@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Discordrb::Activity
+  
+    &mdash; Documentation by YARD 0.9.25
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Discordrb::Activity";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (A)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span>
+     &raquo; 
+    <span class="title">Activity</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Discordrb::Activity
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Discordrb::Activity</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/discordrb/data/activity.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>Contains information about user activities such as the game they are playing,
+music they are listening to, or their live stream.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Activity/Assets.html" title="Discordrb::Activity::Assets (class)">Assets</a></span>, <span class='object_link'><a href="Activity/Party.html" title="Discordrb::Activity::Party (class)">Party</a></span>, <span class='object_link'><a href="Activity/Secrets.html" title="Discordrb::Activity::Secrets (class)">Secrets</a></span>, <span class='object_link'><a href="Activity/Timestamps.html" title="Discordrb::Activity::Timestamps (class)">Timestamps</a></span>
+    
+  
+</p>
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="FLAGS-constant" class="">FLAGS =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Values corresponding to the flags bitmask</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>instance:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>0</span><span class='comma'>,</span> <span class='comment'># this activity is an instanced game session
+</span>  <span class='label'>join:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>1</span><span class='comma'>,</span> <span class='comment'># this activity is joinable
+</span>  <span class='label'>spectate:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>2</span><span class='comma'>,</span> <span class='comment'># this activity can be spectated
+</span>  <span class='label'>join_request:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>3</span><span class='comma'>,</span> <span class='comment'># this activity allows asking to join
+</span>  <span class='label'>sync:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>4</span><span class='comma'>,</span> <span class='comment'># this activity is a spotify track
+</span>  <span class='label'>play:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>5</span> <span class='comment'># this game can be played or opened from discord
+</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="GAME-constant" class="">GAME =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Type indicating the activity is for a game</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>0</span></pre></dd>
+      
+        <dt id="STREAMING-constant" class="">STREAMING =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Type indicating the activity is a stream</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>1</span></pre></dd>
+      
+        <dt id="LISTENING-constant" class="">LISTENING =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Type indicating the activity is for music</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>2</span></pre></dd>
+      
+        <dt id="WATCHING-constant" class="">WATCHING =
+          <div class="docstring">
+  <div class="discussion">
+    <p>This type is currently unused in the client but can be reported by bots</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>3</span></pre></dd>
+      
+        <dt id="CUSTOM-constant" class="">CUSTOM =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Type indicating the activity is a custom status</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>4</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#application_id-instance_method" title="#application_id (instance method)">#<strong>application_id</strong>  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The application ID for the game.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#assets-instance_method" title="#assets (instance method)">#<strong>assets</strong>  &#x21d2; Assets<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Images for the presence and their texts.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#created_at-instance_method" title="#created_at (instance method)">#<strong>created_at</strong>  &#x21d2; Time </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The time when the activity was added to the user&#39;s session.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#details-instance_method" title="#details (instance method)">#<strong>details</strong>  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Details about what the player is currently doing.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#emoji-instance_method" title="#emoji (instance method)">#<strong>emoji</strong>  &#x21d2; Emoji<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Emoji data for custom statuses.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#flags-instance_method" title="#flags (instance method)">#<strong>flags</strong>  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A bitmask of activity flags.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#instance-instance_method" title="#instance (instance method)">#<strong>instance</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether or not the activity is an instanced game session.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#name-instance_method" title="#name (instance method)">#<strong>name</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The activity&#39;s name.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#party-instance_method" title="#party (instance method)">#<strong>party</strong>  &#x21d2; Party<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Information about the player&#39;s current party.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#secrets-instance_method" title="#secrets (instance method)">#<strong>secrets</strong>  &#x21d2; Secrets<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Secrets for rich presence, joining, and spectating.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#state-instance_method" title="#state (instance method)">#<strong>state</strong>  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The user&#39;s current party status.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#timestamps-instance_method" title="#timestamps (instance method)">#<strong>timestamps</strong>  &#x21d2; Timestamps<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Times for the start and/or end of the activity.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#type-instance_method" title="#type (instance method)">#<strong>type</strong>  &#x21d2; Integer<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Activity type.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#url-instance_method" title="#url (instance method)">#<strong>url</strong>  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Stream URL, when the activity type is <span class='object_link'><a href="#STREAMING-constant" title="Discordrb::Activity::STREAMING (constant)">STREAMING</a></span>.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#instance%3F-instance_method" title="#instance? (instance method)">#<strong>instance?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether or not the <code>instance</code> flag is set for this activity.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#join%3F-instance_method" title="#join? (instance method)">#<strong>join?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether or not the <code>join</code> flag is set for this activity.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#join_request%3F-instance_method" title="#join_request? (instance method)">#<strong>join_request?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether or not the <code>join_request</code> flag is set for this activity.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#play%3F-instance_method" title="#play? (instance method)">#<strong>play?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether or not the <code>play</code> flag is set for this activity.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#spectate%3F-instance_method" title="#spectate? (instance method)">#<strong>spectate?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether or not the <code>spectate</code> flag is set for this activity.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sync%3F-instance_method" title="#sync? (instance method)">#<strong>sync?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether or not the <code>sync</code> flag is set for this activity.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="application_id-instance_method">
+  
+    #<strong>application_id</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the application ID for the game.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the application ID for the game</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_application_id'>application_id</span>
+  <span class='ivar'>@application_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="assets-instance_method">
+  
+    #<strong>assets</strong>  &#x21d2; <tt><span class='object_link'><a href="Activity/Assets.html" title="Discordrb::Activity::Assets (class)">Assets</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns images for the presence and their texts.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Activity/Assets.html" title="Discordrb::Activity::Assets (class)">Assets</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>images for the presence and their texts</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+49
+50
+51</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 49</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_assets'>assets</span>
+  <span class='ivar'>@assets</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="created_at-instance_method">
+  
+    #<strong>created_at</strong>  &#x21d2; <tt>Time</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the time when the activity was added to the user&#39;s session.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Time</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the time when the activity was added to the user&#39;s session</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+58
+59
+60</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 58</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_created_at'>created_at</span>
+  <span class='ivar'>@created_at</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="details-instance_method">
+  
+    #<strong>details</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns details about what the player is currently doing.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>details about what the player is currently doing</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_details'>details</span>
+  <span class='ivar'>@details</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="emoji-instance_method">
+  
+    #<strong>emoji</strong>  &#x21d2; <tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns emoji data for custom statuses.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>emoji data for custom statuses</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+55
+56
+57</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 55</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_emoji'>emoji</span>
+  <span class='ivar'>@emoji</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="flags-instance_method">
+  
+    #<strong>flags</strong>  &#x21d2; <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a bitmask of activity flags.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>a bitmask of activity flags</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#FLAGS-constant" title="Discordrb::Activity::FLAGS (constant)">FLAGS</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+40
+41
+42</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 40</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_flags'>flags</span>
+  <span class='ivar'>@flags</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="instance-instance_method">
+  
+    #<strong>instance</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns whether or not the activity is an instanced game session.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>whether or not the activity is an instanced game session</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+36
+37
+38</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 36</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_instance'>instance</span>
+  <span class='ivar'>@instance</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="name-instance_method">
+  
+    #<strong>name</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the activity&#39;s name.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the activity&#39;s name</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+18
+19
+20</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 18</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_name'>name</span>
+  <span class='ivar'>@name</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="party-instance_method">
+  
+    #<strong>party</strong>  &#x21d2; <tt><span class='object_link'><a href="Activity/Party.html" title="Discordrb::Activity::Party (class)">Party</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns information about the player&#39;s current party.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Activity/Party.html" title="Discordrb::Activity::Party (class)">Party</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>information about the player&#39;s current party</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_party'>party</span>
+  <span class='ivar'>@party</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="secrets-instance_method">
+  
+    #<strong>secrets</strong>  &#x21d2; <tt><span class='object_link'><a href="Activity/Secrets.html" title="Discordrb::Activity::Secrets (class)">Secrets</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns secrets for rich presence, joining, and spectating.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Activity/Secrets.html" title="Discordrb::Activity::Secrets (class)">Secrets</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>secrets for rich presence, joining, and spectating</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+46
+47
+48</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 46</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_secrets'>secrets</span>
+  <span class='ivar'>@secrets</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="state-instance_method">
+  
+    #<strong>state</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the user&#39;s current party status.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the user&#39;s current party status</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+33
+34
+35</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 33</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_state'>state</span>
+  <span class='ivar'>@state</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="timestamps-instance_method">
+  
+    #<strong>timestamps</strong>  &#x21d2; <tt><span class='object_link'><a href="Activity/Timestamps.html" title="Discordrb::Activity::Timestamps (class)">Timestamps</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns times for the start and/or end of the activity.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Activity/Timestamps.html" title="Discordrb::Activity::Timestamps (class)">Timestamps</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>times for the start and/or end of the activity</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+43
+44
+45</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 43</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_timestamps'>timestamps</span>
+  <span class='ivar'>@timestamps</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="type-instance_method">
+  
+    #<strong>type</strong>  &#x21d2; <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns activity type. Can be <span class='object_link'><a href="#GAME-constant" title="Discordrb::Activity::GAME (constant)">GAME</a></span>, <span class='object_link'><a href="#STREAMING-constant" title="Discordrb::Activity::STREAMING (constant)">STREAMING</a></span>, <span class='object_link'><a href="#LISTENING-constant" title="Discordrb::Activity::LISTENING (constant)">LISTENING</a></span>, <span class='object_link'><a href="#CUSTOM-constant" title="Discordrb::Activity::CUSTOM (constant)">CUSTOM</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>activity type. Can be <span class='object_link'><a href="#GAME-constant" title="Discordrb::Activity::GAME (constant)">GAME</a></span>, <span class='object_link'><a href="#STREAMING-constant" title="Discordrb::Activity::STREAMING (constant)">STREAMING</a></span>, <span class='object_link'><a href="#LISTENING-constant" title="Discordrb::Activity::LISTENING (constant)">LISTENING</a></span>, <span class='object_link'><a href="#CUSTOM-constant" title="Discordrb::Activity::CUSTOM (constant)">CUSTOM</a></span></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+21
+22
+23</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 21</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_type'>type</span>
+  <span class='ivar'>@type</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="url-instance_method">
+  
+    #<strong>url</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns stream URL, when the activity type is <span class='object_link'><a href="#STREAMING-constant" title="Discordrb::Activity::STREAMING (constant)">STREAMING</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>stream URL, when the activity type is <span class='object_link'><a href="#STREAMING-constant" title="Discordrb::Activity::STREAMING (constant)">STREAMING</a></span></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+24
+25
+26</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 24</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_url'>url</span>
+  <span class='ivar'>@url</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="instance?-instance_method">
+  
+    #<strong>instance?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Whether or not the <code>instance</code> flag is set for this activity.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether or not the <code>instance</code> flag is set for this activity</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+116
+117
+118</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 116</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_instance?'>instance?</span>
+  <span class='ivar'>@instance</span> <span class='op'>||</span> <span class='id identifier rubyid_flag_set?'>flag_set?</span><span class='lparen'>(</span><span class='symbol'>:instance</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="join?-instance_method">
+  
+    #<strong>join?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Whether or not the <code>join</code> flag is set for this activity.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether or not the <code>join</code> flag is set for this activity</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+91
+92
+93</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 91</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_join?'>join?</span>
+  <span class='id identifier rubyid_flag_set?'>flag_set?</span> <span class='symbol'>:join</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="join_request?-instance_method">
+  
+    #<strong>join_request?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Whether or not the <code>join_request</code> flag is set for this activity.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether or not the <code>join_request</code> flag is set for this activity</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+101
+102
+103</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 101</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_join_request?'>join_request?</span>
+  <span class='id identifier rubyid_flag_set?'>flag_set?</span> <span class='symbol'>:join_request</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="play?-instance_method">
+  
+    #<strong>play?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Whether or not the <code>play</code> flag is set for this activity.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether or not the <code>play</code> flag is set for this activity</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+111
+112
+113</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 111</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_play?'>play?</span>
+  <span class='id identifier rubyid_flag_set?'>flag_set?</span> <span class='symbol'>:play</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="spectate?-instance_method">
+  
+    #<strong>spectate?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Whether or not the <code>spectate</code> flag is set for this activity.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether or not the <code>spectate</code> flag is set for this activity</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+96
+97
+98</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 96</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_spectate?'>spectate?</span>
+  <span class='id identifier rubyid_flag_set?'>flag_set?</span> <span class='symbol'>:spectate</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sync?-instance_method">
+  
+    #<strong>sync?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Whether or not the <code>sync</code> flag is set for this activity.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether or not the <code>sync</code> flag is set for this activity</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+106
+107
+108</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 106</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_sync?'>sync?</span>
+  <span class='id identifier rubyid_flag_set?'>flag_set?</span> <span class='symbol'>:sync</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sat Nov 14 01:36:16 2020 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.25 (ruby-2.5.8).
+</div>
+
+    </div>
+  </body>
+</html>
