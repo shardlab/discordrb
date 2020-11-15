@@ -1128,7 +1128,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#send_message-instance_method" title="#send_message (instance method)">#<strong>send_message</strong>(channel, content, tts = false, embed = nil, attachments = nil)  &#x21d2; Message </a>
+      <a href="#send_message-instance_method" title="#send_message (instance method)">#<strong>send_message</strong>(channel, content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil)  &#x21d2; Message </a>
     
 
     
@@ -1151,7 +1151,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#send_temporary_message-instance_method" title="#send_temporary_message (instance method)">#<strong>send_temporary_message</strong>(channel, content, timeout, tts = false, embed = nil, attachments = nil)  &#x21d2; Object </a>
+      <a href="#send_temporary_message-instance_method" title="#send_temporary_message (instance method)">#<strong>send_temporary_message</strong>(channel, content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil)  &#x21d2; Object </a>
     
 
     
@@ -1494,7 +1494,7 @@
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="EventContainer.html" title="Discordrb::EventContainer (module)">EventContainer</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="EventContainer.html#add_handler-instance_method" title="Discordrb::EventContainer#add_handler (method)">#add_handler</a></span>, <span class='object_link'><a href="EventContainer.html#await-instance_method" title="Discordrb::EventContainer#await (method)">#await</a></span>, <span class='object_link'><a href="EventContainer.html#channel_create-instance_method" title="Discordrb::EventContainer#channel_create (method)">#channel_create</a></span>, <span class='object_link'><a href="EventContainer.html#channel_delete-instance_method" title="Discordrb::EventContainer#channel_delete (method)">#channel_delete</a></span>, <span class='object_link'><a href="EventContainer.html#channel_recipient_add-instance_method" title="Discordrb::EventContainer#channel_recipient_add (method)">#channel_recipient_add</a></span>, <span class='object_link'><a href="EventContainer.html#channel_recipient_remove-instance_method" title="Discordrb::EventContainer#channel_recipient_remove (method)">#channel_recipient_remove</a></span>, <span class='object_link'><a href="EventContainer.html#channel_update-instance_method" title="Discordrb::EventContainer#channel_update (method)">#channel_update</a></span>, <span class='object_link'><a href="EventContainer.html#class_from_string-class_method" title="Discordrb::EventContainer.class_from_string (method)">class_from_string</a></span>, <span class='object_link'><a href="EventContainer.html#clear!-instance_method" title="Discordrb::EventContainer#clear! (method)">#clear!</a></span>, <span class='object_link'><a href="EventContainer.html#disconnected-instance_method" title="Discordrb::EventContainer#disconnected (method)">#disconnected</a></span>, <span class='object_link'><a href="EventContainer.html#event_class-class_method" title="Discordrb::EventContainer.event_class (method)">event_class</a></span>, <span class='object_link'><a href="EventContainer.html#handler_class-class_method" title="Discordrb::EventContainer.handler_class (method)">handler_class</a></span>, <span class='object_link'><a href="EventContainer.html#heartbeat-instance_method" title="Discordrb::EventContainer#heartbeat (method)">#heartbeat</a></span>, <span class='object_link'><a href="EventContainer.html#include_events-instance_method" title="Discordrb::EventContainer#include_events (method)">#include_events</a></span>, <span class='object_link'><a href="EventContainer.html#member_join-instance_method" title="Discordrb::EventContainer#member_join (method)">#member_join</a></span>, <span class='object_link'><a href="EventContainer.html#member_leave-instance_method" title="Discordrb::EventContainer#member_leave (method)">#member_leave</a></span>, <span class='object_link'><a href="EventContainer.html#member_update-instance_method" title="Discordrb::EventContainer#member_update (method)">#member_update</a></span>, <span class='object_link'><a href="EventContainer.html#mention-instance_method" title="Discordrb::EventContainer#mention (method)">#mention</a></span>, <span class='object_link'><a href="EventContainer.html#message-instance_method" title="Discordrb::EventContainer#message (method)">#message</a></span>, <span class='object_link'><a href="EventContainer.html#message_delete-instance_method" title="Discordrb::EventContainer#message_delete (method)">#message_delete</a></span>, <span class='object_link'><a href="EventContainer.html#message_edit-instance_method" title="Discordrb::EventContainer#message_edit (method)">#message_edit</a></span>, <span class='object_link'><a href="EventContainer.html#message_update-instance_method" title="Discordrb::EventContainer#message_update (method)">#message_update</a></span>, <span class='object_link'><a href="EventContainer.html#playing-instance_method" title="Discordrb::EventContainer#playing (method)">#playing</a></span>, <span class='object_link'><a href="EventContainer.html#pm-instance_method" title="Discordrb::EventContainer#pm (method)">#pm</a></span>, <span class='object_link'><a href="EventContainer.html#presence-instance_method" title="Discordrb::EventContainer#presence (method)">#presence</a></span>, <span class='object_link'><a href="EventContainer.html#raw-instance_method" title="Discordrb::EventContainer#raw (method)">#raw</a></span>, <span class='object_link'><a href="EventContainer.html#reaction_add-instance_method" title="Discordrb::EventContainer#reaction_add (method)">#reaction_add</a></span>, <span class='object_link'><a href="EventContainer.html#reaction_remove-instance_method" title="Discordrb::EventContainer#reaction_remove (method)">#reaction_remove</a></span>, <span class='object_link'><a href="EventContainer.html#reaction_remove_all-instance_method" title="Discordrb::EventContainer#reaction_remove_all (method)">#reaction_remove_all</a></span>, <span class='object_link'><a href="EventContainer.html#ready-instance_method" title="Discordrb::EventContainer#ready (method)">#ready</a></span>, <span class='object_link'><a href="EventContainer.html#remove_handler-instance_method" title="Discordrb::EventContainer#remove_handler (method)">#remove_handler</a></span>, <span class='object_link'><a href="EventContainer.html#server_create-instance_method" title="Discordrb::EventContainer#server_create (method)">#server_create</a></span>, <span class='object_link'><a href="EventContainer.html#server_delete-instance_method" title="Discordrb::EventContainer#server_delete (method)">#server_delete</a></span>, <span class='object_link'><a href="EventContainer.html#server_emoji-instance_method" title="Discordrb::EventContainer#server_emoji (method)">#server_emoji</a></span>, <span class='object_link'><a href="EventContainer.html#server_emoji_create-instance_method" title="Discordrb::EventContainer#server_emoji_create (method)">#server_emoji_create</a></span>, <span class='object_link'><a href="EventContainer.html#server_emoji_delete-instance_method" title="Discordrb::EventContainer#server_emoji_delete (method)">#server_emoji_delete</a></span>, <span class='object_link'><a href="EventContainer.html#server_emoji_update-instance_method" title="Discordrb::EventContainer#server_emoji_update (method)">#server_emoji_update</a></span>, <span class='object_link'><a href="EventContainer.html#server_role_create-instance_method" title="Discordrb::EventContainer#server_role_create (method)">#server_role_create</a></span>, <span class='object_link'><a href="EventContainer.html#server_role_delete-instance_method" title="Discordrb::EventContainer#server_role_delete (method)">#server_role_delete</a></span>, <span class='object_link'><a href="EventContainer.html#server_role_update-instance_method" title="Discordrb::EventContainer#server_role_update (method)">#server_role_update</a></span>, <span class='object_link'><a href="EventContainer.html#server_update-instance_method" title="Discordrb::EventContainer#server_update (method)">#server_update</a></span>, <span class='object_link'><a href="EventContainer.html#typing-instance_method" title="Discordrb::EventContainer#typing (method)">#typing</a></span>, <span class='object_link'><a href="EventContainer.html#unknown-instance_method" title="Discordrb::EventContainer#unknown (method)">#unknown</a></span>, <span class='object_link'><a href="EventContainer.html#user_ban-instance_method" title="Discordrb::EventContainer#user_ban (method)">#user_ban</a></span>, <span class='object_link'><a href="EventContainer.html#user_unban-instance_method" title="Discordrb::EventContainer#user_unban (method)">#user_unban</a></span>, <span class='object_link'><a href="EventContainer.html#voice_state_update-instance_method" title="Discordrb::EventContainer#voice_state_update (method)">#voice_state_update</a></span>, <span class='object_link'><a href="EventContainer.html#webhook_update-instance_method" title="Discordrb::EventContainer#webhook_update (method)">#webhook_update</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="EventContainer.html#add_handler-instance_method" title="Discordrb::EventContainer#add_handler (method)">#add_handler</a></span>, <span class='object_link'><a href="EventContainer.html#await-instance_method" title="Discordrb::EventContainer#await (method)">#await</a></span>, <span class='object_link'><a href="EventContainer.html#channel_create-instance_method" title="Discordrb::EventContainer#channel_create (method)">#channel_create</a></span>, <span class='object_link'><a href="EventContainer.html#channel_delete-instance_method" title="Discordrb::EventContainer#channel_delete (method)">#channel_delete</a></span>, <span class='object_link'><a href="EventContainer.html#channel_recipient_add-instance_method" title="Discordrb::EventContainer#channel_recipient_add (method)">#channel_recipient_add</a></span>, <span class='object_link'><a href="EventContainer.html#channel_recipient_remove-instance_method" title="Discordrb::EventContainer#channel_recipient_remove (method)">#channel_recipient_remove</a></span>, <span class='object_link'><a href="EventContainer.html#channel_update-instance_method" title="Discordrb::EventContainer#channel_update (method)">#channel_update</a></span>, <span class='object_link'><a href="EventContainer.html#class_from_string-class_method" title="Discordrb::EventContainer.class_from_string (method)">class_from_string</a></span>, <span class='object_link'><a href="EventContainer.html#clear!-instance_method" title="Discordrb::EventContainer#clear! (method)">#clear!</a></span>, <span class='object_link'><a href="EventContainer.html#disconnected-instance_method" title="Discordrb::EventContainer#disconnected (method)">#disconnected</a></span>, <span class='object_link'><a href="EventContainer.html#event_class-class_method" title="Discordrb::EventContainer.event_class (method)">event_class</a></span>, <span class='object_link'><a href="EventContainer.html#handler_class-class_method" title="Discordrb::EventContainer.handler_class (method)">handler_class</a></span>, <span class='object_link'><a href="EventContainer.html#heartbeat-instance_method" title="Discordrb::EventContainer#heartbeat (method)">#heartbeat</a></span>, <span class='object_link'><a href="EventContainer.html#include_events-instance_method" title="Discordrb::EventContainer#include_events (method)">#include_events</a></span>, <span class='object_link'><a href="EventContainer.html#invite_create-instance_method" title="Discordrb::EventContainer#invite_create (method)">#invite_create</a></span>, <span class='object_link'><a href="EventContainer.html#invite_delete-instance_method" title="Discordrb::EventContainer#invite_delete (method)">#invite_delete</a></span>, <span class='object_link'><a href="EventContainer.html#member_join-instance_method" title="Discordrb::EventContainer#member_join (method)">#member_join</a></span>, <span class='object_link'><a href="EventContainer.html#member_leave-instance_method" title="Discordrb::EventContainer#member_leave (method)">#member_leave</a></span>, <span class='object_link'><a href="EventContainer.html#member_update-instance_method" title="Discordrb::EventContainer#member_update (method)">#member_update</a></span>, <span class='object_link'><a href="EventContainer.html#mention-instance_method" title="Discordrb::EventContainer#mention (method)">#mention</a></span>, <span class='object_link'><a href="EventContainer.html#message-instance_method" title="Discordrb::EventContainer#message (method)">#message</a></span>, <span class='object_link'><a href="EventContainer.html#message_delete-instance_method" title="Discordrb::EventContainer#message_delete (method)">#message_delete</a></span>, <span class='object_link'><a href="EventContainer.html#message_edit-instance_method" title="Discordrb::EventContainer#message_edit (method)">#message_edit</a></span>, <span class='object_link'><a href="EventContainer.html#message_update-instance_method" title="Discordrb::EventContainer#message_update (method)">#message_update</a></span>, <span class='object_link'><a href="EventContainer.html#playing-instance_method" title="Discordrb::EventContainer#playing (method)">#playing</a></span>, <span class='object_link'><a href="EventContainer.html#pm-instance_method" title="Discordrb::EventContainer#pm (method)">#pm</a></span>, <span class='object_link'><a href="EventContainer.html#presence-instance_method" title="Discordrb::EventContainer#presence (method)">#presence</a></span>, <span class='object_link'><a href="EventContainer.html#raw-instance_method" title="Discordrb::EventContainer#raw (method)">#raw</a></span>, <span class='object_link'><a href="EventContainer.html#reaction_add-instance_method" title="Discordrb::EventContainer#reaction_add (method)">#reaction_add</a></span>, <span class='object_link'><a href="EventContainer.html#reaction_remove-instance_method" title="Discordrb::EventContainer#reaction_remove (method)">#reaction_remove</a></span>, <span class='object_link'><a href="EventContainer.html#reaction_remove_all-instance_method" title="Discordrb::EventContainer#reaction_remove_all (method)">#reaction_remove_all</a></span>, <span class='object_link'><a href="EventContainer.html#ready-instance_method" title="Discordrb::EventContainer#ready (method)">#ready</a></span>, <span class='object_link'><a href="EventContainer.html#remove_handler-instance_method" title="Discordrb::EventContainer#remove_handler (method)">#remove_handler</a></span>, <span class='object_link'><a href="EventContainer.html#server_create-instance_method" title="Discordrb::EventContainer#server_create (method)">#server_create</a></span>, <span class='object_link'><a href="EventContainer.html#server_delete-instance_method" title="Discordrb::EventContainer#server_delete (method)">#server_delete</a></span>, <span class='object_link'><a href="EventContainer.html#server_emoji-instance_method" title="Discordrb::EventContainer#server_emoji (method)">#server_emoji</a></span>, <span class='object_link'><a href="EventContainer.html#server_emoji_create-instance_method" title="Discordrb::EventContainer#server_emoji_create (method)">#server_emoji_create</a></span>, <span class='object_link'><a href="EventContainer.html#server_emoji_delete-instance_method" title="Discordrb::EventContainer#server_emoji_delete (method)">#server_emoji_delete</a></span>, <span class='object_link'><a href="EventContainer.html#server_emoji_update-instance_method" title="Discordrb::EventContainer#server_emoji_update (method)">#server_emoji_update</a></span>, <span class='object_link'><a href="EventContainer.html#server_role_create-instance_method" title="Discordrb::EventContainer#server_role_create (method)">#server_role_create</a></span>, <span class='object_link'><a href="EventContainer.html#server_role_delete-instance_method" title="Discordrb::EventContainer#server_role_delete (method)">#server_role_delete</a></span>, <span class='object_link'><a href="EventContainer.html#server_role_update-instance_method" title="Discordrb::EventContainer#server_role_update (method)">#server_role_update</a></span>, <span class='object_link'><a href="EventContainer.html#server_update-instance_method" title="Discordrb::EventContainer#server_update (method)">#server_update</a></span>, <span class='object_link'><a href="EventContainer.html#typing-instance_method" title="Discordrb::EventContainer#typing (method)">#typing</a></span>, <span class='object_link'><a href="EventContainer.html#unknown-instance_method" title="Discordrb::EventContainer#unknown (method)">#unknown</a></span>, <span class='object_link'><a href="EventContainer.html#user_ban-instance_method" title="Discordrb::EventContainer#user_ban (method)">#user_ban</a></span>, <span class='object_link'><a href="EventContainer.html#user_unban-instance_method" title="Discordrb::EventContainer#user_unban (method)">#user_unban</a></span>, <span class='object_link'><a href="EventContainer.html#voice_server_update-instance_method" title="Discordrb::EventContainer#voice_server_update (method)">#voice_server_update</a></span>, <span class='object_link'><a href="EventContainer.html#voice_state_update-instance_method" title="Discordrb::EventContainer#voice_state_update (method)">#voice_state_update</a></span>, <span class='object_link'><a href="EventContainer.html#webhook_update-instance_method" title="Discordrb::EventContainer#webhook_update (method)">#webhook_update</a></span></p>
 
   
   
@@ -1799,7 +1799,6 @@ field will be passed.</p>
       <pre class="lines">
 
 
-106
 107
 108
 109
@@ -1842,10 +1841,11 @@ field will be passed.</p>
 146
 147
 148
-149</pre>
+149
+150</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 106</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 107</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span>
   <span class='label'>log_mode:</span> <span class='symbol'>:normal</span><span class='comma'>,</span>
@@ -1945,12 +1945,12 @@ field will be passed.</p>
       <pre class="lines">
 
 
-58
 59
-60</pre>
+60
+61</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 58</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 59</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_awaits'>awaits</span>
   <span class='ivar'>@awaits</span>
@@ -2007,12 +2007,12 @@ how many events were executed before.</p>
       <pre class="lines">
 
 
-44
 45
-46</pre>
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_event_threads'>event_threads</span>
   <span class='ivar'>@event_threads</span>
@@ -2067,12 +2067,12 @@ debugging or developing discordrb itself, or while writing very custom bots.</p>
       <pre class="lines">
 
 
-63
 64
-65</pre>
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 63</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_gateway'>gateway</span>
   <span class='ivar'>@gateway</span>
@@ -2127,12 +2127,12 @@ same codebase. Not required but I recommend setting it anyway.</p>
       <pre class="lines">
 
 
-52
 53
-54</pre>
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 52</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 53</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_name'>name</span>
   <span class='ivar'>@name</span>
@@ -2186,12 +2186,12 @@ same codebase. Not required but I recommend setting it anyway.</p>
       <pre class="lines">
 
 
-55
 56
-57</pre>
+57
+58</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 56</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_shard_key'>shard_key</span>
   <span class='ivar'>@shard_key</span>
@@ -2245,12 +2245,12 @@ same codebase. Not required but I recommend setting it anyway.</p>
       <pre class="lines">
 
 
-47
 48
-49</pre>
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_should_parse_self'>should_parse_self</span>
   <span class='ivar'>@should_parse_self</span>
@@ -2304,12 +2304,12 @@ same codebase. Not required but I recommend setting it anyway.</p>
       <pre class="lines">
 
 
-291
 292
-293</pre>
+293
+294</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 291</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 292</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_voices'>voices</span>
   <span class='ivar'>@voices</span>
@@ -2370,13 +2370,13 @@ same codebase. Not required but I recommend setting it anyway.</p>
       <pre class="lines">
 
 
-273
 274
 275
-276</pre>
+276
+277</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 273</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 274</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_accept_invite'>accept_invite</span><span class='lparen'>(</span><span class='id identifier rubyid_invite'>invite</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_resolved'>resolved</span> <span class='op'>=</span> <span class='id identifier rubyid_invite'>invite</span><span class='lparen'>(</span><span class='id identifier rubyid_invite'>invite</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_code'>code</span>
@@ -2518,16 +2518,16 @@ same codebase. Not required but I recommend setting it anyway.</p>
       <pre class="lines">
 
 
-606
-607
-608
-609
 610
 611
-612</pre>
+612
+613
+614
+615
+616</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 606</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 610</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_await'>add_await</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>You can&#39;t await an AwaitEvent!</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events.html" title="Discordrb::Events (module)">Events</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events/AwaitEvent.html" title="Discordrb::Events::AwaitEvent (class)">AwaitEvent</a></span></span>
@@ -2712,10 +2712,6 @@ same codebase. Not required but I recommend setting it anyway.</p>
       <pre class="lines">
 
 
-622
-623
-624
-625
 626
 627
 628
@@ -2748,10 +2744,14 @@ same codebase. Not required but I recommend setting it anyway.</p>
 655
 656
 657
-658</pre>
+658
+659
+660
+661
+662</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 622</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 626</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_await!'>add_await!</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>You can&#39;t await an AwaitEvent!</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events.html" title="Discordrb::Events (module)">Events</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events/AwaitEvent.html" title="Discordrb::Events::AwaitEvent (class)">AwaitEvent</a></span></span>
@@ -2841,15 +2841,15 @@ same codebase. Not required but I recommend setting it anyway.</p>
       <pre class="lines">
 
 
-207
 208
 209
 210
 211
-212</pre>
+212
+213</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 207</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 208</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bot_application'>bot_application</span>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='ivar'>@type</span> <span class='op'>==</span> <span class='symbol'>:bot</span>
@@ -2904,12 +2904,12 @@ same codebase. Not required but I recommend setting it anyway.</p>
       <pre class="lines">
 
 
-267
 268
-269</pre>
+269
+270</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 267</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 268</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connected?'>connected?</span>
   <span class='ivar'>@gateway</span><span class='period'>.</span><span class='id identifier rubyid_open?'>open?</span>
@@ -2996,13 +2996,13 @@ Discord. For information how to use this, see the docs: <a href="https://discord
       <pre class="lines">
 
 
-438
-439
-440
-441</pre>
+442
+443
+444
+445</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 438</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 442</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_oauth_application'>create_oauth_application</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_redirect_uris'>redirect_uris</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create_oauth_application'><span class='object_link'><a href="API.html#create_oauth_application-class_method" title="Discordrb::API.create_oauth_application (method)">create_oauth_application</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_redirect_uris'>redirect_uris</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -3099,16 +3099,16 @@ waits until the data has been received via the websocket. This may make the exec
       <pre class="lines">
 
 
-425
-426
-427
-428
 429
 430
-431</pre>
+431
+432
+433
+434
+435</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 425</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 429</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_server'>create_server</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_region'>region</span> <span class='op'>=</span> <span class='symbol'>:&#39;eu-central&#39;</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Server.html" title="Discordrb::API::Server (module)">Server</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create'><span class='object_link'><a href="API/Server.html#create-class_method" title="Discordrb::API::Server.create (method)">create</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_region'>region</span><span class='rparen'>)</span>
@@ -3153,12 +3153,12 @@ waits until the data has been received via the websocket. This may make the exec
       <pre class="lines">
 
 
-682
-683
-684</pre>
+686
+687
+688</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 682</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 686</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../Discordrb.html#LOGGER-constant" title="Discordrb::LOGGER (constant)">LOGGER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
@@ -3193,12 +3193,12 @@ waits until the data has been received via the websocket. This may make the exec
       <pre class="lines">
 
 
-583
-584
-585</pre>
+587
+588
+589</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 583</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 587</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_debug='>debug=</span><span class='lparen'>(</span><span class='id identifier rubyid_new_debug'>new_debug</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../Discordrb.html#LOGGER-constant" title="Discordrb::LOGGER (constant)">LOGGER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='op'>=</span> <span class='id identifier rubyid_new_debug'>new_debug</span>
@@ -3253,13 +3253,13 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
       <pre class="lines">
 
 
-355
 356
 357
-358</pre>
+358
+359</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 355</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 356</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_invite'>delete_invite</span><span class='lparen'>(</span><span class='id identifier rubyid_code'>code</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_invite'>invite</span> <span class='op'>=</span> <span class='id identifier rubyid_resolve_invite_code'>resolve_invite_code</span><span class='lparen'>(</span><span class='id identifier rubyid_code'>code</span><span class='rparen'>)</span>
@@ -3295,12 +3295,12 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
       <pre class="lines">
 
 
-692
-693
-694</pre>
+696
+697
+698</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 692</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 696</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dispatch'>dispatch</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_handle_dispatch'>handle_dispatch</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
@@ -3335,13 +3335,13 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
       <pre class="lines">
 
 
-571
-572
-573
-574</pre>
+575
+576
+577
+578</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 571</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 575</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dnd'>dnd</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -3474,7 +3474,6 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
       <pre class="lines">
 
 
-174
 175
 176
 177
@@ -3482,10 +3481,11 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
 179
 180
 181
-182</pre>
+182
+183</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 174</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 175</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emoji'>emoji</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_emoji_hash'>emoji_hash</span> <span class='op'>=</span> <span class='id identifier rubyid_servers'>servers</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:emoji</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_reduce'>reduce</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:merge</span><span class='rparen'>)</span>
@@ -3562,13 +3562,13 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
       <pre class="lines">
 
 
-190
 191
 192
-193</pre>
+193
+194</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 190</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 191</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_find_emoji'>find_emoji</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../Discordrb.html#LOGGER-constant" title="Discordrb::LOGGER (constant)">LOGGER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_out'>out</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Resolving emoji </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -3644,13 +3644,13 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
       <pre class="lines">
 
 
-521
-522
-523
-524</pre>
+525
+526
+527
+528</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 521</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 525</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_game='>game=</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -3690,13 +3690,13 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
       <pre class="lines">
 
 
-563
-564
-565
-566</pre>
+567
+568
+569
+570</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 563</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 567</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_idle'>idle</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -3759,12 +3759,12 @@ presence and any other events will still be received.</p>
       <pre class="lines">
 
 
-664
-665
-666</pre>
+668
+669
+670</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 664</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 668</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ignore_user'>ignore_user</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='rparen'>)</span>
   <span class='ivar'>@ignored_ids</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
@@ -3835,12 +3835,12 @@ presence and any other events will still be received.</p>
       <pre class="lines">
 
 
-677
-678
-679</pre>
+681
+682
+683</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 677</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 681</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ignored?'>ignored?</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='rparen'>)</span>
   <span class='ivar'>@ignored_ids</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='rparen'>)</span>
@@ -3875,13 +3875,13 @@ presence and any other events will still be received.</p>
       <pre class="lines">
 
 
-577
-578
-579
-580</pre>
+581
+582
+583
+584</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 577</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 581</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invisible'>invisible</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -3972,16 +3972,16 @@ presence and any other events will still be received.</p>
       <pre class="lines">
 
 
-282
 283
 284
 285
 286
 287
-288</pre>
+288
+289</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 282</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 283</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invite_url'>invite_url</span><span class='lparen'>(</span><span class='label'>server:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>permission_bits:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@client_id</span> <span class='op'>||=</span> <span class='id identifier rubyid_bot_application'>bot_application</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
@@ -4027,12 +4027,12 @@ continuously running bot.</p>
       <pre class="lines">
 
 
-254
 255
-256</pre>
+256
+257</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 254</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 255</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_join'>join</span>
   <span class='ivar'>@gateway</span><span class='period'>.</span><span class='id identifier rubyid_sync'>sync</span>
@@ -4103,13 +4103,13 @@ continuously running bot.</p>
       <pre class="lines">
 
 
-531
-532
-533
-534</pre>
+535
+536
+537
+538</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 531</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 535</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_listening='>listening=</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -4151,12 +4151,12 @@ continuously running bot.</p>
       <pre class="lines">
 
 
-687
-688
-689</pre>
+691
+692
+693</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 687</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 691</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_log_exception'>log_exception</span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../Discordrb.html#LOGGER-constant" title="Discordrb::LOGGER (constant)">LOGGER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_log_exception'>log_exception</span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='rparen'>)</span>
@@ -4198,12 +4198,12 @@ continuously running bot.</p>
       <pre class="lines">
 
 
-589
-590
-591</pre>
+593
+594
+595</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 589</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 593</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mode='>mode=</span><span class='lparen'>(</span><span class='id identifier rubyid_new_mode'>new_mode</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../Discordrb.html#LOGGER-constant" title="Discordrb::LOGGER (constant)">LOGGER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_mode'>mode</span> <span class='op'>=</span> <span class='id identifier rubyid_new_mode'>new_mode</span>
@@ -4242,13 +4242,13 @@ continuously running bot.</p>
       <pre class="lines">
 
 
-555
-556
-557
-558</pre>
+559
+560
+561
+562</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 555</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 559</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_online'>online</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -4337,12 +4337,12 @@ continuously running bot.</p>
       <pre class="lines">
 
 
-491
-492
-493</pre>
+495
+496
+497</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 491</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 495</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_mention'>parse_mention</span><span class='lparen'>(</span><span class='id identifier rubyid_mention'>mention</span><span class='comma'>,</span> <span class='id identifier rubyid_server'>server</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_parse_mentions'>parse_mentions</span><span class='lparen'>(</span><span class='id identifier rubyid_mention'>mention</span><span class='comma'>,</span> <span class='id identifier rubyid_server'>server</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
@@ -4430,10 +4430,6 @@ continuously running bot.</p>
       <pre class="lines">
 
 
-457
-458
-459
-460
 461
 462
 463
@@ -4458,10 +4454,14 @@ continuously running bot.</p>
 482
 483
 484
-485</pre>
+485
+486
+487
+488
+489</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 457</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 461</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_mentions'>parse_mentions</span><span class='lparen'>(</span><span class='id identifier rubyid_mentions'>mentions</span><span class='comma'>,</span> <span class='id identifier rubyid_server'>server</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_array_to_return'>array_to_return</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -4544,13 +4544,13 @@ to edit user data like the current username (see <span class='object_link'><a hr
       <pre class="lines">
 
 
-198
 199
 200
-201</pre>
+201
+202</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 198</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 199</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_profile'>profile</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -4586,14 +4586,14 @@ to edit user data like the current username (see <span class='object_link'><a hr
       <pre class="lines">
 
 
-702
-703
-704
-705
-706</pre>
+706
+707
+708
+709
+710</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 702</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 706</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_prune_empty_groups'>prune_empty_groups</span>
   <span class='ivar'>@channels</span><span class='period'>.</span><span class='id identifier rubyid_each_value'>each_value</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_channel'>channel</span><span class='op'>|</span>
@@ -4630,12 +4630,12 @@ to edit user data like the current username (see <span class='object_link'><a hr
       <pre class="lines">
 
 
-697
-698
-699</pre>
+701
+702
+703</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 697</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 701</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_raise_heartbeat_event'>raise_heartbeat_event</span>
   <span class='id identifier rubyid_raise_event'>raise_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/HeartbeatEvent.html" title="Discordrb::Events::HeartbeatEvent (class)">HeartbeatEvent</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -4694,12 +4694,12 @@ to edit user data like the current username (see <span class='object_link'><a hr
       <pre class="lines">
 
 
-226
 227
-228</pre>
+228
+229</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 226</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 227</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_raw_token'>raw_token</span>
   <span class='ivar'>@token</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span>
@@ -4771,16 +4771,16 @@ sure to eventually call <span class='object_link'><a href="#join-instance_method
       <pre class="lines">
 
 
-242
 243
 244
 245
 246
 247
-248</pre>
+248
+249</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 242</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 243</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_run'>run</span><span class='lparen'>(</span><span class='id identifier rubyid_background'>background</span> <span class='op'>=</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='ivar'>@gateway</span><span class='period'>.</span><span class='id identifier rubyid_run_async'>run_async</span>
@@ -4939,10 +4939,6 @@ sure to eventually call <span class='object_link'><a href="#join-instance_method
       <pre class="lines">
 
 
-404
-405
-406
-407
 408
 409
 410
@@ -4952,10 +4948,14 @@ sure to eventually call <span class='object_link'><a href="#join-instance_method
 414
 415
 416
-417</pre>
+417
+418
+419
+420
+421</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 404</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 408</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_file'>send_file</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_file'>file</span><span class='comma'>,</span> <span class='label'>caption:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>filename:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>spoiler:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:read</span><span class='rparen'>)</span>
@@ -4979,7 +4979,7 @@ sure to eventually call <span class='object_link'><a href="#join-instance_method
       <div class="method_details ">
   <h3 class="signature " id="send_message-instance_method">
   
-    #<strong>send_message</strong>(channel, content, tts = false, embed = nil, attachments = nil)  &#x21d2; <tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt> 
+    #<strong>send_message</strong>(channel, content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil)  &#x21d2; <tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt> 
   
 
   
@@ -5060,6 +5060,23 @@ sure to eventually call <span class='object_link'><a href="#join-instance_method
       
     </li>
   
+    <li>
+      
+        <span class='name'>allowed_mentions</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt><span class='object_link'><a href="AllowedMentions.html" title="Discordrb::AllowedMentions (class)">Discordrb::AllowedMentions</a></span></tt>, <tt>false</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Mentions that are allowed to ping on this message. <code>false</code> disables all pings</p>
+</div>
+      
+    </li>
+  
 </ul>
 
 <p class="tag_title">Returns:</p>
@@ -5086,22 +5103,24 @@ sure to eventually call <span class='object_link'><a href="#join-instance_method
       <pre class="lines">
 
 
-366
-367
 368
 369
 370
 371
-372</pre>
+372
+373
+374
+375</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 366</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 368</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_channel'>channel</span> <span class='op'>=</span> <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
   <span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Sending message to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_channel'>channel</span><span class='embexpr_end'>}</span><span class='tstring_content'> with content &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_content'>content</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>parse:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>==</span> <span class='kw'>false</span>
 
-  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create_message'><span class='object_link'><a href="API/Channel.html#create_message-class_method" title="Discordrb::API::Channel.create_message (method)">create_message</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span> <span class='op'>?</span> <span class='id identifier rubyid_embed'>embed</span><span class='period'>.</span><span class='id identifier rubyid_to_hash'>to_hash</span> <span class='op'>:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create_message'><span class='object_link'><a href="API/Channel.html#create_message-class_method" title="Discordrb::API::Channel.create_message (method)">create_message</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span> <span class='op'>?</span> <span class='id identifier rubyid_embed'>embed</span><span class='period'>.</span><span class='id identifier rubyid_to_hash'>to_hash</span> <span class='op'>:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>?</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span><span class='period'>.</span><span class='id identifier rubyid_to_hash'>to_hash</span> <span class='op'>:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -5112,7 +5131,7 @@ sure to eventually call <span class='object_link'><a href="#join-instance_method
       <div class="method_details ">
   <h3 class="signature " id="send_temporary_message-instance_method">
   
-    #<strong>send_temporary_message</strong>(channel, content, timeout, tts = false, embed = nil, attachments = nil)  &#x21d2; <tt>Object</tt> 
+    #<strong>send_temporary_message</strong>(channel, content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil)  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -5226,6 +5245,23 @@ then deletes it after the specified timeout in seconds.</p>
       
     </li>
   
+    <li>
+      
+        <span class='name'>allowed_mentions</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt><span class='object_link'><a href="AllowedMentions.html" title="Discordrb::AllowedMentions (class)">Discordrb::AllowedMentions</a></span></tt>, <tt>false</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Mentions that are allowed to ping on this message. <code>false</code> disables all pings</p>
+</div>
+      
+    </li>
+  
 </ul>
 
 
@@ -5235,26 +5271,26 @@ then deletes it after the specified timeout in seconds.</p>
       <pre class="lines">
 
 
-382
-383
-384
-385
 386
 387
 388
 389
 390
 391
-392</pre>
+392
+393
+394
+395
+396</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 382</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 386</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_send_temporary_message'>send_temporary_message</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_timeout'>timeout</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_send_temporary_message'>send_temporary_message</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_timeout'>timeout</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'>Thread</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span>
     <span class='const'>Thread</span><span class='period'>.</span><span class='id identifier rubyid_current'>current</span><span class='lbracket'>[</span><span class='symbol'>:discordrb_name</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@current_thread</span><span class='embexpr_end'>}</span><span class='tstring_content'>-temp-msg</span><span class='tstring_end'>&quot;</span></span>
 
-    <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_sleep'>sleep</span><span class='lparen'>(</span><span class='id identifier rubyid_timeout'>timeout</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span>
   <span class='kw'>end</span>
@@ -5308,14 +5344,14 @@ then deletes it after the specified timeout in seconds.</p>
       <pre class="lines">
 
 
-161
 162
 163
 164
-165</pre>
+165
+166</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 161</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 162</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_servers'>servers</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -5360,12 +5396,12 @@ Discord is immediately aware of the closed connection and makes the bot appear o
       <pre class="lines">
 
 
-262
 263
-264</pre>
+264
+265</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 262</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 263</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_stop'>stop</span><span class='lparen'>(</span><span class='id identifier rubyid__no_sync'>_no_sync</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@gateway</span><span class='period'>.</span><span class='id identifier rubyid_stop'>stop</span>
@@ -5451,14 +5487,14 @@ Discord is immediately aware of the closed connection and makes the bot appear o
       <pre class="lines">
 
 
-548
-549
-550
-551
-552</pre>
+552
+553
+554
+555
+556</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 548</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 552</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_stream'>stream</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_url'>url</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -5495,12 +5531,12 @@ Discord is immediately aware of the closed connection and makes the bot appear o
       <pre class="lines">
 
 
-594
-595
-596</pre>
+598
+599
+600</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 594</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 598</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_suppress_ready_debug'>suppress_ready_debug</span>
   <span class='ivar'>@prevent_ready</span> <span class='op'>=</span> <span class='kw'>true</span>
@@ -5553,13 +5589,13 @@ Discord is immediately aware of the closed connection and makes the bot appear o
       <pre class="lines">
 
 
-219
 220
 221
-222</pre>
+222
+223</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 219</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 220</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_token'>token</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_bot_name'><span class='object_link'><a href="API.html#bot_name-class_method" title="Discordrb::API.bot_name (method)">bot_name</a></span></span> <span class='op'>=</span> <span class='ivar'>@name</span>
@@ -5614,12 +5650,12 @@ Discord is immediately aware of the closed connection and makes the bot appear o
       <pre class="lines">
 
 
-670
-671
-672</pre>
+674
+675
+676</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 670</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 674</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unignore_user'>unignore_user</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='rparen'>)</span>
   <span class='ivar'>@ignored_ids</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='rparen'>)</span>
@@ -5723,12 +5759,12 @@ should be set or changed.</p>
       <pre class="lines">
 
 
-449
-450
-451</pre>
+453
+454
+455</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 449</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 453</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_oauth_application'>update_oauth_application</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_redirect_uris'>redirect_uris</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_icon'>icon</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_update_oauth_application'><span class='object_link'><a href="API.html#update_oauth_application-class_method" title="Discordrb::API.update_oauth_application (method)">update_oauth_application</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_redirect_uris'>redirect_uris</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='id identifier rubyid_icon'>icon</span><span class='rparen'>)</span>
@@ -5870,10 +5906,6 @@ should be set or changed.</p>
       <pre class="lines">
 
 
-503
-504
-505
-506
 507
 508
 509
@@ -5883,10 +5915,14 @@ should be set or changed.</p>
 513
 514
 515
-516</pre>
+516
+517
+518
+519
+520</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 503</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 507</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_status'>update_status</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_activity'>activity</span><span class='comma'>,</span> <span class='id identifier rubyid_url'>url</span><span class='comma'>,</span> <span class='id identifier rubyid_since'>since</span> <span class='op'>=</span> <span class='int'>0</span><span class='comma'>,</span> <span class='id identifier rubyid_afk'>afk</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_activity_type'>activity_type</span> <span class='op'>=</span> <span class='int'>0</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -5949,14 +5985,14 @@ should be set or changed.</p>
       <pre class="lines">
 
 
-153
 154
 155
 156
-157</pre>
+157
+158</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 153</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 154</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_users'>users</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -6030,7 +6066,6 @@ method.</p>
       <pre class="lines">
 
 
-297
 298
 299
 300
@@ -6039,10 +6074,11 @@ method.</p>
 303
 304
 305
-306</pre>
+306
+307</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 297</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 298</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_voice'>voice</span><span class='lparen'>(</span><span class='id identifier rubyid_thing'>thing</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_id'>id</span> <span class='op'>=</span> <span class='id identifier rubyid_thing'>thing</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
@@ -6154,7 +6190,6 @@ connected to voice, the existing connection will be terminated - you don&#39;t h
       <pre class="lines">
 
 
-316
 317
 318
 319
@@ -6176,10 +6211,11 @@ connected to voice, the existing connection will be terminated - you don&#39;t h
 335
 336
 337
-338</pre>
+338
+339</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 316</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 317</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_voice_connect'>voice_connect</span><span class='lparen'>(</span><span class='id identifier rubyid_chan'>chan</span><span class='comma'>,</span> <span class='id identifier rubyid_encrypted'>encrypted</span> <span class='op'>=</span> <span class='kw'>true</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Unencrypted voice connections are no longer supported.</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_encrypted'>encrypted</span>
@@ -6272,15 +6308,15 @@ directly, you should leave it as true.</p>
       <pre class="lines">
 
 
-345
 346
 347
 348
 349
-350</pre>
+350
+351</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 345</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 346</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_voice_destroy'>voice_destroy</span><span class='lparen'>(</span><span class='id identifier rubyid_server'>server</span><span class='comma'>,</span> <span class='id identifier rubyid_destroy_vws'>destroy_vws</span> <span class='op'>=</span> <span class='kw'>true</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_server'>server</span> <span class='op'>=</span> <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
@@ -6354,13 +6390,13 @@ directly, you should leave it as true.</p>
       <pre class="lines">
 
 
-539
-540
-541
-542</pre>
+543
+544
+545
+546</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 539</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 543</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_watching='>watching=</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_gateway_check'>gateway_check</span>
@@ -6376,7 +6412,7 @@ directly, you should leave it as true.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 01:33:09 2020 by
+  Generated on Sun Nov 15 06:23:39 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>

@@ -59,10 +59,8 @@
 
       <div id="content"><div id='filecontents'><p><a href="https://rubygems.org/gems/discordrb"><img src="https://img.shields.io/gem/v/discordrb.svg" alt="Gem"></a>
 <a href="https://rubygems.org/gems/discordrb"><img src="https://img.shields.io/gem/dt/discordrb.svg" alt="Gem"></a>
-<a href="https://travis-ci.org/discordrb/discordrb"><img src="https://travis-ci.org/discordrb/discordrb.svg?branch=master" alt="Build Status"></a>
-<a href="https://inch-ci.org/github/discordrb/discordrb"><img src="https://inch-ci.org/github/discordrb/discordrb.svg?branch=master&style=shields" alt="Inline docs"></a>
-<a href="https://codeclimate.com/github/discordrb/discordrb"><img src="https://codeclimate.com/github/discordrb/discordrb/badges/gpa.svg" alt="Code Climate"></a>
-<a href="https://codeclimate.com/github/discordrb/discordrb/coverage"><img src="https://codeclimate.com/github/discordrb/discordrb/badges/coverage.svg" alt="Test Coverage"></a>
+<a href="https://circleci.com/gh/shardlab/discordrb"><img src="https://circleci.com/gh/shardlab/discordrb.svg?style=svg" alt="CircleCI"></a>
+<a href="https://inch-ci.org/github/shardlab/discordrb"><img src="https://inch-ci.org/github/shardlab/discordrb.svg?branch=master&style=shields" alt="Inline docs"></a>
 <a href="https://discord.gg/cyK3Hjm"><img src="https://img.shields.io/badge/discord-join-7289DA.svg" alt="Join Discord"></a></p>
 
 <h1 id="discordrb">discordrb</h1>
@@ -72,21 +70,49 @@
 <h2 id="quick-links-to-sections">Quick links to sections</h2>
 
 <ul>
-<li><a href="https://github.com/discordrb/discordrb#dependencies">Dependencies</a></li>
-<li><a href="https://github.com/discordrb/discordrb#installation">Installation</a></li>
-<li><a href="https://github.com/discordrb/discordrb#usage">Usage</a></li>
-<li><a href="https://github.com/discordrb/discordrb#webhooks-client">Webhooks Client</a></li>
-<li><a href="https://github.com/discordrb/discordrb#support">Support</a></li>
-<li><a href="https://github.com/discordrb/discordrb#development">Development</a>, <a href="https://github.com/discordrb/discordrb#contributing">Contributing</a></li>
-<li><a href="https://github.com/discordrb/discordrb#license">License</a></li>
+<li><a href="https://github.com/shardlab/discordrb#introduction">Introduction</a></li>
+<li><a href="https://github.com/shardlab/discordrb#dependencies">Dependencies</a></li>
+<li><a href="https://github.com/shardlab/discordrb#installation">Installation</a></li>
+<li><a href="https://github.com/shardlab/discordrb#usage">Usage</a></li>
+<li><a href="https://github.com/shardlab/discordrb#webhooks-client">Webhooks Client</a></li>
+<li><a href="https://github.com/shardlab/discordrb#support">Support</a></li>
+<li><a href="https://github.com/shardlab/discordrb#development">Development</a>, <a href="https://github.com/shardlab/discordrb#contributing">Contributing</a></li>
+<li><a href="https://github.com/shardlab/discordrb#license">License</a></li>
 </ul>
 
-<p>See also: <a href="https://www.rubydoc.info/gems/discordrb">Documentation</a>, <a href="https://github.com/discordrb/discordrb/wiki">Tutorials</a></p>
+<p>See also: <a href="https://www.rubydoc.info/gems/discordrb">Documentation</a>, <a href="https://github.com/shardlab/discordrb/wiki">Tutorials</a></p>
+
+<h2 id="introduction">Introduction</h2>
+
+<p><code>discordrb</code> aims to meet the following design goals:</p>
+
+<ol>
+<li>Full coverage of the public bot API.</li>
+<li>Expressive, high level abstractions for rapid development of common applications.</li>
+<li>Friendly to Ruby beginners and beginners of open source contribution.</li>
+</ol>
+
+<p>If you enjoy using the library, consider getting involved with the community to help us improve and meet these goals!</p>
+
+<p><strong>You should consider using <code>discordrb</code> if:</strong></p>
+
+<ul>
+<li>You need a bot - and fast - for small or medium sized communities, and don&#39;t want to be bogged down with &quot;low level&quot; details. Getting started takes minutes, and utilities like a command parser and tools for modularization make it simple to quickly add or change your bots functionality.</li>
+<li>You like or want to learn Ruby, or want to contribute to a Ruby project. A lot of our users are new to Ruby, and eventually make their first open source contributions with us. We have an active Discord channel with experienced members who will happily help you get involved, either as a user or contributor.</li>
+<li>You want to experiment with Discord&#39;s API or prototype concepts for Discord bots without too much commitment.</li>
+</ul>
+
+<p><strong>You should consider other libraries if:</strong></p>
+
+<ul>
+<li>You need to scale to large volumes of servers (&gt;2,500) with lots of members. It&#39;s still possible, but it can be difficult to scale Ruby processes, and it requires more in depth knowledge to do so well. Especially if you already have a bot that is on a large amount of servers, porting to Ruby is unlikely to improve your performance in most cases.</li>
+<li>You want full control over the library that you&#39;re using. While we expose some &quot;lower level&quot; interfaces, they are unstable, and only exist to serve the more powerful abstractions in the library.</li>
+</ul>
 
 <h2 id="dependencies">Dependencies</h2>
 
 <ul>
-<li>Ruby &gt;= 2.4 supported</li>
+<li>Ruby &gt;= 2.5 supported</li>
 <li>An installed build system for native extensions (on Windows, make sure you download the &quot;Ruby+Devkit&quot; version of <a href="https://rubyinstaller.org/downloads/">RubyInstaller</a>)</li>
 </ul>
 
@@ -99,12 +125,10 @@
 <p>This section only applies to you if you want to use voice functionality.</p>
 
 <ul>
-<li><a href="https://github.com/discordrb/discordrb/wiki/Installing-libsodium">libsodium</a></li>
-<li>A compiled libopus distribution for your system, anywhere the script can find it. See <a href="https://github.com/discordrb/discordrb/wiki/Installing-libopus">here</a> for installation instructions.</li>
+<li><a href="https://github.com/shardlab/discordrb/wiki/Installing-libsodium">libsodium</a></li>
+<li>A compiled libopus distribution for your system, anywhere the script can find it. See <a href="https://github.com/shardlab/discordrb/wiki/Installing-libopus">here</a> for installation instructions.</li>
 <li><a href="https://www.ffmpeg.org/download.html">FFmpeg</a> installed and in your PATH</li>
 </ul>
-
-<p>In addition to this, if you&#39;re on Windows and want to use voice functionality, your installed Ruby version <strong>needs to be 32 bit</strong>, as otherwise Opus won&#39;t work.</p>
 
 <h2 id="installation">Installation</h2>
 
@@ -117,7 +141,7 @@
 
 <p>And then install via <code>bundle install</code>.</p>
 
-<p>Run the <a href="https://github.com/discordrb/discordrb/blob/master/examples/ping.rb">ping example</a> to verify that the installation works (make sure to replace the token and client ID in there with your bots&#39;!):</p>
+<p>Run the <a href="https://github.com/shardlab/discordrb/blob/master/examples/ping.rb">ping example</a> to verify that the installation works (make sure to replace the token and client ID in there with your bots&#39;!):</p>
 
 <p>To run the bot while using bundler:</p>
 
@@ -136,7 +160,7 @@
 <h4 id="windows">Windows</h4>
 
 <blockquote>
-<p><strong>Make sure you have the DevKit installed! See the <a href="https://github.com/discordrb/discordrb#dependencies">Dependencies</a> section)</strong></p>
+<p><strong>Make sure you have the DevKit installed! See the <a href="https://github.com/shardlab/discordrb#dependencies">Dependencies</a> section)</strong></p>
 </blockquote>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_discordrb'>discordrb</span> <span class='op'>-</span><span class='op'>-</span><span class='id identifier rubyid_platform'>platform</span><span class='op'>=</span><span class='id identifier rubyid_ruby'>ruby</span>
@@ -147,42 +171,9 @@
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_ruby'>ruby</span> <span class='id identifier rubyid_ping'>ping</span><span class='period'>.</span><span class='id identifier rubyid_rb'>rb</span>
 </code></pre>
 
-<h4 id="troubleshooting">Troubleshooting</h4>
+<h3 id="installation-troubleshooting">Installation Troubleshooting</h3>
 
-<p><strong>If you get an error like this when installing the gem</strong>:</p>
-
-<pre class="code ruby"><code class="ruby">ERROR:  Error installing discordrb:
-        The &#39;websocket-driver&#39; native gem requires installed build tools.
-</code></pre>
-
-<p>You&#39;re missing the development kit required to build native extensions.</p>
-
-<h5 id="rubyinstaller-for-ruby-2-4-3-2-and-above">RubyInstaller for ruby 2.4.3-2 and above</h5>
-
-<p>RubyInstaller after version 2.3.3 now includes the development kit in the installer. If you do not have the development kit and have installed ruby using RubyInstaller, open a command prompt with administrator privileges and run:</p>
-
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_ridk'>ridk</span> <span class='id identifier rubyid_install'>install</span>
-</code></pre>
-
-<p>Select option 3, and then run</p>
-
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_ridk'>ridk</span> <span class='id identifier rubyid_enable'>enable</span>
-</code></pre>
-
-<p>To enable the changes</p>
-
-<p><strong>If Ruby complains about <code>ffi_c</code> not being able to be found:</strong></p>
-
-<p>For example</p>
-
-<pre class="code ruby"><code class="ruby">C:/Ruby25-x64/lib/ruby/2.5.0/rubygems/core_ext/kernel_require.rb:55:in `require&#39;: cannot load such file -- ffi_c (LoadError)
-</code></pre>
-
-<p>Your ffi setup is screwed up, first run <code>gem uninstall ffi</code> (uninstall all versions if it asks you, say yes to any unmet dependencies), then run <code>gem install ffi --platform=ruby</code> to fix it. If it says something about build tools, follow the steps in the first troubleshooting section.</p>
-
-<p><strong>If you&#39;re having trouble getting voice playback to work</strong>:</p>
-
-<p>Look here: <a href="https://github.com/discordrb/discordrb/wiki/Voice-sending#troubleshooting">https://github.com/discordrb/discordrb/wiki/Voice-sending#troubleshooting</a></p>
+<p>See <a href="https://github.com/shardlab/discordrb/wiki/FAQ#installation">https://github.com/shardlab/discordrb/wiki/FAQ#installation</a> for a list of common problems and solutions when installing <code>discordrb</code>.</p>
 
 <h2 id="usage">Usage</h2>
 
@@ -201,7 +192,7 @@
 
 <p>This bot responds to every &quot;Ping!&quot; with a &quot;Pong!&quot;.</p>
 
-<p>See <a href="https://github.com/discordrb/discordrb/tree/master/examples">additional examples here</a>.</p>
+<p>See <a href="https://github.com/shardlab/discordrb/tree/master/examples">additional examples here</a>.</p>
 
 <p>You can find examples of projects that use discordrb by <a href="https://github.com/topics/discordrb">searching for the discordrb topic on GitHub</a>.</p>
 
@@ -238,19 +229,31 @@
 
 <h2 id="support">Support</h2>
 
-<p>You can find me (@meew0, ID 66237334693085184) on the unofficial Discord API server - if you have a question, just ask there, I or somebody else will probably answer you: <a href="https://discord.gg/3Trm6FW">https://discord.gg/3Trm6FW</a></p>
+<p>If you need help or have a question, you can:</p>
 
-<h2 id="development">Development</h2>
+<ol>
+<li>Join our <a href="https://discord.gg/cyK3Hjm">Discord channel</a>. This is the fastest means of getting support.</li>
+<li><a href="https://github.com/shardlab/discordrb/issues">Open an issue</a>. Be sure to read the issue template, and provide as much detail as you can.</li>
+</ol>
 
-<p><strong>This section is for developing discordrb itself! If you just want to make a bot, see the <a href="https://github.com/discordrb/discordrb#installation">Installation</a> section.</strong></p>
+<h2 id="contributing">Contributing</h2>
+
+<p>Thank you for your interest in contributing!
+Bug reports and pull requests are welcome on GitHub at <a href="https://github.com/shardlab/discordrb">https://github.com/shardlab/discordrb</a>.</p>
+
+<p>In general, we recommend starting by discussing what you would like to contribute in the <a href="https://discord.gg/cyK3Hjm">Discord channel</a>.
+There are usually a handful of people working on things for the library, and what you&#39;re looking for may already be on the way.</p>
+
+<p>Additionally, there is a chance what you are looking for might already exist, or we decided not to pursue it for some reason.
+Be sure to use the search feature on our documentation, GitHub, and Discord to see if this might be the case.</p>
+
+<h2 id="development-setup">Development setup</h2>
+
+<p><strong>This section is for developing discordrb itself! If you just want to make a bot, see the <a href="https://github.com/shardlab/discordrb#installation">Installation</a> section.</strong></p>
 
 <p>After checking out the repo, run <code>bin/setup</code> to install dependencies. You can then run tests via <code>bundle exec rspec spec</code>. Make sure to run rubocop also: <code>bundle exec rubocop</code>. You can also run <code>bin/console</code> for an interactive prompt that will allow you to experiment.</p>
 
 <p>To install this gem onto your local machine, run <code>bundle exec rake install</code>. To release a new version, update the version number in <code>version.rb</code>, and then run <code>bundle exec rake release</code>, which will create a git tag for the version, push git commits and tags, and push the <code>.gem</code> file to <a href="https://rubygems.org">rubygems.org</a>.</p>
-
-<h2 id="contributing">Contributing</h2>
-
-<p>Bug reports and pull requests are welcome on GitHub at <a href="https://github.com/discordrb/discordrb">https://github.com/discordrb/discordrb</a>.</p>
 
 <h2 id="license">License</h2>
 
@@ -258,7 +261,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Sun Nov 15 01:33:08 2020 by
+  Generated on Sun Nov 15 06:23:37 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>

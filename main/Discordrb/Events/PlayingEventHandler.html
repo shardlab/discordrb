@@ -211,11 +211,6 @@
       <pre class="lines">
 
 
-89
-90
-91
-92
-93
 94
 95
 96
@@ -232,10 +227,18 @@
 107
 108
 109
-110</pre>
+110
+111
+112
+113
+114
+115
+116
+117
+118</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/presence.rb', line 89</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/presence.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_matches?'>matches?</span><span class='lparen'>(</span><span class='id identifier rubyid_event'>event</span><span class='rparen'>)</span>
   <span class='comment'># Check for the proper event type
@@ -256,6 +259,9 @@
     <span class='kw'>end</span><span class='comma'>,</span>
     <span class='id identifier rubyid_matches_all'>matches_all</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:type</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='op'>|</span>
       <span class='id identifier rubyid_a'>a</span> <span class='op'>==</span> <span class='id identifier rubyid_e'>e</span>
+    <span class='kw'>end</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_matches_all'>matches_all</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:client_status</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_client_status'>client_status</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='op'>|</span>
+      <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='rparen'>)</span> <span class='op'>==</span> <span class='id identifier rubyid_a'>a</span>
     <span class='kw'>end</span>
   <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_reduce'>reduce</span><span class='lparen'>(</span><span class='kw'>true</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='symbol'>:&amp;</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -269,7 +275,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 01:33:13 2020 by
+  Generated on Sun Nov 15 06:23:43 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>
