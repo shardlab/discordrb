@@ -475,7 +475,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
       <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 170</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_bot'>bot</span><span class='comma'>,</span> <span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_session'>session</span><span class='comma'>,</span> <span class='id identifier rubyid_endpoint'>endpoint</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>libsodium is unavailable - unable to create voice bot! Please read https://github.com/discordrb/discordrb/wiki/Installing-libsodium</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='const'>LIBSODIUM_AVAILABLE</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>libsodium is unavailable - unable to create voice bot! Please read https://github.com/shardlab/discordrb/wiki/Installing-libsodium</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='const'>LIBSODIUM_AVAILABLE</span>
 
   <span class='ivar'>@channel</span> <span class='op'>=</span> <span class='id identifier rubyid_channel'>channel</span>
   <span class='ivar'>@bot</span> <span class='op'>=</span> <span class='id identifier rubyid_bot'>bot</span>
@@ -1050,7 +1050,7 @@ websocket opcode 1 -&gt;    |
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 06:27:25 2020 by
+  Generated on Sun Nov 15 06:47:48 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>
