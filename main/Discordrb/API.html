@@ -498,7 +498,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Handles premeptive ratelimiting by waiting the given mutex by the difference of the Date header to the X-Ratelimit-Reset header, thus making sure we don&#39;t get 429&#39;d in any subsequent requests.</p>
+    <span class="summary_desc"><div class='inline'><p>Handles pre-emptive rate limiting by waiting the given mutex by the difference of the Date header to the X-Ratelimit-Reset header, thus making sure we don&#39;t get 429&#39;d in any subsequent requests.</p>
 </div></span>
   
 </li>
@@ -1583,7 +1583,7 @@ session start limits</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Handles premeptive ratelimiting by waiting the given mutex by the difference of the Date header to the
+    <p>Handles pre-emptive rate limiting by waiting the given mutex by the difference of the Date header to the
 X-Ratelimit-Reset header, thus making sure we don&#39;t get 429&#39;d in any subsequent requests.</p>
 
 
@@ -1611,7 +1611,7 @@ X-Ratelimit-Reset header, thus making sure we don&#39;t get 429&#39;d in any sub
 <span class='kw'>def</span> <span class='id identifier rubyid_handle_preemptive_rl'>handle_preemptive_rl</span><span class='lparen'>(</span><span class='id identifier rubyid_headers'>headers</span><span class='comma'>,</span> <span class='id identifier rubyid_mutex'>mutex</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Discordrb.html#LOGGER-constant" title="Discordrb::LOGGER (constant)">LOGGER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_ratelimit'>ratelimit</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>RL bucket depletion detected! Date: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='symbol'>:date</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'> Reset: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='symbol'>:x_ratelimit_reset</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
   <span class='id identifier rubyid_delta'>delta</span> <span class='op'>=</span> <span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='symbol'>:x_ratelimit_reset_after</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_f'>to_f</span>
-  <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Discordrb.html#LOGGER-constant" title="Discordrb::LOGGER (constant)">LOGGER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Locking RL mutex (key: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_content'>) for </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_delta'>delta</span><span class='embexpr_end'>}</span><span class='tstring_content'> seconds preemptively</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Discordrb.html#LOGGER-constant" title="Discordrb::LOGGER (constant)">LOGGER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Locking RL mutex (key: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_content'>) for </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_delta'>delta</span><span class='embexpr_end'>}</span><span class='tstring_content'> seconds pre-emptively</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_sync_wait'>sync_wait</span><span class='lparen'>(</span><span class='id identifier rubyid_delta'>delta</span><span class='comma'>,</span> <span class='id identifier rubyid_mutex'>mutex</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1938,7 +1938,7 @@ X-Ratelimit-Reset header, thus making sure we don&#39;t get 429&#39;d in any sub
 <span class='kw'>def</span> <span class='id identifier rubyid_raw_request'>raw_request</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
   <span class='const'>RestClient</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
 <span class='kw'>rescue</span> <span class='const'>RestClient</span><span class='op'>::</span><span class='const'>Forbidden</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
-  <span class='comment'># HACK: for #request, dynamically inject restclient&#39;s response into NoPermission - this allows us to ratelimit
+  <span class='comment'># HACK: for #request, dynamically inject restclient&#39;s response into NoPermission - this allows us to rate limit
 </span>  <span class='id identifier rubyid_noprm'>noprm</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors.html" title="Discordrb::Errors (module)">Errors</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors/NoPermission.html" title="Discordrb::Errors::NoPermission (class)">NoPermission</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
   <span class='id identifier rubyid_noprm'>noprm</span><span class='period'>.</span><span class='id identifier rubyid_define_singleton_method'>define_singleton_method</span><span class='lparen'>(</span><span class='symbol'>:_rc_response</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_response'>response</span> <span class='rbrace'>}</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='id identifier rubyid_noprm'>noprm</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The bot doesn&#39;t have the required permission to do this!</span><span class='tstring_end'>&quot;</span></span>
@@ -2626,7 +2626,7 @@ hit.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 01:11:57 2020 by
+  Generated on Sun Nov 15 01:33:08 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>

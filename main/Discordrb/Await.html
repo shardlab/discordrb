@@ -506,8 +506,7 @@ and return its result along with this await&#39;s key.</p>
 46
 47
 48
-49
-50</pre>
+49</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/await.rb', line 42</span>
@@ -516,7 +515,6 @@ and return its result along with this await&#39;s key.</p>
   <span class='id identifier rubyid_dummy_handler'>dummy_handler</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="EventContainer.html" title="Discordrb::EventContainer (module)">EventContainer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_handler_class'><span class='object_link'><a href="EventContainer.html#handler_class-class_method" title="Discordrb::EventContainer.handler_class (method)">handler_class</a></span></span><span class='lparen'>(</span><span class='ivar'>@type</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='comma'>,</span> <span class='ivar'>@bot</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='lbracket'>[</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='rbracket'>]</span> <span class='kw'>unless</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_instance_of?'>instance_of?</span><span class='lparen'>(</span><span class='ivar'>@type</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_dummy_handler'>dummy_handler</span><span class='period'>.</span><span class='id identifier rubyid_matches?'>matches?</span><span class='lparen'>(</span><span class='id identifier rubyid_event'>event</span><span class='rparen'>)</span>
 
-  <span class='id identifier rubyid_should_delete'>should_delete</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='id identifier rubyid_should_delete'>should_delete</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='lparen'>(</span><span class='ivar'>@block</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_event'>event</span><span class='rparen'>)</span> <span class='op'>!=</span> <span class='kw'>false</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='op'>!</span><span class='ivar'>@block</span>
 
   <span class='lbracket'>[</span><span class='ivar'>@key</span><span class='comma'>,</span> <span class='id identifier rubyid_should_delete'>should_delete</span><span class='rbracket'>]</span>
@@ -531,7 +529,7 @@ and return its result along with this await&#39;s key.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 01:11:58 2020 by
+  Generated on Sun Nov 15 01:33:09 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>

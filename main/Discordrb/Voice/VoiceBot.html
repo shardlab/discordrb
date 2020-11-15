@@ -303,7 +303,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>If this value is set, no length adjustments will ever be done and this value will always be used as the length (i. e. packets will be sent every N seconds).</p>
+    <span class="summary_desc"><div class='inline'><p>If this value is set, no length adjustments will ever be done and this value will always be used as the length (i.e. packets will be sent every N seconds).</p>
 </div></span>
   
 </li>
@@ -879,7 +879,7 @@ however, small errors will cause quality problems for a longer time.</p>
       
       
         &mdash;
-        <div class='inline'><p>how frequently audio length adjustments should be done, in ideal packets (20 ms).</p>
+        <div class='inline'><p>how frequently audio length adjustments should be done, in ideal packets (20ms).</p>
 </div>
       
     </li>
@@ -941,7 +941,7 @@ is at a value higher than 10, this value should not be changed at all.</p>
       
       
         &mdash;
-        <div class='inline'><p>the packet number (1 packet = 20 ms) at which length adjustments should start.</p>
+        <div class='inline'><p>the packet number (1 packet = 20ms) at which length adjustments should start.</p>
 </div>
       
     </li>
@@ -1108,8 +1108,8 @@ is at a value higher than 10, this value should not be changed at all.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>If this value is set, no length adjustments will ever be done and this value will always be used as the length
-(i. e. packets will be sent every N seconds). Be careful not to set it too low as to not spam Discord&#39;s servers.
-The ideal length is 20 ms (accessible by the <span class='object_link'><a href="../Voice.html#IDEAL_LENGTH-constant" title="Discordrb::Voice::IDEAL_LENGTH (constant)">IDEAL_LENGTH</a></span> constant), this value should be
+(i.e. packets will be sent every N seconds). Be careful not to set it too low as to not spam Discord&#39;s servers.
+The ideal length is 20ms (accessible by the <span class='object_link'><a href="../Voice.html#IDEAL_LENGTH-constant" title="Discordrb::Voice::IDEAL_LENGTH (constant)">IDEAL_LENGTH</a></span> constant), this value should be
 slightly lower than that because encoding + sending takes time. Note that sending DCA files is significantly
 faster than sending regular audio files (usually about four times as fast), so you might want to set this value
 to something else if you&#39;re sending a DCA file.</p>
@@ -1295,7 +1295,7 @@ to something else if you&#39;re sending a DCA file.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Continue playback. This change may take up to 100 ms to take effect, which is usually negligible.</p>
+    <p>Continue playback. This change may take up to 100ms to take effect, which is usually negligible.</p>
 
 
   </div>
@@ -1603,7 +1603,7 @@ negligible.)</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Plays a stream of raw data to the channel. All playback methods are blocking, i. e. they wait for the playback to
+    <p>Plays a stream of raw data to the channel. All playback methods are blocking, i.e. they wait for the playback to
 finish before exiting the method. This doesn&#39;t cause a problem if you just use discordrb events/commands to
 play stuff, as these are fully threaded, but if you don&#39;t want this behaviour anyway, be sure to call these
 methods in separate threads.</p>
@@ -2277,7 +2277,7 @@ method that the playback has actually stopped.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 01:12:02 2020 by
+  Generated on Sun Nov 15 01:33:13 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>
