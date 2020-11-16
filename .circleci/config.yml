@@ -44,14 +44,6 @@ jobs:
       - run:
           name: Run RSpec
           command: bundle exec rspec
-  test_ruby_27:
-    docker:
-      - image: ruby:2.7-alpine
-    steps:
-      - setup-env
-      - run:
-          name: Run RSpec
-          command: bundle exec rspec
 
   test_ruby_27:
     docker:
