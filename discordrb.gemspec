@@ -35,10 +35,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '>= 1.10', '< 3'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'redcarpet', '~> 3.5.0' # YARD markdown formatting
-  spec.add_development_dependency 'rspec', '~> 3.9.0'
+  spec.add_development_dependency 'rspec', '~> 3.10.0'
   spec.add_development_dependency 'rspec-prof', '~> 0.0.7'
-  spec.add_development_dependency 'rubocop', '~> 0.86.0'
+  spec.add_development_dependency 'rubocop', '~> 1.3.0'
   spec.add_development_dependency 'rubocop-performance', '~> 1.0'
-  spec.add_development_dependency 'simplecov', '~> 0.18.0'
+  spec.add_development_dependency 'simplecov', '~> 0.19.0'
   spec.add_development_dependency 'yard', '~> 0.9.9'
 end

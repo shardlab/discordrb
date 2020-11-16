@@ -409,7 +409,7 @@ module Discordrb
       if file.respond_to?(:read)
         if spoiler
           filename ||= File.basename(file.path)
-          filename = 'SPOILER_' + filename unless filename.start_with? 'SPOILER_'
+          filename = "SPOILER_#{filename}" unless filename.start_with? 'SPOILER_'
         end
         # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L160
         file.define_singleton_method(:original_filename) { filename } if filename
@@ -627,7 +627,7 @@ module Discordrb
       raise "You can't await an AwaitEvent!" if type == Discordrb::Events::AwaitEvent
 
       timeout = attributes[:timeout]
-      raise ArgumentError, 'Timeout must be a number > 0' if timeout&.is_a?(Numeric) && !timeout&.positive?
+      raise ArgumentError, 'Timeout must be a number > 0' if timeout.is_a?(Numeric) && !timeout&.positive?
 
       mutex = Mutex.new
       cv = ConditionVariable.new
@@ -1010,7 +1010,7 @@ module Discordrb
       # Remove the "Bot " prefix if it exists
       token = token[4..-1] if token.start_with? 'Bot '
 
-      token = 'Bot ' + token unless type == :user
+      token = "Bot #{token}" unless type == :user
       token
     end
 
@@ -1188,10 +1188,10 @@ module Discordrb
         played_before = presence_user.nil? ? nil : presence_user.game
         update_presence(data)
 
-        event = if now_playing != played_before
-                  PlayingEvent.new(data, self)
-                else
+        event = if now_playing == played_before
                   PresenceEvent.new(data, self)
+                else
+                  PlayingEvent.new(data, self)
                 end
 
         raise_event(event)

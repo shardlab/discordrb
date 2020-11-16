@@ -509,7 +509,7 @@ module Discordrb
           cert_store.set_default_paths
           ctx.cert_store = cert_store
         else
-          ctx.set_params ssl_version: :TLSv1_2
+          ctx.set_params ssl_version: :TLSv1_2 # rubocop:disable Naming/VariableNumber
         end
 
         socket = OpenSSL::SSL::SSLSocket.new(socket, ctx)
@@ -656,12 +656,13 @@ module Discordrb
     ZLIB_SUFFIX = "\x00\x00\xFF\xFF".b.freeze
 
     def handle_message(msg)
-      if @compress_mode == :large
+      case @compress_mode
+      when :large
         if msg.byteslice(0) == 'x'
           # The message is compressed, inflate it
           msg = Zlib::Inflate.inflate(msg)
         end
-      elsif @compress_mode == :stream
+      when :stream
         # Write deflated string to buffer
         @zlib_reader << msg
 

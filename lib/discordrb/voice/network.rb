@@ -42,10 +42,9 @@ module Discordrb::Voice
     attr_writer :secret_key
 
     # The UDP encryption mode
-    attr_reader :mode
+    attr_accessor :mode
 
     # @!visibility private
-    attr_writer :mode
 
     # Creates a new UDP connection. Only creates a socket as the discovery reply may come before the data is
     # initialized.
