@@ -1,5 +1,3 @@
-inherit_from: .rubocop_todo.yml
-
 require: rubocop-performance
 
 inherit_mode:
@@ -12,6 +10,10 @@ AllCops:
 
 # Disable line length checks
 Layout/LineLength:
+  Enabled: false
+
+# TODO: Larger refactor
+Lint/MissingSuper:
   Enabled: false
 
 # Allow 'Pokémon-style' exception handling
@@ -44,6 +46,14 @@ Style/ClassAndModuleChildren:
 Style/NumericLiterals:
   Exclude:
     - examples/**/*
+
+# TODO: Requires breaking changes
+Style/OptionalBooleanParameter:
+  Enabled: false
+
+# Prefer explicit arguments in case global variables like `$;` or `$,` are changed
+Style/RedundantArgument:
+  Enabled: false
 
 # Prefer |m, e| for the `reduce` block arguments
 Style/SingleLineBlockParams:

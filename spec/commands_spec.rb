@@ -2,16 +2,17 @@
 
 require 'discordrb'
 
-describe Discordrb::Commands::CommandBot, order: :defined do
-  SIMPLE_RESPONSE = 'hi'
-  TEST_CHANNELS = [
-    1,
-    2,
-    '3',
-    'channel-four',
-    '#channel-five'
-  ].freeze
+# TODO: Integrate better into specs
+SIMPLE_RESPONSE = 'hi'
+TEST_CHANNELS = [
+  1,
+  2,
+  '3',
+  'channel-four',
+  '#channel-five'
+].freeze
 
+describe Discordrb::Commands::CommandBot, order: :defined do
   let(:text_channel_data) { load_data_file(:text_channel) }
   let(:default_channel_id) { 123 }
   let(:default_channel_name) { 'test-channel' }
