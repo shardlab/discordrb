@@ -627,7 +627,7 @@ module Discordrb
       raise "You can't await an AwaitEvent!" if type == Discordrb::Events::AwaitEvent
 
       timeout = attributes[:timeout]
-      raise ArgumentError, 'Timeout must be a number > 0' if timeout.is_a?(Numeric) && !timeout&.positive?
+      raise ArgumentError, 'Timeout must be a number > 0' if timeout.is_a?(Numeric) && !timeout.positive?
 
       mutex = Mutex.new
       cv = ConditionVariable.new
