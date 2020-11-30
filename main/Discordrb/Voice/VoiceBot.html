@@ -1725,8 +1725,8 @@ methods in separate threads.</p>
     <span class='kw'>end</span>
 
     <span class='comment'># Adjust volume
-</span>    <span class='id identifier rubyid_buf'>buf</span> <span class='op'>=</span> <span class='ivar'>@encoder</span><span class='period'>.</span><span class='id identifier rubyid_adjust_volume'>adjust_volume</span><span class='lparen'>(</span><span class='id identifier rubyid_buf'>buf</span><span class='comma'>,</span> <span class='ivar'>@volume</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@volume</span> <span class='op'>!=</span> <span class='float'>1.0</span>
-
+</span>    <span class='id identifier rubyid_buf'>buf</span> <span class='op'>=</span> <span class='ivar'>@encoder</span><span class='period'>.</span><span class='id identifier rubyid_adjust_volume'>adjust_volume</span><span class='lparen'>(</span><span class='id identifier rubyid_buf'>buf</span><span class='comma'>,</span> <span class='ivar'>@volume</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@volume</span> <span class='op'>!=</span> <span class='float'>1.0</span> <span class='comment'># rubocop:disable Lint/FloatComparison
+</span>
     <span class='ivar'>@first_packet</span> <span class='op'>=</span> <span class='kw'>false</span>
 
     <span class='comment'># Encode data
@@ -2277,7 +2277,7 @@ method that the playback has actually stopped.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 19:05:35 2020 by
+  Generated on Mon Nov 30 23:17:54 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>

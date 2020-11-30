@@ -211,7 +211,6 @@
       <pre class="lines">
 
 
-94
 95
 96
 97
@@ -235,10 +234,12 @@
 115
 116
 117
-118</pre>
+118
+119
+120</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/presence.rb', line 94</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/presence.rb', line 95</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_matches?'>matches?</span><span class='lparen'>(</span><span class='id identifier rubyid_event'>event</span><span class='rparen'>)</span>
   <span class='comment'># Check for the proper event type
@@ -246,9 +247,10 @@
 
   <span class='lbracket'>[</span>
     <span class='id identifier rubyid_matches_all'>matches_all</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:from</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_user'>user</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='op'>|</span>
-      <span class='id identifier rubyid_a'>a</span> <span class='op'>==</span> <span class='kw'>if</span> <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></span>
+      <span class='id identifier rubyid_a'>a</span> <span class='op'>==</span> <span class='kw'>case</span> <span class='id identifier rubyid_a'>a</span>
+           <span class='kw'>when</span> <span class='const'><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></span>
              <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
-           <span class='kw'>elsif</span> <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></span>
+           <span class='kw'>when</span> <span class='const'><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></span>
              <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
            <span class='kw'>else</span>
              <span class='id identifier rubyid_e'>e</span>
@@ -275,7 +277,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 19:05:35 2020 by
+  Generated on Mon Nov 30 23:17:54 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>

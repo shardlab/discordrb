@@ -1016,7 +1016,7 @@ channel should be searched for</p>
 </span>    <span class='kw'>return</span> <span class='lbracket'>[</span><span class='id identifier rubyid_channel'>channel</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='rbracket'>]</span>
   <span class='kw'>end</span>
 
-  <span class='ivar'>@servers</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_server'>server</span><span class='op'>|</span>
+  <span class='ivar'>@servers</span><span class='period'>.</span><span class='id identifier rubyid_each_value'>each_value</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_server'>server</span><span class='op'>|</span>
     <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_channels'>channels</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_channel'>channel</span><span class='op'>|</span>
       <span class='id identifier rubyid_results'>results</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_channel'>channel</span> <span class='kw'>if</span> <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span> <span class='op'>==</span> <span class='id identifier rubyid_channel_name'>channel_name</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_server_name'>server_name</span> <span class='op'>||</span> <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span> <span class='op'>==</span> <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='op'>!</span><span class='id identifier rubyid_type'>type</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
@@ -1990,7 +1990,7 @@ usage of this method may be unavoidable if only the user ID is known.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 19:05:31 2020 by
+  Generated on Mon Nov 30 23:17:49 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>

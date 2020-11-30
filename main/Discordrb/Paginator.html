@@ -354,7 +354,8 @@ no more results or the configured <code>limit</code> is reached.</p>
 42
 43
 44
-45</pre>
+45
+46</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/paginator.rb', line 25</span>
@@ -365,9 +366,10 @@ no more results or the configured <code>limit</code> is reached.</p>
     <span class='id identifier rubyid_page'>page</span> <span class='op'>=</span> <span class='ivar'>@block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_last_page'>last_page</span><span class='rparen'>)</span>
     <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_page'>page</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
 
-    <span class='id identifier rubyid_enumerator'>enumerator</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='ivar'>@direction</span> <span class='op'>==</span> <span class='symbol'>:down</span>
+    <span class='id identifier rubyid_enumerator'>enumerator</span> <span class='op'>=</span> <span class='kw'>case</span> <span class='ivar'>@direction</span>
+                 <span class='kw'>when</span> <span class='symbol'>:down</span>
                    <span class='id identifier rubyid_page'>page</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span>
-                 <span class='kw'>elsif</span> <span class='ivar'>@direction</span> <span class='op'>==</span> <span class='symbol'>:up</span>
+                 <span class='kw'>when</span> <span class='symbol'>:up</span>
                    <span class='id identifier rubyid_page'>page</span><span class='period'>.</span><span class='id identifier rubyid_reverse_each'>reverse_each</span>
                  <span class='kw'>end</span>
 
@@ -390,7 +392,7 @@ no more results or the configured <code>limit</code> is reached.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 19:05:32 2020 by
+  Generated on Mon Nov 30 23:17:50 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>

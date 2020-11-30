@@ -302,7 +302,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(fancy = false, streams = [STDOUT])  &#x21d2; Logger </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(fancy = false, streams = [$stdout])  &#x21d2; Logger </a>
     
 
     
@@ -379,7 +379,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(fancy = false, streams = [STDOUT])  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Logger (class)">Logger</a></span></tt> 
+    #<strong>initialize</strong>(fancy = false, streams = [$stdout])  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Logger (class)">Logger</a></span></tt> 
   
 
   
@@ -421,7 +421,7 @@
         <span class='type'>(<tt>Array&lt;IO&gt;</tt>, <tt>Array&lt;#puts & #flush&gt;</tt>)</span>
       
       
-        <em class="default">(defaults to: <tt>[STDOUT]</tt>)</em>
+        <em class="default">(defaults to: <tt>[$stdout]</tt>)</em>
       
       
         &mdash;
@@ -449,7 +449,7 @@
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/logger.rb', line 21</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_fancy'>fancy</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_streams'>streams</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='const'>STDOUT</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_fancy'>fancy</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_streams'>streams</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='gvar'>$stdout</span><span class='rbracket'>]</span><span class='rparen'>)</span>
   <span class='ivar'>@fancy</span> <span class='op'>=</span> <span class='id identifier rubyid_fancy'>fancy</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_mode'>mode</span> <span class='op'>=</span> <span class='symbol'>:normal</span>
 
@@ -864,7 +864,7 @@ Possible modes are:</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Nov 15 19:05:32 2020 by
+  Generated on Mon Nov 30 23:17:50 2020 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.25 (ruby-2.5.8).
 </div>
