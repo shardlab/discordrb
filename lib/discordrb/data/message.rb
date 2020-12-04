@@ -160,7 +160,9 @@ module Discordrb
     # @param mention_user [true, false] Whether the user that is being replied to should be pinged by the reply.
     # @return [Message] the message that was sent.
     def reply!(content, tts = false, embed = nil, attachments = nil, allowed_mentions = {}, mention_user: false)
+      allowed_mentions = allowed_mentions.to_hash.transform_keys(&:to_sym)
       allowed_mentions[:replied_user] = mention_user
+
       respond(content, tts, embed, attachments, allowed_mentions, self)
     end
 
