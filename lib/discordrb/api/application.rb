@@ -26,7 +26,7 @@ module Discordrb::API::Application
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands",
       { name: name, description: description, options: options }.to_json,
       Authorization: token,
-      content_type: 'application/json'
+      content_type: :json
     )
   end
 
@@ -40,7 +40,7 @@ module Discordrb::API::Application
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands/#{command_id}",
       { name: name, description: description, options: options }.compact.to_json,
       Authorization: token,
-      content_type: 'application/json'
+      content_type: :json
     )
   end
 
@@ -78,7 +78,7 @@ module Discordrb::API::Application
       "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands",
       { name: name, description: description, options: options }.to_json,
       Authorization: token,
-      content_type: 'application/json'
+      content_type: :json
     )
   end
 
@@ -92,7 +92,7 @@ module Discordrb::API::Application
       "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands/#{command_id}",
       { name: name, description: description, options: options }.compact.to_json,
       Authorization: token,
-      content_type: 'application/json'
+      content_type: :json
     )
   end
 
