@@ -90,7 +90,7 @@ module Discordrb::API::Webhook
       :patch,
       "#{Discordrb::API.api_base}/webhooks/#{webhooks_id}/#{webhook_token}/messages/#{message_id}",
       { content: content, embeds: embeds, allowed_mentions: allowed_mentions }.to_json,
-      content_type: 'application/json'
+      content_type: :json
     )
   end
 
@@ -118,7 +118,7 @@ module Discordrb::API::Webhook
       :post,
       "#{Discordrb::API.api_base}/interactions/#{interaction_id}/#{interaction_token}/callback",
       { type: type, data: data }.to_json,
-      content_type: 'application/json'
+      content_type: :json
     )
   end
 
