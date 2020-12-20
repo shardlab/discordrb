@@ -89,7 +89,8 @@ module Discordrb::API::Webhook
       webhook_id,
       :patch,
       "#{Discordrb::API.api_base}/webhooks/#{webhooks_id}/#{webhook_token}/messages/#{message_id}",
-      { content: content, embeds: embeds, allowed_mentions: allowed_mentions }.to_json
+      { content: content, embeds: embeds, allowed_mentions: allowed_mentions }.to_json,
+      content_type: 'application/json'
     )
   end
 
@@ -100,7 +101,8 @@ module Discordrb::API::Webhook
       :webhooks_id,
       webhook_id,
       :delete,
-      "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}"
+      "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}",
+      {}
     )
   end
 
@@ -115,7 +117,8 @@ module Discordrb::API::Webhook
       interaction_id,
       :post,
       "#{Discordrb::API.api_base}/interactions/#{interaction_id}/#{interaction_token}/callback",
-      { type: type, data: data }.to_json
+      { type: type, data: data }.to_json,
+      content_type: 'application/json'
     )
   end
 
