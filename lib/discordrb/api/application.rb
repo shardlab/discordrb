@@ -11,21 +11,22 @@ module Discordrb::API::Application
       :applications_aid,
       nil,
       :get,
-      "#{Discordrb::API.api_base}/applications/#{application_id}",
+      "#{Discordrb::API.api_base}/applications/#{application_id}/commands",
       Authorization: token
     )
   end
 
   # Create a global application command.
   # https://discord.com/developers/docs/interactions/slash-commands#create-global-application-command
-  def create_global_command(token, application_id, name, description, options = nil)
+  def create_global_command(token, application_id, name, description, options = [])
     Discordrb::API.request(
       :applications_aid_commands,
       nil,
       :post,
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands",
       { name: name, description: description, options: options }.to_json,
-      Authorization: token
+      Authorization: token,
+      content_type: 'application/json'
     )
   end
 
@@ -37,8 +38,9 @@ module Discordrb::API::Application
       nil,
       :patch,
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands/#{command_id}",
-      { name: name, description: description, options: options },
-      Authorization: token
+      { name: name, description: description, options: options }.compact.to_json,
+      Authorization: token,
+      content_type: 'application/json'
     )
   end
 
@@ -75,7 +77,8 @@ module Discordrb::API::Application
       :post,
       "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands",
       { name: name, description: description, options: options }.to_json,
-      Authorization: token
+      Authorization: token,
+      content_type: 'application/json'
     )
   end
 
@@ -87,8 +90,9 @@ module Discordrb::API::Application
       guild_id,
       :patch,
       "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands/#{command_id}",
-      { name: name, description: description, options: options }.to_json,
-      Authorization: token
+      { name: name, description: description, options: options }.compact.to_json,
+      Authorization: token,
+      content_type: 'application/json'
     )
   end
 
