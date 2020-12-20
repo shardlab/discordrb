@@ -80,4 +80,54 @@ module Discordrb::API::Webhook
       'X-Audit-Log-Reason': reason
     )
   end
+
+  # Edit a message created by a specific webhook.
+  # https://discord.com/developers/docs/resources/webhook#edit-webhook-message
+  def edit_webhook_message(webhook_token, webhook_id, message_id, content: nil, embeds: nil, allowed_mentions: nil)
+    Discordrb::API.request(
+      :webhooks_wid,
+      webhook_id,
+      :patch,
+      "#{Discordrb::API.api_base}/webhooks/#{webhooks_id}/#{webhook_token}/messages/#{message_id}",
+      { content: content, embeds: embeds, allowed_mentions: allowed_mentions }.to_json
+    )
+  end
+
+  # Delete a message created by a specific webhook.
+  # https://discord.com/developers/docs/resources/webhook#delete-webhook-message
+  def delete_webhook_message(webhook_token, webhook_id, message_id)
+    Discordrb::API.request(
+      :webhooks_id,
+      webhook_id,
+      :delete,
+      "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}"
+    )
+  end
+
+  # Respond to an interaction.
+  # https://discord.com/developers/docs/interactions/slash-commands#create-interaction-response
+  def create_interaction_response(interaction_token, interaction_id, type, tts: nil, content: nil, embeds: nil, allowed_mentions: nil)
+    data = { tts: tts, content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact
+    data = nil if data.empty?
+
+    Discordrb::API.request(
+      :interactions_iid_token_callback,
+      interaction_id,
+      :post,
+      "#{Discordrb::API.api_base}/interactions/#{interaction_id}/#{interaction_token}/callback",
+      { type: type, data: data }.to_json
+    )
+  end
+
+  # Edit the original response to an interaction.
+  # https://discord.com/developers/docs/interactions/slash-commands#edit-original-interaction-response
+  def edit_original_interaction_response(interaction_token, application_id, content: nil, embeds: nil, allowed_mentions: nil)
+    edit_webhook_message(interaction_token, application_id, '@original', content: content, embeds: embeds, allowed_mentions: allowed_mentions)
+  end
+
+  # Delete the original response to an interaction.
+  # https://discord.com/developers/docs/interactions/slash-commands#delete-original-interaction-response
+  def delete_original_interaction_response(interaction_token, application_id)
+    delete_webhook_message(interaction_token, application_id, '@original')
+  end
 end
