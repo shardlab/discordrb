@@ -97,6 +97,8 @@ module Discordrb::API
     # Specify RateLimit precision
     attributes.last[:x_ratelimit_precision] = 'millisecond'
 
+    # Force content_type to JSON if request is post/put
+    attributes.last[:content_type] = :json if %i[put post].include?(type)
     # The most recent Discord rate limit requirements require the support of major parameters, where a particular route
     # and major parameter combination (*not* the HTTP method) uniquely identifies a RL bucket.
     key = [key, major_parameter].freeze
