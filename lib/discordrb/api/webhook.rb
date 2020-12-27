@@ -88,7 +88,7 @@ module Discordrb::API::Webhook
       :webhooks_wid,
       webhook_id,
       :patch,
-      "#{Discordrb::API.api_base}/webhooks/#{webhooks_id}/#{webhook_token}/messages/#{message_id}",
+      "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}",
       { content: content, embeds: embeds, allowed_mentions: allowed_mentions }.to_json,
       content_type: :json
     )
@@ -108,8 +108,8 @@ module Discordrb::API::Webhook
 
   # Respond to an interaction.
   # https://discord.com/developers/docs/interactions/slash-commands#create-interaction-response
-  def create_interaction_response(interaction_token, interaction_id, type, tts: nil, content: nil, embeds: nil, allowed_mentions: nil)
-    data = { tts: tts, content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact
+  def create_interaction_response(interaction_token, interaction_id, type, tts: nil, content: nil, embeds: nil, allowed_mentions: nil, flags: nil)
+    data = { tts: tts, content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags }.compact
     data = nil if data.empty?
 
     Discordrb::API.request(

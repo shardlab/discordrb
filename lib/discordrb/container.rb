@@ -13,6 +13,7 @@ require 'discordrb/events/guilds'
 require 'discordrb/events/await'
 require 'discordrb/events/bans'
 require 'discordrb/events/reactions'
+require 'discordrb/events/interactions'
 
 require 'discordrb/await'
 
@@ -520,6 +521,15 @@ module Discordrb
     # @return [InviteDeleteEventHandler] The event handler that was registered.
     def invite_delete(attributes = {}, &block)
       register_event(InviteDeleteEvent, attributes, block)
+    end
+
+    # TODO: incomplete docs
+    # This **event** is raised when an application command is sent.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Channel] :channel Matches the channel the command was used in.
+    # @option attributes [String, Integer, Server] :server Matches the server the command was used in.
+    def application_command(command_name, attributes = {}, &block)
+      register_event(ApplicationCommandEvent, attributes.merge(command_name: command_name), block)
     end
 
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
