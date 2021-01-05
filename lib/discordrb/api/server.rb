@@ -427,9 +427,9 @@ module Discordrb::API::Server
     )
   end
 
-  # Retrieves a server's embed information
-  # https://discord.com/developers/docs/resources/guild#get-guild-embed
-  def embed(token, server_id)
+  # Retrieves a server's widget information
+  # https://discord.com/developers/docs/resources/guild#get-guild-widget
+  def widget(token, server_id)
     Discordrb::API.request(
       :guilds_sid_embed,
       server_id,
@@ -438,10 +438,11 @@ module Discordrb::API::Server
       Authorization: token
     )
   end
+  alias embed widget
 
-  # Modify a server's embed settings
-  # https://discord.com/developers/docs/resources/guild#modify-guild-embed
-  def modify_embed(token, server_id, enabled, channel_id, reason = nil)
+  # Modify a server's widget settings
+  # https://discord.com/developers/docs/resources/guild#modify-guild-widget
+  def modify_widget(token, server_id, enabled, channel_id, reason = nil)
     Discordrb::API.request(
       :guilds_sid_embed,
       server_id,
@@ -453,6 +454,7 @@ module Discordrb::API::Server
       content_type: :json
     )
   end
+  alias modify_embed modify_widget
 
   # Adds a custom emoji.
   # https://discord.com/developers/docs/resources/emoji#create-guild-emoji
