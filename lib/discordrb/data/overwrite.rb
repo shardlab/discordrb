@@ -53,8 +53,8 @@ module Discordrb
                 type
               end
 
-      @allow = allow.is_a?(Permissions) ? allow : Permissions.new(allow)
-      @deny = deny.is_a?(Permissions) ? deny : Permissions.new(deny)
+      @allow = allow.is_a?(Permissions) ? allow : Permissions.new(allow.to_i)
+      @deny = deny.is_a?(Permissions) ? deny : Permissions.new(deny.to_i)
     end
 
     # Comparison by attributes [:id, :type, :allow, :deny]
