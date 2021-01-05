@@ -190,7 +190,7 @@ module Discordrb::API::Server
       :guilds_sid_bans_uid,
       server_id,
       :put,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/bans/#{user_id}?delete-message-days=#{message_days}&reason=#{reason}",
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/bans/#{user_id}?delete_message_days=#{message_days}&reason=#{reason}",
       nil,
       Authorization: token
     )
@@ -434,7 +434,7 @@ module Discordrb::API::Server
       :guilds_sid_embed,
       server_id,
       :get,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/embed",
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/widget",
       Authorization: token
     )
   end
@@ -446,7 +446,7 @@ module Discordrb::API::Server
       :guilds_sid_embed,
       server_id,
       :patch,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/embed",
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/widget",
       { enabled: enabled, channel_id: channel_id }.to_json,
       Authorization: token,
       'X-Audit-Log-Reason': reason,
