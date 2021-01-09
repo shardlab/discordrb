@@ -265,7 +265,7 @@ module Discordrb
 
     # @return [Array<Activity>] all activities of type {Activity::COMPETING}
     def competing
-      @activities.select { |act| act.type == Activity::COMPETING}
+      @activities.select { |act| act.type == Activity::COMPETING }
     end
   end
 end
