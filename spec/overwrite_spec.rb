@@ -3,7 +3,7 @@
 require 'discordrb'
 
 describe Discordrb::Overwrite do
-  describe '#initialize', focus: true do
+  describe '#initialize' do
     context 'when object is an Integer' do
       let(:id) { instance_double(Integer) }
 
