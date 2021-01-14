@@ -1185,18 +1185,28 @@ module Discordrb
         # Ignore friends list presences
         return unless data['guild_id']
 
-        now_playing = data['game'].nil? ? nil : data['game']['name']
+        new_activities = (data['activities'] || []).map { |act_data| Activity.new(act_data, self) }
         presence_user = @users[data['user']['id'].to_i]
-        played_before = presence_user.nil? ? nil : presence_user.game
+        old_activities = presence_user.activities.to_a
         update_presence(data)
 
-        event = if now_playing == played_before
-                  PresenceEvent.new(data, self)
-                else
-                  PlayingEvent.new(data, self)
-                end
+        # Starting a new game
+        playing_change = new_activities.reject do |act|
+          old_activities.find { |old| old.name == act.name }
+        end
 
-        raise_event(event)
+        # Exiting an existing game
+        playing_change += old_activities.reject do |old|
+          new_activities.find { |act| act.name == old.name }
+        end
+
+        if playing_change.any?
+          playing_change.each do |act|
+            raise_event(PlayingEvent.new(data, act, self))
+          end
+        else
+          raise_event(PresenceEvent.new(data, self))
+        end
       when :VOICE_STATE_UPDATE
         old_channel_id = update_voice_state(data)
 

@@ -102,6 +102,48 @@ describe Discordrb::Bot do
       expect(bot).to receive(:raise_event).exactly(4).times
       bot.send(:handle_dispatch, type, dispatch_event)
     end
+
+    context 'when handling a PRESENCE_UPDATE' do
+      let(:user) { instance_double(Discordrb::User, activities: [], id: 12345, client_status: nil) }
+      let(:guild_id) { 123456 }
+      let(:activity) { instance_double(Discordrb::Activity, name: 'name') }
+      let(:activity_fixture) { { 'name' => 'New Activity' } }
+      let(:old_activity) { instance_double(Discordrb::Activity, 'old_activity', name: 'Old Activity') }
+
+      before do
+        allow(bot.instance_variable_get(:@users)).to receive(:[]).with(user.id).and_return(user)
+        allow(bot).to receive(:update_presence).and_return(nil)
+        allow(bot).to receive(:raise_event).with(kind_of(Discordrb::Events::PresenceEvent))
+        allow(bot).to receive(:raise_event).with(kind_of(Discordrb::Events::PlayingEvent))
+        allow(bot).to receive(:user).with(user.id).and_return(user)
+        allow(bot).to receive(:server).with(guild_id).and_return(instance_double(Discordrb::Server))
+      end
+
+      it 'raises a PlayingEvent for each new activity' do
+        bot.send(:handle_dispatch, :PRESENCE_UPDATE, { 'activities' => [activity_fixture, activity_fixture], 'user' => { 'id' => user.id}, 'guild_id' => guild_id })
+        expect(bot).to have_received(:raise_event).with(instance_of(Discordrb::Events::PlayingEvent)).twice
+      end
+
+      it 'raises a PlayingEvent for each removed activity' do
+        allow(user).to receive(:activities).and_return([old_activity])
+        bot.send(:handle_dispatch, :PRESENCE_UPDATE, { 'activities' => [], 'user' => { 'id' => user.id}, 'guild_id' => guild_id })
+
+        expect(bot).to have_received(:raise_event).with(instance_of(Discordrb::Events::PlayingEvent))
+      end
+
+      it 'raises a PlayingEvent for each new and removed activity' do
+        allow(user).to receive(:activities).and_return([old_activity])
+        bot.send(:handle_dispatch, :PRESENCE_UPDATE, { 'activities' => [activity_fixture], 'user' => { 'id' => user.id}, 'guild_id' => guild_id })
+
+        expect(bot).to have_received(:raise_event).with(an_instance_of(Discordrb::Events::PlayingEvent)).twice
+      end
+
+      it 'raises a PresenceEvent when the change is not activity based' do
+        bot.send(:handle_dispatch, :PRESENCE_UPDATE, { 'activities' => [], 'user' => { 'id' => user.id }, 'guild_id' => guild_id, 'status' => 'online' })
+
+        expect(bot).to have_received(:raise_event).with(an_instance_of(Discordrb::Events::PresenceEvent))
+      end
+    end
   end
 
   describe '#update_guild_emoji' do
