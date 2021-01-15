@@ -803,7 +803,7 @@ module Discordrb
         LOGGER.error("Message: #{e.data}")
 
         if e.code == 4014
-          LOGGER.error(<<~ERROR) 
+          LOGGER.error(<<~ERROR)
             You attempted to identify with privileged intents that your bot is not authorized to use
             Please enable the privileged intents on the bot page of your application on the discord developer page.
             Read more here https://discord.com/developers/docs/topics/gateway#privileged-intents

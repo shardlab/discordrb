@@ -112,6 +112,13 @@ module Discordrb::API
         response = raw_request(type, attributes)
       rescue RestClient::Exception => e
         response = e.response
+
+        if response.body
+          data = JSON.parse(response.body)
+          err_klass = Discordrb::Errors.error_class_for(data['code'] || 0)
+          e = err_klass.new(data['message'], data['errors'])
+        end
+
         raise e
       rescue Discordrb::Errors::NoPermission => e
         if e.respond_to?(:_rc_response)
