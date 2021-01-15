@@ -826,14 +826,14 @@ module Discordrb
 
     # Internal handler for CHANNEL_CREATE
     def create_channel(data)
-      channel = Channel.new(data, self)
+      channel = data.is_a?(Discordrb::Channel) ? data : Channel.new(data, self)
       server = channel.server
 
       # Handle normal and private channels separately
       if server
         server.add_channel(channel)
         @channels[channel.id] = channel
-      elsif channel.pm?
+      elsif channel.private?
         @pm_channels[channel.recipient.id] = channel
       elsif channel.group?
         @channels[channel.id] = channel
@@ -1086,7 +1086,7 @@ module Discordrb
       when :INVITE_DELETE
         raise_event(InviteDeleteEvent.new(data, self))
       when :MESSAGE_CREATE
-        if ignored?(data['author']['id'].to_i)
+        if ignored?(data['author']['id'])
           debug("Ignored author with ID #{data['author']['id']}")
           return
         end
@@ -1102,6 +1102,13 @@ module Discordrb
         message = Message.new(data, self) unless message.is_a? Message
 
         return if message.from_bot? && !should_parse_self
+
+        # Dispatch a ChannelCreateEvent for channels we don't have cached
+        if message.channel.private? && @pm_channels[message.channel.recipient.id].nil?
+          create_channel(message.channel)
+
+          raise_event(ChannelCreateEvent.new(message.channel, self))
+        end
 
         event = MessageEvent.new(message, self)
         raise_event(event)
