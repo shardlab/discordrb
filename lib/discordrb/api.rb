@@ -117,6 +117,8 @@ module Discordrb::API
           data = JSON.parse(response.body)
           err_klass = Discordrb::Errors.error_class_for(data['code'] || 0)
           e = err_klass.new(data['message'], data['errors'])
+
+          Discordrb::LOGGER.error(e.full_message)
         end
 
         raise e
