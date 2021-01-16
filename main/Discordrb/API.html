@@ -2046,7 +2046,7 @@ X-Ratelimit-Reset header, thus making sure we don&#39;t get 429&#39;d in any sub
 </span>  <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span><span class='lbracket'>[</span><span class='symbol'>:user_agent</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_user_agent'>user_agent</span> <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Hash</span>
 
   <span class='comment'># Specify RateLimit precision
-</span>  <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span><span class='lbracket'>[</span><span class='symbol'>:x_ratelimit_precision</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>millisecond</span><span class='tstring_end'>&#39;</span></span>
+</span>  <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span><span class='lbracket'>[</span><span class='symbol'>:x_ratelimit_precision</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>millisecond</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
 
   <span class='comment'># The most recent Discord rate limit requirements require the support of major parameters, where a particular route
 </span>  <span class='comment'># and major parameter combination (*not* the HTTP method) uniquely identifies a RL bucket.
@@ -2626,7 +2626,7 @@ hit.</p>
 </div>
 
       <div id="footer">
-  Generated on Sat Jan 16 23:14:59 2021 by
+  Generated on Sat Jan 16 23:28:36 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.8).
 </div>
