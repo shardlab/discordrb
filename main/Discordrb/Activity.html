@@ -226,6 +226,21 @@ music they are listening to, or their live stream.</p>
         </dt>
         <dd><pre class="code"><span class='int'>4</span></pre></dd>
       
+        <dt id="COMPETING-constant" class="">COMPETING =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Type indicating the activity is for a competitive game</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>5</span></pre></dd>
+      
     </dl>
   
 
@@ -1513,7 +1528,7 @@ music they are listening to, or their live stream.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns activity type. Can be <span class='object_link'><a href="#GAME-constant" title="Discordrb::Activity::GAME (constant)">GAME</a></span>, <span class='object_link'><a href="#STREAMING-constant" title="Discordrb::Activity::STREAMING (constant)">STREAMING</a></span>, <span class='object_link'><a href="#LISTENING-constant" title="Discordrb::Activity::LISTENING (constant)">LISTENING</a></span>, <span class='object_link'><a href="#CUSTOM-constant" title="Discordrb::Activity::CUSTOM (constant)">CUSTOM</a></span>.</p>
+    <p>Returns activity type. Can be <span class='object_link'><a href="#GAME-constant" title="Discordrb::Activity::GAME (constant)">GAME</a></span>, <span class='object_link'><a href="#STREAMING-constant" title="Discordrb::Activity::STREAMING (constant)">STREAMING</a></span>, <span class='object_link'><a href="#LISTENING-constant" title="Discordrb::Activity::LISTENING (constant)">LISTENING</a></span>, <span class='object_link'><a href="#CUSTOM-constant" title="Discordrb::Activity::CUSTOM (constant)">CUSTOM</a></span>, or <span class='object_link'><a href="#COMPETING-constant" title="Discordrb::Activity::COMPETING (constant)">COMPETING</a></span>.</p>
 
 
   </div>
@@ -1531,7 +1546,7 @@ music they are listening to, or their live stream.</p>
       
       
         &mdash;
-        <div class='inline'><p>activity type. Can be <span class='object_link'><a href="#GAME-constant" title="Discordrb::Activity::GAME (constant)">GAME</a></span>, <span class='object_link'><a href="#STREAMING-constant" title="Discordrb::Activity::STREAMING (constant)">STREAMING</a></span>, <span class='object_link'><a href="#LISTENING-constant" title="Discordrb::Activity::LISTENING (constant)">LISTENING</a></span>, <span class='object_link'><a href="#CUSTOM-constant" title="Discordrb::Activity::CUSTOM (constant)">CUSTOM</a></span></p>
+        <div class='inline'><p>activity type. Can be <span class='object_link'><a href="#GAME-constant" title="Discordrb::Activity::GAME (constant)">GAME</a></span>, <span class='object_link'><a href="#STREAMING-constant" title="Discordrb::Activity::STREAMING (constant)">STREAMING</a></span>, <span class='object_link'><a href="#LISTENING-constant" title="Discordrb::Activity::LISTENING (constant)">LISTENING</a></span>, <span class='object_link'><a href="#CUSTOM-constant" title="Discordrb::Activity::CUSTOM (constant)">CUSTOM</a></span>, or <span class='object_link'><a href="#COMPETING-constant" title="Discordrb::Activity::COMPETING (constant)">COMPETING</a></span></p>
 </div>
       
     </li>
@@ -1667,12 +1682,12 @@ music they are listening to, or their live stream.</p>
       <pre class="lines">
 
 
-116
-117
-118</pre>
+118
+119
+120</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 116</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 118</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_instance?'>instance?</span>
   <span class='ivar'>@instance</span> <span class='op'>||</span> <span class='id identifier rubyid_flag_set?'>flag_set?</span><span class='lparen'>(</span><span class='symbol'>:instance</span><span class='rparen'>)</span>
@@ -1724,12 +1739,12 @@ music they are listening to, or their live stream.</p>
       <pre class="lines">
 
 
-91
-92
-93</pre>
+93
+94
+95</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 91</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 93</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_join?'>join?</span>
   <span class='id identifier rubyid_flag_set?'>flag_set?</span> <span class='symbol'>:join</span>
@@ -1781,12 +1796,12 @@ music they are listening to, or their live stream.</p>
       <pre class="lines">
 
 
-101
-102
-103</pre>
+103
+104
+105</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 101</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 103</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_join_request?'>join_request?</span>
   <span class='id identifier rubyid_flag_set?'>flag_set?</span> <span class='symbol'>:join_request</span>
@@ -1838,12 +1853,12 @@ music they are listening to, or their live stream.</p>
       <pre class="lines">
 
 
-111
-112
-113</pre>
+113
+114
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 111</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 113</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_play?'>play?</span>
   <span class='id identifier rubyid_flag_set?'>flag_set?</span> <span class='symbol'>:play</span>
@@ -1895,12 +1910,12 @@ music they are listening to, or their live stream.</p>
       <pre class="lines">
 
 
-96
-97
-98</pre>
+98
+99
+100</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 96</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 98</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_spectate?'>spectate?</span>
   <span class='id identifier rubyid_flag_set?'>flag_set?</span> <span class='symbol'>:spectate</span>
@@ -1952,12 +1967,12 @@ music they are listening to, or their live stream.</p>
       <pre class="lines">
 
 
-106
-107
-108</pre>
+108
+109
+110</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 106</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 108</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sync?'>sync?</span>
   <span class='id identifier rubyid_flag_set?'>flag_set?</span> <span class='symbol'>:sync</span>
@@ -1972,7 +1987,7 @@ music they are listening to, or their live stream.</p>
 </div>
 
       <div id="footer">
-  Generated on Sat Jan  2 06:32:24 2021 by
+  Generated on Sat Jan 16 23:15:03 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.8).
 </div>

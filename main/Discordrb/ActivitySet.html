@@ -132,6 +132,29 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#competing-instance_method" title="#competing (instance method)">#<strong>competing</strong>  &#x21d2; Array&lt;Activity&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>All activities of type <span class='object_link'><a href="Activity.html#COMPETING-constant" title="Discordrb::Activity::COMPETING (constant)">Discordrb::Activity::COMPETING</a></span>.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#custom_status-instance_method" title="#custom_status (instance method)">#<strong>custom_status</strong>  &#x21d2; Array&lt;Activity&gt; </a>
     
 
@@ -278,7 +301,64 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="custom_status-instance_method">
+  <h3 class="signature first" id="competing-instance_method">
+  
+    #<strong>competing</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="Activity.html" title="Discordrb::Activity (class)">Activity</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns all activities of type <span class='object_link'><a href="Activity.html#COMPETING-constant" title="Discordrb::Activity::COMPETING (constant)">Discordrb::Activity::COMPETING</a></span>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="Activity.html" title="Discordrb::Activity (class)">Activity</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>all activities of type <span class='object_link'><a href="Activity.html#COMPETING-constant" title="Discordrb::Activity::COMPETING (constant)">Discordrb::Activity::COMPETING</a></span></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+267
+268
+269</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 267</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_competing'>competing</span>
+  <span class='ivar'>@activities</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_act'>act</span><span class='op'>|</span> <span class='id identifier rubyid_act'>act</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Activity.html" title="Discordrb::Activity (class)">Activity</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Activity.html#COMPETING-constant" title="Discordrb::Activity::COMPETING (constant)">COMPETING</a></span></span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="custom_status-instance_method">
   
     #<strong>custom_status</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="Activity.html" title="Discordrb::Activity (class)">Activity</a></span>&gt;</tt> 
   
@@ -319,12 +399,12 @@
       <pre class="lines">
 
 
-260
-261
-262</pre>
+262
+263
+264</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 260</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 262</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_custom_status'>custom_status</span>
   <span class='ivar'>@activities</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_act'>act</span><span class='op'>|</span> <span class='id identifier rubyid_act'>act</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Activity.html" title="Discordrb::Activity (class)">Activity</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Activity.html#CUSTOM-constant" title="Discordrb::Activity::CUSTOM (constant)">CUSTOM</a></span></span> <span class='rbrace'>}</span>
@@ -376,12 +456,12 @@
       <pre class="lines">
 
 
-240
-241
-242</pre>
+242
+243
+244</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 240</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 242</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_games'>games</span>
   <span class='ivar'>@activities</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_act'>act</span><span class='op'>|</span> <span class='id identifier rubyid_act'>act</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Activity.html" title="Discordrb::Activity (class)">Activity</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Activity.html#GAME-constant" title="Discordrb::Activity::GAME (constant)">GAME</a></span></span> <span class='rbrace'>}</span>
@@ -433,12 +513,12 @@
       <pre class="lines">
 
 
-250
-251
-252</pre>
+252
+253
+254</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 250</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 252</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_listening'>listening</span>
   <span class='ivar'>@activities</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_act'>act</span><span class='op'>|</span> <span class='id identifier rubyid_act'>act</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Activity.html" title="Discordrb::Activity (class)">Activity</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Activity.html#LISTENING-constant" title="Discordrb::Activity::LISTENING (constant)">LISTENING</a></span></span> <span class='rbrace'>}</span>
@@ -490,12 +570,12 @@
       <pre class="lines">
 
 
-245
-246
-247</pre>
+247
+248
+249</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 245</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 247</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_streaming'>streaming</span>
   <span class='ivar'>@activities</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_act'>act</span><span class='op'>|</span> <span class='id identifier rubyid_act'>act</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Activity.html" title="Discordrb::Activity (class)">Activity</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Activity.html#STREAMING-constant" title="Discordrb::Activity::STREAMING (constant)">STREAMING</a></span></span> <span class='rbrace'>}</span>
@@ -547,12 +627,12 @@
       <pre class="lines">
 
 
-235
-236
-237</pre>
+237
+238
+239</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 235</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 237</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_a'>to_a</span>
   <span class='ivar'>@activities</span>
@@ -604,12 +684,12 @@
       <pre class="lines">
 
 
-255
-256
-257</pre>
+257
+258
+259</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 255</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/activity.rb', line 257</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_watching'>watching</span>
   <span class='ivar'>@activities</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_act'>act</span><span class='op'>|</span> <span class='id identifier rubyid_act'>act</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Activity.html" title="Discordrb::Activity (class)">Activity</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Activity.html#WATCHING-constant" title="Discordrb::Activity::WATCHING (constant)">WATCHING</a></span></span> <span class='rbrace'>}</span>
@@ -624,7 +704,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Jan  2 06:32:24 2021 by
+  Generated on Sat Jan 16 23:15:03 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.8).
 </div>
