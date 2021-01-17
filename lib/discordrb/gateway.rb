@@ -838,8 +838,11 @@ module Discordrb
       # If we're already closed, there's no need to do anything - return
       return if @closed
 
-      # Suspend the session so we don't send heartbeats
+      # Suspend the session and kill off the heartbeat thread,
+      # so we don't try to send heartbeats
       @session&.suspend
+      @heartbeat_thread&.kill
+      @heartbeat_thread = nil
 
       # Send a close frame (if we can)
       send nil, :close, code unless @pipe_broken
