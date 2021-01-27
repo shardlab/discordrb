@@ -818,7 +818,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Add a user to a group channel.</p>
+    <p>Add a user to a group channel.
+<a href="https://discord.com/developers/docs/resources/channel#group-dm-add-recipient">https://discord.com/developers/docs/resources/channel#group-dm-add-recipient</a></p>
 
 
   </div>
@@ -832,9 +833,6 @@
       <pre class="lines">
 
 
-366
-367
-368
 369
 370
 371
@@ -842,10 +840,13 @@
 373
 374
 375
-376</pre>
+376
+377
+378
+379</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 366</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 369</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_group_user'>add_group_user</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_group_channel_id'>group_channel_id</span><span class='comma'>,</span> <span class='id identifier rubyid_user_id'>user_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -933,7 +934,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Create an empty group channel.</p>
+    <p>Create an empty group channel.
+<a href="https://discord.com/developers/docs/resources/user#create-group-dm">https://discord.com/developers/docs/resources/user#create-group-dm</a></p>
 
 
   </div>
@@ -947,7 +949,6 @@
       <pre class="lines">
 
 
-334
 335
 336
 337
@@ -957,10 +958,11 @@
 341
 342
 343
-344</pre>
+344
+345</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 334</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 335</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_empty_group'>create_empty_group</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_bot_user_id'>bot_user_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -989,7 +991,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Create a group channel.</p>
+    <p>Create a group channel.
+<a href="https://discord.com/developers/docs/resources/channel#group-dm-add-recipient">https://discord.com/developers/docs/resources/channel#group-dm-add-recipient</a></p>
 
 
   </div>
@@ -1003,8 +1006,6 @@
       <pre class="lines">
 
 
-347
-348
 349
 350
 351
@@ -1019,10 +1020,12 @@
 360
 361
 362
-363</pre>
+363
+364
+365</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 347</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 349</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_group'>create_group</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_pm_channel_id'>pm_channel_id</span><span class='comma'>,</span> <span class='id identifier rubyid_user_id'>user_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1299,21 +1302,21 @@
       <pre class="lines">
 
 
-404
-405
-406
-407
-408
 409
 410
 411
 412
 413
 414
-415</pre>
+415
+416
+417
+418
+419
+420</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 404</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 409</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_webhook'>create_webhook</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_channel_id'>channel_id</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_avatar'>avatar</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1838,7 +1841,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Leave a group channel.</p>
+    <p>Leave a group channel.
+<a href="https://discord.com/developers/docs/resources/channel#deleteclose-channel">https://discord.com/developers/docs/resources/channel#deleteclose-channel</a></p>
 
 
   </div>
@@ -1852,19 +1856,19 @@
       <pre class="lines">
 
 
-391
-392
-393
-394
-395
 396
 397
 398
 399
-400</pre>
+400
+401
+402
+403
+404
+405</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 391</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 396</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_leave_group'>leave_group</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_group_channel_id'>group_channel_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2108,7 +2112,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Remove a user from a group channel.</p>
+    <p>Remove a user from a group channel.
+<a href="https://discord.com/developers/docs/resources/channel#group-dm-remove-recipient">https://discord.com/developers/docs/resources/channel#group-dm-remove-recipient</a></p>
 
 
   </div>
@@ -2122,19 +2127,19 @@
       <pre class="lines">
 
 
-379
-380
-381
-382
 383
 384
 385
 386
 387
-388</pre>
+388
+389
+390
+391
+392</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 379</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 383</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_group_user'>remove_group_user</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_group_channel_id'>group_channel_id</span><span class='comma'>,</span> <span class='id identifier rubyid_user_id'>user_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2517,18 +2522,18 @@
       <pre class="lines">
 
 
-419
-420
-421
-422
-423
 424
 425
 426
-427</pre>
+427
+428
+429
+430
+431
+432</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 419</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 424</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_webhooks'>webhooks</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_channel_id'>channel_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2549,7 +2554,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Jan 26 20:16:12 2021 by
+  Generated on Wed Jan 27 16:18:51 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.8).
 </div>

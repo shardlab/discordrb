@@ -148,7 +148,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Change the current bot&#39;s nickname on a server.</p>
+    <span class="summary_desc"><div class='inline'><p>Change the current bot&#39;s nickname on a server <a href="https://discord.com/developers/docs/resources/user#modify-current-user">https://discord.com/developers/docs/resources/user#modify-current-user</a>.</p>
 </div></span>
   
 </li>
@@ -418,17 +418,17 @@
       <pre class="lines">
 
 
-141
 142
 143
 144
 145
 146
 147
-148</pre>
+148
+149</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 141</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 142</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_avatar_url'>avatar_url</span><span class='lparen'>(</span><span class='id identifier rubyid_user_id'>user_id</span><span class='comma'>,</span> <span class='id identifier rubyid_avatar_id'>avatar_id</span><span class='comma'>,</span> <span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_format'>format</span> <span class='op'>||=</span> <span class='kw'>if</span> <span class='id identifier rubyid_avatar_id'>avatar_id</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>a_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -454,7 +454,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Change the current bot&#39;s nickname on a server</p>
+    <p>Change the current bot&#39;s nickname on a server
+<a href="https://discord.com/developers/docs/resources/user#modify-current-user">https://discord.com/developers/docs/resources/user#modify-current-user</a></p>
 
 
   </div>
@@ -468,7 +469,6 @@
       <pre class="lines">
 
 
-32
 33
 34
 35
@@ -479,10 +479,11 @@
 40
 41
 42
-43</pre>
+43
+44</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 32</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 33</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_change_own_nickname'>change_own_nickname</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_nick'>nick</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -526,7 +527,6 @@
       <pre class="lines">
 
 
-122
 123
 124
 125
@@ -536,10 +536,11 @@
 129
 130
 131
-132</pre>
+132
+133</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 122</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 123</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_change_status_setting'>change_status_setting</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_status'>status</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -583,7 +584,6 @@
       <pre class="lines">
 
 
-111
 112
 113
 114
@@ -591,10 +591,11 @@
 116
 117
 118
-119</pre>
+119
+120</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 111</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 112</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connections'>connections</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -636,7 +637,6 @@
       <pre class="lines">
 
 
-97
 98
 99
 100
@@ -646,10 +646,11 @@
 104
 105
 106
-107</pre>
+107
+108</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 97</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 98</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_pm'>create_pm</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_recipient_id'>recipient_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -692,13 +693,13 @@
       <pre class="lines">
 
 
-135
 136
 137
-138</pre>
+138
+139</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 135</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 136</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_avatar'>default_avatar</span><span class='lparen'>(</span><span class='id identifier rubyid_discrim'>discrim</span> <span class='op'>=</span> <span class='int'>0</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_index'>index</span> <span class='op'>=</span> <span class='id identifier rubyid_discrim'>discrim</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>%</span> <span class='int'>5</span>
@@ -735,7 +736,6 @@
       <pre class="lines">
 
 
-73
 74
 75
 76
@@ -743,10 +743,11 @@
 78
 79
 80
-81</pre>
+81
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 73</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 74</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_leave_server'>leave_server</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -894,7 +895,6 @@
       <pre class="lines">
 
 
-61
 62
 63
 64
@@ -902,10 +902,11 @@
 66
 67
 68
-69</pre>
+69
+70</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 61</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 62</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_servers'>servers</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -947,7 +948,6 @@
       <pre class="lines">
 
 
-47
 48
 49
 50
@@ -957,10 +957,11 @@
 54
 55
 56
-57</pre>
+57
+58</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_profile'>update_profile</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_email'>email</span><span class='comma'>,</span> <span class='id identifier rubyid_password'>password</span><span class='comma'>,</span> <span class='id identifier rubyid_new_username'>new_username</span><span class='comma'>,</span> <span class='id identifier rubyid_avatar'>avatar</span><span class='comma'>,</span> <span class='id identifier rubyid_new_password'>new_password</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1004,7 +1005,6 @@
       <pre class="lines">
 
 
-85
 86
 87
 88
@@ -1012,10 +1012,11 @@
 90
 91
 92
-93</pre>
+93
+94</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 85</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/user.rb', line 86</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user_dms'>user_dms</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1036,7 +1037,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Jan 26 20:16:11 2021 by
+  Generated on Wed Jan 27 16:18:50 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.8).
 </div>
