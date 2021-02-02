@@ -369,7 +369,7 @@
         <span class='name'>bits</span>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>Array&lt;Symbol&gt;</tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>Array&lt;Symbol&gt;</tt>)</span>
       
       
         <em class="default">(defaults to: <tt>0</tt>)</em>
@@ -428,7 +428,7 @@
   <span class='ivar'>@bits</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='id identifier rubyid_bits'>bits</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Array</span>
             <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_bits'>bits</span><span class='lparen'>(</span><span class='id identifier rubyid_bits'>bits</span><span class='rparen'>)</span>
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_bits'>bits</span>
+            <span class='id identifier rubyid_bits'>bits</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
           <span class='kw'>end</span>
 
   <span class='id identifier rubyid_init_vars'>init_vars</span>
@@ -688,7 +688,7 @@ of instancing a new Permissions object.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Feb  1 21:22:33 2021 by
+  Generated on Tue Feb  2 19:27:38 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.8).
 </div>

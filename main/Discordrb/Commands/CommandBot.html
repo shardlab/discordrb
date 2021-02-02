@@ -319,7 +319,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(attributes = {})  &#x21d2; CommandBot </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(**attributes)  &#x21d2; CommandBot </a>
     
 
     
@@ -554,7 +554,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(attributes = {})  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Commands::CommandBot (class)">CommandBot</a></span></tt> 
+    #<strong>initialize</strong>(**attributes)  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Commands::CommandBot (class)">CommandBot</a></span></tt> 
   
 
   
@@ -579,8 +579,6 @@
         <span class='type'>(<tt>Hash</tt>)</span>
       
       
-        <em class="default">(defaults to: <tt>{}</tt>)</em>
-      
       
         &mdash;
         <div class='inline'><p>The attributes to initialize the CommandBot with.</p>
@@ -593,7 +591,7 @@
   
     
     
-    <p class="tag_title">Options Hash (<tt>attributes</tt>):</p>
+    <p class="tag_title">Options Hash (<tt>**attributes</tt>):</p>
     <ul class="option">
       
         <li>
@@ -954,13 +952,17 @@ chain itself (see :advanced_functionality). Default is &#39;:&#39;. Set to an em
 188
 189
 190
-191</pre>
+191
+192
+193</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 73</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
-  <span class='kw'>super</span><span class='lparen'>(</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
+  <span class='comment'># TODO: This needs to be revisited. undefined attributes are treated
+</span>  <span class='comment'># as explicitly passed nils.
+</span>  <span class='kw'>super</span><span class='lparen'>(</span>
     <span class='label'>log_mode:</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:log_mode</span><span class='rbracket'>]</span><span class='comma'>,</span>
     <span class='label'>token:</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:token</span><span class='rbracket'>]</span><span class='comma'>,</span>
     <span class='label'>client_id:</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:client_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
@@ -974,7 +976,7 @@ chain itself (see :advanced_functionality). Default is &#39;:&#39;. Set to an em
     <span class='label'>redact_token:</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:redact_token</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:redact_token</span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='kw'>true</span><span class='comma'>,</span>
     <span class='label'>ignore_bots:</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:ignore_bots</span><span class='rbracket'>]</span><span class='comma'>,</span>
     <span class='label'>compress_mode:</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:compress_mode</span><span class='rbracket'>]</span><span class='comma'>,</span>
-    <span class='label'>intents:</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:intents</span><span class='rbracket'>]</span>
+    <span class='label'>intents:</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:intents</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='symbol'>:all</span>
   <span class='rparen'>)</span>
 
   <span class='ivar'>@prefix</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:prefix</span><span class='rbracket'>]</span>
@@ -1264,14 +1266,14 @@ chain itself (see :advanced_functionality). Default is &#39;:&#39;. Set to an em
       <pre class="lines">
 
 
-385
-386
 387
 388
-389</pre>
+389
+390
+391</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 385</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 387</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_channel'>add_channel</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>if</span> <span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:channels</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_c'>c</span><span class='op'>|</span> <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span> <span class='op'>==</span> <span class='id identifier rubyid_c'>c</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span> <span class='rbrace'>}</span>
@@ -1309,8 +1311,6 @@ For example, <code>[&#39;1&#39;, &#39;10..14&#39;]</code> with types <code>[Inte
       <pre class="lines">
 
 
-251
-252
 253
 254
 255
@@ -1386,10 +1386,12 @@ For example, <code>[&#39;1&#39;, &#39;10..14&#39;]</code> with types <code>[Inte
 325
 326
 327
-328</pre>
+328
+329
+330</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 251</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 253</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_arg_check'>arg_check</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='id identifier rubyid_types'>types</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_server'>server</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_args'>args</span> <span class='kw'>unless</span> <span class='id identifier rubyid_types'>types</span>
@@ -1505,12 +1507,12 @@ For example, <code>[&#39;1&#39;, &#39;10..14&#39;]</code> with types <code>[Inte
       <pre class="lines">
 
 
-373
-374
-375</pre>
+375
+376
+377</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 373</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 375</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channels='>channels=</span><span class='lparen'>(</span><span class='id identifier rubyid_channels'>channels</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_update_channels'>update_channels</span><span class='lparen'>(</span><span class='id identifier rubyid_channels'>channels</span><span class='rparen'>)</span>
@@ -1577,14 +1579,14 @@ For example, <code>[&#39;1&#39;, &#39;10..14&#39;]</code> with types <code>[Inte
       <pre class="lines">
 
 
-196
-197
 198
 199
-200</pre>
+200
+201
+202</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 196</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 198</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_command_aliases'>command_aliases</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_commands'>commands</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_command'>command</span><span class='op'>|</span>
@@ -1723,8 +1725,6 @@ commands that have chain_usable set to false will not work.</p>
       <pre class="lines">
 
 
-211
-212
 213
 214
 215
@@ -1759,10 +1759,12 @@ commands that have chain_usable set to false will not work.</p>
 244
 245
 246
-247</pre>
+247
+248
+249</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 211</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 213</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_execute_command'>execute_command</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='id identifier rubyid_arguments'>arguments</span><span class='comma'>,</span> <span class='id identifier rubyid_chained'>chained</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_check_permissions'>check_permissions</span> <span class='op'>=</span> <span class='kw'>true</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Executing command </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'> with arguments </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_arguments'>arguments</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -1897,8 +1899,6 @@ commands that have chain_usable set to false will not work.</p>
       <pre class="lines">
 
 
-360
-361
 362
 363
 364
@@ -1907,10 +1907,12 @@ commands that have chain_usable set to false will not work.</p>
 367
 368
 369
-370</pre>
+370
+371
+372</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 360</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 362</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_permission?'>permission?</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='comma'>,</span> <span class='id identifier rubyid_level'>level</span><span class='comma'>,</span> <span class='id identifier rubyid_server'>server</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_determined_level'>determined_level</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_webhook?'>webhook?</span> <span class='op'>||</span> <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -1972,12 +1974,12 @@ commands that have chain_usable set to false will not work.</p>
       <pre class="lines">
 
 
-393
-394
-395</pre>
+395
+396
+397</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 393</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 395</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_channel'>remove_channel</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='rparen'>)</span>
   <span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:channels</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete_if'>delete_if</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_c'>c</span><span class='op'>|</span> <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span> <span class='op'>==</span> <span class='id identifier rubyid_c'>c</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span> <span class='rbrace'>}</span>
@@ -2046,12 +2048,12 @@ commands that have chain_usable set to false will not work.</p>
       <pre class="lines">
 
 
-351
-352
-353</pre>
+353
+354
+355</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 351</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 353</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_set_role_permission'>set_role_permission</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_level'>level</span><span class='rparen'>)</span>
   <span class='ivar'>@permissions</span><span class='lbracket'>[</span><span class='symbol'>:roles</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_level'>level</span>
@@ -2120,12 +2122,12 @@ commands that have chain_usable set to false will not work.</p>
       <pre class="lines">
 
 
-344
-345
-346</pre>
+346
+347
+348</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 344</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 346</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_set_user_permission'>set_user_permission</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_level'>level</span><span class='rparen'>)</span>
   <span class='ivar'>@permissions</span><span class='lbracket'>[</span><span class='symbol'>:users</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_level'>level</span>
@@ -2211,15 +2213,15 @@ commands that have chain_usable set to false will not work.</p>
       <pre class="lines">
 
 
-334
-335
 336
 337
 338
-339</pre>
+339
+340
+341</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 334</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 336</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_simple_execute'>simple_execute</span><span class='lparen'>(</span><span class='id identifier rubyid_chain'>chain</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>if</span> <span class='id identifier rubyid_chain'>chain</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -2278,12 +2280,12 @@ commands that have chain_usable set to false will not work.</p>
       <pre class="lines">
 
 
-379
-380
-381</pre>
+381
+382
+383</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 379</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/commands/command_bot.rb', line 381</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_channels'>update_channels</span><span class='lparen'>(</span><span class='id identifier rubyid_channels'>channels</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
   <span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:channels</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'>Array</span><span class='lparen'>(</span><span class='id identifier rubyid_channels'>channels</span><span class='rparen'>)</span>
@@ -2298,7 +2300,7 @@ commands that have chain_usable set to false will not work.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Feb  1 21:22:40 2021 by
+  Generated on Tue Feb  2 19:27:41 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.8).
 </div>

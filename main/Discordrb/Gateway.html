@@ -146,7 +146,7 @@
 
 </div>
         </dt>
-        <dd><pre class="code"><span class='int'>6</span></pre></dd>
+        <dd><pre class="code"><span class='int'>8</span></pre></dd>
       
     </dl>
   
@@ -245,7 +245,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(bot, token, shard_key = nil, compress_mode = :stream, intents = nil)  &#x21d2; Gateway </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(bot, token, shard_key = nil, compress_mode = :stream, intents = ALL_INTENTS)  &#x21d2; Gateway </a>
     
 
     
@@ -500,7 +500,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#send_identify-instance_method" title="#send_identify (instance method)">#<strong>send_identify</strong>(token, properties, compress, large_threshold, shard_key = nil)  &#x21d2; Object </a>
+      <a href="#send_identify-instance_method" title="#send_identify (instance method)">#<strong>send_identify</strong>(token, properties, compress, large_threshold, shard_key = nil, intents = ALL_INTENTS)  &#x21d2; Object </a>
     
 
     
@@ -713,7 +713,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(bot, token, shard_key = nil, compress_mode = :stream, intents = nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Gateway (class)">Gateway</a></span></tt> 
+    #<strong>initialize</strong>(bot, token, shard_key = nil, compress_mode = :stream, intents = ALL_INTENTS)  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Gateway (class)">Gateway</a></span></tt> 
   
 
   
@@ -753,7 +753,7 @@
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 146</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_bot'>bot</span><span class='comma'>,</span> <span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_shard_key'>shard_key</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_compress_mode'>compress_mode</span> <span class='op'>=</span> <span class='symbol'>:stream</span><span class='comma'>,</span> <span class='id identifier rubyid_intents'>intents</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_bot'>bot</span><span class='comma'>,</span> <span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_shard_key'>shard_key</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_compress_mode'>compress_mode</span> <span class='op'>=</span> <span class='symbol'>:stream</span><span class='comma'>,</span> <span class='id identifier rubyid_intents'>intents</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Discordrb.html#ALL_INTENTS-constant" title="Discordrb::ALL_INTENTS (constant)">ALL_INTENTS</a></span></span><span class='rparen'>)</span>
   <span class='ivar'>@token</span> <span class='op'>=</span> <span class='id identifier rubyid_token'>token</span>
   <span class='ivar'>@bot</span> <span class='op'>=</span> <span class='id identifier rubyid_bot'>bot</span>
 
@@ -978,7 +978,7 @@ before it), or if none have been received yet, with 0.</p>
                   <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>$device</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>discordrb</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
                   <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>$referrer</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
                   <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>$referring_domain</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
-                <span class='rbrace'>}</span><span class='comma'>,</span> <span class='id identifier rubyid_compress'>compress</span><span class='comma'>,</span> <span class='int'>100</span><span class='comma'>,</span> <span class='ivar'>@shard_key</span><span class='rparen'>)</span>
+                <span class='rbrace'>}</span><span class='comma'>,</span> <span class='id identifier rubyid_compress'>compress</span><span class='comma'>,</span> <span class='int'>100</span><span class='comma'>,</span> <span class='ivar'>@shard_key</span><span class='comma'>,</span> <span class='ivar'>@intents</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1573,7 +1573,7 @@ packets until the given sequence have been processed (in case of a resume).</p>
       <div class="method_details ">
   <h3 class="signature " id="send_identify-instance_method">
   
-    #<strong>send_identify</strong>(token, properties, compress, large_threshold, shard_key = nil)  &#x21d2; <tt>Object</tt> 
+    #<strong>send_identify</strong>(token, properties, compress, large_threshold, shard_key = nil, intents = ALL_INTENTS)  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -1708,15 +1708,15 @@ its member list chunked.</p>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 306</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_send_identify'>send_identify</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_properties'>properties</span><span class='comma'>,</span> <span class='id identifier rubyid_compress'>compress</span><span class='comma'>,</span> <span class='id identifier rubyid_large_threshold'>large_threshold</span><span class='comma'>,</span> <span class='id identifier rubyid_shard_key'>shard_key</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_send_identify'>send_identify</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_properties'>properties</span><span class='comma'>,</span> <span class='id identifier rubyid_compress'>compress</span><span class='comma'>,</span> <span class='id identifier rubyid_large_threshold'>large_threshold</span><span class='comma'>,</span> <span class='id identifier rubyid_shard_key'>shard_key</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_intents'>intents</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Discordrb.html#ALL_INTENTS-constant" title="Discordrb::ALL_INTENTS (constant)">ALL_INTENTS</a></span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='lbrace'>{</span>
     <span class='comment'># Don&#39;t send a v anymore as it&#39;s entirely determined by the URL now
 </span>    <span class='label'>token:</span> <span class='id identifier rubyid_token'>token</span><span class='comma'>,</span>
     <span class='label'>properties:</span> <span class='id identifier rubyid_properties'>properties</span><span class='comma'>,</span>
     <span class='label'>compress:</span> <span class='id identifier rubyid_compress'>compress</span><span class='comma'>,</span>
-    <span class='label'>large_threshold:</span> <span class='id identifier rubyid_large_threshold'>large_threshold</span>
+    <span class='label'>large_threshold:</span> <span class='id identifier rubyid_large_threshold'>large_threshold</span><span class='comma'>,</span>
+    <span class='label'>intents:</span> <span class='id identifier rubyid_intents'>intents</span>
   <span class='rbrace'>}</span>
-  <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:intents</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='ivar'>@intents</span> <span class='kw'>unless</span> <span class='ivar'>@intents</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
   <span class='comment'># Don&#39;t include the shard key at all if it is nil as Discord checks for its mere existence
 </span>  <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:shard</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_shard_key'>shard_key</span> <span class='kw'>if</span> <span class='id identifier rubyid_shard_key'>shard_key</span>
@@ -2439,7 +2439,7 @@ Discord is immediately aware of the closed connection and makes the bot appear o
 </div>
 
       <div id="footer">
-  Generated on Mon Feb  1 21:22:31 2021 by
+  Generated on Tue Feb  2 19:27:37 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.8).
 </div>
