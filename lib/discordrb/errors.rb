@@ -20,6 +20,9 @@ module Discordrb
     # Raised when the bot gets a HTTP 502 error, which is usually caused by Cloudflare.
     class CloudflareError < RuntimeError; end
 
+    # Raised when using a webhook method without an associated token.
+    class UnauthorizedWebhook < RuntimeError; end
+
     # Generic class for errors denoted by API error codes
     class CodeError < RuntimeError
       class << self

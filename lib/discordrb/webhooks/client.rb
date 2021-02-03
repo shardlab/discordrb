@@ -53,7 +53,66 @@ module Discordrb::Webhooks
       end
     end
 
+    # Modify this webhook's properties.
+    # @param name [String, nil] The default name.
+    # @param avatar [String, #read, nil] The new avatar, in base64-encoded JPG format.
+    # @param channel_id [String, Integer, nil] The channel to move the webhook to.
+    # @return [RestClient::Response] the response returned by Discord.
+    def modify(name: nil, avatar: nil, channel_id: nil)
+      RestClient.patch(@url, { name: name, avatar: avatarise(avatar), channel_id: channel_id }.compact.to_json, content_type: :json)
+    end
+
+    # Delete this webhook.
+    # @param reason [String, nil] The reason this webhook was deleted.
+    # @return [RestClient::Response] the response returned by Discord.
+    # @note This is permanent and cannot be undone.
+    def delete(reason: nil)
+      RestClient.delete(@url, 'X-Audit-Log-Reason': reason)
+    end
+
+    # Edit a message from this webhook.
+    # @param message_id [String, Integer] The ID of the message to edit.
+    # @param builder [Builder, nil] The builder to start out with, or nil if one should be created anew.
+    # @param content [String] The message content.
+    # @param embeds [Array<Embed, Hash>]
+    # @param allowed_mentions [Hash]
+    # @return [RestClient::Response] the response returned by Discord.
+    # @example Edit message content
+    #   client.edit_message(message_id, content: 'goodbye world!')
+    # @example Edit a message via builder
+    #   client.edit_message(message_id) do |builder|
+    #     builder.add_embed do |e|
+    #       e.description = 'Hello World!'
+    #     end
+    #   end
+    # @note Not all builder options are available when editing.
+    def edit_message(message_id, builder: nil, content: nil, embeds: nil, allowed_mentions: nil)
+      builder ||= Builder.new
+
+      yield builder if block_given?
+
+      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      RestClient.patch("#{@url}/messages/#{message_id}", data.compact.to_json, content_type: :json)
+    end
+
+    # Delete a message created by this webhook.
+    # @param message_id [String, Integer] The ID of the message to delete.
+    # @return [RestClient::Response] the response returned by Discord.
+    def delete_message(message_id)
+      RestClient.delete("#{@url}/messages/#{message_id}")
+    end
+
     private
+
+    # Convert an avatar to API ready data.
+    # @param avatar [String, #read] Avatar data.
+    def avatarise(avatar)
+      if avatar.respond_to? :read
+        "data:image/jpg;base64,#{Base64.strict_encode64(avatar.read)}"
+      else
+        avatar
+      end
+    end
 
     def post_json(builder, wait)
       RestClient.post(@url + (wait ? '?wait=true' : ''), builder.to_json_hash.to_json, content_type: :json)
@@ -64,7 +123,7 @@ module Discordrb::Webhooks
     end
 
     def generate_url(id, token)
-      "https://discord.com/api/v6/webhooks/#{id}/#{token}"
+      "https://discord.com/api/v8/webhooks/#{id}/#{token}"
     end
   end
 end
