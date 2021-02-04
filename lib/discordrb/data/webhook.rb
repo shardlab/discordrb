@@ -150,15 +150,15 @@ module Discordrb
     end
 
     # Delete a message created by this webhook.
-    # @param message_id [String, Integer] The ID of the message to delete.
-    def delete_message(message_id)
+    # @param message_id [Message, String, Integer] The ID of the message to delete.
+    def delete_message(message)
       raise Discordrb::Errors::UnauthorizedWebhook unless @token
 
-      API::Webhook.token_delete_message(@token, @id, message_id)
+      API::Webhook.token_delete_message(@token, @id, message.resolve_id)
     end
 
     # Edit a message created by this webhook.
-    # @param message_id [String, Integer] The ID of the message to edit.
+    # @param message [Message, String, Integer] The ID of the message to edit.
     # @param content [String] The content of the message. May be 2000 characters long at most.
     # @param embeds [Array<Webhooks::Embed, Hash>] Embeds to be attached to the message.
     # @param allowed_mentions [AllowedMentions, Hash] Mentions that are allowed to ping in the `content`.
@@ -167,21 +167,17 @@ module Discordrb
     # @yieldparam builder [Webhooks::Builder] The builder given as a parameter which is used as the initial step to start from.
     # @return [Message] The updated message.
     # @note When editing `allowed_mentions`, it will update visually in the client but not alert the user with a notification.
-    def edit_message(message_id, content: nil, embeds: nil, allowed_mentions: nil, builder: nil)
+    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, builder: nil)
       raise Discordrb::Errors::UnauthorizedWebhook unless @token
 
       params = { content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact
 
-      data = if block_given?
-               builder ||= Discordrb::Webhooks::Builder.new
-               yield(builder)
+      builder ||= Webhooks::Builder.new
+      yield(builder) if block_given?
 
-               builder.to_json_hash.merge(params)
-             else
-               params
-             end
+      data = builder.to_json_hash.merge(params.compact)
 
-      resp = API::Webhook.token_edit_message(@token, @id, message_id, data[:content], data[:embeds], data[:allowed_mentions])
+      resp = API::Webhook.token_edit_message(@token, @id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions])
       Message.new(JSON.parse(resp), @bot)
     end
 
