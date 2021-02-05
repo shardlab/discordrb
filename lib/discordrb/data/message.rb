@@ -226,13 +226,13 @@ module Discordrb
     # @see Bot#add_await
     # @deprecated Will be changed to blocking behavior in v4.0. Use {#await_reaction!} instead.
     def await_reaction(key, attributes = {}, &block)
-      @bot.add_await(key, Discordrb::Events::ReactionAddEvent, { message_id: @id }.merge(attributes), &block)
+      @bot.add_await(key, Discordrb::Events::ReactionAddEvent, { message: @id }.merge(attributes), &block)
     end
 
     # Add a blocking {Await} for a reaction to be added on this message.
     # @see Bot#add_await!
     def await_reaction!(attributes = {}, &block)
-      @bot.add_await!(Discordrb::Events::ReactionAddEvent, { message_id: @id }.merge(attributes), &block)
+      @bot.add_await!(Discordrb::Events::ReactionAddEvent, { message: @id }.merge(attributes), &block)
     end
 
     # @return [true, false] whether this message was sent by the current {Bot}.
