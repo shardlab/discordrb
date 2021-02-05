@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [3.4.2] - 2020-2-5
+[3.4.1]: https://github.com/shardlab/discordrb/releases/tag/v3.4.2
+
+[View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.4.1..v3.4.2)
+
+### Summary
+I failed to update rest-client dependencies properly, and discovered that you can't republish gem versions the hard way.
+
+### Changed
+- `rest-client` has a requirement of `>= 2.0.0` on both `discordrb` and `discordrb-webhooks`
+
 ## [3.4.1] - 2020-2-4
 [3.4.1]: https://github.com/shardlab/discordrb/releases/tag/v3.4.1
 
