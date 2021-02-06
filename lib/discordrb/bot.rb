@@ -1203,7 +1203,7 @@ module Discordrb
 
         new_activities = (data['activities'] || []).map { |act_data| Activity.new(act_data, self) }
         presence_user = @users[data['user']['id'].to_i]
-        old_activities = presence_user.activities.to_a
+        old_activities = (presence_user&.activities || [])
         update_presence(data)
 
         # Starting a new game
