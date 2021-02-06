@@ -33,7 +33,7 @@ module Discordrb
       def initialize(message, errors = nil)
         @message = message
 
-        @errors = flatten_errors(errors) if errors
+        @errors = errors ? flatten_errors(errors) : []
       end
 
       # @return [Integer] The error code represented by this error.
