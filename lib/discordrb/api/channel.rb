@@ -201,7 +201,7 @@ module Discordrb::API::Channel
   # https://discord.com/developers/docs/resources/channel#get-reactions
   def get_reactions(token, channel_id, message_id, emoji, before_id, after_id, limit = 100)
     emoji = URI.encode_www_form_component(emoji) unless emoji.ascii_only?
-    query_string = "limit=#{limit}#{"&before=#{before_id}" if before_id}#{"&after=#{after_id}" if after_id}"
+    query_string = "limit=#{limit || 100}#{"&before=#{before_id}" if before_id}#{"&after=#{after_id}" if after_id}"
     Discordrb::API.request(
       :channels_cid_messages_mid_reactions_emoji,
       channel_id,
