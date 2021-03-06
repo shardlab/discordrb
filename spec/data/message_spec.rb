@@ -117,7 +117,14 @@ describe Discordrb::Message do
       expect(Discordrb::API::Channel).to receive(:get_reactions)
         .with(token, channel_id, any_args, 27)
         .and_return('[]')
-      message.reacted_with('👍', 27)
+      message.reacted_with('👍', limit: 27)
+    end
+
+    it 'defaults to a limit of 100' do
+      expect(Discordrb::API::Channel).to receive(:get_reactions)
+        .with(token, channel_id, any_args, 100)
+        .and_return('[]')
+      message.reacted_with('👍')
     end
 
     it 'converts Emoji to strings' do
