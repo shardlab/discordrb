@@ -109,6 +109,28 @@ describe Discordrb::Message do
     end
   end
 
+  describe '#reacted_with' do
+    let(:message) { described_class.new(message_data, bot) }
+    let(:emoji) { double('emoji') }
+
+    it 'calls the API method' do
+      expect(Discordrb::API::Channel).to receive(:get_reactions)
+        .with(token, channel_id, any_args, 27)
+        .and_return('[]')
+      message.reacted_with('👍', 27)
+    end
+
+    it 'converts Emoji to strings' do
+      allow(emoji).to receive(:to_reaction).and_return('123')
+
+      expect(Discordrb::API::Channel).to receive(:get_reactions)
+        .with(token, channel_id, anything, '123', any_args)
+        .and_return('[]')
+
+      message.reacted_with(emoji)
+    end
+  end
+
   describe '#reply!' do
     let(:message) { described_class.new(message_data, bot) }
     let(:content) { instance_double('String', 'content') }
