@@ -140,6 +140,12 @@ describe Discordrb::Message do
         .with(any_args, '\u{1F44D}', nil, nil, 100)
     end
 
+    it 'fetches all users when limit is nil' do
+      expect(Discordrb::Paginator).to receive(:new).with(nil, :down)
+
+      message.reacted_with('\u{1F44D}', limit: nil)
+    end
+
     it 'converts Emoji to strings' do
       allow(emoji).to receive(:to_reaction).and_return('123')
 
