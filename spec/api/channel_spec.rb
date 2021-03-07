@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "discordrb"
+require 'discordrb'
 
 describe Discordrb::API::Channel do
   let(:token) { double('token') }
@@ -23,7 +23,7 @@ describe Discordrb::API::Channel do
 
       allow(Discordrb::API).to receive(:request)
         .with(anything, channel_id, :get, kind_of(String), any_args)
-    end    
+    end
 
     it 'sends requests' do
       Discordrb::API::Channel.get_reactions(token, channel_id, message_id, 'test', before_id, after_id, 27)
@@ -50,7 +50,7 @@ describe Discordrb::API::Channel do
     end
 
     it 'uses the maximum limit of 100 if nil is provided' do
-      Discordrb::API::Channel.get_reactions(token, channel_id, message_id, "test", before_id, after_id, nil)
+      Discordrb::API::Channel.get_reactions(token, channel_id, message_id, 'test', before_id, after_id, nil)
       expect(Discordrb::API).to have_received(:request)
         .with(
           anything,
