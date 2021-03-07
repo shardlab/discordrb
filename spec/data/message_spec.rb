@@ -114,7 +114,7 @@ describe Discordrb::Message do
     let(:emoji) { double('emoji') }
 
     fixture :user_data, %i[user]
-    
+
     before do
       # Return the appropriate number of users based on after_id
       allow(Discordrb::API::Channel).to receive(:get_reactions)
