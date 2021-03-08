@@ -3,24 +3,15 @@
 require 'discordrb'
 
 describe Discordrb::API::Channel do
-  let(:token) { double('token') }
-  let(:channel_id) { instance_double(String, 'channel_id') }
-
-  before do
-    allow(token).to receive(:to_s).and_return('bot_token')
-    allow(channel_id).to receive(:to_s).and_return('channel_id')
-  end
+  let(:token) { double('token', to_s: 'bot_token') }
+  let(:channel_id) { instance_double(String, 'channel_id', to_s: 'channel_id') }
 
   describe '.get_reactions' do
-    let(:message_id) { double('message_id') }
-    let(:before_id) { double('before_id') }
-    let(:after_id) { double('after_id') }
+    let(:message_id) { double('message_id', to_s: 'message_id') }
+    let(:before_id) { double('before_id', to_s: 'before_id') }
+    let(:after_id) { double('after_id', to_s: 'after_id') }
 
     before do
-      allow(message_id).to receive(:to_s).and_return('message_id')
-      allow(before_id).to receive(:to_s).and_return('before_id')
-      allow(after_id).to receive(:to_s).and_return('after_id')
-
       allow(Discordrb::API).to receive(:request)
         .with(anything, channel_id, :get, kind_of(String), any_args)
     end
