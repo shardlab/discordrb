@@ -17,8 +17,7 @@ describe Discordrb::API::Channel do
     end
 
     it 'sends requests' do
-      Discordrb::API::Channel.get_reactions(token, channel_id, message_id, 'test', before_id, after_id, 27)
-      expect(Discordrb::API).to have_received(:request)
+      expect(Discordrb::API).to receive(:request)
         .with(
           anything,
           channel_id,
@@ -26,11 +25,11 @@ describe Discordrb::API::Channel do
           "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/reactions/test?limit=27&before=#{before_id}&after=#{after_id}",
           any_args
         )
+      Discordrb::API::Channel.get_reactions(token, channel_id, message_id, 'test', before_id, after_id, 27)
     end
 
     it 'percent-encodes emoji' do
-      Discordrb::API::Channel.get_reactions(token, channel_id, message_id, "\u{1F44D}", before_id, after_id, 27)
-      expect(Discordrb::API).to have_received(:request)
+      expect(Discordrb::API).to receive(:request)
         .with(
           anything,
           channel_id,
@@ -38,11 +37,11 @@ describe Discordrb::API::Channel do
           "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/reactions/%F0%9F%91%8D?limit=27&before=#{before_id}&after=#{after_id}",
           any_args
         )
+      Discordrb::API::Channel.get_reactions(token, channel_id, message_id, "\u{1F44D}", before_id, after_id, 27)
     end
 
     it 'uses the maximum limit of 100 if nil is provided' do
-      Discordrb::API::Channel.get_reactions(token, channel_id, message_id, 'test', before_id, after_id, nil)
-      expect(Discordrb::API).to have_received(:request)
+      expect(Discordrb::API).to receive(:request)
         .with(
           anything,
           channel_id,
@@ -50,6 +49,7 @@ describe Discordrb::API::Channel do
           "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/reactions/test?limit=100&before=#{before_id}&after=#{after_id}",
           any_args
         )
+      Discordrb::API::Channel.get_reactions(token, channel_id, message_id, 'test', before_id, after_id, nil)
     end
   end
 end
