@@ -756,6 +756,24 @@ module Discordrb
       API::Channel.start_typing(@bot.token, @id)
     end
 
+    # Suppresses a user in a Stage channel
+    # @param user_id [Integer] The user to suppress
+    def suppress_user(user_id)
+      raise 'Attempted to suppress a user in a non-server channel!' unless server
+      raise 'Attempted to suppress a user in a non-stage channel!' unless stage?
+
+      API::Server.update_voice_state(@bot.token, @server.id, @id, user_id, true)
+    end
+
+    # Unsuppresses a user in a Stage channel
+    # @param user_id [Integer] The user to unsuppress
+    def unsuppress_user(user_id)
+      raise 'Attempted to unsuppress a user in a non-server channel!' unless server
+      raise 'Attempted to unsuppress a user in a non-stage channel!' unless stage?
+
+      API::Server.update_voice_state(@bot.token, @server.id, @id, user_id, false)
+    end
+
     # Creates a Group channel
     # @param user_ids [Array<Integer>] Array of user IDs to add to the new group channel (Excluding
     #   the recipient of the PM channel).
