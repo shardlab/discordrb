@@ -144,7 +144,6 @@ module Discordrb::Voice
     def request_to_speak
       raise 'Cannot request to speak in a non stage channel' unless @channel.stage?
 
-
       Discordrb::API::User.modify_own_voice_state(
         @bot.token,
         @channel.server.id,
