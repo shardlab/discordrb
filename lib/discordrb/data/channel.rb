@@ -19,7 +19,8 @@ module Discordrb
       store: 6,
       news_thread: 10,
       public_thread: 11,
-      private_thread: 12
+      private_thread: 12,
+      stage: 13
     }.freeze
 
     # @return [String] this channel's name.
@@ -224,6 +225,11 @@ module Discordrb
     # @return [true, false] whether or not this channel is a thread.
     def thread?
       news_thread? || public_thread? || private_thread?
+    end
+
+    # @return [true, false] whether or not this channel is a stage channel.
+    def stage?
+      @type == 13
     end
 
     # @return [Channel, nil] the category channel, if this channel is in a category
