@@ -74,7 +74,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
     command_event_double.tap do |event|
       append_author_to_double(event)
       append_bot_to_double(event)
-      append_channel_to_double(event, channel_id, kwargs)
+      append_channel_to_double(event, channel_id, **kwargs)
     end
   end
 
