@@ -202,6 +202,25 @@ module Discordrb
       API::Server.update_member(@bot.token, @server.id, @user.id, mute: false)
     end
 
+    # Bans this member from the server.
+    # @param message_days [Integer] How many days worth of messages sent by the member should be deleted.
+    # @param reason [String] The reason this member is being banned.
+    def ban(message_days = 0, reason: nil)
+      @server.ban(@user, message_days, reason: reason)
+    end
+
+    # Unbans this member from the server.
+    # @param reason [String] The reason this member is being unbanned.
+    def unban(reason = nil)
+      @server.unban(@user, reason)
+    end
+
+    # Kicks this member from the server.
+    # @param reason [String] The reason this member is being kicked.
+    def kick(reason = nil)
+      @server.kick(@user, reason)
+    end
+
     # @see Member#set_nick
     def nick=(nick)
       set_nick(nick)
