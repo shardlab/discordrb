@@ -68,7 +68,7 @@ module Discordrb
       @server = server || bot.server(data['guild_id'].to_i)
 
       # Initialize the roles by getting the roles from the server one-by-one
-      update_roles(data['roles'])
+      update_roles(data['roles']) unless @server.nil?
 
       @nick = data['nick']
       @joined_at = data['joined_at'] ? Time.parse(data['joined_at']) : nil
