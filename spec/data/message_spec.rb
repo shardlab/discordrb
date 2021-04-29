@@ -109,6 +109,53 @@ describe Discordrb::Message do
     end
   end
 
+  describe '#reacted_with' do
+    let(:message) { described_class.new(message_data, bot) }
+    let(:emoji) { double('emoji') }
+
+    fixture :user_data, %i[user]
+
+    before do
+      # Return the appropriate number of users based on after_id
+      allow(Discordrb::API::Channel).to receive(:get_reactions)
+        .with(any_args, nil, anything) # ..., after_id, limit
+        .and_return([user_data].to_json)
+
+      allow(Discordrb::API::Channel).to receive(:get_reactions)
+        .with(any_args, user_data['id'].to_i, anything)
+        .and_return([].to_json)
+    end
+
+    it 'calls the API method' do
+      expect(Discordrb::API::Channel).to receive(:get_reactions)
+        .with(any_args, '\u{1F44D}', nil, nil, 27)
+
+      message.reacted_with('\u{1F44D}', limit: 27)
+    end
+
+    it 'defaults to a limit of 100' do
+      expect(Discordrb::API::Channel).to receive(:get_reactions)
+        .with(any_args, '\u{1F44D}', nil, nil, 100)
+
+      message.reacted_with('\u{1F44D}')
+    end
+
+    it 'fetches all users when limit is nil' do
+      expect(Discordrb::Paginator).to receive(:new).with(nil, :down)
+
+      message.reacted_with('\u{1F44D}', limit: nil)
+    end
+
+    it 'converts Emoji to strings' do
+      allow(emoji).to receive(:to_reaction).and_return('123')
+
+      expect(Discordrb::API::Channel).to receive(:get_reactions)
+        .with(any_args, '123', nil, nil, anything)
+
+      message.reacted_with(emoji)
+    end
+  end
+
   describe '#reply!' do
     let(:message) { described_class.new(message_data, bot) }
     let(:content) { instance_double('String', 'content') }
