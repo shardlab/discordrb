@@ -996,7 +996,7 @@ rubocop:disable Naming/MethodName</p>
       <pre class="code"><span class="info file"># File 'lib/discordrb/errors.rb', line 101</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_error_class_for'>error_class_for</span><span class='lparen'>(</span><span class='id identifier rubyid_code'>code</span><span class='rparen'>)</span>
-  <span class='ivar'>@code_classes</span><span class='lbracket'>[</span><span class='id identifier rubyid_code'>code</span><span class='rbracket'>]</span>
+  <span class='ivar'>@code_classes</span><span class='lbracket'>[</span><span class='id identifier rubyid_code'>code</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="#UnknownError-constant" title="Discordrb::Errors::UnknownError (constant)">UnknownError</a></span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1008,7 +1008,7 @@ rubocop:disable Naming/MethodName</p>
 </div>
 
       <div id="footer">
-  Generated on Sun May  2 04:55:35 2021 by
+  Generated on Sun May  2 21:22:30 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.9).
 </div>
