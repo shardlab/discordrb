@@ -99,7 +99,7 @@
     
   
     
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Errors/CloudflareError.html" title="Discordrb::Errors::CloudflareError (class)">CloudflareError</a></span>, <span class='object_link'><a href="Errors/CodeError.html" title="Discordrb::Errors::CodeError (class)">CodeError</a></span>, <span class='object_link'><a href="Errors/InvalidAuthenticationError.html" title="Discordrb::Errors::InvalidAuthenticationError (class)">InvalidAuthenticationError</a></span>, <span class='object_link'><a href="Errors/MessageTooLong.html" title="Discordrb::Errors::MessageTooLong (class)">MessageTooLong</a></span>, <span class='object_link'><a href="Errors/NoPermission.html" title="Discordrb::Errors::NoPermission (class)">NoPermission</a></span>
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Errors/CloudflareError.html" title="Discordrb::Errors::CloudflareError (class)">CloudflareError</a></span>, <span class='object_link'><a href="Errors/CodeError.html" title="Discordrb::Errors::CodeError (class)">CodeError</a></span>, <span class='object_link'><a href="Errors/InvalidAuthenticationError.html" title="Discordrb::Errors::InvalidAuthenticationError (class)">InvalidAuthenticationError</a></span>, <span class='object_link'><a href="Errors/MessageTooLong.html" title="Discordrb::Errors::MessageTooLong (class)">MessageTooLong</a></span>, <span class='object_link'><a href="Errors/NoPermission.html" title="Discordrb::Errors::NoPermission (class)">NoPermission</a></span>, <span class='object_link'><a href="Errors/UnauthorizedWebhook.html" title="Discordrb::Errors::UnauthorizedWebhook (class)">UnauthorizedWebhook</a></span>
     
   
 </p>
@@ -900,18 +900,18 @@ rubocop:disable Naming/MethodName</p>
       <pre class="lines">
 
 
-85
-86
-87
 88
 89
 90
 91
 92
-93</pre>
+93
+94
+95
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/errors.rb', line 85</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/errors.rb', line 88</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='const'>Code</span><span class='lparen'>(</span><span class='id identifier rubyid_code'>code</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_classy'>classy</span> <span class='op'>=</span> <span class='const'>Class</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Errors/CodeError.html" title="Discordrb::Errors::CodeError (class)">CodeError</a></span></span><span class='rparen'>)</span>
@@ -988,12 +988,12 @@ rubocop:disable Naming/MethodName</p>
       <pre class="lines">
 
 
-98
-99
-100</pre>
+101
+102
+103</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/errors.rb', line 98</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/errors.rb', line 101</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_error_class_for'>error_class_for</span><span class='lparen'>(</span><span class='id identifier rubyid_code'>code</span><span class='rparen'>)</span>
   <span class='ivar'>@code_classes</span><span class='lbracket'>[</span><span class='id identifier rubyid_code'>code</span><span class='rbracket'>]</span>
@@ -1008,7 +1008,7 @@ rubocop:disable Naming/MethodName</p>
 </div>
 
       <div id="footer">
-  Generated on Thu Apr 29 00:03:37 2021 by
+  Generated on Sun May  2 04:55:35 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.9).
 </div>
