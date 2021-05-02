@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'securerandom'
 require 'discordrb/webhooks'
 
 describe Discordrb::Webhooks do
@@ -82,8 +83,8 @@ describe Discordrb::Webhooks do
   end
 
   describe Discordrb::Webhooks::Client do
-    let(:id) { Random.bytes(8) }
-    let(:token) { Random.bytes(24) }
+    let(:id) { SecureRandom.bytes(8) }
+    let(:token) { SecureRandom.bytes(24) }
     let(:provided_url) { instance_double(String) }
 
     subject { described_class.new(url: provided_url) }
@@ -172,7 +173,7 @@ describe Discordrb::Webhooks do
     end
 
     describe '#edit_message' do
-      let(:message_id) { Random.bytes(8) }
+      let(:message_id) { SecureRandom.bytes(8) }
       let(:json_hash) { {} }
       let(:default_builder) { instance_double(Discordrb::Webhooks::Builder, to_json_hash: json_hash) }
 
@@ -199,7 +200,7 @@ describe Discordrb::Webhooks do
 
     describe '#delete_message' do
       let(:base_url) { 'url' }
-      let(:message_id) { Random.bytes(8) }
+      let(:message_id) { SecureRandom.bytes(8) }
 
       subject { described_class.new(url: base_url) }
 
@@ -258,7 +259,7 @@ describe Discordrb::Webhooks do
     end
 
     describe '#avatarise' do
-      let(:data) { Random.bytes(24) }
+      let(:data) { SecureRandom.bytes(24) }
 
       it 'makes no changes if the argument does not respond to read' do
         expect(subject.__send__(:avatarise, data)).to be data
