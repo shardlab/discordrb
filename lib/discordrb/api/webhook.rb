@@ -29,8 +29,8 @@ module Discordrb::API::Webhook
 
   # Execute a webhook via token.
   # https://discord.com/developers/docs/resources/webhook#execute-webhook
-  def token_execute_webhook(webhook_token, webhook_id, wait = false, content = nil, username = nil, avatar_url = nil, tts = nil, file = nil, embeds = nil, allowed_mentions = nil)
-    body = { content: content, username: username, avatar_url: avatar_url, tts: tts, embeds: embeds,  allowed_mentions: allowed_mentions }
+  def token_execute_webhook(webhook_token, webhook_id, wait = false, content = nil, username = nil, avatar_url = nil, tts = nil, file = nil, embeds = nil, allowed_mentions = nil, flags = nil)
+    body = { content: content, username: username, avatar_url: avatar_url, tts: tts, embeds: embeds,  allowed_mentions: allowed_mentions, flags: flags }
     body = if file
              { file: file, payload_json: body.to_json }
            else
@@ -100,6 +100,17 @@ module Discordrb::API::Webhook
       :delete,
       "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}",
       'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get a message that was created by the webhook corresponding to the provided token.
+  # https://discord.com/developers/docs/resources/webhook#get-webhook-message
+  def token_get_message(webhook_token, webhook_id, message_id)
+    Discordrb::API.request(
+      :webhooks_wid_messages_mid,
+      webhook_id,
+      :get,
+      "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}"
     )
   end
 

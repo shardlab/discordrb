@@ -99,7 +99,7 @@ module Discordrb
     # @param code [Integer] The code to check
     # @return [Class] the error class for the given code
     def self.error_class_for(code)
-      @code_classes[code]
+      @code_classes[code] || UnknownError
     end
 
     # Used when Discord doesn't provide a more specific code
