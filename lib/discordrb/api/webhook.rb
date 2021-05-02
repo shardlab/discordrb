@@ -110,7 +110,7 @@ module Discordrb::API::Webhook
       :webhooks_wid_messages_mid,
       webhook_id,
       :get,
-      "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}",
+      "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}"
     )
   end
 
@@ -134,7 +134,7 @@ module Discordrb::API::Webhook
       :webhooks_wid_messages,
       webhook_id,
       :delete,
-      "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}",
+      "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}"
     )
   end
 end
