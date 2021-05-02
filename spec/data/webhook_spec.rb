@@ -245,4 +245,134 @@ describe Discordrb::Webhook do
       end
     end
   end
+
+  describe '#execute' do
+    let(:resp) { instance_double(RestClient::Response) }
+    let(:data) { instance_double(Hash) }
+
+    before do
+      allow(Discordrb::API::Webhook).to receive(:token_execute_webhook)
+    end
+
+    context 'when there is no token' do
+      let(:tokenless_webhook) { webhook.clone }
+
+      before do
+        tokenless_webhook.instance_variable_set(:@token, nil)
+      end
+
+      it 'raises an UnauthorizedWebhook error' do
+        expect { tokenless_webhook.execute }.to raise_error(Discordrb::Errors::UnauthorizedWebhook)
+      end
+    end
+
+    context 'when no builder is provided' do
+      it 'creates a new builder' do
+        expect { |b| webhook.execute(wait: false, &b) }.to yield_with_args(instance_of(Discordrb::Webhooks::Builder))
+      end
+    end
+
+    it 'merges kwargs with builder data' do
+      content = instance_double(String)
+      username = instance_double(String)
+
+      builder = Discordrb::Webhooks::Builder.new(content: content)
+
+      webhook.execute(username: username, builder: builder, wait: false)
+
+      expect(Discordrb::API::Webhook).to have_received(:token_execute_webhook).with(anything, anything, false, content, username, any_args)
+    end
+
+    context 'when wait is true' do
+      before do
+        allow(Discordrb::API::Webhook).to receive(:token_execute_webhook).and_return(resp)
+        allow(Discordrb::Message).to receive(:new)
+        allow(JSON).to receive(:parse).and_call_original
+        allow(JSON).to receive(:parse).with(resp).and_return(data)
+      end
+
+      it 'creates a Message object with the response' do
+        webhook.execute(wait: true)
+
+        expect(Discordrb::Message).to have_received(:new).with(data, bot)
+      end
+    end
+  end
+
+  describe '#edit_message' do
+    let(:message) { instance_double(String, resolve_id: message_id) }
+    let(:message_id) { instance_double(Integer) }
+    let(:resp) { instance_double(RestClient::Response) }
+    let(:data) { instance_double(Hash) }
+
+    before do
+      allow(Discordrb::API::Webhook).to receive(:token_edit_message).with(any_args).and_return(resp)
+      allow(JSON).to receive(:parse).with(anything).and_call_original
+      allow(JSON).to receive(:parse).with(resp).and_return(data)
+      allow(Discordrb::Message).to receive(:new).with(any_args).and_return(nil)
+    end
+
+    context 'when there is no token' do
+      let(:tokenless_webhook) { webhook.clone }
+
+      before do
+        tokenless_webhook.instance_variable_set(:@token, nil)
+      end
+
+      it 'raises an UnauthorizedWebhook error' do
+        expect { tokenless_webhook.edit_message(message) }.to raise_error(Discordrb::Errors::UnauthorizedWebhook)
+      end
+    end
+
+    context 'when no builder is provided' do
+      it 'creates a new builder' do
+        expect { |b| webhook.edit_message(message, &b) }.to yield_with_args(instance_of(Discordrb::Webhooks::Builder))
+      end
+    end
+
+    it 'merges kwargs with builder data' do
+      content = instance_double(String)
+      embeds = instance_double(Array)
+
+      builder = Discordrb::Webhooks::Builder.new(content: content)
+
+      webhook.edit_message(message, embeds: embeds, builder: builder)
+
+      expect(Discordrb::API::Webhook).to have_received(:token_edit_message).with(webhook.token, webhook.id, message_id, content, embeds, nil)
+    end
+
+    it 'returns an updated Message object' do
+      msg = instance_double(Discordrb::Message)
+      allow(Discordrb::Message).to receive(:new).with(data, bot).and_return(msg)
+
+      expect(webhook.edit_message(message)).to be msg
+    end
+  end
+
+  describe '#delete_message' do
+    let(:message) { instance_double(Discordrb::Message, resolve_id: message_id) }
+    let(:message_id) { instance_double(Integer) }
+
+    before do
+      allow(Discordrb::API::Webhook).to receive(:token_delete_message).with(any_args)
+    end
+
+    context 'when there is no token' do
+      let(:tokenless_webhook) { webhook.clone }
+
+      before do
+        tokenless_webhook.instance_variable_set(:@token, nil)
+      end
+
+      it 'raises an UnauthorizedWebhook error' do
+        expect { tokenless_webhook.delete_message(message_id) }.to raise_error(Discordrb::Errors::UnauthorizedWebhook)
+      end
+    end
+
+    it 'calls token_delete_message' do
+      webhook.delete_message(message)
+
+      expect(Discordrb::API::Webhook).to have_received(:token_delete_message).with(webhook.token, webhook.id, message_id)
+    end
+  end
 end
