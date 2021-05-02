@@ -150,7 +150,7 @@ module Discordrb
     end
 
     # Delete a message created by this webhook.
-    # @param message_id [Message, String, Integer] The ID of the message to delete.
+    # @param message [Message, String, Integer] The ID of the message to delete.
     def delete_message(message)
       raise Discordrb::Errors::UnauthorizedWebhook unless @token
 
