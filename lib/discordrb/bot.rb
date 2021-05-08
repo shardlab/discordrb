@@ -19,6 +19,7 @@ require 'discordrb/events/raw'
 require 'discordrb/events/reactions'
 require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
+require 'discordrb/events/interactions'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -1362,6 +1363,9 @@ module Discordrb
           event = ServerEmojiUpdateEvent.new(server, old_emoji_data[e], new_emoji_data[e], self)
           raise_event(event)
         end
+      when :INTERACTION_CREATE
+        event = InteractionCreateEvent.new(data, self)
+        raise_event(event)
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)
         raise_event(event)

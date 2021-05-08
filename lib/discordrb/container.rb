@@ -13,6 +13,7 @@ require 'discordrb/events/guilds'
 require 'discordrb/events/await'
 require 'discordrb/events/bans'
 require 'discordrb/events/reactions'
+require 'discordrb/events/interactions'
 
 require 'discordrb/await'
 
@@ -520,6 +521,20 @@ module Discordrb
     # @return [InviteDeleteEventHandler] The event handler that was registered.
     def invite_delete(attributes = {}, &block)
       register_event(InviteDeleteEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an interaction event is received.
+    # @param attribute [Hash] The event's attributes.
+    # @option attributes [Integer, Symbol, String] :type The interaction type, can be the integer value or the name
+    #   of the key in {Discordrb::Interaction::TYPES}.
+    # @option attributes [String, Integer, Server, nil] :server The server where this event was created. `nil` for DM channels.
+    # @option attribtues [String, Integer, Channel] :channel The channel where this event was created.
+    # @option attribtues [String, Integer, User] :user The user that triggered this event.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [InteractionCreateEvent] The event that was raised.
+    # @return [InteractionCreateEventHandler] The event handler that was registered.
+    def interaction_create(attributes = {}, &block)
+      register_event(InteractionCreateEvent, attributes, block)
     end
 
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
