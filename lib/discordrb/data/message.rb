@@ -158,7 +158,7 @@ module Discordrb
       @channel.send_message(content)
     end
 
-    # Sends a message to this channel.
+    # Responds to this message as an inline reply.
     # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
     # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
     # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
