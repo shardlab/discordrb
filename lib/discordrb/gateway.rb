@@ -144,7 +144,7 @@ module Discordrb
     attr_accessor :check_heartbeat_acks
 
     # @return [Integer] the intent parameter sent to the gateway server.
-    attr_accessor :intents
+    attr_reader :intents
 
     def initialize(bot, token, shard_key = nil, compress_mode = :stream, intents = ALL_INTENTS)
       @token = token
