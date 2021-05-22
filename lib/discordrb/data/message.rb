@@ -153,6 +153,8 @@ module Discordrb
 
     # Replies to this message with the specified content.
     # @deprecated Please use {#respond}.
+    # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
+    # @return (see #respond)
     # @see Channel#send_message
     def reply(content)
       @channel.send_message(content)
