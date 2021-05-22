@@ -165,7 +165,7 @@ module Discordrb
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param mention_user [true, false] Whether the user that is being replied to should be pinged by the reply.
-    # @return [Message] the message that was sent.
+    # @return (see #respond)
     def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false)
       allowed_mentions = { parse: [] } if allowed_mentions == false
       allowed_mentions = allowed_mentions.to_hash.transform_keys(&:to_sym)
