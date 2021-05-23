@@ -177,8 +177,195 @@ module Discordrb
     end
   end
 
+  # An ApplicationCommand for slash commands.
+  class ApplicationCommand
+    # @return [Integer]
+    attr_reader :application_id
+
+    # @return [Integer, nil]
+    attr_reader :server_id
+
+    # @return [String]
+    attr_reader :name
+
+    # @return [String]
+    attr_reader :description
+    
+    # @return [true, false]
+    attr_reader :default_permission
+
+    # @return [Hash]
+    attr_reader :options
+
+    # @!visibility private
+    def initialize(data, bot, server_id = nil)
+      @bot = bot
+      @id = data['id'].to_i
+      @application_id = data['application_id'].to_i
+      @server_id = server_id.to_i
+
+      @name = data['name']
+      @description = data['description']
+      @default_permission = data['default_permission']
+      @options = data['options']
+    end
+
+    # @param name [String] The name to use for this command.
+    # @param description [String] The description of this command.
+    # @param default_permission [true, false] Whether this command is available with default permissions.
+    # @yieldparam (see Bot#edit_application_command)
+    # @return (see Bot#edit_application_command)
+    def edit(name: nil, description: nil, default_permission: nil, &block)
+      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, &block)
+    end
+
+    # Delete this application command.
+    # @return (see Bot#delete_application_command)
+    def delete
+      @bot.delete_application_command(@id, server_id: @server_id)
+    end
+  end
+
   # Objects specific to Interactions.
   module Interactions
+    # A builder for defining slash commands options.
+    class OptionBuilder
+      # @!visibility private
+      TYPES = {
+        subcommand: 1,
+        subcommand_group: 2,
+        string: 3,
+        integer: 4,
+        boolean: 5,
+        user: 6,
+        channel: 7,
+        role: 8,
+        mentionable: 9
+      }.freeze
+
+      # @return [Array<Hash>]
+      attr_reader :options
+
+      # @!visibility private
+      def initialize
+        @options = []
+      end
+
+      # @param name [String, Symbol] The name of the subcommand.
+      # @param description [String] A description of the subcommand.
+      # @yieldparam [OptionBuilder]
+      # @return (see #option)
+      # @example
+      #   bot.register_application_command(:test, 'Test command') do |cmd|
+      #     cmd.subcommand(:echo) do |sub|
+      #       sub.string('message', 'What to echo back', required: true)
+      #     end
+      #   end
+      def subcommand(name, description)
+        builder = OptionBuilder.new
+        yield builder
+
+        option(TYPES[:subcommand], name, description, options: builder.to_a)
+      end
+
+      # @param name [String, Symbol] The name of the subcommand group.
+      # @param description [String] A description of the subcommand group.
+      # @yieldparam [OptionBuilder]
+      # @return (see #option)
+      # @example
+      #   bot.register_application_command(:test, 'Test command') do |cmd|
+      #     cmd.subcommand_group(:fun) do |group|
+      #       group.subcommand(:8ball) do |sub|
+      #         sub.string(:question, 'What do you ask the mighty 8ball?')
+      #       end
+      #     end
+      #   end
+      def subcommand_group(name, description)
+        builder = OptionBuilder.new
+        yield builder
+
+        option(TYPES[:subcommand_group], name, description, options: builder.to_a)
+      end
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
+      # @return (see #option)
+      def string(name, description, required: nil, choices: nil)
+        option(TYPES[:string], name, description, required: required, choices: choices)
+      end
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
+      # @return (see #option)
+      def integer(name, description, required: nil, choices: nil)
+        option(TYPES[:integer], name, description, required: required, choices: choices)
+      end
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def boolean(name, description, required: nil)
+        option(TYPES[:boolean], name, description, required: required)
+      end
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def user(name, description, required: nil)
+        option(TYPES[:user], name, description, required: required)
+      end
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def channel(name, description, required: nil)
+        option(TYPES[:channel], name, description, required: required)
+      end
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def role(name, description, required: nil)
+        option(TYPES[:role], name, description, required: required)
+      end
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def mentionable(name, description, required: nil)
+        option(TYPES[:mentionable], name, description, required: required)
+      end
+
+      # @param type []
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def option(type, name, description, required: nil, choices: nil, options: nil)
+        opt = { type: type, name: name, description: description }
+        choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
+
+        opt.merge!({ required: required, choices: choices, options: options }.compact)
+
+        @options << opt
+        opt
+      end
+
+      # @return [Array<Hash>]
+      def to_a
+        @options
+      end
+    end
+
     # A message partial for interactions.
     class Message
       include IDObject

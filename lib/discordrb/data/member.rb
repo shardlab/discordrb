@@ -65,9 +65,6 @@ module Discordrb
       @server = server
       @server_id = server&.id || data['guild_id'].to_i
 
-      # TODO: This needs to be done lazily for slash commands.
-      # Initialize the roles by getting the roles from the server one-by-one
-      # update_roles(data['roles']) if @server
       @role_ids = data['roles']
 
       @nick = data['nick']

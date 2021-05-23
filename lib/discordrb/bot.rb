@@ -202,8 +202,10 @@ module Discordrb
     # to edit user data like the current username (see {Profile#username=}).
     # @return [Profile] The bot's profile that can be used to edit data.
     def profile
-      gateway_check
-      @profile
+      return @profile if @profile
+
+      response = Discordrb::API::User.profile(@token)
+      @profile = Profile.new(JSON.parse(response), self)
     end
 
     alias_method :bot_user, :profile
@@ -723,6 +725,60 @@ module Discordrb
     def prune_empty_groups
       @channels.each_value do |channel|
         channel.leave_group if channel.group? && channel.recipients.empty?
+      end
+    end
+
+    def get_application_command(command_id, server_id: nil)
+      resp = if server_id
+               API::Application.get_guild_command(@token, profile.id, server_id, command_id)
+             else
+               API::Application.get_global_command(@token, profile.id, command_id)
+             end
+      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+    end
+
+    # @yieldparam [OptionBuilder]
+    # @example
+    #   bot.register_application_command(:reddit, 'Reddit Commands') do |cmd|
+    #     cmd.subcommand_group(:subreddit, 'Subreddit Commands') do |group|
+    #       group.subcommand(:hot, "What's trending") do |sub|
+    #         sub.string(:subreddit, 'Subreddit to search')
+    #       end
+    #       group.subcommand(:new, "What's new") do |sub|
+    #         sub.string(:since, 'How long ago', choices: ['this hour', 'today', 'this week', 'this month', 'this year', 'all time'])
+    #         sub.string(:subreddit, 'Subreddit to search')
+    #       end
+    #     end
+    #   end
+    def register_application_command(name: nil, description: nil, server_id: nil, default_permission: nil)
+      builder = Interactions::OptionBuilder.new
+      yield(builder) if block_given?
+
+      resp = if server_id
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission)
+             else
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission)
+             end
+      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+    end
+
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil)
+      builder = Interactions::OptionBuilder.new
+      yield(builder) if block_given?
+
+      resp = if server_id
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission)
+             else
+               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission)
+             end
+      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+    end
+
+    def delete_application_command(command_id, server_id: nil)
+      if server_id
+        API::Application.delete_guild_command(@token, profile.id, server_id, command_id)
+      else
+        API::Application.delete_global_command(@token, profile.id, command_id)
       end
     end
 
