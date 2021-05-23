@@ -43,7 +43,7 @@ describe Discordrb::Channel do
     end
 
     context 'when toggled from true to false' do
-      subject(:channel) { described_class.new(data.merge('nsfw' => true), double, double) }
+      subject(:channel) { described_class.new(data.merge('nsfw' => true), double, server) }
       it_behaves_like 'a Channel property', :nsfw do
         let(:property_value) { false }
       end

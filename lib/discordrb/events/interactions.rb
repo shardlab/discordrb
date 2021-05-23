@@ -29,8 +29,8 @@ module Discordrb::Events
     end
 
     # (see Interaction#respond)
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil)
-      @interaction.respond(content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral)
+    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false)
+      @interaction.respond(content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, wait: wait)
     end
 
     # (see Interaction#defer)
@@ -66,6 +66,7 @@ module Discordrb::Events
 
   # Event handler for INTERACTION_CREATE events.
   class InteractionCreateEventHandler < EventHandler
+    # @!visibility private
     def matches?(event)
       return false unless event.is_a? InteractionCreateEvent
 
@@ -91,6 +92,171 @@ module Discordrb::Events
           a.resolve_id == e.id
         end
       ].reduce(true, &:&)
+    end
+  end
+
+  # Event for ApplicationCommand interactions.
+  class ApplicationCommandEvent < InteractionCreateEvent
+    # @return [String] The name of the command.
+    attr_reader :command_name
+
+    # @return [Integer] The ID of the command.
+    attr_reader :command_id
+
+    # @return [String, nil] The name of the subcommand group relevant to this event.
+    attr_reader :subcommand_group
+
+    # @return [String, nil] The name of the subcommand relevant to this event.
+    attr_reader :subcommand
+
+    # @return [Hash]
+    attr_reader :resolved
+
+    # @return [Hash]
+    attr_reader :options
+
+    def initialize(data, bot)
+      super
+
+      command_data = data['data']
+
+      @command_id = command_data['id']
+      @command_name = command_data['name'].to_sym
+
+      @resolved = { users: {}, channels: {}, roles: {}, members: {} }
+
+      process_resolved(command_data['resolved']) if command_data['resolved']
+
+      @options = command_data['options']
+
+      return unless @options[0]
+
+      case @options[0]['type']
+      when 2
+        options = @options[0]
+        @subcommand_group = options['name'].to_sym
+        @subcommand = options['options'][0]['name'].to_sym
+        @options = options['options'][0]['options']
+      when 1
+        options = @options[0]
+        @subcommand = options['name'].to_sym
+        @options = options['options']
+      end
+    end
+
+    private
+
+    def process_resolved(resolved_data)
+      resolved_data['users']&.each do |id, data|
+        @resolved[:users][id.to_i] = @bot.ensure_user(data)
+      end
+
+      resolved_data['roles']&.each do |id, data|
+        @resolved[:roles][id.to_i] = Discordrb::Role.new(data, @bot)
+      end
+
+      resolved_data['channels']&.each do |id, data|
+        data['guild_id'] = @interaction.server_id
+        @resolved[:channels][id.to_i] = Discordrb::Channel.new(data, @bot)
+      end
+
+      resolved_data['members']&.each do |id, data|
+        data['user'] = resolved_data['users'][id]
+        @resolved[:members][id.to_i] = Discordrb::Interactions::Member.new(data, @interaction.server_id, @bot)
+      end
+    end
+  end
+
+  # Event handler for ApplicationCommandEvents.
+  class ApplicationCommandEventHandler < EventHandler
+    # @return [Hash]
+    attr_reader :subcommands
+
+    # @!visibility private
+    def initialize(attributes, block)
+      super
+
+      @subcommands = {}
+    end
+
+    # @param name [Symbol, String]
+    # @yieldparam [SubcommandBuilder]
+    # @return [ApplicationCommandEventHandler]
+    def group(name)
+      raise ArgumentError, 'Unable to mix subcommands and groups' if @subcommands.any? { |_, v| v.is_a? Proc }
+
+      builder = SubcommandBuilder.new(name)
+      yield builder
+
+      @subcommands.merge!(builder.to_h)
+      self
+    end
+
+    # @param name [String, Symbol]
+    # @yieldparam [SubcommandBuilder]
+    # @return [ApplicationCommandEventHandler]
+    def subcommand(name, &block)
+      raise ArgumentError, 'Unable to mix subcommands and groups' if @subcommands.any? { |_, v| v.is_a? Hash }
+
+      @subcommands[name.to_sym] = block
+
+      self
+    end
+
+    # @!visibility private
+    # @param event [Event]
+    def call(event)
+      return unless matches?(event)
+
+      if event.subcommand_group
+        unless (cmd = @subcommands.dig(event.subcommand_group, event.subcommand))
+          Discordrb::LOGGER.debug("Received an event for an unhandled subcommand `#{event.command_name} #{event.subcommand_group} #{event.subcommand}'")
+          return
+        end
+
+        cmd.call(event)
+      elsif event.subcommand
+        unless (cmd = @subcommands[event.subcommand])
+          Discordrb::LOGGER.debug("Received an event for an unhandled subcommand `#{event.command_name} #{event.subcommand}'")
+          return
+        end
+
+        cmd.call(event)
+      else
+        @block.call(event)
+      end
+    end
+
+    # @!visibility private
+    def matches?(event)
+      return false unless event.is_a? ApplicationCommandEvent
+
+      [
+        matches_all(@attributes[:name], event.command_name) do |a, e|
+          a.to_sym == e.to_sym
+        end
+      ].reduce(true, &:&)
+    end
+  end
+
+  # Builder for adding subcommands to an ApplicationCommandHandler
+  class SubcommandBuilder
+    # @!visibility private
+    # @param group [String, Symbol, nil]
+    def initialize(group = nil)
+      @group = group&.to_sym
+      @subcommands = {}
+    end
+
+    # @param name [Symbol, String]
+    # @yieldparam [ApplicationCommandEvent]
+    def subcommand(name, &block)
+      @subcommands[name.to_sym] = block
+    end
+
+    # @!visibility private
+    def to_h
+      @group ? { @group => @subcommands } : @subcommands
     end
   end
 end

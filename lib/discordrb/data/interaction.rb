@@ -22,27 +22,27 @@ module Discordrb
     attr_reader :user
 
     # @return [Integer, nil] The ID of the server this interaction originates from.
-		attr_reader :server_id
+    attr_reader :server_id
 
     # @return [Integer] The ID of the channel this interaction originates from.
-		attr_reader :channel_id
+    attr_reader :channel_id
 
     # @return [Integer] The ID of this interaction.
-		attr_reader :id
+    attr_reader :id
 
     # @return [Integer] The ID of the application associated with this interaction.
-		attr_reader :application_id
+    attr_reader :application_id
 
     # @return [String] The interaction token.
-		attr_reader :token
+    attr_reader :token
 
     # @!visibility private
     # @return [Integer] Currently pointless
-		attr_reader :version
+    attr_reader :version
 
     # @return [Integer] The type of this interaction.
     # @see TYPES
-		attr_reader :type
+    attr_reader :type
 
     # @!visibility private
     def initialize(data, bot)
@@ -55,7 +55,8 @@ module Discordrb
       @server_id = data['guild_id']&.to_i
       @channel_id = data['channel_id']&.to_i
       @user = if data['member']
-                InteractionMember.new(data['member'], @server_id, bot)
+                data['member']['guild_id'] = @server_id
+                Discordrb::Member.new(data['member'], nil, bot)
               else
                 bot.ensure_user(data['user'])
               end
@@ -72,8 +73,9 @@ module Discordrb
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
+    # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil)
+    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false)
       flags |= 1 << 6 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
@@ -82,10 +84,14 @@ module Discordrb
       data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
 
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags)
-      nil
+
+      return unless wait
+
+      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
+      Interactions::Message.new(JSON.parse(response), @bot, @interaction)
     end
 
-    # Defer an interaction, setting a temporary response that can be later overriden by {Interaction#send_message}. 
+    # Defer an interaction, setting a temporary response that can be later overriden by {Interaction#send_message}.
     # This method is used when you want to use a single message for your response but require additional processing time, or to simply ack
     # an interaction so an error is not displayed.
     # @param flags [Integer] Message flags.
@@ -110,7 +116,7 @@ module Discordrb
       data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
       resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions])
 
-      InteractionMessage.new(JSON.parse(resp), @interaction, @bot)
+      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
 
     # Delete the original interaction response.
@@ -127,14 +133,14 @@ module Discordrb
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false)
       flags |= 64 if ephemeral
-      
+
       builder = Discordrb::Webhooks::Builder.new
       yield builder if block_given?
 
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
-    
+      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts }.compact)
+
       resp = Discordrb::API::Webhook.token_execute_webhook(@token, @application_id, true, data[:content], nil, nil, data[:tts], nil, data[:embeds], data[:allowed_mentions], flags)
-      InteractionMessage.new(JSON.parse(resp), @interaction, @bot)
+      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
 
     # @param message [String, Integer, InteractionMessage, Message] The message created by this interaction to be edited.
@@ -147,9 +153,9 @@ module Discordrb
       yield builder if block_given?
 
       data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
-    
+
       resp = Discordrb::API::Webhook.token_edit_message(@interaction.token, @interaction.application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions])
-      InteractionMessage.new(JSON.parse(resp), @interaction, @bot)
+      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
 
     # @param message [Integer, String, InteractionMessage, Message] The message created by this interaction to be deleted.
@@ -171,159 +177,126 @@ module Discordrb
     end
   end
 
-  # A member partial for interactions.
-  class InteractionMember < DelegateClass(User)
-    include IDObject
-    include MemberAttributes
+  # Objects specific to Interactions.
+  module Interactions
+    # A message partial for interactions.
+    class Message
+      include IDObject
 
-    # @return [Array<Integer>] the IDs of the roles this member has.
-    attr_reader :roles
+      # @return [Interaction] The interaction that created this message.
+      attr_reader :interaction
 
-    # @!visibility private
-    def initialize(data, server_id, bot)
-      @bot = bot
-      @server_id = server_id
+      # @return [String, nil] The content of the message.
+      attr_reader :content
 
-      @user = bot.ensure_user(data['user'])
-      super @user
+      # @return [true, false] Whether this message is pinned in the channel it belongs to.
+      attr_reader :pinned
 
-      @nick = data['nick']
-      @joined_at = data['joined_at']
-      @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
-      @permissions = Permissions.new(data['permissions'])
-      @mute = data['mute']
-      @deaf = data['deaf']
-    end
+      # @return [true, false]
+      attr_reader :tts
 
-    # Attempt to create a member object
-    # @raise [Errors::NoPermission] Will raise when the application has not been granted the `bot` scope in the
-    #   server where this interaction originates.
-    # @return [Member]
-    def to_member
-      server = @bot.server(@server_id)
-      
-      raise Discordrb::Errors::NoPermission, 'Unauthorized to access information for this server' if server.nil?
+      # @return [Time]
+      attr_reader :timestamp
 
-      server.member(@user.id)
-    end
+      # @return [Time, nil]
+      attr_reader :edited_timestamp
 
-    # @return [String] the name the user displays as (nickname if they have one, username otherwise)
-    def display_name
-      nickname || username
-    end
-  end
+      # @return [true, false]
+      attr_reader :edited
 
-  # A message partial for interactions.
-  class InteractionMessage
-    include IDObject
+      # @return [Integer]
+      attr_reader :id
 
-    # @return [Interaction] The interaction that created this message.
-    attr_reader :interaction
+      # @return [User] The user of the application.
+      attr_reader :author
 
-    # @return [String, nil] The content of the message.
-		attr_reader :content
+      # @return [Attachment]
+      attr_reader :attachments
 
-    # @return [true, false] Whether this message is pinned in the channel it belongs to.
-		attr_reader :pinned
+      # @return [Array<Embed>]
+      attr_reader :embeds
 
-    # @return [true, false]
-		attr_reader :tts
+      # @return [Array<User>]
+      attr_reader :mentions
 
-    # @return [Time]
-		attr_reader :timestamp
+      # @return [Integer]
+      attr_reader :flags
 
-    # @return [Time, nil]
-		attr_reader :edited_timestamp
+      # @!visibility private
+      def initialize(data, bot, interaction)
+        @bot = bot
+        @interaction = interaction
+        @content = data['content']
+        @channel_id = data['channel_id'].to_i
+        @pinned = data['pinned']
+        @tts = data['tts']
 
-    # @return [true, false]
-		attr_reader :edited
+        @message_reference = data['message_reference']
 
-    # @return [Integer]
-		attr_reader :id
+        @server_id = data['guild_id']&.to_i
 
-    # @return [User] The user of the application.
-		attr_reader :author
+        @timestamp = Time.parse(data['timestamp']) if data['timestamp']
+        @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
+        @edited = !@edited_timestamp.nil?
 
-    # @return 
-		attr_reader :attachments
-		attr_reader :embeds
-		attr_reader :mentions
-		attr_reader :flags
-    
-    # @!visibility private
-    def initialize(data, interaction, bot)
-      @bot = bot
-      @interaction = interaction
-      @content = data['content']
-      @channel_id = data['channel_id'].to_i
-      @pinned = data['pinned']
-      @tts = data['tts']
+        @id = data['id'].to_i
+        @author = bot.ensure_user(data['author'])
 
-      @message_reference = data['message_reference']
+        @attachments = []
+        @attachments = data['attachments'].map { |e| Attachment.new(e, self, @bot) } if data['attachments']
 
-      @server_id = data['guild_id']&.to_i
+        @embeds = []
+        @embeds = data['embeds'].map { |e| Embed.new(e, self) } if data['embeds']
 
-      @timestamp = Time.parse(data['timestamp']) if data['timestamp']
-      @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
-      @edited = !@edited_timestamp.nil?
+        @mentions = []
 
-      @id = data['id'].to_i
-      @author = bot.ensure_user(data['author'])
+        data['mentions']&.each do |element|
+          @mentions << bot.ensure_user(element)
+        end
 
-      @attachments = []
-      @attachments = data['attachments'].map { |e| Attachment.new(e, self, @bot) } if data['attachments']
-      
-      @embeds = []
-      @embeds = data['embeds'].map { |e| Embed.new(e, self) } if data['embeds']
-
-      @mentions = []
-      
-      data['mentions']&.each do |element|
-        @mentions << bot.ensure_user(element)
+        @mention_roles = data['mention_roles']
+        @mention_everyone = data['mention_everyone']
+        @flags = data['flags']
+        @pinned = data['pinned']
       end
 
-      @mention_roles = data['mention_roles']
-      @mention_everyone = data['mention_everyone']
-      @flags = data['flags']
-      @pinned = data['pinned']
-    end
+      # @return [Member, nil] This will return nil if the bot does not have access to the
+      #   server the interaction originated in.
+      def member
+        server&.member(@user.id)
+      end
 
-    # @return [Member, nil] This will return nil if the bot does not have access to the
-    #   server the interaction originated in.
-    def member
-      server&.member(@user.id)
-    end
+      # @return [Server, nil] This will return nil if the bot does not have access to the
+      #   server the interaction originated in.
+      def server
+        @bot.server(@server_id)
+      end
 
-    # @return [Server, nil] This will return nil if the bot does not have access to the
-    #   server the interaction originated in.
-    def server
-      @bot.server(@server_id)
-    end
+      # Respond to this message.
+      # @param (see Interaction#send_message)
+      # @yieldparam (see Interaction#send_message)
+      def respond(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: true, &block)
+        @interaction.send_message(content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, &block)
+      end
 
-    # Respond to this message.
-    # @param (see Interaction#send_message)
-    # @yieldparam (see Interaction#send_message)
-    def respond(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: true, &block)
-      @interaction.respond(content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, &block)
-    end
+      # Delete this message.
+      def delete
+        @interaction.delete_message(@id)
+      end
 
-    # Delete this message.
-    def delete
-      @interaction.delete_message(@id)
-    end
+      # Edit this message's data.
+      # @param content (see Interaction#send_message)
+      # @param embeds (see Interaction#send_message)
+      # @param allowed_mentions (see Interaction#send_message)
+      # @yieldparam (see Interaction#send_message)
+      def edit(content: nil, embeds: nil, allowed_mentions: nil, &block)
+        @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, &block)
+      end
 
-    # Edit this message's data.
-    # @param content (see Interaction#send_message)
-    # @param embeds (see Interaction#send_message)
-    # @param allowed_mentions (see Interaction#send_message)
-    # @yieldparam (see Interaction#send_message)
-    def edit(content: nil, embeds: nil, allowed_mentions: nil, &block)
-      @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, &block)
-    end
-
-    # @!visibility private
-    def inspect
-      "<IntreractionMessage content=#{@content.inspect} embeds=#{@embeds.inspect} channel_id=#{@channel_id} server_id=#{@server_id} author=#{@author.inspect}>"
+      # @!visibility private
+      def inspect
+        "<Interaction::Message content=#{@content.inspect} embeds=#{@embeds.inspect} channel_id=#{@channel_id} server_id=#{@server_id} author=#{@author.inspect}>"
+      end
     end
   end
 end

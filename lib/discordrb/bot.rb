@@ -150,6 +150,8 @@ module Discordrb
       @current_thread = 0
 
       @status = :online
+
+      @application_commands = {}
     end
 
     # The list of users the bot shares a server with.
@@ -1366,6 +1368,13 @@ module Discordrb
       when :INTERACTION_CREATE
         event = InteractionCreateEvent.new(data, self)
         raise_event(event)
+
+        case data['type']
+        when Interaction::TYPES[:command]
+          event = ApplicationCommandEvent.new(data, self)
+
+          @application_commands[event.command_name]&.call(event)
+        end
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)
         raise_event(event)

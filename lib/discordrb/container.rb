@@ -524,7 +524,7 @@ module Discordrb
     end
 
     # This **event** is raised whenever an interaction event is received.
-    # @param attribute [Hash] The event's attributes.
+    # @param attributes [Hash] The event's attributes.
     # @option attributes [Integer, Symbol, String] :type The interaction type, can be the integer value or the name
     #   of the key in {Discordrb::Interaction::TYPES}.
     # @option attributes [String, Integer, Server, nil] :server The server where this event was created. `nil` for DM channels.
@@ -535,6 +535,20 @@ module Discordrb
     # @return [InteractionCreateEventHandler] The event handler that was registered.
     def interaction_create(attributes = {}, &block)
       register_event(InteractionCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an application command (slash command) is executed.
+    # @param name [Symbol] The name of the application command this handler is for.
+    # @param attributes [Hash] The event's attributes.
+    def application_command(name, attributes = {}, &block)
+      @application_commands ||= {}
+
+      unless block
+        @application_commands[name] ||= ApplicationCommandEventHandler.new(attributes, nil)
+        return @application_commands[name]
+      end
+
+      @application_commands[name] = ApplicationCommandEventHandler.new(attributes, block)
     end
 
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
@@ -567,9 +581,16 @@ module Discordrb
       @event_handlers[clazz].delete(handler)
     end
 
+    # Remove an application command handler
+    # @param name [String, Symbol] The name of the command handler to remove.
+    def remove_application_command_handler(name)
+      @application_commands.delete(name)
+    end
+
     # Removes all events from this event handler.
     def clear!
       @event_handlers&.clear
+      @application_commands&.clear
     end
 
     # Adds an event handler to this container. Usually, it's more expressive to just use one of the shorthand adder
@@ -585,11 +606,15 @@ module Discordrb
     # Adds all event handlers from another container into this one. Existing event handlers will be overwritten.
     # @param container [Module] A module that `extend`s {EventContainer} from which the handlers will be added.
     def include_events(container)
+      application_command_handlers = container.instance_variable_get(:@application_commands)
       handlers = container.instance_variable_get '@event_handlers'
-      return unless handlers
+      return unless handlers || application_command_handlers
 
       @event_handlers ||= {}
-      @event_handlers.merge!(handlers) { |_, old, new| old + new }
+      @event_handlers.merge!(handlers || {}) { |_, old, new| old + new }
+
+      @application_commands ||= {}
+      @application_commands.merge!(application_command_handlers || {})
     end
 
     alias_method :include!, :include_events

@@ -19,9 +19,6 @@ module Discordrb
     # @return [String] this channel's name.
     attr_reader :name
 
-    # @return [Server, nil] the server this channel is on. If this channel is a PM channel, it will be nil.
-    attr_reader :server
-
     # @return [Integer, nil] the ID of the parent channel, if this channel is inside a category
     attr_reader :parent_id
 
@@ -99,13 +96,27 @@ module Discordrb
         end
       else
         @name = data['name']
-        @server = server || bot.server(data['guild_id'].to_i)
+        @server_id = server&.id || data['guild_id'].to_i
+        @server = server
       end
 
       @nsfw = data['nsfw'] || false
       @rate_limit_per_user = data['rate_limit_per_user'] || 0
 
       process_permission_overwrites(data['permission_overwrites'])
+    end
+
+    # @return [Server, nil] the server this channel is on. If this channel is a PM channel, it will be nil.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    #   authorized with the `bot` scope.
+    def server
+      return @server if @server
+      return nil if private?
+
+      @server = @bot.server(@server_id)
+      raise Discordrb::Errors::NoPermission, 'The bot does not have access to this server' unless @server
+
+      @server
     end
 
     # @return [true, false] whether or not this channel is a text channel
@@ -199,7 +210,7 @@ module Discordrb
       ids = if parent
               parent.children
             else
-              @server.channels.reject(&:parent_id).select { |c| c.type == @type }
+              server.channels.reject(&:parent_id).select { |c| c.type == @type }
             end.sort_by(&:position).map(&:id)
 
       # Move our channel ID after the target ID by deleting it,
@@ -225,7 +236,7 @@ module Discordrb
         move_argument << hash
       end
 
-      API::Server.update_channel_positions(@bot.token, @server.id, move_argument)
+      API::Server.update_channel_positions(@bot.token, @server_id, move_argument)
     end
 
     # Sets whether this channel is NSFW
@@ -518,9 +529,9 @@ module Discordrb
     # @return [Array<Member>] the users in this channel
     def users
       if text?
-        @server.online_members(include_idle: true).select { |u| u.can_read_messages? self }
+        server.online_members(include_idle: true).select { |u| u.can_read_messages? self }
       elsif voice?
-        @server.voice_states.map { |id, voice_state| @server.member(id) if !voice_state.voice_channel.nil? && voice_state.voice_channel.id == @id }.compact
+        server.voice_states.map { |id, voice_state| server.member(id) if !voice_state.voice_channel.nil? && voice_state.voice_channel.id == @id }.compact
       end
     end
 
@@ -744,7 +755,7 @@ module Discordrb
 
     # The default `inspect` method is overwritten to give more useful output.
     def inspect
-      "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} server=#{@server}>"
+      "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} server=#{@server || @server_id}>"
     end
 
     # Adds a recipient to a group channel.
@@ -790,7 +801,7 @@ module Discordrb
 
     # @return [String] a URL that a user can use to navigate to this channel in the client
     def link
-      "https://discord.com/channels/#{@server&.id || '@me'}/#{@channel.id}"
+      "https://discord.com/channels/#{@server_id || '@me'}/#{@channel.id}"
     end
 
     alias_method :jump_link, :link
