@@ -104,7 +104,7 @@ module Discordrb
                       Discordrb::LOGGER.debug("Member with ID #{data['author']['id']} not cached (possibly left the server).")
                       member = if data['member']
                                  member_data = data['author'].merge(data['member'])
-                                 Member.new(member_data, bot)
+                                 Member.new(member_data, @server, bot)
                                else
                                  @bot.ensure_user(data['author'])
                                end
