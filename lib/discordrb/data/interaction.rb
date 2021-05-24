@@ -263,7 +263,7 @@ module Discordrb
       #   end
       def subcommand(name, description)
         builder = OptionBuilder.new
-        yield builder
+        yield builder if block_given?
 
         option(TYPES[:subcommand], name, description, options: builder.to_a)
       end

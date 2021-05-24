@@ -750,7 +750,7 @@ module Discordrb
     #       end
     #     end
     #   end
-    def register_application_command(name: nil, description: nil, server_id: nil, default_permission: nil)
+    def register_application_command(name, description, server_id: nil, default_permission: nil)
       builder = Interactions::OptionBuilder.new
       yield(builder) if block_given?
 

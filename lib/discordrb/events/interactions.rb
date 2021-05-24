@@ -112,7 +112,7 @@ module Discordrb::Events
     # @return [Hash]
     attr_reader :resolved
 
-    # @return [Hash]
+    # @return [Hash<Symbol, Object>] Arguments provided to the command, mapped as `Name => Value`.
     attr_reader :options
 
     def initialize(data, bot)
@@ -127,21 +127,26 @@ module Discordrb::Events
 
       process_resolved(command_data['resolved']) if command_data['resolved']
 
-      @options = command_data['options']
+      options = command_data['options']
 
-      return unless @options[0]
+      if options.empty?
+        @options = {}
+        return
+      end
 
-      case @options[0]['type']
+      case options[0]['type']
       when 2
-        options = @options[0]
+        options = options[0]
         @subcommand_group = options['name'].to_sym
         @subcommand = options['options'][0]['name'].to_sym
-        @options = options['options'][0]['options']
+        options = options['options'][0]['options']
       when 1
-        options = @options[0]
+        options = options[0]
         @subcommand = options['name'].to_sym
-        @options = options['options']
+        options = options['options']
       end
+      
+      @options = options.map {|opt| [opt['name'], opt['options'] || opt['value']] }.to_h
     end
 
     private
