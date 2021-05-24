@@ -105,8 +105,8 @@ module Discordrb
     #   to Discord's gateway. `:none` will request that no payloads are received compressed (not recommended for
     #   production bots). `:large` will request that large payloads are received compressed. `:stream` will request
     #   that all data be received in a continuous compressed stream.
-    # @param intents [:all, :unprivileged, Array<Symbol>, nil] Gateway intents that this bot requires. `:all` will
-    #   request all intents. `:unprivileged` will request only intents that are not defined as "Privileged". `nil`
+    # @param intents [:all, :unprivileged, Array<Symbol>, :none] Gateway intents that this bot requires. `:all` will
+    #   request all intents. `:unprivileged` will request only intents that are not defined as "Privileged". `:none`
     #   will request no intents. An array of symbols will request only those intents specified.
     # @see Discordrb::INTENTS
     def initialize(
@@ -140,7 +140,7 @@ module Discordrb
                    ALL_INTENTS
                  when :unprivileged
                    UNPRIVILEGED_INTENTS
-                 when nil
+                 when :none
                    NO_INTENTS
                  else
                    calculate_intents(intents)
