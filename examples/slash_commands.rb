@@ -32,7 +32,6 @@ bot.register_application_command(:spongecase, 'Are you mocking me?', server_id: 
   cmd.boolean('with_picture', 'Show the mocking sponge?')
 end
 
-
 # This is a really large and fairly pointless example of a subcommand.
 # You can also create subcommand handlers directly on the command like so
 #    bot.application_command(:other_example).subcommand(:test) do |event|
@@ -69,12 +68,11 @@ bot.application_command(:example).group(:fun) do |group|
 end
 
 bot.application_command(:spongecase) do |event|
-  text = event.options['message'].chars.map {|x| x.__send__(%i[upcase downcase].sample) }.join
+  ops = %i[upcase downcase]
+  text = event.options['message'].chars.map { |x| x.__send__(ops.sample) }.join
   event.respond(content: text)
 
-  if event.options['with_picture']
-    event.send_message(content: 'https://pyxis.nymag.com/v1/imgs/09c/923/65324bb3906b6865f904a72f8f8a908541-16-spongebob-explainer.rsquare.w700.jpg')
-  end
+  event.send_message(content: 'https://pyxis.nymag.com/v1/imgs/09c/923/65324bb3906b6865f904a72f8f8a908541-16-spongebob-explainer.rsquare.w700.jpg') if event.options['with_picture']
 end
 
 bot.run

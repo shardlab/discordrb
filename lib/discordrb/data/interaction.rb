@@ -190,7 +190,7 @@ module Discordrb
 
     # @return [String]
     attr_reader :description
-    
+
     # @return [true, false]
     attr_reader :default_permission
 

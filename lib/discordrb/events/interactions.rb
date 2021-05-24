@@ -145,8 +145,8 @@ module Discordrb::Events
         @subcommand = options['name'].to_sym
         options = options['options']
       end
-      
-      @options = options.map {|opt| [opt['name'], opt['options'] || opt['value']] }.to_h
+
+      @options = options.map { |opt| [opt['name'], opt['options'] || opt['value']] }.to_h
     end
 
     private
