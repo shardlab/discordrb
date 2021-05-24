@@ -65,7 +65,7 @@ module Discordrb
       @server = server
       @server_id = server&.id || data['guild_id'].to_i
 
-      @role_ids = data['roles']
+      @role_ids = data['roles'].map {|role_id| role_id.to_i }
 
       @nick = data['nick']
       @joined_at = data['joined_at'] ? Time.parse(data['joined_at']) : nil
@@ -108,7 +108,7 @@ module Discordrb
     # @return [true, false] whether this member has the specified role.
     def role?(role)
       role = role.resolve_id
-      @role_ids.any? { |e| e.id == role }
+      @role_ids.any? { |e| e == role }
     end
 
     # @see Member#set_roles
@@ -135,7 +135,7 @@ module Discordrb
     def modify_roles(add, remove, reason = nil)
       add_role_ids = role_id_array(add)
       remove_role_ids = role_id_array(remove)
-      old_role_ids = roles.map(&:id)
+      old_role_ids = @role_ids
       new_role_ids = (old_role_ids - remove_role_ids + add_role_ids).uniq
 
       API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
@@ -150,7 +150,7 @@ module Discordrb
       if role_ids.count == 1
         API::Server.add_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
-        old_role_ids = roles.map(&:id)
+        old_role_ids = @role_ids
         new_role_ids = (old_role_ids + role_ids).uniq
         API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
       end
@@ -165,7 +165,7 @@ module Discordrb
       if role_ids.count == 1
         API::Server.remove_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
-        old_role_ids = roles.map(&:id)
+        old_role_ids = @role_ids
         new_role_ids = old_role_ids.reject { |i| role_ids.include?(i) }
         API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
       end
