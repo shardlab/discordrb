@@ -42,6 +42,9 @@ module Discordrb
   # @see https://discord.com/developers/docs/topics/gateway#privileged-intents
   UNPRIVILEGED_INTENTS = ALL_INTENTS & ~(INTENTS[:server_members] | INTENTS[:server_presences])
 
+  # No intents
+  NO_INTENTS = 0
+
   # Compares two objects based on IDs - either the objects' IDs are equal, or one object is equal to the other's ID.
   def self.id_compare(one_id, other)
     other.respond_to?(:resolve_id) ? (one_id.resolve_id == other.resolve_id) : (one_id == other)
