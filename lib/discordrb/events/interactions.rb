@@ -152,7 +152,7 @@ module Discordrb::Events
         options = options['options']
       end
 
-      @options = options.map { |opt| [opt['name'], opt['options'] || opt['value']] }.to_h
+      @options = transform_options_hash(options || {})
     end
 
     private
@@ -175,6 +175,10 @@ module Discordrb::Events
         data['user'] = resolved_data['users'][id]
         @resolved[:members][id.to_i] = Discordrb::Interactions::Member.new(data, @interaction.server_id, @bot)
       end
+    end
+
+    def transform_options_hash(hash)
+      hash.map { |opt| [opt['name'], opt['options'] || opt['value']] }.to_h
     end
   end
 
