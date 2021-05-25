@@ -409,6 +409,9 @@ module Discordrb
       # @return [Integer]
       attr_reader :flags
 
+      # @return [Integer]
+      attr_reader :channel_id
+
       # @!visibility private
       def initialize(data, bot, interaction)
         @bot = bot
@@ -457,6 +460,12 @@ module Discordrb
       #   server the interaction originated in.
       def server
         @bot.server(@server_id)
+      end
+
+      # @return [Channel] The channel the interaction originates from.
+      # @raise [Errors::NoPermission] When the bot is not in the server associated with this interaction.
+      def channel
+        @bot.channel(@channel_id)
       end
 
       # Respond to this message.

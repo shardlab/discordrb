@@ -15,13 +15,19 @@ module Discordrb::Events
     # @!attribute [r] server
     #   @return [Server, nil]
     #   @see Interaction#server
+    # @!attribute [r] server_id
+    #   @return [Integer]
+    #   @see Interaction#server_id
     # @!attribute [r] channel
-    #   @return [Channel, nil]
+    #   @return [Channel]
     #   @see Interaction#channel
+    # @!attribute [r] channel_id
+    #   @return [Integer]
+    #   @see Interaction#channel_id
     # @!attribute [r] user
     #   @return [User]
     #   @see Interaction#user
-    delegate :type, :server, :channel, :user, to: :interaction
+    delegate :type, :server, :server_id, :channel, :channel_id, :user, to: :interaction
 
     def initialize(data, bot)
       @interaction = Discordrb::Interaction.new(data, bot)
