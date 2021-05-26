@@ -119,8 +119,20 @@ workflows:
   deploy:
     jobs:
       - yard:
-          filters: {branches: {only: main}, tags: {only: /^v.*/}}
+          filters:
+            branches:
+              only:
+                - main
+                - slash_commands
+            tags:
+              only: /^v.*/
       - pages:
           requires:
             - yard
-          filters: {branches: {only: main}, tags: {only: /^v.*/}}
+          filters: 
+            branches:
+              only: 
+                - main
+                - slash_commands
+            tags:
+              only: /^v.*/
