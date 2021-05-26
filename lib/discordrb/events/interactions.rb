@@ -173,7 +173,8 @@ module Discordrb::Events
 
       resolved_data['members']&.each do |id, data|
         data['user'] = resolved_data['users'][id]
-        @resolved[:members][id.to_i] = Discordrb::Interactions::Member.new(data, @interaction.server_id, @bot)
+        data['guild_id'] = @interaction.server_id
+        @resolved[:members][id.to_i] = Discordrb::Member.new(data, nil, @bot)
       end
     end
 
