@@ -108,7 +108,7 @@ module Discordrb
     # @return [true, false] whether this member has the specified role.
     def role?(role)
       role = role.resolve_id
-      @role_ids.any? { |e| e == role }
+      @role_ids.any?(role)
     end
 
     # @see Member#set_roles
