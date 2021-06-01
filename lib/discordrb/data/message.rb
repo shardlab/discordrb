@@ -291,7 +291,7 @@ module Discordrb
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
       paginator = Paginator.new(limit, :down) do |last_page|
         after_id = last_page.last.id if last_page
-        last_page = JSON.parse(API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, limit))
+        last_page = JSON.parse(API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id))
         last_page.map { |d| User.new(d, @bot) }
       end
       paginator.to_a
