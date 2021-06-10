@@ -65,7 +65,7 @@ module Discordrb
       @server = server
       @server_id = server&.id || data['guild_id'].to_i
 
-      @role_ids = data['roles'].map(&:to_i)
+      @role_ids = data['roles']&.map(&:to_i) || []
 
       @nick = data['nick']
       @joined_at = data['joined_at'] ? Time.parse(data['joined_at']) : nil
