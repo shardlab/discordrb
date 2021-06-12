@@ -67,6 +67,9 @@ module Discordrb
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
 
+    # @return [Array<Component>]
+    attr_reader :components
+
     # The discriminator that webhook user accounts have.
     ZERO_DISCRIM = '0000'
 
@@ -149,6 +152,9 @@ module Discordrb
 
       @embeds = []
       @embeds = data['embeds'].map { |e| Embed.new(e, self) } if data['embeds']
+
+      @components = []
+      @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
     end
 
     # Replies to this message with the specified content.
@@ -342,6 +348,20 @@ module Discordrb
 
       referenced_channel = @bot.channel(@message_reference['channel_id'])
       @referenced_message = referenced_channel.message(@message_reference['message_id'])
+    end
+
+    def buttons
+      results = @components.collect do |component|
+        if component.is_a?(Components::Button)
+          component
+        elsif component.is_a?(Components::ActionRow)
+          component.buttons
+        else
+          nil
+        end
+      end
+
+      results.flatten.compact
     end
   end
 end

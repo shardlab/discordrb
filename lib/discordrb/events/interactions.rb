@@ -275,4 +275,51 @@ module Discordrb::Events
       @group ? { @group => @subcommands } : @subcommands
     end
   end
+
+  # An event for when a user interacts with a button component.
+  class ButtonEvent < InteractionCreateEvent
+    # @return [String] User provided data for this button.
+    attr_reader :custom_id
+
+    # @return [Interactions::Message] The message the button originates from.
+    attr_reader :message
+    
+    # @!visbility private
+    def initialize(data, bot)
+      super
+
+      @message = Discordrb::Interactions::Message.new(data['message'], bot, @interaction)
+      @custom_id = data['data']['custom_id']
+    end
+
+    # Respond to the event with a response that sets the button into a pending state
+    # indicating that information will be sent later. 
+    # @return (see Interaction#defer_update)
+    def defer_update
+      @interaction.defer_update
+    end
+  end
+
+  class ButtonEventHandler < InteractionCreateEventHandler
+    def matches?(event)
+      return false unless super
+
+      return false unless event.is_a? ButtonEvent
+
+      [
+        matches_all(@attributes[:custom_id], event.custom_id) do |a, e|
+          # Match regexp and strings
+          a === e
+        end,
+        matches_all(@attributes[:message], event.message) do |a, e|
+          case a
+          when String, Integer
+            a.resolve_id == e.id
+          else
+            a.id == e.id
+          end
+        end,
+      ].reduce(&:&)
+    end
+  end
 end

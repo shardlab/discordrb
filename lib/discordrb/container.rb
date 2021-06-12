@@ -551,6 +551,10 @@ module Discordrb
       @application_commands[name] = ApplicationCommandEventHandler.new(attributes, block)
     end
 
+    def button(attributes = {}, &block)
+      register_event(ButtonEvent, attributes, block)
+    end
+
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Symbol, Regexp] :type Matches the event type of the dispatch.

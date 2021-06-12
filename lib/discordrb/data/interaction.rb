@@ -23,7 +23,8 @@ module Discordrb
     CALLBACK_TYPES = {
       pong: 1,
       channel_message: 4,
-      deferred_message: 5
+      deferred_message: 5,
+      deferred_update: 6
     }.freeze
 
     # @return [User] The user that initiated the interaction.
@@ -113,6 +114,11 @@ module Discordrb
 
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:deferred_message], nil, nil, nil, nil, flags)
       nil
+    end
+
+    # Defer an update to an interaction. This is can only currently used by Button interactions.
+    def defer_update
+      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:deferred_update])
     end
 
     # Edit the original response to this interaction.

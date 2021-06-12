@@ -1430,6 +1430,10 @@ module Discordrb
           event = ApplicationCommandEvent.new(data, self)
 
           @application_commands[event.command_name]&.call(event)
+        when Interaction::TYPES[:button]
+          event = ButtonEvent.new(data, self)
+
+          raise_event(event)
         end
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)
