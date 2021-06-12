@@ -7,7 +7,15 @@ module Discordrb
     # @see https://discord.com/developers/docs/interactions/slash-commands#interaction-interactiontype
     TYPES = {
       ping: 1,
-      command: 2
+      command: 2,
+      button: 3
+    }.freeze
+
+    # Component types.
+    # @see https://discord.com/developers/docs/interactions/message-components#component-types
+    COMPONENT_TYPES = {
+      action_row: 1,
+      button: 2
     }.freeze
 
     # Interaction response types.
@@ -44,6 +52,9 @@ module Discordrb
     # @see TYPES
     attr_reader :type
 
+    # @return [String] The interaction data.
+    attr_reader :data
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -51,6 +62,7 @@ module Discordrb
       @id = data['id'].to_i
       @application_id = data['application_id'].to_i
       @type = data['type']
+      @message = data['message']
       @data = data['data']
       @server_id = data['guild_id']&.to_i
       @channel_id = data['channel_id']&.to_i
@@ -174,6 +186,17 @@ module Discordrb
     # @raise [Errors::NoPermission] When the bot is not in the server associated with this interaction.
     def channel
       @bot.channel(@channel_id)
+    end
+
+    # @return [Hash, nil] Returns the button that triggered this interaction if applicable, otherwise nil
+    def button
+      return unless @type == TYPES[:button]
+
+      @message['components'].each do |row|
+        row['components'].each do |component|
+          return component if component['type'] == COMPONENT_TYPES[:button] && component['custom_id'] == @data['custom_id']
+        end
+      end
     end
   end
 
