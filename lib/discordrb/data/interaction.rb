@@ -482,6 +482,9 @@ module Discordrb
       # @return [Integer]
       attr_reader :channel_id
 
+      # @return [Hash, nil]
+      attr_reader :message_reference
+
       # @!visibility private
       def initialize(data, bot, interaction)
         @bot = bot

@@ -378,7 +378,7 @@ module Discordrb
       channel = channel.resolve_id
       debug("Sending message to #{channel} with content '#{content}'")
       allowed_mentions = { parse: [] } if allowed_mentions == false
-      message_reference = { message_id: message_reference.id } if message_reference
+      message_reference = message_reference.respond_to?(:id) ? { message_id: message_reference.id } : message_reference
 
       response = API::Channel.create_message(token, channel, content, tts, embed&.to_hash, nil, attachments, allowed_mentions&.to_hash, message_reference, components)
       Message.new(JSON.parse(response), self)
