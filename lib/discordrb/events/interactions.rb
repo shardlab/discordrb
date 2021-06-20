@@ -35,8 +35,11 @@ module Discordrb::Events
     end
 
     # (see Interaction#respond)
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false)
-      @interaction.respond(content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, wait: wait)
+    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, &block)
+      @interaction.respond(
+        content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
+        flags: flags, ephemeral: ephemeral, wait: wait, components: components, &block
+      )
     end
 
     # (see Interaction#defer)
@@ -44,9 +47,17 @@ module Discordrb::Events
       @interaction.defer(flags: flags, ephemeral: ephemeral)
     end
 
+    # (see Interaction#update_message)
+    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, &block)
+      @interaction.update_message(
+        content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
+        flags: flags, ephemeral: ephemeral, wait: wait, components: components, &block
+      )
+    end
+
     # (see Interaction#edit_response)
-    def edit_response(content: nil, embeds: nil, allowed_mentions: nil)
-      @interaction.edit_response(content: content, embeds: embeds, allowed_mentions: allowed_mentions, &block)
+    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil, &block)
+      @interaction.edit_response(content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, &block)
     end
 
     # (see Interaction#delete_response)
@@ -55,8 +66,8 @@ module Discordrb::Events
     end
 
     # (see Interaction#send_message)
-    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: nil, &block)
-      @interaction.send_message(content: content, embeds: embeds, tts: tts, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, &block)
+    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: nil, components: nil, &block)
+      @interaction.send_message(content: content, embeds: embeds, tts: tts, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, components: components, &block)
     end
 
     # (see Interaction#edit_message)
@@ -283,23 +294,25 @@ module Discordrb::Events
 
     # @return [Interactions::Message] The message the button originates from.
     attr_reader :message
-    
-    # @!visbility private
+
+    # @!visibility private
     def initialize(data, bot)
       super
 
+      data['message']['author'] = data['member']
       @message = Discordrb::Interactions::Message.new(data['message'], bot, @interaction)
       @custom_id = data['data']['custom_id']
     end
 
     # Respond to the event with a response that sets the button into a pending state
-    # indicating that information will be sent later. 
+    # indicating that information will be sent later.
     # @return (see Interaction#defer_update)
     def defer_update
       @interaction.defer_update
     end
   end
 
+  # Event handler for a Button interaction event.
   class ButtonEventHandler < InteractionCreateEventHandler
     def matches?(event)
       return false unless super
@@ -309,7 +322,12 @@ module Discordrb::Events
       [
         matches_all(@attributes[:custom_id], event.custom_id) do |a, e|
           # Match regexp and strings
-          a === e
+          case a
+          when Regexp
+            a.match?(e)
+          else
+            a == e
+          end
         end,
         matches_all(@attributes[:message], event.message) do |a, e|
           case a
@@ -318,7 +336,7 @@ module Discordrb::Events
           else
             a.id == e.id
           end
-        end,
+        end
       ].reduce(&:&)
     end
   end

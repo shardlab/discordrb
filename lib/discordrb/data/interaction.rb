@@ -11,20 +11,14 @@ module Discordrb
       button: 3
     }.freeze
 
-    # Component types.
-    # @see https://discord.com/developers/docs/interactions/message-components#component-types
-    COMPONENT_TYPES = {
-      action_row: 1,
-      button: 2
-    }.freeze
-
     # Interaction response types.
     # @see https://discord.com/developers/docs/interactions/slash-commands#interaction-response-interactioncallbacktype
     CALLBACK_TYPES = {
       pong: 1,
       channel_message: 4,
       deferred_message: 5,
-      deferred_update: 6
+      deferred_update: 6,
+      update_message: 7
     }.freeze
 
     # @return [User] The user that initiated the interaction.
@@ -87,16 +81,21 @@ module Discordrb
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
+    # @param components [Array<#to_h>] An array of components
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false)
+    # @yieldparam view [Components::View] A builder for creating interaction components.
+    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
       flags |= 1 << 6 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
-      yield builder if block_given?
+      view = Discordrb::Components::View.new
 
+      yield(builder, view) if block_given?
+
+      components ||= view
       data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags)
+      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components)
 
       return unless wait
 
@@ -121,18 +120,53 @@ module Discordrb
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:deferred_update])
     end
 
+    # Respond to the creation of this interaction. An interaction must be responded to or deferred,
+    # The response may be modified with {Interaction#edit_response} or deleted with {Interaction#delete_response}.
+    # Further messages can be sent with {Interaction#send_message}.
+    # @param content [String] The content of the message.
+    # @param tts [true, false]
+    # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
+    # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param flags [Integer] Message flags.
+    # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
+    # @param wait [true, false] Whether this method should return a Message object of the interaction response.
+    # @param components [Array<#to_h>] An array of components
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
+    # @yieldparam view [Components::View] A builder for creating interaction components.
+    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
+      flags |= 1 << 6 if ephemeral
+
+      builder = Discordrb::Webhooks::Builder.new
+      view = Discordrb::Components::View.new
+
+      yield(builder, view) if block_given?
+
+      components ||= view
+      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+
+      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components)
+
+      return unless wait
+
+      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
+      Interactions::Message.new(JSON.parse(response), @bot, @interaction)
+    end
+
     # Edit the original response to this interaction.
     # @param content [String] The content of the message.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @return [InteractionMessage] The updated response message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_response(content: nil, embeds: nil, allowed_mentions: nil)
+    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil)
       builder = Discordrb::Webhooks::Builder.new
-      yield builder if block_given?
+      view = Discordrb::Components::View.new
 
+      yield(builder, view) if block_given?
+
+      components ||= view
       data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions])
+      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components)
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -149,15 +183,20 @@ module Discordrb
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false)
+    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil)
       flags |= 64 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
-      yield builder if block_given?
+      view = Discordrb::Interactions::View.new
 
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts }.compact)
+      yield builder, view if block_given?
 
-      resp = Discordrb::API::Webhook.token_execute_webhook(@token, @application_id, true, data[:content], nil, nil, data[:tts], nil, data[:embeds], data[:allowed_mentions], flags)
+      components ||= view
+      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, componenets: components }.compact)
+
+      resp = Discordrb::API::Webhook.token_execute_webhook(
+        @token, @application_id, true, data[:content], nil, nil, data[:tts], nil, data[:embeds], data[:allowed_mentions], flags, data[:components]
+      )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
 
@@ -166,19 +205,24 @@ module Discordrb
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil)
-      builder ||= Discordrb::Webhooks::Builder.new
-      yield builder if block_given?
+    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil)
+      builder = Discordrb::Webhooks::Builder.new
+      view = Discordrb::Components::View.new
 
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      yield builder, view if block_given?
 
-      resp = Discordrb::API::Webhook.token_edit_message(@interaction.token, @interaction.application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions])
+      components ||= view
+      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, componenets: components }.compact)
+
+      resp = Discordrb::API::Webhook.token_edit_message(
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], data[:components]
+      )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
 
     # @param message [Integer, String, InteractionMessage, Message] The message created by this interaction to be deleted.
     def delete_message(message)
-      Discordrb::API::Webhook.token_delete_message(@interaction.token, @interaction.application_id, message.resolve_id)
+      Discordrb::API::Webhook.token_delete_message(@token, @application_id, message.resolve_id)
       nil
     end
 
@@ -198,11 +242,7 @@ module Discordrb
     def button
       return unless @type == TYPES[:button]
 
-      @message['components'].each do |row|
-        row['components'].each do |component|
-          return component if component['type'] == COMPONENT_TYPES[:button] && component['custom_id'] == @data['custom_id']
-        end
-      end
+      Components::Button.new(@data, @bot)
     end
   end
 
@@ -374,11 +414,12 @@ module Discordrb
         option(TYPES[:mentionable], name, description, required: required)
       end
 
-      # @param type []
+      # @!visibility private
+      # @param type [Integer] The argument type.
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
-      # @return (see #option)
+      # @return Hash
       def option(type, name, description, required: nil, choices: nil, options: nil)
         opt = { type: type, name: name, description: description }
         choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
@@ -459,7 +500,8 @@ module Discordrb
         @edited = !@edited_timestamp.nil?
 
         @id = data['id'].to_i
-        @author = bot.ensure_user(data['author'])
+
+        @author = bot.ensure_user(data['author'] || data['member']['user'])
 
         @attachments = []
         @attachments = data['attachments'].map { |e| Attachment.new(e, self, @bot) } if data['attachments']
@@ -500,8 +542,8 @@ module Discordrb
       # Respond to this message.
       # @param (see Interaction#send_message)
       # @yieldparam (see Interaction#send_message)
-      def respond(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: true, &block)
-        @interaction.send_message(content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, &block)
+      def respond(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: true, components: nil, &block)
+        @interaction.send_message(content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, components: components, &block)
       end
 
       # Delete this message.
@@ -514,8 +556,8 @@ module Discordrb
       # @param embeds (see Interaction#send_message)
       # @param allowed_mentions (see Interaction#send_message)
       # @yieldparam (see Interaction#send_message)
-      def edit(content: nil, embeds: nil, allowed_mentions: nil, &block)
-        @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, &block)
+      def edit(content: nil, embeds: nil, allowed_mentions: nil, components: nil, &block)
+        @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, &block)
       end
 
       # @!visibility private

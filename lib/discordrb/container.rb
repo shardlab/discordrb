@@ -540,6 +540,9 @@ module Discordrb
     # This **event** is raised whenever an application command (slash command) is executed.
     # @param name [Symbol] The name of the application command this handler is for.
     # @param attributes [Hash] The event's attributes.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ApplicationCommandEvent] The event that was raised.
+    # @return [ApplicationCommandEventHandler] The event handler that was registered.
     def application_command(name, attributes = {}, &block)
       @application_commands ||= {}
 
@@ -551,6 +554,13 @@ module Discordrb
       @application_commands[name] = ApplicationCommandEventHandler.new(attributes, block)
     end
 
+    # This **event** is raised whenever an button interaction is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :custom_id A custom_id to match against.
+    # @option attributes [String, Integer, Message] :message The message to filter for.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ButtonEvent] The event that was raised.
+    # @return [ButtonEventHandler] The event handler that was registered.
     def button(attributes = {}, &block)
       register_event(ButtonEvent, attributes, block)
     end
@@ -618,7 +628,11 @@ module Discordrb
       @event_handlers.merge!(handlers || {}) { |_, old, new| old + new }
 
       @application_commands ||= {}
-      @application_commands.merge!(application_command_handlers || {})
+
+      @application_commands.merge!(application_command_handlers || {}) do |_, old, new|
+        old.subcommands.merge!(new.subcommands)
+        old
+      end
     end
 
     alias_method :include!, :include_events

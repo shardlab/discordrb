@@ -372,14 +372,15 @@ module Discordrb
     # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @return [Message] The message that was sent.
-    def send_message(channel, content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
+    def send_message(channel, content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
       channel = channel.resolve_id
       debug("Sending message to #{channel} with content '#{content}'")
       allowed_mentions = { parse: [] } if allowed_mentions == false
       message_reference = { message_id: message_reference.id } if message_reference
 
-      response = API::Channel.create_message(token, channel, content, tts, embed&.to_hash, nil, attachments, allowed_mentions&.to_hash, message_reference)
+      response = API::Channel.create_message(token, channel, content, tts, embed&.to_hash, nil, attachments, allowed_mentions&.to_hash, message_reference, components)
       Message.new(JSON.parse(response), self)
     end
 
@@ -393,11 +394,12 @@ module Discordrb
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
-    def send_temporary_message(channel, content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    def send_temporary_message(channel, content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
       Thread.new do
         Thread.current[:discordrb_name] = "#{@current_thread}-temp-msg"
 
-        message = send_message(channel, content, tts, embed, attachments, allowed_mentions, message_reference)
+        message = send_message(channel, content, tts, embed, attachments, allowed_mentions, message_reference, components)
         sleep(timeout)
         message.delete
       end
@@ -728,6 +730,9 @@ module Discordrb
       end
     end
 
+    # Get an application command by ID.
+    # @param command_id [String, Integer]
+    # @param server_id [String, Integer, nil] The ID of the server to get the command from. Global if `nil`.
     def get_application_command(command_id, server_id: nil)
       resp = if server_id
                API::Application.get_guild_command(@token, profile.id, server_id, command_id)
@@ -774,6 +779,9 @@ module Discordrb
       ApplicationCommand.new(JSON.parse(resp), self, server_id)
     end
 
+    # Remove an application command from the commands registered with discord.
+    # @param command_id [String, Integer] The ID of the command to remove.
+    # @param server_id [String, Integer] The ID of the server to delete this command from, global if `nil`.
     def delete_application_command(command_id, server_id: nil)
       if server_id
         API::Application.delete_guild_command(@token, profile.id, server_id, command_id)

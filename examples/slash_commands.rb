@@ -24,6 +24,8 @@ bot.register_application_command(:example, 'Example commands', server_id: ENV['S
       sub.string('operation', 'What to do', choices: { times: '*', divided_by: '/', plus: '+', minus: '-' })
       sub.integer('second', 'Second number')
     end
+
+    group.subcommand('button-test', 'Test a button!')
   end
 end
 
@@ -65,6 +67,14 @@ bot.application_command(:example).group(:fun) do |group|
     result = event.options['first'].send(event.options['operation'], event.options['second'])
     event.respond(content: result)
   end
+
+  group.subcommand(:'button-test') do |event|
+    event.respond(content: 'Button test') do |_, view|
+      view.row do |r|
+        r.button(label: 'Test!', style: :primary, emoji: 577663465322315786, custom_id: 'test_button:1')
+      end
+    end
+  end
 end
 
 bot.application_command(:spongecase) do |event|
@@ -73,6 +83,17 @@ bot.application_command(:spongecase) do |event|
   event.respond(content: text)
 
   event.send_message(content: 'https://pyxis.nymag.com/v1/imgs/09c/923/65324bb3906b6865f904a72f8f8a908541-16-spongebob-explainer.rsquare.w700.jpg') if event.options['with_picture']
+end
+
+bot.button(custom_id: /^test_button:/) do |event|
+  num = event.interaction.button.custom_id.split(':')[1].to_i
+
+  event.update_message(content: num.to_s) do |_, view|
+    view.row do |row|
+      row.button(label: '-', style: :danger, custom_id: "test_button:#{num - 1}")
+      row.button(label: '+', style: :success, custom_id: "test_button:#{num + 1}")
+    end
+  end
 end
 
 bot.run
