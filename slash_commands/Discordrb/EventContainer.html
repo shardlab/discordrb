@@ -225,7 +225,7 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#application_command-instance_method" title="#application_command (instance method)">#<strong>application_command</strong>(name, attributes = {}, &amp;block)  &#x21d2; Object </a>
+      <a href="#application_command-instance_method" title="#application_command (instance method)">#<strong>application_command</strong>(name, attributes = {}) {|event| ... } &#x21d2; ApplicationCommandEventHandler </a>
     
 
     
@@ -263,6 +263,29 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
 
   
     <span class="summary_desc"><div class='inline'><p>This <strong>event</strong> is raised when an <span class='object_link'><a href="Await.html" title="Discordrb::Await (class)">Await</a></span> is triggered.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#button-instance_method" title="#button (instance method)">#<strong>button</strong>(attributes = {}) {|event| ... } &#x21d2; ButtonEventHandler </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>This <strong>event</strong> is raised whenever an button interaction is created.</p>
 </div></span>
   
 </li>
@@ -1434,14 +1457,14 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
       <pre class="lines">
 
 
-645
-646
-647
-648
-649</pre>
+663
+664
+665
+666
+667</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 645</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 663</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class_from_string'>class_from_string</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_str'>str</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>::</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_inject'>inject</span><span class='lparen'>(</span><span class='const'>Object</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_mod'>mod</span><span class='comma'>,</span> <span class='id identifier rubyid_class_name'>class_name</span><span class='op'>|</span>
@@ -1521,15 +1544,15 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
       <pre class="lines">
 
 
-635
-636
-637
-638
-639
-640</pre>
+653
+654
+655
+656
+657
+658</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 635</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 653</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_event_class'>event_class</span><span class='lparen'>(</span><span class='id identifier rubyid_handler_class'>handler_class</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_class_name'>class_name</span> <span class='op'>=</span> <span class='id identifier rubyid_handler_class'>handler_class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -1610,12 +1633,12 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
       <pre class="lines">
 
 
-627
-628
-629</pre>
+645
+646
+647</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 627</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 645</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_handler_class'>handler_class</span><span class='lparen'>(</span><span class='id identifier rubyid_event_class'>event_class</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_class_from_string'>class_from_string</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_event_class'>event_class</span><span class='embexpr_end'>}</span><span class='tstring_content'>Handler</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -1680,15 +1703,15 @@ methods like <span class='object_link'><a href="#message-instance_method" title=
       <pre class="lines">
 
 
-599
-600
-601
-602
-603
-604</pre>
+613
+614
+615
+616
+617
+618</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 599</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 613</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_handler'>add_handler</span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_clazz'>clazz</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::EventContainer (module)">EventContainer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_event_class'><span class='object_link'><a href="#event_class-class_method" title="Discordrb::EventContainer.event_class (method)">event_class</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span>
@@ -1704,7 +1727,7 @@ methods like <span class='object_link'><a href="#message-instance_method" title=
       <div class="method_details ">
   <h3 class="signature " id="application_command-instance_method">
   
-    #<strong>application_command</strong>(name, attributes = {}, &amp;block)  &#x21d2; <tt>Object</tt> 
+    #<strong>application_command</strong>(name, attributes = {}) {|event| ... } &#x21d2; <tt><span class='object_link'><a href="Events/ApplicationCommandEventHandler.html" title="Discordrb::Events::ApplicationCommandEventHandler (class)">ApplicationCommandEventHandler</a></span></tt> 
   
 
   
@@ -1755,6 +1778,59 @@ methods like <span class='object_link'><a href="#message-instance_method" title=
   
 </ul>
 
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>The block is executed when the event is raised.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Events/ApplicationCommandEvent.html" title="Discordrb::Events::ApplicationCommandEvent (class)">ApplicationCommandEvent</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The event that was raised.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Events/ApplicationCommandEventHandler.html" title="Discordrb::Events::ApplicationCommandEventHandler (class)">ApplicationCommandEventHandler</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The event handler that was registered.</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1762,19 +1838,19 @@ methods like <span class='object_link'><a href="#message-instance_method" title=
       <pre class="lines">
 
 
-543
-544
-545
 546
 547
 548
 549
 550
 551
-552</pre>
+552
+553
+554
+555</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 543</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 546</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_application_command'>application_command</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@application_commands</span> <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -1933,6 +2009,153 @@ on an await without having to rely on the await&#39;s block.</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_await'>await</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/AwaitEvent.html" title="Discordrb::Events::AwaitEvent (class)">AwaitEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="button-instance_method">
+  
+    #<strong>button</strong>(attributes = {}) {|event| ... } &#x21d2; <tt><span class='object_link'><a href="Events/ButtonEventHandler.html" title="Discordrb::Events::ButtonEventHandler (class)">ButtonEventHandler</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>This <strong>event</strong> is raised whenever an button interaction is created.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>attributes</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The event&#39;s attributes.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    <p class="tag_title">Options Hash (<tt>attributes</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:custom_id</span>
+          <span class="type">(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>Regexp</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>A custom_id to match against.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:message</span>
+          <span class="type">(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>The message to filter for.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>The block is executed when the event is raised.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Events/ButtonEvent.html" title="Discordrb::Events::ButtonEvent (class)">ButtonEvent</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The event that was raised.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Events/ButtonEventHandler.html" title="Discordrb::Events::ButtonEventHandler (class)">ButtonEventHandler</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The event handler that was registered.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+564
+565
+566</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 564</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_button'>button</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ButtonEvent.html" title="Discordrb::Events::ButtonEvent (class)">ButtonEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2723,13 +2946,13 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-591
-592
-593
-594</pre>
+605
+606
+607
+608</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 591</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 605</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clear!'>clear!</span>
   <span class='ivar'>@event_handlers</span><span class='op'>&amp;.</span><span class='id identifier rubyid_clear'>clear</span>
@@ -3023,20 +3246,24 @@ setting some kind of uptime variable or whatever else. The only limit is yoursel
       <pre class="lines">
 
 
-608
-609
-610
-611
-612
-613
-614
-615
-616
-617
-618</pre>
+622
+623
+624
+625
+626
+627
+628
+629
+630
+631
+632
+633
+634
+635
+636</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 608</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 622</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_include_events'>include_events</span><span class='lparen'>(</span><span class='id identifier rubyid_container'>container</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_application_command_handlers'>application_command_handlers</span> <span class='op'>=</span> <span class='id identifier rubyid_container'>container</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_get'>instance_variable_get</span><span class='lparen'>(</span><span class='symbol'>:@application_commands</span><span class='rparen'>)</span>
@@ -3047,7 +3274,11 @@ setting some kind of uptime variable or whatever else. The only limit is yoursel
   <span class='ivar'>@event_handlers</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_handlers'>handlers</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_old'>old</span><span class='comma'>,</span> <span class='id identifier rubyid_new'>new</span><span class='op'>|</span> <span class='id identifier rubyid_old'>old</span> <span class='op'>+</span> <span class='id identifier rubyid_new'>new</span> <span class='rbrace'>}</span>
 
   <span class='ivar'>@application_commands</span> <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
-  <span class='ivar'>@application_commands</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_application_command_handlers'>application_command_handlers</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+
+  <span class='ivar'>@application_commands</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_application_command_handlers'>application_command_handlers</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_old'>old</span><span class='comma'>,</span> <span class='id identifier rubyid_new'>new</span><span class='op'>|</span>
+    <span class='id identifier rubyid_old'>old</span><span class='period'>.</span><span class='id identifier rubyid_subcommands'>subcommands</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_subcommands'>subcommands</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_old'>old</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -5521,12 +5752,12 @@ on various device types (<code>:desktop</code>, <code>:mobile</code>, or <code>:
       <pre class="lines">
 
 
-560
-561
-562</pre>
+574
+575
+576</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 560</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 574</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_raw'>raw</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/RawEvent.html" title="Discordrb::Events::RawEvent (class)">RawEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -6197,12 +6428,12 @@ initialization. It&#39;s the recommended way to do things when the bot has finis
       <pre class="lines">
 
 
-586
-587
-588</pre>
+600
+601
+602</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 586</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 600</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_application_command_handler'>remove_application_command_handler</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='ivar'>@application_commands</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
@@ -6257,14 +6488,14 @@ initialization. It&#39;s the recommended way to do things when the bot has finis
       <pre class="lines">
 
 
-578
-579
-580
-581
-582</pre>
+592
+593
+594
+595
+596</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 578</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 592</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_handler'>remove_handler</span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_clazz'>clazz</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::EventContainer (module)">EventContainer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_event_class'><span class='object_link'><a href="#event_class-class_method" title="Discordrb::EventContainer.event_class (method)">event_class</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span>
@@ -8006,12 +8237,12 @@ discordrb.</p>
       <pre class="lines">
 
 
-571
-572
-573</pre>
+585
+586
+587</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 571</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 585</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unknown'>unknown</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/UnknownEvent.html" title="Discordrb::Events::UnknownEvent (class)">UnknownEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -8825,7 +9056,7 @@ moves between voice channels, as well as their mute and deaf status for themselv
 </div>
 
       <div id="footer">
-  Generated on Sat Jun 12 17:38:52 2021 by
+  Generated on Sun Jun 20 04:33:38 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.9).
 </div>

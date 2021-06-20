@@ -348,7 +348,7 @@
   
   
   <h3 class="inherited">Methods inherited from <span class='object_link'><a href="InteractionCreateEvent.html" title="Discordrb::Events::InteractionCreateEvent (class)">InteractionCreateEvent</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="InteractionCreateEvent.html#defer-instance_method" title="Discordrb::Events::InteractionCreateEvent#defer (method)">#defer</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#delete_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#delete_message (method)">#delete_message</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#delete_response-instance_method" title="Discordrb::Events::InteractionCreateEvent#delete_response (method)">#delete_response</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#edit_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#edit_message (method)">#edit_message</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#edit_response-instance_method" title="Discordrb::Events::InteractionCreateEvent#edit_response (method)">#edit_response</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#respond-instance_method" title="Discordrb::Events::InteractionCreateEvent#respond (method)">#respond</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#send_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#send_message (method)">#send_message</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="InteractionCreateEvent.html#defer-instance_method" title="Discordrb::Events::InteractionCreateEvent#defer (method)">#defer</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#delete_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#delete_message (method)">#delete_message</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#delete_response-instance_method" title="Discordrb::Events::InteractionCreateEvent#delete_response (method)">#delete_response</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#edit_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#edit_message (method)">#edit_message</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#edit_response-instance_method" title="Discordrb::Events::InteractionCreateEvent#edit_response (method)">#edit_response</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#respond-instance_method" title="Discordrb::Events::InteractionCreateEvent#respond (method)">#respond</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#send_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#send_message (method)">#send_message</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#update_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#update_message (method)">#update_message</a></span></p>
 
   
   
@@ -383,17 +383,6 @@
       <pre class="lines">
 
 
-124
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134
 135
 136
 137
@@ -415,10 +404,21 @@
 153
 154
 155
-156</pre>
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 124</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 135</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_bot'>bot</span><span class='rparen'>)</span>
   <span class='kw'>super</span>
@@ -507,12 +507,12 @@
       <pre class="lines">
 
 
-110
-111
-112</pre>
+121
+122
+123</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 110</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 121</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_command_id'>command_id</span>
   <span class='ivar'>@command_id</span>
@@ -566,12 +566,12 @@
       <pre class="lines">
 
 
-107
-108
-109</pre>
+118
+119
+120</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 107</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 118</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_command_name'>command_name</span>
   <span class='ivar'>@command_name</span>
@@ -625,12 +625,12 @@
       <pre class="lines">
 
 
-122
-123
-124</pre>
+133
+134
+135</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 122</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 133</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@options</span>
@@ -679,12 +679,12 @@
       <pre class="lines">
 
 
-119
-120
-121</pre>
+130
+131
+132</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 119</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 130</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_resolved'>resolved</span>
   <span class='ivar'>@resolved</span>
@@ -738,12 +738,12 @@
       <pre class="lines">
 
 
-116
-117
-118</pre>
+127
+128
+129</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 116</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 127</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_subcommand'>subcommand</span>
   <span class='ivar'>@subcommand</span>
@@ -797,12 +797,12 @@
       <pre class="lines">
 
 
-113
-114
-115</pre>
+124
+125
+126</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 113</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 124</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_subcommand_group'>subcommand_group</span>
   <span class='ivar'>@subcommand_group</span>
@@ -818,7 +818,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Jun 12 17:38:58 2021 by
+  Generated on Sun Jun 20 04:33:55 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.9).
 </div>
