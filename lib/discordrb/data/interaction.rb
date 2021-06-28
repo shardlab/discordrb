@@ -187,7 +187,7 @@ module Discordrb
       flags |= 64 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Interactions::View.new
+      view = Discordrb::Components::View.new
 
       yield builder, view if block_given?
 
