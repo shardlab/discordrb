@@ -510,12 +510,14 @@ module Discordrb::API::Channel
 
   # Get the members of a thread.
   # https://discord.com/developers/docs/resources/channel#list-thread-members
-  def list_thread_members(token, channel_id)
+  def list_thread_members(token, channel_id, before, limit)
+    query = URI.encode_www_form({ before: before, limit: limit }.compact)
+
     Discordrb::API.request(
       :channels_cid_thread_members,
       channel_id,
       :get,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/thread-members/#{user_id}",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/thread-members?#{query}",
       Authorization: token
     )
   end

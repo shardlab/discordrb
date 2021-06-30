@@ -828,6 +828,59 @@ module Discordrb
       invites.map { |invite_data| Invite.new(invite_data, @bot) }
     end
 
+    # Start a thread.
+    # @param title [String] The name of the thread.
+    # @param auto_archive_duration [60, 1440, 4320, 10080] How long before a thread is automatically
+    #   archived.
+    # @param message [Message, Integer, String] The message to reference when starting this thread.
+    # @param type [Symbol, Integer] The type of thread to create. Can be a key from {TYPES} or the value.
+    # @return [Channel]
+    def start_thread(title, auto_archive_duration, message: nil, type: 11)
+      message_id = message&.id || message
+      type = TYPES[type] || type
+
+      data = if message
+               API::Channel.start_thread_with_message(@bot.token, @id, message_id, name, auto_archive_duration)
+             else
+               API::Channel.start_thread_without_message(@bot.token, @id, name, auto_archive_duration, type)
+             end
+      
+      Channel.new(JSON.parse(data), @bot, @server)
+    end
+
+    # @!group Threads
+
+    # Join this thread.
+    def join
+      API::Channel.join_thread(@bot.token, @id)
+
+      nil
+    end
+    
+    # Add a member to the thread
+    # @param member [Member, Integer, String] The member, or ID of the member, to add to this thread.
+    def add_member(member)
+      API::Channel.add_thread_member(@bot.token, @id, member&.id || member)
+
+      nil
+    end
+
+    # @param member [Member, Integer, String] The member, or ID of the member, to remove from a thread.
+    def remove_member(member)
+      API::Channel.remove_thread_member(@bot.token, @id, member&.id || member)
+
+      nil
+    end
+
+    # Leave this thread
+    def leave
+      API::Channel.leave_thread(@bot.token, @id)
+      
+      nil
+    end
+
+    # @!endgroup
+
     # The default `inspect` method is overwritten to give more useful output.
     def inspect
       "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} server=#{@server || @server_id}>"
