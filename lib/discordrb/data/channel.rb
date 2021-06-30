@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'discordrb/webhooks/view'
+require 'time'
 
 module Discordrb
   # A Discord channel, including data like the topic
@@ -15,20 +16,25 @@ module Discordrb
       group: 3,
       category: 4,
       news: 5,
-      store: 6
+      store: 6,
+      news_thread: 10,
+      public_thread: 11,
+      private_thread: 12
     }.freeze
 
     # @return [String] this channel's name.
     attr_reader :name
 
-    # @return [Integer, nil] the ID of the parent channel, if this channel is inside a category
+    # @return [Integer, nil] the ID of the parent channel, if this channel is inside a category. If this channel is a
+    #   thread, this is the text channel it is a child to.
     attr_reader :parent_id
 
     # @return [Integer] the type of this channel
     # @see TYPES
     attr_reader :type
 
-    # @return [Integer, nil] the ID of the owner of the group channel or nil if this is not a group channel.
+    # @return [Integer, nil] the ID of the owner of the group channel or nil if this is not a group channel. If this
+    #   channel is a thread, this is the member that started the thread.
     attr_reader :owner_id
 
     # @return [Array<Recipient>, nil] the array of recipients of the private messages, or nil if this is not a Private channel
@@ -54,6 +60,31 @@ module Discordrb
     # @return [Integer] the amount of time (in seconds) users need to wait to send in between messages.
     attr_reader :rate_limit_per_user
     alias_method :slowmode_rate, :rate_limit_per_user
+
+    # @return [Integer, nil] An approximate count of messages sent in a thread. Stops counting at 50.
+    attr_reader :message_count
+
+    # @return [Integer, nil] An approximate count of members in a thread. Stops counting at 50.
+    attr_reader :member_count
+
+    # @return [true, false, nil] Whether or not this thread is archived.
+    attr_reader :archived
+
+    # @return [Integer, nil] How long after the last message before a thread is automatically archived.
+    attr_reader :auto_archive_duration
+
+    # @return [Time, nil] The timestamp of when this threads status last changed.
+    attr_reader :archive_timestamp
+
+    # @return [true, false, nil] Whether this thread is locked or not.
+    attr_reader :locked
+    alias_method :locked?, :locked
+
+    # @return [Time, nil] When the current user joined this thread.
+    attr_reader :join_timestamp
+
+    # @return [Integer, nil] Member flags for this thread, used for notifications.
+    attr_reader :member_flags
 
     # @return [true, false] whether or not this channel is a PM or group channel.
     def private?
@@ -104,6 +135,20 @@ module Discordrb
 
       @nsfw = data['nsfw'] || false
       @rate_limit_per_user = data['rate_limit_per_user'] || 0
+      @message_count = data['message_count']
+      @member_count = data['member_count']
+
+      if (metadata = data['thread_metadata'])
+        @archived = metadata['archived']
+        @auto_archive_duration = metadata['auto_archive_duration']
+        @archive_timestamp = Time.iso8601(metadata['archive_timestamp'])
+        @locked = metadata['locked']
+      end
+
+      if (member = data['member'])
+        @member_join = Time.iso8601(member['join_timestamp'])
+        @member_flags = member['flags']
+      end
 
       process_permission_overwrites(data['permission_overwrites'])
     end
@@ -154,6 +199,26 @@ module Discordrb
     # @return [true, false] whether or not this channel is a store channel.
     def store?
       @type == 6
+    end
+
+    # @return [true, false] whether or not this channel is a news thread.
+    def news_thread?
+      @type == 10
+    end
+
+    # @return [true, false] whether or not this channel is a public thread.
+    def public_thread?
+      @type == 11
+    end
+
+    # @return [true, false] whether or not this channel is a private thread.
+    def private_thread?
+      @type == 12
+    end
+
+    # @return [true, false] whether or not this channel is a thread.
+    def thread?
+      news_thread? || public_thread? || private_thread?
     end
 
     # @return [Channel, nil] the category channel, if this channel is in a category
