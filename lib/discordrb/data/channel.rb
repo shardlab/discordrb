@@ -856,6 +856,10 @@ module Discordrb
 
       nil
     end
+
+    # @todo Need to handle thread_member cache first
+    def members
+    end
     
     # Add a member to the thread
     # @param member [Member, Integer, String] The member, or ID of the member, to add to this thread.
