@@ -468,6 +468,7 @@ module Discordrb::API::Channel
       channel_id,
       :put,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/thread-members/@me",
+      nil,
       Authorization: token
     )
   end
@@ -480,6 +481,7 @@ module Discordrb::API::Channel
       channel_id,
       :put,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/thread-members/#{user_id}",
+      nil,
       Authorization: token
     )
   end

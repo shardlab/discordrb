@@ -617,6 +617,36 @@ module Discordrb
       update_status(:invisible, @activity, nil)
     end
 
+    # Join a thread
+    # @param channel [Channel, Integer, String]
+    def join_thread(channel)
+      API::Channel.join_thread(@token, channel.resolve_id)
+      nil
+    end
+
+    # Leave a thread
+    # @param channel [Channel, Integer, String]
+    def leave_thread(channel)
+      API::Channel.leave_thread(@token, channel.resolve_id)
+      nil
+    end
+
+    # Add a member to a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def add_thread_member(channel, member)
+      API::Channel.add_thread_member(@token, channel.resolve_id, member.resolve_id)
+      nil
+    end
+
+    # Remove a member from a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def remove_thread_member(channel, member)
+      API::Channel.remove_thread_member(@token, channel.resolve_id, member.resolve_id)
+      nil
+    end
+
     # Sets debug mode. If debug mode is on, many things will be outputted to STDOUT.
     def debug=(new_debug)
       LOGGER.debug = new_debug
@@ -1007,6 +1037,8 @@ module Discordrb
       elsif channel.group?
         @channels.delete(channel.id)
       end
+
+      @thread_members.delete(channel.id) if channel.thread?
     end
 
     # Internal handler for CHANNEL_RECIPIENT_ADD
@@ -1528,6 +1560,35 @@ module Discordrb
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)
         raise_event(event)
+      when :THREAD_CREATE
+        create_channel(data)
+
+        # raise ThreadCreateEvent
+      when :THREAD_UPDATE
+        update_channel(data)
+
+        # raise ThreadUpdateEvent
+      when :THREAD_DELETE
+        channel_delete(data)
+        @thread_members.delete(data['id'])
+
+        # raise ThreadDeleteEvent
+      when :THREAD_LIST_SYNC
+        data['members'].map { |member| ensure_thread_member(member, member['id'], member['user_id']) }
+        data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
+
+        # raise ThreadListSyncEvent?
+      when :THREAD_MEMBER_UPDATE
+        ensure_thread_member(data, data['id'], data['user_id'])
+
+        # raise ThreadMemberUpdateEvent
+      when :THREAD_MEMBERS_UPDATE
+        data['added_members'].each do |member|
+          thread_data = member.slice('join_timestamp', 'flags')
+          ensure_thread_member(thread_data, data['id'], member['user_id'])
+        end
+
+        # raise ThreadMembersUpdate
       else
         # another event that we don't support yet
         debug "Event #{type} has been received but is unsupported. Raising UnknownEvent"
