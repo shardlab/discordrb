@@ -149,6 +149,29 @@ and dropdowns have a weight of 5.</p>
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#select_menu-instance_method" title="#select_menu (instance method)">#<strong>select_menu</strong>(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil) {|builder| ... } &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Add a select menu to this action row.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -288,7 +311,6 @@ There is a limit of 100 characters to each custom_id.</p>
       <pre class="lines">
 
 
-30
 31
 32
 33
@@ -299,10 +321,11 @@ There is a limit of 100 characters to each custom_id.</p>
 38
 39
 40
-41</pre>
+41
+42</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_button'>button</span><span class='lparen'>(</span><span class='label'>style:</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>emoji:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>custom_id:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>url:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_style'>style</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Button.html" title="Discordrb::Components::Button (class)">Button</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Button.html#STYLES-constant" title="Discordrb::Components::Button::STYLES (constant)">STYLES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_style'>style</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_style'>style</span>
@@ -321,12 +344,163 @@ There is a limit of 100 characters to each custom_id.</p>
 </table>
 </div>
     
+      <div class="method_details ">
+  <h3 class="signature " id="select_menu-instance_method">
+  
+    #<strong>select_menu</strong>(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil) {|builder| ... } &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Add a select menu to this action row.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Custom IDs are used to pass state to the events that are raised from interactions.
+There is a limit of 100 characters to each custom_id.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>[]</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Options that can be selected in this menu. Can also be provided via the yielded builder.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>placeholder</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Default text to show when no entries are selected.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>min_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The minimum amount of values a user must select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>max_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The maximum amount of values a user can select.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>builder</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="SelectMenuBuilder.html" title="Discordrb::Components::SelectMenuBuilder (class)">SelectMenuBuilder</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54
+55
+56
+57
+58</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_select_menu'>select_menu</span><span class='lparen'>(</span><span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>placeholder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>min_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>max_values:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_builder'>builder</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="SelectMenuBuilder.html" title="Discordrb::Components::SelectMenuBuilder (class)">SelectMenuBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SelectMenuBuilder.html#initialize-instance_method" title="Discordrb::Components::SelectMenuBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='comma'>,</span> <span class='id identifier rubyid_placeholder'>placeholder</span><span class='comma'>,</span> <span class='id identifier rubyid_min_values'>min_values</span><span class='comma'>,</span> <span class='id identifier rubyid_max_values'>max_values</span><span class='rparen'>)</span>
+
+  <span class='kw'>yield</span> <span class='id identifier rubyid_builder'>builder</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+
+  <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_builder'>builder</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 </div>
 
       <div id="footer">
-  Generated on Mon Jun 28 12:10:48 2021 by
+  Generated on Mon Jul  5 20:06:26 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.9).
 </div>
