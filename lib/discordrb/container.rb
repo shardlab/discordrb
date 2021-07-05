@@ -565,6 +565,17 @@ module Discordrb
       register_event(ButtonEvent, attributes, block)
     end
 
+    # This **event** is raised whenever an select menu interaction is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :custom_id A custom_id to match against.
+    # @option attributes [String, Integer, Message] :message The message to filter for.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [SelectMenuEvent] The event that was raised.
+    # @return [SelectMenuEventHandler] The event handler that was registered.
+    def select_menu(attributes = {}, &block)
+      register_event(SelectMenuEvent, attributes, block)
+    end
+
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Symbol, Regexp] :type Matches the event type of the dispatch.

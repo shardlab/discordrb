@@ -7,7 +7,8 @@ module Discordrb
     # @see https://discord.com/developers/docs/interactions/message-components#component-types
     TYPES = {
       action_row: 1,
-      button: 2
+      button: 2,
+      select_menu: 3
     }.freeze
 
     # This builder is used when constructing an ActionRow. All current components must be within an action row, but this can
@@ -40,9 +41,66 @@ module Discordrb
         @components << { type: Components::TYPES[:button], label: label, emoji: emoji, style: style, custom_id: custom_id, disabled: disabled, url: url }
       end
 
+      # Add a select menu to this action row.
+      # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
+      #   There is a limit of 100 characters to each custom_id.
+      # @param options [Array<Hash>] Options that can be selected in this menu. Can also be provided via the yielded builder.
+      # @param placeholder [String, nil] Default text to show when no entries are selected.
+      # @param min_values [Integer, nil] The minimum amount of values a user must select.
+      # @param max_values [Integer, nil] The maximum amount of values a user can select.
+      # @yieldparam builder [SelectMenuBuilder]
+      def select_menu(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil)
+        builder = SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values)
+
+        yield builder if block_given?
+
+        @components << builder.to_h
+      end
+
       # @!visibility private
       def to_json(_)
         { type: Components::TYPES[:action_row], components: @components }.to_json
+      end
+    end
+
+    # A builder to assist in adding options to select menus.
+    class SelectMenuBuilder
+      # @!visibility hidden
+      def initialize(custom_id, options = [], placeholder = nil, min_values = nil, max_values = nil)
+        @custom_id = custom_id
+        @options = options
+        @placeholder = placeholder
+        @min_values = min_values
+        @max_values = max_values
+      end
+
+      # Add an option to this select menu.
+      # @param label [String] The title of this option.
+      # @param value [String] The value that this option represents.
+      # @param description [String, nil] An optional description of the option.
+      # @param emoji [Emoji, String, Integer, nil] An optional emoji to display on the left of the option title.
+      # @param default [true, false, nil] Whether this is the default selected option.
+      def option(label:, value:, description: nil, emoji: nil, default: nil)
+        emoji = case emoji
+                when Integer, String
+                  emoji.to_i.positive? ? { id: emoji } : { name: emoji }
+                when Emoji
+                  emoji.to_h
+                end
+
+        @options << { label: label, value: value, description: description, emoji: emoji, default: default }
+      end
+
+      # @!visibility private
+      def to_h
+        {
+          type: Components::TYPES[:select_menu],
+          options: @options,
+          placeholder: @placeholder,
+          min_values: @min_values,
+          max_values: @max_values,
+          custom_id: @custom_id
+        }
       end
     end
 
@@ -79,6 +137,8 @@ module Discordrb
         ActionRow.new(data, bot)
       when TYPES[:button]
         Button.new(data, bot)
+      when TYPES[:select_menu]
+        SelectMenu.new(data, bot)
       end
     end
 
@@ -177,6 +237,59 @@ module Discordrb
       # Await a button click, blocking.
       def await_click!(**attributes, &block)
         @bot.add_await!(Discordrb::Events::ButtonEvent, { custom_id: @custom_id }.merge(attributes), &block)
+      end
+    end
+
+    # An interactable select menu component.
+    class SelectMenu
+      # A select menu option.
+      class Option
+        # @return [String]
+        attr_reader :label
+
+        # @return [String]
+        attr_reader :value
+
+        # @return [String, nil]
+        attr_reader :description
+
+        # @return [Emoji, nil]
+        attr_reader :emoji
+
+        # @!visibility hidden
+        def initialize(data)
+          @label = data['label']
+          @value = data['value']
+          @description = data['description']
+          @emoji = Emoji.new(data['emoji'], @bot) if data['emoji']
+        end
+      end
+
+      # @return [String]
+      attr_reader :custom_id
+
+      # @return [Integer, nil]
+      attr_reader :max_values
+
+      # @return [Integer, nil]
+      attr_reader :min_values
+
+      # @return [String, nil]
+      attr_reader :placeholder
+
+      # @return [Array<Option>]
+      attr_reader :options
+
+      # @!visibility private
+      def initialize(data, bot)
+        @bot = bot
+
+        @max_values = data['max_values']
+        @min_values = data['min_values']
+        @placeholder = data['placeholder']
+        @custom_id = data['custom_id']
+        @emoji = Emoji.new(data['emoji'], @bot) if data['emoji']
+        @options = data['options'].map { |opt| Option.new(opt) }
       end
     end
   end

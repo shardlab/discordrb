@@ -1438,10 +1438,17 @@ module Discordrb
           event = ApplicationCommandEvent.new(data, self)
 
           @application_commands[event.command_name]&.call(event)
-        when Interaction::TYPES[:button]
-          event = ButtonEvent.new(data, self)
+        when Interaction::TYPES[:component]
+          case data['data']['component_type']
+          when Components::TYPES[:button]
+            event = ButtonEvent.new(data, self)
 
-          raise_event(event)
+            raise_event(event)
+          when Components::TYPES[:select_menu]
+            event = SelectMenuEvent.new(data, self)
+
+            raise_event(event)
+          end
         end
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)

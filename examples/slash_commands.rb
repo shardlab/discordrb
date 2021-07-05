@@ -2,7 +2,7 @@
 
 require 'discordrb'
 
-bot = Discordrb::Bot.new(token: ENV['SLASH_COMMAND_BOT_TOKEN'])
+bot = Discordrb::Bot.new(token: ENV['SLASH_COMMAND_BOT_TOKEN'], intents: [:server_messages])
 
 # We need to register our application comomands separately from the handlers with a special DSL.
 # This example uses server specifc commands so that they appear immediately for testing,
@@ -73,6 +73,15 @@ bot.application_command(:example).group(:fun) do |group|
       view.row do |r|
         r.button(label: 'Test!', style: :primary, emoji: 577663465322315786, custom_id: 'test_button:1')
       end
+
+      view.row do |r|
+        r.select_menu(custom_id: 'test_select', placeholder: 'Select me!', max_values: 3) do |s|
+          s.option(label: 'Foo', value: 'foo')
+          s.option(label: 'Bar', value: 'bar')
+          s.option(label: 'Baz', value: 'baz')
+          s.option(label: 'Bazinga', value: 'bazinga')
+        end
+      end
     end
   end
 end
@@ -94,6 +103,10 @@ bot.button(custom_id: /^test_button:/) do |event|
       row.button(label: '+', style: :success, custom_id: "test_button:#{num + 1}")
     end
   end
+end
+
+bot.select_menu(custom_id: 'test_select') do |event|
+  event.respond(content: "You selected: #{event.values.join(', ')}")
 end
 
 bot.run

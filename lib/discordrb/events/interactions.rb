@@ -79,6 +79,11 @@ module Discordrb::Events
     def delete_message(message)
       @interaction.delete_message(message)
     end
+
+    # (see Interaction#defer_update)
+    def defer_update
+      @interaction.defer_update
+    end
   end
 
   # Event handler for INTERACTION_CREATE events.
@@ -287,8 +292,8 @@ module Discordrb::Events
     end
   end
 
-  # An event for when a user interacts with a button component.
-  class ButtonEvent < InteractionCreateEvent
+  # An event for when a user interacts with a component.
+  class ComponentEvent < InteractionCreateEvent
     # @return [String] User provided data for this button.
     attr_reader :custom_id
 
@@ -303,21 +308,13 @@ module Discordrb::Events
       @message = Discordrb::Interactions::Message.new(data['message'], bot, @interaction)
       @custom_id = data['data']['custom_id']
     end
-
-    # Respond to the event with a response that sets the button into a pending state
-    # indicating that information will be sent later.
-    # @return (see Interaction#defer_update)
-    def defer_update
-      @interaction.defer_update
-    end
   end
 
-  # Event handler for a Button interaction event.
-  class ButtonEventHandler < InteractionCreateEventHandler
+  # Generic handler for component events.
+  class ComponentEventHandler < InteractionCreateEventHandler
     def matches?(event)
       return false unless super
-
-      return false unless event.is_a? ButtonEvent
+      return false unless event.is_a? ComponentEvent
 
       [
         matches_all(@attributes[:custom_id], event.custom_id) do |a, e|
@@ -339,5 +336,31 @@ module Discordrb::Events
         end
       ].reduce(&:&)
     end
+  end
+
+  # An event for when a user interacts with a button component.
+
+  class ButtonEvent < ComponentEvent
+  end
+
+  # Event handler for a Button interaction event.
+  class ButtonEventHandler < ComponentEventHandler
+  end
+
+  # Event for when a user interacts with a select menu component.
+  class SelectMenuEvent < ComponentEvent
+    # @return [Array<String>] Selected values.
+    attr_reader :values
+
+    # @!visibility private
+    def initialize(data, bot)
+      super
+
+      @values = data['data']['values']
+    end
+  end
+
+  # Event handler for a select menu component.
+  class SelectMenuEventHandler < ComponentEventHandler
   end
 end

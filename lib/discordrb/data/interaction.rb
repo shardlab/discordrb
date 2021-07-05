@@ -8,7 +8,7 @@ module Discordrb
     TYPES = {
       ping: 1,
       command: 2,
-      button: 3
+      component: 3
     }.freeze
 
     # Interaction response types.
