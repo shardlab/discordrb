@@ -36,7 +36,8 @@ module Discordrb
       27 => :manage_nicknames,     # 134217728
       28 => :manage_roles,         # 268435456, also Manage Permissions
       29 => :manage_webhooks,      # 536870912
-      30 => :manage_emojis         # 1073741824
+      30 => :manage_emojis,        # 1073741824
+      32 => :request_to_speak      # 4294967296
     }.freeze
 
     FLAGS.each do |position, flag|

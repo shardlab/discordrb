@@ -140,6 +140,33 @@ module Discordrb::Voice
       @paused = false
     end
 
+    # Requests to speak inside of the current Stage channel
+    def request_to_speak
+      raise 'Cannot request to speak in a non stage channel' unless @channel.stage?
+
+      Discordrb::API::User.modify_own_voice_state(
+        @bot.token,
+        @channel.server.id,
+        @channel.id,
+        nil,
+        Time.now.iso8601
+      )
+    end
+
+    # Sets whether or not the bot is suppressed in the current Stage channel.
+    # @param value [true, false] whether or not the bot is suppressed
+    def suppressed=(value)
+      raise 'Cannot change suppressed state in a non stage channel' unless @channel.stage?
+
+      Discordrb::API::User.modify_own_voice_state(
+        @bot.token,
+        @channel.server.id,
+        @channel.id,
+        value,
+        nil
+      )
+    end
+
     # Skips to a later time in the song. It's impossible to go back without replaying the song.
     # @param secs [Float] How many seconds to skip forwards. Skipping will always be done in discrete intervals of
     #   0.05 seconds, so if the given amount is smaller than that, it will be rounded up.

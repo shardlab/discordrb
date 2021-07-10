@@ -13,7 +13,8 @@ module Discordrb
       group: 3,
       category: 4,
       news: 5,
-      store: 6
+      store: 6,
+      stage: 13
     }.freeze
 
     # @return [String] this channel's name.
@@ -141,6 +142,11 @@ module Discordrb
     # @return [true, false] whether or not this channel is a store channel.
     def store?
       @type == 6
+    end
+
+    # @return [true, false] whether or not this channel is a stage channel.
+    def stage?
+      @type == 13
     end
 
     # @return [Channel, nil] the category channel, if this channel is in a category
@@ -657,6 +663,24 @@ module Discordrb
     #   channel.start_typing()
     def start_typing
       API::Channel.start_typing(@bot.token, @id)
+    end
+
+    # Suppresses a user in a Stage channel
+    # @param user_id [Integer] The user to suppress
+    def suppress_user(user_id)
+      raise 'Attempted to suppress a user in a non-server channel!' unless server
+      raise 'Attempted to suppress a user in a non-stage channel!' unless stage?
+
+      API::Server.update_voice_state(@bot.token, @server.id, @id, user_id, true)
+    end
+
+    # Unsuppresses a user in a Stage channel
+    # @param user_id [Integer] The user to unsuppress
+    def unsuppress_user(user_id)
+      raise 'Attempted to unsuppress a user in a non-server channel!' unless server
+      raise 'Attempted to unsuppress a user in a non-stage channel!' unless stage?
+
+      API::Server.update_voice_state(@bot.token, @server.id, @id, user_id, false)
     end
 
     # Creates a Group channel
