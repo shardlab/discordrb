@@ -375,7 +375,7 @@ module Discordrb::API::Server
   end
 
   # Create a server integration
-  # https://discordapp.com/developers/docs/resources/guild#create-guild-integration
+  # https://discord.com/developers/docs/resources/guild#create-guild-integration
   def create_integration(token, server_id, type, id, reason = nil)
     Discordrb::API.request(
       :guilds_sid_integrations,
@@ -403,7 +403,7 @@ module Discordrb::API::Server
   end
 
   # Delete a server integration
-  # https://discordapp.com/developers/docs/resources/guild#delete-guild-integration
+  # https://discord.com/developers/docs/resources/guild#delete-guild-integration
   def delete_integration(token, server_id, integration_id, reason = nil)
     Discordrb::API.request(
       :guilds_sid_integrations_iid,
