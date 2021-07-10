@@ -231,8 +231,7 @@
 153
 154
 155
-156
-157</pre>
+156</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/events/reactions.rb', line 136</span>
@@ -241,8 +240,7 @@
   <span class='comment'># Check for the proper event type
 </span>  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="ReactionRemoveAllEvent.html" title="Discordrb::Events::ReactionRemoveAllEvent (class)">ReactionRemoveAllEvent</a></span></span>
 
-  <span class='comment'># No attributes yet as there is no property available on the event that doesn&#39;t involve doing a resolution request
-</span>  <span class='lbracket'>[</span>
+  <span class='lbracket'>[</span>
     <span class='id identifier rubyid_matches_all'>matches_all</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:message</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_message_id'>message_id</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='op'>|</span>
       <span class='id identifier rubyid_a'>a</span> <span class='op'>==</span> <span class='id identifier rubyid_e'>e</span>
     <span class='kw'>end</span><span class='comma'>,</span>
@@ -269,7 +267,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon May 24 22:09:53 2021 by
+  Generated on Sat Jul 10 18:28:59 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.9).
 </div>
