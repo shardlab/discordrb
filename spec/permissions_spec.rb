@@ -72,6 +72,13 @@ describe Discordrb::Permissions do
         subject
       end
     end
+
+    describe '#defined_permissions' do
+      it 'returns the defined permissions' do
+        instance = Discordrb::Permissions.new 3
+        expect(instance.defined_permissions).to eq %i[foo bar]
+      end
+    end
   end
 end
 
