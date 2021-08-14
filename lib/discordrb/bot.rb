@@ -19,6 +19,7 @@ require 'discordrb/events/raw'
 require 'discordrb/events/reactions'
 require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
+require 'discordrb/events/interactions'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -149,6 +150,8 @@ module Discordrb
       @current_thread = 0
 
       @status = :online
+
+      @application_commands = {}
     end
 
     # The list of users the bot shares a server with.
@@ -199,8 +202,10 @@ module Discordrb
     # to edit user data like the current username (see {Profile#username=}).
     # @return [Profile] The bot's profile that can be used to edit data.
     def profile
-      gateway_check
-      @profile
+      return @profile if @profile
+
+      response = Discordrb::API::User.profile(@token)
+      @profile = Profile.new(JSON.parse(response), self)
     end
 
     alias_method :bot_user, :profile
@@ -367,14 +372,15 @@ module Discordrb
     # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @return [Message] The message that was sent.
-    def send_message(channel, content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
+    def send_message(channel, content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
       channel = channel.resolve_id
       debug("Sending message to #{channel} with content '#{content}'")
       allowed_mentions = { parse: [] } if allowed_mentions == false
-      message_reference = { message_id: message_reference.id } if message_reference
+      message_reference = message_reference.respond_to?(:id) ? { message_id: message_reference.id } : message_reference
 
-      response = API::Channel.create_message(token, channel, content, tts, embed&.to_hash, nil, attachments, allowed_mentions&.to_hash, message_reference)
+      response = API::Channel.create_message(token, channel, content, tts, embed&.to_hash, nil, attachments, allowed_mentions&.to_hash, message_reference, components)
       Message.new(JSON.parse(response), self)
     end
 
@@ -388,11 +394,12 @@ module Discordrb
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
-    def send_temporary_message(channel, content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    def send_temporary_message(channel, content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
       Thread.new do
         Thread.current[:discordrb_name] = "#{@current_thread}-temp-msg"
 
-        message = send_message(channel, content, tts, embed, attachments, allowed_mentions, message_reference)
+        message = send_message(channel, content, tts, embed, attachments, allowed_mentions, message_reference, components)
         sleep(timeout)
         message.delete
       end
@@ -720,6 +727,70 @@ module Discordrb
     def prune_empty_groups
       @channels.each_value do |channel|
         channel.leave_group if channel.group? && channel.recipients.empty?
+      end
+    end
+
+    # Get an application command by ID.
+    # @param command_id [String, Integer]
+    # @param server_id [String, Integer, nil] The ID of the server to get the command from. Global if `nil`.
+    def get_application_command(command_id, server_id: nil)
+      resp = if server_id
+               API::Application.get_guild_command(@token, profile.id, server_id, command_id)
+             else
+               API::Application.get_global_command(@token, profile.id, command_id)
+             end
+      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+    end
+
+    # @yieldparam [OptionBuilder]
+    # @example
+    #   bot.register_application_command(:reddit, 'Reddit Commands') do |cmd|
+    #     cmd.subcommand_group(:subreddit, 'Subreddit Commands') do |group|
+    #       group.subcommand(:hot, "What's trending") do |sub|
+    #         sub.string(:subreddit, 'Subreddit to search')
+    #       end
+    #       group.subcommand(:new, "What's new") do |sub|
+    #         sub.string(:since, 'How long ago', choices: ['this hour', 'today', 'this week', 'this month', 'this year', 'all time'])
+    #         sub.string(:subreddit, 'Subreddit to search')
+    #       end
+    #     end
+    #   end
+    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input)
+      type = ApplicationCommand::TYPES[type] || type
+
+      builder = Interactions::OptionBuilder.new
+      yield(builder) if block_given?
+
+      resp = if server_id
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type)
+             else
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type)
+             end
+      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+    end
+
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input)
+      type = ApplicationCommand::TYPES[type] || type
+
+      builder = Interactions::OptionBuilder.new
+      yield(builder) if block_given?
+
+      resp = if server_id
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type)
+             else
+               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type)
+             end
+      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+    end
+
+    # Remove an application command from the commands registered with discord.
+    # @param command_id [String, Integer] The ID of the command to remove.
+    # @param server_id [String, Integer] The ID of the server to delete this command from, global if `nil`.
+    def delete_application_command(command_id, server_id: nil)
+      if server_id
+        API::Application.delete_guild_command(@token, profile.id, server_id, command_id)
+      else
+        API::Application.delete_global_command(@token, profile.id, command_id)
       end
     end
 
@@ -1361,6 +1432,27 @@ module Discordrb
         updated_ids.each do |e|
           event = ServerEmojiUpdateEvent.new(server, old_emoji_data[e], new_emoji_data[e], self)
           raise_event(event)
+        end
+      when :INTERACTION_CREATE
+        event = InteractionCreateEvent.new(data, self)
+        raise_event(event)
+
+        case data['type']
+        when Interaction::TYPES[:command]
+          event = ApplicationCommandEvent.new(data, self)
+
+          @application_commands[event.command_name]&.call(event)
+        when Interaction::TYPES[:component]
+          case data['data']['component_type']
+          when Components::TYPES[:button]
+            event = ButtonEvent.new(data, self)
+
+            raise_event(event)
+          when Components::TYPES[:select_menu]
+            event = SelectMenuEvent.new(data, self)
+
+            raise_event(event)
+          end
         end
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)

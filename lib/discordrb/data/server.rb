@@ -71,7 +71,7 @@ module Discordrb
       update_data(data)
 
       @large = data['large']
-      @member_count = data['member_count']
+      @member_count = data['member_count'] || 0
       @splash_id = nil
       @banner_id = nil
       @features = data['features'].map { |element| element.downcase.to_sym }
@@ -439,7 +439,7 @@ module Discordrb
     # @!visibility private
     def delete_member(user_id)
       @members.delete(user_id)
-      @member_count -= 1
+      @member_count -= 1 unless @member_count <= 0
     end
 
     # Checks whether a member is cached

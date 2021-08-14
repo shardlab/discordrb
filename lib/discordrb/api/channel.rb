@@ -74,8 +74,8 @@ module Discordrb::API::Channel
   # https://discord.com/developers/docs/resources/channel#create-message
   # @param attachments [Array<File>, nil] Attachments to use with `attachment://` in embeds. See
   #   https://discord.com/developers/docs/resources/channel#create-message-using-attachments-within-embeds
-  def create_message(token, channel_id, message, tts = false, embed = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
-    body = { content: message, tts: tts, embed: embed, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference }
+  def create_message(token, channel_id, message, tts = false, embed = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+    body = { content: message, tts: tts, embed: embed, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components }
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h
              { **files, payload_json: body.to_json }
