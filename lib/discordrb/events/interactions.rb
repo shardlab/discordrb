@@ -119,6 +119,9 @@ module Discordrb::Events
 
   # Event for ApplicationCommand interactions.
   class ApplicationCommandEvent < InteractionCreateEvent
+    # Struct to allow accessing data via [] or methods.
+    Resolved = Struct.new('Resolved', :channels, :members, :messages, :roles, :users)
+
     # @return [String] The name of the command.
     attr_reader :command_name
 
@@ -131,11 +134,14 @@ module Discordrb::Events
     # @return [String, nil] The name of the subcommand relevant to this event.
     attr_reader :subcommand
 
-    # @return [Hash]
+    # @return [Resolved]
     attr_reader :resolved
 
     # @return [Hash<Symbol, Object>] Arguments provided to the command, mapped as `Name => Value`.
     attr_reader :options
+
+    # @return [Integer, nil] The target of this command when it is a context command.
+    attr_reader :target_id
 
     def initialize(data, bot)
       super
@@ -145,11 +151,11 @@ module Discordrb::Events
       @command_id = command_data['id']
       @command_name = command_data['name'].to_sym
 
-      @resolved = { users: {}, channels: {}, roles: {}, members: {} }
-
+      @target_id = command_data['target_id']&.to_i
+      @resolved = Resolved.new({}, {}, {}, {}, {})
       process_resolved(command_data['resolved']) if command_data['resolved']
 
-      options = command_data['options']
+      options = command_data['options'] || []
 
       if options.empty?
         @options = {}
@@ -169,6 +175,13 @@ module Discordrb::Events
       end
 
       @options = transform_options_hash(options || {})
+    end
+
+    # @return [Message, User, nil] The target of this command, for context commands.
+    def target
+      return nil unless @target_id
+
+      @resolved.find {|data| data.key?(@target_id) }[@target_id]
     end
 
     private
@@ -191,6 +204,10 @@ module Discordrb::Events
         data['user'] = resolved_data['users'][id]
         data['guild_id'] = @interaction.server_id
         @resolved[:members][id.to_i] = Discordrb::Member.new(data, nil, @bot)
+      end
+
+      resolved_data['messages']&.each do |id, data|
+        @resolved[:messages][id.to_i] = Discordrb::Message.new(data, @bot)
       end
     end
 

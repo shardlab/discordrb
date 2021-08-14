@@ -248,6 +248,14 @@ module Discordrb
 
   # An ApplicationCommand for slash commands.
   class ApplicationCommand
+    # Command types. `chat_input` is a command that appears in the text input field. `user` and `message` types appear as context menus
+    # for the respective resource.
+    TYPES = {
+      chat_input: 1,
+      user: 2,
+      message: 3
+    }
+
     # @return [Integer]
     attr_reader :application_id
 

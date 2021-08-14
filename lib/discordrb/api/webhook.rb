@@ -30,7 +30,7 @@ module Discordrb::API::Webhook
   # Execute a webhook via token.
   # https://discord.com/developers/docs/resources/webhook#execute-webhook
   def token_execute_webhook(webhook_token, webhook_id, wait = false, content = nil, username = nil, avatar_url = nil, tts = nil, file = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil)
-    body = { content: content, username: username, avatar_url: avatar_url, tts: tts, embeds: embeds&.map(&:to_hash),  allowed_mentions: allowed_mentions, flags: flags, components: components&.map(&:to_h) }
+    body = { content: content, username: username, avatar_url: avatar_url, tts: tts, embeds: embeds&.map(&:to_hash),  allowed_mentions: allowed_mentions, flags: flags, components: components }
     body = if file
              { file: file, payload_json: body.to_json }
            else
@@ -122,7 +122,7 @@ module Discordrb::API::Webhook
       webhook_id,
       :patch,
       "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}",
-      { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components&.map(&:to_h) }.to_json,
+      { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components }.to_json,
       content_type: :json
     )
   end

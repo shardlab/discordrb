@@ -755,26 +755,30 @@ module Discordrb
     #       end
     #     end
     #   end
-    def register_application_command(name, description, server_id: nil, default_permission: nil)
+    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input)
+      type = ApplicationCommand::TYPES[type] || type
+
       builder = Interactions::OptionBuilder.new
       yield(builder) if block_given?
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission)
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type)
              else
-               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission)
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type)
              end
       ApplicationCommand.new(JSON.parse(resp), self, server_id)
     end
 
-    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil)
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input)
+      type = ApplicationCommand::TYPES[type] || type
+
       builder = Interactions::OptionBuilder.new
       yield(builder) if block_given?
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type)
              else
-               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission)
+               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission. type)
              end
       ApplicationCommand.new(JSON.parse(resp), self, server_id)
     end
