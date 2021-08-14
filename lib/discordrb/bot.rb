@@ -778,7 +778,7 @@ module Discordrb
       resp = if server_id
                API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type)
              else
-               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission. type)
+               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type)
              end
       ApplicationCommand.new(JSON.parse(resp), self, server_id)
     end

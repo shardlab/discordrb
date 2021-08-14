@@ -254,7 +254,7 @@ module Discordrb
       chat_input: 1,
       user: 2,
       message: 3
-    }
+    }.freeze
 
     # @return [Integer]
     attr_reader :application_id
