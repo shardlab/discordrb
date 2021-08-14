@@ -113,7 +113,17 @@
 <div class="tags">
   
 
-</div>
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="ApplicationCommandEvent/Resolved.html" title="Discordrb::Events::ApplicationCommandEvent::Resolved (class)">Resolved</a></span>
+    
+  
+</p>
+
 
 
 
@@ -207,7 +217,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#resolved-instance_method" title="#resolved (instance method)">#<strong>resolved</strong>  &#x21d2; Hash </a>
+      <a href="#resolved-instance_method" title="#resolved (instance method)">#<strong>resolved</strong>  &#x21d2; Resolved </a>
     
 
     
@@ -287,6 +297,34 @@
 </li>
 
     
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#target_id-instance_method" title="#target_id (instance method)">#<strong>target_id</strong>  &#x21d2; Integer<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The target of this command when it is a context command.</p>
+</div></span>
+  
+</li>
+
+    
   </ul>
 
 
@@ -330,6 +368,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>A new instance of ApplicationCommandEvent.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#target-instance_method" title="#target (instance method)">#<strong>target</strong>  &#x21d2; Message, ... </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The target of this command, for context commands.</p>
 </div></span>
   
 </li>
@@ -383,12 +444,6 @@
       <pre class="lines">
 
 
-140
-141
-142
-143
-144
-145
 146
 147
 148
@@ -415,10 +470,16 @@
 169
 170
 171
-172</pre>
+172
+173
+174
+175
+176
+177
+178</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 140</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 146</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_bot'>bot</span><span class='rparen'>)</span>
   <span class='kw'>super</span>
@@ -428,11 +489,11 @@
   <span class='ivar'>@command_id</span> <span class='op'>=</span> <span class='id identifier rubyid_command_data'>command_data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
   <span class='ivar'>@command_name</span> <span class='op'>=</span> <span class='id identifier rubyid_command_data'>command_data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
 
-  <span class='ivar'>@resolved</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>users:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>channels:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>roles:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>members:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span> <span class='rbrace'>}</span>
-
+  <span class='ivar'>@target_id</span> <span class='op'>=</span> <span class='id identifier rubyid_command_data'>command_data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>target_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span>
+  <span class='ivar'>@resolved</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ApplicationCommandEvent/Resolved.html" title="Discordrb::Events::ApplicationCommandEvent::Resolved (class)">Resolved</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_process_resolved'>process_resolved</span><span class='lparen'>(</span><span class='id identifier rubyid_command_data'>command_data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>resolved</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_command_data'>command_data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>resolved</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
 
-  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='id identifier rubyid_command_data'>command_data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>options</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='id identifier rubyid_command_data'>command_data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>options</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
 
   <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
     <span class='ivar'>@options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -507,12 +568,12 @@
       <pre class="lines">
 
 
-126
-127
-128</pre>
+129
+130
+131</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 126</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 129</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_command_id'>command_id</span>
   <span class='ivar'>@command_id</span>
@@ -566,12 +627,12 @@
       <pre class="lines">
 
 
-123
-124
-125</pre>
+126
+127
+128</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 123</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 126</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_command_name'>command_name</span>
   <span class='ivar'>@command_name</span>
@@ -625,12 +686,12 @@
       <pre class="lines">
 
 
-138
-139
-140</pre>
+141
+142
+143</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 138</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 141</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@options</span>
@@ -645,7 +706,7 @@
       <div class="method_details ">
   <h3 class="signature " id="resolved-instance_method">
   
-    #<strong>resolved</strong>  &#x21d2; <tt>Hash</tt>  <span class="extras">(readonly)</span>
+    #<strong>resolved</strong>  &#x21d2; <tt><span class='object_link'><a href="ApplicationCommandEvent/Resolved.html" title="Discordrb::Events::ApplicationCommandEvent::Resolved (class)">Resolved</a></span></tt>  <span class="extras">(readonly)</span>
   
 
   
@@ -665,7 +726,7 @@
     <li>
       
       
-        <span class='type'>(<tt>Hash</tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="ApplicationCommandEvent/Resolved.html" title="Discordrb::Events::ApplicationCommandEvent::Resolved (class)">Resolved</a></span></tt>)</span>
       
       
       
@@ -679,12 +740,12 @@
       <pre class="lines">
 
 
-135
-136
-137</pre>
+138
+139
+140</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 135</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 138</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_resolved'>resolved</span>
   <span class='ivar'>@resolved</span>
@@ -738,12 +799,12 @@
       <pre class="lines">
 
 
-132
-133
-134</pre>
+135
+136
+137</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 132</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 135</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_subcommand'>subcommand</span>
   <span class='ivar'>@subcommand</span>
@@ -797,12 +858,12 @@
       <pre class="lines">
 
 
-129
-130
-131</pre>
+132
+133
+134</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 129</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 132</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_subcommand_group'>subcommand_group</span>
   <span class='ivar'>@subcommand_group</span>
@@ -812,13 +873,139 @@
 </table>
 </div>
     
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="target_id-instance_method">
+  
+    #<strong>target_id</strong>  &#x21d2; <tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns The target of this command when it is a context command.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The target of this command when it is a context command.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+144
+145
+146</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 144</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_target_id'>target_id</span>
+  <span class='ivar'>@target_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="target-instance_method">
+  
+    #<strong>target</strong>  &#x21d2; <tt><span class='object_link'><a href="../Message.html" title="Discordrb::Message (class)">Message</a></span></tt>, ... 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns The target of this command, for context commands.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Message.html" title="Discordrb::Message (class)">Message</a></span></tt>, <tt><span class='object_link'><a href="../User.html" title="Discordrb::User (class)">User</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The target of this command, for context commands.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+181
+182
+183
+184
+185</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 181</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_target'>target</span>
+  <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>unless</span> <span class='ivar'>@target_id</span>
+
+  <span class='ivar'>@resolved</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_data'>data</span><span class='op'>|</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='ivar'>@target_id</span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='lbracket'>[</span><span class='ivar'>@target_id</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
 
 </div>
 
       <div id="footer">
-  Generated on Mon Jul  5 20:06:31 2021 by
+  Generated on Sat Aug 14 18:57:23 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.9).
 </div>

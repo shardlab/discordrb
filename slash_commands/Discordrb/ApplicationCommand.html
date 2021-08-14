@@ -110,6 +110,37 @@
   
 
 </div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="TYPES-constant" class="">TYPES =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Command types. <code>chat_input</code> is a command that appears in the text input field. <code>user</code> and <code>message</code> types appear as context menus
+for the respective resource.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>chat_input:</span> <span class='int'>1</span><span class='comma'>,</span>
+  <span class='label'>user:</span> <span class='int'>2</span><span class='comma'>,</span>
+  <span class='label'>message:</span> <span class='int'>3</span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
 
 
 
@@ -382,12 +413,12 @@
       <pre class="lines">
 
 
-252
-253
-254</pre>
+260
+261
+262</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 252</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 260</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_application_id'>application_id</span>
   <span class='ivar'>@application_id</span>
@@ -436,12 +467,12 @@
       <pre class="lines">
 
 
-264
-265
-266</pre>
+272
+273
+274</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 264</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 272</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_permission'>default_permission</span>
   <span class='ivar'>@default_permission</span>
@@ -490,12 +521,12 @@
       <pre class="lines">
 
 
-261
-262
-263</pre>
+269
+270
+271</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 261</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 269</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_description'>description</span>
   <span class='ivar'>@description</span>
@@ -544,12 +575,12 @@
       <pre class="lines">
 
 
-258
-259
-260</pre>
+266
+267
+268</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 258</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 266</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_name'>name</span>
   <span class='ivar'>@name</span>
@@ -598,12 +629,12 @@
       <pre class="lines">
 
 
-267
-268
-269</pre>
+275
+276
+277</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 267</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 275</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@options</span>
@@ -652,12 +683,12 @@
       <pre class="lines">
 
 
-255
-256
-257</pre>
+263
+264
+265</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 255</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 263</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_id'>server_id</span>
   <span class='ivar'>@server_id</span>
@@ -699,12 +730,12 @@
       <pre class="lines">
 
 
-293
-294
-295</pre>
+301
+302
+303</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 293</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 301</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_delete_application_command'>delete_application_command</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='label'>server_id:</span> <span class='ivar'>@server_id</span><span class='rparen'>)</span>
@@ -793,12 +824,12 @@
       <pre class="lines">
 
 
-287
-288
-289</pre>
+295
+296
+297</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 287</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 295</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit'>edit</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>default_permission:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_edit_application_command'>edit_application_command</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='label'>server_id:</span> <span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>default_permission:</span> <span class='id identifier rubyid_default_permission'>default_permission</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -813,7 +844,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jul  5 20:06:30 2021 by
+  Generated on Sat Aug 14 18:57:22 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.5.9).
 </div>
