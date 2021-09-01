@@ -112,6 +112,7 @@ describe Discordrb::Message do
   describe '#reacted_with' do
     let(:message) { described_class.new(message_data, bot) }
     let(:emoji) { double('emoji') }
+    let(:reaction) { double('reaction') }
 
     fixture :user_data, %i[user]
 
@@ -154,8 +155,26 @@ describe Discordrb::Message do
 
       message.reacted_with(emoji)
     end
+
+    it 'converts Reaction to strings' do
+      allow(reaction).to receive(:to_s).and_return('123')
+
+      expect(Discordrb::API::Channel).to receive(:get_reactions)
+        .with(any_args, '123', nil, nil, anything)
+
+      message.reacted_with(reaction)
+    end
   end
 
+  describe '#all_reaction_users' do
+
+    fixture :user_data, %i[user]
+    # TODO write proper tests
+    it 'returns a filled hash' do
+    end
+
+  end
+  
   describe '#reply!' do
     let(:message) { described_class.new(message_data, bot) }
     let(:content) { instance_double('String', 'content') }
