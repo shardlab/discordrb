@@ -167,7 +167,6 @@ describe Discordrb::Message do
   end
 
   describe '#all_reaction_users' do
-
     let(:message) { described_class.new(message_data, bot) }
     let(:reaction1) { double('reaction') }
     let(:reaction2) { double('reaction') }
@@ -179,23 +178,22 @@ describe Discordrb::Message do
       message.instance_variable_set(:@reactions, [reaction1, reaction2])
       allow(reaction1).to receive(:to_s).and_return('123')
       allow(reaction2).to receive(:to_s).and_return('456')
-      
+
       allow(message).to receive(:reacted_with)
-        .with(reaction1, limit:100)
-        .and_return([user1,user2])
-      
+        .with(reaction1, limit: 100)
+        .and_return([user1, user2])
+
       allow(message).to receive(:reacted_with)
-        .with(reaction2, limit:100)
-        .and_return([user1,user3])
+        .with(reaction2, limit: 100)
+        .and_return([user1, user3])
     end
 
     it 'returns a filled hash' do
-      reactions_hash = message.all_reaction_users()
-      expect(reactions_hash).to eq({'123' => [user1,user2], '456' => [user1,user3]})
+      reactions_hash = message.all_reaction_users
+      expect(reactions_hash).to eq({ '123' => [user1, user2], '456' => [user1, user3] })
     end
-
   end
-  
+
   describe '#reply!' do
     let(:message) { described_class.new(message_data, bot) }
     let(:content) { instance_double('String', 'content') }

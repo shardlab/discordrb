@@ -309,10 +309,10 @@ module Discordrb
     # @param limit [Integer] the limit of how many users to retrieve per distinct reaction emoji. `nil` will return all users
     # @example Get all the users that reacted to a message for a giveaway.
     #   giveaway_participants = message.all_reaction_users
-    # @return Hash{String => [Array<User>]} a hash with key=reaction.to_s, value=[Array<User>]
+    # @return {String => [Array<User>]} a hash with key=reaction.to_s, value=[Array<User>]
     def all_reaction_users(limit: 100)
-      all_reactions = @reactions.map { |r| r = Hash["#{r.to_s}" => self.reacted_with(r, limit:limit)]}
-      return all_reactions.reduce(Hash.new, :merge)
+      all_reactions = @reactions.map { |r| { r.to_s => reacted_with(r, limit: limit) } }
+      all_reactions.reduce({}, :merge)
     end
 
     # Deletes a reaction made by a user on this message.
