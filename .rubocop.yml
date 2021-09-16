@@ -1,4 +1,6 @@
-require: rubocop-performance
+require:
+  - rubocop-performance
+  - rubocop-rake
 
 inherit_mode:
   merge:
@@ -6,7 +8,7 @@ inherit_mode:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.6
 
 # Disable line length checks
 Layout/LineLength:
