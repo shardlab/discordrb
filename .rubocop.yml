@@ -40,6 +40,10 @@ Security/Eval:
 Style/Alias:
   Enabled: false
 
+# Had to disable this globally because it's being silently autocorrected even with local disable comments?
+Style/BisectedAttrAccessor:
+  Enabled: false
+
 # Prefer compact module/class defs
 Style/ClassAndModuleChildren:
   Enabled: false

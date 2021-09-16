@@ -76,7 +76,7 @@ module Discordrb
     ideal_ary = ideal.length > CHARACTER_LIMIT ? ideal.split(/(.{1,#{CHARACTER_LIMIT}}\b|.{1,#{CHARACTER_LIMIT}})/o).reject(&:empty?) : [ideal]
 
     # Slice off the ideal part and strip newlines
-    rest = msg[ideal.length..-1].strip
+    rest = msg[ideal.length..].strip
 
     # If none remains, return an empty array -> we're done
     return [] unless rest
