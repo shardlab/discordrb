@@ -1172,7 +1172,7 @@ will be used instead.</p>
     <span class='label'>avatar_url:</span> <span class='ivar'>@avatar_url</span><span class='comma'>,</span>
     <span class='label'>tts:</span> <span class='ivar'>@tts</span><span class='comma'>,</span>
     <span class='label'>embeds:</span> <span class='ivar'>@embeds</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_hash</span><span class='rparen'>)</span><span class='comma'>,</span>
-    <span class='label'>allowed_mentions:</span> <span class='ivar'>@allowed_mentions</span>
+    <span class='label'>allowed_mentions:</span> <span class='ivar'>@allowed_mentions</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1243,7 +1243,7 @@ will be used instead.</p>
     <span class='label'>avatar_url:</span> <span class='ivar'>@avatar_url</span><span class='comma'>,</span>
     <span class='label'>tts:</span> <span class='ivar'>@tts</span><span class='comma'>,</span>
     <span class='label'>file:</span> <span class='ivar'>@file</span><span class='comma'>,</span>
-    <span class='label'>allowed_mentions:</span> <span class='ivar'>@allowed_mentions</span>
+    <span class='label'>allowed_mentions:</span> <span class='ivar'>@allowed_mentions</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1256,7 +1256,7 @@ will be used instead.</p>
 </div>
 
       <div id="footer">
-  Generated on Fri Sep 17 01:44:07 2021 by
+  Generated on Fri Sep 17 01:51:35 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.6.8).
 </div>
