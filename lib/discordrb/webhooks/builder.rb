@@ -5,13 +5,14 @@ require 'discordrb/webhooks/embeds'
 module Discordrb::Webhooks
   # A class that acts as a builder for a webhook message object.
   class Builder
-    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [])
+    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil)
       @content = content
       @username = username
       @avatar_url = avatar_url
       @tts = tts
       @file = file
       @embeds = embeds
+      @allowed_mentions = allowed_mentions
     end
 
     # The content of the message. May be 2000 characters long at most.
@@ -70,6 +71,10 @@ module Discordrb::Webhooks
     # @return [Array<Embed>] the embeds attached to this message.
     attr_reader :embeds
 
+    # @return [Discordrb::AllowedMentions, Hash] Mentions that are allowed to ping in this message.
+    # @see https://discord.com/developers/docs/resources/channel#allowed-mentions-object
+    attr_accessor :allowed_mentions
+
     # @return [Hash] a hash representation of the created message, for JSON format.
     def to_json_hash
       {
@@ -77,7 +82,8 @@ module Discordrb::Webhooks
         username: @username,
         avatar_url: @avatar_url,
         tts: @tts,
-        embeds: @embeds.map(&:to_hash)
+        embeds: @embeds.map(&:to_hash),
+        allowed_mentions: @allowed_mentions&.to_hash
       }
     end
 
@@ -88,7 +94,8 @@ module Discordrb::Webhooks
         username: @username,
         avatar_url: @avatar_url,
         tts: @tts,
-        file: @file
+        file: @file,
+        allowed_mentions: @allowed_mentions&.to_hash
       }
     end
   end

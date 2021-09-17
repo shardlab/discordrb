@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'discordrb/webhooks/builder'
+
 module Discordrb
   # A webhook on a server channel
   class Webhook
@@ -87,13 +89,99 @@ module Discordrb
     end
 
     # Deletes the webhook.
-    # @param reason [String] The reason the invite is being deleted.
+    # @param reason [String] The reason the webhook is being deleted.
     def delete(reason = nil)
       if token?
         API::Webhook.token_delete_webhook(@token, @id, reason)
       else
         API::Webhook.delete_webhook(@bot.token, @id, reason)
       end
+    end
+
+    # Execute a webhook.
+    # @param content [String] The content of the message. May be 2000 characters long at most.
+    # @param username [String] The username the webhook will display as. If this is not set, the default username set in the webhook's settings.
+    # @param avatar_url [String] The URL of an image file to be used as an avatar. If this is not set, the default avatar from the webhook's
+    # @param tts [true, false] Whether this message should use TTS or not. By default, it doesn't.
+    # @param file [File] File to be sent together with the message. Mutually exclusive with embeds; a webhook message can contain
+    #   either a file to be sent or embeds.
+    # @param embeds [Array<Webhooks::Embed, Hash>] Embeds to attach to this message.
+    # @param allowed_mentions [AllowedMentions, Hash] Mentions that are allowed to ping in the `content`.
+    # @param wait [true, false] Whether Discord should wait for the message to be successfully received by clients, or
+    #   whether it should return immediately after sending the message. If `true` a {Message} object will be returned.
+    # @yield [builder] Gives the builder to the block to add additional steps, or to do the entire building process.
+    # @yieldparam builder [Builder] The builder given as a parameter which is used as the initial step to start from.
+    # @example Execute the webhook with kwargs
+    #   client.execute(
+    #     content: 'Testing',
+    #     username: 'discordrb',
+    #     embeds: [
+    #       { timestamp: Time.now.iso8601, title: 'testing', image: { url: 'https://i.imgur.com/PcMltU7.jpg' } }
+    #     ])
+    # @example Execute the webhook with an already existing builder
+    #   builder = Discordrb::Webhooks::Builder.new # ...
+    #   client.execute(builder)
+    # @example Execute the webhook by building a new message
+    #   client.execute do |builder|
+    #     builder.content = 'Testing'
+    #     builder.username = 'discordrb'
+    #     builder.add_embed do |embed|
+    #       embed.timestamp = Time.now
+    #       embed.title = 'Testing'
+    #       embed.image = Discordrb::Webhooks::EmbedImage.new(url: 'https://i.imgur.com/PcMltU7.jpg')
+    #     end
+    #   end
+    # @return [Message, nil] If `wait` is `true`, a {Message} will be returned. Otherwise this method will return `nil`.
+    # @note This is only available to webhooks with publically exposed tokens. This excludes channel follow webhooks and webhooks retrieved
+    #   via the audit log.
+    def execute(content: nil, username: nil, avatar_url: nil, tts: nil, file: nil, embeds: nil, allowed_mentions: nil, wait: true, builder: nil, components: nil)
+      raise Discordrb::Errors::UnauthorizedWebhook unless @token
+
+      params = { content: content, username: username, avatar_url: avatar_url, tts: tts, file: file, embeds: embeds, allowed_mentions: allowed_mentions, components: components }
+
+      builder ||= Webhooks::Builder.new
+      view = Discordrb::Components::View.new
+      yield(builder, view) if block_given?
+
+      data = builder.to_json_hash.merge(params.compact)
+      data[:components] ||= view
+
+      resp = API::Webhook.token_execute_webhook(@token, @id, wait, data[:content], data[:username], data[:avatar_url], data[:tts], data[:file], data[:embeds], data[:allowed_mentions], data[:components])
+
+      Message.new(JSON.parse(resp), @bot) if wait
+    end
+
+    # Delete a message created by this webhook.
+    # @param message [Message, String, Integer] The ID of the message to delete.
+    def delete_message(message)
+      raise Discordrb::Errors::UnauthorizedWebhook unless @token
+
+      API::Webhook.token_delete_message(@token, @id, message.resolve_id)
+    end
+
+    # Edit a message created by this webhook.
+    # @param message [Message, String, Integer] The ID of the message to edit.
+    # @param content [String] The content of the message. May be 2000 characters long at most.
+    # @param embeds [Array<Webhooks::Embed, Hash>] Embeds to be attached to the message.
+    # @param allowed_mentions [AllowedMentions, Hash] Mentions that are allowed to ping in the `content`.
+    # @param builder [Builder, nil] The builder to start out with, or nil if one should be created anew.
+    # @yield [builder] Gives the builder to the block to add additional steps, or to do the entire building process.
+    # @yieldparam builder [Webhooks::Builder] The builder given as a parameter which is used as the initial step to start from.
+    # @return [Message] The updated message.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @note When editing `allowed_mentions`, it will update visually in the client but not alert the user with a notification.
+    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, builder: nil, components: nil)
+      raise Discordrb::Errors::UnauthorizedWebhook unless @token
+
+      params = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, componenets: components }.compact
+
+      builder ||= Webhooks::Builder.new
+      yield(builder) if block_given?
+
+      data = builder.to_json_hash.merge(params.compact)
+
+      resp = API::Webhook.token_edit_message(@token, @id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], data[:components])
+      Message.new(JSON.parse(resp), @bot)
     end
 
     # Utility function to get a webhook's avatar URL.

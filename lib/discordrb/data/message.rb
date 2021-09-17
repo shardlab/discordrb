@@ -67,6 +67,9 @@ module Discordrb
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
 
+    # @return [Array<Component>]
+    attr_reader :components
+
     # The discriminator that webhook user accounts have.
     ZERO_DISCRIM = '0000'
 
@@ -104,7 +107,7 @@ module Discordrb
                       Discordrb::LOGGER.debug("Member with ID #{data['author']['id']} not cached (possibly left the server).")
                       member = if data['member']
                                  member_data = data['author'].merge(data['member'])
-                                 Member.new(member_data, bot)
+                                 Member.new(member_data, @server, bot)
                                else
                                  @bot.ensure_user(data['author'])
                                end
@@ -149,6 +152,9 @@ module Discordrb
 
       @embeds = []
       @embeds = data['embeds'].map { |e| Embed.new(e, self) } if data['embeds']
+
+      @components = []
+      @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
     end
 
     # Replies to this message with the specified content.
@@ -158,25 +164,26 @@ module Discordrb
       @channel.send_message(content)
     end
 
-    # Sends a message to this channel.
+    # Responds to this message as an inline reply.
     # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
     # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
     # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param mention_user [true, false] Whether the user that is being replied to should be pinged by the reply.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @return [Message] the message that was sent.
-    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false)
+    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil)
       allowed_mentions = { parse: [] } if allowed_mentions == false
       allowed_mentions = allowed_mentions.to_hash.transform_keys(&:to_sym)
       allowed_mentions[:replied_user] = mention_user
 
-      respond(content, tts, embed, attachments, allowed_mentions, self)
+      respond(content, tts, embed, attachments, allowed_mentions, self, components)
     end
 
     # (see Channel#send_message)
-    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
-      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference)
+    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components)
     end
 
     # Edits this message to have the specified content instead.
@@ -184,8 +191,8 @@ module Discordrb
     # @param new_content [String] the new content the message should have.
     # @param new_embed [Hash, Discordrb::Webhooks::Embed, nil] The new embed the message should have. If `nil` the message will be changed to have no embed.
     # @return [Message] the resulting message.
-    def edit(new_content, new_embed = nil)
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embed ? new_embed.to_hash : nil)
+    def edit(new_content, new_embed = nil, components = nil)
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embed ? new_embed.to_hash : nil, components)
       Message.new(JSON.parse(response), @bot)
     end
 
@@ -220,6 +227,19 @@ module Discordrb
     # @see Bot#add_await!
     def await!(attributes = {}, &block)
       @bot.add_await!(Discordrb::Events::MessageEvent, { from: @author.id, in: @channel.id }.merge(attributes), &block)
+    end
+
+    # Add an {Await} for a reaction to be added on this message.
+    # @see Bot#add_await
+    # @deprecated Will be changed to blocking behavior in v4.0. Use {#await_reaction!} instead.
+    def await_reaction(key, attributes = {}, &block)
+      @bot.add_await(key, Discordrb::Events::ReactionAddEvent, { message: @id }.merge(attributes), &block)
+    end
+
+    # Add a blocking {Await} for a reaction to be added on this message.
+    # @see Bot#add_await!
+    def await_reaction!(attributes = {}, &block)
+      @bot.add_await!(Discordrb::Events::ReactionAddEvent, { message: @id }.merge(attributes), &block)
     end
 
     # @return [true, false] whether this message was sent by the current {Bot}.
@@ -278,7 +298,7 @@ module Discordrb
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
       paginator = Paginator.new(limit, :down) do |last_page|
         after_id = last_page.last.id if last_page
-        last_page = JSON.parse(API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, limit))
+        last_page = JSON.parse(API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id))
         last_page.map { |d| User.new(d, @bot) }
       end
       paginator.to_a
@@ -329,6 +349,20 @@ module Discordrb
 
       referenced_channel = @bot.channel(@message_reference['channel_id'])
       @referenced_message = referenced_channel.message(@message_reference['message_id'])
+    end
+
+    # @return [Array<Components::Button>]
+    def buttons
+      results = @components.collect do |component|
+        case component
+        when Components::Button
+          component
+        when Components::ActionRow
+          component.buttons
+        end
+      end
+
+      results.flatten.compact
     end
   end
 end

@@ -13,6 +13,7 @@ TEST_CHANNELS = [
 ].freeze
 
 describe Discordrb::Commands::CommandBot, order: :defined do
+  let(:server) { double('server', id: 123) }
   let(:text_channel_data) { load_data_file(:text_channel) }
   let(:default_channel_id) { 123 }
   let(:default_channel_name) { 'test-channel' }
@@ -29,7 +30,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
   let(:sixth_channel) do
     bot = double('bot')
     allow(bot).to receive(:token) { 'fake token' }
-    Discordrb::Channel.new(text_channel_data, bot, double('server'))
+    Discordrb::Channel.new(text_channel_data, bot, server)
   end
 
   def command_event_double
@@ -66,7 +67,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
     data = text_channel_data.dup.merge kwargs
     data['id'] = channel_id
     data['name'] = kwargs.fetch(:name) { default_channel_name }
-    channel = Discordrb::Channel.new(data, event.bot, double('server'))
+    channel = Discordrb::Channel.new(data, event.bot, server)
     allow(event).to receive(:channel) { channel }
   end
 
@@ -74,7 +75,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
     command_event_double.tap do |event|
       append_author_to_double(event)
       append_bot_to_double(event)
-      append_channel_to_double(event, channel_id, kwargs)
+      append_channel_to_double(event, channel_id, **kwargs)
     end
   end
 

@@ -36,7 +36,13 @@ module Discordrb
       27 => :manage_nicknames,     # 134217728
       28 => :manage_roles,         # 268435456, also Manage Permissions
       29 => :manage_webhooks,      # 536870912
-      30 => :manage_emojis         # 1073741824
+      30 => :manage_emojis,        # 1073741824, also Manage Stickers
+      31 => :use_slash_commands,   # 2147483648
+      32 => :request_to_speak,     # 4294967296
+      33 => :manage_threads,       # 8589934592
+      34 => :use_public_threads,   # 17179869184
+      35 => :use_private_threads,  # 34359738368
+      36 => :use_external_stickers # 68719476736
     }.freeze
 
     FLAGS.each do |position, flag|
@@ -115,6 +121,15 @@ module Discordrb
       init_vars
     end
 
+    # Return an array of permission flag symbols for this class's permissions
+    # @example Get the permissions for the bits "9"
+    #   permissions = Permissions.new(9)
+    #   permissions.defined_permissions #=> [:create_instant_invite, :administrator]
+    # @return [Array<Symbol>] the permissions
+    def defined_permissions
+      FLAGS.collect { |value, name| (@bits & (1 << value)).positive? ? name : nil }.compact
+    end
+
     # Comparison based on permission bits
     def ==(other)
       false unless other.is_a? Discordrb::Permissions
@@ -179,7 +194,7 @@ module Discordrb
     private
 
     def defined_role_permission?(action, channel)
-      roles_to_check = [@server.everyone_role] + @roles
+      roles_to_check = [@server.everyone_role] + roles
 
       # For each role, check if
       #   (1) the channel explicitly allows or permits an action for the role and

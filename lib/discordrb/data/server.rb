@@ -71,7 +71,7 @@ module Discordrb
       update_data(data)
 
       @large = data['large']
-      @member_count = data['member_count']
+      @member_count = data['member_count'] || 0
       @splash_id = nil
       @banner_id = nil
       @features = data['features'].map { |element| element.downcase.to_sym }
@@ -143,10 +143,15 @@ module Discordrb
     end
 
     # @return [Array<Member>] an array of all the members on this server.
+    # @raise [RuntimeError] if the bot was not started with the :server_member intent
     def members
       return @members.values if @chunked
 
       @bot.debug("Members for server #{@id} not chunked yet - initiating")
+
+      # If the SERVER_MEMBERS intent flag isn't set, the gateway won't respond when we ask for members.
+      raise 'The :server_members intent is required to get server members' if (@bot.gateway.intents & INTENTS[:server_members]).zero?
+
       @bot.request_chunks(@id)
       sleep 0.05 until @chunked
       @members.values
@@ -439,7 +444,7 @@ module Discordrb
     # @!visibility private
     def delete_member(user_id)
       @members.delete(user_id)
-      @member_count -= 1
+      @member_count -= 1 unless @member_count <= 0
     end
 
     # Checks whether a member is cached

@@ -72,11 +72,11 @@ module Discordrb::API::Channel
   end
 
   # Send a message to a channel
-  # https://discordapp.com/developers/docs/resources/channel#create-message
+  # https://discord.com/developers/docs/resources/channel#create-message
   # @param attachments [Array<File>, nil] Attachments to use with `attachment://` in embeds. See
   #   https://discord.com/developers/docs/resources/channel#create-message-using-attachments-within-embeds
-  def create_message(token, channel_id, message, tts = false, embed = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
-    body = { content: message, tts: tts, embed: embed, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference }
+  def create_message(token, channel_id, message, tts = false, embed = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+    body = { content: message, tts: tts, embed: embed, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components }
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h
              { **files, payload_json: body.to_json }
@@ -117,20 +117,20 @@ module Discordrb::API::Channel
 
   # Edit a message
   # https://discord.com/developers/docs/resources/channel#edit-message
-  def edit_message(token, channel_id, message_id, message, mentions = [], embed = nil)
+  def edit_message(token, channel_id, message_id, message, mentions = [], embed = nil, components = nil)
     Discordrb::API.request(
       :channels_cid_messages_mid,
       channel_id,
       :patch,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}",
-      { content: message, mentions: mentions, embed: embed }.to_json,
+      { content: message, mentions: mentions, embed: embed, components: components }.to_json,
       Authorization: token,
       content_type: :json
     )
   end
 
   # Delete a message
-  # https://discordapp.com/developers/docs/resources/channel#delete-message
+  # https://discord.com/developers/docs/resources/channel#delete-message
   def delete_message(token, channel_id, message_id, reason = nil)
     Discordrb::API.request(
       :channels_cid_messages_mid,
@@ -143,7 +143,7 @@ module Discordrb::API::Channel
   end
 
   # Delete messages in bulk
-  # https://discordapp.com/developers/docs/resources/channel#bulk-delete-messages
+  # https://discord.com/developers/docs/resources/channel#bulk-delete-messages
   def bulk_delete_messages(token, channel_id, messages = [], reason = nil)
     Discordrb::API.request(
       :channels_cid_messages_bulk_delete,
@@ -305,7 +305,7 @@ module Discordrb::API::Channel
   end
 
   # Pin a message
-  # https://discordapp.com/developers/docs/resources/channel#add-pinned-channel-message
+  # https://discord.com/developers/docs/resources/channel#add-pinned-channel-message
   def pin_message(token, channel_id, message_id, reason = nil)
     Discordrb::API.request(
       :channels_cid_pins_mid,
@@ -319,7 +319,7 @@ module Discordrb::API::Channel
   end
 
   # Unpin a message
-  # https://discordapp.com/developers/docs/resources/channel#delete-pinned-channel-message
+  # https://discord.com/developers/docs/resources/channel#delete-pinned-channel-message
   def unpin_message(token, channel_id, message_id, reason = nil)
     Discordrb::API.request(
       :channels_cid_pins_mid,

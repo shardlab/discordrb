@@ -16,7 +16,7 @@ module Discordrb
   DISCORD_EPOCH = 1_420_070_400_000
 
   # Used to declare what events you wish to recieve from Discord.
-  # @see https://discordapp.com/developers/docs/topics/gateway#gateway-intents
+  # @see https://discord.com/developers/docs/topics/gateway#gateway-intents
   INTENTS = {
     servers: 1 << 0,
     server_members: 1 << 1,
@@ -35,8 +35,15 @@ module Discordrb
     direct_message_typing: 1 << 14
   }.freeze
 
-  # @return [Integer] All available intents
+  # All available intents
   ALL_INTENTS = INTENTS.values.reduce(&:|)
+
+  # All unprivileged intents
+  # @see https://discord.com/developers/docs/topics/gateway#privileged-intents
+  UNPRIVILEGED_INTENTS = ALL_INTENTS & ~(INTENTS[:server_members] | INTENTS[:server_presences])
+
+  # No intents
+  NO_INTENTS = 0
 
   # Compares two objects based on IDs - either the objects' IDs are equal, or one object is equal to the other's ID.
   def self.id_compare(one_id, other)
@@ -76,7 +83,7 @@ module Discordrb
     ideal_ary = ideal.length > CHARACTER_LIMIT ? ideal.split(/(.{1,#{CHARACTER_LIMIT}}\b|.{1,#{CHARACTER_LIMIT}})/o).reject(&:empty?) : [ideal]
 
     # Slice off the ideal part and strip newlines
-    rest = msg[ideal.length..-1].strip
+    rest = msg[ideal.length..].strip
 
     # If none remains, return an empty array -> we're done
     return [] unless rest

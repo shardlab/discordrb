@@ -19,9 +19,6 @@ module Discordrb
     # @return [String] this channel's name.
     attr_reader :name
 
-    # @return [Server, nil] the server this channel is on. If this channel is a PM channel, it will be nil.
-    attr_reader :server
-
     # @return [Integer, nil] the ID of the parent channel, if this channel is inside a category
     attr_reader :parent_id
 
@@ -99,13 +96,27 @@ module Discordrb
         end
       else
         @name = data['name']
-        @server = server || bot.server(data['guild_id'].to_i)
+        @server_id = server&.id || data['guild_id'].to_i
+        @server = server
       end
 
       @nsfw = data['nsfw'] || false
       @rate_limit_per_user = data['rate_limit_per_user'] || 0
 
       process_permission_overwrites(data['permission_overwrites'])
+    end
+
+    # @return [Server, nil] the server this channel is on. If this channel is a PM channel, it will be nil.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    #   authorized with the `bot` scope.
+    def server
+      return @server if @server
+      return nil if private?
+
+      @server = @bot.server(@server_id)
+      raise Discordrb::Errors::NoPermission, 'The bot does not have access to this server' unless @server
+
+      @server
     end
 
     # @return [true, false] whether or not this channel is a text channel
@@ -199,7 +210,7 @@ module Discordrb
       ids = if parent
               parent.children
             else
-              @server.channels.reject(&:parent_id).select { |c| c.type == @type }
+              server.channels.reject(&:parent_id).select { |c| c.type == @type }
             end.sort_by(&:position).map(&:id)
 
       # Move our channel ID after the target ID by deleting it,
@@ -225,7 +236,7 @@ module Discordrb
         move_argument << hash
       end
 
-      API::Server.update_channel_positions(@bot.token, @server.id, move_argument)
+      API::Server.update_channel_positions(@bot.token, @server_id, move_argument)
     end
 
     # Sets whether this channel is NSFW
@@ -341,9 +352,10 @@ module Discordrb
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @return [Message] the message that was sent.
-    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
-      @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference)
+    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+      @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference, components)
     end
 
     alias_method :send, :send_message
@@ -356,8 +368,9 @@ module Discordrb
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
-    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
-      @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference)
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+      @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference, components)
     end
 
     # Convenience method to send a message with an embed.
@@ -372,13 +385,17 @@ module Discordrb
     # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @yield [embed] Yields the embed to allow for easy building inside a block.
     # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
     # @return [Message] The resulting message.
-    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil)
+    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil)
       embed ||= Discordrb::Webhooks::Embed.new
-      yield(embed) if block_given?
-      send_message(message, tts, embed, attachments, allowed_mentions, message_reference)
+      view ||= Discordrb::Components::View.new
+
+      yield(embed, view) if block_given?
+
+      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view)
     end
 
     # Sends multiple messages to a channel
@@ -518,9 +535,9 @@ module Discordrb
     # @return [Array<Member>] the users in this channel
     def users
       if text?
-        @server.online_members(include_idle: true).select { |u| u.can_read_messages? self }
+        server.online_members(include_idle: true).select { |u| u.can_read_messages? self }
       elsif voice?
-        @server.voice_states.map { |id, voice_state| @server.member(id) if !voice_state.voice_channel.nil? && voice_state.voice_channel.id == @id }.compact
+        server.voice_states.map { |id, voice_state| server.member(id) if !voice_state.voice_channel.nil? && voice_state.voice_channel.id == @id }.compact
       end
     end
 
@@ -554,6 +571,8 @@ module Discordrb
     # @param message_id [Integer] The ID of the message to retrieve.
     # @return [Message, nil] the retrieved message, or `nil` if it couldn't be found.
     def load_message(message_id)
+      raise ArgumentError, 'message_id cannot be nil' if message_id.nil?
+
       response = API::Channel.message(@bot.token, @id, message_id)
       Message.new(JSON.parse(response), @bot)
     rescue RestClient::ResourceNotFound
@@ -744,7 +763,7 @@ module Discordrb
 
     # The default `inspect` method is overwritten to give more useful output.
     def inspect
-      "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} server=#{@server}>"
+      "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} server=#{@server || @server_id}>"
     end
 
     # Adds a recipient to a group channel.
@@ -790,7 +809,7 @@ module Discordrb
 
     # @return [String] a URL that a user can use to navigate to this channel in the client
     def link
-      "https://discord.com/channels/#{@server&.id || '@me'}/#{@channel.id}"
+      "https://discord.com/channels/#{@server_id || '@me'}/#{@channel.id}"
     end
 
     alias_method :jump_link, :link

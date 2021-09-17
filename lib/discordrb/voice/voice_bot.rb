@@ -22,10 +22,10 @@ module Discordrb::Voice
   # {VoiceBot#adjust_offset}, and {VoiceBot#adjust_average}.
   class VoiceBot
     # @return [Channel] the current voice channel
-    attr_reader :channel # rubocop:disable Style/BisectedAttrAccessor
+    attr_reader :channel
 
     # @!visibility private
-    attr_writer :channel # rubocop:disable Style/BisectedAttrAccessor
+    attr_writer :channel
 
     # @return [Integer, nil] the amount of time the stream has been playing, or `nil` if nothing has been played yet.
     attr_reader :stream_time
@@ -149,7 +149,7 @@ module Discordrb::Voice
 
     # Sets whether or not the bot is speaking (green circle around user).
     # @param value [true, false, Integer] whether or not the bot should be speaking, or a bitmask denoting the audio type
-    # @note https://discordapp.com/developers/docs/topics/voice-connections#speaking for information on the speaking bitmask
+    # @note https://discord.com/developers/docs/topics/voice-connections#speaking for information on the speaking bitmask
     def speaking=(value)
       @playing = value
       @ws.send_speaking(value)
