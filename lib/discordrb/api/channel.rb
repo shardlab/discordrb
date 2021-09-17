@@ -49,11 +49,12 @@ module Discordrb::API::Channel
   # Get a list of messages from a channel's history
   # https://discord.com/developers/docs/resources/channel#get-channel-messages
   def messages(token, channel_id, amount, before = nil, after = nil, around = nil)
+    query_string = URI.encode_www_form({ limit: amount, before: before, after: after, around: around }.compact)
     Discordrb::API.request(
       :channels_cid_messages,
       channel_id,
       :get,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages?limit=#{amount}#{"&before=#{before}" if before}#{"&after=#{after}" if after}#{"&around=#{around}" if around}",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages?#{query_string}",
       Authorization: token
     )
   end
