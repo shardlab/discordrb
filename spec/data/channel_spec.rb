@@ -259,7 +259,7 @@ describe Discordrb::Channel do
     end
 
     context 'when in non-strict mode' do
-      let('@bot'.to_sym) { double('bot', token: 'token') }
+      let(:@bot) { double('bot', token: 'token') }
 
       it 'should remove old messages ' do
         allow(Discordrb::IDObject).to receive(:synthesise).and_return(4)

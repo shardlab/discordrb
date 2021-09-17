@@ -42,10 +42,10 @@ module Discordrb::Voice
     attr_writer :secret_key
 
     # The UDP encryption mode
-    attr_reader :mode # rubocop:disable Style/BisectedAttrAccessor
+    attr_reader :mode
 
     # @!visibility private
-    attr_writer :mode # rubocop:disable Style/BisectedAttrAccessor
+    attr_writer :mode
 
     # Creates a new UDP connection. Only creates a socket as the discovery reply may come before the data is
     # initialized.
@@ -71,7 +71,7 @@ module Discordrb::Voice
       # Wait for a UDP message
       message = @socket.recv(70)
       ip = message[4..-3].delete("\0")
-      port = message[-2..-1].unpack1('n')
+      port = message[-2..].unpack1('n')
       [ip, port]
     end
 
