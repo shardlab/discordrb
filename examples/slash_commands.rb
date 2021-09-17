@@ -5,7 +5,7 @@ require 'discordrb'
 bot = Discordrb::Bot.new(token: ENV['SLASH_COMMAND_BOT_TOKEN'], intents: [:server_messages])
 
 # We need to register our application comomands separately from the handlers with a special DSL.
-# This example uses server specifc commands so that they appear immediately for testing,
+# This example uses server specific commands so that they appear immediately for testing,
 # but you can omit the server_id as well to register a global command that can take up to an hour
 # to appear.
 #
