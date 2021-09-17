@@ -47,7 +47,7 @@ module Discordrb
     # @see TYPES
     attr_reader :type
 
-    # @return [String] The interaction data.
+    # @return [Hash] The interaction data.
     attr_reader :data
 
     # @!visibility private
@@ -240,9 +240,13 @@ module Discordrb
 
     # @return [Hash, nil] Returns the button that triggered this interaction if applicable, otherwise nil
     def button
-      return unless @type == TYPES[:button]
+      return unless @type == TYPES[:component]
 
-      Components::Button.new(@data, @bot)
+      @message['components'].each do |row|
+        Components::ActionRow.new(row, @bot).buttons.each do |button|
+          return button if button.custom_id == @data['custom_id']
+        end
+      end
     end
   end
 
