@@ -571,6 +571,8 @@ module Discordrb
     # @param message_id [Integer] The ID of the message to retrieve.
     # @return [Message, nil] the retrieved message, or `nil` if it couldn't be found.
     def load_message(message_id)
+      raise ArgumentError, 'message_id cannot be nil' if message_id.nil?
+
       response = API::Channel.message(@bot.token, @id, message_id)
       Message.new(JSON.parse(response), @bot)
     rescue RestClient::ResourceNotFound
