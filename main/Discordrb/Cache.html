@@ -1717,7 +1717,7 @@ usage of this method may be unavoidable if only the user ID is known.</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_resolve_invite_code'>resolve_invite_code</span><span class='lparen'>(</span><span class='id identifier rubyid_invite'>invite</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_invite'>invite</span> <span class='op'>=</span> <span class='id identifier rubyid_invite'>invite</span><span class='period'>.</span><span class='id identifier rubyid_code'>code</span> <span class='kw'>if</span> <span class='id identifier rubyid_invite'>invite</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Invite.html" title="Discordrb::Invite (class)">Invite</a></span></span>
-  <span class='id identifier rubyid_invite'>invite</span> <span class='op'>=</span> <span class='id identifier rubyid_invite'>invite</span><span class='lbracket'>[</span><span class='id identifier rubyid_invite'>invite</span><span class='period'>.</span><span class='id identifier rubyid_rindex'>rindex</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>+</span> <span class='int'>1</span><span class='op'>..</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_invite'>invite</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>discord.gg</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_invite'>invite</span> <span class='op'>=</span> <span class='id identifier rubyid_invite'>invite</span><span class='lbracket'>[</span><span class='id identifier rubyid_invite'>invite</span><span class='period'>.</span><span class='id identifier rubyid_rindex'>rindex</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>+</span> <span class='int'>1</span><span class='op'>..</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_invite'>invite</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>discord.gg</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_invite'>invite</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1990,9 +1990,9 @@ usage of this method may be unavoidable if only the user ID is known.</p>
 </div>
 
       <div id="footer">
-  Generated on Sat Aug 14 23:42:36 2021 by
+  Generated on Fri Sep 17 01:38:00 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.5.9).
+  0.9.26 (ruby-2.6.8).
 </div>
 
     </div>

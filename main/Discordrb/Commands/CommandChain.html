@@ -710,7 +710,7 @@ its chain arguments.</p>
 
     <span class='id identifier rubyid_first_space'>first_space</span> <span class='op'>=</span> <span class='id identifier rubyid_command'>command</span><span class='period'>.</span><span class='id identifier rubyid_index'>index</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> </span><span class='tstring_end'>&#39;</span></span>
     <span class='id identifier rubyid_command_name'>command_name</span> <span class='op'>=</span> <span class='id identifier rubyid_first_space'>first_space</span> <span class='op'>?</span> <span class='id identifier rubyid_command'>command</span><span class='lbracket'>[</span><span class='int'>0</span><span class='op'>..</span><span class='id identifier rubyid_first_space'>first_space</span> <span class='op'>-</span> <span class='int'>1</span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='id identifier rubyid_command'>command</span>
-    <span class='id identifier rubyid_arguments'>arguments</span> <span class='op'>=</span> <span class='id identifier rubyid_first_space'>first_space</span> <span class='op'>?</span> <span class='id identifier rubyid_command'>command</span><span class='lbracket'>[</span><span class='id identifier rubyid_first_space'>first_space</span> <span class='op'>+</span> <span class='int'>1</span><span class='op'>..</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_arguments'>arguments</span> <span class='op'>=</span> <span class='id identifier rubyid_first_space'>first_space</span> <span class='op'>?</span> <span class='id identifier rubyid_command'>command</span><span class='lbracket'>[</span><span class='id identifier rubyid_first_space'>first_space</span> <span class='op'>+</span> <span class='int'>1</span><span class='op'>..</span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
 
     <span class='comment'># Append a previous sign if none is present
 </span>    <span class='id identifier rubyid_arguments'>arguments</span> <span class='op'>+=</span> <span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:previous</span><span class='rbracket'>]</span> <span class='kw'>unless</span> <span class='id identifier rubyid_arguments'>arguments</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:previous</span><span class='rbracket'>]</span>
@@ -745,9 +745,9 @@ its chain arguments.</p>
 </div>
 
       <div id="footer">
-  Generated on Sat Aug 14 23:42:41 2021 by
+  Generated on Fri Sep 17 01:38:09 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.5.9).
+  0.9.26 (ruby-2.6.8).
 </div>
 
     </div>

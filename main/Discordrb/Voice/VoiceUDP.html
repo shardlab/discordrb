@@ -691,7 +691,7 @@ on the same endpoint.</p>
   <span class='comment'># Wait for a UDP message
 </span>  <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='ivar'>@socket</span><span class='period'>.</span><span class='id identifier rubyid_recv'>recv</span><span class='lparen'>(</span><span class='int'>70</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_ip'>ip</span> <span class='op'>=</span> <span class='id identifier rubyid_message'>message</span><span class='lbracket'>[</span><span class='int'>4</span><span class='op'>..</span><span class='op'>-</span><span class='int'>3</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\0</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_port'>port</span> <span class='op'>=</span> <span class='id identifier rubyid_message'>message</span><span class='lbracket'>[</span><span class='op'>-</span><span class='int'>2</span><span class='op'>..</span><span class='op'>-</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_unpack1'>unpack1</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>n</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_port'>port</span> <span class='op'>=</span> <span class='id identifier rubyid_message'>message</span><span class='lbracket'>[</span><span class='op'>-</span><span class='int'>2</span><span class='op'>..</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_unpack1'>unpack1</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>n</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='lbracket'>[</span><span class='id identifier rubyid_ip'>ip</span><span class='comma'>,</span> <span class='id identifier rubyid_port'>port</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -865,9 +865,9 @@ be received using <span class='object_link'><a href="#receive_discovery_reply-in
 </div>
 
       <div id="footer">
-  Generated on Sat Aug 14 23:42:40 2021 by
+  Generated on Fri Sep 17 01:38:07 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.26 (ruby-2.5.9).
+  0.9.26 (ruby-2.6.8).
 </div>
 
     </div>
