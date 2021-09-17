@@ -128,16 +128,9 @@ describe Discordrb::Message do
 
     it 'calls the API method' do
       expect(Discordrb::API::Channel).to receive(:get_reactions)
-        .with(any_args, '\u{1F44D}', nil, nil, 27)
+        .with(any_args, '\u{1F44D}', nil, nil)
 
       message.reacted_with('\u{1F44D}', limit: 27)
-    end
-
-    it 'defaults to a limit of 100' do
-      expect(Discordrb::API::Channel).to receive(:get_reactions)
-        .with(any_args, '\u{1F44D}', nil, nil, 100)
-
-      message.reacted_with('\u{1F44D}')
     end
 
     it 'fetches all users when limit is nil' do
@@ -150,7 +143,7 @@ describe Discordrb::Message do
       allow(emoji).to receive(:to_reaction).and_return('123')
 
       expect(Discordrb::API::Channel).to receive(:get_reactions)
-        .with(any_args, '123', nil, nil, anything)
+        .with(any_args, '123', nil, nil)
 
       message.reacted_with(emoji)
     end
