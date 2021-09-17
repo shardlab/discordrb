@@ -83,7 +83,7 @@ module Discordrb::Webhooks
         avatar_url: @avatar_url,
         tts: @tts,
         embeds: @embeds.map(&:to_hash),
-        allowed_mentions: @allowed_mentions
+        allowed_mentions: @allowed_mentions&.to_hash
       }
     end
 
@@ -95,7 +95,7 @@ module Discordrb::Webhooks
         avatar_url: @avatar_url,
         tts: @tts,
         file: @file,
-        allowed_mentions: @allowed_mentions
+        allowed_mentions: @allowed_mentions&.to_hash
       }
     end
   end
