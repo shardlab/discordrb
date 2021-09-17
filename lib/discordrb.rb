@@ -35,8 +35,15 @@ module Discordrb
     direct_message_typing: 1 << 14
   }.freeze
 
-  # @return [Integer] All available intents
+  # All available intents
   ALL_INTENTS = INTENTS.values.reduce(&:|)
+
+  # All unprivileged intents
+  # @see https://discord.com/developers/docs/topics/gateway#privileged-intents
+  UNPRIVILEGED_INTENTS = ALL_INTENTS & ~(INTENTS[:server_members] | INTENTS[:server_presences])
+
+  # No intents
+  NO_INTENTS = 0
 
   # Compares two objects based on IDs - either the objects' IDs are equal, or one object is equal to the other's ID.
   def self.id_compare(one_id, other)
