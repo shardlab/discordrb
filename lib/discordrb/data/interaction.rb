@@ -47,7 +47,7 @@ module Discordrb
     # @see TYPES
     attr_reader :type
 
-    # @return Hash The interaction data.
+    # @return [Hash] The interaction data.
     attr_reader :data
 
     # @!visibility private
