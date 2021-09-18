@@ -129,7 +129,7 @@ describe Discordrb::Message do
 
     it 'calls the API method' do
       expect(Discordrb::API::Channel).to receive(:get_reactions)
-        .with(any_args, '\u{1F44D}', nil, nil)
+        .with(any_args, '\u{1F44D}', nil, nil, 27)
 
       message.reacted_with('\u{1F44D}', limit: 27)
     end
@@ -144,7 +144,7 @@ describe Discordrb::Message do
       allow(emoji).to receive(:to_reaction).and_return('123')
 
       expect(Discordrb::API::Channel).to receive(:get_reactions)
-        .with(any_args, '123', nil, nil)
+        .with(any_args, '123', nil, nil, anything)
 
       message.reacted_with(emoji)
     end
