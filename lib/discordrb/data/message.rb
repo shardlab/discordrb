@@ -298,8 +298,8 @@ module Discordrb
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
       reaction = reaction.to_s if reaction.respond_to?(:to_s)
 
-      get_reactions = proc do |limit, after_id = nil|
-        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, limit)
+      get_reactions = proc do |fetch_limit, after_id = nil|
+        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit)
         return JSON.parse(resp).map { |d| User.new(d, @bot) }
       end
 
