@@ -297,11 +297,23 @@ module Discordrb
     def reacted_with(reaction, limit: 100)
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
       reaction = reaction.to_s if reaction.respond_to?(:to_s)
-      paginator = Paginator.new(limit, :down) do |last_page|
-        after_id = last_page.last.id if last_page
-        last_page = JSON.parse(API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id))
-        last_page.map { |d| User.new(d, @bot) }
+
+      get_reactions = proc do |fetch_limit, after_id = nil|
+        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit)
+        return JSON.parse(resp).map { |d| User.new(d, @bot) }
       end
+
+      # Can be done without pagination
+      return get_reactions.call(limit) if limit && limit <= 100
+
+      paginator = Paginator.new(limit, :down) do |last_page|
+        if last_page && last_page.count < 100
+          []
+        else
+          get_reactions.call(100, last_page&.last&.id)
+        end
+      end
+
       paginator.to_a
     end
 
