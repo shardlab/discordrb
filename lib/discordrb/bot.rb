@@ -1453,7 +1453,17 @@ module Discordrb
         when Interaction::TYPES[:command]
           event = ApplicationCommandEvent.new(data, self)
 
-          @application_commands[event.command_name]&.call(event)
+          Thread.new do
+            Thread.current[:discordrb_name] = "it-#{event.interaction.id}"
+
+            begin
+              debug("Executing application command #{event.command_name}:#{event.command_id}")
+
+              @application_commands[event.command_name]&.call(event)
+            rescue StandardError => e
+              log_exception(e)
+            end
+          end
         when Interaction::TYPES[:component]
           case data['data']['component_type']
           when Components::TYPES[:button]
