@@ -3,13 +3,13 @@
 require 'discordrb'
 
 describe Discordrb::Emoji do
-  let(:bot) { double('bot') }
-
   subject(:emoji) do
     server = double('server', role: double)
 
     described_class.new(emoji_data, bot, server)
   end
+
+  let(:bot) { double('bot') }
 
   fixture :emoji_data, %i[emoji]
 

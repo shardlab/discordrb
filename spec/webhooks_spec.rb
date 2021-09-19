@@ -83,11 +83,11 @@ describe Discordrb::Webhooks do
   end
 
   describe Discordrb::Webhooks::Client do
+    subject { described_class.new(url: provided_url) }
+
     let(:id) { SecureRandom.bytes(8) }
     let(:token) { SecureRandom.bytes(24) }
     let(:provided_url) { instance_double(String) }
-
-    subject { described_class.new(url: provided_url) }
 
     describe '#initialize' do
       it 'generates a url from id and token' do
@@ -202,10 +202,10 @@ describe Discordrb::Webhooks do
     end
 
     describe '#delete_message' do
+      subject { described_class.new(url: base_url) }
+
       let(:base_url) { 'url' }
       let(:message_id) { SecureRandom.bytes(8) }
-
-      subject { described_class.new(url: base_url) }
 
       before do
         allow(RestClient).to receive(:delete).with(any_args)

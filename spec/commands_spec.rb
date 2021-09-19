@@ -29,7 +29,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
   let(:fifth_channel) { test_channels[4] }
   let(:sixth_channel) do
     bot = double('bot')
-    allow(bot).to receive(:token) { 'fake token' }
+    allow(bot).to receive(:token).and_return('fake token')
     Discordrb::Channel.new(text_channel_data, bot, server)
   end
 
@@ -47,8 +47,8 @@ describe Discordrb::Commands::CommandBot, order: :defined do
       double('member').tap do |member|
         allow(member).to receive(:id) { user_id }
         allow(member).to receive(:roles) { user_roles }
-        allow(member).to receive(:permission?) { true }
-        allow(member).to receive(:webhook?) { false }
+        allow(member).to receive(:permission?).and_return(true)
+        allow(member).to receive(:webhook?).and_return(false)
       end
     end
   end
@@ -56,9 +56,9 @@ describe Discordrb::Commands::CommandBot, order: :defined do
   def append_bot_to_double(event)
     allow(event).to receive(:bot) do
       double('bot').tap do |bot|
-        allow(bot).to receive(:token) { 'fake token' }
-        allow(bot).to receive(:rate_limited?) { false }
-        allow(bot).to receive(:attributes) { {} }
+        allow(bot).to receive(:token).and_return('fake token')
+        allow(bot).to receive(:rate_limited?).and_return(false)
+        allow(bot).to receive(:attributes).and_return({})
       end
     end
   end

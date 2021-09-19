@@ -3,15 +3,15 @@
 require 'discordrb'
 
 describe Discordrb::Webhook do
+  subject(:webhook) do
+    described_class.new(webhook_data, bot)
+  end
+
   let(:token) { double('token') }
   let(:reason) { double('reason') }
   let(:server) { double('server', member: double) }
   let(:channel) { double('channel', server: server) }
   let(:bot) { double('bot', channel: channel, token: token) }
-
-  subject(:webhook) do
-    described_class.new(webhook_data, bot)
-  end
 
   fixture :webhook_data, %i[webhook]
   fixture_property :webhook_name, :webhook_data, ['name']
@@ -44,6 +44,7 @@ describe Discordrb::Webhook do
 
     context 'when webhook from a token' do
       before { webhook.instance_variable_set(:@owner, nil) }
+
       it 'doesn\'t set owner' do
         expect(webhook.owner).to eq nil
       end
@@ -157,6 +158,7 @@ describe Discordrb::Webhook do
 
     context 'when webhook is from token' do
       before { webhook.instance_variable_set(:@owner, nil) }
+
       it 'returns true' do
         expect(webhook.token?).to eq true
       end
