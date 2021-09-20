@@ -251,6 +251,36 @@
         </dt>
         <dd><pre class="code"><span class='int'>2000</span></pre></dd>
       
+        <dt id="TIMESTAMP_STYLES-constant" class="">TIMESTAMP_STYLES =
+          <div class="docstring">
+  <div class="discussion">
+    <p>For creating timestamps with <span class='object_link'><a href="#timestamp-class_method" title="Discordrb.timestamp (method)">timestamp</a></span></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="https://discord.com/developers/docs/reference#message-formatting-timestamp-styles" target="_parent" title="https://discord.com/developers/docs/reference#message-formatting-timestamp-styles">https://discord.com/developers/docs/reference#message-formatting-timestamp-styles</a></li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>short_time:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>t</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># 16:20
+</span>  <span class='label'>long_time:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>T</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># 16:20:30
+</span>  <span class='label'>short_date:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>d</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># 20/04/2021
+</span>  <span class='label'>long_date:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>D</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># 20 April 2021
+</span>  <span class='label'>short_datetime:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>f</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># 20 April 2021 16:20
+</span>  <span class='label'>long_datetime:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>F</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># Tuesday, 20 April 2021 16:20
+</span>  <span class='label'>relative:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>R</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># 2 months ago
+</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
         <dt id="LOG_TIMESTAMP_FORMAT-constant" class="">LOG_TIMESTAMP_FORMAT =
           <div class="docstring">
   <div class="discussion">
@@ -355,6 +385,28 @@
   
     <span class="summary_desc"><div class='inline'><p>Splits a message into chunks of 2000 characters.</p>
 </div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#timestamp-class_method" title="timestamp (class method)">.<strong>timestamp</strong>(time, style = nil)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
   
 </li>
 
@@ -469,18 +521,6 @@
       <pre class="lines">
 
 
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
 71
 72
 73
@@ -503,10 +543,22 @@
 90
 91
 92
-93</pre>
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_split_message'>split_message</span><span class='lparen'>(</span><span class='id identifier rubyid_msg'>msg</span><span class='rparen'>)</span>
   <span class='comment'># If the messages is empty, return an empty array
@@ -548,12 +600,117 @@
 </table>
 </div>
     
+      <div class="method_details ">
+  <h3 class="signature " id="timestamp-class_method">
+  
+    .<strong>timestamp</strong>(time, style = nil)  &#x21d2; <tt><span class='object_link'><a href="String.html" title="String (class)">String</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code><span class='const'><span class='object_link'><a href="" title="Discordrb (module)">Discordrb</a></span></span><span class='period'>.</span><span class='id identifier rubyid_timestamp'>timestamp</span><span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='comma'>,</span> <span class='symbol'>:short_time</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; &quot;&lt;t:1632146954:t&gt;&quot;</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>time</span>
+      
+      
+        <span class='type'>(<tt>Time</tt>, <tt><span class='object_link'><a href="Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The time to create the timestamp from, or a unix timestamp integer.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>style</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt><span class='object_link'><a href="String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>One of the keys from <span class='object_link'><a href="#TIMESTAMP_STYLES-constant" title="Discordrb::TIMESTAMP_STYLES (constant)">TIMESTAMP_STYLES</a></span> or a string with the style.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+113
+114
+115
+116
+117
+118
+119</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb.rb', line 113</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_timestamp'>timestamp</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='comma'>,</span> <span class='id identifier rubyid_style'>style</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_style'>style</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;t:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_time'>time</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>else</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;t:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_time'>time</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="#TIMESTAMP_STYLES-constant" title="Discordrb::TIMESTAMP_STYLES (constant)">TIMESTAMP_STYLES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_style'>style</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_style'>style</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 </div>
 
       <div id="footer">
-  Generated on Sun Sep 19 23:02:25 2021 by
+  Generated on Mon Sep 20 15:26:31 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.6.8).
 </div>
