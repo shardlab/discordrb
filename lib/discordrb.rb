@@ -63,7 +63,7 @@ module Discordrb
     short_datetime: 'f', # 20 April 2021 16:20
     long_datetime: 'F', # Tuesday, 20 April 2021 16:20
     relative_time: 'R' # 2 months ago
-  }
+}.freeze
 
   # Splits a message into chunks of 2000 characters. Attempts to split by lines if possible.
   # @param msg [String] The message to split.
@@ -104,8 +104,12 @@ module Discordrb
     ideal_ary + split_message(rest)
   end
 
-  # @param time [Time]
-  # @param style [Symbol]
+  # @param time [Time] The time to create the timestamp from.
+  # @param style [Symbol] One of the keys from {TIMESTAMP_STYLES}
+  # @return [String]
+  # @example
+  #   Discordrb.timestamp(Time.now, :short_time)
+  #   # => "<t:1632146954:t>"
   def self.timestamp(time, style = nil)
     if style.nil? || TIMESTAMP_STYLES[style].nil?
       "<t:#{time.to_i}>"
