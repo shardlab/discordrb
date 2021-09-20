@@ -105,7 +105,7 @@ module Discordrb
   end
 
   # @param time [Time, Integer] The time to create the timestamp from, or a unix timestamp integer.
-  # @param style [Symbol] One of the keys from {TIMESTAMP_STYLES}
+  # @param style [Symbol, String] One of the keys from {TIMESTAMP_STYLES} or a string with the style.
   # @return [String]
   # @example
   #   Discordrb.timestamp(Time.now, :short_time)
