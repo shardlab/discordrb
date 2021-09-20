@@ -63,7 +63,7 @@ module Discordrb
     short_datetime: 'f', # 20 April 2021 16:20
     long_datetime: 'F', # Tuesday, 20 April 2021 16:20
     relative_time: 'R' # 2 months ago
-}.freeze
+  }.freeze
 
   # Splits a message into chunks of 2000 characters. Attempts to split by lines if possible.
   # @param msg [String] The message to split.
