@@ -58,8 +58,8 @@ module Discordrb
       end
 
       # @!visibility private
-      def to_json(_)
-        { type: Components::TYPES[:action_row], components: @components }.to_json
+      def to_h
+        { type: Components::TYPES[:action_row], components: @components }
       end
     end
 
@@ -126,7 +126,7 @@ module Discordrb
 
       # @!visibility private
       def to_a
-        @rows.to_a
+        @rows.map(&:to_h)
       end
     end
 
