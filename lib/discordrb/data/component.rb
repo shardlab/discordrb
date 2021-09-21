@@ -125,8 +125,8 @@ module Discordrb
       end
 
       # @!visibility private
-      def to_json(_)
-        @rows.to_json
+      def to_a
+        @rows.to_a
       end
     end
 
@@ -167,8 +167,8 @@ module Discordrb
       end
 
       # @!visibility private
-      def to_json(_)
-        @components.to_json
+      def to_a
+        @components
       end
     end
 
