@@ -68,12 +68,12 @@ describe Discordrb::Channel do
   describe '#slowmode?' do
     it 'works when the value is 0' do
       channel.instance_variable_set(:@rate_limit_per_user, 0)
-      expect(channel.slowmode?).to be_falsy
+      expect(channel).not_to be_slowmode
     end
 
     it "works when the value isn't 0" do
       channel.instance_variable_set(:@rate_limit_per_user, 5)
-      expect(channel.slowmode?).to be_truthy
+      expect(channel).to be_slowmode
     end
   end
 
@@ -263,7 +263,7 @@ describe Discordrb::Channel do
     context 'when in non-strict mode' do
       let(:@bot) { double('bot', token: 'token') }
 
-      it 'should remove old messages ' do
+      it 'should remove old messages' do
         allow(Discordrb::IDObject).to receive(:synthesise).and_return(4)
         messages = [1, 2, 3, 4]
 

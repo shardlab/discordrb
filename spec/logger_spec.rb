@@ -19,7 +19,7 @@ describe Discordrb::Logger do
 
     logger.error('Testing')
 
-    expect(stream).to_not have_received(:puts)
+    expect(stream).not_to have_received(:puts)
   end
 
   context 'fancy mode' do

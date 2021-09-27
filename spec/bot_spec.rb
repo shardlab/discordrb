@@ -176,7 +176,7 @@ describe Discordrb::Bot do
 
         bot.send(:handle_dispatch, :MESSAGE_CREATE, message_fixture)
 
-        expect(bot).to_not have_received(:raise_event).with(instance_of(Discordrb::Events::ChannelCreateEvent))
+        expect(bot).not_to have_received(:raise_event).with(instance_of(Discordrb::Events::ChannelCreateEvent))
       end
     end
   end

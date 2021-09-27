@@ -101,7 +101,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
 
       bot.execute_command(:test, event, [], false, false)
 
-      expect(spy).to_not have_received :respond
+      expect(spy).not_to have_received :respond
     end
   end
 
@@ -148,7 +148,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
       bot = Discordrb::Commands::CommandBot.new(token: 'token', command_doesnt_exist_message: ->(_event) {})
 
       it 'does not reply' do
-        expect(plain_event).to_not receive(:respond)
+        expect(plain_event).not_to receive(:respond)
         result = bot.execute_command(:bleep_blorp, plain_event, [])
         expect(result).to be_nil
       end
