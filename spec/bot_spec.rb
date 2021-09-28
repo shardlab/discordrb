@@ -32,7 +32,7 @@ describe Discordrb::Bot do
     bot.instance_variable_set(:@servers, server_id => server)
   end
 
-  it 'should set up' do
+  it 'sets up' do
     expect(bot.server(server_id)).to eq(server)
     expect(bot.server(server_id).emoji.size).to eq(2)
   end

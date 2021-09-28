@@ -6,99 +6,99 @@ describe Discordrb::Events do
   RSpec::Matchers.alias_matcher :be_a_match_of, :be_matches
 
   describe Discordrb::Events::Negated do
-    it 'should initialize without errors' do
-      Discordrb::Events::Negated.new(:test)
+    it 'initializes without errors' do
+      described_class.new(:test)
     end
 
-    it 'should contain the passed object' do
-      negated = Discordrb::Events::Negated.new(:test)
+    it 'contains the passed object' do
+      negated = described_class.new(:test)
       expect(negated.object).to eq :test
     end
   end
 
   describe 'not!' do
-    it 'should return a Negated object' do
+    it 'returns a Negated object' do
       expect(not!(:test)).to be_a(Discordrb::Events::Negated)
     end
 
-    it 'should contain the correct value' do
+    it 'contains the correct value' do
       expect(not!(:test).object).to eq :test
     end
   end
 
   describe 'matches_all' do
-    it 'should return true for a nil attribute' do
-      expect(Discordrb::Events.matches_all(nil, nil)).to eq true
+    it 'returns true for a nil attribute' do
+      expect(described_class.matches_all(nil, nil)).to eq true
     end
 
-    it 'should be truthy if the block is truthy' do
-      expect(Discordrb::Events.matches_all(:a, :e) { true }).to be_truthy
-      expect(Discordrb::Events.matches_all(:a, :e) { 1 }).to be_truthy
-      expect(Discordrb::Events.matches_all(:a, :e) { 0 }).to be_truthy
-      expect(Discordrb::Events.matches_all(:a, :e) { 'string' }).to be_truthy
-      expect(Discordrb::Events.matches_all(:a, :e) { false }).not_to be_truthy
+    it 'is truthy if the block is truthy' do
+      expect(described_class.matches_all(:a, :e) { true }).to be_truthy
+      expect(described_class.matches_all(:a, :e) { 1 }).to be_truthy
+      expect(described_class.matches_all(:a, :e) { 0 }).to be_truthy
+      expect(described_class.matches_all(:a, :e) { 'string' }).to be_truthy
+      expect(described_class.matches_all(:a, :e) { false }).not_to be_truthy
     end
 
-    it 'should be falsey if the block is falsey' do
-      expect(Discordrb::Events.matches_all(:a, :e) { nil }).to be_falsy
-      expect(Discordrb::Events.matches_all(:a, :e) { false }).to be_falsy
-      expect(Discordrb::Events.matches_all(:a, :e) { 0 }).not_to be_falsy
+    it 'is falsey if the block is falsey' do
+      expect(described_class.matches_all(:a, :e) { nil }).to be_falsy
+      expect(described_class.matches_all(:a, :e) { false }).to be_falsy
+      expect(described_class.matches_all(:a, :e) { 0 }).not_to be_falsy
     end
 
-    it 'should correctly pass the arguments given' do
-      Discordrb::Events.matches_all(:one, :two) do |a, e|
+    it 'correctly passes the arguments given' do
+      described_class.matches_all(:one, :two) do |a, e|
         expect(a).to eq(:one)
         expect(e).to eq(:two)
       end
     end
 
-    it 'should correctly compare arguments for comparison blocks' do
-      expect(Discordrb::Events.matches_all(1, 1) { |a, e| a == e }).to be_truthy
-      expect(Discordrb::Events.matches_all(1, 0) { |a, e| a == e }).to be_falsy
-      expect(Discordrb::Events.matches_all(0, 1) { |a, e| a == e }).to be_falsy
-      expect(Discordrb::Events.matches_all(0, 0) { |a, e| a == e }).to be_truthy
-      expect(Discordrb::Events.matches_all(1, 1) { |a, e| a != e }).to be_falsy
-      expect(Discordrb::Events.matches_all(1, 0) { |a, e| a != e }).to be_truthy
-      expect(Discordrb::Events.matches_all(0, 1) { |a, e| a != e }).to be_truthy
-      expect(Discordrb::Events.matches_all(0, 0) { |a, e| a != e }).to be_falsy
+    it 'correctly compares arguments for comparison blocks' do
+      expect(described_class.matches_all(1, 1) { |a, e| a == e }).to be_truthy
+      expect(described_class.matches_all(1, 0) { |a, e| a == e }).to be_falsy
+      expect(described_class.matches_all(0, 1) { |a, e| a == e }).to be_falsy
+      expect(described_class.matches_all(0, 0) { |a, e| a == e }).to be_truthy
+      expect(described_class.matches_all(1, 1) { |a, e| a != e }).to be_falsy
+      expect(described_class.matches_all(1, 0) { |a, e| a != e }).to be_truthy
+      expect(described_class.matches_all(0, 1) { |a, e| a != e }).to be_truthy
+      expect(described_class.matches_all(0, 0) { |a, e| a != e }).to be_falsy
     end
 
-    it 'should return the opposite results for negated arguments' do
-      expect(Discordrb::Events.matches_all(not!(:a), :e) { true }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!(:a), :e) { 1 }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!(:a), :e) { 0 }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!(:a), :e) { 'string' }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!(:a), :e) { false }).not_to be_falsy
-      expect(Discordrb::Events.matches_all(not!(:a), :e) { nil }).to be_truthy
-      expect(Discordrb::Events.matches_all(not!(:a), :e) { false }).to be_truthy
-      expect(Discordrb::Events.matches_all(not!(:a), :e) { 0 }).not_to be_truthy
-      expect(Discordrb::Events.matches_all(not!(1), 1) { |a, e| a == e }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!(1), 0) { |a, e| a == e }).to be_truthy
-      expect(Discordrb::Events.matches_all(not!(0), 1) { |a, e| a == e }).to be_truthy
-      expect(Discordrb::Events.matches_all(not!(0), 0) { |a, e| a == e }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!(1), 1) { |a, e| a != e }).to be_truthy
-      expect(Discordrb::Events.matches_all(not!(1), 0) { |a, e| a != e }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!(0), 1) { |a, e| a != e }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!(0), 0) { |a, e| a != e }).to be_truthy
+    it 'returns the opposite results for negated arguments' do
+      expect(described_class.matches_all(not!(:a), :e) { true }).to be_falsy
+      expect(described_class.matches_all(not!(:a), :e) { 1 }).to be_falsy
+      expect(described_class.matches_all(not!(:a), :e) { 0 }).to be_falsy
+      expect(described_class.matches_all(not!(:a), :e) { 'string' }).to be_falsy
+      expect(described_class.matches_all(not!(:a), :e) { false }).not_to be_falsy
+      expect(described_class.matches_all(not!(:a), :e) { nil }).to be_truthy
+      expect(described_class.matches_all(not!(:a), :e) { false }).to be_truthy
+      expect(described_class.matches_all(not!(:a), :e) { 0 }).not_to be_truthy
+      expect(described_class.matches_all(not!(1), 1) { |a, e| a == e }).to be_falsy
+      expect(described_class.matches_all(not!(1), 0) { |a, e| a == e }).to be_truthy
+      expect(described_class.matches_all(not!(0), 1) { |a, e| a == e }).to be_truthy
+      expect(described_class.matches_all(not!(0), 0) { |a, e| a == e }).to be_falsy
+      expect(described_class.matches_all(not!(1), 1) { |a, e| a != e }).to be_truthy
+      expect(described_class.matches_all(not!(1), 0) { |a, e| a != e }).to be_falsy
+      expect(described_class.matches_all(not!(0), 1) { |a, e| a != e }).to be_falsy
+      expect(described_class.matches_all(not!(0), 0) { |a, e| a != e }).to be_truthy
     end
 
-    it 'should find one correct element inside arrays' do
-      expect(Discordrb::Events.matches_all([1, 2, 3], 1) { |a, e| a == e }).to be_truthy
-      expect(Discordrb::Events.matches_all([1, 2, 3], 2) { |a, e| a == e }).to be_truthy
-      expect(Discordrb::Events.matches_all([1, 2, 3], 3) { |a, e| a == e }).to be_truthy
-      expect(Discordrb::Events.matches_all([1, 2, 3], 4) { |a, e| a != e }).to be_truthy
+    it 'finds one correct element inside arrays' do
+      expect(described_class.matches_all([1, 2, 3], 1) { |a, e| a == e }).to be_truthy
+      expect(described_class.matches_all([1, 2, 3], 2) { |a, e| a == e }).to be_truthy
+      expect(described_class.matches_all([1, 2, 3], 3) { |a, e| a == e }).to be_truthy
+      expect(described_class.matches_all([1, 2, 3], 4) { |a, e| a != e }).to be_truthy
     end
 
-    it 'should return false when nothing matches inside arrays' do
-      expect(Discordrb::Events.matches_all([1, 2, 3], 4) { |a, e| a == e }).to be_falsy
+    it 'returns false when nothing matches inside arrays' do
+      expect(described_class.matches_all([1, 2, 3], 4) { |a, e| a == e }).to be_falsy
     end
 
-    it 'should return the respective opposite results for negated arrays' do
-      expect(Discordrb::Events.matches_all(not!([1, 2, 3]), 1) { |a, e| a == e }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!([1, 2, 3]), 2) { |a, e| a == e }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!([1, 2, 3]), 3) { |a, e| a == e }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!([1, 2, 3]), 4) { |a, e| a != e }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!([1, 2, 3]), 4) { |a, e| a == e }).to be_truthy
+    it 'returns the respective opposite results for negated arrays' do
+      expect(described_class.matches_all(not!([1, 2, 3]), 1) { |a, e| a == e }).to be_falsy
+      expect(described_class.matches_all(not!([1, 2, 3]), 2) { |a, e| a == e }).to be_falsy
+      expect(described_class.matches_all(not!([1, 2, 3]), 3) { |a, e| a == e }).to be_falsy
+      expect(described_class.matches_all(not!([1, 2, 3]), 4) { |a, e| a != e }).to be_falsy
+      expect(described_class.matches_all(not!([1, 2, 3]), 4) { |a, e| a == e }).to be_truthy
     end
   end
 
@@ -131,38 +131,38 @@ describe Discordrb::Events do
 
   describe Discordrb::Events::EventHandler do
     describe 'matches?' do
-      it 'should raise an error' do
-        expect { Discordrb::Events::EventHandler.new({}, nil).matches?(nil) }.to raise_error(RuntimeError)
+      it 'raises an error' do
+        expect { described_class.new({}, nil).matches?(nil) }.to raise_error(RuntimeError)
       end
     end
   end
 
   describe Discordrb::Events::TrueEventHandler do
     describe 'matches?' do
-      it 'should return true' do
-        expect(Discordrb::Events::TrueEventHandler.new({}, nil).matches?(nil)).to eq true
+      it 'returns true' do
+        expect(described_class.new({}, nil).matches?(nil)).to eq true
       end
 
-      it 'should always call the block given' do
+      it 'always calls the block given' do
         count = 0
-        Discordrb::Events::TrueEventHandler.new({}, proc { count += 1 }).match(nil)
-        Discordrb::Events::TrueEventHandler.new({}, proc { count += 2 }).match(1)
-        Discordrb::Events::TrueEventHandler.new({}, proc do |e|
+        described_class.new({}, proc { count += 1 }).match(nil)
+        described_class.new({}, proc { count += 2 }).match(1)
+        described_class.new({}, proc do |e|
           expect(e).to eq(1)
           count += 4
         end).match(1)
-        Discordrb::Events::TrueEventHandler.new({ a: :b }, proc { count += 8 }).match(1)
-        Discordrb::Events::TrueEventHandler.new(nil, proc { count += 16 }).match(1)
+        described_class.new({ a: :b }, proc { count += 8 }).match(1)
+        described_class.new(nil, proc { count += 16 }).match(1)
       end
     end
   end
 
   describe Discordrb::Events::MessageEventHandler do
     describe 'matches?' do
-      it 'should call with empty attributes' do
+      it 'calls with empty attributes' do
         t = track('empty attributes')
         event = double('Discordrb::Events::MessageEvent')
-        Discordrb::Events::MessageEventHandler.new({}, proc { t.track(1) }).match(event)
+        described_class.new({}, proc { t.track(1) }).match(event)
         # t.summary
       end
     end
@@ -170,14 +170,14 @@ describe Discordrb::Events do
     shared_examples 'end_with attributes' do |expr, matching, non_matching|
       describe 'end_with attribute' do
         it "matches #{matching}" do
-          handler = Discordrb::Events::MessageEventHandler.new({ end_with: expr }, double('proc'))
+          handler = described_class.new({ end_with: expr }, double('proc'))
           event = double('event', channel: double('channel', private?: false), author: double('author'), timestamp: double('timestamp'), content: matching)
           allow(event).to receive(:is_a?).with(Discordrb::Events::MessageEvent).and_return(true)
           expect(handler).to be_a_match_of(event)
         end
 
         it "doesn't match #{non_matching}" do
-          handler = Discordrb::Events::MessageEventHandler.new({ end_with: expr }, double('proc'))
+          handler = described_class.new({ end_with: expr }, double('proc'))
           event = double('event', channel: double('channel', private?: false), author: double('author'), timestamp: double('timestamp'), content: non_matching)
           allow(event).to receive(:is_a?).with(Discordrb::Events::MessageEvent).and_return(true)
           expect(handler).not_to be_a_match_of(event)

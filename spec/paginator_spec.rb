@@ -13,7 +13,7 @@ describe Discordrb::Paginator do
       ]
 
       index = 0
-      paginator = Discordrb::Paginator.new(nil, :down) do |last_page|
+      paginator = described_class.new(nil, :down) do |last_page|
         expect(last_page).to eq data[index - 1] if last_page
         next_page = data[index]
         index += 1
@@ -34,7 +34,7 @@ describe Discordrb::Paginator do
       ]
 
       index = 0
-      paginator = Discordrb::Paginator.new(nil, :up) do |last_page|
+      paginator = described_class.new(nil, :up) do |last_page|
         expect(last_page).to eq data[index - 1] if last_page
         next_page = data[index]
         index += 1
@@ -53,7 +53,7 @@ describe Discordrb::Paginator do
     ]
 
     index = 0
-    paginator = Discordrb::Paginator.new(2, :down) do |_last_page|
+    paginator = described_class.new(2, :down) do |_last_page|
       next_page = data[index]
       index += 1
       next_page
