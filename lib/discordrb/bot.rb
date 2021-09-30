@@ -437,6 +437,7 @@ module Discordrb
         end
         # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L160
         file.define_singleton_method(:original_filename) { filename } if filename
+        file.define_singleton_method(:path) { filename } if filename
       end
 
       channel = channel.resolve_id
