@@ -1,17 +1,22 @@
 # frozen_string_literal: true
 
-require 'discordrb/events/generic'
+require 'discordrb/events/guilds'
 require 'discordrb/data'
 
 module Discordrb::Events
   # Generic subclass for server emoji events (create/update/delete)
-  class ServerEmojiEvent < Event
+  class ServerEmojiEvent < ServerEvent
     # @return [Server] the server in question.
     attr_reader :server
 
     def initialize(server, bot)
-      @bot = bot
+      super(nil, bot)
       @server = server
+    end
+
+    # HACK: this allows us to subclass ServerEvent to avoid breaking heirarchy-dependent usage
+    def init_server(_data, _bot)
+      nil
     end
   end
 
