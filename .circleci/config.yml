@@ -32,7 +32,6 @@ jobs:
       - image: ruby:2.6-alpine
     steps:
       - setup-env
-      - run: mkdir ~/rspec
       - run:
           name: Run RSpec
           command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
@@ -44,7 +43,6 @@ jobs:
       - image: ruby:2.7-alpine
     steps:
       - setup-env
-      - run: mkdir ~/rspec
       - run:
           name: Run RSpec
           command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
@@ -56,7 +54,6 @@ jobs:
       - image: ruby:3.0-alpine
     steps:
       - setup-env
-      - run: mkdir ~/rspec
       - run:
           name: Run RSpec
           command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
