@@ -353,7 +353,8 @@ module Discordrb::API::Server
       "#{Discordrb::API.api_base}/guilds/#{server_id}/prune",
       { days: days },
       Authorization: token,
-      'X-Audit-Log-Reason': reason
+      'X-Audit-Log-Reason': reason,
+      content_type: json
     )
   end
 
@@ -403,7 +404,8 @@ module Discordrb::API::Server
       "#{Discordrb::API.api_base}/guilds/#{server_id}/integrations",
       { type: type, id: id },
       Authorization: token,
-      'X-Audit-Log-Reason': reason
+      'X-Audit-Log-Reason': reason,
+      content_type: json
     )
   end
 
@@ -443,7 +445,8 @@ module Discordrb::API::Server
       :post,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/integrations/#{integration_id}/sync",
       nil,
-      Authorization: token
+      Authorization: token,
+      content_type: json
     )
   end
 
