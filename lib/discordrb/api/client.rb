@@ -5,6 +5,7 @@ require 'faraday_middleware'
 require 'discordrb/api/client/audit_log_endpoints'
 require 'discordrb/api/client/channel_endpoints'
 require 'discordrb/api/client/emoji_endpoints'
+require 'discordrb/api/client/guild_endpoints'
 require 'discordrb/api/client/guild_template_endpoints'
 require 'discordrb/api/client/invite_endpoints'
 require 'discordrb/api/client/stage_instance_endpoints'
@@ -45,6 +46,7 @@ module Discordrb
       include AuditLogEndpoints
       include ChannelEndpoints
       include EmojiEndpoints
+      include GuildEndpoints
       include GuildTemplateEndpoints
       include InviteEndpoints
       include StageInstanceEndpoints
