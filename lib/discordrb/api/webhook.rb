@@ -5,7 +5,7 @@ module Discordrb::API::Webhook
   module_function
 
   # Get a webhook
-  # https://discord.com/developers/docs/resources/webhook#get-webhook
+  # @see https://discord.com/developers/docs/resources/webhook#get-webhook
   def webhook(token, webhook_id)
     Discordrb::API.request(
       :webhooks_wid,
@@ -17,7 +17,7 @@ module Discordrb::API::Webhook
   end
 
   # Get a webhook via webhook token
-  # https://discord.com/developers/docs/resources/webhook#get-webhook-with-token
+  # @see https://discord.com/developers/docs/resources/webhook#get-webhook-with-token
   def token_webhook(webhook_token, webhook_id)
     Discordrb::API.request(
       :webhooks_wid,
@@ -29,7 +29,7 @@ module Discordrb::API::Webhook
   end
 
   # Execute a webhook via token.
-  # https://discord.com/developers/docs/resources/webhook#execute-webhook
+  # @see https://discord.com/developers/docs/resources/webhook#execute-webhook
   def token_execute_webhook(webhook_token, webhook_id, wait = false, content = nil, username = nil, avatar_url = nil, tts = nil, file = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil)
     body = { content: content, username: username, avatar_url: avatar_url, tts: tts, embeds: embeds&.map(&:to_hash),  allowed_mentions: allowed_mentions, flags: flags, components: components }
     body = if file
@@ -51,7 +51,7 @@ module Discordrb::API::Webhook
   end
 
   # Update a webhook
-  # https://discord.com/developers/docs/resources/webhook#modify-webhook
+  # @see https://discord.com/developers/docs/resources/webhook#modify-webhook
   def update_webhook(token, webhook_id, data, reason = nil)
     Discordrb::API.request(
       :webhooks_wid,
@@ -66,7 +66,7 @@ module Discordrb::API::Webhook
   end
 
   # Update a webhook via webhook token
-  # https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token
+  # @see https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token
   def token_update_webhook(webhook_token, webhook_id, data, reason = nil)
     Discordrb::API.request(
       :webhooks_wid,
@@ -80,7 +80,7 @@ module Discordrb::API::Webhook
   end
 
   # Deletes a webhook
-  # https://discord.com/developers/docs/resources/webhook#delete-webhook
+  # @see https://discord.com/developers/docs/resources/webhook#delete-webhook
   def delete_webhook(token, webhook_id, reason = nil)
     Discordrb::API.request(
       :webhooks_wid,
@@ -93,7 +93,7 @@ module Discordrb::API::Webhook
   end
 
   # Deletes a webhook via webhook token
-  # https://discord.com/developers/docs/resources/webhook#delete-webhook-with-token
+  # @see https://discord.com/developers/docs/resources/webhook#delete-webhook-with-token
   def token_delete_webhook(webhook_token, webhook_id, reason = nil)
     Discordrb::API.request(
       :webhooks_wid,
@@ -105,7 +105,7 @@ module Discordrb::API::Webhook
   end
 
   # Get a message that was created by the webhook corresponding to the provided token.
-  # https://discord.com/developers/docs/resources/webhook#get-webhook-message
+  # @see https://discord.com/developers/docs/resources/webhook#get-webhook-message
   def token_get_message(webhook_token, webhook_id, message_id)
     Discordrb::API.request(
       :webhooks_wid_messages_mid,
@@ -117,7 +117,7 @@ module Discordrb::API::Webhook
   end
 
   # Edit a webhook message via webhook token
-  # https://discord.com/developers/docs/resources/webhook#edit-webhook-message
+  # @see https://discord.com/developers/docs/resources/webhook#edit-webhook-message
   def token_edit_message(webhook_token, webhook_id, message_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil)
     Discordrb::API.request(
       :webhooks_wid_messages,
@@ -130,7 +130,7 @@ module Discordrb::API::Webhook
   end
 
   # Delete a webhook message via webhook token.
-  # https://discord.com/developers/docs/resources/webhook#delete-webhook-message
+  # @see https://discord.com/developers/docs/resources/webhook#delete-webhook-message
   def token_delete_message(webhook_token, webhook_id, message_id)
     Discordrb::API.request(
       :webhooks_wid_messages,

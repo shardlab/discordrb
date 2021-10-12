@@ -232,6 +232,7 @@ module Discordrb::API
   end
 
   # Login to the server
+  # @todo Review for removal.
   def login(email, password)
     request(
       :auth_login,
@@ -244,6 +245,7 @@ module Discordrb::API
   end
 
   # Logout from the server
+  # @todo Review for removal.
   def logout(token)
     request(
       :auth_logout,
@@ -256,6 +258,7 @@ module Discordrb::API
   end
 
   # Create an OAuth application
+  # @todo Review for removal.
   def create_oauth_application(token, name, redirect_uris)
     request(
       :oauth2_applications,
@@ -269,6 +272,7 @@ module Discordrb::API
   end
 
   # Change an OAuth application's properties
+  # @todo Review for removal.
   def update_oauth_application(token, name, redirect_uris, description = '', icon = nil)
     request(
       :oauth2_applications,
@@ -282,6 +286,7 @@ module Discordrb::API
   end
 
   # Get the bot's OAuth application's information
+  # @see https://discord.com/developers/docs/topics/oauth2#get-current-bot-application-information
   def oauth_application(token)
     request(
       :oauth2_applications_me,
@@ -307,6 +312,7 @@ module Discordrb::API
   end
 
   # Get the gateway to be used
+  # @see https://discord.com/developers/docs/topics/gateway#get-gateway
   def gateway(token)
     request(
       :gateway,
@@ -319,6 +325,7 @@ module Discordrb::API
 
   # Get the gateway to be used, with additional information for sharding and
   # session start limits
+  # @see https://discord.com/developers/docs/topics/gateway#get-gateway-bot
   def gateway_bot(token)
     request(
       :gateway_bot,
@@ -330,6 +337,7 @@ module Discordrb::API
   end
 
   # Validate a token (this request will fail if the token is invalid)
+  # @todo Review for removal.
   def validate_token(token)
     request(
       :auth_login,
@@ -343,6 +351,7 @@ module Discordrb::API
   end
 
   # Get a list of available voice regions
+  # @see https://discord.com/developers/docs/resources/voice#list-voice-regions
   def voice_regions(token)
     request(
       :voice_regions,
