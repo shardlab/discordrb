@@ -1,10 +1,10 @@
+# discordrb
+
 [![Gem](https://img.shields.io/gem/v/discordrb.svg)](https://rubygems.org/gems/discordrb)
 [![Gem](https://img.shields.io/gem/dt/discordrb.svg)](https://rubygems.org/gems/discordrb)
 [![CircleCI](https://circleci.com/gh/shardlab/discordrb.svg?style=svg)](https://circleci.com/gh/shardlab/discordrb)
 [![Inline docs](https://inch-ci.org/github/shardlab/discordrb.svg?branch=main)](https://drb.shardlab.dev/v3.4.0/)
 [![Join Discord](https://img.shields.io/badge/discord-join-7289DA.svg)](https://discord.gg/cyK3Hjm)
-
-# discordrb
 
 An implementation of the [Discord](https://discord.com/) API using Ruby.
 
