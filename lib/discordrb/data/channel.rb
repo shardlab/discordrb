@@ -346,11 +346,7 @@ module Discordrb
       @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference)
     end
 
-    # (see #send_message)
-    # @deprecated Please use {#send_message}.
-    def send(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
-      send_message(content, tts, embed, attachments, allowed_mentions, message_reference)
-    end
+    alias_method :send, :send_message
 
     # Sends a temporary message to this channel.
     # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
