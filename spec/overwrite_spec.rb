@@ -91,7 +91,7 @@ describe Discordrb::Overwrite do
 
     it 'converts a hash to an Overwrite' do
       overwrite = described_class.from_hash({
-                                              'id' => id, 'type' => type, 'allow' => 0, 'deny': 0
+                                              'id' => id, 'type' => type, 'allow' => 0, deny: 0
                                             })
 
       expect(overwrite).to eq described_class.new(id, type: :role, allow: 0, deny: 0)

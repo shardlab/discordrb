@@ -112,6 +112,7 @@ describe Discordrb::Message do
   describe '#reacted_with' do
     let(:message) { described_class.new(message_data, bot) }
     let(:emoji) { double('emoji') }
+    let(:reaction) { double('reaction') }
 
     fixture :user_data, %i[user]
 
@@ -133,13 +134,6 @@ describe Discordrb::Message do
       message.reacted_with('\u{1F44D}', limit: 27)
     end
 
-    it 'defaults to a limit of 100' do
-      expect(Discordrb::API::Channel).to receive(:get_reactions)
-        .with(any_args, '\u{1F44D}', nil, nil, 100)
-
-      message.reacted_with('\u{1F44D}')
-    end
-
     it 'fetches all users when limit is nil' do
       expect(Discordrb::Paginator).to receive(:new).with(nil, :down)
 
@@ -154,6 +148,43 @@ describe Discordrb::Message do
 
       message.reacted_with(emoji)
     end
+
+    it 'converts Reaction to strings' do
+      allow(reaction).to receive(:to_s).and_return('123')
+
+      expect(Discordrb::API::Channel).to receive(:get_reactions)
+        .with(any_args, '123', nil, nil, anything)
+
+      message.reacted_with(reaction)
+    end
+  end
+
+  describe '#all_reaction_users' do
+    let(:message) { described_class.new(message_data, bot) }
+    let(:reaction1) { double('reaction') }
+    let(:reaction2) { double('reaction') }
+    let(:user1) { double('user') }
+    let(:user2) { double('user') }
+    let(:user3) { double('user') }
+
+    before do
+      message.instance_variable_set(:@reactions, [reaction1, reaction2])
+      allow(reaction1).to receive(:to_s).and_return('123')
+      allow(reaction2).to receive(:to_s).and_return('456')
+
+      allow(message).to receive(:reacted_with)
+        .with(reaction1, limit: 100)
+        .and_return([user1, user2])
+
+      allow(message).to receive(:reacted_with)
+        .with(reaction2, limit: 100)
+        .and_return([user1, user3])
+    end
+
+    it 'returns a filled hash' do
+      reactions_hash = message.all_reaction_users
+      expect(reactions_hash).to eq({ '123' => [user1, user2], '456' => [user1, user3] })
+    end
   end
 
   describe '#reply!' do
@@ -162,13 +193,13 @@ describe Discordrb::Message do
     let(:mention) { instance_double('TrueClass', 'mention') }
 
     it 'responds with a message_reference' do
-      expect(message).to receive(:respond).with(content, false, nil, nil, hash_including(:replied_user), message)
+      expect(message).to receive(:respond).with(content, false, nil, nil, hash_including(:replied_user), message, nil)
 
       message.reply!(content)
     end
 
     it 'sets replied_user in allowed_mentions' do
-      expect(message).to receive(:respond).with(content, false, nil, nil, { replied_user: mention }, message)
+      expect(message).to receive(:respond).with(content, false, nil, nil, { replied_user: mention }, message, nil)
 
       message.reply!(content, mention_user: mention)
     end
@@ -177,7 +208,7 @@ describe Discordrb::Message do
       let(:mention) { double('mention') }
 
       it 'sets parse to an empty array add merges the mention_user param' do
-        expect(message).to receive(:respond).with(content, false, nil, nil, { parse: [], replied_user: mention }, message)
+        expect(message).to receive(:respond).with(content, false, nil, nil, { parse: [], replied_user: mention }, message, nil)
 
         message.reply!(content, allowed_mentions: false, mention_user: mention)
       end
@@ -195,7 +226,7 @@ describe Discordrb::Message do
       end
 
       it 'converts it to a hash to set the replied_user key' do
-        expect(message).to receive(:respond).with(content, false, nil, nil, hash, message)
+        expect(message).to receive(:respond).with(content, false, nil, nil, hash, message, nil)
         message.reply!(content, allowed_mentions: allowed_mentions, mention_user: mention_user)
       end
     end
@@ -220,11 +251,12 @@ describe Discordrb::Message do
     let(:attachments) { instance_double('Array', 'attachments') }
     let(:allowed_mentions) { instance_double('Hash', 'allowed_mentions') }
     let(:message_reference) { instance_double('Discordrb::Message') }
+    let(:components) { instance_double('Discordrb::Components::View') }
 
     it 'forwards arguments to Channel#send_message' do
-      expect(channel).to receive(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference)
+      expect(channel).to receive(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference, components)
 
-      message.respond(content, tts, embed, attachments, allowed_mentions, message_reference)
+      message.respond(content, tts, embed, attachments, allowed_mentions, message_reference, components)
     end
   end
 end

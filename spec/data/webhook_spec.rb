@@ -268,7 +268,7 @@ describe Discordrb::Webhook do
 
     context 'when no builder is provided' do
       it 'creates a new builder' do
-        expect { |b| webhook.execute(wait: false, &b) }.to yield_with_args(instance_of(Discordrb::Webhooks::Builder))
+        expect { |b| webhook.execute(wait: false, &b) }.to yield_with_args(instance_of(Discordrb::Webhooks::Builder), instance_of(Discordrb::Components::View))
       end
     end
 
@@ -338,7 +338,7 @@ describe Discordrb::Webhook do
 
       webhook.edit_message(message, embeds: embeds, builder: builder)
 
-      expect(Discordrb::API::Webhook).to have_received(:token_edit_message).with(webhook.token, webhook.id, message_id, content, embeds, nil)
+      expect(Discordrb::API::Webhook).to have_received(:token_edit_message).with(webhook.token, webhook.id, message_id, content, embeds, nil, nil)
     end
 
     it 'returns an updated Message object' do

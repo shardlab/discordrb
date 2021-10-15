@@ -51,7 +51,7 @@ module Discordrb::Webhooks
       elsif value.is_a? Array
         raise ArgumentError, 'Colour tuple must have three values!' if value.length != 3
 
-        self.colour = value[0] << 16 | value[1] << 8 | value[2]
+        self.colour = (value[0] << 16) | (value[1] << 8) | value[2]
       else
         self.colour = value.to_i
       end

@@ -137,7 +137,6 @@ module Discordrb::Events
       # Check for the proper event type
       return false unless event.is_a? ReactionRemoveAllEvent
 
-      # No attributes yet as there is no property available on the event that doesn't involve doing a resolution request
       [
         matches_all(@attributes[:message], event.message_id) do |a, e|
           a == e

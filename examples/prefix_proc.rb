@@ -27,7 +27,7 @@ PREFIXES = {
 # 2. Get prefix:
 #      PREFIXES[345687437722386433] #=> '!'
 # 3. Remove prefix from the string, so we don't parse it:
-#      content[prefix.size..-1] #=> "roll 1d6"
+#      content[prefix.size..] #=> "roll 1d6"
 #
 # You can of course define any behavior you like in here, such as a database
 # lookup in SQL for example.
@@ -37,8 +37,8 @@ prefix_proc = proc do |message|
   # PREFIXES[] will return nil.
   prefix = PREFIXES[message.channel.id] || '.'
 
-  # We use [prefix.size..-1] so we can handle prefixes of any length
-  message.content[prefix.size..-1] if message.content.start_with?(prefix)
+  # We use [prefix.size..] so we can handle prefixes of any length
+  message.content[prefix.size..] if message.content.start_with?(prefix)
 end
 
 # Setup a new bot with our prefix proc

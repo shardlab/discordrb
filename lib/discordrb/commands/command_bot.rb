@@ -337,7 +337,7 @@ module Discordrb::Commands
       return nil if chain.empty?
 
       args = chain.split(' ')
-      execute_command(args[0].to_sym, event, args[1..-1])
+      execute_command(args[0].to_sym, event, args[1..])
     end
 
     # Sets the permission level of a user
@@ -445,7 +445,7 @@ module Discordrb::Commands
     def standard_prefix_trigger(message, prefix)
       return nil unless message.start_with? prefix
 
-      message[prefix.length..-1]
+      message[prefix.length..]
     end
 
     def required_permissions?(member, required, channel = nil)

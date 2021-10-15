@@ -113,7 +113,7 @@ module Discordrb::API
       rescue RestClient::Exception => e
         response = e.response
 
-        if response.body
+        if response.body && !e.is_a?(RestClient::TooManyRequests)
           data = JSON.parse(response.body)
           err_klass = Discordrb::Errors.error_class_for(data['code'] || 0)
           e = err_klass.new(data['message'], data['errors'])

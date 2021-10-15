@@ -19,6 +19,7 @@ require 'discordrb/events/raw'
 require 'discordrb/events/reactions'
 require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
+require 'discordrb/events/interactions'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -96,16 +97,19 @@ module Discordrb
     # @param parse_self [true, false] Whether the bot should react on its own messages. It's best to turn this off
     #   unless you really need this so you don't inadvertently create infinite loops.
     # @param shard_id [Integer] The number of the shard this bot should handle. See
-    #   https://github.com/discordapp/discord-api-docs/issues/17 for how to do sharding.
+    #   https://github.com/discord/discord-api-docs/issues/17 for how to do sharding.
     # @param num_shards [Integer] The total number of shards that should be running. See
-    #   https://github.com/discordapp/discord-api-docs/issues/17 for how to do sharding.
+    #   https://github.com/discord/discord-api-docs/issues/17 for how to do sharding.
     # @param redact_token [true, false] Whether the bot should redact the token in logs. Default is true.
     # @param ignore_bots [true, false] Whether the bot should ignore bot accounts or not. Default is false.
     # @param compress_mode [:none, :large, :stream] Sets which compression mode should be used when connecting
     #   to Discord's gateway. `:none` will request that no payloads are received compressed (not recommended for
     #   production bots). `:large` will request that large payloads are received compressed. `:stream` will request
     #   that all data be received in a continuous compressed stream.
-    # @param intents [:all, Array<Symbol>, nil] Intents that this bot requires.
+    # @param intents [:all, :unprivileged, Array<Symbol>, :none] Gateway intents that this bot requires. `:all` will
+    #   request all intents. `:unprivileged` will request only intents that are not defined as "Privileged". `:none`
+    #   will request no intents. An array of symbols will request only those intents specified.
+    # @see Discordrb::INTENTS
     def initialize(
       log_mode: :normal,
       token: nil, client_id: nil,
@@ -132,7 +136,16 @@ module Discordrb
 
       raise 'Token string is empty or nil' if token.nil? || token.empty?
 
-      @intents = intents == :all ? INTENTS.values.reduce(&:|) : calculate_intents(intents)
+      @intents = case intents
+                 when :all
+                   ALL_INTENTS
+                 when :unprivileged
+                   UNPRIVILEGED_INTENTS
+                 when :none
+                   NO_INTENTS
+                 else
+                   calculate_intents(intents)
+                 end
 
       @token = process_token(@type, token)
       @gateway = Gateway.new(self, @token, @shard_key, @compress_mode, @intents)
@@ -149,6 +162,8 @@ module Discordrb
       @current_thread = 0
 
       @status = :online
+
+      @application_commands = {}
     end
 
     # The list of users the bot shares a server with.
@@ -199,8 +214,10 @@ module Discordrb
     # to edit user data like the current username (see {Profile#username=}).
     # @return [Profile] The bot's profile that can be used to edit data.
     def profile
-      gateway_check
-      @profile
+      return @profile if @profile
+
+      response = Discordrb::API::User.profile(@token)
+      @profile = Profile.new(JSON.parse(response), self)
     end
 
     alias_method :bot_user, :profile
@@ -367,14 +384,15 @@ module Discordrb
     # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @return [Message] The message that was sent.
-    def send_message(channel, content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
+    def send_message(channel, content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
       channel = channel.resolve_id
       debug("Sending message to #{channel} with content '#{content}'")
       allowed_mentions = { parse: [] } if allowed_mentions == false
-      message_reference = { message_id: message_reference.id } if message_reference
+      message_reference = { message_id: message_reference.id } if message_reference.respond_to?(:id)
 
-      response = API::Channel.create_message(token, channel, content, tts, embed&.to_hash, nil, attachments, allowed_mentions&.to_hash, message_reference)
+      response = API::Channel.create_message(token, channel, content, tts, embed&.to_hash, nil, attachments, allowed_mentions&.to_hash, message_reference, components)
       Message.new(JSON.parse(response), self)
     end
 
@@ -388,11 +406,12 @@ module Discordrb
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
-    def send_temporary_message(channel, content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    def send_temporary_message(channel, content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
       Thread.new do
         Thread.current[:discordrb_name] = "#{@current_thread}-temp-msg"
 
-        message = send_message(channel, content, tts, embed, attachments, allowed_mentions, message_reference)
+        message = send_message(channel, content, tts, embed, attachments, allowed_mentions, message_reference, components)
         sleep(timeout)
         message.delete
       end
@@ -418,6 +437,7 @@ module Discordrb
         end
         # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L160
         file.define_singleton_method(:original_filename) { filename } if filename
+        file.define_singleton_method(:path) { filename } if filename
       end
 
       channel = channel.resolve_id
@@ -723,6 +743,70 @@ module Discordrb
       end
     end
 
+    # Get an application command by ID.
+    # @param command_id [String, Integer]
+    # @param server_id [String, Integer, nil] The ID of the server to get the command from. Global if `nil`.
+    def get_application_command(command_id, server_id: nil)
+      resp = if server_id
+               API::Application.get_guild_command(@token, profile.id, server_id, command_id)
+             else
+               API::Application.get_global_command(@token, profile.id, command_id)
+             end
+      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+    end
+
+    # @yieldparam [OptionBuilder]
+    # @example
+    #   bot.register_application_command(:reddit, 'Reddit Commands') do |cmd|
+    #     cmd.subcommand_group(:subreddit, 'Subreddit Commands') do |group|
+    #       group.subcommand(:hot, "What's trending") do |sub|
+    #         sub.string(:subreddit, 'Subreddit to search')
+    #       end
+    #       group.subcommand(:new, "What's new") do |sub|
+    #         sub.string(:since, 'How long ago', choices: ['this hour', 'today', 'this week', 'this month', 'this year', 'all time'])
+    #         sub.string(:subreddit, 'Subreddit to search')
+    #       end
+    #     end
+    #   end
+    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input)
+      type = ApplicationCommand::TYPES[type] || type
+
+      builder = Interactions::OptionBuilder.new
+      yield(builder) if block_given?
+
+      resp = if server_id
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type)
+             else
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type)
+             end
+      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+    end
+
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input)
+      type = ApplicationCommand::TYPES[type] || type
+
+      builder = Interactions::OptionBuilder.new
+      yield(builder) if block_given?
+
+      resp = if server_id
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type)
+             else
+               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type)
+             end
+      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+    end
+
+    # Remove an application command from the commands registered with discord.
+    # @param command_id [String, Integer] The ID of the command to remove.
+    # @param server_id [String, Integer] The ID of the server to delete this command from, global if `nil`.
+    def delete_application_command(command_id, server_id: nil)
+      if server_id
+        API::Application.delete_guild_command(@token, profile.id, server_id, command_id)
+      else
+        API::Application.delete_global_command(@token, profile.id, command_id)
+      end
+    end
+
     private
 
     # Throws a useful exception if there's currently no gateway connection.
@@ -1022,7 +1106,7 @@ module Discordrb
 
     def process_token(type, token)
       # Remove the "Bot " prefix if it exists
-      token = token[4..-1] if token.start_with? 'Bot '
+      token = token[4..] if token.start_with? 'Bot '
 
       token = "Bot #{token}" unless type == :user
       token
@@ -1361,6 +1445,37 @@ module Discordrb
         updated_ids.each do |e|
           event = ServerEmojiUpdateEvent.new(server, old_emoji_data[e], new_emoji_data[e], self)
           raise_event(event)
+        end
+      when :INTERACTION_CREATE
+        event = InteractionCreateEvent.new(data, self)
+        raise_event(event)
+
+        case data['type']
+        when Interaction::TYPES[:command]
+          event = ApplicationCommandEvent.new(data, self)
+
+          Thread.new do
+            Thread.current[:discordrb_name] = "it-#{event.interaction.id}"
+
+            begin
+              debug("Executing application command #{event.command_name}:#{event.command_id}")
+
+              @application_commands[event.command_name]&.call(event)
+            rescue StandardError => e
+              log_exception(e)
+            end
+          end
+        when Interaction::TYPES[:component]
+          case data['data']['component_type']
+          when Components::TYPES[:button]
+            event = ButtonEvent.new(data, self)
+
+            raise_event(event)
+          when Components::TYPES[:select_menu]
+            event = SelectMenuEvent.new(data, self)
+
+            raise_event(event)
+          end
         end
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)

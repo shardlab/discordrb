@@ -67,6 +67,9 @@ module Discordrb
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
 
+    # @return [Array<Component>]
+    attr_reader :components
+
     # The discriminator that webhook user accounts have.
     ZERO_DISCRIM = '0000'
 
@@ -104,7 +107,7 @@ module Discordrb
                       Discordrb::LOGGER.debug("Member with ID #{data['author']['id']} not cached (possibly left the server).")
                       member = if data['member']
                                  member_data = data['author'].merge(data['member'])
-                                 Member.new(member_data, bot)
+                                 Member.new(member_data, @server, bot)
                                else
                                  @bot.ensure_user(data['author'])
                                end
@@ -149,6 +152,9 @@ module Discordrb
 
       @embeds = []
       @embeds = data['embeds'].map { |e| Embed.new(e, self) } if data['embeds']
+
+      @components = []
+      @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
     end
 
     # Replies to this message with the specified content.
@@ -167,18 +173,19 @@ module Discordrb
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param mention_user [true, false] Whether the user that is being replied to should be pinged by the reply.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @return (see #respond)
-    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false)
+    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil)
       allowed_mentions = { parse: [] } if allowed_mentions == false
       allowed_mentions = allowed_mentions.to_hash.transform_keys(&:to_sym)
       allowed_mentions[:replied_user] = mention_user
 
-      respond(content, tts, embed, attachments, allowed_mentions, self)
+      respond(content, tts, embed, attachments, allowed_mentions, self, components)
     end
 
     # (see Channel#send_message)
-    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil)
-      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference)
+    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components)
     end
 
     # Edits this message to have the specified content instead.
@@ -186,8 +193,8 @@ module Discordrb
     # @param new_content [String] the new content the message should have.
     # @param new_embed [Hash, Discordrb::Webhooks::Embed, nil] The new embed the message should have. If `nil` the message will be changed to have no embed.
     # @return [Message] the resulting message.
-    def edit(new_content, new_embed = nil)
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embed ? new_embed.to_hash : nil)
+    def edit(new_content, new_embed = nil, components = nil)
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embed ? new_embed.to_hash : nil, components)
       Message.new(JSON.parse(response), @bot)
     end
 
@@ -291,12 +298,36 @@ module Discordrb
     # @return [Array<User>] the users who used this reaction
     def reacted_with(reaction, limit: 100)
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
-      paginator = Paginator.new(limit, :down) do |last_page|
-        after_id = last_page.last.id if last_page
-        last_page = JSON.parse(API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, limit))
-        last_page.map { |d| User.new(d, @bot) }
+      reaction = reaction.to_s if reaction.respond_to?(:to_s)
+
+      get_reactions = proc do |fetch_limit, after_id = nil|
+        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit)
+        return JSON.parse(resp).map { |d| User.new(d, @bot) }
       end
+
+      # Can be done without pagination
+      return get_reactions.call(limit) if limit && limit <= 100
+
+      paginator = Paginator.new(limit, :down) do |last_page|
+        if last_page && last_page.count < 100
+          []
+        else
+          get_reactions.call(100, last_page&.last&.id)
+        end
+      end
+
       paginator.to_a
+    end
+
+    # Returns a hash of all reactions to a message as keys and the users that reacted to it as values.
+    # @param limit [Integer] the limit of how many users to retrieve per distinct reaction emoji. `nil` will return all users
+    # @example Get all the users that reacted to a message for a giveaway.
+    #   giveaway_participants = message.all_reaction_users
+    # @return [Hash<String => Array<User>>] A hash mapping the string representation of a
+    #   reaction to an array of users.
+    def all_reaction_users(limit: 100)
+      all_reactions = @reactions.map { |r| { r.to_s => reacted_with(r, limit: limit) } }
+      all_reactions.reduce({}, :merge)
     end
 
     # Deletes a reaction made by a user on this message.
@@ -344,6 +375,20 @@ module Discordrb
 
       referenced_channel = @bot.channel(@message_reference['channel_id'])
       @referenced_message = referenced_channel.message(@message_reference['message_id'])
+    end
+
+    # @return [Array<Components::Button>]
+    def buttons
+      results = @components.collect do |component|
+        case component
+        when Components::Button
+          component
+        when Components::ActionRow
+          component.buttons
+        end
+      end
+
+      results.flatten.compact
     end
   end
 end

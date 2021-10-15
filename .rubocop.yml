@@ -1,4 +1,6 @@
-require: rubocop-performance
+require:
+  - rubocop-performance
+  - rubocop-rake
 
 inherit_mode:
   merge:
@@ -6,7 +8,7 @@ inherit_mode:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.6
 
 # Disable line length checks
 Layout/LineLength:
@@ -36,6 +38,10 @@ Security/Eval:
 
 # https://stackoverflow.com/q/4763121/
 Style/Alias:
+  Enabled: false
+
+# Had to disable this globally because it's being silently autocorrected even with local disable comments?
+Style/BisectedAttrAccessor:
   Enabled: false
 
 # Prefer compact module/class defs

@@ -43,7 +43,7 @@ describe Discordrb::Channel do
     end
 
     context 'when toggled from true to false' do
-      subject(:channel) { described_class.new(data.merge('nsfw' => true), double, double) }
+      subject(:channel) { described_class.new(data.merge('nsfw' => true), double, server) }
       it_behaves_like 'a Channel property', :nsfw do
         let(:property_value) { false }
       end
@@ -259,7 +259,7 @@ describe Discordrb::Channel do
     end
 
     context 'when in non-strict mode' do
-      let('@bot'.to_sym) { double('bot', token: 'token') }
+      let(:@bot) { double('bot', token: 'token') }
 
       it 'should remove old messages ' do
         allow(Discordrb::IDObject).to receive(:synthesise).and_return(4)
