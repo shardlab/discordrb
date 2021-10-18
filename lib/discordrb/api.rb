@@ -232,7 +232,7 @@ module Discordrb::API
   end
 
   # Login to the server
-  # @todo Review for removal.
+  # @deprecated This method can only be used by User accounts, which is unsupported.
   def login(email, password)
     request(
       :auth_login,
@@ -245,7 +245,7 @@ module Discordrb::API
   end
 
   # Logout from the server
-  # @todo Review for removal.
+  # @deprecated This method can only be used by User accounts, which is unsupported.
   def logout(token)
     request(
       :auth_logout,
@@ -258,7 +258,7 @@ module Discordrb::API
   end
 
   # Create an OAuth application
-  # @todo Review for removal.
+  # @deprecated This endpoint is not documented and does not appear to be usable by Bot accounts.
   def create_oauth_application(token, name, redirect_uris)
     request(
       :oauth2_applications,
@@ -272,7 +272,7 @@ module Discordrb::API
   end
 
   # Change an OAuth application's properties
-  # @todo Review for removal.
+  # @deprecated This endpoint is not documented and does not appear to be usable by Bot accounts.
   def update_oauth_application(token, name, redirect_uris, description = '', icon = nil)
     request(
       :oauth2_applications,
@@ -300,6 +300,7 @@ module Discordrb::API
   # Acknowledge that a message has been received
   # The last acknowledged message will be sent in the ready packet,
   # so this is an easy way to catch up on messages
+  # @deprecated This method can only be used by User accounts, which is unsupported.
   def acknowledge_message(token, channel_id, message_id)
     request(
       :channels_cid_messages_mid_ack,
@@ -337,7 +338,7 @@ module Discordrb::API
   end
 
   # Validate a token (this request will fail if the token is invalid)
-  # @todo Review for removal.
+  # @note This method is not blocked for bots, but is undocumented by Discord and should not be relied upon.
   def validate_token(token)
     request(
       :auth_login,

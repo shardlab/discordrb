@@ -395,7 +395,7 @@ module Discordrb::API::Server
   end
 
   # Create a server integration
-  # @todo Review for removal.
+  # @deprecated This method is not available for Bot accounts.
   def create_integration(token, server_id, type, id, reason = nil)
     Discordrb::API.request(
       :guilds_sid_integrations,
@@ -410,7 +410,7 @@ module Discordrb::API::Server
   end
 
   # Update integration from server
-  # @todo Review for removal.
+  # @deprecated This method is not available for Bot accounts.
   def update_integration(token, server_id, integration_id, expire_behavior, expire_grace_period, enable_emoticons)
     Discordrb::API.request(
       :guilds_sid_integrations_iid,
@@ -437,7 +437,7 @@ module Discordrb::API::Server
   end
 
   # Sync an integration
-  # @todo Review for removal.
+  # @deprecated This method is not available for Bot accounts.
   def sync_integration(token, server_id, integration_id)
     Discordrb::API.request(
       :guilds_sid_integrations_iid_sync,

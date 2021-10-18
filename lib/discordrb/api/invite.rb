@@ -30,7 +30,7 @@ module Discordrb::API::Invite
   end
 
   # Join a server using an invite
-  # @todo Review for removal.
+  # @deprecated Bots cannot join servers through invite codes, they must use the OAuth flow.
   def accept(token, invite_code)
     Discordrb::API.request(
       :invite_code,

@@ -82,7 +82,7 @@ module Discordrb::API::User
   end
 
   # Get the DMs for the current user
-  # @todo Review for removal.
+  # @note This method is not blocked for bots, but is undocumented by Discord and should not be relied upon.
   def user_dms(token)
     Discordrb::API.request(
       :users_me_channels,
@@ -120,7 +120,7 @@ module Discordrb::API::User
   end
 
   # Change user status setting
-  # @todo Review for removal.
+  # @deprecated This method is not available for Bot accounts.
   def change_status_setting(token, status)
     Discordrb::API.request(
       :users_me_settings,
