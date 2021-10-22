@@ -211,7 +211,8 @@ describe Discordrb::Channel do
 
     context 'when data is not provided' do
       it 'requests it from the API' do
-        expect(Discordrb::API::Channel).to receive(:resolve).and_return('{}')
+        allow(Discordrb::API::Channel).to receive(:resolve).and_return('{}')
+        expect(Discordrb::API::Channel).to receive(:resolve)
         channel.__send__(:update_data)
       end
     end
