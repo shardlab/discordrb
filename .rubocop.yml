@@ -50,6 +50,10 @@ RSpec/ExampleLength:
   CountAsOne: ['array', 'hash', 'heredoc']
   Enabled: false
 
+# The default for this cop is 3, which is a bit restrictive
+RSpec/NestedGroups:
+  Max: 4
+
 # Ignore `eval` in the examples folder
 Security/Eval:
   Exclude:
