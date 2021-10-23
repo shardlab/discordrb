@@ -44,6 +44,12 @@ RSpec/ContextWording:
     - unless
     - for
 
+# Disabling for the same reasons as the Metrics department & Layout/LineLength.
+# This doesn't mean it isn't useful, just that we don't want it for every single run.
+RSpec/ExampleLength:
+  CountAsOne: ['array', 'hash', 'heredoc']
+  Enabled: false
+
 # Ignore `eval` in the examples folder
 Security/Eval:
   Exclude:
