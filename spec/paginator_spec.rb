@@ -3,7 +3,7 @@
 require 'discordrb'
 
 describe Discordrb::Paginator do
-  context 'direction down' do
+  context 'when direction down' do
     it 'requests all pages until empty' do
       data = [
         [1, 2, 3],
@@ -24,7 +24,7 @@ describe Discordrb::Paginator do
     end
   end
 
-  context 'direction up' do
+  context 'when direction up' do
     it 'requests all pages until empty' do
       data = [
         [6, 7],
