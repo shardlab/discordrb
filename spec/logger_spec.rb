@@ -22,7 +22,7 @@ describe Discordrb::Logger do
     expect(stream).not_to have_received(:puts)
   end
 
-  context 'fancy mode' do
+  context 'when using fancy mode' do
     it 'logs messages' do
       stream = spy
       logger = described_class.new(true, [stream])
@@ -33,7 +33,7 @@ describe Discordrb::Logger do
     end
   end
 
-  context 'redacted token' do
+  context 'when redacted token is enabled' do
     it 'redacts the token from messages' do
       stream = spy
       logger = described_class.new(true, [stream])

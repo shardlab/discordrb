@@ -126,14 +126,14 @@ describe Discordrb::Webhook do
   end
 
   describe '#avatar_url' do
-    context 'avatar is set' do
+    context 'when avatar is set' do
       it 'calls the correct API helper' do
         expect(Discordrb::API::User).to receive(:avatar_url).with(webhook_id, webhook_avatar)
         webhook.avatar_url
       end
     end
 
-    context 'avatar is not set' do
+    context 'when avatar is not set' do
       before { webhook.instance_variable_set(:@avatar, nil) }
 
       it 'calls the correct API helper' do
@@ -166,14 +166,14 @@ describe Discordrb::Webhook do
   end
 
   describe '#avatarise' do
-    context 'avatar responds to read' do
+    context 'when avatar responds to read' do
       it 'returns encoded' do
         avatar = double('avatar', read: 'text')
         expect(webhook.send(:avatarise, avatar)).to eq "data:image/jpg;base64,#{Base64.strict_encode64('text')}"
       end
     end
 
-    context 'avatar does not respond to read' do
+    context 'when avatar does not respond to read' do
       it 'returns itself' do
         avatar = double('avatar')
         expect(webhook.send(:avatarise, avatar)).to eq avatar
@@ -204,7 +204,7 @@ describe Discordrb::Webhook do
   end
 
   describe '#update_webhook' do
-    context 'API returns valid data' do
+    context 'when the API returns valid data' do
       it 'calls update_internal' do
         webhook
         data = double('data', :[] => double)
@@ -215,7 +215,7 @@ describe Discordrb::Webhook do
       end
     end
 
-    context 'API returns error' do
+    context 'when the API returns error' do
       it 'doesn\'t call update_internal' do
         webhook
         data = double('data', :[] => nil)

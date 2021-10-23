@@ -87,7 +87,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
     end
   end
 
-  context 'no defined commands' do
+  context 'without defined commands' do
     bot = described_class.new token: 'token', help_available: false
 
     it 'successfully triggers the command' do
@@ -105,14 +105,14 @@ describe Discordrb::Commands::CommandBot, order: :defined do
     end
   end
 
-  context 'single command' do
+  context 'with a single command' do
     bot = described_class.new token: 'token', help_available: false
 
     bot.command :name do
       SIMPLE_RESPONSE
     end
 
-    context 'regular user' do
+    context 'for a regular user' do
       it 'returns the response' do
         result = bot.execute_command(:name, command_event_double, [], false, false)
 
@@ -124,7 +124,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
   context 'with :command_doesnt_exist_message attribute' do
     let(:plain_event) { command_event_double_for_channel(first_channel) }
 
-    context 'as a string' do
+    context 'with a string' do
       bot = described_class.new(token: 'token', command_doesnt_exist_message: 'command %command% does not exist!')
 
       it 'replies with the message including % substitution' do
@@ -134,7 +134,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
       end
     end
 
-    context 'as a lambda' do
+    context 'with a lambda' do
       bot = described_class.new(token: 'token', command_doesnt_exist_message: ->(event) { "command %command% does not exist in #{event.channel.name} and 1+2=#{1 + 2}" })
 
       it 'executes the lambda and replies with a message including % substitution' do
@@ -318,7 +318,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         end
       end
 
-      context 'listed as a channel name', order: :defined do
+      context 'when listed as a channel name', order: :defined do
         bot = described_class.new(token: 'token', help_available: false)
 
         bot.command :name do
@@ -347,7 +347,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         end
       end
 
-      context 'listed as an object', order: :defined do
+      context 'when listed as an object', order: :defined do
         bot = described_class.new(token: 'token', help_available: false)
 
         bot.command :name do
@@ -376,7 +376,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         end
       end
 
-      context 'command_bot#channels=', order: :defined do
+      describe '#channels=', order: :defined do
         bot = described_class.new(token: 'token', help_available: false, channels: [TEST_CHANNELS[0], TEST_CHANNELS[1]])
 
         bot.command :name do

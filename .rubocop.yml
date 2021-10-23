@@ -34,6 +34,16 @@ Naming/MethodParameterName:
   AllowedNames:
     - e
 
+# Allow a more permissive list of prefixes for Rspec `context` docstrings
+RSpec/ContextWording:
+  Prefixes:
+    - when
+    - with
+    - without
+    - if
+    - unless
+    - for
+
 # Ignore `eval` in the examples folder
 Security/Eval:
   Exclude:
