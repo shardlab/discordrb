@@ -5,6 +5,16 @@ require 'discordrb'
 describe Discordrb::Events do
   RSpec::Matchers.alias_matcher :be_a_match_of, :be_matches
 
+  # This data is shared across examples, so it needs to be defined here
+  before do
+    stub_const('SERVER_ID', 1)
+    stub_const('SERVER_NAME', 'server_name')
+    stub_const('EMOJI1_ID', 10)
+    stub_const('EMOJI1_NAME', 'emoji_name_1')
+    stub_const('EMOJI2_ID', 11)
+    stub_const('EMOJI2_NAME', 'emoji_name_2')
+  end
+
   describe Discordrb::Events::Negated do
     it 'initializes without errors' do
       described_class.new(:test)
@@ -205,17 +215,6 @@ describe Discordrb::Events do
       'end_with attributes', 'bar', 'foobar', 'foobarbaz'
     )
   end
-
-  # This data is shared across examples, so it needs to be defined here
-  # TODO: Refactor, potentially use `shared_context`
-  # rubocop:disable Lint/ConstantDefinitionInBlock
-  SERVER_ID = 1
-  SERVER_NAME = 'server_name'
-  EMOJI1_ID = 10
-  EMOJI1_NAME = 'emoji_name_1'
-  EMOJI2_ID = 11
-  EMOJI2_NAME = 'emoji_name_2'
-  # rubocop:enable Lint/ConstantDefinitionInBlock
 
   shared_examples 'ServerEvent' do
     describe '#initialize' do
