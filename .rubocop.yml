@@ -34,7 +34,7 @@ Naming/MethodParameterName:
   AllowedNames:
     - e
 
-# Allow a more permissive list of prefixes for Rspec `context` docstrings
+# Allow a more permissive list of prefixes for context docstrings
 RSpec/ContextWording:
   Prefixes:
     - when
