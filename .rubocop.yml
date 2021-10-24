@@ -54,6 +54,11 @@ RSpec/ExampleLength:
 RSpec/NestedGroups:
   Max: 4
 
+# The main offender here is our API specs, so this should be re-enabled when we
+# refactor using webmock (or whatever solution we end up with).
+RSpec/SubjectStub:
+  Enabled: false
+
 # Ignore `eval` in the examples folder
 Security/Eval:
   Exclude:
