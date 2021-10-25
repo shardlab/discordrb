@@ -13,7 +13,7 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 2.7
 
-# Disable line length checks
+# Disable line length checks, may be useful but too noisy for default runs
 Layout/LineLength:
   Enabled: false
 
@@ -25,7 +25,7 @@ Lint/MissingSuper:
 Lint/RescueException:
   Enabled: false
 
-# Disable all metrics.
+# These may be useful to try sometime but are too noisy to enable by default
 Metrics:
   Enabled: false
 
@@ -44,10 +44,10 @@ RSpec/ContextWording:
     - unless
     - for
 
-# Disabling for the same reasons as the Metrics department & Layout/LineLength.
+# Disabling due to noise level, just like the Metrics department & Layout/LineLength.
 # This doesn't mean it isn't useful, just that we don't want it for every single run.
 RSpec/ExampleLength:
-  CountAsOne: ['array', 'hash', 'heredoc']
+  CountAsOne: ['array', 'hash', 'heredoc'] # When we do have the cop enabled, these only count as a single line
   Enabled: false
 
 # The default for this cop is 3, which is a bit restrictive
