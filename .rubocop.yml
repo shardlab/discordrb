@@ -8,6 +8,7 @@ require:
 inherit_mode:
   merge:
     - AllowedNames
+    - CustomTransform
 
 AllCops:
   NewCops: enable
@@ -49,6 +50,11 @@ RSpec/ContextWording:
 RSpec/ExampleLength:
   CountAsOne: ['array', 'hash', 'heredoc'] # When we do have the cop enabled, these only count as a single line
   Enabled: false
+
+# This is set so that it doesn't suggest moving most of our spec files under `spec/discordrb`.
+RSpec/FilePath:
+  CustomTransform:
+    Discordrb: ''
 
 # The default for this cop is 3, which is a bit restrictive
 RSpec/NestedGroups:
