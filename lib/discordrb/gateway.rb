@@ -285,7 +285,7 @@ module Discordrb
                       '$device': 'discordrb',
                       '$referrer': '',
                       '$referring_domain': ''
-                    }, compress, 100, @shard_key, @intents)
+                    }, compress, LARGE_THRESHOLD, @shard_key, @intents)
     end
 
     # Sends an identify packet (op 2). This starts a new session on the current connection and tells Discord who we are.
