@@ -21,8 +21,6 @@ module Discordrb
 
       @channels = {}
       @pm_channels = {}
-
-      @restricted_channels = []
     end
 
     # Returns or caches the available voice regions
@@ -43,27 +41,20 @@ module Discordrb
     # @param server [Server] The server for which to search the channel for. If this isn't specified, it will be
     #   inferred using the API
     # @return [Channel] The channel identified by the ID.
+    # @raise Discordrb::Errors::NoPermission
     def channel(id, server = nil)
       id = id.resolve_id
-
-      raise Discordrb::Errors::NoPermission if @restricted_channels.include? id
 
       debug("Obtaining data for channel with id #{id}")
       return @channels[id] if @channels[id]
 
       begin
-        begin
-          response = API::Channel.resolve(token, id)
-        rescue RestClient::ResourceNotFound
-          return nil
-        end
-        channel = Channel.new(JSON.parse(response), self, server)
-        @channels[id] = channel
-      rescue Discordrb::Errors::NoPermission
-        debug "Tried to get access to restricted channel #{id}, blacklisting it"
-        @restricted_channels << id
-        raise
+        response = API::Channel.resolve(token, id)
+      rescue RestClient::ResourceNotFound
+        return nil
       end
+      channel = Channel.new(JSON.parse(response), self, server)
+      @channels[id] = channel
     end
 
     alias_method :group_channel, :channel
