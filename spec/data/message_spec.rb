@@ -251,7 +251,7 @@ describe Discordrb::Message do
     let(:attachments) { instance_double('Array', 'attachments') }
     let(:allowed_mentions) { instance_double('Hash', 'allowed_mentions') }
     let(:message_reference) { instance_double('Discordrb::Message') }
-    let(:components) { instance_double('Discordrb::Components::View') }
+    let(:components) { instance_double('Discordrb::Webhooks::View') }
 
     it 'forwards arguments to Channel#send_message' do
       expect(channel).to receive(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference, components)

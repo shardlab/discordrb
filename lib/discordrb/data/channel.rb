@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'discordrb/webhooks/view'
+
 module Discordrb
   # A Discord channel, including data like the topic
   class Channel
@@ -391,11 +393,11 @@ module Discordrb
     # @return [Message] The resulting message.
     def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil)
       embed ||= Discordrb::Webhooks::Embed.new
-      view ||= Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
       yield(embed, view) if block_given?
 
-      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view)
+      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a)
     end
 
     # Sends multiple messages to a channel
