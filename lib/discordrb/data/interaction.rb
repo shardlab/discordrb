@@ -83,12 +83,12 @@ module Discordrb
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @param components [Array<#to_h>] An array of components
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    # @yieldparam view [Components::View] A builder for creating interaction components.
+    # @yieldparam view [Webhooks::View] A builder for creating interaction components.
     def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
       flags |= 1 << 6 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
       yield(builder, view) if block_given?
 
@@ -132,12 +132,12 @@ module Discordrb
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @param components [Array<#to_h>] An array of components
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    # @yieldparam view [Components::View] A builder for creating interaction components.
+    # @yieldparam view [Webhooks::View] A builder for creating interaction components.
     def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
       flags |= 1 << 6 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
       yield(builder, view) if block_given?
 
@@ -160,7 +160,7 @@ module Discordrb
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil)
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
       yield(builder, view) if block_given?
 
@@ -187,12 +187,12 @@ module Discordrb
       flags |= 64 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, componenets: components.to_a }.compact)
+      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, components: components.to_a }.compact)
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
         @token, @application_id, true, data[:content], nil, nil, data[:tts], nil, data[:embeds], data[:allowed_mentions], flags, data[:components]
@@ -207,12 +207,12 @@ module Discordrb
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil)
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, componenets: components.to_a }.compact)
+      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components.to_a }.compact)
 
       resp = Discordrb::API::Webhook.token_edit_message(
         @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], data[:components]

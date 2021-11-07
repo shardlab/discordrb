@@ -1467,11 +1467,11 @@ module Discordrb
           end
         when Interaction::TYPES[:component]
           case data['data']['component_type']
-          when Components::TYPES[:button]
+          when Webhooks::View::COMPONENT_TYPES[:button]
             event = ButtonEvent.new(data, self)
 
             raise_event(event)
-          when Components::TYPES[:select_menu]
+          when Webhooks::View::COMPONENT_TYPES[:select_menu]
             event = SelectMenuEvent.new(data, self)
 
             raise_event(event)
