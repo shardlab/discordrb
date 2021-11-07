@@ -556,9 +556,13 @@ inferred using the API</p>
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="Errors/NoPermission.html" title="Discordrb::Errors::NoPermission (class)">Discordrb::Errors::NoPermission</a></span></tt>)</span>
+        <span class='type'></span>
       
       
+      
+        
+        <div class='inline'><p>Discordrb::Errors::NoPermission</p>
+</div>
       
     </li>
   
@@ -570,6 +574,7 @@ inferred using the API</p>
       <pre class="lines">
 
 
+45
 46
 47
 48
@@ -582,41 +587,24 @@ inferred using the API</p>
 55
 56
 57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67</pre>
+58</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 46</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channel'>channel</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_server'>server</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_id'>id</span> <span class='op'>=</span> <span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
-
-  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors.html" title="Discordrb::Errors (module)">Errors</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors/NoPermission.html" title="Discordrb::Errors::NoPermission (class)">NoPermission</a></span></span> <span class='kw'>if</span> <span class='ivar'>@restricted_channels</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_id'>id</span>
 
   <span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Obtaining data for channel with id </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='ivar'>@channels</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='ivar'>@channels</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span>
 
   <span class='kw'>begin</span>
-    <span class='kw'>begin</span>
-      <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_resolve'><span class='object_link'><a href="API/Channel.html#resolve-class_method" title="Discordrb::API::Channel.resolve (method)">resolve</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
-    <span class='kw'>rescue</span> <span class='const'>RestClient</span><span class='op'>::</span><span class='const'>ResourceNotFound</span>
-      <span class='kw'>return</span> <span class='kw'>nil</span>
-    <span class='kw'>end</span>
-    <span class='id identifier rubyid_channel'>channel</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Channel.html" title="Discordrb::Channel (class)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_server'>server</span><span class='rparen'>)</span>
-    <span class='ivar'>@channels</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_channel'>channel</span>
-  <span class='kw'>rescue</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors.html" title="Discordrb::Errors (module)">Errors</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors/NoPermission.html" title="Discordrb::Errors::NoPermission (class)">NoPermission</a></span></span>
-    <span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Tried to get access to restricted channel </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>, blacklisting it</span><span class='tstring_end'>&quot;</span></span>
-    <span class='ivar'>@restricted_channels</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_id'>id</span>
-    <span class='id identifier rubyid_raise'>raise</span>
+    <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_resolve'><span class='object_link'><a href="API/Channel.html#resolve-class_method" title="Discordrb::API::Channel.resolve (method)">resolve</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
+  <span class='kw'>rescue</span> <span class='const'>RestClient</span><span class='op'>::</span><span class='const'>ResourceNotFound</span>
+    <span class='kw'>return</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
+  <span class='id identifier rubyid_channel'>channel</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Channel.html" title="Discordrb::Channel (class)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_server'>server</span><span class='rparen'>)</span>
+  <span class='ivar'>@channels</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_channel'>channel</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -701,16 +689,16 @@ inferred using the API</p>
       <pre class="lines">
 
 
-172
-173
-174
-175
-176
-177
-178</pre>
+163
+164
+165
+166
+167
+168
+169</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 172</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 163</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ensure_channel'>ensure_channel</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_server'>server</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='ivar'>@channels</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rparen'>)</span>
@@ -785,16 +773,16 @@ inferred using the API</p>
       <pre class="lines">
 
 
-160
-161
-162
-163
-164
-165
-166</pre>
+151
+152
+153
+154
+155
+156
+157</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 160</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 151</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ensure_server'>ensure_server</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='ivar'>@servers</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rparen'>)</span>
@@ -869,16 +857,16 @@ inferred using the API</p>
       <pre class="lines">
 
 
-149
-150
-151
-152
-153
-154
-155</pre>
+140
+141
+142
+143
+144
+145
+146</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 149</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 140</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ensure_user'>ensure_user</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='ivar'>@users</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rparen'>)</span>
@@ -988,25 +976,25 @@ channel should be searched for</p>
       <pre class="lines">
 
 
+206
+207
+208
+209
+210
+211
+212
+213
+214
 215
 216
 217
 218
 219
 220
-221
-222
-223
-224
-225
-226
-227
-228
-229
-230</pre>
+221</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 215</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 206</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_find_channel'>find_channel</span><span class='lparen'>(</span><span class='id identifier rubyid_channel_name'>channel_name</span><span class='comma'>,</span> <span class='id identifier rubyid_server_name'>server_name</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_results'>results</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -1208,15 +1196,15 @@ Find a user by name and discriminator</p>
       <pre class="lines">
 
 
-249
-250
-251
-252
-253
-254</pre>
+240
+241
+242
+243
+244
+245</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 249</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 240</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_find_user'>find_user</span><span class='lparen'>(</span><span class='id identifier rubyid_username'>username</span><span class='comma'>,</span> <span class='id identifier rubyid_discrim'>discrim</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_users'>users</span> <span class='op'>=</span> <span class='ivar'>@users</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_find_all'>find_all</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_e'>e</span><span class='op'>|</span> <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_username'>username</span> <span class='op'>==</span> <span class='id identifier rubyid_username'>username</span> <span class='rbrace'>}</span>
@@ -1263,9 +1251,7 @@ Find a user by name and discriminator</p>
 21
 22
 23
-24
-25
-26</pre>
+24</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 15</span>
@@ -1279,8 +1265,6 @@ Find a user by name and discriminator</p>
 
   <span class='ivar'>@channels</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
   <span class='ivar'>@pm_channels</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
-
-  <span class='ivar'>@restricted_channels</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1348,13 +1332,13 @@ Find a user by name and discriminator</p>
       <pre class="lines">
 
 
-204
-205
-206
-207</pre>
+195
+196
+197
+198</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 204</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 195</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invite'>invite</span><span class='lparen'>(</span><span class='id identifier rubyid_invite'>invite</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_code'>code</span> <span class='op'>=</span> <span class='id identifier rubyid_resolve_invite_code'>resolve_invite_code</span><span class='lparen'>(</span><span class='id identifier rubyid_invite'>invite</span><span class='rparen'>)</span>
@@ -1441,6 +1425,15 @@ Find a user by name and discriminator</p>
       <pre class="lines">
 
 
+102
+103
+104
+105
+106
+107
+108
+109
+110
 111
 112
 113
@@ -1448,19 +1441,10 @@ Find a user by name and discriminator</p>
 115
 116
 117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127</pre>
+118</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 111</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 102</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_member'>member</span><span class='lparen'>(</span><span class='id identifier rubyid_server_or_id'>server_or_id</span><span class='comma'>,</span> <span class='id identifier rubyid_user_id'>user_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_server_id'>server_id</span> <span class='op'>=</span> <span class='id identifier rubyid_server_or_id'>server_or_id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
@@ -1551,18 +1535,18 @@ usage of this method may be unavoidable if only the user ID is known.</p>
       <pre class="lines">
 
 
-134
-135
-136
-137
-138
-139
-140
-141
-142</pre>
+125
+126
+127
+128
+129
+130
+131
+132
+133</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 134</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 125</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_pm_channel'>pm_channel</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_id'>id</span> <span class='op'>=</span> <span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
@@ -1622,12 +1606,12 @@ usage of this method may be unavoidable if only the user ID is known.</p>
       <pre class="lines">
 
 
-182
-183
-184</pre>
+173
+174
+175</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 182</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 173</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_request_chunks'>request_chunks</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='ivar'>@gateway</span><span class='period'>.</span><span class='id identifier rubyid_send_request_members'>send_request_members</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>0</span><span class='rparen'>)</span>
@@ -1706,14 +1690,14 @@ usage of this method may be unavoidable if only the user ID is known.</p>
       <pre class="lines">
 
 
-195
-196
-197
-198
-199</pre>
+186
+187
+188
+189
+190</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 195</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 186</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_resolve_invite_code'>resolve_invite_code</span><span class='lparen'>(</span><span class='id identifier rubyid_invite'>invite</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_invite'>invite</span> <span class='op'>=</span> <span class='id identifier rubyid_invite'>invite</span><span class='period'>.</span><span class='id identifier rubyid_code'>code</span> <span class='kw'>if</span> <span class='id identifier rubyid_invite'>invite</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Invite.html" title="Discordrb::Invite (class)">Invite</a></span></span>
@@ -1793,22 +1777,22 @@ usage of this method may be unavoidable if only the user ID is known.</p>
       <pre class="lines">
 
 
+84
+85
+86
+87
+88
+89
+90
+91
+92
 93
 94
 95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105</pre>
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 93</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 84</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server'>server</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_id'>id</span> <span class='op'>=</span> <span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
@@ -1896,22 +1880,22 @@ usage of this method may be unavoidable if only the user ID is known.</p>
       <pre class="lines">
 
 
+66
+67
+68
+69
+70
+71
+72
+73
+74
 75
 76
 77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87</pre>
+78</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 75</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 66</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_id'>id</span> <span class='op'>=</span> <span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
@@ -1956,6 +1940,8 @@ usage of this method may be unavoidable if only the user ID is known.</p>
       <pre class="lines">
 
 
+27
+28
 29
 30
 31
@@ -1963,12 +1949,10 @@ usage of this method may be unavoidable if only the user ID is known.</p>
 33
 34
 35
-36
-37
-38</pre>
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/cache.rb', line 27</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_voice_regions'>voice_regions</span>
   <span class='kw'>return</span> <span class='ivar'>@voice_regions</span> <span class='kw'>unless</span> <span class='ivar'>@voice_regions</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -1990,7 +1974,7 @@ usage of this method may be unavoidable if only the user ID is known.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Nov  7 23:16:05 2021 by
+  Generated on Sun Nov  7 23:16:42 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.6.8).
 </div>
