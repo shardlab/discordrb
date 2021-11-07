@@ -148,7 +148,7 @@ module Discordrb
       data = builder.to_json_hash.merge(params.compact)
       components ||= view
 
-      resp = API::Webhook.token_execute_webhook(@token, @id, wait, data[:content], data[:username], data[:avatar_url], data[:tts], data[:file], data[:embeds], data[:allowed_mentions], components.to_a)
+      resp = API::Webhook.token_execute_webhook(@token, @id, wait, data[:content], data[:username], data[:avatar_url], data[:tts], data[:file], data[:embeds], data[:allowed_mentions], nil, components.to_a)
 
       Message.new(JSON.parse(resp), @bot) if wait
     end
