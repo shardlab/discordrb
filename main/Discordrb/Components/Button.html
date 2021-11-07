@@ -110,38 +110,6 @@
   
 
 </div>
-  
-    <h2>
-      Constant Summary
-      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
-    </h2>
-
-    <dl class="constants">
-      
-        <dt id="STYLES-constant" class="">STYLES =
-          <div class="docstring">
-  <div class="discussion">
-    <p>Possible button style names and values.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='lbrace'>{</span>
-  <span class='label'>primary:</span> <span class='int'>1</span><span class='comma'>,</span>
-  <span class='label'>secondary:</span> <span class='int'>2</span><span class='comma'>,</span>
-  <span class='label'>success:</span> <span class='int'>3</span><span class='comma'>,</span>
-  <span class='label'>danger:</span> <span class='int'>4</span><span class='comma'>,</span>
-  <span class='label'>link:</span> <span class='int'>5</span>
-<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
-      
-    </dl>
-  
-
 
 
 
@@ -525,12 +493,12 @@
       <pre class="lines">
 
 
-184
-185
-186</pre>
+61
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 184</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 61</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_custom_id'>custom_id</span>
   <span class='ivar'>@custom_id</span>
@@ -579,12 +547,12 @@
       <pre class="lines">
 
 
-187
-188
-189</pre>
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 187</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_disabled'>disabled</span>
   <span class='ivar'>@disabled</span>
@@ -633,12 +601,12 @@
       <pre class="lines">
 
 
-193
-194
-195</pre>
+70
+71
+72</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 193</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 70</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emoji'>emoji</span>
   <span class='ivar'>@emoji</span>
@@ -687,12 +655,12 @@
       <pre class="lines">
 
 
-178
-179
-180</pre>
+55
+56
+57</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 178</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 55</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_label'>label</span>
   <span class='ivar'>@label</span>
@@ -741,12 +709,12 @@
       <pre class="lines">
 
 
-181
-182
-183</pre>
+58
+59
+60</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 181</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_style'>style</span>
   <span class='ivar'>@style</span>
@@ -795,12 +763,12 @@
       <pre class="lines">
 
 
-190
-191
-192</pre>
+67
+68
+69</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 190</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 67</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_url'>url</span>
   <span class='ivar'>@url</span>
@@ -842,12 +810,12 @@
       <pre class="lines">
 
 
-233
-234
-235</pre>
+101
+102
+103</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 233</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 101</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_await_click'>await_click</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_add_await'>add_await</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Events.html" title="Discordrb::Events (module)">Events</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Events/ButtonEvent.html" title="Discordrb::Events::ButtonEvent (class)">ButtonEvent</a></span></span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>custom_id:</span> <span class='ivar'>@custom_id</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -882,12 +850,12 @@
       <pre class="lines">
 
 
-238
-239
-240</pre>
+106
+107
+108</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 238</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 106</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_await_click!'>await_click!</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_add_await!'>add_await!</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Events.html" title="Discordrb::Events (module)">Events</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Events/ButtonEvent.html" title="Discordrb::Events::ButtonEvent (class)">ButtonEvent</a></span></span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>custom_id:</span> <span class='ivar'>@custom_id</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -934,16 +902,16 @@
       <pre class="lines">
 
 
-226
-227
-228
-229
-230</pre>
+94
+95
+96
+97
+98</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 226</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 94</span>
 
-<span class='const'><span class='object_link'><a href="#STYLES-constant" title="Discordrb::Components::Button::STYLES (constant)">STYLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+<span class='const'><span class='object_link'><a href="../Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/View.html#BUTTON_STYLES-constant" title="Discordrb::Webhooks::View::BUTTON_STYLES (constant)">BUTTON_STYLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
   <span class='id identifier rubyid_define_method'>define_method</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>?</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
     <span class='ivar'>@style</span> <span class='op'>==</span> <span class='id identifier rubyid_value'>value</span>
   <span class='kw'>end</span>
@@ -990,16 +958,16 @@
       <pre class="lines">
 
 
-226
-227
-228
-229
-230</pre>
+94
+95
+96
+97
+98</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 226</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 94</span>
 
-<span class='const'><span class='object_link'><a href="#STYLES-constant" title="Discordrb::Components::Button::STYLES (constant)">STYLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+<span class='const'><span class='object_link'><a href="../Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/View.html#BUTTON_STYLES-constant" title="Discordrb::Webhooks::View::BUTTON_STYLES (constant)">BUTTON_STYLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
   <span class='id identifier rubyid_define_method'>define_method</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>?</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
     <span class='ivar'>@style</span> <span class='op'>==</span> <span class='id identifier rubyid_value'>value</span>
   <span class='kw'>end</span>
@@ -1046,16 +1014,16 @@
       <pre class="lines">
 
 
-226
-227
-228
-229
-230</pre>
+94
+95
+96
+97
+98</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 226</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 94</span>
 
-<span class='const'><span class='object_link'><a href="#STYLES-constant" title="Discordrb::Components::Button::STYLES (constant)">STYLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+<span class='const'><span class='object_link'><a href="../Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/View.html#BUTTON_STYLES-constant" title="Discordrb::Webhooks::View::BUTTON_STYLES (constant)">BUTTON_STYLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
   <span class='id identifier rubyid_define_method'>define_method</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>?</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
     <span class='ivar'>@style</span> <span class='op'>==</span> <span class='id identifier rubyid_value'>value</span>
   <span class='kw'>end</span>
@@ -1102,16 +1070,16 @@
       <pre class="lines">
 
 
-226
-227
-228
-229
-230</pre>
+94
+95
+96
+97
+98</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 226</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 94</span>
 
-<span class='const'><span class='object_link'><a href="#STYLES-constant" title="Discordrb::Components::Button::STYLES (constant)">STYLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+<span class='const'><span class='object_link'><a href="../Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/View.html#BUTTON_STYLES-constant" title="Discordrb::Webhooks::View::BUTTON_STYLES (constant)">BUTTON_STYLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
   <span class='id identifier rubyid_define_method'>define_method</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>?</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
     <span class='ivar'>@style</span> <span class='op'>==</span> <span class='id identifier rubyid_value'>value</span>
   <span class='kw'>end</span>
@@ -1158,16 +1126,16 @@
       <pre class="lines">
 
 
-226
-227
-228
-229
-230</pre>
+94
+95
+96
+97
+98</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 226</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 94</span>
 
-<span class='const'><span class='object_link'><a href="#STYLES-constant" title="Discordrb::Components::Button::STYLES (constant)">STYLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+<span class='const'><span class='object_link'><a href="../Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks/View.html#BUTTON_STYLES-constant" title="Discordrb::Webhooks::View::BUTTON_STYLES (constant)">BUTTON_STYLES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
   <span class='id identifier rubyid_define_method'>define_method</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>?</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
     <span class='ivar'>@style</span> <span class='op'>==</span> <span class='id identifier rubyid_value'>value</span>
   <span class='kw'>end</span>
@@ -1182,7 +1150,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Oct 14 15:55:46 2021 by
+  Generated on Sun Nov  7 23:16:10 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.6.8).
 </div>
