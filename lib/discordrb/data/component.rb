@@ -3,6 +3,10 @@
 module Discordrb
   # Components are interactable interfaces that can be attached to messages.
   module Components
+    # @deprecated This alias will be removed in future releases.
+    class View < Webhooks::View
+    end
+
     # @!visibility private
     def self.from_data(data, bot)
       case data['type']
