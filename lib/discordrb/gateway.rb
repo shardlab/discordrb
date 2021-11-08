@@ -534,7 +534,7 @@ module Discordrb
 
     def find_gateway
       response = API.gateway(@token)
-      JSON.parse(response)['url']
+      JSON.parse(response)[:url]
     end
 
     def process_gateway
@@ -678,7 +678,7 @@ module Discordrb
 
       # Parse packet
       packet = JSON.parse(msg)
-      op = packet['op'].to_i
+      op = packet[:op].to_i
 
       LOGGER.in(packet)
 
@@ -687,7 +687,7 @@ module Discordrb
       # Only do this, of course, if a session has been created already; for a READY dispatch (which has s=0 set but is
       # the packet that starts the session in the first place) we need not do any handling since initialising the
       # session will set it to 0 by default.
-      @session.sequence = packet['s'] if packet['s'] && @session
+      @session.sequence = packet[:s] if packet[:s] && @session
 
       case op
       when Opcodes::DISPATCH
@@ -709,14 +709,14 @@ module Discordrb
 
     # Op 0
     def handle_dispatch(packet)
-      data = packet['d']
-      type = packet['t'].intern
+      data = packet[:d]
+      type = packet[:t].intern
 
       case type
       when :READY
-        LOGGER.info("Discord using gateway protocol version: #{data['v']}, requested: #{GATEWAY_VERSION}")
+        LOGGER.info("Discord using gateway protocol version: #{data[:v]}, requested: #{GATEWAY_VERSION}")
 
-        @session = Session.new(data['session_id'])
+        @session = Session.new(data[:session_id])
         @session.sequence = 0
         @bot.__send__(:notify_ready) if @intents && (@intents & INTENTS[:servers]).zero?
       when :RESUMED
@@ -733,7 +733,7 @@ module Discordrb
     # Op 1
     def handle_heartbeat(packet)
       # If we receive a heartbeat, we have to resend one with the same sequence
-      send_heartbeat(packet['s'])
+      send_heartbeat(packet[:s])
     end
 
     # Op 7
@@ -760,10 +760,10 @@ module Discordrb
       LOGGER.debug('Hello!')
 
       # The heartbeat interval is given in ms, so divide it by 1000 to get seconds
-      interval = packet['d']['heartbeat_interval'].to_f / 1000.0
+      interval = packet[:d][:heartbeat_interval].to_f / 1000.0
       setup_heartbeats(interval)
 
-      LOGGER.debug("Trace: #{packet['d']['_trace']}")
+      LOGGER.debug("Trace: #{packet[:d][:_trace]}")
       LOGGER.debug("Session: #{@session.inspect}")
 
       if @session&.should_resume?

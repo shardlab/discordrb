@@ -10,8 +10,8 @@ module Discordrb
     attr_reader :id
 
     def initialize(data)
-      @name = data['name']
-      @id = data['id'].to_i
+      @name = data[:name]
+      @id = data[:id].to_i
     end
   end
 
@@ -36,12 +36,12 @@ module Discordrb
     attr_reader :bot
 
     def initialize(data, bot)
-      @id = data['id'].to_i
-      @name = data['name']
-      @icon = data['icon']
-      @description = data['description']
-      @summary = data['summary']
-      @bot = Discordrb::User.new(data['user'], bot) if data['user']
+      @id = data[:id].to_i
+      @name = data[:name]
+      @icon = data[:icon]
+      @description = data[:description]
+      @summary = data[:summary]
+      @bot = Discordrb::User.new(data[:user], bot) if data[:user]
     end
   end
 
@@ -96,22 +96,22 @@ module Discordrb
     def initialize(data, bot, server)
       @bot = bot
 
-      @name = data['name']
+      @name = data[:name]
       @server = server
-      @id = data['id'].to_i
-      @enabled = data['enabled']
-      @syncing = data['syncing']
-      @type = data['type']
-      @account = IntegrationAccount.new(data['account'])
-      @synced_at = Time.parse(data['synced_at'])
-      @expire_behaviour = %i[remove kick][data['expire_behavior']]
-      @expire_grace_period = data['expire_grace_period']
-      @user = @bot.ensure_user(data['user'])
-      @role_id = data['role_id']&.to_i
-      @emoticon = data['enable_emoticons']
-      @subscriber_count = data['subscriber_count']&.to_i
-      @revoked = data['revoked']
-      @application = IntegrationApplication.new(data['application'], bot) if data['application']
+      @id = data[:id].to_i
+      @enabled = data[:enabled]
+      @syncing = data[:syncing]
+      @type = data[:type]
+      @account = IntegrationAccount.new(data[:account])
+      @synced_at = Time.parse(data[:synced_at])
+      @expire_behaviour = %i[remove kick][data[:expire_behavior]]
+      @expire_grace_period = data[:expire_grace_period]
+      @user = @bot.ensure_user(data[:user])
+      @role_id = data[:role_id]&.to_i
+      @emoticon = data[:enable_emoticons]
+      @subscriber_count = data[:subscriber_count]&.to_i
+      @revoked = data[:revoked]
+      @application = IntegrationApplication.new(data[:application], bot) if data[:application]
     end
 
     # The inspect method is overwritten to give more useful output

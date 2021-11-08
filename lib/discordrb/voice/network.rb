@@ -254,28 +254,28 @@ module Discordrb::Voice
       @bot.debug("Received VWS message! #{msg}")
       packet = JSON.parse(msg)
 
-      case packet['op']
+      case packet[:op]
       when 2
         # Opcode 2 contains data to initialize the UDP connection
-        @ws_data = packet['d']
+        @ws_data = packet[:d]
 
-        @ssrc = @ws_data['ssrc']
-        @port = @ws_data['port']
+        @ssrc = @ws_data[:ssrc]
+        @port = @ws_data[:port]
 
-        @udp_mode = (ENCRYPTION_MODES & @ws_data['modes']).first
+        @udp_mode = (ENCRYPTION_MODES & @ws_data[:modes]).first
 
-        @udp.connect(@ws_data['ip'], @port, @ssrc)
+        @udp.connect(@ws_data[:ip], @port, @ssrc)
         @udp.send_discovery
       when 4
         # Opcode 4 sends the secret key used for encryption
-        @ws_data = packet['d']
+        @ws_data = packet[:d]
 
         @ready = true
-        @udp.secret_key = @ws_data['secret_key'].pack('C*')
-        @udp.mode = @ws_data['mode']
+        @udp.secret_key = @ws_data[:secret_key].pack('C*')
+        @udp.mode = @ws_data[:mode]
       when 8
         # Opcode 8 contains the heartbeat interval.
-        @heartbeat_interval = packet['d']['heartbeat_interval']
+        @heartbeat_interval = packet[:d][:heartbeat_interval]
       end
     end
 

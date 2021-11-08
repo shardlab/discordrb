@@ -2,11 +2,13 @@
 
 require 'faraday'
 require 'faraday_middleware'
+require 'discordrb/api/client/application_command_endpoints'
 require 'discordrb/api/client/audit_log_endpoints'
 require 'discordrb/api/client/channel_endpoints'
 require 'discordrb/api/client/emoji_endpoints'
 require 'discordrb/api/client/guild_endpoints'
 require 'discordrb/api/client/guild_template_endpoints'
+require 'discordrb/api/client/interaction_endpoints'
 require 'discordrb/api/client/invite_endpoints'
 require 'discordrb/api/client/stage_instance_endpoints'
 require 'discordrb/api/client/sticker_endpoints'
@@ -17,6 +19,7 @@ require 'discordrb/errors'
 
 module Discordrb
   module API
+    # @!api private
     class Route
       # @return [String]
       attr_reader :endpoint
@@ -33,16 +36,24 @@ module Discordrb
       # @return [String]
       attr_reader :rate_limit_key
 
+      # @param verb [Symbol]
+      # @param endpoint [String]
+      # @param major_param [#to_s, nil]
+      # @param route_key [String, nil]
       def initialize(verb, endpoint, major_param = nil, route_key = nil)
         @verb = verb.downcase.to_sym
         @endpoint = endpoint.delete_prefix('/')
-        @route_key = route_key || endpoint.tr('/', '_').gsub(/\d+/, 'id')
+        @route_key = route_key || endpoint.delete_prefix('/').tr('/', '_').gsub(/\d+/, 'id')
         @major_param = major_param&.to_s
         @rate_limit_key = "#{@verb}:#{@route_key}:#{@major_param}"
       end
 
-      def self.[](verb, endpoint, route_key = nil, major_param = nil)
-        new(verb, endpoint, route_key, major_param)
+      # @param verb [Symbol]
+      # @param endpoint [String]
+      # @param major_param [String, nil]
+      # @param route_key [String, nil]
+      def self.[](verb, endpoint, major_param = nil, route_key = nil)
+        new(verb, endpoint, major_param, route_key)
       end
 
       %i[delete head get patch post put].each do |verb|
@@ -50,12 +61,24 @@ module Discordrb
       end
     end
 
+    # @!api private
     class RateLimit
+      # @return [Integer, nil]
       attr_reader :limit
+
+      # @return [Integer, nil]
       attr_reader :remaining
+
+      # @return [Time, nil]
       attr_reader :reset
+
+      # @return [Time, nil]
       attr_reader :reset_after
+
+      # @return [String, nil]
       attr_reader :bucket
+
+      # @return [Mutex]
       attr_reader :mutex
 
       def initialize(data = {})
@@ -63,22 +86,25 @@ module Discordrb
         update(data)
       end
 
+      # @param data [Hash]
       def update(data)
-        @limit = data['x-ratelimit-limit']&.to_i || @limit || Float::INFINITY
-        @remaining = data['x-ratelimit-remaining']&.to_i || @remaining || Float::INFINITY
-        @reset = Time.at(data['x-ratelimit-reset']&.to_i || 0) || @reset
-        @reset_after = Time.now + (data['x-ratelimit-reset-after']&.to_i || 0) || @reset_after
+        @limit = data['x-ratelimit-limit'].to_i || @limit || Float::INFINITY
+        @remaining = data['x-ratelimit-remaining'].to_i || @remaining || Float::INFINITY
+        @reset = Time.at(data['x-ratelimit-reset'].to_i) || @reset
+        @reset_after = (Time.now + data['x-ratelimit-reset-after'].to_i) || @reset_after
         @bucket = data['x-ratelimit-bucket'] || @bucket
       end
     end
 
     # Client for making HTTP requests to the Discord API.
     class Client
+      include ApplicationCommandEndpoints
       include AuditLogEndpoints
       include ChannelEndpoints
       include EmojiEndpoints
       include GuildEndpoints
       include GuildTemplateEndpoints
+      include InteractionEndpoints
       include InviteEndpoints
       include StageInstanceEndpoints
       include StickerEndpoints
@@ -86,6 +112,7 @@ module Discordrb
       include VoiceEndpoints
       include WebhookEndpoints
 
+      # The user agent used when making requests.
       USER_AGENT = "DiscordBot (https://github.com/shardlab/discordrb, #{Discordrb::VERSION})"
 
       def initialize(token, version: 9)
@@ -104,6 +131,12 @@ module Discordrb
         init_rl
       end
 
+      private
+
+      # @param route [Route]
+      # @param params [Hash, nil]
+      # @param body [Hash, nil]
+      # @param headers [Hash]
       def raw_request(route, params: nil, body: nil, headers: {})
         trace = SecureRandom.alphanumeric(6)
 
@@ -116,6 +149,11 @@ module Discordrb
         resp
       end
 
+      # @param route [Route]
+      # @param params [Hash, nil]
+      # @param body [Hash, nil]
+      # @param headers [Hash, nil]
+      # @param reason [String, nil]
       def request(route, params: nil, body: nil, headers: {}, reason: nil)
         headers['X-Audit-Log-Reason'] = reason if reason && reason != :undef
 
@@ -125,8 +163,8 @@ module Discordrb
         end
       end
 
-      private
-
+      # @param route [Route]
+      # @param response [Faraday::Response]
       def handle_response(route, response)
         update_rate_limits(route, response)
 
@@ -150,6 +188,8 @@ module Discordrb
         end
       end
 
+      # @param route [Route]
+      # @param response [Faraday::Response]
       def update_rate_limits(route, response)
         @rl_info[route.rate_limit_key] = @rl_info[response.headers['x-ratelimit-bucket']] if response.headers['x-ratelimit-bucket']
         @rl_info[route.rate_limit_key].update(response.headers)
@@ -159,25 +199,39 @@ module Discordrb
         @rl_info = Hash.new { |hash, key| hash[key] = RateLimit.new }
       end
 
+      # @param key [String]
       def synchronize_rl_key(key)
         rl_info = @rl_info[key].bucket ? @rl_info[@rl_info[key].bucket] : @rl_info[key]
 
         rl_info.mutex.synchronize do
-          sleep(rl_info.reset_after - Time.now) if (rl_info.remaining) < 1 && Time.now < rl_info.reset_after
+          if (rl_info.remaining) < 1 && Time.now < rl_info.reset_after
+            duration = rl_info.reset_after - Time.now
+
+            LOGGER.ratelimit("Preemptively locking #{key} for #{duration} seconds")
+            sleep(duration)
+          end
 
           yield
         end
       end
 
-      def log_request(route, trace, params, body)
-        endpoint = route.endpoint + (params&.any? ? "?#{URI.encode_www_form(params)}" : '')
-        Discordrb::LOGGER.info  "HTTP OUT [#{trace}] -- #{route.verb.upcase} /#{endpoint} (#{body&.length || 0})"
-        Discordrb::LOGGER.debug "HTTP OUT [#{trace}] -- #{body.inspect}"
+      # @param route [Route]
+      # @param trace [String]
+      # @param params [Hash, nil]
+      # @param body [Object, nil]
+      def log_request(route, trace, params = nil, body = nil)
+        endpoint = route.endpoint
+        endpoint += "?#{URI.encode_www_form(params || {})}" if params&.any?
+
+        Discordrb::LOGGER.info  "HTTP OUT [#{trace}] -- #{route.verb.upcase} /#{endpoint}"
+        Discordrb::LOGGER.debug "HTTP OUT [#{trace}] -- Request Body: #{body.inspect}" if body
       end
 
+      # @param response [Faraday::Response]
+      # @param trace [String]
       def log_response(response, trace)
         Discordrb::LOGGER.info  "HTTP IN  [#{trace}] -- #{response.status} #{response.reason_phrase}"
-        Discordrb::LOGGER.debug "HTTP IN  [#{trace}] -- #{response.body.inspect}"
+        Discordrb::LOGGER.debug "HTTP IN  [#{trace}] -- Response Body: #{response.body.inspect}"
       end
 
       # @param hash [Hash<Object, Object>]

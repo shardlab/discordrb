@@ -22,9 +22,9 @@ module Discordrb::Events
     def initialize(data, bot)
       @bot = bot
 
-      @token = data['token']
-      @endpoint = data['endpoint']
-      @server = bot.server(data['guild_id'])
+      @token = data[:token]
+      @endpoint = data[:endpoint]
+      @server = bot.server(data[:guild_id])
     end
   end
 

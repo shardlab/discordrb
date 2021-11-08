@@ -17,10 +17,10 @@ module Discordrb
     attr_reader :name
 
     def initialize(data)
-      @count = data['count']
-      @me = data['me']
-      @id = data['emoji']['id'].nil? ? nil : data['emoji']['id'].to_i
-      @name = data['emoji']['name']
+      @count = data[:count]
+      @me = data[:me]
+      @id = data[:emoji][:id].nil? ? nil : data[:emoji][:id].to_i
+      @name = data[:emoji][:name]
     end
 
     # Converts this Reaction into a string that can be sent back to Discord in other reaction endpoints.

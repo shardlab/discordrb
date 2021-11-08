@@ -54,21 +54,21 @@ module Discordrb
     def initialize(data, bot)
       @bot = bot
 
-      @id = data['id'].to_i
-      @application_id = data['application_id'].to_i
-      @type = data['type']
-      @message = data['message']
-      @data = data['data']
-      @server_id = data['guild_id']&.to_i
-      @channel_id = data['channel_id']&.to_i
-      @user = if data['member']
-                data['member']['guild_id'] = @server_id
-                Discordrb::Member.new(data['member'], nil, bot)
+      @id = data[:id].to_i
+      @application_id = data[:application_id].to_i
+      @type = data[:type]
+      @message = data[:message]
+      @data = data[:data]
+      @server_id = data[:guild_id]&.to_i
+      @channel_id = data[:channel_id]&.to_i
+      @user = if data[:member]
+                data[:member][:guild_id] = @server_id
+                Discordrb::Member.new(data[:member], nil, bot)
               else
-                bot.ensure_user(data['user'])
+                bot.ensure_user(data[:user])
               end
-      @token = data['token']
-      @version = data['version']
+      @token = data[:token]
+      @version = data[:version]
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
@@ -93,14 +93,15 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, components: components.to_a }
+      data = builder.to_json_hash.merge(data.compact)
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
+      @bot.client.create_interaction_response(@id, @token, type: CALLBACK_TYPES[:channel_message], **data)
 
       return unless wait
 
-      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
-      Interactions::Message.new(JSON.parse(response), @bot, @interaction)
+      resp = @bot.client.get_original_interaction_response(@application_id, @token)
+      Interactions::Message.new(resp, @bot, @interaction)
     end
 
     # Defer an interaction, setting a temporary response that can be later overriden by {Interaction#send_message}.
@@ -111,13 +112,13 @@ module Discordrb
     def defer(flags: 0, ephemeral: true)
       flags |= 1 << 6 if ephemeral
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:deferred_message], nil, nil, nil, nil, flags)
+      @bot.client.create_interaction_response(@id, @token, type: CALLBACK_TYPES[:deferred_message], flags: flags)
       nil
     end
 
     # Defer an update to an interaction. This is can only currently used by Button interactions.
     def defer_update
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:deferred_update])
+      @bot.client.create_interaction_response(@id, @token, type: CALLBACK_TYPES[:deferred_update])
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
@@ -142,14 +143,15 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, flags: flags, components: components&.to_a }
+      data = builder.to_json_hash.merge(data.compact)
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
+      @bot.client.create_interaction_response(@application_id, @token, type: CALLBACK_TYPES[:update_message], **data)
 
       return unless wait
 
-      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
-      Interactions::Message.new(JSON.parse(response), @bot, @interaction)
+      resp = @bot.client.get_original_interaction_response(@application_id, @token)
+      Interactions::Message.new(resp, @bot, @interaction)
     end
 
     # Edit the original response to this interaction.
@@ -165,15 +167,16 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
+      data = {content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components&.to_a }
+      data = builder.to_json_hash.merge(data.compact)
+      resp = @bot.client.edit_original_interaction_response(@application_id, @token, **data)
 
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      Interactions::Message.new(resp, @bot, @interaction)
     end
 
     # Delete the original interaction response.
     def delete_response
-      Discordrb::API::Interaction.delete_original_interaction_response(@token, @application_id)
+      @bot.client.delete_original_interaction_response(@application_id, @token)
     end
 
     # @param content [String] The content of the message.
@@ -192,12 +195,10 @@ module Discordrb
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, components: components.to_a }.compact)
+      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, components: components.to_a, flags: flags }.compact)
 
-      resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, data[:tts], nil, data[:embeds], data[:allowed_mentions], flags, data[:components]
-      )
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      resp = @bot.client.execute_webhook(@application_id, @token, wait: true, **data)
+      Interactions::Message.new(resp, @bot, @interaction)
     end
 
     # @param message [String, Integer, InteractionMessage, Message] The message created by this interaction to be edited.
@@ -214,15 +215,13 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components.to_a }.compact)
 
-      resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], data[:components]
-      )
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      resp = @bot.client.execute_webhook(@application_id, @token, **data)
+      Interactions::Message.new(resp, @bot, @interaction)
     end
 
     # @param message [Integer, String, InteractionMessage, Message] The message created by this interaction to be deleted.
     def delete_message(message)
-      Discordrb::API::Webhook.token_delete_message(@token, @application_id, message.resolve_id)
+      @bot.client.delete_webhook_message(@application_id, @token, message.resolve_id)
       nil
     end
 
@@ -242,9 +241,9 @@ module Discordrb
     def button
       return unless @type == TYPES[:component]
 
-      @message['components'].each do |row|
+      @message[:components].each do |row|
         Components::ActionRow.new(row, @bot).buttons.each do |button|
-          return button if button.custom_id == @data['custom_id']
+          return button if button.custom_id == @data[:custom_id]
         end
       end
     end
@@ -281,14 +280,14 @@ module Discordrb
     # @!visibility private
     def initialize(data, bot, server_id = nil)
       @bot = bot
-      @id = data['id'].to_i
-      @application_id = data['application_id'].to_i
+      @id = data[:id].to_i
+      @application_id = data[:application_id].to_i
       @server_id = server_id.to_i
 
-      @name = data['name']
-      @description = data['description']
-      @default_permission = data['default_permission']
-      @options = data['options']
+      @name = data[:name]
+      @description = data[:description]
+      @default_permission = data[:default_permission]
+      @options = data[:options]
     end
 
     # @param name [String] The name to use for this command.
@@ -501,39 +500,39 @@ module Discordrb
       def initialize(data, bot, interaction)
         @bot = bot
         @interaction = interaction
-        @content = data['content']
-        @channel_id = data['channel_id'].to_i
-        @pinned = data['pinned']
-        @tts = data['tts']
+        @content = data[:content]
+        @channel_id = data[:channel_id].to_i
+        @pinned = data[:pinned]
+        @tts = data[:tts]
 
-        @message_reference = data['message_reference']
+        @message_reference = data[:message_reference]
 
-        @server_id = data['guild_id']&.to_i
+        @server_id = data[:guild_id]&.to_i
 
-        @timestamp = Time.parse(data['timestamp']) if data['timestamp']
-        @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
+        @timestamp = Time.parse(data[:timestamp]) if data[:timestamp]
+        @edited_timestamp = data[:edited_timestamp].nil? ? nil : Time.parse(data[:edited_timestamp])
         @edited = !@edited_timestamp.nil?
 
-        @id = data['id'].to_i
+        @id = data[:id].to_i
 
-        @author = bot.ensure_user(data['author'] || data['member']['user'])
+        @author = bot.ensure_user(data[:author] || data[:member][:user])
 
         @attachments = []
-        @attachments = data['attachments'].map { |e| Attachment.new(e, self, @bot) } if data['attachments']
+        @attachments = data[:attachments].map { |e| Attachment.new(e, self, @bot) } if data[:attachments]
 
         @embeds = []
-        @embeds = data['embeds'].map { |e| Embed.new(e, self) } if data['embeds']
+        @embeds = data[:embeds].map { |e| Embed.new(e, self) } if data[:embeds]
 
         @mentions = []
 
-        data['mentions']&.each do |element|
+        data[:mentions]&.each do |element|
           @mentions << bot.ensure_user(element)
         end
 
-        @mention_roles = data['mention_roles']
-        @mention_everyone = data['mention_everyone']
-        @flags = data['flags']
-        @pinned = data['pinned']
+        @mention_roles = data[:mention_roles]
+        @mention_everyone = data[:mention_everyone]
+        @flags = data[:flags]
+        @pinned = data[:pinned]
       end
 
       # @return [Member, nil] This will return nil if the bot does not have access to the

@@ -76,10 +76,10 @@ module Discordrb
     # @!visibility private
     def self.from_hash(data)
       new(
-        data['id'].to_i,
-        type: TYPES.key(data['type']),
-        allow: Permissions.new(data['allow']),
-        deny: Permissions.new(data['deny'])
+        data[:id].to_i,
+        type: TYPES.key(data[:type]),
+        allow: Permissions.new(data[:allow]),
+        deny: Permissions.new(data[:deny])
       )
     end
 

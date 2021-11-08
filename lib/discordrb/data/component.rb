@@ -9,7 +9,7 @@ module Discordrb
 
     # @!visibility private
     def self.from_data(data, bot)
-      case data['type']
+      case data[:type]
       when Webhooks::View::COMPONENT_TYPES[:action_row]
         ActionRow.new(data, bot)
       when Webhooks::View::COMPONENT_TYPES[:button]
@@ -29,7 +29,7 @@ module Discordrb
       # @!visibility private
       def initialize(data, bot)
         @bot = bot
-        @componenets = data['components'].map { |component_data| Components.from_data(component_data, @bot) }
+        @componenets = data[:components].map { |component_data| Components.from_data(component_data, @bot) }
       end
 
       # Iterate over each component in the row.
@@ -73,12 +73,12 @@ module Discordrb
       def initialize(data, bot)
         @bot = bot
 
-        @label = data['label']
-        @style = data['style']
-        @custom_id = data['custom_id']
-        @disabled = data['disabled']
-        @url = data['url']
-        @emoji = Emoji.new(data['emoji'], @bot) if data['emoji']
+        @label = data[:label]
+        @style = data[:style]
+        @custom_id = data[:custom_id]
+        @disabled = data[:disabled]
+        @url = data[:url]
+        @emoji = Emoji.new(data[:emoji], @bot) if data[:emoji]
       end
 
       # @method primary?
@@ -126,10 +126,10 @@ module Discordrb
 
         # @!visibility hidden
         def initialize(data)
-          @label = data['label']
-          @value = data['value']
-          @description = data['description']
-          @emoji = Emoji.new(data['emoji'], @bot) if data['emoji']
+          @label = data[:label]
+          @value = data[:value]
+          @description = data[:description]
+          @emoji = Emoji.new(data[:emoji], @bot) if data[:emoji]
         end
       end
 
@@ -152,12 +152,12 @@ module Discordrb
       def initialize(data, bot)
         @bot = bot
 
-        @max_values = data['max_values']
-        @min_values = data['min_values']
-        @placeholder = data['placeholder']
-        @custom_id = data['custom_id']
-        @emoji = Emoji.new(data['emoji'], @bot) if data['emoji']
-        @options = data['options'].map { |opt| Option.new(opt) }
+        @max_values = data[:max_values]
+        @min_values = data[:min_values]
+        @placeholder = data[:placeholder]
+        @custom_id = data[:custom_id]
+        @emoji = Emoji.new(data[:emoji], @bot) if data[:emoji]
+        @options = data[:options].map { |opt| Option.new(opt) }
       end
     end
   end

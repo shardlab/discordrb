@@ -37,8 +37,8 @@ module Discordrb::Events
     def initialize(data, invite, bot)
       @bot = bot
       @invite = invite
-      @channel = bot.channel(data['channel_id'])
-      @server = bot.server(data['guild_id']) if data['guild_id']
+      @channel = bot.channel(data[:channel_id])
+      @server = bot.server(data[:guild_id]) if data[:guild_id]
     end
   end
 
@@ -55,9 +55,9 @@ module Discordrb::Events
 
     def initialize(data, bot)
       @bot = bot
-      @channel = bot.channel(data['channel_id'])
-      @server = bot.server(data['guild_id']) if data['guild_id']
-      @code = data['code']
+      @channel = bot.channel(data[:channel_id])
+      @server = bot.server(data[:guild_id]) if data[:guild_id]
+      @code = data[:code]
     end
   end
 

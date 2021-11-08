@@ -36,10 +36,11 @@ module Discordrb
     # Utility function to get a user's avatar URL.
     # @param format [String, nil] If `nil`, the URL will default to `webp` for static avatars, and will detect if the user has a `gif` avatar. You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this. Will always be PNG for default avatars.
     # @return [String] the URL to the avatar image.
+    # TODO: avatar urls
     def avatar_url(format = nil)
-      return API::User.default_avatar(@discriminator) unless @avatar_id
+      return Discordrb.default_avatar(@discriminator) unless @avatar_id
 
-      API::User.avatar_url(@id, @avatar_id, format)
+      Discordrb.avatar_url(@id, @avatar_id, format)
     end
   end
 
@@ -62,18 +63,18 @@ module Discordrb
     def initialize(data, bot)
       @bot = bot
 
-      @username = data['username']
-      @id = data['id'].to_i
-      @discriminator = data['discriminator']
-      @avatar_id = data['avatar']
+      @username = data[:username]
+      @id = data[:id].to_i
+      @discriminator = data[:discriminator]
+      @avatar_id = data[:avatar]
       @roles = {}
       @activities = Discordrb::ActivitySet.new
 
       @bot_account = false
-      @bot_account = true if data['bot']
+      @bot_account = true if data[:bot]
 
       @status = :offline
-      @client_status = process_client_status(data['client_status'])
+      @client_status = process_client_status(data[:client_status])
     end
 
     # Get a user's PM channel or send them a PM
@@ -120,10 +121,10 @@ module Discordrb
     # @note for internal use only
     # @!visibility private
     def update_presence(data)
-      @status = data['status'].to_sym
-      @client_status = process_client_status(data['client_status'])
+      @status = data[:status].to_sym
+      @client_status = process_client_status(data[:client_status])
 
-      @activities = Discordrb::ActivitySet.new(data['activities'].map { |act| Activity.new(act, @bot) })
+      @activities = Discordrb::ActivitySet.new(data[:activities].map { |act| Activity.new(act, @bot) })
     end
 
     # Add an await for a message from this user. Specifically, this adds a global await for a MessageEvent with this

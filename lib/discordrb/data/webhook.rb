@@ -34,22 +34,22 @@ module Discordrb
     def initialize(data, bot)
       @bot = bot
 
-      @name = data['name']
-      @id = data['id'].to_i
-      @channel = bot.channel(data['channel_id'])
+      @name = data[:name]
+      @id = data[:id].to_i
+      @channel = bot.channel(data[:channel_id])
       @server = @channel.server
-      @token = data['token']
-      @avatar = data['avatar']
-      @type = data['type']
+      @token = data[:token]
+      @avatar = data[:avatar]
+      @type = data[:type]
 
       # Will not exist if the data was requested through a webhook token
-      return unless data['user']
+      return unless data[:user]
 
-      @owner = @server.member(data['user']['id'].to_i)
+      @owner = @server.member(data[:user][:id].to_i)
       return if @owner
 
-      Discordrb::LOGGER.debug("Member with ID #{data['user']['id']} not cached (possibly left the server).")
-      @owner = @bot.ensure_user(data['user'])
+      Discordrb::LOGGER.debug("Member with ID #{data[:user][:id]} not cached (possibly left the server).")
+      @owner = @bot.ensure_user(data[:user])
     end
 
     # Sets the webhook's avatar.
@@ -93,9 +93,9 @@ module Discordrb
     # @param reason [String] The reason the webhook is being deleted.
     def delete(reason = nil)
       if token?
-        API::Webhook.token_delete_webhook(@token, @id, reason)
+        @bot.client.delete_webhook_with_token(@token, @id, reason: reason)
       else
-        API::Webhook.delete_webhook(@bot.token, @id, reason)
+        @bot.client.delete_webhook(@id, reason: reason)
       end
     end
 
@@ -146,11 +146,11 @@ module Discordrb
       yield(builder, view) if block_given?
 
       data = builder.to_json_hash.merge(params.compact)
-      components ||= view
+      data[:components] ||= view
 
-      resp = API::Webhook.token_execute_webhook(@token, @id, wait, data[:content], data[:username], data[:avatar_url], data[:tts], data[:file], data[:embeds], data[:allowed_mentions], nil, components.to_a)
+      resp = @bot.client.execute_webhook(@id, @token, **data.compact)
 
-      Message.new(JSON.parse(resp), @bot) if wait
+      Message.new(resp, @bot) if wait
     end
 
     # Delete a message created by this webhook.
@@ -158,7 +158,7 @@ module Discordrb
     def delete_message(message)
       raise Discordrb::Errors::UnauthorizedWebhook unless @token
 
-      API::Webhook.token_delete_message(@token, @id, message.resolve_id)
+      @bot.client.delete_webhook_message(@id, @token, message.resolve_id)
     end
 
     # Edit a message created by this webhook.
@@ -175,7 +175,7 @@ module Discordrb
     def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, builder: nil, components: nil)
       raise Discordrb::Errors::UnauthorizedWebhook unless @token
 
-      params = { content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact
+      params = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components }.compact
 
       builder ||= Webhooks::Builder.new
       view ||= Webhooks::View.new
@@ -183,18 +183,18 @@ module Discordrb
       yield(builder, view) if block_given?
 
       data = builder.to_json_hash.merge(params.compact)
-      components ||= view
+      data[:components] = components || view
 
-      resp = API::Webhook.token_edit_message(@token, @id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
-      Message.new(JSON.parse(resp), @bot)
+      resp = @bot.client.edit_webhook_message(@token, @id, message.resolve_id, **data)
+      Message.new(resp, @bot)
     end
 
     # Utility function to get a webhook's avatar URL.
     # @return [String] the URL to the avatar image
     def avatar_url
-      return API::User.default_avatar unless @avatar
+      return Discordrb.default_avatar unless @avatar
 
-      API::User.avatar_url(@id, @avatar)
+      Discordrb.avatar_url(@id, @avatar)
     end
 
     # The `inspect` method is overwritten to give more useful output.
@@ -219,20 +219,20 @@ module Discordrb
     end
 
     def update_internal(data)
-      @name = data['name']
-      @avatar_id = data['avatar']
-      @channel = @bot.channel(data['channel_id'])
+      @name = data[:name]
+      @avatar_id = data[:avatar]
+      @channel = @bot.channel(data[:channel_id])
     end
 
     def update_webhook(new_data)
       reason = new_data.delete(:reason)
-      data = JSON.parse(if token?
-                          API::Webhook.token_update_webhook(@token, @id, new_data, reason)
-                        else
-                          API::Webhook.update_webhook(@bot.token, @id, new_data, reason)
-                        end)
+      data = if token?
+               @bot.client.modify_webhook_with_token(@id, @token, **new_data, reason: reason)
+             else
+               @bot.client.modify_webhook(@id, **new_data, reason: reason)
+             end
       # Only update cache if API call worked
-      update_internal(data) if data['name']
+      update_internal(data) if data[:name]
     end
   end
 end

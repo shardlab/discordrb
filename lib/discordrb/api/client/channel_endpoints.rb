@@ -64,9 +64,8 @@ module Discordrb
 
       # @!discord_api https://discord.com/developers/docs/resources/channel#create-message
       # @return [Hash<Symbol, Object>]
-      # TODO: multi attachment coming soon
       def create_message(channel_id,
-                         content: :undef, tts: :undef, file: :undef, embeds: :undef, allowed_mentions: :undef,
+                         content: :undef, tts: :undef, files: :undef, embeds: :undef, allowed_mentions: :undef,
                          message_reference: :undef, components: :undef, sticker_ids: :undef, **rest)
         body = filter_undef({
                               content: content,
@@ -79,7 +78,10 @@ module Discordrb
                               **rest
                             })
 
-        body = { file: file, payload_json: JSON.dump(body) } if file
+        if files
+          files = files.zip(0...files.count).map { |file, index| ["file[#{index}]", file] }.to_h
+          body = { **files, payload_json: JSON.dump(body) }
+        end
 
         request Route[:POST, "/channels/#{channel_id}/messages", channel_id],
                 body: body
@@ -168,7 +170,7 @@ module Discordrb
 
       # @!discord_api https://discord.com/developers/docs/resources/channel#bulk-delete-messages
       # @return [nil]
-      def bulk_delete_messages(channel_id, messages:, reason: :undef)
+      def bulk_delete_messages(channel_id, messages, reason: :undef)
         request Route[:POST, "/channels/#{channel_id}/messages/bulk-delete", channel_id],
                 body: messages,
                 reason: reason

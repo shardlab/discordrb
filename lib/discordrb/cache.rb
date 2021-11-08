@@ -29,7 +29,7 @@ module Discordrb
 
       regions = JSON.parse API.voice_regions(token)
       regions.each do |data|
-        @voice_regions[data['id']] = VoiceRegion.new(data)
+        @voice_regions[data[:id]] = VoiceRegion.new(data)
       end
 
       @voice_regions
@@ -49,11 +49,11 @@ module Discordrb
       return @channels[id] if @channels[id]
 
       begin
-        response = API::Channel.resolve(token, id)
+        response = @client.get_channel(id)
       rescue Discordrb::Errors::UnknownChannel
         return nil
       end
-      channel = Channel.new(JSON.parse(response), self, server)
+      channel = Channel.new(response, self, server)
       @channels[id] = channel
     end
 
@@ -69,11 +69,11 @@ module Discordrb
 
       LOGGER.out("Resolving user #{id}")
       begin
-        response = API::User.resolve(token, id)
+        response = @client.get_user(id)
       rescue Discordrb::Errors::UnknownUser
         return nil
       end
-      user = User.new(JSON.parse(response), self)
+      user = User.new(response, self)
       @users[id] = user
     end
 
@@ -87,11 +87,11 @@ module Discordrb
 
       LOGGER.out("Resolving server #{id}")
       begin
-        response = API::Server.resolve(token, id)
+        response = @client.get_guild(id)
       rescue Discordrb::Errors::NoPermission
         return nil
       end
-      server = Server.new(JSON.parse(response), self)
+      server = Server.new(response, self)
       @servers[id] = server
     end
 
@@ -108,11 +108,11 @@ module Discordrb
 
       LOGGER.out("Resolving member #{server_id} on server #{user_id}")
       begin
-        response = API::Server.resolve_member(token, server_id, user_id)
+        response = @client.get_guild_member(server_id, user_id)
       rescue Discordrb::Errors::UnknownUser, Discordrb::Errors::UnknownMember
         return nil
       end
-      member = Member.new(JSON.parse(response), server, self)
+      member = Member.new(response, server, self)
       server.cache_member(member)
     end
 
@@ -126,8 +126,8 @@ module Discordrb
       return @pm_channels[id] if @pm_channels[id]
 
       debug("Creating pm channel with user id #{id}")
-      response = API::User.create_pm(token, id)
-      channel = Channel.new(JSON.parse(response), self)
+      response = @client.create_dm(id)
+      channel = Channel.new(response, self)
       @pm_channels[id] = channel
     end
 
@@ -137,10 +137,10 @@ module Discordrb
     # @param data [Hash] A data hash representing a user.
     # @return [User] the user represented by the data hash.
     def ensure_user(data)
-      if @users.include?(data['id'].to_i)
-        @users[data['id'].to_i]
+      if @users.include?(data[:id].to_i)
+        @users[data[:id].to_i]
       else
-        @users[data['id'].to_i] = User.new(data, self)
+        @users[data[:id].to_i] = User.new(data, self)
       end
     end
 
@@ -150,12 +150,12 @@ module Discordrb
     #   data if it already exists.
     # @return [Server] the server represented by the data hash.
     def ensure_server(data, force_cache = false)
-      if @servers.include?(data['id'].to_i)
-        server = @servers[data['id'].to_i]
+      if @servers.include?(data[:id].to_i)
+        server = @servers[data[:id].to_i]
         server.update_data(data) if force_cache
         server
       else
-        @servers[data['id'].to_i] = Server.new(data, self)
+        @servers[data[:id].to_i] = Server.new(data, self)
       end
     end
 
@@ -164,10 +164,10 @@ module Discordrb
     # @param server [Server, nil] The server the channel is on, if known.
     # @return [Channel] the channel represented by the data hash.
     def ensure_channel(data, server = nil)
-      if @channels.include?(data['id'].to_i)
-        @channels[data['id'].to_i]
+      if @channels.include?(data[:id].to_i)
+        @channels[data[:id].to_i]
       else
-        @channels[data['id'].to_i] = Channel.new(data, self, server)
+        @channels[data[:id].to_i] = Channel.new(data, self, server)
       end
     end
 
@@ -197,7 +197,7 @@ module Discordrb
     # @return [Invite] The invite with information about the given invite URL.
     def invite(invite)
       code = resolve_invite_code(invite)
-      Invite.new(JSON.parse(API::Invite.resolve(token, code)), self)
+      Invite.new(@client.get_invite(code), self)
     end
 
     # Finds a channel given its name and optionally the name of the server it is in.

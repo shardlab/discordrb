@@ -72,21 +72,21 @@ module Discordrb
 
     # @!visibility private
     def initialize(data, bot)
-      @name = data['name']
-      @type = data['type']
-      @url = data['url']
-      @application_id = data['application_id']
-      @details = data['details']
-      @state = data['state']
-      @instance = data['instance']
-      @flags = data['flags'] || 0
-      @created_at = Time.at(data['created_at'].to_i)
+      @name = data[:name]
+      @type = data[:type]
+      @url = data[:url]
+      @application_id = data[:application_id]
+      @details = data[:details]
+      @state = data[:state]
+      @instance = data[:instance]
+      @flags = data[:flags] || 0
+      @created_at = Time.at(data[:created_at].to_i)
 
-      @timestamps = Timestamps.new(data['timestamps']) if data['timestamps']
-      @secrets = Secret.new(data['secrets']) if data['secrets']
-      @assets = Assets.new(data['assets'], @application_id) if data['assets']
-      @party = Party.new(data['party']) if data['party']
-      @emoji = Emoji.new(data['emoji'], bot, nil) if data['emoji']
+      @timestamps = Timestamps.new(data[:timestamps]) if data[:timestamps]
+      @secrets = Secret.new(data[:secrets]) if data[:secrets]
+      @assets = Assets.new(data[:assets], @application_id) if data[:assets]
+      @party = Party.new(data[:party]) if data[:party]
+      @emoji = Emoji.new(data[:emoji], bot, nil) if data[:emoji]
     end
 
     # @return [true, false] Whether or not the `join` flag is set for this activity
@@ -134,8 +134,8 @@ module Discordrb
 
       # @!visibility private
       def initialize(data)
-        @start = Time.at(data['start'] / 1000) if data['start']
-        @end = Time.at(data['end'] / 1000) if data['end']
+        @start = Time.at(data[:start] / 1000) if data[:start]
+        @end = Time.at(data[:end] / 1000) if data[:end]
       end
     end
 
@@ -152,9 +152,9 @@ module Discordrb
 
       # @!visibility private
       def initialize(data)
-        @join = data['join']
-        @spectate = data['spectate']
-        @match = data['match']
+        @join = data[:join]
+        @spectate = data[:spectate]
+        @match = data[:match]
       end
     end
 
@@ -178,15 +178,16 @@ module Discordrb
       # @!visibility private
       def initialize(data, application_id)
         @application_id = application_id
-        @large_image_id = data['large_image']
-        @large_text = data['large_text']
-        @small_image_id = data['small_image']
-        @small_text = data['small_text']
+        @large_image_id = data[:large_image]
+        @large_text = data[:large_text]
+        @small_image_id = data[:small_image]
+        @small_text = data[:small_text]
       end
 
       # Utility function to get an Asset's large image URL.
       # @param format [String, nil] If `nil`, the URL will default to `webp`. You can otherwise specify one of `webp`, `jpg`, or `png`.
       # @return [String] the URL to the large image asset.
+      # TODO: Asset url helper
       def large_image_url(format = 'webp')
         API.asset_url(@application_id, @large_image_id, format)
       end
@@ -194,6 +195,7 @@ module Discordrb
       # Utility function to get an Asset's large image URL.
       # @param format [String, nil] If `nil`, the URL will default to `webp`. You can otherwise specify one of `webp`, `jpg`, or `png`.
       # @return [String] the URL to the small image asset.
+      # TODO: Asset url helper
       def small_image_url(format = 'webp')
         API.asset_url(@application_id, @small_image_id, format)
       end
@@ -212,8 +214,8 @@ module Discordrb
 
       # @!visibility private
       def initialize(data)
-        @id = data['id']
-        @current_size, @max_size = data['size']
+        @id = data[:id]
+        @current_size, @max_size = data[:size]
       end
     end
   end

@@ -32,15 +32,15 @@ module Discordrb
       @bot = bot
       @message = message
 
-      @id = data['id'].to_i
-      @url = data['url']
-      @proxy_url = data['proxy_url']
-      @filename = data['filename']
+      @id = data[:id].to_i
+      @url = data[:url]
+      @proxy_url = data[:proxy_url]
+      @filename = data[:filename]
 
-      @size = data['size']
+      @size = data[:size]
 
-      @width = data['width']
-      @height = data['height']
+      @width = data[:width]
+      @height = data[:height]
     end
 
     # @return [true, false] whether this file is an image file.

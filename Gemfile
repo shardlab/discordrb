@@ -7,3 +7,4 @@ gemspec name: 'discordrb'
 gemspec name: 'discordrb-webhooks', development_group: 'webhooks'
 
 gem 'faraday', '~> 1.8'
+gem 'faraday_middleware', '~> 1.1.0'

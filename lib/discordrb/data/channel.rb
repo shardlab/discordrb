@@ -76,36 +76,36 @@ module Discordrb
       # data is sometimes a Hash and other times an array of Hashes, you only want the last one if it's an array
       data = data[-1] if data.is_a?(Array)
 
-      @id = data['id'].to_i
-      @type = data['type'] || 0
-      @topic = data['topic']
-      @bitrate = data['bitrate']
-      @user_limit = data['user_limit']
-      @position = data['position']
-      @parent_id = data['parent_id'].to_i if data['parent_id']
+      @id = data[:id].to_i
+      @type = data[:type] || 0
+      @topic = data[:topic]
+      @bitrate = data[:bitrate]
+      @user_limit = data[:user_limit]
+      @position = data[:position]
+      @parent_id = data[:parent_id].to_i if data[:parent_id]
 
       if private?
         @recipients = []
-        data['recipients']&.each do |recipient|
+        data[:recipients]&.each do |recipient|
           recipient_user = bot.ensure_user(recipient)
           @recipients << Recipient.new(recipient_user, self, bot)
         end
         if pm?
           @name = @recipients.first.username
         else
-          @name = data['name']
-          @owner_id = data['owner_id']
+          @name = data[:name]
+          @owner_id = data[:owner_id]
         end
       else
-        @name = data['name']
-        @server_id = server&.id || data['guild_id'].to_i
+        @name = data[:name]
+        @server_id = server&.id || data[:guild_id].to_i
         @server = server
       end
 
-      @nsfw = data['nsfw'] || false
-      @rate_limit_per_user = data['rate_limit_per_user'] || 0
+      @nsfw = data[:nsfw] || false
+      @rate_limit_per_user = data[:rate_limit_per_user] || 0
 
-      process_permission_overwrites(data['permission_overwrites'])
+      process_permission_overwrites(data[:permission_overwrites])
     end
 
     # @return [Server, nil] the server this channel is on. If this channel is a PM channel, it will be nil.
@@ -180,7 +180,7 @@ module Discordrb
     #   channel is a category, this channel will be sorted at the top of that category. If it is `nil`, the channel will
     #   be sorted at the top of the channel list.
     # @param lock_permissions [true, false] Whether the channel's permissions should be synced to the category's
-    def sort_after(other = nil, lock_permissions = false)
+    def sort_after(other = nil, lock_permissions = false, reason: nil)
       raise TypeError, 'other must be one of Channel, NilClass, String, or Integer' unless other.is_a?(Channel) || other.nil? || other.respond_to?(:resolve_id)
 
       other = @bot.channel(other.resolve_id) if other
@@ -238,7 +238,7 @@ module Discordrb
         move_argument << hash
       end
 
-      API::Server.update_channel_positions(@bot.token, @server_id, move_argument)
+      client.modify_guild_channel_positions(@server_id, move_argument, reason: reason || :undef)
     end
 
     # Sets whether this channel is NSFW
@@ -428,13 +428,13 @@ module Discordrb
     # Deletes a message on this channel. Mostly useful in case a message needs to be deleted when only the ID is known
     # @param message [Message, String, Integer, String, Integer] The message, or its ID, that should be deleted.
     def delete_message(message)
-      API::Channel.delete_message(@bot.token, @id, message.resolve_id)
+      @bot.client.delete_message(@id, message.resolve_id)
     end
 
     # Permanently deletes this channel
     # @param reason [String] The reason the for the channel deletion.
     def delete(reason = nil)
-      API::Channel.delete(@bot.token, @id, reason)
+      @bot.client.delete_channel(@id, reason: reason)
     end
 
     # Sets this channel's name. The name must be alphanumeric with dashes, unless this is a voice channel (then there are no limitations)
@@ -504,7 +504,14 @@ module Discordrb
         thing = Overwrite.new thing, allow: allow_bits, deny: deny_bits
       end
 
-      API::Channel.update_permission(@bot.token, @id, thing.id, thing.allow.bits, thing.deny.bits, thing.type, reason)
+      client.edit_channel_permissions(
+        @id,
+        thing.id,
+        allow: thing.allow.bits,
+        deny: thing.deny.bits,
+        type: thing.type,
+        reason: reason
+      )
     end
 
     # Deletes a permission overwrite for this channel
@@ -513,7 +520,7 @@ module Discordrb
     def delete_overwrite(target, reason = nil)
       raise 'Tried deleting a overwrite for an invalid target' unless target.is_a?(Member) || target.is_a?(User) || target.is_a?(Role) || target.is_a?(Profile) || target.is_a?(Recipient) || target.respond_to?(:resolve_id)
 
-      API::Channel.delete_permission(@bot.token, @id, target.resolve_id, reason)
+      @bot.client.delete_channel_permission(@id, target.resolve_id, reason: reason)
     end
 
     # Updates the cached data from another channel.
@@ -557,16 +564,20 @@ module Discordrb
     #   last_ten_messages = channel.history(10, message.id)
     # @return [Array<Message>] the retrieved messages.
     def history(amount, before_id = nil, after_id = nil, around_id = nil)
-      logs = API::Channel.messages(@bot.token, @id, amount, before_id, after_id, around_id)
-      JSON.parse(logs).map { |message| Message.new(message, @bot) }
+      resp = @bot.client.get_channel_messages(@id, **{
+        before: before_id, after: after_id, around: around_id, limit: amount
+      }.compact)
+      resp.map { |message| Message.new(message, @bot) }
     end
 
     # Retrieves message history, but only message IDs for use with prune.
     # @note For internal use only
     # @!visibility private
     def history_ids(amount, before_id = nil, after_id = nil, around_id = nil)
-      logs = API::Channel.messages(@bot.token, @id, amount, before_id, after_id, around_id)
-      JSON.parse(logs).map { |message| message['id'].to_i }
+      resp = @bot.client.get_channel_messages(@id, **{
+        before: before_id, after: after_id, around: around_id, limit: amount
+      }.compact)
+      resp.map { |message| message[:id].to_i }
     end
 
     # Returns a single message from this channel's history by ID.
@@ -575,8 +586,8 @@ module Discordrb
     def load_message(message_id)
       raise ArgumentError, 'message_id cannot be nil' if message_id.nil?
 
-      response = API::Channel.message(@bot.token, @id, message_id)
-      Message.new(JSON.parse(response), @bot)
+      response = @bot.client.get_channel_message(@id, message_id)
+      Message.new(response, @bot)
     rescue Discordrb::Errors::UnknownMessage
       nil
     end
@@ -586,8 +597,7 @@ module Discordrb
     # Requests all pinned messages in a channel.
     # @return [Array<Message>] the received messages.
     def pins
-      msgs = API::Channel.pinned_messages(@bot.token, @id)
-      JSON.parse(msgs).map { |msg| Message.new(msg, @bot) }
+      @bot.client.get_pinned_messages(@id).map { |msg| Message.new(msg, @bot) }
     end
 
     # Delete the last N messages on this channel.
@@ -614,7 +624,7 @@ module Discordrb
       when 0
         0
       when 1
-        API::Channel.delete_message(@bot.token, @id, messages.first, reason)
+        @bot.client.delete_message(@id, messages.first, reason: reason)
         1
       else
         bulk_delete(messages, strict, reason)
@@ -665,8 +675,10 @@ module Discordrb
     # @param reason [String] The reason the for the creation of this invite.
     # @return [Invite] the created invite.
     def make_invite(max_age = 0, max_uses = 0, temporary = false, unique = false, reason = nil)
-      response = API::Channel.create_invite(@bot.token, @id, max_age, max_uses, temporary, unique, reason)
-      Invite.new(JSON.parse(response), @bot)
+      resp = @bot.client.create_channel_invite(@id, **{
+        max_age: max_age, max_uses: max_uses, temporary: temporary, unique: unique, reason: reason
+      }.compact)
+      Invite.new(resp, @bot)
     end
 
     alias_method :invite, :make_invite
@@ -677,10 +689,11 @@ module Discordrb
     # @example Send a typing indicator for the bot in a given channel.
     #   channel.start_typing()
     def start_typing
-      API::Channel.start_typing(@bot.token, @id)
+      @bot.client.trigger_typing_indicator(@id)
     end
 
     # Creates a Group channel
+    # @deprecated TODO: Remove
     # @param user_ids [Array<Integer>] Array of user IDs to add to the new group channel (Excluding
     #   the recipient of the PM channel).
     # @return [Channel] the created channel.
@@ -693,6 +706,7 @@ module Discordrb
     end
 
     # Adds a user to a group channel.
+    # @deprecated TODO: Also remove this?
     # @param user_ids [Array<String, Integer>, String, Integer] User ID or array of user IDs to add to the group channel.
     # @return [Channel] the group channel.
     def add_group_users(user_ids)
@@ -708,6 +722,7 @@ module Discordrb
     alias_method :add_group_user, :add_group_users
 
     # Removes a user from a group channel.
+    # @deprecated TODO: Check that all group dm stuff is actually not supported
     # @param user_ids [Array<String, Integer>, String, Integer] User ID or array of user IDs to remove from the group channel.
     # @return [Channel] the group channel.
     def remove_group_users(user_ids)
@@ -726,7 +741,7 @@ module Discordrb
     def leave_group
       raise 'Attempted to leave a non-group channel!' unless group?
 
-      API::Channel.leave_group(@bot.token, @id)
+      @bot.client.delete_channel(@id)
     end
 
     alias_method :leave, :leave_group
@@ -741,8 +756,8 @@ module Discordrb
       raise ArgumentError, 'Tried to create a webhook in a non-server channel' unless server
       raise ArgumentError, 'Tried to create a webhook in a non-text channel' unless text?
 
-      response = API::Channel.create_webhook(@bot.token, @id, name, avatar, reason)
-      Webhook.new(JSON.parse(response), @bot)
+      resp = @bot.client.create_webhook(@id, name: name, avatar: avatar, reason: reason)
+      Webhook.new(resp, @bot)
     end
 
     # Requests a list of Webhooks on the channel.
@@ -750,8 +765,7 @@ module Discordrb
     def webhooks
       raise 'Tried to request webhooks from a non-server channel' unless server
 
-      webhooks = JSON.parse(API::Channel.webhooks(@bot.token, @id))
-      webhooks.map { |webhook_data| Webhook.new(webhook_data, @bot) }
+      @bot.client.get_channel_webhooks(@id).map { |data| Webhook.new(data, @bot) }
     end
 
     # Requests a list of Invites to the channel.
@@ -759,8 +773,7 @@ module Discordrb
     def invites
       raise 'Tried to request invites from a non-server channel' unless server
 
-      invites = JSON.parse(API::Channel.invites(@bot.token, @id))
-      invites.map { |invite_data| Invite.new(invite_data, @bot) }
+      @bot.client.get_channel_invites(@id).map { |data| Invite.new(data, @bot) }
     end
 
     # The default `inspect` method is overwritten to give more useful output.
@@ -796,17 +809,16 @@ module Discordrb
     # @note For internal use only
     # @!visibility private
     def update_data(new_data = nil)
-      new_data ||= JSON.parse(API::Channel.resolve(@bot.token, @id))
-      @name = new_data[:name] || new_data['name'] || @name
-      @topic = new_data[:topic] || new_data['topic'] || @topic
-      @position = new_data[:position] || new_data['position'] || @position
-      @bitrate = new_data[:bitrate] || new_data['bitrate'] || @bitrate
-      @user_limit = new_data[:user_limit] || new_data['user_limit'] || @user_limit
-      new_nsfw = new_data.key?(:nsfw) ? new_data[:nsfw] : new_data['nsfw']
-      @nsfw = new_nsfw.nil? ? @nsfw : new_nsfw
-      @parent_id = new_data[:parent_id] || new_data['parent_id'] || @parent_id
-      process_permission_overwrites(new_data[:permission_overwrites] || new_data['permission_overwrites'])
-      @rate_limit_per_user = new_data[:rate_limit_per_user] || new_data['rate_limit_per_user'] || @rate_limit_per_user
+      new_data ||= @bot.client.get_channel(@id)
+      @name = new_data[:name] || @name
+      @topic = new_data[:topic] || @topic
+      @position = new_data[:position] || @position
+      @bitrate = new_data[:bitrate] || @bitrate
+      @user_limit = new_data[:user_limit] || @user_limit
+      @nsfw = new_data[:nsfw].nil? ? @nsfw : new_data[:nsfw]
+      @parent_id = new_data[:parent_id] || @parent_id
+      process_permission_overwrites(new_data[:permission_overwrites])
+      @rate_limit_per_user = new_data[:rate_limit_per_user] || @rate_limit_per_user
     end
 
     # @return [String] a URL that a user can use to navigate to this channel in the client
@@ -835,25 +847,16 @@ module Discordrb
         true
       end
 
-      API::Channel.bulk_delete_messages(@bot.token, @id, ids, reason)
+      @bot.client.bulk_delete_messages(@id, ids, reason: reason)
       ids.size
     end
 
     def update_channel_data(new_data)
-      new_nsfw = new_data[:nsfw].is_a?(TrueClass) || new_data[:nsfw].is_a?(FalseClass) ? new_data[:nsfw] : @nsfw
       # send permission_overwrite only when explicitly set
-      overwrites = new_data[:permission_overwrites] ? new_data[:permission_overwrites].map { |_, v| v.to_hash } : nil
-      response = JSON.parse(API::Channel.update(@bot.token, @id,
-                                                new_data[:name] || @name,
-                                                new_data[:topic] || @topic,
-                                                new_data[:position] || @position,
-                                                new_data[:bitrate] || @bitrate,
-                                                new_data[:user_limit] || @user_limit,
-                                                new_nsfw,
-                                                overwrites,
-                                                new_data[:parent_id] || @parent_id,
-                                                new_data[:rate_limit_per_user] || @rate_limit_per_user))
-      update_data(response)
+      new_data[:permission_overwrites] = new_data[:permission_overwrites] ? new_data[:permission_overwrites].map { |_, v| v.to_hash } : nil
+      resp = @bot.client.modify_channel(@id, **new_data)
+
+      update_data(resp)
     end
 
     def process_permission_overwrites(overwrites)
@@ -862,7 +865,7 @@ module Discordrb
       return unless overwrites
 
       overwrites.each do |element|
-        id = element['id'].to_i
+        id = element[:id].to_i
         @permission_overwrites[id] = Overwrite.from_hash(element)
       end
     end

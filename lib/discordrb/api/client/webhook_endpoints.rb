@@ -6,9 +6,10 @@ module Discordrb
     module WebhookEndpoints
       # @!discord_api https://discord.com/developers/docs/resources/webhook#create-webhook
       # @return [Hash<Symbol, Object>]
-      def create_webhook(channel_id, name: :undef, avatar: :undef, **rest)
+      def create_webhook(channel_id, name: :undef, avatar: :undef, reason: :undef, **rest)
         request Route[:POST, "/channels/#{channel_id}/webhooks", channel_id],
-                body: filter_undef({ name: name, avatar: avatar, **rest })
+                body: filter_undef({ name: name, avatar: avatar, **rest }),
+                reason: reason
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/webhook#get-channel-webhooks
@@ -49,20 +50,22 @@ module Discordrb
       # @!discord_api https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token
       # @return [Hash<Symbol, Object>]
       def modify_webhook_with_token(webhook_id, webhook_token, name: :undef, avatar: :undef, channel_id: :undef, **rest)
-        request Route[:PATCH, "/webhooks/#{webhook_id}", webhook_id, :patch_webhooks_id_token],
+        request Route[:PATCH, "/webhooks/#{webhook_id}/#{webhook_token}", webhook_id, :patch_webhooks_id_token],
                 body: filter_undef({ name: name, avatar: avatar, channel_id: channel_id, **rest })
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/webhook#delete-webhook
       # @return [nil]
-      def delete_webhook(webhook_id)
-        request Route[:DELETE, "/webhooks/#{webhook_id}", webhook_id]
+      def delete_webhook(webhook_id, reason: :undef)
+        request Route[:DELETE, "/webhooks/#{webhook_id}", webhook_id],
+                reason: reason
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/webhook#delete-webhook-with-token
       # @return [nil]
-      def delete_webhook_with_token(webhook_id, webhook_token)
-        request Route[:DELETE, "/webhooks/#{webhook_id}", webhook_id, :delete_webhook_id_token]
+      def delete_webhook_with_token(webhook_id, webhook_token, reason: :undef)
+        request Route[:DELETE, "/webhooks/#{webhook_id}/#{webhook_token}", webhook_id, :delete_webhook_id_token],
+                reason: reason
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/webhook#execute-webhook
@@ -116,7 +119,7 @@ module Discordrb
 
       # @!discord_api https://discord.com/developers/docs/resources/webhook#delete-webhook-message
       # @return [nil]
-      def delete_webhook_message(webhook_id, webhook_token)
+      def delete_webhook_message(webhook_id, webhook_token, message_id)
         request Route[:DELETE, "/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}", webhook_id, :delete_webhooks_id_token_messages_id]
       end
     end

@@ -1,0 +1,597 @@
+module Discordrb
+  module API
+    module AuditLogEndpoints
+      def get_guild_audit_log: (untyped guild_id, ?user_id: ::Symbol user_id, ?action_type: ::Symbol action_type, ?before: ::Symbol before, ?limit: ::Symbol limit, **untyped params) -> untyped
+    end
+  end
+end
+
+module Discordrb
+  module API
+    # @!discord_api https://discord.com/developers/docs/resources/channel
+    module ChannelEndpoints
+      # @!discord_api https://discord.com/developers/docs/resources/channel#get-channel
+      # @return [Hash<Symbol, Object>]
+      def get_channel: (untyped channel_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#modify-channel
+      # @return [Hash<Symbol, Object>]
+      def modify_channel: (untyped channel_id, ?name: ::Symbol name, ?icon: ::Symbol icon, ?type: ::Symbol `type`, ?position: ::Symbol position, ?topic: ::Symbol topic, ?nsfw: ::Symbol nsfw, ?rate_limit_per_user: ::Symbol rate_lim
+      it_per_user, ?bitrate: ::Symbol bitrate, ?user_limit: ::Symbol user_limit, ?permission_overwrites: ::Symbol permission_overwrites, ?parent_id: ::Symbol parent_id, ?rtc_region: ::Symbol rtc_region, ?video_quality_mode: ::Symbol vid
+      eo_quality_mode, ?default_auto_archive_duration: ::Symbol default_auto_archive_duration, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#deleteclose-channel
+      # @return [Hash<Symbol, Object>]
+      def delete_channel: (untyped channel_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#get-channel-messages
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_channel_messages: (untyped channel_id, ?around: ::Symbol around, ?before: ::Symbol before, ?after: ::Symbol after, ?limit: ::Symbol limit, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#get-channel-message
+      # @return [Hash<Symbol, Object>]
+      def get_channel_message: (untyped channel_id, untyped message_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#create-message
+      # @return [Hash<Symbol, Object>]
+      # TODO: multi attachment coming soon
+      def create_message: (untyped channel_id, ?content: ::Symbol content, ?tts: ::Symbol tts, ?file: ::Symbol file, ?embeds: ::Symbol embeds, ?allowed_mentions: ::Symbol allowed_mentions, ?message_reference: ::Symbol message_refe
+      rence, ?components: ::Symbol components, ?sticker_ids: ::Symbol sticker_ids, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#crosspost-message
+      # @return [Hash<Symbol, Object>]
+      def crosspost_message: (untyped channel_id, untyped message_id, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#create-reaction
+      # @return [nil]
+      def create_reaction: (untyped channel_id, untyped message_id, untyped emoji) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#delete-own-reaction
+      # @return [nil]
+      def delete_own_reaction: (untyped channel_id, untyped message_id, untyped emoji) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#delete-user-reaction
+      # @return [nil]
+      def delete_user_reaction: (untyped channel_id, untyped message_id, untyped emoji, untyped user_id) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#get-reactions
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_reactions: (untyped channel_id, untyped message_id, untyped emoji, ?after: ::Symbol after, ?limit: ::Symbol limit, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#delete-all-reactions
+      # @return [nil]
+      def delete_all_reactions: (untyped channel_id, untyped message_id) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#delete-all-reactions-for-emoji
+      # @return [nil]
+      def delete_all_reactions_for_emoji: (untyped channel_id, untyped message_id, untyped emoji) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#edit-message
+      # @return [Hash<Symbol, Object>]
+      def edit_message: (untyped channel_id, untyped message_id, ?content: ::Symbol content, ?embeds: ::Symbol embeds, ?flags: ::Symbol flags, ?file: ::Symbol file, ?allowed_mentions: ::Symbol allowed_mentions, ?attachments: ::Sym
+      bol attachments, ?components: ::Symbol components, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#delete-message
+      # @return [nil]
+      def delete_message: (untyped channel_id, untyped message_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#bulk-delete-messages
+      # @return [nil]
+      def bulk_delete_messages: (untyped channel_id, messages: untyped messages, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#edit-channel-permissions
+      # @return [nil]
+      def edit_channel_permissions: (untyped channel_id, untyped overwrite_id, ?allow: ::Symbol allow, ?deny: ::Symbol deny, ?type: ::Symbol `type`, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#get-channel-invites
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_channel_invites: (untyped channel_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#create-channel-invite
+      # @return [Hash<Symbol, Object>]
+      def create_channel_invite: (untyped channel_id, ?max_age: ::Symbol max_age, ?max_uses: ::Symbol max_uses, ?temporary: ::Symbol temporary, ?unique: ::Symbol unique, ?target_type: ::Symbol target_type, ?target_user_id: ::Symbo
+      l target_user_id, ?target_application_id: ::Symbol target_application_id, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#delete-channel-permission
+      # @return [nil]
+      def delete_channel_permission: (untyped channel_id, untyped overwrite_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#follow-news-channel
+      # @return [Hash<Symbol, Object>]
+      def follow_news_channel: (untyped channel_id, webhook_channel_id: untyped webhook_channel_id) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#trigger-typing-indicator
+      # @return [nil]
+      def trigger_typing_indicator: (untyped channel_id, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#get-pinned-messages
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_pinned_messages: (untyped channel_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#pin-message
+      # @return [nil]
+      def pin_message: (untyped channel_id, untyped message_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#unpin-message
+      # @return [nil]
+      def unpin_message: (untyped channel_id, untyped message_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#start-thread-with-message
+      # @return [Hash<Symbol, Object>]
+      def start_thread_with_message: (untyped channel_id, untyped message_id, name: untyped name, ?auto_archive_duration: ::Symbol auto_archive_duration, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#start-thread-without-message
+      # @return [Hash<Symbol, Object>]
+      def start_thread_without_message: (untyped channel_id, name: untyped name, ?auto_archive_duration: ::Symbol auto_archive_duration, ?type: ::Symbol `type`, ?invitable: ::Symbol invitable, ?reason: ::Symbol reason, **untyped r
+      est) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#join-thread
+      # @return [nil]
+      def join_thread: (untyped channel_id) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#add-thread-member
+      # @return [nil]
+      def add_thread_member: (untyped channel_id, untyped user_id) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#leave-thread
+      # @return [nil]
+      def leave_thread: (untyped channel_id) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#remove-thread-member
+      # @return [nil]
+      def remove_thread_member: (untyped channel_id, untyped user_id) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#remove-thread-member
+      # @return [Array<Hash<Symbol, Object>>]
+      def list_thread_members: (untyped channel_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#list-thread-members
+      # @return [Array<Hash<Symbol, Object>>]
+      def list_active_threads: (untyped channel_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#list-public-archived-threads
+      # @return [Array<Hash<Symbol, Object>>]
+      def list_public_archived_threads: (untyped channel_id, ?before: ::Symbol before, ?limit: ::Symbol limit, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#list-private-archived-threads
+      # @return [Array<Hash<Symbol, Object>>]
+      def list_private_archived_threads: (untyped channel_id, ?before: ::Symbol before, ?limit: ::Symbol limit, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/channel#list-joined-private-archived-threads
+      # @return [Array<Hash<Symbol, Object>>]
+      def list_joined_private_archived_threads: (untyped channel_id, ?before: ::Symbol before, ?limit: ::Symbol limit, **untyped params) -> untyped
+    end
+  end
+end
+
+module Discordrb
+  module API
+    # @!discord_api https://discord.com/developers/docs/resources/emoji
+    module EmojiEndpoints
+      # @!discord_api https://discord.com/developers/docs/resources/emoji#list-guild-emojis
+      # @return [Array<Hash<Symbol, Object>>]
+      def list_guild_emojis: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/emoji#get-guild-emoji
+      # @return [Hash<Symbol, Object>]
+      def get_guild_emoji: (untyped guild_id, untyped emoji_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/emoji#create-guild-emoji
+      # @return [Hash<Symbol, Object>]
+      def create_guild_emoji: (untyped guild_id, name: untyped name, image: untyped image, ?roles: ::Symbol roles, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
+      # @return [Hash<Symbol, Object>]
+      def modify_guild_emoji: (untyped guild_id, untyped emoji_id, ?name: ::Symbol name, ?roles: ::Symbol roles, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/emoji#delete-guild-emoji
+      # @return [nil]
+      def delete_guild_emoji: (untyped guild_id, untyped emoji_id, ?reason: ::Symbol reason) -> untyped
+    end
+  end
+end
+
+module Discordrb
+  module API
+    # @!discord_api https://discord.com/developers/docs/resources/guild
+    module GuildEndpoints
+      # @!discord_api https://discord.com/developers/docs/resources/guild#create-guild
+      # @return [Hash<Symbol, Object>]
+      def create_guild: (name: untyped name, ?region: ::Symbol region, ?icon: ::Symbol icon, ?verification_level: ::Symbol verification_level, ?default_message_notifications: ::Symbol default_message_notifications, ?explicit_conte
+      nt_filter: ::Symbol explicit_content_filter, ?roles: ::Symbol roles, ?channels: ::Symbol channels, ?afk_channel_id: ::Symbol afk_channel_id, ?afk_timeout: ::Symbol afk_timeout, ?system_channel_id: ::Symbol system_channel_id, ?syst
+      em_channel_flags: ::Symbol system_channel_flags, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild
+      # @return [Hash<Symbol, Object>]
+      def get_guild: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-preview
+      # @return [Hash<Symbol, Object>]
+      def get_guild_preview: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild
+      # @return [Hash<Symbol, Object>]
+      def modify_guild: (untyped guild_id, ?name: ::Symbol name, ?region: ::Symbol region, ?verification_level: ::Symbol verification_level, ?default_message_notifications: ::Symbol default_message_notifications, ?explicit_content
+      _filter: ::Symbol explicit_content_filter, ?afk_channel_id: ::Symbol afk_channel_id, ?afk_timeout: ::Symbol afk_timeout, ?icon: ::Symbol icon, ?owner_id: ::Symbol owner_id, ?splash: ::Symbol splash, ?discovery_splash: ::Symbol dis
+      covery_splash, ?banner: ::Symbol banner, ?system_channel_id: ::Symbol system_channel_id, ?system_channel_flags: ::Symbol system_channel_flags, ?rules_channel_id: ::Symbol rules_channel_id, ?public_updates_channel_id: ::Symbol publ
+      ic_updates_channel_id, ?preferred_locale: ::Symbol preferred_locale, ?features: ::Symbol features, ?description: ::Symbol description, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#delete-guild
+      # @return [nil]
+      def delete_guild: (untyped guild_id) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-channels
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_guild_channels: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#create-guild-channel
+      # @return [Hash<Symbol, Object>]
+      def create_guild_channel: (untyped guild_id, name: untyped name, ?type: ::Symbol `type`, ?topic: ::Symbol topic, ?bitrate: ::Symbol bitrate, ?user_limit: ::Symbol user_limit, ?rate_limit_per_user: ::Symbol rate_limit_per_use
+      r, ?position: ::Symbol position, ?permission_overwrites: ::Symbol permission_overwrites, ?parent_id: ::Symbol parent_id, ?nsfw: ::Symbol nsfw, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions
+      # @return [nil]
+      def modify_guild_channel_positions: (untyped guild_id, untyped channels, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#list-active-threads
+      # @return [Hash<Symbol,Object>]
+      def list_active_threads: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-member
+      # @return [Hash<Symbol, Object>]
+      def get_guild_member: (untyped guild_id, untyped user_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-preview
+      # @return [Array<Hash<Symbol, Object>>]
+      def list_guild_members: (untyped guild_id, ?limit: ::Symbol limit, ?after: ::Symbol after, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#search-guild-members
+      # @return [Array<Hash<Symbol, Object>>]
+      def search_guild_members: (untyped guild_id, query: untyped query, ?limit: ::Symbol limit, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#add-guild-member
+      # @return [Hash<Symbol, Object>]
+      def add_guild_member: (untyped guild_id, untyped user_id, access_token: untyped access_token, ?nick: ::Symbol nick, ?roles: ::Symbol roles, ?mute: ::Symbol mute, ?deaf: ::Symbol deaf, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-member
+      # @return [Hash<Symbol, Object>]
+      def modify_guild_member: (untyped guild_id, untyped user_id, ?nick: ::Symbol nick, ?roles: ::Symbol roles, ?mute: ::Symbol mute, ?deaf: ::Symbol deaf, ?channel_id: ::Symbol channel_id, ?reason: ::Symbol reason, **untyped res
+      t) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-current-member
+      # @return [Hash<Symbol, Object>]
+      def modify_current_member: (untyped guild_id, ?nick: ::Symbol nick, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#add-guild-member-role
+      # @return [nil]
+      def add_guild_member_role: (untyped guild_id, untyped user_id, untyped role_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#remove-guild-member-role
+      # @return [nil]
+      def remove_guild_member_role: (untyped guild_id, untyped user_id, untyped role_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#remove-guild-member
+      # @return [nil]
+      def remove_guild_member: (untyped guild_id, untyped user_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-bans
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_guild_bans: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-ban
+      # @return [Hash<Symbol, Object>]
+      def get_guild_ban: (untyped guild_id, untyped user_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#create-guild-ban
+      # @return [nil]
+      def create_guild_ban: (untyped guild_id, untyped user_id, ?delete_message_days: ::Symbol delete_message_days, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#remove-guild-ban
+      # @return [nil]
+      def remove_guild_ban: (untyped guild_id, untyped user_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-roles
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_guild_roles: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#create-guild-role
+      # @return [Hash<Symbol, Object>]
+      def create_guild_role: (untyped guild_id, ?name: ::Symbol name, ?permissions: ::Symbol permissions, ?color: ::Symbol color, ?hoist: ::Symbol hoist, ?icon: ::Symbol icon, ?unicode_emoji: ::Symbol unicode_emoji, ?mentionable:
+      ::Symbol mentionable, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-role-positions
+      # @return [Array<Hash<Symbol, Object>>]
+      def modify_guild_role_positions: (untyped guild_id, untyped roles, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-role
+      # @return [Hash<Symbol, Object>]
+      def modify_guild_role: (untyped guild_id, untyped role_id, ?name: ::Symbol name, ?permissions: ::Symbol permissions, ?color: ::Symbol color, ?hoist: ::Symbol hoist, ?icon: ::Symbol icon, ?unicode_emoji: ::Symbol unicode_emoj
+      i, ?mentionable: ::Symbol mentionable, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#delete-guild-role
+      # @return [nil]
+      def delete_guild_role: (untyped guild_id, untyped role_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-prune-count
+      # @return [Hash<Symbol, Object>]
+      def get_guild_prune_count: (untyped guild_id, ?days: ::Symbol days, ?include_roles: ::Symbol include_roles, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#begin-guild-prune
+      # @return [Hash<Symbol, Object>]
+      def begin_guild_prune: (untyped guild_id, ?days: ::Symbol days, ?compute_prune_count: ::Symbol compute_prune_count, ?include_roles: ::Symbol include_roles, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-voice-regions
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_guild_voice_regions: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-invites
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_guild_invites: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-integrations
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_guild_integrations: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#delete-guild-integration
+      # @return [nil]
+      def delete_guild_integration: (untyped guild_id, untyped integration_id, ?reason: ::Symbol reason) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-widget-settings
+      # @return [Hash<Symbol, Object>]
+      def get_guild_widget_settings: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-widget
+      # @return [Hash<Symbol, Object>]
+      def modify_guild_widget: (untyped guild_id, ?enabled: ::Symbol enabled, ?channel_id: ::Symbol channel_id, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-widget
+      # @return [Hash<Symbol, Object>]
+      def get_guild_widget: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-vanity-url
+      # @return [Hash<Symbol, Object>]
+      def get_guild_vanity_url: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-widget-image
+      # @return [String]
+      def get_guild_widget_image: (untyped guild_id, ?style: ::Symbol style, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen
+      # @return [Hash<Symbol, Object>]
+      def get_guild_welcome_screen: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen
+      # @return [Hash<Symbol, Object>]
+      def modify_guild_welcome_screen: (untyped guild_id, ?enabled: ::Symbol enabled, ?welcome_channels: ::Symbol welcome_channels, ?description: ::Symbol description, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-current-user-voice-state
+      # @return [nil]
+      def modify_current_user_voice_state: (untyped guild_id, ?channel_id: ::Symbol channel_id, ?suppress: ::Symbol suppress, ?request_to_speak_timestamp: ::Symbol request_to_speak_timestamp, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-user-voice-state
+      # @return [nil]
+      def modify_user_voice_state: (untyped guild_id, untyped user_id, ?channel_id: ::Symbol channel_id, ?suppress: ::Symbol suppress, **untyped rest) -> untyped
+    end
+  end
+end
+
+module Discordrb
+  module API
+    # @!discord_api https://discord.com/developers/docs/resources/guild-template
+    module GuildTemplateEndpoints
+      # @!discord_api https://discord.com/developers/docs/resources/guild-template#get-guild-template
+      # @return [Hash<Symbol, Object>]
+      def get_guild_template: (untyped template_code, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild-template#create-guild-from-guild-template
+      # @return [Hash<Symbol, Object>]
+      def create_guild_from_template: (untyped template_code, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild-template#get-guild-templates
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_guild_templates: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild-template#create-guild-template
+      # @return [Hash<Symbol, Object>]
+      def create_guild_template: (untyped guild_id, name: untyped name, ?description: ::Symbol description, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild-template#sync-guild-template
+      # @return [Hash<Symbol, Object>]
+      def sync_guild_template: (untyped guild_id, untyped template_code) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild-template#modify-guild-template
+      # @return [Hash<Symbol, Object>]
+      def modify_guild_template: (untyped guild_id, untyped template_code, ?name: ::Symbol name, ?description: ::Symbol description, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild-template#delete-guild-template
+      # @return [Hash<Symbol, Object>]
+      def delete_guild_template: (untyped guild_id, untyped template_code) -> untyped
+    end
+  end
+end
+
+module Discordrb
+  module API
+    # @!discord_api https://discord.com/developers/docs/resources/invite
+    module InviteEndpoints
+      # @!discord_api https://discord.com/developers/docs/resources/invite#get-invite
+      # @return [Hash<Symbol, Object>]
+      def get_invite: (untyped invite_code, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/invite#delete-invite
+      # @return [Hash<Symbol, Object>]
+      def delete_invite: (untyped invite_code, ?reason: ::Symbol reason) -> untyped
+    end
+  end
+end
+
+module Discordrb
+  module API
+    # @!discord_api https://discord.com/developers/docs/resources/stage-instance
+    module StageInstanceEndpoints
+      # @!discord_api https://discord.com/developers/docs/resources/stage-instance#create-stage-instance
+      # @return [Hash<Symbol, Object>]
+      def create_stage_instance: (channel_id: untyped channel_id, topic: untyped topic, ?privacy_level: ::Symbol privacy_level, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/stage-instance#get-stage-instance
+      # @return [Hash<Symbol, Object>]
+      def get_stage_instance: (untyped channel_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance
+      # @return [Hash<Symbol, Object>]
+      def modify_stage_instance: (untyped channel_id, ?topic: ::Symbol topic, ?privacy_level: ::Symbol privacy_level, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/stage-instance#delete-stage-instance
+      # @return [untyped]
+      def delete_stage_instance: (untyped channel_id, ?reason: ::Symbol reason) -> untyped
+    end
+  end
+end
+
+module Discordrb
+  module API
+    # @!discord_api https://discord.com/developers/docs/resources/sticker
+    module StickerEndpoints
+      # @!discord_api https://discord.com/developers/docs/resources/sticker#get-sticker
+      # @return [Hash<Symbol, Object>]
+      def get_sticker: (untyped sticker_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/sticker#list-nitro-sticker-packs
+      # @return [Array<Hash<Symbol, Object>>]
+      def list_nitro_sticker_packs: (**untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/sticker#list-guild-stickers
+      # @return [Array<Hash<Symbol, Object>>]
+      def list_guild_stickers: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/sticker#get-guild-sticker
+      # @return [Hash<Symbol, Object>]
+      def get_guild_sticker: (untyped guild_id, untyped sticker_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/sticker#create-guild-sticker
+      # @return [Hash<Symbol, Object>]
+      def create_guild_sticker: (untyped guild_id, name: untyped name, description: untyped description, tags: untyped tags, file: untyped file, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
+      # @return [Hash<Symbol, Object>]
+      def modify_guild_sticker: (untyped guild_id, untyped sticker_id, ?name: ::Symbol name, ?description: ::Symbol description, ?tags: ::Symbol tags, ?reason: ::Symbol reason, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
+      # @return nil
+      def delete_guild_sticker: (untyped guild_id, untyped sticker_id, ?reason: ::Symbol reason) -> untyped
+    end
+  end
+end
+
+module Discordrb
+  module API
+    # @!discord_api https://discord.com/developers/docs/resources/user#users-resource
+    module UserEndpoints
+      # @!discord_api https://discord.com/developers/docs/resources/user#get-current-user
+      # @return [Hash<Symbol, Object>]
+      def get_current_user: (**untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/user#get-user
+      # @param user_id [Integer, String]
+      # @return [Hash<Symbol, Object>]
+      def get_user: (untyped user_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/user#modify-current-user
+      # @param username [String]
+      # @param avatar [String, nil]
+      # @return [Hash<Symbol, Object>]
+      def modify_current_user: (?username: ::Symbol username, ?avatar: ::Symbol avatar, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/user#get-current-user-guilds
+      # @return [Hash<Symbol, Object>]
+      def get_current_user_guilds: (**untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/user#leave-guild
+      # @param guild_id [Integer, String]
+      # @return [Hash<Symbol, Object>]
+      def leave_guild: (untyped guild_id) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/user#create-dm
+      # @param recipient_id [Integer, String]
+      # @return [Hash<Symbol, Object>]
+      def create_dm: (untyped recipient_id, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/user#get-user-connections
+      # @return [Hash<Symbol, Object>]
+      def get_current_user_connections: (**untyped params) -> untyped
+    end
+  end
+end
+
+module Discordrb
+  module API
+    # @!discord_api https://discord.com/developers/docs/resources/voice
+    module VoiceEndpoints
+      # @!discord_api https://discord.com/developers/docs/resources/voice#list-voice-regions
+      # @return [Array<Hash<Symbol, Object>>]
+      def list_voice_regions: (**untyped params) -> untyped
+    end
+  end
+end
+
+module Discordrb
+  module API
+    # @!discord_api https://discord.com/developers/docs/resources/webhook
+    module WebhookEndpoints
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#create-webhook
+      # @return [Hash<Symbol, Object>]
+      def create_webhook: (untyped channel_id, ?name: ::Symbol name, ?avatar: ::Symbol avatar, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#get-channel-webhooks
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_channel_webhooks: (untyped channel_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#get-guild-webhooks
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_guild_webhooks: (untyped guild_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#get-webhook
+      # @return [Hash<Symbol, Object>]
+      def get_webhook: (untyped webhook_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#get-webhook-with-token
+      # @return [Hash<Symbol, Object>]
+      def get_webhook_with_token: (untyped webhook_id, untyped webhook_token, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#modify-webhook
+      # @return [Hash<Symbol, Object>]
+      def modify_webhook: (untyped webhook_id, ?name: ::Symbol name, ?avatar: ::Symbol avatar, ?channel_id: ::Symbol channel_id, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token
+      # @return [Hash<Symbol, Object>]
+      def modify_webhook_with_token: (untyped webhook_id, untyped webhook_token, ?name: ::Symbol name, ?avatar: ::Symbol avatar, ?channel_id: ::Symbol channel_id, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#delete-webhook
+      # @return [nil]
+      def delete_webhook: (untyped webhook_id) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#delete-webhook-with-token
+      # @return [nil]
+      def delete_webhook_with_token: (untyped webhook_id, untyped webhook_token) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#execute-webhook
+      # @return [nil, Hash<Symbol, Object>]
+      def execute_webhook: (untyped webhook_id, untyped webhook_token, ?wait: ::Symbol wait, ?thread_id: ::Symbol thread_id, ?content: ::Symbol content, ?username: ::Symbol username, ?avatar_url: ::Symbol avatar_url, ?tts: ::Symbo
+      l tts, ?file: ::Symbol file, ?embeds: ::Symbol embeds, ?allowed_mentions: ::Symbol allowed_mentions, ?components: ::Symbol components, ?params: ::Hash[untyped, untyped] params, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#get-webhook-message
+      # @return [Hash<Symbol, Object>]
+      def get_webhook_message: (untyped webhook_id, untyped webhook_token, untyped message_id, **untyped params) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#edit-webhook-message
+      # @return [Hash<Symbol, Object>]
+      def edit_webhook_message: (untyped webhook_id, untyped webhook_token, untyped message_id, ?content: ::Symbol content, ?embeds: ::Symbol embeds, ?file: ::Symbol file, ?allowed_mentions: ::Symbol allowed_mentions, ?attachments
+        : ::Symbol attachments, ?components: ::Symbol components, **untyped rest) -> untyped
+
+      # @!discord_api https://discord.com/developers/docs/resources/webhook#delete-webhook-message
+      # @return [nil]
+      def delete_webhook_message: (untyped webhook_id, untyped webhook_token) -> untyped
+    end
+  end
+end
+
