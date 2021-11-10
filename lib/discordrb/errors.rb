@@ -12,7 +12,7 @@ module Discordrb
     end
 
     # Raised for unauthorized HTTP requests.
-    class Unauthorized < RuntimeError
+    class HttpUnauthorized < RuntimeError
       # Default message for this exception
       def message
         'The Authorization header was missing or invalid. Ensure your token is correct.'
