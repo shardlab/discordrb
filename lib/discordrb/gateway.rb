@@ -533,8 +533,7 @@ module Discordrb
     end
 
     def find_gateway
-      response = API.gateway(@token)
-      JSON.parse(response)[:url]
+      @bot.client.get_gateway_bot[:url]
     end
 
     def process_gateway
@@ -677,7 +676,7 @@ module Discordrb
       end
 
       # Parse packet
-      packet = JSON.parse(msg)
+      packet = JSON.parse(msg, symbolize_names: true)
       op = packet[:op].to_i
 
       LOGGER.in(packet)

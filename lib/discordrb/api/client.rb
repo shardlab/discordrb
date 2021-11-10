@@ -91,7 +91,7 @@ module Discordrb
         @limit = data['x-ratelimit-limit'].to_i || @limit || Float::INFINITY
         @remaining = data['x-ratelimit-remaining'].to_i || @remaining || Float::INFINITY
         @reset = Time.at(data['x-ratelimit-reset'].to_i) || @reset
-        @reset_after = (Time.now + data['x-ratelimit-reset-after'].to_i) || @reset_after
+        @reset_after = (Time.now + data['x-ratelimit-reset-after'].to_f) || @reset_after
         @bucket = data['x-ratelimit-bucket'] || @bucket
       end
     end
@@ -129,6 +129,11 @@ module Discordrb
         end
 
         init_rl
+      end
+
+      def get_gateway_bot(**params)
+        request Route[:GET, '/gateway/bot'],
+                params: filter_undef(params)
       end
 
       private

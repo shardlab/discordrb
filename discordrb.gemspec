@@ -25,7 +25,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'ffi', '>= 1.9.24'
   spec.add_dependency 'opus-ruby'
-  spec.add_dependency 'rest-client', '>= 2.0.0'
+  spec.add_dependency 'faraday', '~> 1.8'
+  spec.add_dependency 'faraday_middleware', '~> 1.1.0'
   spec.add_dependency 'websocket-client-simple', '>= 0.3.0'
 
   spec.add_dependency 'discordrb-webhooks', '~> 3.4.2'
