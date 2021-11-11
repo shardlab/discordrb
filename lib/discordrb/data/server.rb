@@ -87,7 +87,6 @@ module Discordrb
 
       # Whether this server's members have been chunked (resolved using op 8 and GUILD_MEMBERS_CHUNK) yet
       @chunked = false
-      @processed_chunk_members = 0
 
       @booster_count = data['premium_subscription_count'] || 0
       @boost_level = data['premium_tier']
@@ -805,19 +804,16 @@ module Discordrb
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
     # @note For internal use only
     # @!visibility private
-    def process_chunk(members)
+    def process_chunk(members, chunk_index, chunk_count)
       process_members(members)
-      @processed_chunk_members += members.length
-      LOGGER.debug("Processed one chunk on server #{@id} - length #{members.length}")
+      LOGGER.debug("Processed chunk #{chunk_index + 1}/#{chunk_count} server #{@id} - index #{chunk_index} - length #{members.length}")
 
-      # Don't bother with the rest of the method if it's not truly the last packet
-      return unless @processed_chunk_members == @member_count
+      return if chunk_index + 1 < chunk_count
 
       LOGGER.debug("Finished chunking server #{@id}")
 
       # Reset everything to normal
       @chunked = true
-      @processed_chunk_members = 0
     end
 
     # @return [Channel, nil] the AFK voice channel of this server, or `nil` if none is set.

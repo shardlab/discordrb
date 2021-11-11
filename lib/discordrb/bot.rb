@@ -1175,7 +1175,7 @@ module Discordrb
       when :GUILD_MEMBERS_CHUNK
         id = data['guild_id'].to_i
         server = server(id)
-        server.process_chunk(data['members'])
+        server.process_chunk(data['members'], data['chunk_index'], data['chunk_count'])
       when :INVITE_CREATE
         invite = Invite.new(data, self)
         raise_event(InviteCreateEvent.new(data, invite, self))
