@@ -806,9 +806,9 @@ module Discordrb
     # @!visibility private
     def process_chunk(members, chunk_index, chunk_count)
       process_members(members)
-      LOGGER.debug("Processed chunk #{chunk_index + 1}/#{chunk_count} server #{@id} - length #{members.length}")
+      LOGGER.debug("Processed chunk #{chunk_index + 1}/#{chunk_count} server #{@id} - index #{chunk_index} - length #{members.length}")
 
-      return unless chunk_index + 1 == chunk_count
+      return if chunk_index + 1 < chunk_count
 
       LOGGER.debug("Finished chunking server #{@id}")
 
