@@ -147,10 +147,14 @@ module Discordrb
 
     # Ensures a given server object is cached and if not, cache it from the given data hash.
     # @param data [Hash] A data hash representing a server.
+    # @param force_cache [true, false] Whether the object in cache should be updated with the given
+    #   data if it already exists.
     # @return [Server] the server represented by the data hash.
-    def ensure_server(data)
+    def ensure_server(data, force_cache = false)
       if @servers.include?(data['id'].to_i)
-        @servers[data['id'].to_i]
+        server = @servers[data['id'].to_i]
+        server.update_data(data) if force_cache
+        server
       else
         @servers[data['id'].to_i] = Server.new(data, self)
       end
