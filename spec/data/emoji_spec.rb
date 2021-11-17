@@ -4,12 +4,12 @@ require 'discordrb'
 
 describe Discordrb::Emoji do
   subject(:emoji) do
-    server = double('server', role: double)
+    server = instance_double(Discordrb::Server, role: double)
 
     described_class.new(emoji_data, bot, server)
   end
 
-  let(:bot) { double('bot') }
+  let(:bot) { instance_double(Discordrb::Bot) }
 
   fixture :emoji_data, %i[emoji]
 

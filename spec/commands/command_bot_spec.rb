@@ -13,7 +13,7 @@ TEST_CHANNELS = [
 ].freeze
 
 describe Discordrb::Commands::CommandBot, order: :defined do
-  let(:server) { double('server', id: 123) }
+  let(:server) { instance_double(Discordrb::Server, id: 123) }
   let(:text_channel_data) { load_data_file(:text_channel) }
   let(:default_channel_id) { 123 }
   let(:default_channel_name) { 'test-channel' }
@@ -28,13 +28,12 @@ describe Discordrb::Commands::CommandBot, order: :defined do
   let(:fourth_channel) { test_channels[3] }
   let(:fifth_channel) { test_channels[4] }
   let(:sixth_channel) do
-    bot = double('bot')
-    allow(bot).to receive(:token).and_return('fake token')
+    bot = instance_double(Discordrb::Bot, token: 'fake token')
     Discordrb::Channel.new(text_channel_data, bot, server)
   end
 
   def command_event_double
-    double('event').tap do |event|
+    instance_double(Discordrb::Commands::CommandEvent).tap do |event|
       allow(event).to receive :command=
       allow(event).to receive(:drain_into) { |e| e }
       allow(event).to receive(:server)
@@ -44,7 +43,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
 
   def append_author_to_double(event)
     allow(event).to receive(:author) do
-      double('member').tap do |member|
+      instance_double(Discordrb::Member).tap do |member|
         allow(member).to receive(:id) { user_id }
         allow(member).to receive(:roles) { user_roles }
         allow(member).to receive(:permission?).and_return(true)
@@ -55,7 +54,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
 
   def append_bot_to_double(event)
     allow(event).to receive(:bot) do
-      double('bot').tap do |bot|
+      instance_double(Discordrb::Commands::CommandBot).tap do |bot|
         allow(bot).to receive(:token).and_return('fake token')
         allow(bot).to receive(:rate_limited?).and_return(false)
         allow(bot).to receive(:attributes).and_return({})

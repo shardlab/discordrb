@@ -3,22 +3,18 @@
 require 'discordrb'
 
 describe Discordrb::Message do
-  let(:server) { double('server') }
-  let(:channel) { double('channel', server: server) }
-  let(:token) { double('token') }
-  let(:bot) { double('bot', channel: channel, token: token) }
-  let(:server_id) { instance_double('String', 'server_id') }
-  let(:channel_id) { instance_double('String', 'channel_id') }
-  let(:message_id) { instance_double('String', 'message_id') }
+  let(:server) { instance_double(Discordrb::Server, :server) }
+  let(:channel) { instance_double(Discordrb::Channel, :channel, server: server) }
+  let(:token) { instance_double(String, :token) }
+  let(:bot) { instance_double(Discordrb::Bot, channel: channel, token: token) }
+  let(:server_id) { instance_double(Integer, :server_id, to_s: 'server_id') }
+  let(:channel_id) { instance_double(Integer, :channel_id, to_s: 'channel_id') }
+  let(:message_id) { instance_double(Integer, :message_id, to_s: 'message_id') }
 
   before do
     allow(server_id).to receive(:to_i).and_return(server_id)
     allow(channel_id).to receive(:to_i).and_return(channel_id)
     allow(message_id).to receive(:to_i).and_return(message_id)
-
-    allow(message_id).to receive(:to_s).and_return('message_id')
-    allow(server_id).to receive(:to_s).and_return('server_id')
-    allow(channel_id).to receive(:to_s).and_return('channel_id')
 
     allow(server).to receive(:id).and_return(server_id)
     allow(channel).to receive(:id).and_return(channel_id)
@@ -111,8 +107,8 @@ describe Discordrb::Message do
 
   describe '#reacted_with' do
     let(:message) { described_class.new(message_data, bot) }
-    let(:emoji) { double('emoji') }
-    let(:reaction) { double('reaction') }
+    let(:emoji) { instance_double(Discordrb::Emoji, :emoji) }
+    let(:reaction) { instance_double(Discordrb::Reaction, :reaction) }
 
     fixture :user_data, %i[user]
 
@@ -161,11 +157,11 @@ describe Discordrb::Message do
 
   describe '#all_reaction_users' do
     let(:message) { described_class.new(message_data, bot) }
-    let(:reaction1) { double('reaction') }
-    let(:reaction2) { double('reaction') }
-    let(:user1) { double('user') }
-    let(:user2) { double('user') }
-    let(:user3) { double('user') }
+    let(:reaction1) { instance_double(Discordrb::Reaction, :reaction1) }
+    let(:reaction2) { instance_double(Discordrb::Reaction, :reaction2) }
+    let(:user1) { instance_double(Discordrb::User, :user1) }
+    let(:user2) { instance_double(Discordrb::User, :user2) }
+    let(:user3) { instance_double(Discordrb::User, :user3) }
 
     before do
       message.instance_variable_set(:@reactions, [reaction1, reaction2])
@@ -205,7 +201,7 @@ describe Discordrb::Message do
     end
 
     context 'when allowed_mentions is false' do
-      let(:mention) { double('mention') }
+      let(:mention) { instance_double(TrueClass, :mention) }
 
       it 'sets parse to an empty array add merges the mention_user param' do
         expect(message).to receive(:respond).with(content, false, nil, nil, { parse: [], replied_user: mention }, message, nil)

@@ -93,11 +93,11 @@ describe Discordrb::PermissionCalculator do
 
   describe '#defined_role_permission?' do
     it 'solves permissions (issue #607)' do
-      everyone_role = double('everyone role', id: 0, position: 0, permissions: Discordrb::Permissions.new)
-      role_a = double('role a', id: 1, position: 1, permissions: Discordrb::Permissions.new)
-      role_b = double('role b', id: 2, position: 2, permissions: Discordrb::Permissions.new([:manage_messages]))
+      everyone_role = instance_double(Discordrb::Role, id: 0, position: 0, permissions: Discordrb::Permissions.new)
+      role_a = instance_double(Discordrb::Role, id: 1, position: 1, permissions: Discordrb::Permissions.new)
+      role_b = instance_double(Discordrb::Role, id: 2, position: 2, permissions: Discordrb::Permissions.new([:manage_messages]))
 
-      channel = double('channel')
+      channel = instance_double(Discordrb::Channel)
       allow(example_calculator).to receive(:permission_overwrite)
         .with(:manage_messages, channel, everyone_role.id)
         .and_return(false)
@@ -110,7 +110,7 @@ describe Discordrb::PermissionCalculator do
         .with(:manage_messages, channel, role_b.id)
         .and_return(false)
 
-      example_calculator.server = double('server', everyone_role: everyone_role)
+      example_calculator.server = instance_double(Discordrb::Server, everyone_role: everyone_role)
       example_calculator.roles = [role_a, role_b]
       permission = example_calculator.__send__(:defined_role_permission?, :manage_messages, channel)
       expect(permission).to eq true
@@ -121,12 +121,12 @@ describe Discordrb::PermissionCalculator do
     end
 
     it 'takes overwrites into account' do
-      everyone_role = double('everyone role', id: 0, position: 0, permissions: Discordrb::Permissions.new)
-      role_a = double('role a', id: 1, position: 1, permissions: Discordrb::Permissions.new([:manage_messages]))
-      role_b = double('role b', id: 2, position: 2, permissions: Discordrb::Permissions.new)
-      channel = double('channel')
+      everyone_role = instance_double(Discordrb::Role, id: 0, position: 0, permissions: Discordrb::Permissions.new)
+      role_a = instance_double(Discordrb::Role, id: 1, position: 1, permissions: Discordrb::Permissions.new([:manage_messages]))
+      role_b = instance_double(Discordrb::Role, id: 2, position: 2, permissions: Discordrb::Permissions.new)
+      channel = instance_double(Discordrb::Channel)
 
-      example_calculator.server = double('server', everyone_role: everyone_role)
+      example_calculator.server = instance_double(Discordrb::Server, everyone_role: everyone_role)
       example_calculator.roles = [role_a, role_b]
 
       allow(example_calculator).to receive(:permission_overwrite).and_return(nil)
