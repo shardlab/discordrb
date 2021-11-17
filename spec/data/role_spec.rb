@@ -7,8 +7,8 @@ describe Discordrb::Role do
     described_class.new(role_data, bot, server)
   end
 
-  let(:server) { double('server', id: double) }
-  let(:bot) { double('bot', token: double) }
+  let(:server) { instance_double(Discordrb::Server, id: double) }
+  let(:bot) { instance_double(Discordrb::Bot, token: double) }
 
   fixture :role_data, %i[role]
 
@@ -17,8 +17,8 @@ describe Discordrb::Role do
       it 'sorts the role to position 1' do
         allow(server).to receive(:update_role_positions)
         allow(server).to receive(:roles).and_return [
-          double(id: 0, position: 0),
-          double(id: 1, position: 1)
+          instance_double(described_class, id: 0, position: 0),
+          instance_double(described_class, id: 1, position: 1)
         ]
 
         new_position = role.sort_above
@@ -28,13 +28,13 @@ describe Discordrb::Role do
 
     context 'when other is given' do
       it 'sorts above other' do
-        other = double(id: 1, position: 1, resolve_id: 1)
+        other = instance_double(described_class, id: 1, position: 1, resolve_id: 1)
         allow(server).to receive(:update_role_positions)
         allow(server).to receive(:role).and_return other
         allow(server).to receive(:roles).and_return [
-          double(id: 0, position: 0),
+          instance_double(described_class, id: 0, position: 0),
           other,
-          double(id: 2, position: 2)
+          instance_double(described_class, id: 2, position: 2)
         ]
 
         new_position = role.sort_above(other)

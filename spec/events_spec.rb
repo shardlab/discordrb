@@ -117,19 +117,19 @@ describe Discordrb::Events do
       described_class.new(message, bot)
     end
 
-    let(:bot) { double }
-    let(:channel) { double }
-    let(:message) { double('message', channel: channel) }
+    let(:bot) { instance_double(Discordrb::Bot, :bot) }
+    let(:channel) { instance_double(Discordrb::Channel, :channel) }
+    let(:message) { instance_double(Discordrb::Message, :message, channel: channel) }
 
     describe 'after_call' do
       subject :handler do
-        Discordrb::Events::MessageEventHandler.new(double, double('proc'))
+        Discordrb::Events::MessageEventHandler.new(double, instance_double(Proc, :proc))
       end
 
       it 'calls send_file with attached file, filename, and spoiler' do
-        file = double(:file)
-        filename = double(:filename)
-        spoiler = double(:spoiler)
+        file = instance_double(File, :file)
+        filename = instance_double(String, :filename)
+        spoiler = instance_double(Object, :spoiler)
         allow(file).to receive(:is_a?).with(File).and_return(true)
 
         expect(event).to receive(:send_file).with(file, caption: '', filename: filename, spoiler: spoiler)
@@ -171,7 +171,7 @@ describe Discordrb::Events do
     describe 'matches?' do
       it 'calls with empty attributes' do
         t = track('empty attributes')
-        event = double('Discordrb::Events::MessageEvent')
+        event = instance_double(Discordrb::Events::MessageEvent, :event)
         described_class.new({}, proc { t.track(1) }).match(event)
         # t.summary
       end
@@ -180,15 +180,15 @@ describe Discordrb::Events do
     shared_examples 'end_with attributes' do |expr, matching, non_matching|
       describe 'end_with attribute' do
         it "matches #{matching}" do
-          handler = described_class.new({ end_with: expr }, double('proc'))
-          event = double('event', channel: double('channel', private?: false), author: double('author'), timestamp: double('timestamp'), content: matching)
+          handler = described_class.new({ end_with: expr }, instance_double(Proc, :proc))
+          event = instance_double(Discordrb::Events::MessageEvent, :matching_event, channel: instance_double(Discordrb::Channel, :channel, private?: false), author: instance_double(Discordrb::Member, :author), timestamp: instance_double(Time, :timestamp), content: matching)
           allow(event).to receive(:is_a?).with(Discordrb::Events::MessageEvent).and_return(true)
           expect(handler).to be_a_match_of(event)
         end
 
         it "doesn't match #{non_matching}" do
-          handler = described_class.new({ end_with: expr }, double('proc'))
-          event = double('event', channel: double('channel', private?: false), author: double('author'), timestamp: double('timestamp'), content: non_matching)
+          handler = described_class.new({ end_with: expr }, instance_double(Proc, :proc))
+          event = instance_double(Discordrb::Events::MessageEvent, :non_matching_event, channel: instance_double(Discordrb::Channel, :channel, private?: false), author: instance_double(Discordrb::Member, :author), timestamp: instance_double(Time, :timestamp), content: non_matching)
           allow(event).to receive(:is_a?).with(Discordrb::Events::MessageEvent).and_return(true)
           expect(handler).not_to be_a_match_of(event)
         end
@@ -266,8 +266,8 @@ describe Discordrb::Events do
       described_class.new({ SERVER_ID => nil }, bot)
     end
 
-    let(:bot) { double('bot', server: server) }
-    let(:server) { double }
+    let(:bot) { instance_double(Discordrb::Bot, :bot, server: server) }
+    let(:server) { instance_double(Discordrb::Server, :server) }
 
     it_behaves_like 'ServerEvent'
   end
@@ -301,7 +301,7 @@ describe Discordrb::Events do
     end
 
     let(:bot) { double }
-    let(:server) { double('server', emoji: { emoji_1_id => nil, emoji_2_id => nil }) }
+    let(:server) { instance_double(Discordrb::Server, :server, emoji: { emoji_1_id => nil, emoji_2_id => nil }) }
 
     it_behaves_like 'ServerEvent'
 
@@ -336,27 +336,38 @@ describe Discordrb::Events do
   end
 
   describe Discordrb::Events::ServerEventHandler do
-    let(:event) { double('event', is_a?: true, emoji: emoji, server: server) }
-    let(:server) { double('server', name: SERVER_NAME, id: SERVER_ID) }
-    let(:emoji) { double('emoji', id: EMOJI1_ID, name: EMOJI1_NAME) }
+    let(:event) do
+      event = instance_double(Discordrb::Events::ServerEvent, :event, server: server)
+      allow(event).to receive(:is_a?).with(Discordrb::Events::ServerEvent).and_return(true)
+      event
+    end
+    let(:server) { instance_double(Discordrb::Server, :server, name: SERVER_NAME, id: SERVER_ID) }
 
     it_behaves_like 'ServerEventHandler'
   end
 
   describe Discordrb::Events::ServerEmojiCDEventHandler do
-    let(:event) { double('event', is_a?: true, emoji: emoji, server: server) }
-    let(:server) { double('server', name: SERVER_NAME, id: SERVER_ID) }
-    let(:emoji) { double('emoji', id: EMOJI1_ID, name: EMOJI1_NAME) }
+    let(:event) do
+      event = instance_double(Discordrb::Events::ServerEmojiCDEvent, :event, emoji: emoji, server: server)
+      allow(event).to receive(:is_a?).with(Discordrb::Events::ServerEmojiCDEvent).and_return(true)
+      event
+    end
+    let(:server) { instance_double(Discordrb::Server, :server, name: SERVER_NAME, id: SERVER_ID) }
+    let(:emoji) { instance_double(Discordrb::Emoji, :emoji, id: EMOJI1_ID, name: EMOJI1_NAME) }
 
     it_behaves_like 'ServerEventHandler'
     it_behaves_like 'ServerEmojiEventHandler'
   end
 
   describe Discordrb::Events::ServerEmojiUpdateEventHandler do
-    let(:event) { double('event', is_a?: true, emoji: emoji_new, old_emoji: emoji_old, server: server) }
-    let(:server) { double('server', name: SERVER_NAME, id: SERVER_ID) }
-    let(:emoji_old) { double('emoji_old', id: EMOJI1_ID, name: EMOJI2_NAME) }
-    let(:emoji_new) { double('emoji_new', name: EMOJI1_NAME) }
+    let(:event) do
+      event = instance_double(Discordrb::Events::ServerEmojiUpdateEvent, :event, emoji: emoji_new, old_emoji: emoji_old, server: server)
+      allow(event).to receive(:is_a?).with(Discordrb::Events::ServerEmojiUpdateEvent).and_return(true)
+      event
+    end
+    let(:server) { instance_double(Discordrb::Server, :server, name: SERVER_NAME, id: SERVER_ID) }
+    let(:emoji_old) { instance_double(Discordrb::Emoji, :emoji_old, id: EMOJI1_ID, name: EMOJI2_NAME) }
+    let(:emoji_new) { instance_double(Discordrb::Emoji, :emoji_new, name: EMOJI1_NAME) }
 
     it_behaves_like 'ServerEventHandler'
     it_behaves_like 'ServerEmojiEventHandler'
