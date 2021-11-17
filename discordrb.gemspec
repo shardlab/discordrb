@@ -19,7 +19,8 @@ Gem::Specification.new do |spec|
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.metadata = {
-    'changelog_uri' => 'https://github.com/shardlab/discordrb/blob/master/CHANGELOG.md'
+    'changelog_uri' => 'https://github.com/shardlab/discordrb/blob/master/CHANGELOG.md',
+    'rubygems_mfa_required' => 'true'
   }
   spec.require_paths = ['lib']
 
@@ -37,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'redcarpet', '~> 3.5.0' # YARD markdown formatting
   spec.add_development_dependency 'rspec', '~> 3.10.0'
   spec.add_development_dependency 'rspec-prof', '~> 0.0.7'
-  spec.add_development_dependency 'rubocop', '~> 1.22.0'
+  spec.add_development_dependency 'rubocop', '~> 1.24.0'
   spec.add_development_dependency 'rubocop-performance', '~> 1.0'
   spec.add_development_dependency 'rubocop-rake', '~> 0.6.0'
   spec.add_development_dependency 'simplecov', '~> 0.21.0'
