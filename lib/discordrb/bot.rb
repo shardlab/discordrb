@@ -1015,7 +1015,7 @@ module Discordrb
 
     # Internal handler for GUILD_CREATE
     def create_guild(data)
-      ensure_server(data)
+      ensure_server(data, true)
     end
 
     # Internal handler for GUILD_UPDATE
@@ -1143,14 +1143,14 @@ module Discordrb
         data['guilds'].each do |element|
           # Check for true specifically because unavailable=false indicates that a previously unavailable server has
           # come online
-          if element['unavailable'].is_a? TrueClass
+          if element['unavailable']
             @unavailable_servers += 1
 
             # Ignore any unavailable servers
             next
           end
 
-          ensure_server(element)
+          ensure_server(element, true)
         end
 
         # Add PM and group channels
