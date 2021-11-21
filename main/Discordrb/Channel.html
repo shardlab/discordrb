@@ -4202,7 +4202,7 @@ as soon as possible with the specified amount.</p>
 
   <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_message'><span class='object_link'><a href="API/Channel.html#message-class_method" title="Discordrb::API::Channel.message (method)">message</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_message_id'>message_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='ivar'>@bot</span><span class='rparen'>)</span>
-<span class='kw'>rescue</span> <span class='const'>RestClient</span><span class='op'>::</span><span class='const'>ResourceNotFound</span>
+<span class='kw'>rescue</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors.html" title="Discordrb::Errors (module)">Errors</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors.html#UnknownMessage-constant" title="Discordrb::Errors::UnknownMessage (constant)">UnknownMessage</a></span></span>
   <span class='kw'>nil</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -7079,7 +7079,7 @@ in that channel. For a text channel, it will return all online members that have
 </div>
 
       <div id="footer">
-  Generated on Sat Nov 20 03:09:47 2021 by
+  Generated on Sun Nov 21 22:26:20 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.6.8).
 </div>
