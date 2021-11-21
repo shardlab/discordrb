@@ -40,7 +40,7 @@ module Discordrb
     # @param id [Integer] The channel ID for which to search for.
     # @param server [Server] The server for which to search the channel for. If this isn't specified, it will be
     #   inferred using the API
-    # @return [Channel] The channel identified by the ID.
+    # @return [Channel, nil] The channel identified by the ID.
     # @raise Discordrb::Errors::NoPermission
     def channel(id, server = nil)
       id = id.resolve_id
@@ -50,7 +50,7 @@ module Discordrb
 
       begin
         response = API::Channel.resolve(token, id)
-      rescue RestClient::ResourceNotFound
+      rescue Discordrb::Errors::UnknownChannel
         return nil
       end
       channel = Channel.new(JSON.parse(response), self, server)
@@ -70,7 +70,7 @@ module Discordrb
       LOGGER.out("Resolving user #{id}")
       begin
         response = API::User.resolve(token, id)
-      rescue RestClient::ResourceNotFound
+      rescue Discordrb::Errors::UnknownUser
         return nil
       end
       user = User.new(JSON.parse(response), self)
@@ -102,7 +102,6 @@ module Discordrb
     def member(server_or_id, user_id)
       server_id = server_or_id.resolve_id
       user_id = user_id.resolve_id
-
       server = server_or_id.is_a?(Server) ? server_or_id : self.server(server_id)
 
       return server.member(user_id) if server.member_cached?(user_id)
@@ -110,7 +109,7 @@ module Discordrb
       LOGGER.out("Resolving member #{server_id} on server #{user_id}")
       begin
         response = API::Server.resolve_member(token, server_id, user_id)
-      rescue RestClient::ResourceNotFound
+      rescue Discordrb::Errors::UnknownUser, Discordrb::Errors::UnknownMember
         return nil
       end
       member = Member.new(JSON.parse(response), server, self)

@@ -577,7 +577,7 @@ module Discordrb
 
       response = API::Channel.message(@bot.token, @id, message_id)
       Message.new(JSON.parse(response), @bot)
-    rescue RestClient::ResourceNotFound
+    rescue Discordrb::Errors::UnknownMessage
       nil
     end
 
