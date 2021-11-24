@@ -44,14 +44,6 @@ module Discordrb::Light
       @client.get_current_user_guilds.map { |e| LightServer.new(e, self) }
     end
 
-    # Joins a server using an instant invite.
-    # @deprecated TODO: This should be removed right? Pretty sure it's self bot only.
-    # @param code [String] The code part of the invite (for example 0cDvIgU2voWn4BaD if the invite URL is
-    #   https://discord.gg/0cDvIgU2voWn4BaD)
-    def join(code)
-      Discordrb::API::Invite.accept(@token, code)
-    end
-
     # Gets the connections associated with this account.
     # @return [Array<Connection>] this account's connections.
     def connections

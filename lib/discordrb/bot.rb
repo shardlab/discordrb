@@ -294,15 +294,6 @@ module Discordrb
       @gateway.open?
     end
 
-    # Makes the bot join an invite to a server.
-    # TODO: Remove
-    # @deprecated
-    # @param invite [String, Invite] The invite to join. For possible formats see {#resolve_invite_code}.
-    def accept_invite(invite)
-      resolved = invite(invite).code
-      API::Invite.accept(token, resolved)
-    end
-
     # Creates an OAuth invite URL that can be used to invite this bot to a particular server.
     # @param server [Server, nil] The server the bot should be invited to, or nil if a general invite should be created.
     # @param permission_bits [String, Integer] Permission bits that should be appended to invite url.
@@ -482,17 +473,6 @@ module Discordrb
     def create_oauth_application(name, redirect_uris)
       response = JSON.parse(API.create_oauth_application(@token, name, redirect_uris))
       [response[:id], response[:secret]]
-    end
-
-    # Changes information about your OAuth application
-    # @deprecated TODO: Remove
-    # @param name [String] What your application should be called.
-    # @param redirect_uris [Array<String>] URIs that Discord should redirect your users to after authorizing.
-    # @param description [String] A string that describes what your application does.
-    # @param icon [String, nil] A data URI for your icon image (for example a base 64 encoded image), or nil if no icon
-    #   should be set or changed.
-    def update_oauth_application(name, redirect_uris, description = '', icon = nil)
-      API.update_oauth_application(@token, name, redirect_uris, description, icon)
     end
 
     # Gets the users, channels, roles and emoji from a string.
@@ -834,10 +814,7 @@ module Discordrb
 
     private
 
-    def file_to_file_part(file, content_type = nil, filename = nil)
-      content_type ||= MIME::Types.type_for(filename || file.respond_to?(:path) ? file.path : file).first&.content_type
-      content_type ||= 'binary/octet-stream'
-
+    def file_to_file_part(file, content_type = 'binary/octet-stream', filename = nil)
       Faraday::FilePart.new(file, content_type, filename)
     end
 

@@ -75,12 +75,6 @@ module Discordrb
 
     private
 
-    # Internal handler for updating the user's status setting
-    # @deprecated
-    def update_profile_status_setting(status)
-      API::User.change_status_setting(@bot.token, status)
-    end
-
     def update_profile_data(new_data)
       @bot.client.modify_current_user(**new_data)
       update_data(new_data)

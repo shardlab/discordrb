@@ -692,60 +692,6 @@ module Discordrb
       @bot.client.trigger_typing_indicator(@id)
     end
 
-    # Creates a Group channel
-    # @deprecated TODO: Remove
-    # @param user_ids [Array<Integer>] Array of user IDs to add to the new group channel (Excluding
-    #   the recipient of the PM channel).
-    # @return [Channel] the created channel.
-    def create_group(user_ids)
-      raise 'Attempted to create group channel on a non-pm channel!' unless pm?
-
-      response = API::Channel.create_group(@bot.token, @id, user_ids.shift)
-      channel = Channel.new(JSON.parse(response), @bot)
-      channel.add_group_users(user_ids)
-    end
-
-    # Adds a user to a group channel.
-    # @deprecated TODO: Also remove this?
-    # @param user_ids [Array<String, Integer>, String, Integer] User ID or array of user IDs to add to the group channel.
-    # @return [Channel] the group channel.
-    def add_group_users(user_ids)
-      raise 'Attempted to add a user to a non-group channel!' unless group?
-
-      user_ids = [user_ids] unless user_ids.is_a? Array
-      user_ids.each do |user_id|
-        API::Channel.add_group_user(@bot.token, @id, user_id.resolve_id)
-      end
-      self
-    end
-
-    alias_method :add_group_user, :add_group_users
-
-    # Removes a user from a group channel.
-    # @deprecated TODO: Check that all group dm stuff is actually not supported
-    # @param user_ids [Array<String, Integer>, String, Integer] User ID or array of user IDs to remove from the group channel.
-    # @return [Channel] the group channel.
-    def remove_group_users(user_ids)
-      raise 'Attempted to remove a user from a non-group channel!' unless group?
-
-      user_ids = [user_ids] unless user_ids.is_a? Array
-      user_ids.each do |user_id|
-        API::Channel.remove_group_user(@bot.token, @id, user_id.resolve_id)
-      end
-      self
-    end
-
-    alias_method :remove_group_user, :remove_group_users
-
-    # Leaves the group.
-    def leave_group
-      raise 'Attempted to leave a non-group channel!' unless group?
-
-      @bot.client.delete_channel(@id)
-    end
-
-    alias_method :leave, :leave_group
-
     # Creates a webhook in this channel
     # @param name [String] the default name of this webhook.
     # @param avatar [String] the default avatar URL to give this webhook.
