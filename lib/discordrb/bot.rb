@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'rest-client'
 require 'zlib'
 require 'set'
 
+require 'discordrb/api/client'
 require 'discordrb/events/message'
 require 'discordrb/events/typing'
 require 'discordrb/events/lifetime'
@@ -21,12 +21,6 @@ require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 
-require 'discordrb/api'
-require 'discordrb/api/channel'
-require 'discordrb/api/server'
-require 'discordrb/api/invite'
-require 'discordrb/api/interaction'
-require 'discordrb/api/application'
 
 require 'discordrb/errors'
 require 'discordrb/data'
@@ -66,6 +60,9 @@ module Discordrb
     # debugging or developing discordrb itself, or while writing very custom bots.
     # @return [Gateway] the underlying {Gateway} object.
     attr_reader :gateway
+
+    # @return [API::Client]
+    attr_reader :client
 
     include EventContainer
     include Cache
@@ -164,6 +161,8 @@ module Discordrb
       @status = :online
 
       @application_commands = {}
+
+      @client = API::Client.new(token)
     end
 
     # The list of users the bot shares a server with.
@@ -216,8 +215,8 @@ module Discordrb
     def profile
       return @profile if @profile
 
-      response = Discordrb::API::User.profile(@token)
-      @profile = Profile.new(JSON.parse(response), self)
+      response = @client.get_current_user
+      @profile = Profile.new(response, self)
     end
 
     alias_method :bot_user, :profile
@@ -286,13 +285,6 @@ module Discordrb
     # @return [true, false] whether or not the bot is currently connected to Discord.
     def connected?
       @gateway.open?
-    end
-
-    # Makes the bot join an invite to a server.
-    # @param invite [String, Invite] The invite to join. For possible formats see {#resolve_invite_code}.
-    def accept_invite(invite)
-      resolved = invite(invite).code
-      API::Invite.accept(token, resolved)
     end
 
     # Creates an OAuth invite URL that can be used to invite this bot to a particular server.
@@ -372,9 +364,10 @@ module Discordrb
     # Revokes an invite to a server. Will fail unless you have the *Manage Server* permission.
     # It is recommended that you use {Invite#delete} instead.
     # @param code [String, Invite] The invite to revoke. For possible formats see {#resolve_invite_code}.
-    def delete_invite(code)
+    # @param reason [String, nil]
+    def delete_invite(code, reason: nil)
       invite = resolve_invite_code(code)
-      API::Invite.delete(token, invite)
+      @client.delete_invite(invite, reason: reason)
     end
 
     # Sends a text message to a channel given its ID and the message's content.
@@ -392,8 +385,15 @@ module Discordrb
       allowed_mentions = { parse: [] } if allowed_mentions == false
       message_reference = { message_id: message_reference.id } if message_reference.respond_to?(:id)
 
-      response = API::Channel.create_message(token, channel, content, tts, embed&.to_hash, nil, attachments, allowed_mentions&.to_hash, message_reference, components)
-      Message.new(JSON.parse(response), self)
+      attachments = attachments&.map do |attachment|
+        attachment.is_a?(UploadIO) ? attachment : file_to_file_part(attachment)
+      end
+
+      resp = @client.create_message(channel, **{
+        content: content, tts: tts, files: attachments, embed: embed&.to_hash,
+        allowed_mentions: allowed_mentions&.to_hash, message_reference: message_reference, components: components
+      }.compact)
+      Message.new(resp, self)
     end
 
     # Sends a text message to a channel given its ID and the message's content,
@@ -422,26 +422,25 @@ module Discordrb
     # Sends a file to a channel. If it is an image, it will automatically be embedded.
     # @note This executes in a blocking way, so if you're sending long files, be wary of delays.
     # @param channel [Channel, String, Integer] The channel, or its ID, to send something to.
-    # @param file [File] The file that should be sent.
+    # @param file [File, String] The file that should be sent.
     # @param caption [string] The caption for the file.
     # @param tts [true, false] Whether or not this file's caption should be sent using Discord text-to-speech.
     # @param filename [String] Overrides the filename of the uploaded file
     # @param spoiler [true, false] Whether or not this file should appear as a spoiler.
     # @example Send a file from disk
     #   bot.send_file(83281822225530880, File.open('rubytaco.png', 'r'))
-    def send_file(channel, file, caption: nil, tts: false, filename: nil, spoiler: nil)
-      if file.respond_to?(:read)
+    def send_file(channel, file, content_type: nil, caption: nil, tts: false, filename: nil, spoiler: nil)
+      if file
         if spoiler
-          filename ||= File.basename(file.path)
+          filename ||= file.is_a?(String) ? file : File.basename(file.path)
           filename = "SPOILER_#{filename}" unless filename.start_with? 'SPOILER_'
         end
-        # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L160
-        file.define_singleton_method(:original_filename) { filename } if filename
+
+        file = file_to_file_part(file, content_type, filename)
       end
 
-      channel = channel.resolve_id
-      response = API::Channel.upload_file(token, channel, file, caption: caption, tts: tts)
-      Message.new(JSON.parse(response), self)
+      resp = @client.create_message(channel.resolve_id, files: file, content: caption, tts: tts)
+      Message.new(resp, self)
     end
 
     # Creates a server on Discord with a specified name and a region.
@@ -451,8 +450,8 @@ module Discordrb
     # @param region [Symbol] The region where the server should be created, for example 'eu-central' or 'hongkong'.
     # @return [Server] The server that was created.
     def create_server(name, region = :'eu-central')
-      response = API::Server.create(token, name, region)
-      id = JSON.parse(response)['id'].to_i
+      resp = @client.create_guild(name: name, region: region)
+      id = resp[:id].to_i
       sleep 0.1 until (server = @servers[id])
       debug "Successfully created server #{server.id} with name #{server.name}"
       server
@@ -460,22 +459,13 @@ module Discordrb
 
     # Creates a new application to do OAuth authorization with. This allows you to use OAuth to authorize users using
     # Discord. For information how to use this, see the docs: https://discord.com/developers/docs/topics/oauth2
+    # @deprecated TODO: Remove
     # @param name [String] What your application should be called.
     # @param redirect_uris [Array<String>] URIs that Discord should redirect your users to after authorizing.
     # @return [Array(String, String)] your applications' client ID and client secret to be used in OAuth authorization.
     def create_oauth_application(name, redirect_uris)
       response = JSON.parse(API.create_oauth_application(@token, name, redirect_uris))
-      [response['id'], response['secret']]
-    end
-
-    # Changes information about your OAuth application
-    # @param name [String] What your application should be called.
-    # @param redirect_uris [Array<String>] URIs that Discord should redirect your users to after authorizing.
-    # @param description [String] A string that describes what your application does.
-    # @param icon [String, nil] A data URI for your icon image (for example a base 64 encoded image), or nil if no icon
-    #   should be set or changed.
-    def update_oauth_application(name, redirect_uris, description = '', icon = nil)
-      API.update_oauth_application(@token, name, redirect_uris, description, icon)
+      [response[:id], response[:secret]]
     end
 
     # Gets the users, channels, roles and emoji from a string.
@@ -747,11 +737,11 @@ module Discordrb
     # @param server_id [String, Integer, nil] The ID of the server to get the command from. Global if `nil`.
     def get_application_command(command_id, server_id: nil)
       resp = if server_id
-               API::Application.get_guild_command(@token, profile.id, server_id, command_id)
+               @client.get_guild_application_command(profile.id, server_id, command_id)
              else
-               API::Application.get_global_command(@token, profile.id, command_id)
+               @client.get_global_application_command(profile.id, command_id)
              end
-      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+      ApplicationCommand.new(resp, self, server_id)
     end
 
     # @yieldparam [OptionBuilder]
@@ -773,12 +763,17 @@ module Discordrb
       builder = Interactions::OptionBuilder.new
       yield(builder) if block_given?
 
+      params = {
+        name: name, description: description, options: builder.to_a,
+        default_permission: default_permission, type: type
+      }.compact
+
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type)
+               @client.create_guild_application_command(profile.id, server_id, **params)
              else
-               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type)
+               @client.create_global_application_command(profile.id, **params)
              end
-      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+      ApplicationCommand.new(resp, self, server_id)
     end
 
     def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input)
@@ -787,12 +782,16 @@ module Discordrb
       builder = Interactions::OptionBuilder.new
       yield(builder) if block_given?
 
+      params = {
+        name: name, description: description, default_permission: default_permission, type: type
+      }.compact
+
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type)
+               @client.edit_guild_application_command(profile.id, server_id, command_id, **params)
              else
-               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type)
+               @client.edit_global_application_command(profile.id, command_id, **params)
              end
-      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+      ApplicationCommand.new(resp, self, server_id)
     end
 
     # Remove an application command from the commands registered with discord.
@@ -800,13 +799,17 @@ module Discordrb
     # @param server_id [String, Integer] The ID of the server to delete this command from, global if `nil`.
     def delete_application_command(command_id, server_id: nil)
       if server_id
-        API::Application.delete_guild_command(@token, profile.id, server_id, command_id)
+        @client.delete_guild_application_command(profile.id, server_id, command_id)
       else
-        API::Application.delete_global_command(@token, profile.id, command_id)
+        @client.delete_global_application_command(profile.id, command_id)
       end
     end
 
     private
+
+    def file_to_file_part(file, content_type = 'binary/octet-stream', filename = nil)
+      Faraday::FilePart.new(file, content_type, filename)
+    end
 
     # Throws a useful exception if there's currently no gateway connection.
     def gateway_check
@@ -834,10 +837,10 @@ module Discordrb
     # Internal handler for PRESENCE_UPDATE
     def update_presence(data)
       # Friends list presences have no server ID so ignore these to not cause an error
-      return unless data['guild_id']
+      return unless data[:guild_id]
 
-      user_id = data['user']['id'].to_i
-      server_id = data['guild_id'].to_i
+      user_id = data[:user][:id].to_i
+      server_id = data[:guild_id].to_i
       server = server(server_id)
       return unless server
 
@@ -855,7 +858,7 @@ module Discordrb
         member_is_new = true
       end
 
-      username = data['user']['username']
+      username = data[:user][:username]
       if username && !member_is_new # Don't set the username for newly-cached members
         debug "Implicitly updating presence-obtained information for member #{user_id}"
         member.update_username(username)
@@ -863,20 +866,20 @@ module Discordrb
 
       member.update_presence(data)
 
-      member.avatar_id = data['user']['avatar'] if data['user']['avatar']
+      member.avatar_id = data[:user][:avatar] if data[:user][:avatar]
 
       server.cache_member(member)
     end
 
     # Internal handler for VOICE_STATE_UPDATE
     def update_voice_state(data)
-      @session_id = data['session_id']
+      @session_id = data[:session_id]
 
-      server_id = data['guild_id'].to_i
+      server_id = data[:guild_id].to_i
       server = server(server_id)
       return unless server
 
-      user_id = data['user_id'].to_i
+      user_id = data[:user_id].to_i
       old_voice_state = server.voice_states[user_id]
       old_channel_id = old_voice_state.voice_channel&.id if old_voice_state
 
@@ -884,7 +887,7 @@ module Discordrb
 
       existing_voice = @voices[server_id]
       if user_id == @profile.id && existing_voice
-        new_channel_id = data['channel_id']
+        new_channel_id = data[:channel_id]
         if new_channel_id
           new_channel = channel(new_channel_id)
           existing_voice.channel = new_channel
@@ -898,7 +901,7 @@ module Discordrb
 
     # Internal handler for VOICE_SERVER_UPDATE
     def update_voice_server(data)
-      server_id = data['guild_id'].to_i
+      server_id = data[:guild_id].to_i
       channel = @should_connect_to_voice[server_id]
 
       debug("Voice server update received! chan: #{channel.inspect}")
@@ -907,8 +910,8 @@ module Discordrb
       @should_connect_to_voice.delete(server_id)
       debug('Updating voice server!')
 
-      token = data['token']
-      endpoint = data['endpoint']
+      token = data[:token]
+      endpoint = data[:endpoint]
 
       unless endpoint
         debug('VOICE_SERVER_UPDATE sent with nil endpoint! Ignoring')
@@ -962,27 +965,27 @@ module Discordrb
 
     # Internal handler for CHANNEL_RECIPIENT_ADD
     def add_recipient(data)
-      channel_id = data['channel_id'].to_i
+      channel_id = data[:channel_id].to_i
       channel = self.channel(channel_id)
 
-      recipient_user = ensure_user(data['user'])
+      recipient_user = ensure_user(data[:user])
       recipient = Recipient.new(recipient_user, channel, self)
       channel.add_recipient(recipient)
     end
 
     # Internal handler for CHANNEL_RECIPIENT_REMOVE
     def remove_recipient(data)
-      channel_id = data['channel_id'].to_i
+      channel_id = data[:channel_id].to_i
       channel = self.channel(channel_id)
 
-      recipient_user = ensure_user(data['user'])
+      recipient_user = ensure_user(data[:user])
       recipient = Recipient.new(recipient_user, channel, self)
       channel.remove_recipient(recipient)
     end
 
     # Internal handler for GUILD_MEMBER_ADD
     def add_guild_member(data)
-      server_id = data['guild_id'].to_i
+      server_id = data[:guild_id].to_i
       server = self.server(server_id)
 
       member = Member.new(data, server, self)
@@ -991,22 +994,22 @@ module Discordrb
 
     # Internal handler for GUILD_MEMBER_UPDATE
     def update_guild_member(data)
-      server_id = data['guild_id'].to_i
+      server_id = data[:guild_id].to_i
       server = self.server(server_id)
 
-      member = server.member(data['user']['id'].to_i)
-      member.update_roles(data['roles'])
-      member.update_nick(data['nick'])
-      member.update_boosting_since(data['premium_since'])
+      member = server.member(data[:user][:id].to_i)
+      member.update_roles(data[:roles])
+      member.update_nick(data[:nick])
+      member.update_boosting_since(data[:premium_since])
     end
 
     # Internal handler for GUILD_MEMBER_DELETE
     def delete_guild_member(data)
-      server_id = data['guild_id'].to_i
+      server_id = data[:guild_id].to_i
       server = self.server(server_id)
       return unless server
 
-      user_id = data['user']['id'].to_i
+      user_id = data[:user][:id].to_i
       server.delete_member(user_id)
     rescue Discordrb::Errors::NoPermission
       Discordrb::LOGGER.warn("delete_guild_member attempted to access a server for which the bot doesn't have permission! Not sure what happened here, ignoring")
@@ -1014,35 +1017,35 @@ module Discordrb
 
     # Internal handler for GUILD_CREATE
     def create_guild(data)
-      ensure_server(data)
+      ensure_server(data, true)
     end
 
     # Internal handler for GUILD_UPDATE
     def update_guild(data)
-      @servers[data['id'].to_i].update_data(data)
+      @servers[data[:id].to_i].update_data(data)
     end
 
     # Internal handler for GUILD_DELETE
     def delete_guild(data)
-      id = data['id'].to_i
+      id = data[:id].to_i
       @servers.delete(id)
     end
 
     # Internal handler for GUILD_ROLE_UPDATE
     def update_guild_role(data)
-      role_data = data['role']
-      server_id = data['guild_id'].to_i
+      role_data = data[:role]
+      server_id = data[:guild_id].to_i
       server = @servers[server_id]
       new_role = Role.new(role_data, self, server)
-      role_id = role_data['id'].to_i
+      role_id = role_data[:id].to_i
       old_role = server.roles.find { |r| r.id == role_id }
       old_role.update_from(new_role)
     end
 
     # Internal handler for GUILD_ROLE_CREATE
     def create_guild_role(data)
-      role_data = data['role']
-      server_id = data['guild_id'].to_i
+      role_data = data[:role]
+      server_id = data[:guild_id].to_i
       server = @servers[server_id]
       new_role = Role.new(role_data, self, server)
       existing_role = server.role(new_role.id)
@@ -1055,15 +1058,15 @@ module Discordrb
 
     # Internal handler for GUILD_ROLE_DELETE
     def delete_guild_role(data)
-      role_id = data['role_id'].to_i
-      server_id = data['guild_id'].to_i
+      role_id = data[:role_id].to_i
+      server_id = data[:guild_id].to_i
       server = @servers[server_id]
       server.delete_role(role_id)
     end
 
     # Internal handler for GUILD_EMOJIS_UPDATE
     def update_guild_emoji(data)
-      server_id = data['guild_id'].to_i
+      server_id = data[:guild_id].to_i
       server = @servers[server_id]
       server.update_emoji_data(data)
     end
@@ -1131,7 +1134,7 @@ module Discordrb
         # replaced.
         init_cache
 
-        @profile = Profile.new(data['user'], self)
+        @profile = Profile.new(data[:user], self)
 
         # Initialize servers
         @servers = {}
@@ -1139,21 +1142,21 @@ module Discordrb
         # Count unavailable servers
         @unavailable_servers = 0
 
-        data['guilds'].each do |element|
+        data[:guilds].each do |element|
           # Check for true specifically because unavailable=false indicates that a previously unavailable server has
           # come online
-          if element['unavailable'].is_a? TrueClass
+          if element[:unavailable]
             @unavailable_servers += 1
 
             # Ignore any unavailable servers
             next
           end
 
-          ensure_server(element)
+          ensure_server(element, true)
         end
 
         # Add PM and group channels
-        data['private_channels'].each do |element|
+        data[:private_channels].each do |element|
           channel = ensure_channel(element)
           if channel.pm?
             @pm_channels[channel.recipient.id] = channel
@@ -1172,22 +1175,22 @@ module Discordrb
         @ready_time = Time.now
         @unavailable_timeout_time = Time.now
       when :GUILD_MEMBERS_CHUNK
-        id = data['guild_id'].to_i
+        id = data[:guild_id].to_i
         server = server(id)
-        server.process_chunk(data['members'])
+        server.process_chunk(data[:members], data['chunk_index'], data['chunk_count'])
       when :INVITE_CREATE
         invite = Invite.new(data, self)
         raise_event(InviteCreateEvent.new(data, invite, self))
       when :INVITE_DELETE
         raise_event(InviteDeleteEvent.new(data, self))
       when :MESSAGE_CREATE
-        if ignored?(data['author']['id'])
-          debug("Ignored author with ID #{data['author']['id']}")
+        if ignored?(data[:author][:id])
+          debug("Ignored author with ID #{data[:author][:id]}")
           return
         end
 
-        if @ignore_bots && data['author']['bot']
-          debug("Ignored Bot account with ID #{data['author']['id']}")
+        if @ignore_bots && data[:author][:bot]
+          debug("Ignored Bot account with ID #{data[:author][:id]}")
           return
         end
 
@@ -1240,13 +1243,13 @@ module Discordrb
         event = MessageDeleteEvent.new(data, self)
         raise_event(event)
       when :MESSAGE_DELETE_BULK
-        debug("MESSAGE_DELETE_BULK will raise #{data['ids'].length} events")
+        debug("MESSAGE_DELETE_BULK will raise #{data[:ids].length} events")
 
-        data['ids'].each do |single_id|
+        data[:ids].each do |single_id|
           # Form a data hash for a single ID so the methods get what they want
           single_data = {
             'id' => single_id,
-            'channel_id' => data['channel_id']
+            'channel_id' => data[:channel_id]
           }
 
           # Raise as normal
@@ -1267,14 +1270,14 @@ module Discordrb
       when :MESSAGE_REACTION_ADD
         add_message_reaction(data)
 
-        return if profile.id == data['user_id'].to_i && !should_parse_self
+        return if profile.id == data[:user_id].to_i && !should_parse_self
 
         event = ReactionAddEvent.new(data, self)
         raise_event(event)
       when :MESSAGE_REACTION_REMOVE
         remove_message_reaction(data)
 
-        return if profile.id == data['user_id'].to_i && !should_parse_self
+        return if profile.id == data[:user_id].to_i && !should_parse_self
 
         event = ReactionRemoveEvent.new(data, self)
         raise_event(event)
@@ -1285,10 +1288,10 @@ module Discordrb
         raise_event(event)
       when :PRESENCE_UPDATE
         # Ignore friends list presences
-        return unless data['guild_id']
+        return unless data[:guild_id]
 
-        new_activities = (data['activities'] || []).map { |act_data| Activity.new(act_data, self) }
-        presence_user = @users[data['user']['id'].to_i]
+        new_activities = (data[:activities] || []).map { |act_data| Activity.new(act_data, self) }
+        presence_user = @users[data[:user][:id].to_i]
         old_activities = (presence_user&.activities || [])
         update_presence(data)
 
@@ -1388,7 +1391,7 @@ module Discordrb
         create_guild(data)
 
         # Check for false specifically (no data means the server has never been unavailable)
-        if data['unavailable'].is_a? FalseClass
+        if data[:unavailable].is_a? FalseClass
           @unavailable_servers -= 1 if @unavailable_servers
           @unavailable_timeout_time = Time.now
 
@@ -1408,15 +1411,15 @@ module Discordrb
       when :GUILD_DELETE
         delete_guild(data)
 
-        if data['unavailable'].is_a? TrueClass
-          LOGGER.warn("Server #{data['id']} is unavailable due to an outage!")
+        if data[:unavailable].is_a? TrueClass
+          LOGGER.warn("Server #{data[:id]} is unavailable due to an outage!")
           return # Don't raise an event
         end
 
         event = ServerDeleteEvent.new(data, self)
         raise_event(event)
       when :GUILD_EMOJIS_UPDATE
-        server_id = data['guild_id'].to_i
+        server_id = data[:guild_id].to_i
         server = @servers[server_id]
         old_emoji_data = server.emoji.clone
         update_guild_emoji(data)
@@ -1449,7 +1452,7 @@ module Discordrb
         event = InteractionCreateEvent.new(data, self)
         raise_event(event)
 
-        case data['type']
+        case data[:type]
         when Interaction::TYPES[:command]
           event = ApplicationCommandEvent.new(data, self)
 
@@ -1465,12 +1468,12 @@ module Discordrb
             end
           end
         when Interaction::TYPES[:component]
-          case data['data']['component_type']
-          when Components::TYPES[:button]
+          case data[:data][:component_type]
+          when Webhooks::View::COMPONENT_TYPES[:button]
             event = ButtonEvent.new(data, self)
 
             raise_event(event)
-          when Components::TYPES[:select_menu]
+          when Webhooks::View::COMPONENT_TYPES[:select_menu]
             event = SelectMenuEvent.new(data, self)
 
             raise_event(event)

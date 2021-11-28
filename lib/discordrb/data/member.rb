@@ -59,17 +59,17 @@ module Discordrb
     def initialize(data, server, bot)
       @bot = bot
 
-      @user = bot.ensure_user(data['user'])
+      @user = bot.ensure_user(data[:user])
       super @user # Initialize the delegate class
 
       @server = server
-      @server_id = server&.id || data['guild_id'].to_i
+      @server_id = server&.id || data[:guild_id].to_i
 
-      @role_ids = data['roles']&.map(&:to_i) || []
+      @role_ids = data[:roles]&.map(&:to_i) || []
 
-      @nick = data['nick']
-      @joined_at = data['joined_at'] ? Time.parse(data['joined_at']) : nil
-      @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
+      @nick = data[:nick]
+      @joined_at = data[:joined_at] ? Time.parse(data[:joined_at]) : nil
+      @boosting_since = data[:premium_since] ? Time.parse(data[:premium_since]) : nil
     end
 
     # @return [Server] the server this member is on.
@@ -108,7 +108,7 @@ module Discordrb
     # @return [true, false] whether this member has the specified role.
     def role?(role)
       role = role.resolve_id
-      @role_ids.any?(role)
+      roles.any?(role)
     end
 
     # @see Member#set_roles
@@ -121,7 +121,7 @@ module Discordrb
     # @param reason [String] The reason the user's roles are being changed.
     def set_roles(role, reason = nil)
       role_ids = role_id_array(role)
-      API::Server.update_member(@bot.token, @server_id, @user.id, roles: role_ids, reason: reason)
+      @bot.client.modify_guild_member(@server_id, @user.id, roles: role_ids, reason: reason)
     end
 
     # Adds and removes roles from a member.
@@ -138,7 +138,7 @@ module Discordrb
       old_role_ids = @role_ids
       new_role_ids = (old_role_ids - remove_role_ids + add_role_ids).uniq
 
-      API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
+      @bot.client.modify_guild_member(@server_id, @user.id, roles: new_role_ids, reason: reason)
     end
 
     # Adds one or more roles to this member.
@@ -148,11 +148,11 @@ module Discordrb
       role_ids = role_id_array(role)
 
       if role_ids.count == 1
-        API::Server.add_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
+        @bot.client.add_guild_member_role(@server_id, @user.id, roles: role_ids[0], reason: reason)
       else
         old_role_ids = @role_ids
         new_role_ids = (old_role_ids + role_ids).uniq
-        API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
+        @bot.client.modify_guild_member(@server_id, @user.id, roles: new_role_ids, reason: reason)
       end
     end
 
@@ -163,11 +163,11 @@ module Discordrb
       role_ids = role_id_array(role)
 
       if role_ids.count == 1
-        API::Server.remove_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
+        @bot.client.remove_guild_member_role(@server_id, @user.id, role_ids[0], reason: reason)
       else
         old_role_ids = @role_ids
         new_role_ids = old_role_ids.reject { |i| role_ids.include?(i) }
-        API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
+        @bot.client.modify_guild_member(@server_id, @user.id, roles: new_role_ids, reason: reason)
       end
     end
 
@@ -203,22 +203,22 @@ module Discordrb
 
     # Server deafens this member.
     def server_deafen
-      API::Server.update_member(@bot.token, @server_id, @user.id, deaf: true)
+      @bot.client.modify_guild_member(@server_id, @user.id, deaf: true)
     end
 
     # Server undeafens this member.
     def server_undeafen
-      API::Server.update_member(@bot.token, @server_id, @user.id, deaf: false)
+      @bot.client.modify_guild_member(@server_id, @user.id, deaf: false)
     end
 
     # Server mutes this member.
     def server_mute
-      API::Server.update_member(@bot.token, @server_id, @user.id, mute: true)
+      @bot.client.modify_guild_member(@server_id, @user.id, mute: true)
     end
 
     # Server unmutes this member.
     def server_unmute
-      API::Server.update_member(@bot.token, @server_id, @user.id, mute: false)
+      @bot.client.modify_guild_member(@server_id, @user.id, mute: false)
     end
 
     # Bans this member from the server.
@@ -256,9 +256,9 @@ module Discordrb
       nick ||= ''
 
       if @user.current_bot?
-        API::User.change_own_nickname(@bot.token, @server_id, nick, reason)
+        @bot.client.modify_current_member(@server_id, nick: nick, reason: reason)
       else
-        API::Server.update_member(@bot.token, @server_id, @user.id, nick: nick, reason: nil)
+        @bot.client.modify_guild_member(@server_id, @user.id, nick: nick, reason: reason)
       end
     end
 
@@ -300,12 +300,12 @@ module Discordrb
     # @note For internal use only.
     # @!visibility private
     def update_data(data)
-      update_roles(data['roles']) if data['roles']
-      update_nick(data['nick']) if data.key?('nick')
-      @mute = data['mute'] if data.key?('mute')
-      @deaf = data['deaf'] if data.key?('deaf')
+      update_roles(data[:roles]) if data[:roles]
+      update_nick(data[:nick]) if data.key?('nick')
+      @mute = data[:mute] if data.key?('mute')
+      @deaf = data[:deaf] if data.key?('deaf')
 
-      @joined_at = Time.parse(data['joined_at']) if data['joined_at']
+      @joined_at = Time.parse(data[:joined_at]) if data[:joined_at]
     end
 
     include PermissionCalculator

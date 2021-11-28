@@ -56,19 +56,19 @@ module Discordrb
     def initialize(data, message)
       @message = message
 
-      @url = data['url']
-      @title = data['title']
-      @type = data['type'].to_sym
-      @description = data['description']
-      @timestamp = data['timestamp'].nil? ? nil : Time.parse(data['timestamp'])
-      @color = data['color']
-      @footer = data['footer'].nil? ? nil : EmbedFooter.new(data['footer'], self)
-      @image = data['image'].nil? ? nil : EmbedImage.new(data['image'], self)
-      @video = data['video'].nil? ? nil : EmbedVideo.new(data['video'], self)
-      @provider = data['provider'].nil? ? nil : EmbedProvider.new(data['provider'], self)
-      @thumbnail = data['thumbnail'].nil? ? nil : EmbedThumbnail.new(data['thumbnail'], self)
-      @author = data['author'].nil? ? nil : EmbedAuthor.new(data['author'], self)
-      @fields = data['fields'].nil? ? nil : data['fields'].map { |field| EmbedField.new(field, self) }
+      @url = data[:url]
+      @title = data[:title]
+      @type = data[:type].to_sym
+      @description = data[:description]
+      @timestamp = data[:timestamp].nil? ? nil : Time.parse(data[:timestamp])
+      @color = data[:color]
+      @footer = data[:footer].nil? ? nil : EmbedFooter.new(data[:footer], self)
+      @image = data[:image].nil? ? nil : EmbedImage.new(data[:image], self)
+      @video = data[:video].nil? ? nil : EmbedVideo.new(data[:video], self)
+      @provider = data[:provider].nil? ? nil : EmbedProvider.new(data[:provider], self)
+      @thumbnail = data[:thumbnail].nil? ? nil : EmbedThumbnail.new(data[:thumbnail], self)
+      @author = data[:author].nil? ? nil : EmbedAuthor.new(data[:author], self)
+      @fields = data[:fields].nil? ? nil : data[:fields].map { |field| EmbedField.new(field, self) }
     end
   end
 
@@ -90,9 +90,9 @@ module Discordrb
     def initialize(data, embed)
       @embed = embed
 
-      @text = data['text']
-      @icon_url = data['icon_url']
-      @proxy_icon_url = data['proxy_icon_url']
+      @text = data[:text]
+      @icon_url = data[:icon_url]
+      @proxy_icon_url = data[:proxy_icon_url]
     end
   end
 
@@ -117,10 +117,10 @@ module Discordrb
     def initialize(data, embed)
       @embed = embed
 
-      @url = data['url']
-      @proxy_url = data['proxy_url']
-      @width = data['width']
-      @height = data['height']
+      @url = data[:url]
+      @proxy_url = data[:proxy_url]
+      @width = data[:width]
+      @height = data[:height]
     end
   end
 
@@ -142,9 +142,9 @@ module Discordrb
     def initialize(data, embed)
       @embed = embed
 
-      @url = data['url']
-      @width = data['width']
-      @height = data['height']
+      @url = data[:url]
+      @width = data[:width]
+      @height = data[:height]
     end
   end
 
@@ -170,10 +170,10 @@ module Discordrb
     def initialize(data, embed)
       @embed = embed
 
-      @url = data['url']
-      @proxy_url = data['proxy_url']
-      @width = data['width']
-      @height = data['height']
+      @url = data[:url]
+      @proxy_url = data[:proxy_url]
+      @width = data[:width]
+      @height = data[:height]
     end
   end
 
@@ -192,8 +192,8 @@ module Discordrb
     def initialize(data, embed)
       @embed = embed
 
-      @name = data['name']
-      @url = data['url']
+      @name = data[:name]
+      @url = data[:url]
     end
   end
 
@@ -218,10 +218,10 @@ module Discordrb
     def initialize(data, embed)
       @embed = embed
 
-      @name = data['name']
-      @url = data['url']
-      @icon_url = data['icon_url']
-      @proxy_icon_url = data['proxy_icon_url']
+      @name = data[:name]
+      @url = data[:url]
+      @icon_url = data[:icon_url]
+      @proxy_icon_url = data[:proxy_icon_url]
     end
   end
 
@@ -243,9 +243,9 @@ module Discordrb
     def initialize(data, embed)
       @embed = embed
 
-      @name = data['name']
-      @value = data['value']
-      @inline = data['inline']
+      @name = data[:name]
+      @value = data[:value]
+      @inline = data[:inline]
     end
   end
 end

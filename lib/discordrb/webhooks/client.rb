@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'rest-client'
+require 'faraday'
+require 'faraday_middleware'
 require 'json'
 
 require 'discordrb/webhooks/builder'
@@ -16,10 +17,14 @@ module Discordrb::Webhooks
     #   if `url` is not set.
     def initialize(url: nil, id: nil, token: nil)
       @url = url || generate_url(id, token)
+      @faraday = Faraday.new(@url) do |f|
+        f.request :multipart
+        f.request :json
+      end
     end
 
     # Executes the webhook this client points to with the given data.
-    # @param builder [Builder, nil] The builder to start out with, or nil if one should be created anew.
+    # @param builder [Builder] The builder to start out with, or nil if one should be created anew.
     # @param wait [true, false] Whether Discord should wait for the message to be successfully received by clients, or
     #   whether it should return immediately after sending the message.
     # @yield [builder] Gives the builder to the block to add additional steps, or to do the entire building process.
@@ -38,19 +43,18 @@ module Discordrb::Webhooks
     #     end
     #   end
     # @return [RestClient::Response] the response returned by Discord.
-    def execute(builder = nil, wait = false)
+    def execute(builder = nil, wait = false, components = nil)
       raise TypeError, 'builder needs to be nil or like a Discordrb::Webhooks::Builder!' unless
         (builder.respond_to?(:file) && builder.respond_to?(:to_multipart_hash)) || builder.respond_to?(:to_json_hash) || builder.nil?
 
       builder ||= Builder.new
+      view = View.new
 
-      yield builder if block_given?
+      yield(builder, view) if block_given?
 
-      if builder.file
-        post_multipart(builder, wait)
-      else
-        post_json(builder, wait)
-      end
+      components ||= view
+
+      @faraday.post(wait ? '?wait=true' : '', builder.to_h)
     end
 
     # Modify this webhook's properties.
@@ -59,7 +63,7 @@ module Discordrb::Webhooks
     # @param channel_id [String, Integer, nil] The channel to move the webhook to.
     # @return [RestClient::Response] the response returned by Discord.
     def modify(name: nil, avatar: nil, channel_id: nil)
-      RestClient.patch(@url, { name: name, avatar: avatarise(avatar), channel_id: channel_id }.compact.to_json, content_type: :json)
+      @faraday.patch({ name: name, avatar: avatarise(avatar), channel_id: channel_id }.compact)
     end
 
     # Delete this webhook.
@@ -67,12 +71,12 @@ module Discordrb::Webhooks
     # @return [RestClient::Response] the response returned by Discord.
     # @note This is permanent and cannot be undone.
     def delete(reason: nil)
-      RestClient.delete(@url, 'X-Audit-Log-Reason': reason)
+      @faraday.delete(nil, { 'X-Audit-Log-Reason': reason })
     end
 
     # Edit a message from this webhook.
     # @param message_id [String, Integer] The ID of the message to edit.
-    # @param builder [Builder, nil] The builder to start out with, or nil if one should be created anew.
+    # @param builder [Builder] The builder to start out with, or nil if one should be created anew.
     # @param content [String] The message content.
     # @param embeds [Array<Embed, Hash>]
     # @param allowed_mentions [Hash]
@@ -92,14 +96,14 @@ module Discordrb::Webhooks
       yield builder if block_given?
 
       data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
-      RestClient.patch("#{@url}/messages/#{message_id}", data.compact.to_json, content_type: :json)
+      @faraday.patch("messages/#{message_id}", data.compact)
     end
 
     # Delete a message created by this webhook.
     # @param message_id [String, Integer] The ID of the message to delete.
     # @return [RestClient::Response] the response returned by Discord.
     def delete_message(message_id)
-      RestClient.delete("#{@url}/messages/#{message_id}")
+      @faraday.delete("messages/#{message_id}")
     end
 
     private
@@ -112,14 +116,6 @@ module Discordrb::Webhooks
       else
         avatar
       end
-    end
-
-    def post_json(builder, wait)
-      RestClient.post(@url + (wait ? '?wait=true' : ''), builder.to_json_hash.to_json, content_type: :json)
-    end
-
-    def post_multipart(builder, wait)
-      RestClient.post(@url + (wait ? '?wait=true' : ''), builder.to_multipart_hash)
     end
 
     def generate_url(id, token)

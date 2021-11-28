@@ -12,6 +12,10 @@ module Discordrb::Light
   # A bot that only uses the REST part of the API. Hierarchically unrelated to the regular {Discordrb::Bot}. Useful to
   # make applications integrated to Discord over OAuth, for example.
   class LightBot
+    # @!visibility private
+    # @return [API::Client]
+    attr_reader :client
+
     # Create a new LightBot. This does no networking yet, all networking is done by the methods on this class.
     # @param token [String] The token that should be used to authenticate to Discord. Can be an OAuth token or a regular
     #   user account token.
@@ -26,33 +30,24 @@ module Discordrb::Light
         token = "Bearer #{token}" # OAuth tokens have to be prefixed with 'Bearer' for Discord to be able to use them
       end
 
-      @token = token
+      @client = Discordrb::API::Client.new(token)
     end
 
     # @return [LightProfile] the details of the user this bot is connected to.
     def profile
-      response = Discordrb::API::User.profile(@token)
-      LightProfile.new(JSON.parse(response), self)
+      response = @client.get_current_user
+      LightProfile.new(response, self)
     end
 
     # @return [Array<LightServer>] the servers this bot is connected to.
     def servers
-      response = Discordrb::API::User.servers(@token)
-      JSON.parse(response).map { |e| LightServer.new(e, self) }
-    end
-
-    # Joins a server using an instant invite.
-    # @param code [String] The code part of the invite (for example 0cDvIgU2voWn4BaD if the invite URL is
-    #   https://discord.gg/0cDvIgU2voWn4BaD)
-    def join(code)
-      Discordrb::API::Invite.accept(@token, code)
+      @client.get_current_user_guilds.map { |e| LightServer.new(e, self) }
     end
 
     # Gets the connections associated with this account.
     # @return [Array<Connection>] this account's connections.
     def connections
-      response = Discordrb::API::User.connections(@token)
-      JSON.parse(response).map { |e| Connection.new(e, self) }
+      @client.get_current_user_connections.map { |data| Connection.new(data, self) }
     end
   end
 end

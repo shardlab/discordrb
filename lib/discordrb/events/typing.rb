@@ -20,9 +20,9 @@ module Discordrb::Events
     def initialize(data, bot)
       @bot = bot
 
-      @user_id = data['user_id'].to_i
+      @user_id = data[:user_id].to_i
 
-      @channel_id = data['channel_id'].to_i
+      @channel_id = data[:channel_id].to_i
       @channel = bot.channel(@channel_id)
 
       @user = if channel.pm?
@@ -33,7 +33,7 @@ module Discordrb::Events
                 bot.member(@channel.server.id, @user_id)
               end
 
-      @timestamp = Time.at(data['timestamp'].to_i)
+      @timestamp = Time.at(data[:timestamp].to_i)
     end
   end
 

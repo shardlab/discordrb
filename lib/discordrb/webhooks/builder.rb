@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'faraday'
 require 'discordrb/webhooks/embeds'
 
 module Discordrb::Webhooks
@@ -39,7 +40,7 @@ module Discordrb::Webhooks
     def file=(file)
       raise ArgumentError, 'Embeds and files are mutually exclusive!' unless @embeds.empty?
 
-      @file = file
+      @file = Faraday::FilePart.new(file, 'binary/octet-stream')
     end
 
     # Adds an embed to this message.
@@ -75,27 +76,16 @@ module Discordrb::Webhooks
     # @see https://discord.com/developers/docs/resources/channel#allowed-mentions-object
     attr_accessor :allowed_mentions
 
-    # @return [Hash] a hash representation of the created message, for JSON format.
-    def to_json_hash
+    # @return [Hash<Symbol, Object>]
+    def to_h
       {
         content: @content,
         username: @username,
         avatar_url: @avatar_url,
         tts: @tts,
         embeds: @embeds.map(&:to_hash),
-        allowed_mentions: @allowed_mentions&.to_hash
-      }
-    end
-
-    # @return [Hash] a hash representation of the created message, for multipart format.
-    def to_multipart_hash
-      {
-        content: @content,
-        username: @username,
-        avatar_url: @avatar_url,
-        tts: @tts,
-        file: @file,
-        allowed_mentions: @allowed_mentions&.to_hash
+        allowed_mentions: @allowed_mentions&.to_hash,
+        file: @file
       }
     end
   end

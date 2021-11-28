@@ -22,10 +22,10 @@ module Discordrb::Events
     def initialize(data, bot)
       @bot = bot
 
-      @user = bot.user(data['user']['id'].to_i)
-      @status = data['status'].to_sym
+      @user = bot.user(data[:user][:id].to_i)
+      @status = data[:status].to_sym
       @client_status = user.client_status
-      @server = bot.server(data['guild_id'].to_i)
+      @server = bot.server(data[:guild_id].to_i)
     end
   end
 
@@ -86,8 +86,8 @@ module Discordrb::Events
       @bot = bot
       @activity = activity
 
-      @server = bot.server(data['guild_id'].to_i)
-      @user = bot.user(data['user']['id'].to_i)
+      @server = bot.server(data[:guild_id].to_i)
+      @user = bot.user(data[:user][:id].to_i)
       @client_status = @user.client_status
     end
 

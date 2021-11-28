@@ -23,12 +23,12 @@ module Discordrb
       @bot = bot
       @roles = nil
 
-      @name = data['name']
+      @name = data[:name]
       @server = server
-      @id = data['id'].nil? ? nil : data['id'].to_i
-      @animated = data['animated']
+      @id = data[:id].nil? ? nil : data[:id].to_i
+      @animated = data[:animated]
 
-      process_roles(data['roles']) if server
+      process_roles(data[:roles]) if server
     end
 
     # ID or name based comparison

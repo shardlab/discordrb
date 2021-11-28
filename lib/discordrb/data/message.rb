@@ -76,40 +76,40 @@ module Discordrb
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-      @content = data['content']
-      @channel = bot.channel(data['channel_id'].to_i)
-      @pinned = data['pinned']
-      @tts = data['tts']
-      @nonce = data['nonce']
-      @mention_everyone = data['mention_everyone']
+      @content = data[:content]
+      @channel = bot.channel(data[:channel_id].to_i)
+      @pinned = data[:pinned]
+      @tts = data[:tts]
+      @nonce = data[:nonce]
+      @mention_everyone = data[:mention_everyone]
 
-      @referenced_message = Message.new(data['referenced_message'], bot) if data['referenced_message']
-      @message_reference = data['message_reference']
+      @referenced_message = Message.new(data[:referenced_message], bot) if data[:referenced_message]
+      @message_reference = data[:message_reference]
 
       @server = @channel.server
 
-      @author = if data['author']
-                  if data['author']['discriminator'] == ZERO_DISCRIM
+      @author = if data[:author]
+                  if data[:author][:discriminator] == ZERO_DISCRIM
                     # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
                     # a User and return that instead.
-                    Discordrb::LOGGER.debug("Webhook user: #{data['author']['id']}")
-                    User.new(data['author'], @bot)
+                    Discordrb::LOGGER.debug("Webhook user: #{data[:author][:id]}")
+                    User.new(data[:author], @bot)
                   elsif @channel.private?
                     # Turn the message user into a recipient - we can't use the channel recipient
                     # directly because the bot may also send messages to the channel
-                    Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
+                    Recipient.new(bot.user(data[:author][:id].to_i), @channel, bot)
                   else
-                    member = @channel.server.member(data['author']['id'].to_i)
+                    member = @channel.server.member(data[:author][:id].to_i)
 
                     if member
-                      member.update_data(data['member']) if data['member']
+                      member.update_data(data[:member]) if data[:member]
                     else
-                      Discordrb::LOGGER.debug("Member with ID #{data['author']['id']} not cached (possibly left the server).")
-                      member = if data['member']
-                                 member_data = data['author'].merge(data['member'])
+                      Discordrb::LOGGER.debug("Member with ID #{data[:author][:id]} not cached (possibly left the server).")
+                      member = if data[:member]
+                                 member_data = data[:author].merge(data[:member])
                                  Member.new(member_data, @server, bot)
                                else
-                                 @bot.ensure_user(data['author'])
+                                 @bot.ensure_user(data[:author])
                                end
                     end
 
@@ -117,24 +117,24 @@ module Discordrb
                   end
                 end
 
-      @webhook_id = data['webhook_id'].to_i if data['webhook_id']
+      @webhook_id = data[:webhook_id].to_i if data[:webhook_id]
 
-      @timestamp = Time.parse(data['timestamp']) if data['timestamp']
-      @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
+      @timestamp = Time.parse(data[:timestamp]) if data[:timestamp]
+      @edited_timestamp = data[:edited_timestamp].nil? ? nil : Time.parse(data[:edited_timestamp])
       @edited = !@edited_timestamp.nil?
-      @id = data['id'].to_i
+      @id = data[:id].to_i
 
       @emoji = []
 
       @reactions = []
 
-      data['reactions']&.each do |element|
+      data[:reactions]&.each do |element|
         @reactions << Reaction.new(element)
       end
 
       @mentions = []
 
-      data['mentions']&.each do |element|
+      data[:mentions]&.each do |element|
         @mentions << bot.ensure_user(element)
       end
 
@@ -142,19 +142,19 @@ module Discordrb
 
       # Role mentions can only happen on public servers so make sure we only parse them there
       if @channel.text?
-        data['mention_roles']&.each do |element|
+        data[:mention_roles]&.each do |element|
           @role_mentions << @channel.server.role(element.to_i)
         end
       end
 
       @attachments = []
-      @attachments = data['attachments'].map { |e| Attachment.new(e, self, @bot) } if data['attachments']
+      @attachments = data[:attachments].map { |e| Attachment.new(e, self, @bot) } if data[:attachments]
 
       @embeds = []
-      @embeds = data['embeds'].map { |e| Embed.new(e, self) } if data['embeds']
+      @embeds = data[:embeds].map { |e| Embed.new(e, self) } if data[:embeds]
 
       @components = []
-      @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+      @components = data[:components].map { |component_data| Components.from_data(component_data, @bot) } if data[:components]
     end
 
     # Replies to this message with the specified content.
@@ -192,26 +192,27 @@ module Discordrb
     # @param new_embed [Hash, Discordrb::Webhooks::Embed, nil] The new embed the message should have. If `nil` the message will be changed to have no embed.
     # @return [Message] the resulting message.
     def edit(new_content, new_embed = nil, components = nil)
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embed ? new_embed.to_hash : nil, components)
-      Message.new(JSON.parse(response), @bot)
+      data = { content: new_content, embeds: new_embed ? [new_embed] : nil, components: components }
+      resp = @bot.client.edit_message(@channel.id, @id, **data)
+      Message.new(resp, @bot)
     end
 
     # Deletes this message.
     def delete(reason = nil)
-      API::Channel.delete_message(@bot.token, @channel.id, @id, reason)
+      @bot.client.delete_message(@channel.id, @id, reason: reason)
       nil
     end
 
     # Pins this message
     def pin(reason = nil)
-      API::Channel.pin_message(@bot.token, @channel.id, @id, reason)
+      @bot.client.pin_message(@channel.id, @id, reason: reason)
       @pinned = true
       nil
     end
 
     # Unpins this message
     def unpin(reason = nil)
-      API::Channel.unpin_message(@bot.token, @channel.id, @id, reason)
+      @bot.client.unpin_message(@channel.id, @id, reason: reason)
       @pinned = false
       nil
     end
@@ -282,7 +283,7 @@ module Discordrb
     # @param reaction [String, #to_reaction] the unicode emoji or {Emoji}
     def create_reaction(reaction)
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
-      API::Channel.create_reaction(@bot.token, @channel.id, @id, reaction)
+      @bot.client.create_reaction(@channel.id, @id, reaction)
       nil
     end
 
@@ -299,8 +300,8 @@ module Discordrb
       reaction = reaction.to_s if reaction.respond_to?(:to_s)
 
       get_reactions = proc do |fetch_limit, after_id = nil|
-        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit)
-        return JSON.parse(resp).map { |d| User.new(d, @bot) }
+        resp = @bot.client.get_reactions(@channel.id, @id, reaction, **{ after: after_id, limit: fetch_limit }.compact)
+        return resp.map { |d| User.new(d, @bot) }
       end
 
       # Can be done without pagination
@@ -333,19 +334,19 @@ module Discordrb
     # @param reaction [String, #to_reaction] the reaction to remove
     def delete_reaction(user, reaction)
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
-      API::Channel.delete_user_reaction(@bot.token, @channel.id, @id, reaction, user.resolve_id)
+      @bot.client.delete_user_reaction(@channel.id, @id, reaction, user.resolve_id)
     end
 
     # Deletes this client's reaction on this message.
     # @param reaction [String, #to_reaction] the reaction to remove
     def delete_own_reaction(reaction)
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
-      API::Channel.delete_own_reaction(@bot.token, @channel.id, @id, reaction)
+      @bot.client.delete_own_reaction(@channel.id, @id, reaction)
     end
 
     # Removes all reactions from this message.
     def delete_all_reactions
-      API::Channel.delete_all_reactions(@bot.token, @channel.id, @id)
+      @bot.client.delete_all_reactions(@channel.id, @id)
     end
 
     # The inspect method is overwritten to give more useful output
@@ -371,8 +372,8 @@ module Discordrb
       return @referenced_message if @referenced_message
       return nil unless @message_reference
 
-      referenced_channel = @bot.channel(@message_reference['channel_id'])
-      @referenced_message = referenced_channel.message(@message_reference['message_id'])
+      referenced_channel = @bot.channel(@message_reference[:channel_id])
+      @referenced_message = referenced_channel.message(@message_reference[:message_id])
     end
 
     # @return [Array<Components::Button>]

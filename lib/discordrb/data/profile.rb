@@ -75,16 +75,8 @@ module Discordrb
 
     private
 
-    # Internal handler for updating the user's status setting
-    def update_profile_status_setting(status)
-      API::User.change_status_setting(@bot.token, status)
-    end
-
     def update_profile_data(new_data)
-      API::User.update_profile(@bot.token,
-                               nil, nil,
-                               new_data[:username] || @username,
-                               new_data.key?(:avatar) ? new_data[:avatar] : @avatar_id)
+      @bot.client.modify_current_user(**new_data)
       update_data(new_data)
     end
   end

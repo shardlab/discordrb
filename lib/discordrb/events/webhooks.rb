@@ -15,8 +15,8 @@ module Discordrb::Events
     def initialize(data, bot)
       @bot = bot
 
-      @server = bot.server(data['guild_id'].to_i)
-      @channel = bot.channel(data['channel_id'].to_i)
+      @server = bot.server(data[:guild_id].to_i)
+      @channel = bot.channel(data[:channel_id].to_i)
     end
   end
 

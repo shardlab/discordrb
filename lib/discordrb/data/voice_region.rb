@@ -29,17 +29,17 @@ module Discordrb
     attr_reader :custom
 
     def initialize(data)
-      @id = data['id']
+      @id = data[:id]
 
-      @name = data['name']
+      @name = data[:name]
 
-      @sample_hostname = data['sample_hostname']
-      @sample_port = data['sample_port']
+      @sample_hostname = data[:sample_hostname]
+      @sample_port = data[:sample_port]
 
-      @vip = data['vip']
-      @optimal = data['optimal']
-      @deprecated = data['deprecated']
-      @custom = data['custom']
+      @vip = data[:vip]
+      @optimal = data[:optimal]
+      @deprecated = data[:deprecated]
+      @custom = data[:custom]
     end
   end
 end

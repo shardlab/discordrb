@@ -11,6 +11,20 @@ module Discordrb
       end
     end
 
+    # Raised for unauthorized HTTP requests.
+    class HttpUnauthorized < RuntimeError
+      # Default message for this exception
+      def message
+        'The Authorization header was missing or invalid. Ensure your token is correct.'
+      end
+    end
+
+    # Raised for unauthorized HTTP requests where the associated resource cannot be found.
+    class NotFound < RuntimeError; end
+
+    # Raised for HTTP requests that use an invalid HTTP method. Should never raise under normal circumstances.
+    class MethodNotAllowed < RuntimeError; end
+
     # Raised when a message is over the character limit
     class MessageTooLong < RuntimeError; end
 
@@ -62,7 +76,7 @@ module Discordrb
       # @!visibility hidden
       # Flattens errors into a more easily read format.
       # @example Flattening errors of a bad field
-      #   flatten_errors(data['errors'])
+      #   flatten_errors(data[:errors])
       #   # => ["embed.fields[0].name: This field is required", "embed.fields[0].value: This field is required"]
       def flatten_errors(err, prev_key = nil)
         err.collect do |key, sub_err|
@@ -70,10 +84,10 @@ module Discordrb
             key = /\A\d+\Z/.match?(key) ? "#{prev_key}[#{key}]" : "#{prev_key}.#{key}"
           end
 
-          if (errs = sub_err['_errors'])
-            "#{key}: #{errs.map { |e| e['message'] }.join(' ')}"
-          elsif sub_err['message'] || sub_err['code']
-            "#{sub_err['code'] ? "#{sub_err['code']}: " : nil}#{err_msg}"
+          if (errs = sub_err[:_errors])
+            "#{key}: #{errs.map { |e| e[:message] }.join(' ')}"
+          elsif sub_err[:message] || sub_err[:code]
+            "#{sub_err[:code] ? "#{sub_err[:code]}: " : nil}#{err_msg}"
           elsif sub_err.is_a? String
             sub_err
           else
@@ -97,7 +111,7 @@ module Discordrb
     # rubocop:enable Naming/MethodName
 
     # @param code [Integer] The code to check
-    # @return [Class] the error class for the given code
+    # @return [CodeError] the error class for the given code
     def self.error_class_for(code)
       @code_classes[code] || UnknownError
     end

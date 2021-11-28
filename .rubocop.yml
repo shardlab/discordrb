@@ -66,3 +66,6 @@ Style/SingleLineBlockParams:
   Methods:
     - reduce: [m, e]
     - inject: [m, e]
+
+Layout/EndOfLine:
+  EnforcedStyle: lf

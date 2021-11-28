@@ -284,8 +284,8 @@ module Discordrb::Events
 
     # @!visibility private
     def initialize(data, bot)
-      @id = data['id'].to_i
-      @channel = bot.channel(data['channel_id'].to_i)
+      @id = data[:id].to_i
+      @channel = bot.channel(data[:channel_id].to_i)
       @saved_message = ''
       @bot = bot
     end
