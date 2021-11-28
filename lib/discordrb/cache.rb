@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'discordrb/api'
-require 'discordrb/api/server'
-require 'discordrb/api/invite'
-require 'discordrb/api/user'
 require 'discordrb/data'
 
 module Discordrb

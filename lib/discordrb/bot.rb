@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rest-client'
 require 'zlib'
 require 'set'
 
@@ -22,12 +21,6 @@ require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 
-require 'discordrb/api'
-require 'discordrb/api/channel'
-require 'discordrb/api/server'
-require 'discordrb/api/invite'
-require 'discordrb/api/interaction'
-require 'discordrb/api/application'
 
 require 'discordrb/errors'
 require 'discordrb/data'
