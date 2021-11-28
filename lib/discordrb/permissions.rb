@@ -140,15 +140,15 @@ module Discordrb
   # Mixin to calculate resulting permissions from overrides etc.
   module PermissionCalculator
     # Checks whether this user can do the particular action, regardless of whether it has the permission defined,
-    # through for example being the server owner or having the Manage Roles permission
+    # through for example being the guild owner or having the Manage Roles permission
     # @param action [Symbol] The permission that should be checked. See also {Permissions::FLAGS} for a list.
     # @param channel [Channel, nil] If channel overrides should be checked too, this channel specifies where the overrides should be checked.
-    # @example Check if the bot can send messages to a specific channel in a server.
-    #   bot_profile = bot.profile.on(event.server)
+    # @example Check if the bot can send messages to a specific channel in a guild.
+    #   bot_profile = bot.profile.on(event.guild)
     #   can_send_messages = bot_profile.permission?(:send_messages, channel)
     # @return [true, false] whether or not this user has the permission.
     def permission?(action, channel = nil)
-      # If the member is the server owner, it irrevocably has all permissions.
+      # If the member is the guild owner, it irrevocably has all permissions.
       return true if owner?
 
       # First, check whether the user has Manage Roles defined.
@@ -165,7 +165,7 @@ module Discordrb
     # Manage Roles)
     # @param action [Symbol] The permission that should be checked. See also {Permissions::FLAGS} for a list.
     # @param channel [Channel, nil] If channel overrides should be checked too, this channel specifies where the overrides should be checked.
-    # @example Check if a member has the Manage Channels permission defined in the server.
+    # @example Check if a member has the Manage Channels permission defined in the guild.
     #   has_manage_channels = member.defined_permission?(:manage_channels)
     # @return [true, false] whether or not this user has the permission defined.
     def defined_permission?(action, channel = nil)
@@ -194,7 +194,7 @@ module Discordrb
     private
 
     def defined_role_permission?(action, channel)
-      roles_to_check = [@server.everyone_role] + roles
+      roles_to_check = [@guild.everyone_role] + roles
 
       # For each role, check if
       #   (1) the channel explicitly allows or permits an action for the role and

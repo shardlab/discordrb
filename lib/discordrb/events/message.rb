@@ -119,10 +119,10 @@ module Discordrb::Events
     #   @see Message#timestamp
     delegate :author, :channel, :content, :timestamp, to: :message
 
-    # @!attribute [r] server
-    #   @return [Server, nil] the server where this message was sent, or nil if it was sent in PM.
-    #   @see Channel#server
-    delegate :server, to: :channel
+    # @!attribute [r] guild
+    #   @return [Guild, nil] the guild where this message was sent, or nil if it was sent in PM.
+    #   @see Channel#guild
+    delegate :guild, to: :channel
 
     def initialize(message, bot)
       @bot = bot
@@ -174,10 +174,10 @@ module Discordrb::Events
       @message.user.id == @bot.profile.id
     end
 
-    # Utility method to get the voice bot for the current server
-    # @return [VoiceBot, nil] the voice bot connected to this message's server, or nil if there is none connected
+    # Utility method to get the voice bot for the current guild
+    # @return [VoiceBot, nil] the voice bot connected to this message's guild, or nil if there is none connected
     def voice
-      @bot.voice(@message.channel.server.id)
+      @bot.voice(@message.channel.guild.id)
     end
 
     alias_method :user, :author

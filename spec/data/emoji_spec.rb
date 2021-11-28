@@ -6,9 +6,9 @@ describe Discordrb::Emoji do
   let(:bot) { double('bot') }
 
   subject(:emoji) do
-    server = double('server', role: double)
+    guild = double('guild', role: double)
 
-    described_class.new(emoji_data, bot, server)
+    described_class.new(emoji_data, bot, guild)
   end
 
   fixture :emoji_data, %i[emoji]

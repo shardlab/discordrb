@@ -4,13 +4,13 @@ require 'discordrb/events/generic'
 require 'discordrb/data'
 
 module Discordrb::Events
-  # Raised when a role is created on a server
-  class ServerRoleCreateEvent < Event
+  # Raised when a role is created on a guild
+  class GuildRoleCreateEvent < Event
     # @return [Role] the role that got created
     attr_reader :role
 
-    # @return [Server] the server on which a role got created
-    attr_reader :server
+    # @return [Guild] the guild on which a role got created
+    attr_reader :guild
 
     # @!attribute [r] name
     #   @return [String] this role's name
@@ -20,19 +20,19 @@ module Discordrb::Events
     def initialize(data, bot)
       @bot = bot
 
-      @server = bot.server(data[:guild_id].to_i)
-      return unless @server
+      @guild = bot.guild(data[:guild_id].to_i)
+      return unless @guild
 
       role_id = data[:role][:id].to_i
-      @role = @server.roles.find { |r| r.id == role_id }
+      @role = @guild.roles.find { |r| r.id == role_id }
     end
   end
 
-  # Event handler for ServerRoleCreateEvent
-  class ServerRoleCreateEventHandler < EventHandler
+  # Event handler for GuildRoleCreateEvent
+  class GuildRoleCreateEventHandler < EventHandler
     def matches?(event)
       # Check for the proper event type
-      return false unless event.is_a? ServerRoleCreateEvent
+      return false unless event.is_a? GuildRoleCreateEvent
 
       [
         matches_all(@attributes[:name], event.name) do |a, e|
@@ -46,31 +46,31 @@ module Discordrb::Events
     end
   end
 
-  # Raised when a role is deleted from a server
-  class ServerRoleDeleteEvent < Event
+  # Raised when a role is deleted from a guild
+  class GuildRoleDeleteEvent < Event
     # @return [Integer] the ID of the role that got deleted.
     attr_reader :id
 
-    # @return [Server] the server on which a role got deleted.
-    attr_reader :server
+    # @return [Guild] the guild on which a role got deleted.
+    attr_reader :guild
 
     def initialize(data, bot)
       @bot = bot
 
-      # The role should already be deleted from the server's list
+      # The role should already be deleted from the guild's list
       # by the time we create this event, so we'll create a temporary
       # role object for event consumers to use.
       @id = data[:role_id].to_i
-      server_id = data[:guild_id].to_i
-      @server = bot.server(server_id)
+      guild_id = data[:guild_id].to_i
+      @guild = bot.guild(guild_id)
     end
   end
 
-  # EventHandler for ServerRoleDeleteEvent
-  class ServerRoleDeleteEventHandler < EventHandler
+  # EventHandler for GuildRoleDeleteEvent
+  class GuildRoleDeleteEventHandler < EventHandler
     def matches?(event)
       # Check for the proper event type
-      return false unless event.is_a? ServerRoleDeleteEvent
+      return false unless event.is_a? GuildRoleDeleteEvent
 
       [
         matches_all(@attributes[:id], event.id) do |a, e|
@@ -80,9 +80,9 @@ module Discordrb::Events
     end
   end
 
-  # Event raised when a role updates on a server
-  class ServerRoleUpdateEvent < ServerRoleCreateEvent; end
+  # Event raised when a role updates on a guild
+  class GuildRoleUpdateEvent < GuildRoleCreateEvent; end
 
-  # Event handler for ServerRoleUpdateEvent
-  class ServerRoleUpdateEventHandler < ServerRoleCreateEventHandler; end
+  # Event handler for GuildRoleUpdateEvent
+  class GuildRoleUpdateEventHandler < GuildRoleCreateEventHandler; end
 end

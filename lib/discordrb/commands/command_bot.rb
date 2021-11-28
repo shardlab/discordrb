@@ -36,7 +36,7 @@ module Discordrb::Commands
     #     string, any of the strings in the array can be used.
     #   * Something Proc-like (responds to :call) that takes a {Message} object as an argument and returns either
     #     the command chain in raw form or `nil` if the given message shouldn't be parsed. This can be used to make more
-    #     complicated dynamic prefixes (e. g. based on server), or even something else entirely (suffixes, or most
+    #     complicated dynamic prefixes (e. g. based on guild), or even something else entirely (suffixes, or most
     #     adventurous, infixes).
     # @option attributes [true, false] :advanced_functionality Whether to enable advanced functionality (very powerful
     #   way to nest commands into chains, see https://github.com/shardlab/discordrb/wiki/Commands#command-chain-syntax
@@ -229,9 +229,9 @@ module Discordrb::Commands
       end
       return unless !check_permissions || channels?(event.channel, command.attributes[:channels])
 
-      arguments = arg_check(arguments, command.attributes[:arg_types], event.server) if check_permissions
+      arguments = arg_check(arguments, command.attributes[:arg_types], event.guild) if check_permissions
       if (check_permissions &&
-         permission?(event.author, command.attributes[:permission_level], event.server) &&
+         permission?(event.author, command.attributes[:permission_level], event.guild) &&
          required_permissions?(event.author, command.attributes[:required_permissions], event.channel) &&
          required_roles?(event.author, command.attributes[:required_roles]) &&
          allowed_roles?(event.author, command.attributes[:allowed_roles])) ||
@@ -250,7 +250,7 @@ module Discordrb::Commands
 
     # Transforms an array of string arguments based on types array.
     # For example, `['1', '10..14']` with types `[Integer, Range]` would turn into `[1, 10..14]`.
-    def arg_check(args, types = nil, server = nil)
+    def arg_check(args, types = nil, guild = nil)
       return args unless types
 
       args.each_with_index.map do |arg, i|
@@ -313,7 +313,7 @@ module Discordrb::Commands
         elsif types[i] == NilClass
           nil
         elsif [Discordrb::User, Discordrb::Role, Discordrb::Emoji].include? types[i]
-          result = parse_mention arg, server
+          result = parse_mention arg, guild
           result if result.instance_of? types[i]
         elsif types[i] == Discordrb::Invite
           resolve_invite_code arg
@@ -357,10 +357,10 @@ module Discordrb::Commands
     # Check if a user has permission to do something
     # @param user [User] The user to check
     # @param level [Integer] The minimum permission level the user should have (inclusive)
-    # @param server [Server] The server on which to check
+    # @param guild [Guild] The guild on which to check
     # @return [true, false] whether or not the user has the given permission
-    def permission?(user, level, server)
-      determined_level = if user.webhook? || server.nil?
+    def permission?(user, level, guild)
+      determined_level = if user.webhook? || guild.nil?
                            0
                          else
                            user.roles.reduce(0) do |memo, role|

@@ -12,12 +12,12 @@ module Discordrb::Events
     # @!attribute [r] type
     #   @return [Integer]
     #   @see Interaction#type
-    # @!attribute [r] server
-    #   @return [Server, nil]
-    #   @see Interaction#server
-    # @!attribute [r] server_id
+    # @!attribute [r] guild
+    #   @return [Guild, nil]
+    #   @see Interaction#guild
+    # @!attribute [r] guild_id
     #   @return [Integer]
-    #   @see Interaction#server_id
+    #   @see Interaction#guild_id
     # @!attribute [r] channel
     #   @return [Channel]
     #   @see Interaction#channel
@@ -27,7 +27,7 @@ module Discordrb::Events
     # @!attribute [r] user
     #   @return [User]
     #   @see Interaction#user
-    delegate :type, :server, :server_id, :channel, :channel_id, :user, to: :interaction
+    delegate :type, :guild, :guild_id, :channel, :channel_id, :user, to: :interaction
 
     def initialize(data, bot)
       @interaction = Discordrb::Interaction.new(data, bot)
@@ -102,8 +102,8 @@ module Discordrb::Events
                end
         end,
 
-        matches_all(@attributes[:server], event.interaction) do |a, e|
-          a.resolve_id == e.server_id
+        matches_all(@attributes[:guild], event.interaction) do |a, e|
+          a.resolve_id == e.guild_id
         end,
 
         matches_all(@attributes[:channel], event.interaction) do |a, e|
@@ -196,13 +196,13 @@ module Discordrb::Events
       end
 
       resolved_data[:channels]&.each do |id, data|
-        data[:guild_id] = @interaction.server_id
+        data[:guild_id] = @interaction.guild_id
         @resolved[:channels][id.to_i] = Discordrb::Channel.new(data, @bot)
       end
 
       resolved_data[:members]&.each do |id, data|
         data[:user] = resolved_data[:users][id]
-        data[:guild_id] = @interaction.server_id
+        data[:guild_id] = @interaction.guild_id
         @resolved[:members][id.to_i] = Discordrb::Member.new(data, nil, @bot)
       end
 

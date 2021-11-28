@@ -39,9 +39,9 @@ module Discordrb::Light
       LightProfile.new(response, self)
     end
 
-    # @return [Array<LightServer>] the servers this bot is connected to.
-    def servers
-      @client.get_current_user_guilds.map { |e| LightServer.new(e, self) }
+    # @return [Array<LightGuild>] the guilds this bot is connected to.
+    def guilds
+      @client.get_current_user_guilds.map { |e| LightGuild.new(e, self) }
     end
 
     # Gets the connections associated with this account.

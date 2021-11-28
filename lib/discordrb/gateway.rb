@@ -66,7 +66,7 @@ module Discordrb
     # session - the client has to create an entirely new session with the new gateway instead of resuming the old one.
     RECONNECT = 7
 
-    # **Sent**: This opcode identifies packets used to retrieve a list of members from a particular server. There is
+    # **Sent**: This opcode identifies packets used to retrieve a list of members from a particular guild. There is
     # also a REST endpoint available for this, but it is inconvenient to use because the client has to implement
     # pagination itself, whereas sending this opcode lets Discord handle the pagination and the client can just add
     # members when it receives them. (Sending this is never necessary for a gateway client to behave correctly)
@@ -130,7 +130,7 @@ module Discordrb
 
   # Client for the Discord gateway protocol
   class Gateway
-    # How many members there need to be in a server for it to count as "large"
+    # How many members there need to be in a guild for it to count as "large"
     LARGE_THRESHOLD = 100
 
     # The version of the gateway that's supposed to be used.
@@ -302,7 +302,7 @@ module Discordrb
     #    - "$referring_domain" (recommended value: empty)
     #
     # @param compress [true, false] Whether certain large packets should be compressed using zlib.
-    # @param large_threshold [Integer] The member threshold after which a server counts as large and will have to have
+    # @param large_threshold [Integer] The member threshold after which a guild counts as large and will have to have
     #   its member list chunked.
     # @param shard_key [Array(Integer, Integer), nil] The shard key to use for sharding, represented as
     #   [shard_id, num_shards], or nil if the bot should not be sharded.
@@ -341,15 +341,15 @@ module Discordrb
     end
 
     # Sends a voice state update packet (op 4). This packet can connect a user to a voice channel, update self mute/deaf
-    # status in an existing voice connection, move the user to a new voice channel on the same server or disconnect an
+    # status in an existing voice connection, move the user to a new voice channel on the same guild or disconnect an
     # existing voice connection.
-    # @param server_id [Integer] The ID of the server on which this action should occur.
+    # @param guild_id [Integer] The ID of the guild on which this action should occur.
     # @param channel_id [Integer, nil] The channel ID to connect/move to, or `nil` to disconnect.
     # @param self_mute [true, false] Whether the user should itself be muted to everyone else.
     # @param self_deaf [true, false] Whether the user should be deaf towards other users.
-    def send_voice_state_update(server_id, channel_id, self_mute, self_deaf)
+    def send_voice_state_update(guild_id, channel_id, self_mute, self_deaf)
       data = {
-        guild_id: server_id,
+        guild_id: guild_id,
         channel_id: channel_id,
         self_mute: self_mute,
         self_deaf: self_deaf
@@ -397,14 +397,14 @@ module Discordrb
 
     # Sends a request members packet (op 8). This will order Discord to gradually sent all requested members as dispatch
     # events with type `GUILD_MEMBERS_CHUNK`. It is necessary to use this method in order to get all members of a large
-    # server (see `large_threshold` in {#send_identify}), however it can also be used for other purposes.
-    # @param server_id [Integer] The ID of the server whose members to query.
+    # guild (see `large_threshold` in {#send_identify}), however it can also be used for other purposes.
+    # @param guild_id [Integer] The ID of the guild whose members to query.
     # @param query [String] If this string is not empty, only members whose username starts with this string will be
     #   returned.
     # @param limit [Integer] How many members to send at maximum, or `0` to send all members.
-    def send_request_members(server_id, query, limit)
+    def send_request_members(guild_id, query, limit)
       data = {
-        guild_id: server_id,
+        guild_id: guild_id,
         query: query,
         limit: limit
       }
@@ -717,7 +717,7 @@ module Discordrb
 
         @session = Session.new(data[:session_id])
         @session.sequence = 0
-        @bot.__send__(:notify_ready) if @intents && (@intents & INTENTS[:servers]).zero?
+        @bot.__send__(:notify_ready) if @intents && (@intents & INTENTS[:guilds]).zero?
       when :RESUMED
         # The RESUMED event is received after a successful op 6 (resume). It does nothing except tell the bot the
         # connection is initiated (like READY would). Starting with v5, it doesn't set a new heartbeat interval anymore

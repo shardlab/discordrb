@@ -4,7 +4,7 @@ require 'discordrb/webhooks/builder'
 require 'discordrb/webhooks/view'
 
 module Discordrb
-  # A webhook on a server channel
+  # A webhook on a guild channel
   class Webhook
     include IDObject
 
@@ -14,8 +14,8 @@ module Discordrb
     # @return [Channel] the channel that the webhook is currently connected to.
     attr_reader :channel
 
-    # @return [Server] the server that the webhook is currently connected to.
-    attr_reader :server
+    # @return [Guild] the guild that the webhook is currently connected to.
+    attr_reader :guild
 
     # @return [String, nil] the webhook's token, if this is an Incoming Webhook.
     attr_reader :token
@@ -37,7 +37,7 @@ module Discordrb
       @name = data[:name]
       @id = data[:id].to_i
       @channel = bot.channel(data[:channel_id])
-      @server = @channel.server
+      @guild = @channel.guild
       @token = data[:token]
       @avatar = data[:avatar]
       @type = data[:type]
@@ -45,10 +45,10 @@ module Discordrb
       # Will not exist if the data was requested through a webhook token
       return unless data[:user]
 
-      @owner = @server.member(data[:user][:id].to_i)
+      @owner = @guild.member(data[:user][:id].to_i)
       return if @owner
 
-      Discordrb::LOGGER.debug("Member with ID #{data[:user][:id]} not cached (possibly left the server).")
+      Discordrb::LOGGER.debug("Member with ID #{data[:user][:id]} not cached (possibly left the guild).")
       @owner = @bot.ensure_user(data[:user])
     end
 

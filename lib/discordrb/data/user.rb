@@ -141,12 +141,12 @@ module Discordrb
       @bot.add_await!(Discordrb::Events::MessageEvent, { from: @id }.merge(attributes), &block)
     end
 
-    # Gets the member this user is on a server
-    # @param server [Server] The server to get the member for
-    # @return [Member] this user as a member on a particular server
-    def on(server)
-      id = server.resolve_id
-      @bot.server(id).member(@id)
+    # Gets the member this user is on a guild
+    # @param guild [Guild] The guild to get the member for
+    # @return [Member] this user as a member on a particular guild
+    def on(guild)
+      id = guild.resolve_id
+      @bot.guild(id).member(@id)
     end
 
     # Is the user the bot?

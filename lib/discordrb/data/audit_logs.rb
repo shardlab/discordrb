@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 module Discordrb
-  # A server's audit logs
+  # A guild's audit logs
   class AuditLogs
     # The numbers associated with the type of action.
     ACTIONS = {
-      1 => :server_update,
+      1 => :guild_update,
       10 => :channel_create,
       11 => :channel_update,
       12 => :channel_delete,
@@ -59,7 +59,7 @@ module Discordrb
 
     # @!visibility private
     UPDATE_ACTIONS = %i[
-      server_update channel_update channel_overwrite_update member_update
+      guild_update channel_update channel_overwrite_update member_update
       member_role_update role_update invite_update webhook_update
       emoji_update integration_update
     ].freeze
@@ -74,18 +74,18 @@ module Discordrb
     attr_reader :entries
 
     # @!visibility private
-    def initialize(server, bot, data)
+    def initialize(guild, bot, data)
       @bot = bot
-      @server = server
+      @guild = guild
       @users = {}
       @webhooks = {}
-      @entries = data[:audit_log_entries].map { |entry| Entry.new(self, @server, @bot, entry) }
+      @entries = data[:audit_log_entries].map { |entry| Entry.new(self, @guild, @bot, entry) }
 
       process_users(data[:users])
       process_webhooks(data[:webhooks])
     end
 
-    # An entry in a server's audit logs.
+    # An entry in a guild's audit logs.
     class Entry
       include IDObject
 
@@ -95,7 +95,7 @@ module Discordrb
       # @return [Symbol] the type action that was performed. (:create, :delete, :update, :unknown)
       attr_reader :action_type
 
-      # @return [Symbol] the type of target being performed on. (:server, :channel, :user, :role, :invite, :webhook, :emoji, :unknown)
+      # @return [Symbol] the type of target being performed on. (:guild, :channel, :user, :role, :invite, :webhook, :emoji, :unknown)
       attr_reader :target_type
 
       # @return [Integer, nil] the amount of messages deleted. Only present if the action is `:message_delete`.
@@ -115,11 +115,11 @@ module Discordrb
       attr_reader :changes
 
       # @!visibility private
-      def initialize(logs, server, bot, data)
+      def initialize(logs, guild, bot, data)
         @bot = bot
         @id = data[:id].resolve_id
         @logs = logs
-        @server = server
+        @guild = guild
         @data = data
         @action = ACTIONS[data[:action_type]]
         @reason = data[:reason]
@@ -130,7 +130,7 @@ module Discordrb
         @changes = {} unless @action == :message_delete || @action == :member_prune || @action == :member_role_update
 
         # Sets the 'changes' variable to a RoleChange class if there's a role update.
-        @changes = RoleChange.new(data[:changes][0], @server) if @action == :member_role_update
+        @changes = RoleChange.new(data[:changes][0], @guild) if @action == :member_role_update
 
         process_changes(data[:changes]) unless @action == :member_role_update
         return unless data.include?('options')
@@ -142,14 +142,14 @@ module Discordrb
         @members_removed = data[:options][:members_removed].to_i unless data[:options][:members_removed].nil?
       end
 
-      # @return [Server, Channel, Member, User, Role, Invite, Webhook, Emoji, nil] the target being performed on.
+      # @return [Guild, Channel, Member, User, Role, Invite, Webhook, Emoji, nil] the target being performed on.
       def target
         @target ||= process_target(@data[:target_id], @target_type)
       end
 
-      # @return [Member, User] the user that authored this action. Can be a User object if the user no longer exists in the server.
+      # @return [Member, User] the user that authored this action. Can be a User object if the user no longer exists in the guild.
       def user
-        @user ||= @server.member(@data[:user_id].to_i) || @bot.user(@data[:user_id].to_i) || @logs.user(@data[:user_id].to_i)
+        @user ||= @guild.member(@data[:user_id].to_i) || @bot.user(@data[:user_id].to_i) || @logs.user(@data[:user_id].to_i)
       end
       alias_method :author, :user
 
@@ -157,21 +157,21 @@ module Discordrb
       def channel
         return nil unless @channel_id
 
-        @channel ||= @bot.channel(@channel_id, @server, bot, self)
+        @channel ||= @bot.channel(@channel_id, @guild, bot, self)
       end
 
       # @!visibility private
       def process_target(id, type)
         id = id.resolve_id unless id.nil?
         case type
-        when :server then @server # Since it won't be anything else
-        when :channel then @bot.channel(id, @server)
-        when :user, :message then @server.member(id) || @bot.user(id) || @logs.user(id)
-        when :role then @server.role(id)
+        when :guild then @guild # Since it won't be anything else
+        when :channel then @bot.channel(id, @guild)
+        when :user, :message then @guild.member(id) || @bot.user(id) || @logs.user(id)
+        when :role then @guild.role(id)
         when :invite then @bot.invite(@data[:changes].find { |change| change[:key] == 'code' }.values.delete_if { |v| v == 'code' }.first)
-        when :webhook then @server.webhooks.find { |webhook| webhook.id == id } || @logs.webhook(id)
-        when :emoji then @server.emoji[id]
-        when :integration then @server.integrations.find { |integration| integration.id == id }
+        when :webhook then @guild.webhooks.find { |webhook| webhook.id == id } || @logs.webhook(id)
+        when :emoji then @guild.emoji[id]
+        when :integration then @guild.integrations.find { |integration| integration.id == id }
         end
       end
 
@@ -187,7 +187,7 @@ module Discordrb
         return unless changes
 
         changes.each do |element|
-          change = Change.new(element, @server, @bot, self)
+          change = Change.new(element, @guild, @bot, self)
           @changes[change.key] = change
         end
       end
@@ -208,11 +208,11 @@ module Discordrb
       alias_method :new_value, :new
 
       # @!visibility private
-      def initialize(data, server, bot, logs)
+      def initialize(data, guild, bot, logs)
         @key = data[:key]
         @old = data[:old_value]
         @new = data[:new_value]
-        @server = server
+        @guild = guild
         @bot = bot
         @logs = logs
 
@@ -223,34 +223,34 @@ module Discordrb
         @new = @new.map { |o| Overwrite.new(o[:id], type: o[:type].to_sym, allow: o[:allow], deny: o[:deny]) } if @new && @key == 'permission_overwrites'
       end
 
-      # @return [Channel, nil] the channel that was previously used in the server widget. Only present if the key for this change is `widget_channel_id`.
+      # @return [Channel, nil] the channel that was previously used in the guild widget. Only present if the key for this change is `widget_channel_id`.
       def old_widget_channel
-        @bot.channel(@old, @server) if @old && @key == 'widget_channel_id'
+        @bot.channel(@old, @guild) if @old && @key == 'widget_channel_id'
       end
 
-      # @return [Channel, nil] the channel that is used in the server widget prior to this change. Only present if the key for this change is `widget_channel_id`.
+      # @return [Channel, nil] the channel that is used in the guild widget prior to this change. Only present if the key for this change is `widget_channel_id`.
       def new_widget_channel
-        @bot.channel(@new, @server) if @new && @key == 'widget_channel_id'
+        @bot.channel(@new, @guild) if @new && @key == 'widget_channel_id'
       end
 
-      # @return [Channel, nil] the channel that was previously used in the server as an AFK channel. Only present if the key for this change is `afk_channel_id`.
+      # @return [Channel, nil] the channel that was previously used in the guild as an AFK channel. Only present if the key for this change is `afk_channel_id`.
       def old_afk_channel
-        @bot.channel(@old, @server) if @old && @key == 'afk_channel_id'
+        @bot.channel(@old, @guild) if @old && @key == 'afk_channel_id'
       end
 
-      # @return [Channel, nil] the channel that is used in the server as an AFK channel prior to this change. Only present if the key for this change is `afk_channel_id`.
+      # @return [Channel, nil] the channel that is used in the guild as an AFK channel prior to this change. Only present if the key for this change is `afk_channel_id`.
       def new_afk_channel
-        @bot.channel(@new, @server) if @new && @key == 'afk_channel_id'
+        @bot.channel(@new, @guild) if @new && @key == 'afk_channel_id'
       end
 
-      # @return [Member, User, nil] the member that used to be the owner of the server. Only present if the for key for this change is `owner_id`.
+      # @return [Member, User, nil] the member that used to be the owner of the guild. Only present if the for key for this change is `owner_id`.
       def old_owner
-        @server.member(@old) || @bot.user(@old) || @logs.user(@old) if @old && @key == 'owner_id'
+        @guild.member(@old) || @bot.user(@old) || @logs.user(@old) if @old && @key == 'owner_id'
       end
 
-      # @return [Member, User, nil] the member that is now the owner of the server prior to this change. Only present if the key for this change is `owner_id`.
+      # @return [Member, User, nil] the member that is now the owner of the guild prior to this change. Only present if the key for this change is `owner_id`.
       def new_owner
-        @server.member(@new) || @bot.user(@new) || @logs.user(@new) if @new && @key == 'owner_id'
+        @guild.member(@new) || @bot.user(@new) || @logs.user(@new) if @new && @key == 'owner_id'
       end
     end
 
@@ -260,15 +260,15 @@ module Discordrb
       attr_reader :type
 
       # @!visibility private
-      def initialize(data, server)
+      def initialize(data, guild)
         @type = data[:key].delete('$').to_sym
         @role_id = data[:new_value][0][:id].to_i
-        @server = server
+        @guild = guild
       end
 
       # @return [Role] the role being used.
       def role
-        @role ||= @server.role(@role_id)
+        @role ||= @guild.role(@role_id)
       end
     end
 
@@ -317,7 +317,7 @@ module Discordrb
     # @!visibility private
     def self.target_type_for(action)
       case action
-      when 1..9 then :server
+      when 1..9 then :guild
       when 10..19 then :channel
       when 20..29 then :user
       when 30..39 then :role

@@ -11,8 +11,8 @@ module Discordrb
     # @return [String] this role's name ("new role" if it hasn't been changed)
     attr_reader :name
 
-    # @return [Server] the server this role belongs to
-    attr_reader :server
+    # @return [Guild] the guild this role belongs to
+    attr_reader :guild
 
     # @return [true, false] whether or not this role should be displayed separately from other users
     attr_reader :hoist
@@ -53,9 +53,9 @@ module Discordrb
     end
 
     # @!visibility private
-    def initialize(data, bot, server = nil)
+    def initialize(data, bot, guild = nil)
       @bot = bot
-      @server = server
+      @guild = guild
       @permissions = Permissions.new(data[:permissions], RoleWriter.new(self, @bot.token))
       @name = data[:name]
       @id = data[:id].to_i
@@ -75,9 +75,9 @@ module Discordrb
     end
 
     # @return [Array<Member>] an array of members who have this role.
-    # @note This requests a member chunk if it hasn't for the server before, which may be slow initially
+    # @note This requests a member chunk if it hasn't for the guild before, which may be slow initially
     def members
-      @server.members.select { |m| m.role? self }
+      @guild.members.select { |m| m.role? self }
     end
 
     alias_method :users, :members
@@ -149,15 +149,15 @@ module Discordrb
     #   the role will be moved above the @everyone role.
     # @return [Integer] the new position of this role
     def sort_above(other = nil)
-      other = @server.role(other.resolve_id) if other
-      roles = @server.roles.sort_by(&:position)
+      other = @guild.role(other.resolve_id) if other
+      roles = @guild.roles.sort_by(&:position)
       roles.delete_at(@position)
 
       index = other ? roles.index { |role| role.id == other.id } + 1 : 1
       roles.insert(index, self)
 
       updated_roles = roles.map.with_index { |role, position| { id: role.id, position: position } }
-      @server.update_role_positions(updated_roles)
+      @guild.update_role_positions(updated_roles)
       index
     end
 
@@ -166,19 +166,19 @@ module Discordrb
     # Deletes this role. This cannot be undone without recreating the role!
     # @param reason [String] the reason for this role's deletion
     def delete(reason = nil)
-      @bot.client.delete_guild_role(@server.id, @id, reason: reason)
-      @server.delete_role(@id)
+      @bot.client.delete_guild_role(@guild.id, @id, reason: reason)
+      @guild.delete_role(@id)
     end
 
     # The inspect method is overwritten to give more useful output
     def inspect
-      "<Role name=#{@name} permissions=#{@permissions.inspect} hoist=#{@hoist} colour=#{@colour.inspect} server=#{@server.inspect} position=#{@position} mentionable=#{@mentionable}>"
+      "<Role name=#{@name} permissions=#{@permissions.inspect} hoist=#{@hoist} colour=#{@colour.inspect} guild=#{@guild.inspect} position=#{@position} mentionable=#{@mentionable}>"
     end
 
     private
 
     def update_role_data(new_data)
-      @bot.client.modify_guild_role(@server.id, @id, **new_data)
+      @bot.client.modify_guild_role(@guild.id, @id, **new_data)
       update_data(new_data)
     end
   end

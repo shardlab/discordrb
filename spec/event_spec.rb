@@ -207,45 +207,45 @@ describe Discordrb::Events do
   # This data is shared across examples, so it needs to be defined here
   # TODO: Refactor, potentially use `shared_context`
   # rubocop:disable Lint/ConstantDefinitionInBlock
-  SERVER_ID = 1
-  SERVER_NAME = 'server_name'
+  GUILD_ID = 1
+  GUILD_NAME = 'guild_name'
   EMOJI1_ID = 10
   EMOJI1_NAME = 'emoji_name_1'
   EMOJI2_ID = 11
   EMOJI2_NAME = 'emoji_name_2'
   # rubocop:enable Lint/ConstantDefinitionInBlock
 
-  shared_examples 'ServerEvent' do
+  shared_examples 'GuildEvent' do
     describe '#initialize' do
       it 'sets bot' do
         expect(event.bot).to eq(bot)
       end
-      it 'sets server' do
-        expect(event.server).to eq(server)
+      it 'sets guild' do
+        expect(event.guild).to eq(guild)
       end
     end
   end
 
-  shared_examples 'ServerEventHandler' do
+  shared_examples 'GuildEventHandler' do
     describe '#matches?' do
-      it 'matches server names' do
-        handler = described_class.new({ server: SERVER_NAME }, nil)
+      it 'matches guild names' do
+        handler = described_class.new({ guild: GUILD_NAME }, nil)
         expect(handler.matches?(event)).to be_truthy
       end
 
-      it 'matches server ids' do
-        handler = described_class.new({ server: SERVER_ID }, nil)
+      it 'matches guild ids' do
+        handler = described_class.new({ guild: GUILD_ID }, nil)
         expect(handler.matches?(event)).to be_truthy
       end
 
-      it 'matches server object' do
-        handler = described_class.new({ server: server }, nil)
+      it 'matches guild object' do
+        handler = described_class.new({ guild: guild }, nil)
         expect(handler.matches?(event)).to be_truthy
       end
     end
   end
 
-  shared_examples 'ServerEmojiEventHandler' do
+  shared_examples 'GuildEmojiEventHandler' do
     describe '#matches?' do
       it 'matches emoji id' do
         handler = described_class.new({ id: EMOJI1_ID }, nil)
@@ -259,27 +259,27 @@ describe Discordrb::Events do
     end
   end
 
-  describe Discordrb::Events::ServerEvent do
-    let(:bot) { double('bot', server: server) }
-    let(:server) { double }
+  describe Discordrb::Events::GuildEvent do
+    let(:bot) { double('bot', guild: guild) }
+    let(:guild) { double }
 
     subject(:event) do
-      described_class.new({ SERVER_ID => nil }, bot)
+      described_class.new({ GUILD_ID => nil }, bot)
     end
 
-    it_behaves_like 'ServerEvent'
+    it_behaves_like 'GuildEvent'
   end
 
-  describe Discordrb::Events::ServerEmojiCDEvent do
+  describe Discordrb::Events::GuildEmojiCDEvent do
     let(:bot) { double }
-    let(:server) { double }
+    let(:guild) { double }
     let(:emoji) { double }
 
     subject(:event) do
-      described_class.new(server, emoji, bot)
+      described_class.new(guild, emoji, bot)
     end
 
-    it_behaves_like 'ServerEvent'
+    it_behaves_like 'GuildEvent'
 
     describe '#initialize' do
       it 'sets emoji' do
@@ -288,20 +288,20 @@ describe Discordrb::Events do
     end
   end
 
-  describe Discordrb::Events::ServerEmojiChangeEvent do
+  describe Discordrb::Events::GuildEmojiChangeEvent do
     fixture :dispatch, %i[emoji dispatch]
 
     fixture_property :emoji_1_id, :dispatch, ['emojis', 0, 'id'], :to_i
     fixture_property :emoji_2_id, :dispatch, ['emojis', 1, 'id'], :to_i
 
     let(:bot) { double }
-    let(:server) { double('server', emoji: { emoji_1_id => nil, emoji_2_id => nil }) }
+    let(:guild) { double('guild', emoji: { emoji_1_id => nil, emoji_2_id => nil }) }
 
     subject(:event) do
-      described_class.new(server, dispatch, bot)
+      described_class.new(guild, dispatch, bot)
     end
 
-    it_behaves_like 'ServerEvent'
+    it_behaves_like 'GuildEvent'
 
     describe '#process_emoji' do
       it 'sets an array of Emoji' do
@@ -310,17 +310,17 @@ describe Discordrb::Events do
     end
   end
 
-  describe Discordrb::Events::ServerEmojiUpdateEvent do
+  describe Discordrb::Events::GuildEmojiUpdateEvent do
     let(:bot) { double }
-    let(:server) { double }
+    let(:guild) { double }
     let(:old_emoji) { double }
     let(:emoji) { double }
 
     subject(:event) do
-      described_class.new(server, old_emoji, emoji, bot)
+      described_class.new(guild, old_emoji, emoji, bot)
     end
 
-    it_behaves_like 'ServerEvent'
+    it_behaves_like 'GuildEvent'
 
     describe '#initialize' do
       it 'sets emoji' do
@@ -332,31 +332,31 @@ describe Discordrb::Events do
     end
   end
 
-  describe Discordrb::Events::ServerEventHandler do
-    let(:event) { double('event', is_a?: true, emoji: emoji, server: server) }
-    let(:server) { double('server', name: SERVER_NAME, id: SERVER_ID) }
+  describe Discordrb::Events::GuildEventHandler do
+    let(:event) { double('event', is_a?: true, emoji: emoji, guild: guild) }
+    let(:guild) { double('guild', name: GUILD_NAME, id: GUILD_ID) }
     let(:emoji) { double('emoji', id: EMOJI1_ID, name: EMOJI1_NAME) }
 
-    it_behaves_like 'ServerEventHandler'
+    it_behaves_like 'GuildEventHandler'
   end
 
-  describe Discordrb::Events::ServerEmojiCDEventHandler do
-    let(:event) { double('event', is_a?: true, emoji: emoji, server: server) }
-    let(:server) { double('server', name: SERVER_NAME, id: SERVER_ID) }
+  describe Discordrb::Events::GuildEmojiCDEventHandler do
+    let(:event) { double('event', is_a?: true, emoji: emoji, guild: guild) }
+    let(:guild) { double('guild', name: GUILD_NAME, id: GUILD_ID) }
     let(:emoji) { double('emoji', id: EMOJI1_ID, name: EMOJI1_NAME) }
 
-    it_behaves_like 'ServerEventHandler'
-    it_behaves_like 'ServerEmojiEventHandler'
+    it_behaves_like 'GuildEventHandler'
+    it_behaves_like 'GuildEmojiEventHandler'
   end
 
-  describe Discordrb::Events::ServerEmojiUpdateEventHandler do
-    let(:event) { double('event', is_a?: true, emoji: emoji_new, old_emoji: emoji_old, server: server) }
-    let(:server) { double('server', name: SERVER_NAME, id: SERVER_ID) }
+  describe Discordrb::Events::GuildEmojiUpdateEventHandler do
+    let(:event) { double('event', is_a?: true, emoji: emoji_new, old_emoji: emoji_old, guild: guild) }
+    let(:guild) { double('guild', name: GUILD_NAME, id: GUILD_ID) }
     let(:emoji_old) { double('emoji_old', id: EMOJI1_ID, name: EMOJI2_NAME) }
     let(:emoji_new) { double('emoji_new', name: EMOJI1_NAME) }
 
-    it_behaves_like 'ServerEventHandler'
-    it_behaves_like 'ServerEmojiEventHandler'
+    it_behaves_like 'GuildEventHandler'
+    it_behaves_like 'GuildEmojiEventHandler'
 
     describe '#matches?' do
       it 'matches old emoji name' do

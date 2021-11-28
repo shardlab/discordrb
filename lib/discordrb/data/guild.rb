@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module Discordrb
-  # Basic attributes a server should have
-  module ServerAttributes
-    # @return [String] this server's name.
+  # Basic attributes a guild should have
+  module GuildAttributes
+    # @return [String] this guild's name.
     attr_reader :name
 
-    # @return [String] the hexadecimal ID used to identify this server's icon.
+    # @return [String] the hexadecimal ID used to identify this guild's icon.
     attr_reader :icon_id
 
     # Utility function to get the URL for the icon image
@@ -18,46 +18,46 @@ module Discordrb
     end
   end
 
-  # A server on Discord
-  class Server
+  # A guild on Discord
+  class Guild
     include IDObject
-    include ServerAttributes
+    include GuildAttributes
 
-    # @return [String] the ID of the region the server is on (e.g. `amsterdam`).
+    # @return [String] the ID of the region the guild is on (e.g. `amsterdam`).
     attr_reader :region_id
 
-    # @return [Array<Channel>] an array of all the channels (text and voice) on this server.
+    # @return [Array<Channel>] an array of all the channels (text and voice) on this guild.
     attr_reader :channels
 
-    # @return [Array<Role>] an array of all the roles created on this server.
+    # @return [Array<Role>] an array of all the roles created on this guild.
     attr_reader :roles
 
-    # @return [Hash<Integer => Emoji>] a hash of all the emoji available on this server.
+    # @return [Hash<Integer => Emoji>] a hash of all the emoji available on this guild.
     attr_reader :emoji
     alias_method :emojis, :emoji
 
-    # @return [true, false] whether or not this server is large (members > 100). If it is,
+    # @return [true, false] whether or not this guild is large (members > 100). If it is,
     # it means the members list may be inaccurate for a couple seconds after starting up the bot.
     attr_reader :large
     alias_method :large?, :large
 
-    # @return [Array<Symbol>] the features of the server (eg. "INVITE_SPLASH")
+    # @return [Array<Symbol>] the features of the guild (eg. "INVITE_SPLASH")
     attr_reader :features
 
-    # @return [Integer] the absolute number of members on this server, offline or not.
+    # @return [Integer] the absolute number of members on this guild, offline or not.
     attr_reader :member_count
 
     # @return [Integer] the amount of time after which a voice user gets moved into the AFK channel, in seconds.
     attr_reader :afk_timeout
 
-    # @return [Hash<Integer => VoiceState>] the hash (user ID => voice state) of voice states of members on this server
+    # @return [Hash<Integer => VoiceState>] the hash (user ID => voice state) of voice states of members on this guild
     attr_reader :voice_states
 
-    # The server's amount of Nitro boosters.
+    # The guild's amount of Nitro boosters.
     # @return [Integer] the amount of boosters, 0 if no one has boosted.
     attr_reader :booster_count
 
-    # The server's Nitro boost level.
+    # The guild's Nitro boost level.
     # @return [Integer] the boost level, 0 if no level.
     attr_reader :boost_level
 
@@ -73,22 +73,22 @@ module Discordrb
       process_channels(data[:channels])
       update_data(data)
 
-      # Whether this server's members have been chunked (resolved using op 8 and GUILD_MEMBERS_CHUNK) yet
+      # Whether this guild's members have been chunked (resolved using op 8 and GUILD_MEMBERS_CHUNK) yet
       @chunked = false
 
       @booster_count = data[:premium_subscription_count] || 0
       @boost_level = data[:premium_tier]
     end
 
-    # @return [Member] The server owner.
+    # @return [Member] The guild owner.
     def owner
       @owner ||= member(@owner_id)
     end
 
-    # The default channel is the text channel on this server with the highest position
+    # The default channel is the text channel on this guild with the highest position
     # that the bot has Read Messages permission on.
     # @param send_messages [true, false] whether to additionally consider if the bot has Send Messages permission
-    # @return [Channel, nil] The default channel on this server, or `nil` if there are no channels that the bot can read.
+    # @return [Channel, nil] The default channel on this guild, or `nil` if there are no channels that the bot can read.
     def default_channel(send_messages = false)
       bot_member = member(@bot.profile)
       text_channels.sort_by { |e| [e.position, e.id] }.find do |e|
@@ -102,12 +102,12 @@ module Discordrb
 
     alias_method :general_channel, :default_channel
 
-    # @return [Role] The @everyone role on this server
+    # @return [Role] The @everyone role on this guild
     def everyone_role
       role(@id)
     end
 
-    # Gets a role on this server based on its ID.
+    # Gets a role on this guild based on its ID.
     # @param id [String, Integer] The role ID to look for.
     # @return [Role, nil] The role identified by the ID, or `nil` if it couldn't be found.
     def role(id)
@@ -115,7 +115,7 @@ module Discordrb
       @roles.find { |e| e.id == id }
     end
 
-    # Gets a member on this server based on user ID
+    # Gets a member on this guild based on user ID
     # @param id [Integer] The user ID to look for
     # @param request [true, false] Whether the member should be requested from Discord if it's not cached
     def member(id, request = true)
@@ -129,15 +129,15 @@ module Discordrb
       nil
     end
 
-    # @return [Array<Member>] an array of all the members on this server.
-    # @raise [RuntimeError] if the bot was not started with the :server_member intent
+    # @return [Array<Member>] an array of all the members on this guild.
+    # @raise [RuntimeError] if the bot was not started with the :guild_member intent
     def members
       return @members.values if @chunked
 
-      @bot.debug("Members for server #{@id} not chunked yet - initiating")
+      @bot.debug("Members for guild #{@id} not chunked yet - initiating")
 
-      # If the SERVER_MEMBERS intent flag isn't set, the gateway won't respond when we ask for members.
-      raise 'The :server_members intent is required to get server members' if (@bot.gateway.intents & INTENTS[:server_members]).zero?
+      # If the GUILD_MEMBERS intent flag isn't set, the gateway won't respond when we ask for members.
+      raise 'The :guild_members intent is required to get guild members' if (@bot.gateway.intents & INTENTS[:guild_members]).zero?
 
       @bot.request_chunks(@id)
       sleep 0.05 until @chunked
@@ -146,22 +146,22 @@ module Discordrb
 
     alias_method :users, :members
 
-    # @return [Array<Member>] an array of all the bot members on this server.
+    # @return [Array<Member>] an array of all the bot members on this guild.
     def bot_members
       members.select(&:bot_account?)
     end
 
-    # @return [Array<Member>] an array of all the non bot members on this server.
+    # @return [Array<Member>] an array of all the non bot members on this guild.
     def non_bot_members
       members.reject(&:bot_account?)
     end
 
-    # @return [Member] the bot's own `Member` on this server
+    # @return [Member] the bot's own `Member` on this guild
     def bot
       member(@bot.profile)
     end
 
-    # @return [Array<Integration>] an array of all the integrations connected to this server.
+    # @return [Array<Integration>] an array of all the integrations connected to this guild.
     def integrations
       integration = @bot.client.get_guild_integrations(@id)
       integration.map { |element| Integration.new(element, @bot, self) }
@@ -171,7 +171,7 @@ module Discordrb
     # @param user [User, String, Integer] The user, or their ID, to filter entries to.
     # @param limit [Integer] The amount of entries to limit it to.
     # @param before [Entry, String, Integer] The entry, or its ID, to use to not include all entries after it.
-    # @return [AuditLogs] The server's audit logs.
+    # @return [AuditLogs] The guild's audit logs.
     def audit_logs(action: nil, user: nil, limit: 50, before: nil)
       raise 'Invalid audit log action!' if action && AuditLogs::ACTIONS.key(action).nil?
 
@@ -193,7 +193,7 @@ module Discordrb
       @widget_channel_id = data[:channel_id]
     end
 
-    # @return [true, false] whether or not the server has widget enabled
+    # @return [true, false] whether or not the guild has widget enabled
     def widget_enabled?
       cache_widget_data if @widget_enabled.nil?
       @widget_enabled
@@ -202,21 +202,21 @@ module Discordrb
     alias_method :embed_enabled, :widget_enabled?
     alias_method :embed?, :widget_enabled?
 
-    # @return [Channel, nil] the channel the server widget will make an invite for.
+    # @return [Channel, nil] the channel the guild widget will make an invite for.
     def widget_channel
       cache_widget_data if @widget_enabled.nil?
       @bot.channel(@widget_channel_id) if @widget_channel_id
     end
     alias_method :embed_channel, :widget_channel
 
-    # Sets whether this server's widget is enabled
+    # Sets whether this guild's widget is enabled
     # @param value [true, false]
     def widget_enabled=(value)
       modify_widget(value, widget_channel)
     end
     alias_method :embed_enabled=, :widget_enabled=
 
-    # Sets whether this server's widget is enabled
+    # Sets whether this guild's widget is enabled
     # @param value [true, false]
     # @param reason [String, nil] the reason to be shown in the audit log for this action
     def set_widget_enabled(value, reason = nil)
@@ -224,14 +224,14 @@ module Discordrb
     end
     alias_method :set_embed_enabled, :set_widget_enabled
 
-    # Changes the channel on the server's widget
+    # Changes the channel on the guild's widget
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
     def widget_channel=(channel)
       modify_widget(widget?, channel)
     end
     alias_method :embed_channel=, :widget_channel=
 
-    # Changes the channel on the server's widget
+    # Changes the channel on the guild's widget
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
     # @param reason [String, nil] the reason to be shown in the audit log for this action
     def set_widget_channel(channel, reason = nil)
@@ -239,7 +239,7 @@ module Discordrb
     end
     alias_method :set_embed_channel, :set_widget_channel
 
-    # Changes the channel on the server's widget, and sets whether it is enabled.
+    # Changes the channel on the guild's widget, and sets whether it is enabled.
     # @param enabled [true, false] whether the widget is enabled
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
     # @param reason [String, nil] the reason to be shown in the audit log for this action
@@ -254,7 +254,7 @@ module Discordrb
 
     # @param include_idle [true, false] Whether to count idle members as online.
     # @param include_bots [true, false] Whether to include bot accounts in the count.
-    # @return [Array<Member>] an array of online members on this server.
+    # @return [Array<Member>] an array of online members on this guild.
     def online_members(include_idle: false, include_bots: true)
       @members.values.select do |e|
         ((include_idle ? e.idle? : false) || e.online?) && (include_bots ? true : !e.bot_account?)
@@ -266,14 +266,14 @@ module Discordrb
     # Adds a member to this guild that has granted this bot's application an OAuth2 access token
     # with the `guilds.join` scope.
     # For more information about Discord's OAuth2 implementation, see: https://discord.com/developers/docs/topics/oauth2
-    # @note Your bot must be present in this server, and have permission to create instant invites for this to work.
-    # @param user [User, String, Integer] the user, or ID of the user to add to this server
+    # @note Your bot must be present in this guild, and have permission to create instant invites for this to work.
+    # @param user [User, String, Integer] the user, or ID of the user to add to this guild
     # @param access_token [String] the OAuth2 Bearer token that has been granted the `guilds.join` scope
     # @param nick [String] the nickname to give this member upon joining
     # @param roles [Role, Array<Role, String, Integer>] the role (or roles) to give this member upon joining
-    # @param deaf [true, false] whether this member will be server deafened upon joining
-    # @param mute [true, false] whether this member will be server muted upon joining
-    # @return [Member, nil] the created member, or `nil` if the user is already a member of this server.
+    # @param deaf [true, false] whether this member will be guild deafened upon joining
+    # @param mute [true, false] whether this member will be guild muted upon joining
+    # @return [Member, nil] the created member, or `nil` if the user is already a member of this guild.
     def add_member_using_token(user, access_token, nick: nil, roles: [], deaf: false, mute: false)
       user_id = user.resolve_id
       roles = roles.is_a?(Array) ? roles.map(&:resolve_id) : [roles.resolve_id]
@@ -310,27 +310,27 @@ module Discordrb
 
     alias_method :prune, :begin_prune
 
-    # @return [Array<Channel>] an array of text channels on this server
+    # @return [Array<Channel>] an array of text channels on this guild
     def text_channels
       @channels.select(&:text?)
     end
 
-    # @return [Array<Channel>] an array of voice channels on this server
+    # @return [Array<Channel>] an array of voice channels on this guild
     def voice_channels
       @channels.select(&:voice?)
     end
 
-    # @return [Array<Channel>] an array of category channels on this server
+    # @return [Array<Channel>] an array of category channels on this guild
     def categories
       @channels.select(&:category?)
     end
 
-    # @return [Array<Channel>] an array of channels on this server that are not in a category
+    # @return [Array<Channel>] an array of channels on this guild that are not in a category
     def orphan_channels
       @channels.reject { |c| c.parent || c.category? }
     end
 
-    # @return [String, nil] the widget URL to the server that displays the amount of online members in a
+    # @return [String, nil] the widget URL to the guild that displays the amount of online members in a
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
       update_data if @embed_enabled.nil?
@@ -340,13 +340,13 @@ module Discordrb
     end
 
     # @param style [Symbol] The style the picture should have. Possible styles are:
-    #   * `:banner1` creates a rectangular image with the server name, member count and icon, a "Powered by Discord" message on the bottom and an arrow on the right.
+    #   * `:banner1` creates a rectangular image with the guild name, member count and icon, a "Powered by Discord" message on the bottom and an arrow on the right.
     #   * `:banner2` creates a less tall rectangular image that has the same information as `banner1`, but the Discord logo on the right - together with the arrow and separated by a diagonal separator.
     #   * `:banner3` creates an image similar in size to `banner1`, but it has the arrow in the bottom part, next to the Discord logo and with a "Chat now" text.
-    #   * `:banner4` creates a tall, almost square, image that prominently features the Discord logo at the top and has a "Join my server" in a pill-style button on the bottom. The information about the server is in the same format as the other three `banner` styles.
+    #   * `:banner4` creates a tall, almost square, image that prominently features the Discord logo at the top and has a "Join my guild" in a pill-style button on the bottom. The information about the guild is in the same format as the other three `banner` styles.
     #   * `:shield` creates a very small, long rectangle, of the style you'd find at the top of GitHub `README.md` files. It features a small version of the Discord logo at the left and the member count at the right.
-    # @return [String, nil] the widget banner URL to the server that displays the amount of online members,
-    #   server icon and server name in a stylish way. `nil` if the widget is not enabled.
+    # @return [String, nil] the widget banner URL to the guild that displays the amount of online members,
+    #   guild icon and guild name in a stylish way. `nil` if the widget is not enabled.
     def widget_banner_url(style)
       update_data if @embed_enabled.nil?
       return unless @embed_enabled
@@ -354,13 +354,13 @@ module Discordrb
       API.widget_url(@id, style)
     end
 
-    # @return [String] the hexadecimal ID used to identify this server's splash image for their VIP invite page.
+    # @return [String] the hexadecimal ID used to identify this guild's splash image for their VIP invite page.
     def splash_id
       @splash_id ||= @bot.client.get_guild(@id)[:splash]
     end
     alias splash_hash splash_id
 
-    # @return [String, nil] the splash image URL for the server's VIP invite page.
+    # @return [String, nil] the splash image URL for the guild's VIP invite page.
     #   `nil` if there is no splash image.
     def splash_url
       splash_id if @splash_id.nil?
@@ -369,12 +369,12 @@ module Discordrb
       API.splash_url(@id, @splash_id)
     end
 
-    # @return [String] the hexadecimal ID used to identify this server's banner image, shown by the server name.
+    # @return [String] the hexadecimal ID used to identify this guild's banner image, shown by the guild name.
     def banner_id
       @banner_id ||= @bot.client.get_guild(@id)[:banner]
     end
 
-    # @return [String, nil] the banner image URL for the server's banner image, or
+    # @return [String, nil] the banner image URL for the guild's banner image, or
     #   `nil` if there is no banner image.
     def banner_url
       banner_id if @banner_id.nil?
@@ -383,7 +383,7 @@ module Discordrb
       Discordrb.banner_url(@id, @banner_id)
     end
 
-    # @return [String] a URL that a user can use to navigate to this server in the client
+    # @return [String] a URL that a user can use to navigate to this guild in the client
     def link
       "https://discord.com/channels/#{@id}"
     end
@@ -412,7 +412,7 @@ module Discordrb
       end
     end
 
-    # Updates the positions of all roles on the server
+    # Updates the positions of all roles on the guild
     # @note For internal use only
     # @!visibility private
     def update_role_positions(role_positions)
@@ -480,7 +480,7 @@ module Discordrb
       end
     end
 
-    # Creates a channel on this server with the given name.
+    # Creates a channel on this guild with the given name.
     # @note If parent is provided, permission overwrites have the follow behavior:
     #
     #  1. If overwrites is null, the new channel inherits the parent's permissions.
@@ -515,7 +515,7 @@ module Discordrb
       Channel.new(resp, @bot)
     end
 
-    # Creates a role on this server which can then be modified. It will be initialized
+    # Creates a role on this guild which can then be modified. It will be initialized
     # with the regular role defaults the client uses unless specified, i.e. name is "new role",
     # permissions are the default, colour is the default etc.
     # @param name [String] Name of the role to create
@@ -546,7 +546,7 @@ module Discordrb
       role
     end
 
-    # Adds a new custom emoji on this server.
+    # Adds a new custom emoji on this guild.
     # @param name [String] The name of emoji to create.
     # @param image [String, #read] A base64 encoded string with the image data, or an object that responds to `#read`, such as `File`.
     # @param roles [Array<Role, String, Integer>] An array of roles, or role IDs to be whitelisted for this emoji.
@@ -565,14 +565,14 @@ module Discordrb
       @emoji[new_emoji.id] = new_emoji
     end
 
-    # Delete a custom emoji on this server
+    # Delete a custom emoji on this guild
     # @param emoji [Emoji, String, Integer] The emoji or emoji ID to be deleted.
     # @param reason [String] The reason the for the deletion of this emoji.
     def delete_emoji(emoji, reason: nil)
       @bot.client.delete_guild_emoji(@id, emoji.resolve_id, reason: reason)
     end
 
-    # Changes the name and/or role whitelist of an emoji on this server.
+    # Changes the name and/or role whitelist of an emoji on this guild.
     # @param emoji [Emoji, String, Integer] The emoji or emoji ID to edit.
     # @param name [String] The new name for the emoji.
     # @param roles [Array<Role, String, Integer>] A new array of roles, or role IDs, to whitelist.
@@ -589,7 +589,7 @@ module Discordrb
       @emoji[new_emoji.id] = new_emoji
     end
 
-    # The amount of emoji the server can have, based on its current Nitro Boost Level.
+    # The amount of emoji the guild can have, based on its current Nitro Boost Level.
     # @return [Integer] the max amount of emoji
     def max_emoji
       case @level
@@ -604,15 +604,15 @@ module Discordrb
       end
     end
 
-    # @return [Array<ServerBan>] a list of banned users on this server and the reason they were banned.
+    # @return [Array<GuildBan>] a list of banned users on this guild and the reason they were banned.
     def bans
       response = @bot.client.get_guild_bans(@id)
       response.map do |e|
-        ServerBan.new(self, User.new(e[:user], @bot), e[:reason])
+        GuildBan.new(self, User.new(e[:user], @bot), e[:reason])
       end
     end
 
-    # Bans a user from this server.
+    # Bans a user from this guild.
     # @param user [User, String, Integer] The user to ban.
     # @param message_days [Integer] How many days worth of messages sent by the user should be deleted.
     # @param reason [String] The reason the user is being banned.
@@ -620,14 +620,14 @@ module Discordrb
       @bot.client.create_guild_ban(@id, user.resolve_id, delete_message_days: message_days, reason: reason)
     end
 
-    # Unbans a previously banned user from this server.
+    # Unbans a previously banned user from this guild.
     # @param user [User, String, Integer] The user to unban.
     # @param reason [String] The reason the user is being unbanned.
     def unban(user, reason = nil)
       @bot.client.remove_guild_ban(@id, user.resolve_id, reason: reason)
     end
 
-    # Kicks a user from this server.
+    # Kicks a user from this guild.
     # @param user [User, String, Integer] The user to kick.
     # @param reason [String] The reason the user is being kicked.
     def kick(user, reason = nil)
@@ -641,27 +641,27 @@ module Discordrb
       @bot.client.modify_guild_member(@id, user.resolve_id, channel_id: channel.resolve_id)
     end
 
-    # Deletes this server. Be aware that this is permanent and impossible to undo, so be careful!
+    # Deletes this guild. Be aware that this is permanent and impossible to undo, so be careful!
     def delete
       @bot.client.delete_guild(@id)
     end
 
-    # Leave the server.
+    # Leave the guild.
     def leave
       @bot.client.leave_guild(@id)
     end
 
-    # Transfers server ownership to another user.
+    # Transfers guild ownership to another user.
     # TODO: Is this supported for bots?
     # @param user [User, String, Integer] The user who should become the new owner.
     def owner=(user)
-      API::Server.transfer_ownership(@bot.token, @id, user.resolve_id)
+      API::Guild.transfer_ownership(@bot.token, @id, user.resolve_id)
     end
 
-    # Sets the server's name.
-    # @param name [String] The new server name.
+    # Sets the guild's name.
+    # @param name [String] The new guild name.
     def name=(name)
-      update_server_data(name: name)
+      update_guild_data(name: name)
     end
 
     # @return [Array<VoiceRegion>] collection of available voice regions to this guild
@@ -674,49 +674,49 @@ module Discordrb
       @available_voice_regions = data.map { |e| VoiceRegion.new e }
     end
 
-    # @return [VoiceRegion, nil] voice region data for this server's region
-    # @note This may return `nil` if this server's voice region is deprecated.
+    # @return [VoiceRegion, nil] voice region data for this guild's region
+    # @note This may return `nil` if this guild's voice region is deprecated.
     def region
       available_voice_regions.find { |e| e.id == @region_id }
     end
 
-    # Moves the server to another region. This will cause a voice interruption of at most a second.
-    # @param region [String] The new region the server should be in.
+    # Moves the guild to another region. This will cause a voice interruption of at most a second.
+    # @param region [String] The new region the guild should be in.
     def region=(region)
-      update_server_data(region: region.to_s)
+      update_guild_data(region: region.to_s)
     end
 
-    # Sets the server's icon.
+    # Sets the guild's icon.
     # @param icon [String, #read] The new icon, in base64-encoded JPG format.
     def icon=(icon)
       if icon.respond_to? :read
         icon_string = 'data:image/jpg;base64,'
         icon_string += Base64.strict_encode64(icon.read)
-        update_server_data(icon_id: icon_string)
+        update_guild_data(icon_id: icon_string)
       else
-        update_server_data(icon_id: icon)
+        update_guild_data(icon_id: icon)
       end
     end
 
-    # Sets the server's AFK channel.
+    # Sets the guild's AFK channel.
     # @param afk_channel [Channel, nil] The new AFK channel, or `nil` if there should be none set.
     def afk_channel=(afk_channel)
-      update_server_data(afk_channel_id: afk_channel.resolve_id)
+      update_guild_data(afk_channel_id: afk_channel.resolve_id)
     end
 
-    # Sets the server's system channel.
+    # Sets the guild's system channel.
     # @param system_channel [Channel, String, Integer, nil] The new system channel, or `nil` should it be disabled.
     def system_channel=(system_channel)
-      update_server_data(system_channel_id: system_channel.resolve_id)
+      update_guild_data(system_channel_id: system_channel.resolve_id)
     end
 
     # Sets the amount of time after which a user gets moved into the AFK channel.
     # @param afk_timeout [Integer] The AFK timeout, in seconds.
     def afk_timeout=(afk_timeout)
-      update_server_data(afk_timeout: afk_timeout)
+      update_guild_data(afk_timeout: afk_timeout)
     end
 
-    # A map of possible server verification levels to symbol names
+    # A map of possible guild verification levels to symbol names
     VERIFICATION_LEVELS = {
       none: 0,
       low: 1,
@@ -725,17 +725,17 @@ module Discordrb
       very_high: 4
     }.freeze
 
-    # @return [Symbol] the verification level of the server (:none = none, :low = 'Must have a verified email on their Discord account', :medium = 'Has to be registered with Discord for at least 5 minutes', :high = 'Has to be a member of this server for at least 10 minutes', :very_high = 'Must have a verified phone on their Discord account').
+    # @return [Symbol] the verification level of the guild (:none = none, :low = 'Must have a verified email on their Discord account', :medium = 'Has to be registered with Discord for at least 5 minutes', :high = 'Has to be a member of this guild for at least 10 minutes', :very_high = 'Must have a verified phone on their Discord account').
     def verification_level
       VERIFICATION_LEVELS.key @verification_level
     end
 
-    # Sets the verification level of the server
+    # Sets the verification level of the guild
     # @param level [Integer, Symbol] The verification level from 0-4 or Symbol (see {VERIFICATION_LEVELS})
     def verification_level=(level)
       level = VERIFICATION_LEVELS[level] if level.is_a?(Symbol)
 
-      update_server_data(verification_level: level)
+      update_guild_data(verification_level: level)
     end
 
     # A map of possible message notification levels to symbol names
@@ -744,7 +744,7 @@ module Discordrb
       only_mentions: 1
     }.freeze
 
-    # @return [Symbol] the default message notifications settings of the server (:all = 'All messages', :mentions = 'Only @mentions').
+    # @return [Symbol] the default message notifications settings of the guild (:all = 'All messages', :mentions = 'Only @mentions').
     def default_message_notifications
       NOTIFICATION_LEVELS.key @default_message_notifications
     end
@@ -754,15 +754,15 @@ module Discordrb
     def default_message_notifications=(notification_level)
       notification_level = NOTIFICATION_LEVELS[notification_level] if notification_level.is_a?(Symbol)
 
-      update_server_data(default_message_notifications: notification_level)
+      update_guild_data(default_message_notifications: notification_level)
     end
 
     alias_method :notification_level=, :default_message_notifications=
 
-    # Sets the server splash
+    # Sets the guild splash
     # @param splash_hash [String] The splash hash
     def splash=(splash_hash)
-      update_server_data(splash: splash_hash)
+      update_guild_data(splash: splash_hash)
     end
 
     # A map of possible content filter levels to symbol names
@@ -772,22 +772,22 @@ module Discordrb
       all_members: 2
     }.freeze
 
-    # @return [Symbol] the explicit content filter level of the server (:none = 'Don't scan any messages.', :exclude_roles = 'Scan messages for members without a role.', :all = 'Scan messages sent by all members.').
+    # @return [Symbol] the explicit content filter level of the guild (:none = 'Don't scan any messages.', :exclude_roles = 'Scan messages for members without a role.', :all = 'Scan messages sent by all members.').
     def explicit_content_filter
       FILTER_LEVELS.key @explicit_content_filter
     end
 
     alias_method :content_filter_level, :explicit_content_filter
 
-    # Sets the server content filter.
+    # Sets the guild content filter.
     # @param filter_level [Integer, Symbol] The content filter from 0-2 or Symbol (see {FILTER_LEVELS})
     def explicit_content_filter=(filter_level)
       filter_level = FILTER_LEVELS[filter_level] if filter_level.is_a?(Symbol)
 
-      update_server_data(explicit_content_filter: filter_level)
+      update_guild_data(explicit_content_filter: filter_level)
     end
 
-    # @return [true, false] whether this server has any emoji or not.
+    # @return [true, false] whether this guild has any emoji or not.
     def any_emoji?
       @emoji.any?
     end
@@ -795,15 +795,15 @@ module Discordrb
     alias_method :has_emoji?, :any_emoji?
     alias_method :emoji?, :any_emoji?
 
-    # Requests a list of Webhooks on the server.
-    # @return [Array<Webhook>] webhooks on the server.
+    # Requests a list of Webhooks on the guild.
+    # @return [Array<Webhook>] webhooks on the guild.
     def webhooks
       webhooks = @bot.client.get_guild_webhooks(@id)
       webhooks.map { |webhook| Webhook.new(webhook, @bot) }
     end
 
-    # Requests a list of Invites to the server.
-    # @return [Array<Invite>] invites to the server.
+    # Requests a list of Invites to the guild.
+    # @return [Array<Invite>] invites to the guild.
     def invites
       invites = @bot.client.get_guild_invites(@id)
       invites.map { |invite| Invite.new(invite, @bot) }
@@ -814,22 +814,22 @@ module Discordrb
     # @!visibility private
     def process_chunk(members, chunk_index, chunk_count)
       process_members(members)
-      LOGGER.debug("Processed chunk #{chunk_index + 1}/#{chunk_count} server #{@id} - index #{chunk_index} - length #{members.length}")
+      LOGGER.debug("Processed chunk #{chunk_index + 1}/#{chunk_count} guild #{@id} - index #{chunk_index} - length #{members.length}")
 
       return if chunk_index + 1 < chunk_count
 
-      LOGGER.debug("Finished chunking server #{@id}")
+      LOGGER.debug("Finished chunking guild #{@id}")
 
       # Reset everything to normal
       @chunked = true
     end
 
-    # @return [Channel, nil] the AFK voice channel of this server, or `nil` if none is set.
+    # @return [Channel, nil] the AFK voice channel of this guild, or `nil` if none is set.
     def afk_channel
       @bot.channel(@afk_channel_id) if @afk_channel_id
     end
 
-    # @return [Channel, nil] the system channel (used for automatic welcome messages) of a server, or `nil` if none is set.
+    # @return [Channel, nil] the system channel (used for automatic welcome messages) of a guild, or `nil` if none is set.
     def system_channel
       @bot.channel(@system_channel_id) if @system_channel_id
     end
@@ -872,7 +872,7 @@ module Discordrb
       process_voice_states(new_data[:voice_states]) if new_data[:voice_states]
     end
 
-    # Adds a channel to this server's cache
+    # Adds a channel to this guild's cache
     # @note For internal use only
     # @!visibility private
     def add_channel(channel)
@@ -880,7 +880,7 @@ module Discordrb
       @channels_by_id[channel.id] = channel
     end
 
-    # Deletes a channel from this server's cache
+    # Deletes a channel from this guild's cache
     # @note For internal use only
     # @!visibility private
     def delete_channel(id)
@@ -898,12 +898,12 @@ module Discordrb
 
     # The inspect method is overwritten to give more useful output
     def inspect
-      "<Server name=#{@name} id=#{@id} large=#{@large} region=#{@region} owner=#{@owner} afk_channel_id=#{@afk_channel_id} system_channel_id=#{@system_channel_id} afk_timeout=#{@afk_timeout}>"
+      "<Guild name=#{@name} id=#{@id} large=#{@large} region=#{@region} owner=#{@owner} afk_channel_id=#{@afk_channel_id} system_channel_id=#{@system_channel_id} afk_timeout=#{@afk_timeout}>"
     end
 
     private
 
-    def update_server_data(new_data)
+    def update_guild_data(new_data)
       resp = @bot.client.modify_guild(@id, **new_data)
       update_data(resp)
     end
@@ -979,28 +979,28 @@ module Discordrb
     end
   end
 
-  # A ban entry on a server
-  class ServerBan
+  # A ban entry on a guild
+  class GuildBan
     # @return [String, nil] the reason the user was banned, if provided
     attr_reader :reason
 
     # @return [User] the user that was banned
     attr_reader :user
 
-    # @return [Server] the server this ban belongs to
-    attr_reader :server
+    # @return [Guild] the guild this ban belongs to
+    attr_reader :guild
 
     # @!visibility private
-    def initialize(server, user, reason)
-      @server = server
+    def initialize(guild, user, reason)
+      @guild = guild
       @user = user
       @reason = reason
     end
 
-    # Removes this ban on the associated user in the server
+    # Removes this ban on the associated user in the guild
     # @param reason [String] the reason for removing the ban
     def remove(reason = nil)
-      @server.unban(user, reason)
+      @guild.unban(user, reason)
     end
 
     alias_method :unban, :remove

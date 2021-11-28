@@ -6,8 +6,8 @@ require 'discordrb/data'
 module Discordrb::Events
   # Event raised when a user's presence state updates (idle or online)
   class PresenceEvent < Event
-    # @return [Server] the server on which the presence update happened.
-    attr_reader :server
+    # @return [Guild] the guild on which the presence update happened.
+    attr_reader :guild
 
     # @return [User] the user whose status got updated.
     attr_reader :user
@@ -25,7 +25,7 @@ module Discordrb::Events
       @user = bot.user(data[:user][:id].to_i)
       @status = data[:status].to_sym
       @client_status = user.client_status
-      @server = bot.server(data[:guild_id].to_i)
+      @guild = bot.guild(data[:guild_id].to_i)
     end
   end
 
@@ -59,8 +59,8 @@ module Discordrb::Events
 
   # Event raised when a user starts or stops playing a game
   class PlayingEvent < Event
-    # @return [Server] the server on which the presence update happened.
-    attr_reader :server
+    # @return [Guild] the guild on which the presence update happened.
+    attr_reader :guild
 
     # @return [User] the user whose status got updated.
     attr_reader :user
@@ -86,7 +86,7 @@ module Discordrb::Events
       @bot = bot
       @activity = activity
 
-      @server = bot.server(data[:guild_id].to_i)
+      @guild = bot.guild(data[:guild_id].to_i)
       @user = bot.user(data[:user][:id].to_i)
       @client_status = @user.client_status
     end

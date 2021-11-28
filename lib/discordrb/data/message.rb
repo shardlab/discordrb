@@ -11,7 +11,7 @@ module Discordrb
     alias_method :to_s, :content
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
-    #   {User} for old messages when the author has left the server since then)
+    #   {User} for old messages when the author has left the guild since then)
     attr_reader :author
     alias_method :user, :author
     alias_method :writer, :author
@@ -61,8 +61,8 @@ module Discordrb
     attr_reader :pinned
     alias_method :pinned?, :pinned
 
-    # @return [Server, nil] the server in which this message was sent.
-    attr_reader :server
+    # @return [Guild, nil] the guild in which this message was sent.
+    attr_reader :guild
 
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
@@ -86,7 +86,7 @@ module Discordrb
       @referenced_message = Message.new(data[:referenced_message], bot) if data[:referenced_message]
       @message_reference = data[:message_reference]
 
-      @server = @channel.server
+      @guild = @channel.guild
 
       @author = if data[:author]
                   if data[:author][:discriminator] == ZERO_DISCRIM
@@ -99,15 +99,15 @@ module Discordrb
                     # directly because the bot may also send messages to the channel
                     Recipient.new(bot.user(data[:author][:id].to_i), @channel, bot)
                   else
-                    member = @channel.server.member(data[:author][:id].to_i)
+                    member = @channel.guild.member(data[:author][:id].to_i)
 
                     if member
                       member.update_data(data[:member]) if data[:member]
                     else
-                      Discordrb::LOGGER.debug("Member with ID #{data[:author][:id]} not cached (possibly left the server).")
+                      Discordrb::LOGGER.debug("Member with ID #{data[:author][:id]} not cached (possibly left the guild).")
                       member = if data[:member]
                                  member_data = data[:author].merge(data[:member])
-                                 Member.new(member_data, @server, bot)
+                                 Member.new(member_data, @guild, bot)
                                else
                                  @bot.ensure_user(data[:author])
                                end
@@ -140,10 +140,10 @@ module Discordrb
 
       @role_mentions = []
 
-      # Role mentions can only happen on public servers so make sure we only parse them there
+      # Role mentions can only happen on public guilds so make sure we only parse them there
       if @channel.text?
         data[:mention_roles]&.each do |element|
-          @role_mentions << @channel.server.role(element.to_i)
+          @role_mentions << @channel.guild.role(element.to_i)
         end
       end
 
@@ -356,7 +356,7 @@ module Discordrb
 
     # @return [String] a URL that a user can use to navigate to this message in the client
     def link
-      "https://discord.com/channels/#{@server&.id || '@me'}/#{@channel.id}/#{@id}"
+      "https://discord.com/channels/#{@guild&.id || '@me'}/#{@channel.id}/#{@id}"
     end
 
     alias_method :jump_link, :link

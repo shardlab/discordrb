@@ -6,8 +6,8 @@ module Discordrb::Events
     # @return [Invite] The invite that was created.
     attr_reader :invite
 
-    # @return [Server, nil] The server the invite was created for.
-    attr_reader :server
+    # @return [Guild, nil] The guild the invite was created for.
+    attr_reader :guild
 
     # @return [Channel] The channel the invite was created for.
     attr_reader :channel
@@ -38,7 +38,7 @@ module Discordrb::Events
       @bot = bot
       @invite = invite
       @channel = bot.channel(data[:channel_id])
-      @server = bot.server(data[:guild_id]) if data[:guild_id]
+      @guild = bot.guild(data[:guild_id]) if data[:guild_id]
     end
   end
 
@@ -47,8 +47,8 @@ module Discordrb::Events
     # @return [Channel] The channel the deleted invite was for.
     attr_reader :channel
 
-    # @return [Server, nil] The server the deleted invite was for.
-    attr_reader :server
+    # @return [Guild, nil] The guild the deleted invite was for.
+    attr_reader :guild
 
     # @return [String] The code of the deleted invite.
     attr_reader :code
@@ -56,7 +56,7 @@ module Discordrb::Events
     def initialize(data, bot)
       @bot = bot
       @channel = bot.channel(data[:channel_id])
-      @server = bot.server(data[:guild_id]) if data[:guild_id]
+      @guild = bot.guild(data[:guild_id]) if data[:guild_id]
       @code = data[:code]
     end
   end
@@ -67,7 +67,7 @@ module Discordrb::Events
       return false unless event.is_a? InviteCreateEvent
 
       [
-        matches_all(@attributes[:server], event.server) do |a, e|
+        matches_all(@attributes[:guild], event.guild) do |a, e|
           a == case a
                when String
                  e.name
@@ -99,7 +99,7 @@ module Discordrb::Events
       return false unless event.is_a? InviteDeleteEvent
 
       [
-        matches_all(@attributes[:server], event.server) do |a, e|
+        matches_all(@attributes[:guild], event.guild) do |a, e|
           a == case a
                when String
                  e.name

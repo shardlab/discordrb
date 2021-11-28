@@ -182,9 +182,9 @@ module Discordrb::API
     end
   end
 
-  # Make an icon URL from server and icon IDs
-  def icon_url(server_id, icon_id, format = 'webp')
-    "#{cdn_url}/icons/#{server_id}/#{icon_id}.#{format}"
+  # Make an icon URL from guild and icon IDs
+  def icon_url(guild_id, icon_id, format = 'webp')
+    "#{cdn_url}/icons/#{guild_id}/#{icon_id}.#{format}"
   end
 
   # Make an icon URL from application and icon IDs
@@ -192,19 +192,19 @@ module Discordrb::API
     "#{cdn_url}/app-icons/#{app_id}/#{icon_id}.#{format}"
   end
 
-  # Make a widget picture URL from server ID
-  def widget_url(server_id, style = 'shield')
-    "#{api_base}/guilds/#{server_id}/widget.png?style=#{style}"
+  # Make a widget picture URL from guild ID
+  def widget_url(guild_id, style = 'shield')
+    "#{api_base}/guilds/#{guild_id}/widget.png?style=#{style}"
   end
 
-  # Make a splash URL from server and splash IDs
-  def splash_url(server_id, splash_id, format = 'webp')
-    "#{cdn_url}/splashes/#{server_id}/#{splash_id}.#{format}"
+  # Make a splash URL from guild and splash IDs
+  def splash_url(guild_id, splash_id, format = 'webp')
+    "#{cdn_url}/splashes/#{guild_id}/#{splash_id}.#{format}"
   end
 
-  # Make a banner URL from server and banner IDs
-  def banner_url(server_id, banner_id, format = 'webp')
-    "#{cdn_url}/banners/#{server_id}/#{banner_id}.#{format}"
+  # Make a banner URL from guild and banner IDs
+  def banner_url(guild_id, banner_id, format = 'webp')
+    "#{cdn_url}/banners/#{guild_id}/#{banner_id}.#{format}"
   end
 
   # Make an emoji icon URL from emoji ID
@@ -222,56 +222,6 @@ module Discordrb::API
     "#{cdn_url}/app-assets/#{application_id}/achievements/#{achievement_id}/icons/#{icon_hash}.#{format}"
   end
 
-  # Login to the server
-  def login(email, password)
-    request(
-      :auth_login,
-      nil,
-      :post,
-      "#{api_base}/auth/login",
-      email: email,
-      password: password
-    )
-  end
-
-  # Logout from the server
-  def logout(token)
-    request(
-      :auth_logout,
-      nil,
-      :post,
-      "#{api_base}/auth/logout",
-      nil,
-      Authorization: token
-    )
-  end
-
-  # Create an OAuth application
-  def create_oauth_application(token, name, redirect_uris)
-    request(
-      :oauth2_applications,
-      nil,
-      :post,
-      "#{api_base}/oauth2/applications",
-      { name: name, redirect_uris: redirect_uris }.to_json,
-      Authorization: token,
-      content_type: :json
-    )
-  end
-
-  # Change an OAuth application's properties
-  def update_oauth_application(token, name, redirect_uris, description = '', icon = nil)
-    request(
-      :oauth2_applications,
-      nil,
-      :put,
-      "#{api_base}/oauth2/applications",
-      { name: name, redirect_uris: redirect_uris, description: description, icon: icon }.to_json,
-      Authorization: token,
-      content_type: :json
-    )
-  end
-
   # Get the bot's OAuth application's information
   def oauth_application(token)
     request(
@@ -279,20 +229,6 @@ module Discordrb::API
       nil,
       :get,
       "#{api_base}/oauth2/applications/@me",
-      Authorization: token
-    )
-  end
-
-  # Acknowledge that a message has been received
-  # The last acknowledged message will be sent in the ready packet,
-  # so this is an easy way to catch up on messages
-  def acknowledge_message(token, channel_id, message_id)
-    request(
-      :channels_cid_messages_mid_ack,
-      nil, # This endpoint is unavailable for bot accounts and thus isn't subject to its rate limit requirements.
-      :post,
-      "#{api_base}/channels/#{channel_id}/messages/#{message_id}/ack",
-      nil,
       Authorization: token
     )
   end
@@ -317,19 +253,6 @@ module Discordrb::API
       :get,
       "#{api_base}/gateway/bot",
       Authorization: token
-    )
-  end
-
-  # Validate a token (this request will fail if the token is invalid)
-  def validate_token(token)
-    request(
-      :auth_login,
-      nil,
-      :post,
-      "#{api_base}/auth/login",
-      {}.to_json,
-      Authorization: token,
-      content_type: :json
     )
   end
 

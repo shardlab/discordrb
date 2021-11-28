@@ -9,11 +9,11 @@ describe Discordrb::Channel do
   let(:data) { load_data_file(:text_channel) }
   # Instantiate the doubles here so we can apply mocks in the specs
   let(:bot) { double('bot') }
-  let(:server) { double('server', id: double) }
+  let(:guild) { double('guild', id: double) }
 
   subject(:channel) do
     allow(bot).to receive(:token) { 'fake token' }
-    described_class.new(data, bot, server)
+    described_class.new(data, bot, guild)
   end
 
   shared_examples 'a Channel property' do |property_name|
@@ -43,7 +43,7 @@ describe Discordrb::Channel do
     end
 
     context 'when toggled from true to false' do
-      subject(:channel) { described_class.new(data.merge('nsfw' => true), double, server) }
+      subject(:channel) { described_class.new(data.merge('nsfw' => true), double, guild) }
       it_behaves_like 'a Channel property', :nsfw do
         let(:property_value) { false }
       end
@@ -289,27 +289,27 @@ describe Discordrb::Channel do
 
   describe '#sort_after' do
     it 'should call the API' do
-      allow(server).to receive(:channels).and_return([])
-      allow(server).to receive(:id).and_return(double)
-      expect(Discordrb::API::Server).to receive(:update_channel_positions)
+      allow(guild).to receive(:channels).and_return([])
+      allow(guild).to receive(:id).and_return(double)
+      expect(Discordrb::API::Guild).to receive(:update_channel_positions)
 
       channel.sort_after
     end
 
     it 'should only send channels of its own type' do
       channels = Array.new(10) { |i| double("channel #{i}", type: i % 4, parent_id: nil, position: i, id: i) }
-      allow(server).to receive(:channels).and_return(channels)
-      allow(server).to receive(:id).and_return(double)
+      allow(guild).to receive(:channels).and_return(channels)
+      allow(guild).to receive(:id).and_return(double)
       non_text_channels = channels.reject { |e| e.type == 0 }
 
-      expect(Discordrb::API::Server).to receive(:update_channel_positions)
+      expect(Discordrb::API::Guild).to receive(:update_channel_positions)
         .with(any_args, an_array_excluding(*non_text_channels.map { |e| { id: e.id, position: instance_of(Integer) } }))
       channel.sort_after
     end
 
-    context 'when other is not on this server' do
+    context 'when other is not on this guild' do
       it 'should raise ArgumentError' do
-        other = double('other', server: double('other server'), resolve_id: double, category?: nil, type: channel.type)
+        other = double('other', guild: double('other guild'), resolve_id: double, category?: nil, type: channel.type)
         allow(bot).to receive(:channel).and_return(other)
         expect { channel.sort_after(other) }.to raise_error(ArgumentError)
       end
@@ -332,10 +332,10 @@ describe Discordrb::Channel do
     context 'when channel is in a category' do
       it 'should send parent_id' do
         category = double('category', id: 1)
-        other_channel = double('other', id: 2, resolve_id: double, type: channel.type, category?: nil, server: channel.server, parent: category, position: 5)
+        other_channel = double('other', id: 2, resolve_id: double, type: channel.type, category?: nil, guild: channel.guild, parent: category, position: 5)
         allow(category).to receive(:children).and_return [other_channel, channel]
         allow(bot).to receive(:channel).and_return(other_channel)
-        expect(Discordrb::API::Server).to receive(:update_channel_positions)
+        expect(Discordrb::API::Guild).to receive(:update_channel_positions)
           .with(any_args, [{ id: 2, position: 0 }, { id: channel.id, position: 1, parent_id: category.id }])
         channel.sort_after(other_channel)
       end
@@ -343,10 +343,10 @@ describe Discordrb::Channel do
 
     context 'when channel is not in a category' do
       it 'should send null' do
-        other_channel = double('other', id: 2, resolve_id: double, type: channel.type, category?: nil, server: channel.server, parent: nil, parent_id: nil, position: 5)
-        allow(server).to receive(:channels).and_return [other_channel, channel]
+        other_channel = double('other', id: 2, resolve_id: double, type: channel.type, category?: nil, guild: channel.guild, parent: nil, parent_id: nil, position: 5)
+        allow(guild).to receive(:channels).and_return [other_channel, channel]
         allow(bot).to receive(:channel).and_return(other_channel)
-        expect(Discordrb::API::Server).to receive(:update_channel_positions)
+        expect(Discordrb::API::Guild).to receive(:update_channel_positions)
           .with(any_args, [{ id: 2, position: 0 }, { id: channel.id, position: 1, parent_id: nil }])
         channel.sort_after(other_channel)
       end

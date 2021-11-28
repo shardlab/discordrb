@@ -5,8 +5,8 @@ require 'discordrb'
 describe Discordrb::Webhook do
   let(:token) { double('token') }
   let(:reason) { double('reason') }
-  let(:server) { double('server', member: double) }
-  let(:channel) { double('channel', server: server) }
+  let(:guild) { double('guild', member: double) }
+  let(:channel) { double('channel', guild: guild) }
   let(:bot) { double('bot', channel: channel, token: token) }
 
   subject(:webhook) do
@@ -38,7 +38,7 @@ describe Discordrb::Webhook do
       expect(webhook.id).to eq webhook_id
       expect(webhook.token).to eq webhook_token
       expect(webhook.avatar).to eq webhook_avatar
-      expect(webhook.server).to eq server
+      expect(webhook.guild).to eq guild
       expect(webhook.channel).to eq channel
     end
 
@@ -52,7 +52,7 @@ describe Discordrb::Webhook do
     context 'when webhook is from auth' do
       context 'when owner cached' do
         let(:member) { double('member') }
-        let(:server) { double('server', member: member) }
+        let(:guild) { double('guild', member: member) }
 
         it 'sets owner from cache' do
           expect(webhook.owner).to eq member
@@ -60,7 +60,7 @@ describe Discordrb::Webhook do
       end
 
       context 'when owner not cached' do
-        let(:server) { double('server', member: nil) }
+        let(:guild) { double('guild', member: nil) }
         let(:user) { double('user') }
         let(:bot) { double('bot', channel: channel, ensure_user: user) }
 

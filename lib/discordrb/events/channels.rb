@@ -24,10 +24,10 @@ module Discordrb::Events
     # @!attribute [r] id
     #   @return [Integer] the channel's unique ID.
     #   @see Channel#id
-    # @!attribute [r] server
-    #   @return [Server] the server the channel belongs to.
-    #   @see Channel#server
-    delegate :name, :server, :type, :owner_id, :recipients, :topic, :user_limit, :position, :permission_overwrites, to: :channel
+    # @!attribute [r] guild
+    #   @return [Guild] the guild the channel belongs to.
+    #   @see Channel#guild
+    delegate :name, :guild, :type, :owner_id, :recipients, :topic, :user_limit, :position, :permission_overwrites, to: :channel
 
     def initialize(data, bot)
       @bot = bot
@@ -77,8 +77,8 @@ module Discordrb::Events
     # @return [Integer] the channel's ID
     attr_reader :id
 
-    # @return [Server] the channel's server
-    attr_reader :server
+    # @return [Guild] the channel's guild
+    attr_reader :guild
 
     # @return [Integer, nil] the channel's owner ID if this is a group channel
     attr_reader :owner_id
@@ -92,7 +92,7 @@ module Discordrb::Events
       @name = data[:name]
       @is_private = data[:is_private]
       @id = data[:id].to_i
-      @server = bot.server(data[:guild_id].to_i) if data[:guild_id]
+      @guild = bot.guild(data[:guild_id].to_i) if data[:guild_id]
       @owner_id = bot.user(data[:owner_id]) if @type == 3
     end
   end
@@ -127,7 +127,7 @@ module Discordrb::Events
     # @return [Channel] the channel in question.
     attr_reader :channel
 
-    delegate :name, :server, :type, :owner_id, :recipients, :topic, :user_limit, :position, :permission_overwrites, to: :channel
+    delegate :name, :guild, :type, :owner_id, :recipients, :topic, :user_limit, :position, :permission_overwrites, to: :channel
 
     # @return [Recipient] the recipient that was added/removed from the group
     attr_reader :recipient

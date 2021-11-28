@@ -26,10 +26,10 @@ module Discordrb::Light
     end
   end
 
-  # A server that only has an icon, a name, and an ID associated with it, like for example an integration's server.
-  class UltraLightServer
+  # A guild that only has an icon, a name, and an ID associated with it, like for example an integration's guild.
+  class UltraLightGuild
     include Discordrb::IDObject
-    include Discordrb::ServerAttributes
+    include Discordrb::GuildAttributes
 
     # @!visibility private
     def initialize(data, bot)
@@ -42,13 +42,13 @@ module Discordrb::Light
     end
   end
 
-  # Represents a light server which only has a fraction of the properties of any other server.
-  class LightServer < UltraLightServer
-    # @return [true, false] whether or not the LightBot this server belongs to is the owner of the server.
+  # Represents a light guild which only has a fraction of the properties of any other guild.
+  class LightGuild < UltraLightGuild
+    # @return [true, false] whether or not the LightBot this guild belongs to is the owner of the guild.
     attr_reader :bot_is_owner
     alias_method :bot_is_owner?, :bot_is_owner
 
-    # @return [Discordrb::Permissions] the permissions the LightBot has on this server
+    # @return [Discordrb::Permissions] the permissions the LightBot has on this guild
     attr_reader :bot_permissions
 
     # @!visibility private

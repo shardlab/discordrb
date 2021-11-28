@@ -45,15 +45,15 @@ module Discordrb
     end
   end
 
-  # Server integration
+  # Guild integration
   class Integration
     include IDObject
 
     # @return [String] the integration name
     attr_reader :name
 
-    # @return [Server] the server the integration is linked to
-    attr_reader :server
+    # @return [Guild] the guild the integration is linked to
+    attr_reader :guild
 
     # @return [User] the user the integration is linked to
     attr_reader :user
@@ -80,7 +80,7 @@ module Discordrb
     # @return [Time] the time the integration was synced at
     attr_reader :synced_at
 
-    # @return [Symbol] the behaviour of expiring subscribers (:remove = Remove User from role; :kick = Kick User from server)
+    # @return [Symbol] the behaviour of expiring subscribers (:remove = Remove User from role; :kick = Kick User from guild)
     attr_reader :expire_behaviour
     alias_method :expire_behavior, :expire_behaviour
 
@@ -93,11 +93,11 @@ module Discordrb
     # @return [true, false] has this integration been revoked.
     attr_reader :revoked
 
-    def initialize(data, bot, server)
+    def initialize(data, bot, guild)
       @bot = bot
 
       @name = data[:name]
-      @server = server
+      @guild = guild
       @id = data[:id].to_i
       @enabled = data[:enabled]
       @syncing = data[:syncing]

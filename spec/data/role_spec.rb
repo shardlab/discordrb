@@ -3,11 +3,11 @@
 require 'discordrb'
 
 describe Discordrb::Role do
-  let(:server) { double('server', id: double) }
+  let(:guild) { double('guild', id: double) }
   let(:bot) { double('bot', token: double) }
 
   subject(:role) do
-    described_class.new(role_data, bot, server)
+    described_class.new(role_data, bot, guild)
   end
 
   fixture :role_data, %i[role]
@@ -15,8 +15,8 @@ describe Discordrb::Role do
   describe '#sort_above' do
     context 'when other is nil' do
       it 'sorts the role to position 1' do
-        allow(server).to receive(:update_role_positions)
-        allow(server).to receive(:roles).and_return [
+        allow(guild).to receive(:update_role_positions)
+        allow(guild).to receive(:roles).and_return [
           double(id: 0, position: 0),
           double(id: 1, position: 1)
         ]
@@ -29,9 +29,9 @@ describe Discordrb::Role do
     context 'when other is given' do
       it 'sorts above other' do
         other = double(id: 1, position: 1, resolve_id: 1)
-        allow(server).to receive(:update_role_positions)
-        allow(server).to receive(:role).and_return other
-        allow(server).to receive(:roles).and_return [
+        allow(guild).to receive(:update_role_positions)
+        allow(guild).to receive(:role).and_return other
+        allow(guild).to receive(:roles).and_return [
           double(id: 0, position: 0),
           other,
           double(id: 2, position: 2)

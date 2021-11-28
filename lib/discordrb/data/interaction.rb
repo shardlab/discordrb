@@ -24,8 +24,8 @@ module Discordrb
     # @return [User] The user that initiated the interaction.
     attr_reader :user
 
-    # @return [Integer, nil] The ID of the server this interaction originates from.
-    attr_reader :server_id
+    # @return [Integer, nil] The ID of the guild this interaction originates from.
+    attr_reader :guild_id
 
     # @return [Integer] The ID of the channel this interaction originates from.
     attr_reader :channel_id
@@ -59,10 +59,10 @@ module Discordrb
       @type = data[:type]
       @message = data[:message]
       @data = data[:data]
-      @server_id = data[:guild_id]&.to_i
+      @guild_id = data[:guild_id]&.to_i
       @channel_id = data[:channel_id]&.to_i
       @user = if data[:member]
-                data[:member][:guild_id] = @server_id
+                data[:member][:guild_id] = @guild_id
                 Discordrb::Member.new(data[:member], nil, bot)
               else
                 bot.ensure_user(data[:user])
@@ -225,14 +225,14 @@ module Discordrb
       nil
     end
 
-    # @return [Server, nil] This will be nil for interactions that occur in DM channels or servers where the bot
+    # @return [Guild, nil] This will be nil for interactions that occur in DM channels or guilds where the bot
     #   does not have the `bot` scope.
-    def server
-      @bot.server(@server_id)
+    def guild
+      @bot.guild(@guild_id)
     end
 
     # @return [Channel, nil]
-    # @raise [Errors::NoPermission] When the bot is not in the server associated with this interaction.
+    # @raise [Errors::NoPermission] When the bot is not in the guild associated with this interaction.
     def channel
       @bot.channel(@channel_id)
     end
@@ -263,7 +263,7 @@ module Discordrb
     attr_reader :application_id
 
     # @return [Integer, nil]
-    attr_reader :server_id
+    attr_reader :guild_id
 
     # @return [String]
     attr_reader :name
@@ -278,11 +278,11 @@ module Discordrb
     attr_reader :options
 
     # @!visibility private
-    def initialize(data, bot, server_id = nil)
+    def initialize(data, bot, guild_id = nil)
       @bot = bot
       @id = data[:id].to_i
       @application_id = data[:application_id].to_i
-      @server_id = server_id.to_i
+      @guild_id = guild_id.to_i
 
       @name = data[:name]
       @description = data[:description]
@@ -296,13 +296,13 @@ module Discordrb
     # @yieldparam (see Bot#edit_application_command)
     # @return (see Bot#edit_application_command)
     def edit(name: nil, description: nil, default_permission: nil, &block)
-      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, &block)
+      @bot.edit_application_command(@id, guild_id: @guild_id, name: name, description: description, default_permission: default_permission, &block)
     end
 
     # Delete this application command.
     # @return (see Bot#delete_application_command)
     def delete
-      @bot.delete_application_command(@id, server_id: @server_id)
+      @bot.delete_application_command(@id, guild_id: @guild_id)
     end
   end
 
@@ -507,7 +507,7 @@ module Discordrb
 
         @message_reference = data[:message_reference]
 
-        @server_id = data[:guild_id]&.to_i
+        @guild_id = data[:guild_id]&.to_i
 
         @timestamp = Time.parse(data[:timestamp]) if data[:timestamp]
         @edited_timestamp = data[:edited_timestamp].nil? ? nil : Time.parse(data[:edited_timestamp])
@@ -536,19 +536,19 @@ module Discordrb
       end
 
       # @return [Member, nil] This will return nil if the bot does not have access to the
-      #   server the interaction originated in.
+      #   guild the interaction originated in.
       def member
-        server&.member(@user.id)
+        guild&.member(@user.id)
       end
 
-      # @return [Server, nil] This will return nil if the bot does not have access to the
-      #   server the interaction originated in.
-      def server
-        @bot.server(@server_id)
+      # @return [Guild, nil] This will return nil if the bot does not have access to the
+      #   guild the interaction originated in.
+      def guild
+        @bot.guild(@guild_id)
       end
 
       # @return [Channel] The channel the interaction originates from.
-      # @raise [Errors::NoPermission] When the bot is not in the server associated with this interaction.
+      # @raise [Errors::NoPermission] When the bot is not in the guild associated with this interaction.
       def channel
         @bot.channel(@channel_id)
       end
@@ -576,7 +576,7 @@ module Discordrb
 
       # @!visibility private
       def inspect
-        "<Interaction::Message content=#{@content.inspect} embeds=#{@embeds.inspect} channel_id=#{@channel_id} server_id=#{@server_id} author=#{@author.inspect}>"
+        "<Interaction::Message content=#{@content.inspect} embeds=#{@embeds.inspect} channel_id=#{@channel_id} guild_id=#{@guild_id} author=#{@author.inspect}>"
       end
     end
   end

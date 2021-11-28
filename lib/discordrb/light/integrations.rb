@@ -35,21 +35,21 @@ module Discordrb::Light
     end
   end
 
-  # An integration of a connection into a particular server, for example being a member of a subscriber-only Twitch
-  # server.
+  # An integration of a connection into a particular guild, for example being a member of a subscriber-only Twitch
+  # guild.
   class Integration
     include Discordrb::IDObject
 
-    # @return [UltraLightServer] the server associated with this integration
-    attr_reader :server
+    # @return [UltraLightGuild] the guild associated with this integration
+    attr_reader :guild
 
     # @note The connection returned by this method will have no integrations itself, as Discord doesn't provide that
     #   data. Also, it will always be considered not revoked.
-    # @return [Connection] the server's underlying connection (for a Twitch subscriber-only server, it would be the
-    #   Twitch account connection of the server owner).
-    attr_reader :server_connection
+    # @return [Connection] the guild's underlying connection (for a Twitch subscriber-only guild, it would be the
+    #   Twitch account connection of the guild owner).
+    attr_reader :guild_connection
 
-    # @return [Connection] the connection integrated with the server (i.e. your connection)
+    # @return [Connection] the connection integrated with the guild (i.e. your connection)
     attr_reader :integrated_connection
 
     # @!visibility private
@@ -57,7 +57,7 @@ module Discordrb::Light
       @bot = bot
       @integrated_connection = integrated
 
-      @server = UltraLightServer.new(data['guild'], bot)
+      @guild = UltraLightGuild.new(data['guild'], bot)
 
       # Restructure the given data so we can reuse the Connection initializer
       restructured = {}
@@ -67,7 +67,7 @@ module Discordrb::Light
       restructured['name'] = data['account']['name']
       restructured['integrations'] = []
 
-      @server_connection = Connection.new(restructured, bot)
+      @guild_connection = Connection.new(restructured, bot)
     end
   end
 end

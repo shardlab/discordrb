@@ -5,10 +5,10 @@ require 'discordrb'
 # Here, we'll demonstrate one way to achieve a dynamic command prefix
 # in different contexts for your CommandBot.
 # We'll use a frozen hash configuration, but you're free to implement
-# any kind of lookup. (ex: server, channel, user, phase of the moon)
+# any kind of lookup. (ex: guild, channel, user, phase of the moon)
 
 # Define a map of Channel ID => Prefix string.
-# Here, we'll be using channel IDs so that it's easy to test in one server.
+# Here, we'll be using channel IDs so that it's easy to test in one guild.
 PREFIXES = {
   345687437722386433 => '!',
   83281822225530880 => '?'

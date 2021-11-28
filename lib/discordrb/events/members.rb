@@ -4,8 +4,8 @@ require 'discordrb/events/generic'
 require 'discordrb/data'
 
 module Discordrb::Events
-  # Generic subclass for server member events (add/update/delete)
-  class ServerMemberEvent < Event
+  # Generic subclass for guild member events (add/update/delete)
+  class GuildMemberEvent < Event
     # @return [Member] the member in question.
     attr_reader :user
     alias_method :member, :user
@@ -13,14 +13,14 @@ module Discordrb::Events
     # @return [Array<Role>] the member's roles.
     attr_reader :roles
 
-    # @return [Server] the server on which the event happened.
-    attr_reader :server
+    # @return [Guild] the guild on which the event happened.
+    attr_reader :guild
 
     def initialize(data, bot)
       @bot = bot
 
-      @server = bot.server(data[:guild_id].to_i)
-      return unless @server
+      @guild = bot.guild(data[:guild_id].to_i)
+      return unless @guild
 
       init_user(data, bot)
       init_roles(data, bot)
@@ -30,25 +30,25 @@ module Discordrb::Events
 
     def init_user(data, _)
       user_id = data[:user][:id].to_i
-      @user = @server.member(user_id)
+      @user = @guild.member(user_id)
     end
 
     def init_roles(data, _)
-      @roles = [@server.role(@server.id)]
+      @roles = [@guild.role(@guild.id)]
       return unless data[:roles]
 
       data[:roles].each do |element|
         role_id = element.to_i
-        @roles << @server.roles.find { |r| r.id == role_id }
+        @roles << @guild.roles.find { |r| r.id == role_id }
       end
     end
   end
 
   # Generic event handler for member events
-  class ServerMemberEventHandler < EventHandler
+  class GuildMemberEventHandler < EventHandler
     def matches?(event)
       # Check for the proper event type
-      return false unless event.is_a? ServerMemberEvent
+      return false unless event.is_a? GuildMemberEvent
 
       [
         matches_all(@attributes[:username], event.user.name) do |a, e|
@@ -64,22 +64,22 @@ module Discordrb::Events
 
   # Member joins
   # @see Discordrb::EventContainer#member_join
-  class ServerMemberAddEvent < ServerMemberEvent; end
+  class GuildMemberAddEvent < GuildMemberEvent; end
 
-  # Event handler for {ServerMemberAddEvent}
-  class ServerMemberAddEventHandler < ServerMemberEventHandler; end
+  # Event handler for {GuildMemberAddEvent}
+  class GuildMemberAddEventHandler < GuildMemberEventHandler; end
 
   # Member is updated (roles added or deleted)
   # @see Discordrb::EventContainer#member_update
-  class ServerMemberUpdateEvent < ServerMemberEvent; end
+  class GuildMemberUpdateEvent < GuildMemberEvent; end
 
-  # Event handler for {ServerMemberUpdateEvent}
-  class ServerMemberUpdateEventHandler < ServerMemberEventHandler; end
+  # Event handler for {GuildMemberUpdateEvent}
+  class GuildMemberUpdateEventHandler < GuildMemberEventHandler; end
 
   # Member leaves
   # @see Discordrb::EventContainer#member_leave
-  class ServerMemberDeleteEvent < ServerMemberEvent
-    # Override init_user to account for the deleted user on the server
+  class GuildMemberDeleteEvent < GuildMemberEvent
+    # Override init_user to account for the deleted user on the guild
     def init_user(data, bot)
       @user = Discordrb::User.new(data[:user], bot)
     end
@@ -88,6 +88,6 @@ module Discordrb::Events
     attr_reader :user
   end
 
-  # Event handler for {ServerMemberDeleteEvent}
-  class ServerMemberDeleteEventHandler < ServerMemberEventHandler; end
+  # Event handler for {GuildMemberDeleteEvent}
+  class GuildMemberDeleteEventHandler < GuildMemberEventHandler; end
 end

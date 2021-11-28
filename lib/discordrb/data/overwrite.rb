@@ -32,7 +32,7 @@ module Discordrb
     #   deny.can_create_instant_invite = true
     #
     #   # Find some role by name
-    #   role = server.roles.find { |r| r.name == 'some role' }
+    #   role = guild.roles.find { |r| r.name == 'some role' }
     #
     #   Overwrite.new(role, allow: allow, deny: deny)
     # @example Create an overwrite by ID and permissions bits

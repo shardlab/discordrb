@@ -246,7 +246,7 @@ module Discordrb::Voice
       Thread.current[:discordrb_name] = 'vws-i'
 
       # Send the init packet
-      send_init(@channel.server.id, @bot.profile.id, @session, @token)
+      send_init(@channel.guild.id, @bot.profile.id, @session, @token)
     end
 
     # @!visibility private

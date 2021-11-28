@@ -6,8 +6,8 @@ require 'discordrb/data'
 module Discordrb::Events
   # Event raised when a webhook is updated
   class WebhookUpdateEvent < Event
-    # @return [Server] the server where the webhook updated
-    attr_reader :server
+    # @return [Guild] the guild where the webhook updated
+    attr_reader :guild
 
     # @return [Channel] the channel the webhook is associated to
     attr_reader :channel
@@ -15,7 +15,7 @@ module Discordrb::Events
     def initialize(data, bot)
       @bot = bot
 
-      @server = bot.server(data[:guild_id].to_i)
+      @guild = bot.guild(data[:guild_id].to_i)
       @channel = bot.channel(data[:channel_id].to_i)
     end
   end
@@ -27,7 +27,7 @@ module Discordrb::Events
       return false unless event.is_a? WebhookUpdateEvent
 
       [
-        matches_all(@attributes[:server], event.server) do |a, e|
+        matches_all(@attributes[:guild], event.guild) do |a, e|
           a == case a
                when String
                  e.name

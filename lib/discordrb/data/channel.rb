@@ -71,7 +71,7 @@ module Discordrb
     end
 
     # @!visibility private
-    def initialize(data, bot, server = nil)
+    def initialize(data, bot, guild = nil)
       @bot = bot
       # data is sometimes a Hash and other times an array of Hashes, you only want the last one if it's an array
       data = data[-1] if data.is_a?(Array)
@@ -98,8 +98,8 @@ module Discordrb
         end
       else
         @name = data[:name]
-        @server_id = server&.id || data[:guild_id].to_i
-        @server = server
+        @guild_id = guild&.id || data[:guild_id].to_i
+        @guild = guild
       end
 
       @nsfw = data[:nsfw] || false
@@ -108,17 +108,17 @@ module Discordrb
       process_permission_overwrites(data[:permission_overwrites])
     end
 
-    # @return [Server, nil] the server this channel is on. If this channel is a PM channel, it will be nil.
-    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    # @return [Guild, nil] the guild this channel is on. If this channel is a PM channel, it will be nil.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for guilds in which the bot is not
     #   authorized with the `bot` scope.
-    def server
-      return @server if @server
+    def guild
+      return @guild if @guild
       return nil if private?
 
-      @server = @bot.server(@server_id)
-      raise Discordrb::Errors::NoPermission, 'The bot does not have access to this server' unless @server
+      @guild = @bot.guild(@guild_id)
+      raise Discordrb::Errors::NoPermission, 'The bot does not have access to this guild' unless @guild
 
-      @server
+      @guild
     end
 
     # @return [true, false] whether or not this channel is a text channel
@@ -191,7 +191,7 @@ module Discordrb
       if other
         raise ArgumentError, 'Can only sort a channel after a channel of the same type!' unless other.category? || (@type == other.type)
 
-        raise ArgumentError, 'Can only sort a channel after a channel in the same server!' unless other.server == server
+        raise ArgumentError, 'Can only sort a channel after a channel in the same guild!' unless other.guild == guild
 
         # Store `others` parent (or if `other` is a category itself)
         parent = if category? && other.category?
@@ -212,7 +212,7 @@ module Discordrb
       ids = if parent
               parent.children
             else
-              server.channels.reject(&:parent_id).select { |c| c.type == @type }
+              guild.channels.reject(&:parent_id).select { |c| c.type == @type }
             end.sort_by(&:position).map(&:id)
 
       # Move our channel ID after the target ID by deleting it,
@@ -238,7 +238,7 @@ module Discordrb
         move_argument << hash
       end
 
-      client.modify_guild_channel_positions(@server_id, move_argument, reason: reason || :undef)
+      client.modify_guild_channel_positions(@guild_id, move_argument, reason: reason || :undef)
     end
 
     # Sets whether this channel is NSFW
@@ -308,7 +308,7 @@ module Discordrb
     def children
       return [] unless category?
 
-      server.channels.select { |c| c.parent_id == id }
+      guild.channels.select { |c| c.parent_id == id }
     end
 
     alias_method :channels, :children
@@ -337,7 +337,7 @@ module Discordrb
 
     # @return [true, false] whether or not this channel is the default channel
     def default_channel?
-      server.default_channel == self
+      guild.default_channel == self
     end
 
     alias_method :default?, :default_channel?
@@ -452,7 +452,7 @@ module Discordrb
     end
 
     # Sets this channel's bitrate.
-    # @param bitrate [Integer] The new bitrate (in bps). Number has to be between 8000-96000 (128000 for VIP servers)
+    # @param bitrate [Integer] The new bitrate (in bps). Number has to be between 8000-96000 (128000 for VIP guilds)
     def bitrate=(bitrate)
       raise 'Tried to set bitrate on text channel' if text?
 
@@ -544,9 +544,9 @@ module Discordrb
     # @return [Array<Member>] the users in this channel
     def users
       if text?
-        server.online_members(include_idle: true).select { |u| u.can_read_messages? self }
+        guild.online_members(include_idle: true).select { |u| u.can_read_messages? self }
       elsif voice?
-        server.voice_states.map { |id, voice_state| server.member(id) if !voice_state.voice_channel.nil? && voice_state.voice_channel.id == @id }.compact
+        guild.voice_states.map { |id, voice_state| guild.member(id) if !voice_state.voice_channel.nil? && voice_state.voice_channel.id == @id }.compact
       end
     end
 
@@ -696,10 +696,10 @@ module Discordrb
     # @param name [String] the default name of this webhook.
     # @param avatar [String] the default avatar URL to give this webhook.
     # @param reason [String] the reason for the webhook creation.
-    # @raise [ArgumentError] if the channel isn't a text channel in a server.
+    # @raise [ArgumentError] if the channel isn't a text channel in a guild.
     # @return [Webhook] the created webhook.
     def create_webhook(name, avatar = nil, reason = nil)
-      raise ArgumentError, 'Tried to create a webhook in a non-server channel' unless server
+      raise ArgumentError, 'Tried to create a webhook in a non-guild channel' unless guild
       raise ArgumentError, 'Tried to create a webhook in a non-text channel' unless text?
 
       resp = @bot.client.create_webhook(@id, name: name, avatar: avatar, reason: reason)
@@ -709,7 +709,7 @@ module Discordrb
     # Requests a list of Webhooks on the channel.
     # @return [Array<Webhook>] webhooks on the channel.
     def webhooks
-      raise 'Tried to request webhooks from a non-server channel' unless server
+      raise 'Tried to request webhooks from a non-guild channel' unless guild
 
       @bot.client.get_channel_webhooks(@id).map { |data| Webhook.new(data, @bot) }
     end
@@ -717,14 +717,14 @@ module Discordrb
     # Requests a list of Invites to the channel.
     # @return [Array<Invite>] invites to the channel.
     def invites
-      raise 'Tried to request invites from a non-server channel' unless server
+      raise 'Tried to request invites from a non-guild channel' unless guild
 
       @bot.client.get_channel_invites(@id).map { |data| Invite.new(data, @bot) }
     end
 
     # The default `inspect` method is overwritten to give more useful output.
     def inspect
-      "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} server=#{@server || @server_id}>"
+      "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} guild=#{@guild || @guild_id}>"
     end
 
     # Adds a recipient to a group channel.
@@ -769,7 +769,7 @@ module Discordrb
 
     # @return [String] a URL that a user can use to navigate to this channel in the client
     def link
-      "https://discord.com/channels/#{@server_id || '@me'}/#{@channel.id}"
+      "https://discord.com/channels/#{@guild_id || '@me'}/#{@channel.id}"
     end
 
     alias_method :jump_link, :link

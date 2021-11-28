@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 module Discordrb
-  # Server emoji
+  # Guild emoji
   class Emoji
     include IDObject
 
     # @return [String] the emoji name
     attr_reader :name
 
-    # @return [Server, nil] the server of this emoji
-    attr_reader :server
+    # @return [Guild, nil] the guild of this emoji
+    attr_reader :guild
 
-    # @return [Array<Role>, nil] roles this emoji is active for, or nil if the emoji's server is unknown
+    # @return [Array<Role>, nil] roles this emoji is active for, or nil if the emoji's guild is unknown
     attr_reader :roles
 
     # @return [true, false] if the emoji is animated
@@ -19,16 +19,16 @@ module Discordrb
     alias_method :animated?, :animated
 
     # @!visibility private
-    def initialize(data, bot, server = nil)
+    def initialize(data, bot, guild = nil)
       @bot = bot
       @roles = nil
 
       @name = data[:name]
-      @server = server
+      @guild = guild
       @id = data[:id].nil? ? nil : data[:id].to_i
       @animated = data[:animated]
 
-      process_roles(data[:roles]) if server
+      process_roles(data[:roles]) if guild
     end
 
     # ID or name based comparison
@@ -74,7 +74,7 @@ module Discordrb
       return unless roles
 
       roles.each do |role_id|
-        role = server.role(role_id)
+        role = guild.role(role_id)
         @roles << role
       end
     end

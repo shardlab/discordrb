@@ -6,7 +6,7 @@ require 'discordrb/data'
 module Discordrb::Events
   # Event raised when a user's voice state updates
   class VoiceStateUpdateEvent < Event
-    attr_reader :user, :token, :suppress, :session_id, :self_mute, :self_deaf, :mute, :deaf, :server, :channel
+    attr_reader :user, :token, :suppress, :session_id, :self_mute, :self_deaf, :mute, :deaf, :guild, :channel
 
     # @return [Channel, nil] the old channel this user was on, or nil if the user is newly joining voice.
     attr_reader :old_channel
@@ -21,8 +21,8 @@ module Discordrb::Events
       @self_deaf = data[:self_deaf]
       @mute = data[:mute]
       @deaf = data[:deaf]
-      @server = bot.server(data[:guild_id].to_i)
-      return unless @server
+      @guild = bot.guild(data[:guild_id].to_i)
+      return unless @guild
 
       @channel = bot.channel(data[:channel_id].to_i) if data[:channel_id]
       @old_channel = bot.channel(old_channel_id) if old_channel_id

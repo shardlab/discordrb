@@ -39,7 +39,7 @@ module Discordrb
       register_event(MessageEvent, attributes, block)
     end
 
-    # This **event** is raised when the READY packet is received, i.e. servers and channels have finished
+    # This **event** is raised when the READY packet is received, i.e. guilds and channels have finished
     # initialization. It's the recommended way to do things when the bot has finished starting up.
     # @param attributes [Hash] Event attributes, none in this particular case
     # @yield The block is executed when the event is raised.
@@ -265,13 +265,13 @@ module Discordrb
     end
 
     # This **event** is raised when a user's voice state changes. This includes when a user joins, leaves, or
-    # moves between voice channels, as well as their mute and deaf status for themselves and on the server.
+    # moves between voice channels, as well as their mute and deaf status for themselves and on the guild.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, User] :from Matches the user that sent the message.
     # @option attributes [String, Integer, Channel] :channel Matches the voice channel the user has joined.
     # @option attributes [String, Integer, Channel] :old_channel Matches the voice channel the user was in previously.
-    # @option attributes [true, false] :mute Matches whether or not the user is muted server-wide.
-    # @option attributes [true, false] :deaf Matches whether or not the user is deafened server-wide.
+    # @option attributes [true, false] :mute Matches whether or not the user is muted guild-wide.
+    # @option attributes [true, false] :deaf Matches whether or not the user is deafened guild-wide.
     # @option attributes [true, false] :self_mute Matches whether or not the user is muted by the bot.
     # @option attributes [true, false] :self_deaf Matches whether or not the user is deafened by the bot.
     # @yield The block is executed when the event is raised.
@@ -281,9 +281,9 @@ module Discordrb
       register_event(VoiceStateUpdateEvent, attributes, block)
     end
 
-    # This **event** is raised when first connecting to a server's voice channel.
+    # This **event** is raised when first connecting to a guild's voice channel.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, User] :from Matches the server that the update is for.
+    # @option attributes [String, Integer, User] :from Matches the guild that the update is for.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [VoiceServerUpdateEvent] The event that was raised.
     # @return [VoiceServerUpdateEventHandler] The event handler that was registered.
@@ -291,14 +291,14 @@ module Discordrb
       register_event(VoiceServerUpdateEvent, attributes, block)
     end
 
-    # This **event** is raised when a new user joins a server.
+    # This **event** is raised when a new user joins a guild.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String] :username Matches the username of the joined user.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerMemberAddEvent] The event that was raised.
-    # @return [ServerMemberAddEventHandler] the event handler that was registered.
+    # @yieldparam event [GuildMemberAddEvent] The event that was raised.
+    # @return [GuildMemberAddEventHandler] the event handler that was registered.
     def member_join(attributes = {}, &block)
-      register_event(ServerMemberAddEvent, attributes, block)
+      register_event(GuildMemberAddEvent, attributes, block)
     end
 
     # This **event** is raised when a member update happens. This includes when a members nickname
@@ -306,26 +306,26 @@ module Discordrb
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String] :username Matches the username of the updated user.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerMemberUpdateEvent] The event that was raised.
-    # @return [ServerMemberUpdateEventHandler] the event handler that was registered.
+    # @yieldparam event [GuildMemberUpdateEvent] The event that was raised.
+    # @return [GuildMemberUpdateEventHandler] the event handler that was registered.
     def member_update(attributes = {}, &block)
-      register_event(ServerMemberUpdateEvent, attributes, block)
+      register_event(GuildMemberUpdateEvent, attributes, block)
     end
 
-    # This **event** is raised when a member leaves a server.
+    # This **event** is raised when a member leaves a guild.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String] :username Matches the username of the member.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerMemberDeleteEvent] The event that was raised.
-    # @return [ServerMemberDeleteEventHandler] the event handler that was registered.
+    # @yieldparam event [GuildMemberDeleteEvent] The event that was raised.
+    # @return [GuildMemberDeleteEventHandler] the event handler that was registered.
     def member_leave(attributes = {}, &block)
-      register_event(ServerMemberDeleteEvent, attributes, block)
+      register_event(GuildMemberDeleteEvent, attributes, block)
     end
 
-    # This **event** is raised when a user is banned from a server.
+    # This **event** is raised when a user is banned from a guild.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, User] :user Matches the user that was banned.
-    # @option attributes [String, Integer, Server] :server Matches the server from which the user was banned.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild from which the user was banned.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [UserBanEvent] The event that was raised.
     # @return [UserBanEventHandler] the event handler that was registered.
@@ -333,10 +333,10 @@ module Discordrb
       register_event(UserBanEvent, attributes, block)
     end
 
-    # This **event** is raised when a user is unbanned from a server.
+    # This **event** is raised when a user is unbanned from a guild.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, User] :user Matches the user that was unbanned.
-    # @option attributes [String, Integer, Server] :server Matches the server from which the user was unbanned.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild from which the user was unbanned.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [UserUnbanEvent] The event that was raised.
     # @return [UserUnbanEventHandler] the event handler that was registered.
@@ -344,118 +344,118 @@ module Discordrb
       register_event(UserUnbanEvent, attributes, block)
     end
 
-    # This **event** is raised when a server is created respective to the bot, i.e. the bot joins a server or creates
+    # This **event** is raised when a guild is created respective to the bot, i.e. the bot joins a guild or creates
     # a new one itself.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, Server] :server Matches the server that was created.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild that was created.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerCreateEvent] The event that was raised.
-    # @return [ServerCreateEventHandler] the event handler that was registered.
-    def server_create(attributes = {}, &block)
-      register_event(ServerCreateEvent, attributes, block)
+    # @yieldparam event [GuildCreateEvent] The event that was raised.
+    # @return [GuildCreateEventHandler] the event handler that was registered.
+    def guild_create(attributes = {}, &block)
+      register_event(GuildCreateEvent, attributes, block)
     end
 
-    # This **event** is raised when a server is updated, for example if the name or region has changed.
+    # This **event** is raised when a guild is updated, for example if the name or region has changed.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, Server] :server Matches the server that was updated.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild that was updated.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerUpdateEvent] The event that was raised.
-    # @return [ServerUpdateEventHandler] the event handler that was registered.
-    def server_update(attributes = {}, &block)
-      register_event(ServerUpdateEvent, attributes, block)
+    # @yieldparam event [GuildUpdateEvent] The event that was raised.
+    # @return [GuildUpdateEventHandler] the event handler that was registered.
+    def guild_update(attributes = {}, &block)
+      register_event(GuildUpdateEvent, attributes, block)
     end
 
-    # This **event** is raised when a server is deleted, or when the bot leaves a server. (These two cases are identical
+    # This **event** is raised when a guild is deleted, or when the bot leaves a guild. (These two cases are identical
     # to Discord.)
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, Server] :server Matches the server that was deleted.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild that was deleted.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerDeleteEvent] The event that was raised.
-    # @return [ServerDeleteEventHandler] the event handler that was registered.
-    def server_delete(attributes = {}, &block)
-      register_event(ServerDeleteEvent, attributes, block)
+    # @yieldparam event [GuildDeleteEvent] The event that was raised.
+    # @return [GuildDeleteEventHandler] the event handler that was registered.
+    def guild_delete(attributes = {}, &block)
+      register_event(GuildDeleteEvent, attributes, block)
     end
 
     # This **event** is raised when an emoji or collection of emojis is created/deleted/updated.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, Server] :server Matches the server.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerEmojiChangeEvent] The event that was raised.
-    # @return [ServerEmojiChangeEventHandler] the event handler that was registered.
-    def server_emoji(attributes = {}, &block)
-      register_event(ServerEmojiChangeEvent, attributes, block)
+    # @yieldparam event [GuildEmojiChangeEvent] The event that was raised.
+    # @return [GuildEmojiChangeEventHandler] the event handler that was registered.
+    def guild_emoji(attributes = {}, &block)
+      register_event(GuildEmojiChangeEvent, attributes, block)
     end
 
     # This **event** is raised when an emoji is created.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, Server] :server Matches the server.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild.
     # @option attributes [String, Integer] :id Matches the ID of the emoji.
     # @option attributes [String] :name Matches the name of the emoji.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerEmojiCreateEvent] The event that was raised.
-    # @return [ServerEmojiCreateEventHandler] the event handler that was registered.
-    def server_emoji_create(attributes = {}, &block)
-      register_event(ServerEmojiCreateEvent, attributes, block)
+    # @yieldparam event [GuildEmojiCreateEvent] The event that was raised.
+    # @return [GuildEmojiCreateEventHandler] the event handler that was registered.
+    def guild_emoji_create(attributes = {}, &block)
+      register_event(GuildEmojiCreateEvent, attributes, block)
     end
 
     # This **event** is raised when an emoji is deleted.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, Server] :server Matches the server.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild.
     # @option attributes [String, Integer] :id Matches the ID of the emoji.
     # @option attributes [String] :name Matches the name of the emoji.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerEmojiDeleteEvent] The event that was raised.
-    # @return [ServerEmojiDeleteEventHandler] the event handler that was registered.
-    def server_emoji_delete(attributes = {}, &block)
-      register_event(ServerEmojiDeleteEvent, attributes, block)
+    # @yieldparam event [GuildEmojiDeleteEvent] The event that was raised.
+    # @return [GuildEmojiDeleteEventHandler] the event handler that was registered.
+    def guild_emoji_delete(attributes = {}, &block)
+      register_event(GuildEmojiDeleteEvent, attributes, block)
     end
 
     # This **event** is raised when an emoji is updated.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, Server] :server Matches the server.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild.
     # @option attributes [String, Integer] :id Matches the ID of the emoji.
     # @option attributes [String] :name Matches the name of the emoji.
     # @option attributes [String] :old_name Matches the name of the emoji before the update.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerEmojiUpdateEvent] The event that was raised.
-    # @return [ServerEmojiUpdateEventHandler] the event handler that was registered.
-    def server_emoji_update(attributes = {}, &block)
-      register_event(ServerEmojiUpdateEvent, attributes, block)
+    # @yieldparam event [GuildEmojiUpdateEvent] The event that was raised.
+    # @return [GuildEmojiUpdateEventHandler] the event handler that was registered.
+    def guild_emoji_update(attributes = {}, &block)
+      register_event(GuildEmojiUpdateEvent, attributes, block)
     end
 
     # This **event** is raised when a role is created.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String] :name Matches the role name.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerRoleCreateEvent] The event that was raised.
-    # @return [ServerRoleCreateEventHandler] the event handler that was registered.
-    def server_role_create(attributes = {}, &block)
-      register_event(ServerRoleCreateEvent, attributes, block)
+    # @yieldparam event [GuildRoleCreateEvent] The event that was raised.
+    # @return [GuildRoleCreateEventHandler] the event handler that was registered.
+    def guild_role_create(attributes = {}, &block)
+      register_event(GuildRoleCreateEvent, attributes, block)
     end
 
     # This **event** is raised when a role is deleted.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer] :id Matches the role ID.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerRoleDeleteEvent] The event that was raised.
-    # @return [ServerRoleDeleteEventHandler] the event handler that was registered.
-    def server_role_delete(attributes = {}, &block)
-      register_event(ServerRoleDeleteEvent, attributes, block)
+    # @yieldparam event [GuildRoleDeleteEvent] The event that was raised.
+    # @return [GuildRoleDeleteEventHandler] the event handler that was registered.
+    def guild_role_delete(attributes = {}, &block)
+      register_event(GuildRoleDeleteEvent, attributes, block)
     end
 
     # This **event** is raised when a role is updated.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String] :name Matches the role name.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ServerRoleUpdateEvent] The event that was raised.
-    # @return [ServerRoleUpdateEventHandler] the event handler that was registered.
-    def server_role_update(attributes = {}, &block)
-      register_event(ServerRoleUpdateEvent, attributes, block)
+    # @yieldparam event [GuildRoleUpdateEvent] The event that was raised.
+    # @return [GuildRoleUpdateEventHandler] the event handler that was registered.
+    def guild_role_update(attributes = {}, &block)
+      register_event(GuildRoleUpdateEvent, attributes, block)
     end
 
     # This **event** is raised when a webhook is updated.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, Server] :server Matches the server by name, ID or instance.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild by name, ID or instance.
     # @option attributes [String, Integer, Channel] :channel Matches the channel by name, ID or instance.
     # @option attribute [String, Integer, Webhook] :webhook Matches the webhook by name, ID or instance.
     # @yield The block is executed when the event is raised.
@@ -503,7 +503,7 @@ module Discordrb
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, User] :inviter Matches the user that created the invite.
     # @option attributes [String, Integer, Channel] :channel Matches the channel the invite was created for.
-    # @option attributes [String, Integer, Server] :server Matches the server the invite was created for.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild the invite was created for.
     # @option attributes [true, false] :temporary Matches whether the invite is temporary or not.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [InviteCreateEvent] The event that was raised.
@@ -515,7 +515,7 @@ module Discordrb
     # This **event** is raised when an invite is deleted.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, Channel] :channel Matches the channel the deleted invite was for.
-    # @option attributes [String, Integer, Server] :server Matches the server the deleted invite was for.
+    # @option attributes [String, Integer, Guild] :guild Matches the guild the deleted invite was for.
     # @yield The block is executed when the event is raised
     # @yieldparam event [InviteDeleteEvent] The event that was raised.
     # @return [InviteDeleteEventHandler] The event handler that was registered.
@@ -527,7 +527,7 @@ module Discordrb
     # @param attributes [Hash] The event's attributes.
     # @option attributes [Integer, Symbol, String] :type The interaction type, can be the integer value or the name
     #   of the key in {Discordrb::Interaction::TYPES}.
-    # @option attributes [String, Integer, Server, nil] :server The server where this event was created. `nil` for DM channels.
+    # @option attributes [String, Integer, Guild, nil] :guild The guild where this event was created. `nil` for DM channels.
     # @option attribtues [String, Integer, Channel] :channel The channel where this event was created.
     # @option attribtues [String, Integer, User] :user The user that triggered this event.
     # @yield The block is executed when the event is raised.

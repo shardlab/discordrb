@@ -30,7 +30,7 @@ module Discordrb::Events
               elsif channel.group?
                 bot.user(@user_id)
               else
-                bot.member(@channel.server.id, @user_id)
+                bot.member(@channel.guild.id, @user_id)
               end
 
       @timestamp = Time.at(data[:timestamp].to_i)

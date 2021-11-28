@@ -8,13 +8,13 @@ module Discordrb::Events
     # @return [User] the user that was banned
     attr_reader :user
 
-    # @return [Server] the server from which the user was banned
-    attr_reader :server
+    # @return [Guild] the guild from which the user was banned
+    attr_reader :guild
 
     # @!visibility private
     def initialize(data, bot)
       @user = bot.user(data[:user][:id].to_i)
-      @server = bot.server(data[:guild_id].to_i)
+      @guild = bot.guild(data[:guild_id].to_i)
       @bot = bot
     end
   end
@@ -38,7 +38,7 @@ module Discordrb::Events
             a == e
           end
         end,
-        matches_all(@attributes[:server], event.server) do |a, e|
+        matches_all(@attributes[:guild], event.guild) do |a, e|
           a == case a
                when String
                  e.name
@@ -52,7 +52,7 @@ module Discordrb::Events
     end
   end
 
-  # Raised when a user is unbanned from a server
+  # Raised when a user is unbanned from a guild
   class UserUnbanEvent < UserBanEvent; end
 
   # Event handler for {UserUnbanEvent}

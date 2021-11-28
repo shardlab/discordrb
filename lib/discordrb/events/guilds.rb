@@ -4,32 +4,32 @@ require 'discordrb/events/generic'
 require 'discordrb/data'
 
 module Discordrb::Events
-  # Generic subclass for server events (create/update/delete)
-  class ServerEvent < Event
-    # @return [Server] the server in question.
-    attr_reader :server
+  # Generic subclass for guild events (create/update/delete)
+  class GuildEvent < Event
+    # @return [Guild] the guild in question.
+    attr_reader :guild
 
     def initialize(data, bot)
       @bot = bot
 
-      init_server(data, bot)
+      init_guild(data, bot)
     end
 
-    # Initializes this event with server data. Should be overwritten in case the server doesn't exist at the time
-    # of event creation (e. g. {ServerDeleteEvent})
-    def init_server(data, bot)
-      @server = bot.server(data[:id].to_i)
+    # Initializes this event with guild data. Should be overwritten in case the guild doesn't exist at the time
+    # of event creation (e. g. {GuildDeleteEvent})
+    def init_guild(data, bot)
+      @guild = bot.guild(data[:id].to_i)
     end
   end
 
   # Generic event handler for member events
-  class ServerEventHandler < EventHandler
+  class GuildEventHandler < EventHandler
     def matches?(event)
       # Check for the proper event type
-      return false unless event.is_a? ServerEvent
+      return false unless event.is_a? GuildEvent
 
       [
-        matches_all(@attributes[:server], event.server) do |a, e|
+        matches_all(@attributes[:guild], event.guild) do |a, e|
           a == case a
                when String
                  e.name
@@ -43,83 +43,83 @@ module Discordrb::Events
     end
   end
 
-  # Server is created
-  # @see Discordrb::EventContainer#server_create
-  class ServerCreateEvent < ServerEvent; end
+  # Guild is created
+  # @see Discordrb::EventContainer#guild_create
+  class GuildCreateEvent < GuildEvent; end
 
-  # Event handler for {ServerCreateEvent}
-  class ServerCreateEventHandler < ServerEventHandler; end
+  # Event handler for {GuildCreateEvent}
+  class GuildCreateEventHandler < GuildEventHandler; end
 
-  # Server is updated (e.g. name changed)
-  # @see Discordrb::EventContainer#server_update
-  class ServerUpdateEvent < ServerEvent; end
+  # Guild is updated (e.g. name changed)
+  # @see Discordrb::EventContainer#guild_update
+  class GuildUpdateEvent < GuildEvent; end
 
-  # Event handler for {ServerUpdateEvent}
-  class ServerUpdateEventHandler < ServerEventHandler; end
+  # Event handler for {GuildUpdateEvent}
+  class GuildUpdateEventHandler < GuildEventHandler; end
 
-  # Server is deleted, the server was left because the bot was kicked, or the
-  # bot made itself leave the server.
-  # @see Discordrb::EventContainer#server_delete
-  class ServerDeleteEvent < ServerEvent
-    # @return [Integer] The ID of the server that was left.
-    attr_reader :server
+  # Guild is deleted, the guild was left because the bot was kicked, or the
+  # bot made itself leave the guild.
+  # @see Discordrb::EventContainer#guild_delete
+  class GuildDeleteEvent < GuildEvent
+    # @return [Integer] The ID of the guild that was left.
+    attr_reader :guild
 
-    # Override init_server to account for the deleted server
-    def init_server(data, _bot)
-      @server = data[:id].to_i
+    # Override init_guild to account for the deleted guild
+    def init_guild(data, _bot)
+      @guild = data[:id].to_i
     end
   end
 
-  # Event handler for {ServerDeleteEvent}
-  class ServerDeleteEventHandler < ServerEventHandler; end
+  # Event handler for {GuildDeleteEvent}
+  class GuildDeleteEventHandler < GuildEventHandler; end
 
   # Emoji is created/deleted/updated
-  class ServerEmojiChangeEvent < ServerEvent
-    # @return [Server] the server in question.
-    attr_reader :server
+  class GuildEmojiChangeEvent < GuildEvent
+    # @return [Guild] the guild in question.
+    attr_reader :guild
 
     # @return [Array<Emoji>] array of emojis.
     attr_reader :emoji
 
-    def initialize(server, data, bot)
+    def initialize(guild, data, bot)
       @bot = bot
-      @server = server
+      @guild = guild
       process_emoji(data)
     end
 
     # @!visibility private
     def process_emoji(data)
       @emoji = data[:emojis].map do |e|
-        @server.emoji[e[:id]]
+        @guild.emoji[e[:id]]
       end
     end
   end
 
   # Generic event helper for when an emoji is either created or deleted
-  class ServerEmojiCDEvent < ServerEvent
-    # @return [Server] the server in question.
-    attr_reader :server
+  class GuildEmojiCDEvent < GuildEvent
+    # @return [Guild] the guild in question.
+    attr_reader :guild
 
     # @return [Emoji] the emoji data.
     attr_reader :emoji
 
-    def initialize(server, emoji, bot)
+    def initialize(guild, emoji, bot)
       @bot = bot
       @emoji = emoji
-      @server = server
+      @guild = guild
     end
   end
 
   # Emoji is created
-  class ServerEmojiCreateEvent < ServerEmojiCDEvent; end
+  class GuildEmojiCreateEvent < GuildEmojiCDEvent; end
 
   # Emoji is deleted
-  class ServerEmojiDeleteEvent < ServerEmojiCDEvent; end
+  class GuildEmojiDeleteEvent < GuildEmojiCDEvent; end
 
   # Emoji is updated
-  class ServerEmojiUpdateEvent < ServerEvent
-    # @return [Server] the server in question.
-    attr_reader :server
+  class GuildEmojiUpdateEvent < GuildEvent
+    # @return [Guild] the guild in question.
+    attr_reader :guild
 
     # @return [Emoji, nil] the emoji data before the event.
     attr_reader :old_emoji
@@ -127,25 +127,25 @@ module Discordrb::Events
     # @return [Emoji, nil] the updated emoji data.
     attr_reader :emoji
 
-    def initialize(server, old_emoji, emoji, bot)
+    def initialize(guild, old_emoji, emoji, bot)
       @bot = bot
       @old_emoji = old_emoji
       @emoji = emoji
-      @server = server
+      @guild = guild
     end
   end
 
-  # Event handler for {ServerEmojiChangeEvent}
-  class ServerEmojiChangeEventHandler < ServerEventHandler; end
+  # Event handler for {GuildEmojiChangeEvent}
+  class GuildEmojiChangeEventHandler < GuildEventHandler; end
 
   # Generic handler for emoji create and delete
-  class ServerEmojiCDEventHandler < ServerEventHandler
+  class GuildEmojiCDEventHandler < GuildEventHandler
     def matches?(event)
       # Check for the proper event type
-      return false unless event.is_a? ServerEmojiCDEvent
+      return false unless event.is_a? GuildEmojiCDEvent
 
       [
-        matches_all(@attributes[:server], event.server) do |a, e|
+        matches_all(@attributes[:guild], event.guild) do |a, e|
           a == case a
                when String
                  e.name
@@ -161,20 +161,20 @@ module Discordrb::Events
     end
   end
 
-  # Event handler for {ServerEmojiCreateEvent}
-  class ServerEmojiCreateEventHandler < ServerEmojiCDEventHandler; end
+  # Event handler for {GuildEmojiCreateEvent}
+  class GuildEmojiCreateEventHandler < GuildEmojiCDEventHandler; end
 
-  # Event handler for {ServerEmojiDeleteEvent}
-  class ServerEmojiDeleteEventHandler < ServerEmojiCDEventHandler; end
+  # Event handler for {GuildEmojiDeleteEvent}
+  class GuildEmojiDeleteEventHandler < GuildEmojiCDEventHandler; end
 
-  # Event handler for {ServerEmojiUpdateEvent}
-  class ServerEmojiUpdateEventHandler < EventHandler
+  # Event handler for {GuildEmojiUpdateEvent}
+  class GuildEmojiUpdateEventHandler < EventHandler
     def matches?(event)
       # Check for the proper event type
-      return false unless event.is_a? ServerEmojiUpdateEvent
+      return false unless event.is_a? GuildEmojiUpdateEvent
 
       [
-        matches_all(@attributes[:server], event.server) do |a, e|
+        matches_all(@attributes[:guild], event.guild) do |a, e|
           a == case a
                when String
                  e.name

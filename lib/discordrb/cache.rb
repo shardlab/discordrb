@@ -13,7 +13,7 @@ module Discordrb
 
       @voice_regions = {}
 
-      @servers = {}
+      @guilds = {}
 
       @channels = {}
       @pm_channels = {}
@@ -34,11 +34,11 @@ module Discordrb
     # Gets a channel given its ID. This queries the internal channel cache, and if the channel doesn't
     # exist in there, it will get the data from Discord.
     # @param id [Integer] The channel ID for which to search for.
-    # @param server [Server] The server for which to search the channel for. If this isn't specified, it will be
+    # @param guild [Guild] The guild for which to search the channel for. If this isn't specified, it will be
     #   inferred using the API
     # @return [Channel, nil] The channel identified by the ID.
     # @raise Discordrb::Errors::NoPermission
-    def channel(id, server = nil)
+    def channel(id, guild = nil)
       id = id.resolve_id
 
       debug("Obtaining data for channel with id #{id}")
@@ -49,14 +49,14 @@ module Discordrb
       rescue Discordrb::Errors::UnknownChannel
         return nil
       end
-      channel = Channel.new(response, self, server)
+      channel = Channel.new(response, self, guild)
       @channels[id] = channel
     end
 
     alias_method :group_channel, :channel
 
     # Gets a user by its ID.
-    # @note This can only resolve users known by the bot (i.e. that share a server with the bot).
+    # @note This can only resolve users known by the bot (i.e. that share a guild with the bot).
     # @param id [Integer] The user ID that should be resolved.
     # @return [User, nil] The user identified by the ID, or `nil` if it couldn't be found.
     def user(id)
@@ -73,43 +73,43 @@ module Discordrb
       @users[id] = user
     end
 
-    # Gets a server by its ID.
-    # @note This can only resolve servers the bot is currently in.
-    # @param id [Integer] The server ID that should be resolved.
-    # @return [Server, nil] The server identified by the ID, or `nil` if it couldn't be found.
-    def server(id)
+    # Gets a guild by its ID.
+    # @note This can only resolve guilds the bot is currently in.
+    # @param id [Integer] The guild ID that should be resolved.
+    # @return [Guild, nil] The guild identified by the ID, or `nil` if it couldn't be found.
+    def guild(id)
       id = id.resolve_id
-      return @servers[id] if @servers[id]
+      return @guilds[id] if @guilds[id]
 
-      LOGGER.out("Resolving server #{id}")
+      LOGGER.out("Resolving guild #{id}")
       begin
         response = @client.get_guild(id)
       rescue Discordrb::Errors::NoPermission
         return nil
       end
-      server = Server.new(response, self)
-      @servers[id] = server
+      guild = Guild.new(response, self)
+      @guilds[id] = guild
     end
 
-    # Gets a member by both IDs, or `Server` and user ID.
-    # @param server_or_id [Server, Integer] The `Server` or server ID for which a member should be resolved
+    # Gets a member by both IDs, or `Guild` and user ID.
+    # @param guild_or_id [Guild, Integer] The `Guild` or guild ID for which a member should be resolved
     # @param user_id [Integer] The ID of the user that should be resolved
     # @return [Member, nil] The member identified by the IDs, or `nil` if none could be found
-    def member(server_or_id, user_id)
-      server_id = server_or_id.resolve_id
+    def member(guild_or_id, user_id)
+      guild_id = guild_or_id.resolve_id
       user_id = user_id.resolve_id
-      server = server_or_id.is_a?(Server) ? server_or_id : self.server(server_id)
+      guild = guild_or_id.is_a?(Guild) ? guild_or_id : self.guild(guild_id)
 
-      return server.member(user_id) if server.member_cached?(user_id)
+      return guild.member(user_id) if guild.member_cached?(user_id)
 
-      LOGGER.out("Resolving member #{server_id} on server #{user_id}")
+      LOGGER.out("Resolving member #{guild_id} on guild #{user_id}")
       begin
-        response = @client.get_guild_member(server_id, user_id)
+        response = @client.get_guild_member(guild_id, user_id)
       rescue Discordrb::Errors::UnknownUser, Discordrb::Errors::UnknownMember
         return nil
       end
-      member = Member.new(response, server, self)
-      server.cache_member(member)
+      member = Member.new(response, guild, self)
+      guild.cache_member(member)
     end
 
     # Creates a PM channel for the given user ID, or if one exists already, returns that one.
@@ -140,35 +140,35 @@ module Discordrb
       end
     end
 
-    # Ensures a given server object is cached and if not, cache it from the given data hash.
-    # @param data [Hash] A data hash representing a server.
+    # Ensures a given guild object is cached and if not, cache it from the given data hash.
+    # @param data [Hash] A data hash representing a guild.
     # @param force_cache [true, false] Whether the object in cache should be updated with the given
     #   data if it already exists.
-    # @return [Server] the server represented by the data hash.
-    def ensure_server(data, force_cache = false)
-      if @servers.include?(data[:id].to_i)
-        server = @servers[data[:id].to_i]
-        server.update_data(data) if force_cache
-        server
+    # @return [Guild] the guild represented by the data hash.
+    def ensure_guild(data, force_cache = false)
+      if @guilds.include?(data[:id].to_i)
+        guild = @guilds[data[:id].to_i]
+        guild.update_data(data) if force_cache
+        guild
       else
-        @servers[data[:id].to_i] = Server.new(data, self)
+        @guilds[data[:id].to_i] = Guild.new(data, self)
       end
     end
 
     # Ensures a given channel object is cached and if not, cache it from the given data hash.
     # @param data [Hash] A data hash representing a channel.
-    # @param server [Server, nil] The server the channel is on, if known.
+    # @param guild [Guild, nil] The guild the channel is on, if known.
     # @return [Channel] the channel represented by the data hash.
-    def ensure_channel(data, server = nil)
+    def ensure_channel(data, guild = nil)
       if @channels.include?(data[:id].to_i)
         @channels[data[:id].to_i]
       else
-        @channels[data[:id].to_i] = Channel.new(data, self, server)
+        @channels[data[:id].to_i] = Channel.new(data, self, guild)
       end
     end
 
-    # Requests member chunks for a given server ID.
-    # @param id [Integer] The server ID to request chunks for.
+    # Requests member chunks for a given guild ID.
+    # @param id [Integer] The guild ID to request chunks for.
     def request_chunks(id)
       @gateway.send_request_members(id, '', 0)
     end
@@ -196,13 +196,13 @@ module Discordrb
       Invite.new(@client.get_invite(code), self)
     end
 
-    # Finds a channel given its name and optionally the name of the server it is in.
+    # Finds a channel given its name and optionally the name of the guild it is in.
     # @param channel_name [String] The channel to search for.
-    # @param server_name [String] The server to search for, or `nil` if only the channel should be searched for.
+    # @param guild_name [String] The guild to search for, or `nil` if only the channel should be searched for.
     # @param type [Integer, nil] The type of channel to search for (0: text, 1: private, 2: voice, 3: group), or `nil` if any type of
     #   channel should be searched for
     # @return [Array<Channel>] The array of channels that were found. May be empty if none were found.
-    def find_channel(channel_name, server_name = nil, type: nil)
+    def find_channel(channel_name, guild_name = nil, type: nil)
       results = []
 
       if /<#(?<id>\d+)>?/ =~ channel_name
@@ -210,9 +210,9 @@ module Discordrb
         return [channel(id)]
       end
 
-      @servers.each_value do |server|
-        server.channels.each do |channel|
-          results << channel if channel.name == channel_name && (server_name || server.name) == server.name && (!type || (channel.type == type))
+      @guilds.each_value do |guild|
+        guild.channels.each do |channel|
+          results << channel if channel.name == channel_name && (guild_name || guild.name) == guild.name && (!type || (channel.type == type))
         end
       end
 
@@ -231,7 +231,7 @@ module Discordrb
     #   @param discrim [String] The user's discriminator
     #   @return [User, nil] The user that was found, or `nil` if none was found
     # @note This method only searches through users that have been cached. Users that have not yet been cached
-    #   by the bot but still share a connection with the user (mutual server) will not be found.
+    #   by the bot but still share a connection with the user (mutual guild) will not be found.
     # @example Find users by name
     #   bot.find_user('z64') #=> Array<User>
     # @example Find a user by name and discriminator

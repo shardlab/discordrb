@@ -3,10 +3,10 @@
 module Discordrb
   # Mixin for the attributes members and private members should have
   module MemberAttributes
-    # @return [Time] when this member joined the server.
+    # @return [Time] when this member joined the guild.
     attr_reader :joined_at
 
-    # @return [Time, nil] when this member boosted this server, `nil` if they haven't.
+    # @return [Time, nil] when this member boosted this guild, `nil` if they haven't.
     attr_reader :boosting_since
 
     # @return [String, nil] the nickname this member has, or `nil` if it has none.
@@ -16,19 +16,19 @@ module Discordrb
     # @return [Array<Role>] the roles this member has.
     attr_reader :roles
 
-    # @return [Server] the server this member is on.
-    attr_reader :server
+    # @return [Guild] the guild this member is on.
+    attr_reader :guild
   end
 
-  # A member is a user on a server. It differs from regular users in that it has roles, voice statuses and things like
+  # A member is a user on a guild. It differs from regular users in that it has roles, voice statuses and things like
   # that.
   class Member < DelegateClass(User)
-    # @return [true, false] whether this member is muted server-wide.
+    # @return [true, false] whether this member is muted guild-wide.
     def mute
       voice_state_attribute(:mute)
     end
 
-    # @return [true, false] whether this member is deafened server-wide.
+    # @return [true, false] whether this member is deafened guild-wide.
     def deaf
       voice_state_attribute(:deaf)
     end
@@ -56,14 +56,14 @@ module Discordrb
     include MemberAttributes
 
     # @!visibility private
-    def initialize(data, server, bot)
+    def initialize(data, guild, bot)
       @bot = bot
 
       @user = bot.ensure_user(data[:user])
       super @user # Initialize the delegate class
 
-      @server = server
-      @server_id = server&.id || data[:guild_id].to_i
+      @guild = guild
+      @guild_id = guild&.id || data[:guild_id].to_i
 
       @role_ids = data[:roles]&.map(&:to_i) || []
 
@@ -72,20 +72,20 @@ module Discordrb
       @boosting_since = data[:premium_since] ? Time.parse(data[:premium_since]) : nil
     end
 
-    # @return [Server] the server this member is on.
-    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    # @return [Guild] the guild this member is on.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for guilds in which the bot is not
     #   authorized with the `bot` scope.
-    def server
-      return @server if @server
+    def guild
+      return @guild if @guild
 
-      @server = @bot.server(@server_id)
-      raise Discordrb::Errors::NoPermission, 'The bot does not have access to this server' unless @server
+      @guild = @bot.guild(@guild_id)
+      raise Discordrb::Errors::NoPermission, 'The bot does not have access to this guild' unless @guild
 
-      @server
+      @guild
     end
 
     # @return [Array<Role>] the roles this member has.
-    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for guilds in which the bot is not
     #   authorized with the `bot` scope.
     def roles
       return @roles if @roles
@@ -94,14 +94,14 @@ module Discordrb
       @roles
     end
 
-    # @return [true, false] if this user is a Nitro Booster of this server.
+    # @return [true, false] if this user is a Nitro Booster of this guild.
     def boosting?
       !@boosting_since.nil?
     end
 
-    # @return [true, false] whether this member is the server owner.
+    # @return [true, false] whether this member is the guild owner.
     def owner?
-      server.owner == self
+      guild.owner == self
     end
 
     # @param role [Role, String, Integer] the role to check or its ID.
@@ -121,7 +121,7 @@ module Discordrb
     # @param reason [String] The reason the user's roles are being changed.
     def set_roles(role, reason = nil)
       role_ids = role_id_array(role)
-      @bot.client.modify_guild_member(@server_id, @user.id, roles: role_ids, reason: reason)
+      @bot.client.modify_guild_member(@guild_id, @user.id, roles: role_ids, reason: reason)
     end
 
     # Adds and removes roles from a member.
@@ -129,8 +129,8 @@ module Discordrb
     # @param remove [Role, Array<Role>] The role(s) to remove.
     # @param reason [String] The reason the user's roles are being changed.
     # @example Remove the 'Member' role from a user, and add the 'Muted' role to them.
-    #   to_add = server.roles.find {|role| role.name == 'Muted'}
-    #   to_remove = server.roles.find {|role| role.name == 'Member'}
+    #   to_add = guild.roles.find {|role| role.name == 'Muted'}
+    #   to_remove = guild.roles.find {|role| role.name == 'Member'}
     #   member.modify_roles(to_add, to_remove)
     def modify_roles(add, remove, reason = nil)
       add_role_ids = role_id_array(add)
@@ -138,7 +138,7 @@ module Discordrb
       old_role_ids = @role_ids
       new_role_ids = (old_role_ids - remove_role_ids + add_role_ids).uniq
 
-      @bot.client.modify_guild_member(@server_id, @user.id, roles: new_role_ids, reason: reason)
+      @bot.client.modify_guild_member(@guild_id, @user.id, roles: new_role_ids, reason: reason)
     end
 
     # Adds one or more roles to this member.
@@ -148,11 +148,11 @@ module Discordrb
       role_ids = role_id_array(role)
 
       if role_ids.count == 1
-        @bot.client.add_guild_member_role(@server_id, @user.id, roles: role_ids[0], reason: reason)
+        @bot.client.add_guild_member_role(@guild_id, @user.id, roles: role_ids[0], reason: reason)
       else
         old_role_ids = @role_ids
         new_role_ids = (old_role_ids + role_ids).uniq
-        @bot.client.modify_guild_member(@server_id, @user.id, roles: new_role_ids, reason: reason)
+        @bot.client.modify_guild_member(@guild_id, @user.id, roles: new_role_ids, reason: reason)
       end
     end
 
@@ -163,11 +163,11 @@ module Discordrb
       role_ids = role_id_array(role)
 
       if role_ids.count == 1
-        @bot.client.remove_guild_member_role(@server_id, @user.id, role_ids[0], reason: reason)
+        @bot.client.remove_guild_member_role(@guild_id, @user.id, role_ids[0], reason: reason)
       else
         old_role_ids = @role_ids
         new_role_ids = old_role_ids.reject { |i| role_ids.include?(i) }
-        @bot.client.modify_guild_member(@server_id, @user.id, roles: new_role_ids, reason: reason)
+        @bot.client.modify_guild_member(@guild_id, @user.id, roles: new_role_ids, reason: reason)
       end
     end
 
@@ -201,43 +201,43 @@ module Discordrb
     end
     alias_method :color, :colour
 
-    # Server deafens this member.
-    def server_deafen
-      @bot.client.modify_guild_member(@server_id, @user.id, deaf: true)
+    # Guild deafens this member.
+    def guild_deafen
+      @bot.client.modify_guild_member(@guild_id, @user.id, deaf: true)
     end
 
-    # Server undeafens this member.
-    def server_undeafen
-      @bot.client.modify_guild_member(@server_id, @user.id, deaf: false)
+    # Guild undeafens this member.
+    def guild_undeafen
+      @bot.client.modify_guild_member(@guild_id, @user.id, deaf: false)
     end
 
-    # Server mutes this member.
-    def server_mute
-      @bot.client.modify_guild_member(@server_id, @user.id, mute: true)
+    # Guild mutes this member.
+    def guild_mute
+      @bot.client.modify_guild_member(@guild_id, @user.id, mute: true)
     end
 
-    # Server unmutes this member.
-    def server_unmute
-      @bot.client.modify_guild_member(@server_id, @user.id, mute: false)
+    # Guild unmutes this member.
+    def guild_unmute
+      @bot.client.modify_guild_member(@guild_id, @user.id, mute: false)
     end
 
-    # Bans this member from the server.
+    # Bans this member from the guild.
     # @param message_days [Integer] How many days worth of messages sent by the member should be deleted.
     # @param reason [String] The reason this member is being banned.
     def ban(message_days = 0, reason: nil)
-      server.ban(@user, message_days, reason: reason)
+      guild.ban(@user, message_days, reason: reason)
     end
 
-    # Unbans this member from the server.
+    # Unbans this member from the guild.
     # @param reason [String] The reason this member is being unbanned.
     def unban(reason = nil)
-      server.unban(@user, reason)
+      guild.unban(@user, reason)
     end
 
-    # Kicks this member from the server.
+    # Kicks this member from the guild.
     # @param reason [String] The reason this member is being kicked.
     def kick(reason = nil)
-      server.kick(@user, reason)
+      guild.kick(@user, reason)
     end
 
     # @see Member#set_nick
@@ -256,9 +256,9 @@ module Discordrb
       nick ||= ''
 
       if @user.current_bot?
-        @bot.client.modify_current_member(@server_id, nick: nick, reason: reason)
+        @bot.client.modify_current_member(@guild_id, nick: nick, reason: reason)
       else
-        @bot.client.modify_guild_member(@server_id, @user.id, nick: nick, reason: reason)
+        @bot.client.modify_guild_member(@guild_id, @user.id, nick: nick, reason: reason)
       end
     end
 
@@ -273,11 +273,11 @@ module Discordrb
     # @note For internal use only.
     # @!visibility private
     def update_roles(role_ids)
-      @roles = [server.role(@server_id)]
+      @roles = [guild.role(@guild_id)]
       role_ids.each do |id|
         # It is possible for members to have roles that do not exist
-        # on the server any longer. See https://github.com/discordrb/discordrb/issues/371
-        role = server.role(id)
+        # on the guild any longer. See https://github.com/discordrb/discordrb/issues/371
+        role = guild.role(id)
         @roles << role if role
       end
     end
@@ -312,7 +312,7 @@ module Discordrb
 
     # Overwriting inspect for debug purposes
     def inspect
-      "<Member user=#{@user.inspect} server=#{@server&.inspect || @server_id} joined_at=#{@joined_at} roles=#{@roles&.inspect || @role_ids} voice_channel=#{@voice_channel.inspect} mute=#{@mute} deaf=#{@deaf} self_mute=#{@self_mute} self_deaf=#{@self_deaf}>"
+      "<Member user=#{@user.inspect} guild=#{@guild&.inspect || @guild_id} joined_at=#{@joined_at} roles=#{@roles&.inspect || @role_ids} voice_channel=#{@voice_channel.inspect} mute=#{@mute} deaf=#{@deaf} self_mute=#{@self_mute} self_deaf=#{@self_deaf}>"
     end
 
     private
@@ -328,7 +328,7 @@ module Discordrb
 
     # Utility method to get data out of this member's voice state
     def voice_state_attribute(name)
-      voice_state = server.voice_states[@user.id]
+      voice_state = guild.voice_states[@user.id]
       voice_state&.send name
     end
   end

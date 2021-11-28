@@ -18,18 +18,18 @@ module Discordrb
   # Used to declare what events you wish to recieve from Discord.
   # @see https://discord.com/developers/docs/topics/gateway#gateway-intents
   INTENTS = {
-    servers: 1 << 0,
-    server_members: 1 << 1,
-    server_bans: 1 << 2,
-    server_emojis: 1 << 3,
-    server_integrations: 1 << 4,
-    server_webhooks: 1 << 5,
-    server_invites: 1 << 6,
-    server_voice_states: 1 << 7,
-    server_presences: 1 << 8,
-    server_messages: 1 << 9,
-    server_message_reactions: 1 << 10,
-    server_message_typing: 1 << 11,
+    guilds: 1 << 0,
+    guild_members: 1 << 1,
+    guild_bans: 1 << 2,
+    guild_emojis: 1 << 3,
+    guild_integrations: 1 << 4,
+    guild_webhooks: 1 << 5,
+    guild_invites: 1 << 6,
+    guild_voice_states: 1 << 7,
+    guild_presences: 1 << 8,
+    guild_messages: 1 << 9,
+    guild_message_reactions: 1 << 10,
+    guild_message_typing: 1 << 11,
     direct_messages: 1 << 12,
     direct_message_reactions: 1 << 13,
     direct_message_typing: 1 << 14
@@ -40,7 +40,7 @@ module Discordrb
 
   # All unprivileged intents
   # @see https://discord.com/developers/docs/topics/gateway#privileged-intents
-  UNPRIVILEGED_INTENTS = ALL_INTENTS & ~(INTENTS[:server_members] | INTENTS[:server_presences])
+  UNPRIVILEGED_INTENTS = ALL_INTENTS & ~(INTENTS[:guild_members] | INTENTS[:guild_presences])
 
   # No intents
   NO_INTENTS = 0
@@ -136,9 +136,9 @@ module Discordrb
     "#{Discordrb::API.cdn_url}/avatars/#{user_id}/#{avatar_id}.#{format}"
   end
 
-  # Make a banner URL from server and banner IDs
-  def self.banner_url(server_id, banner_id, format = 'webp')
-    "#{cdn_url}/banners/#{server_id}/#{banner_id}.#{format}"
+  # Make a banner URL from guild and banner IDs
+  def self.banner_url(guild_id, banner_id, format = 'webp')
+    "#{cdn_url}/banners/#{guild_id}/#{banner_id}.#{format}"
   end
 end
 

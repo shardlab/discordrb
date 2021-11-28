@@ -21,14 +21,14 @@ module Discordrb
     end
   end
 
-  # A server referenced to by an invite
-  class InviteServer
+  # A guild referenced to by an invite
+  class InviteGuild
     include IDObject
 
-    # @return [String] this server's name.
+    # @return [String] this guild's name.
     attr_reader :name
 
-    # @return [String, nil] the hash of the server's invite splash screen (for partnered servers) or nil if none is
+    # @return [String, nil] the hash of the guild's invite splash screen (for partnered guilds) or nil if none is
     #   present
     attr_reader :splash_hash
 
@@ -47,8 +47,8 @@ module Discordrb
     # @return [InviteChannel, Channel] the channel this invite references.
     attr_reader :channel
 
-    # @return [InviteServer, Server] the server this invite references.
-    attr_reader :server
+    # @return [InviteGuild, Guild] the guild this invite references.
+    attr_reader :guild
 
     # @return [Integer] the amount of uses left on this invite.
     attr_reader :uses
@@ -58,7 +58,7 @@ module Discordrb
     attr_reader :inviter
     alias_method :user, :inviter
 
-    # @return [true, false] whether or not this invite grants temporary membership. If someone joins a server with this invite, they will be removed from the server when they go offline unless they've received a role.
+    # @return [true, false] whether or not this invite grants temporary membership. If someone joins a guild with this invite, they will be removed from the guild when they go offline unless they've received a role.
     attr_reader :temporary
     alias_method :temporary?, :temporary
 
@@ -69,11 +69,11 @@ module Discordrb
     # @return [String] this invite's code
     attr_reader :code
 
-    # @return [Integer, nil] the amount of members in the server. Will be nil if it has not been resolved.
+    # @return [Integer, nil] the amount of members in the guild. Will be nil if it has not been resolved.
     attr_reader :member_count
     alias_method :user_count, :member_count
 
-    # @return [Integer, nil] the amount of online members in the server. Will be nil if it has not been resolved.
+    # @return [Integer, nil] the amount of online members in the guild. Will be nil if it has not been resolved.
     attr_reader :online_member_count
     alias_method :online_user_count, :online_member_count
 
@@ -93,10 +93,10 @@ module Discordrb
                    InviteChannel.new(data[:channel], bot)
                  end
 
-      @server = if data[:guild_id]
-                  bot.server(data[:guild_id])
+      @guild = if data[:guild_id]
+                  bot.guild(data[:guild_id])
                 else
-                  InviteServer.new(data[:guild], bot)
+                  InviteGuild.new(data[:guild], bot)
                 end
 
       @uses = data[:uses]
