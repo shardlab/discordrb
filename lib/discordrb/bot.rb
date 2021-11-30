@@ -756,6 +756,7 @@ module Discordrb
     end
 
     # @yieldparam [OptionBuilder]
+    # @yieldparam [PermissionBuilder]
     # @example
     #   bot.register_application_command(:reddit, 'Reddit Commands') do |cmd|
     #     cmd.subcommand_group(:subreddit, 'Subreddit Commands') do |group|
@@ -772,28 +773,49 @@ module Discordrb
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
-      yield(builder) if block_given?
+      permission_builder = Interactions::PermissionBuilder.new
+      yield(builder, permission_builder) if block_given?
 
       resp = if server_id
                API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type)
              else
                API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type)
              end
-      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+      cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
+
+      if permission_builder.to_a.any?
+        raise ArgumentError, 'Permissions can only be set for guild commands' unless server_id
+
+        edit_application_command_permissions(cmd.id, server_id, permission_builder.to_a)
+      end
+
+      cmd
     end
 
+    # @yieldparam [OptionBuilder]
+    # @yieldparam [PermissionBuilder]
     def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
-      yield(builder) if block_given?
+      permission_builder = Interactions::PermissionBuilder.new
+
+      yield(builder, permission_builder) if block_given?
 
       resp = if server_id
                API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type)
              else
                API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type)
              end
-      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+      cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
+
+      if permission_builder.to_a.any?
+        raise ArgumentError, 'Permissions can only be set for guild commands' unless server_id
+
+        edit_application_command_permissions(cmd.id, server_id, permission_builder.to_a)
+      end
+
+      cmd
     end
 
     # Remove an application command from the commands registered with discord.
@@ -805,6 +827,17 @@ module Discordrb
       else
         API::Application.delete_global_command(@token, profile.id, command_id)
       end
+    end
+
+    # @param command_id [Integer, String]
+    # @param server_id [Integer, String]
+    # @param permissions [Array<Hash>] An array of objects formatted as `{ id: ENTITY_ID, type: 1 or 2, permission: true or false }`
+    def edit_application_command_permissions(command_id, server_id, permissions = [])
+      builder = Interactions::PermissionBuilder.new
+      yield builder
+
+      permissions = permissions.merge(builder.to_a)
+      API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
     end
 
     private
