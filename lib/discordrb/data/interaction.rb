@@ -278,6 +278,9 @@ module Discordrb
     # @return [Hash]
     attr_reader :options
 
+    # @return [Integer]
+    attr_reader :id
+
     # @!visibility private
     def initialize(data, bot, server_id = nil)
       @bot = bot

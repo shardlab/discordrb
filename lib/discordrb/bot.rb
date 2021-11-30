@@ -834,9 +834,9 @@ module Discordrb
     # @param permissions [Array<Hash>] An array of objects formatted as `{ id: ENTITY_ID, type: 1 or 2, permission: true or false }`
     def edit_application_command_permissions(command_id, server_id, permissions = [])
       builder = Interactions::PermissionBuilder.new
-      yield builder
+      yield builder if block_given?
 
-      permissions = permissions.merge(builder.to_a)
+      permissions = permissions + builder.to_a
       API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
     end
 
