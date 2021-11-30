@@ -836,7 +836,7 @@ module Discordrb
       builder = Interactions::PermissionBuilder.new
       yield builder if block_given?
 
-      permissions = permissions + builder.to_a
+      permissions += builder.to_a
       API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
     end
 
