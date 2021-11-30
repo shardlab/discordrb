@@ -322,7 +322,7 @@ module Discordrb
         channel: 7,
         role: 8,
         mentionable: 9,
-        number: 10,
+        number: 10
       }.freeze
 
       # Channel types that can be provided to #channel
@@ -337,7 +337,7 @@ module Discordrb
         news_thread: 10,
         public_thread: 11,
         private_thread: 12,
-        stage: 13,
+        stage: 13
       }.freeze
 
       # @return [Array<Hash>]
@@ -421,7 +421,7 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
-      # @param channel_types [Array<Symbol, Integer>]
+      # @param types [Array<Symbol, Integer>] See {CHANNEL_TYPES}
       # @return (see #option)
       def channel(name, description, required: nil, types: nil)
         types = types&.collect { |type| type.is_a?(Numeric) ? type : CHANNEL_TYPES[type] }
