@@ -321,7 +321,23 @@ module Discordrb
         user: 6,
         channel: 7,
         role: 8,
-        mentionable: 9
+        mentionable: 9,
+        number: 10
+      }.freeze
+
+      # Channel types that can be provided to #channel
+      CHANNEL_TYPES = {
+        text: 0,
+        dm: 1,
+        voice: 2,
+        group_dm: 3,
+        category: 4,
+        news: 5,
+        store: 6,
+        news_thread: 10,
+        public_thread: 11,
+        private_thread: 12,
+        stage: 13
       }.freeze
 
       # @return [Array<Hash>]
@@ -405,9 +421,11 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param types [Array<Symbol, Integer>] See {CHANNEL_TYPES}
       # @return (see #option)
-      def channel(name, description, required: nil)
-        option(TYPES[:channel], name, description, required: required)
+      def channel(name, description, required: nil, types: nil)
+        types = types&.collect { |type| type.is_a?(Numeric) ? type : CHANNEL_TYPES[type] }
+        option(TYPES[:channel], name, description, required: required, channel_types: types)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -426,17 +444,31 @@ module Discordrb
         option(TYPES[:mentionable], name, description, required: required)
       end
 
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil)
+        option(TYPES[:number], name, description,
+               required: required, min_value: min_value, max_value: max_value, choices: choices)
+      end
+
       # @!visibility private
       # @param type [Integer] The argument type.
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_value [Integer, Float] A minimum value for integer and number options.
+      # @param max_value [Integer, Float] A maximum value for integer and number options.
+      # @param channel_types [Array<Integer>] Channel types that can be provides for channel options.
       # @return Hash
-      def option(type, name, description, required: nil, choices: nil, options: nil)
+      def option(type, name, description, required: nil, choices: nil, options: nil, min_value: nil, max_value: nil,
+                 channel_types: nil)
         opt = { type: type, name: name, description: description }
         choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
 
-        opt.merge!({ required: required, choices: choices, options: options }.compact)
+        opt.merge!({ required: required, choices: choices, options: options, min_value: min_value,
+                     max_value: max_value, channel_types: channel_types }.compact)
 
         @options << opt
         opt
