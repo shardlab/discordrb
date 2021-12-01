@@ -744,7 +744,7 @@ module Discordrb
     end
 
     # Get all application commands.
-    # @param server_id [String, Integer, nil] The ID of the server to get the command from. Global if `nil`.
+    # @param server_id [String, Integer, nil] The ID of the server to get the commands from. Global if `nil`.
     def get_application_commands(server_id: nil)
       resp = if server_id
                API::Application.get_guild_commands(@token, profile.id, server_id)
