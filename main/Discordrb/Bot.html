@@ -795,6 +795,29 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#get_application_commands-instance_method" title="#get_application_commands (instance method)">#<strong>get_application_commands</strong>(server_id: nil)  &#x21d2; Array&lt;ApplicationCommand&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Get all application commands.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#idle-instance_method" title="#idle (instance method)">#<strong>idle</strong>  &#x21d2; Object </a>
     
 
@@ -3512,16 +3535,16 @@ waits until the data has been received via the websocket. This may make the exec
       <pre class="lines">
 
 
-824
-825
-826
-827
-828
-829
-830</pre>
+839
+840
+841
+842
+843
+844
+845</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 824</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 839</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_application_command'>delete_application_command</span><span class='lparen'>(</span><span class='id identifier rubyid_command_id'>command_id</span><span class='comma'>,</span> <span class='label'>server_id:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_server_id'>server_id</span>
@@ -3729,21 +3752,6 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
       <pre class="lines">
 
 
-797
-798
-799
-800
-801
-802
-803
-804
-805
-806
-807
-808
-809
-810
-811
 812
 813
 814
@@ -3751,10 +3759,25 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
 816
 817
 818
-819</pre>
+819
+820
+821
+822
+823
+824
+825
+826
+827
+828
+829
+830
+831
+832
+833
+834</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 797</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 812</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_application_command'>edit_application_command</span><span class='lparen'>(</span><span class='id identifier rubyid_command_id'>command_id</span><span class='comma'>,</span> <span class='label'>server_id:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>name:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>default_permission:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='symbol'>:chat_input</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ApplicationCommand.html" title="Discordrb::ApplicationCommand (class)">ApplicationCommand</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="ApplicationCommand.html#TYPES-constant" title="Discordrb::ApplicationCommand::TYPES (constant)">TYPES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_type'>type</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_type'>type</span>
@@ -3864,16 +3887,16 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
       <pre class="lines">
 
 
-835
-836
-837
-838
-839
-840
-841</pre>
+850
+851
+852
+853
+854
+855
+856</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 835</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 850</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_application_command_permissions'>edit_application_command_permissions</span><span class='lparen'>(</span><span class='id identifier rubyid_command_id'>command_id</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_permissions'>permissions</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_builder'>builder</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Interactions.html" title="Discordrb::Interactions (module)">Interactions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Interactions/PermissionBuilder.html" title="Discordrb::Interactions::PermissionBuilder (class)">PermissionBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Interactions/PermissionBuilder.html#initialize-instance_method" title="Discordrb::Interactions::PermissionBuilder#initialize (method)">new</a></span></span>
@@ -4253,17 +4276,17 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
       <pre class="lines">
 
 
-749
-750
-751
-752
-753
-754
-755
-756</pre>
+764
+765
+766
+767
+768
+769
+770
+771</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 749</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 764</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_application_command'>get_application_command</span><span class='lparen'>(</span><span class='id identifier rubyid_command_id'>command_id</span><span class='comma'>,</span> <span class='label'>server_id:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_resp'>resp</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='id identifier rubyid_server_id'>server_id</span>
@@ -4272,6 +4295,96 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
            <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Application.html" title="Discordrb::API::Application (module)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_get_global_command'><span class='object_link'><a href="API/Application.html#get_global_command-class_method" title="Discordrb::API::Application.get_global_command (method)">get_global_command</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_command_id'>command_id</span><span class='rparen'>)</span>
          <span class='kw'>end</span>
   <span class='const'><span class='object_link'><a href="ApplicationCommand.html" title="Discordrb::ApplicationCommand (class)">ApplicationCommand</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_resp'>resp</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="get_application_commands-instance_method">
+  
+    #<strong>get_application_commands</strong>(server_id: nil)  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="ApplicationCommand.html" title="Discordrb::ApplicationCommand (class)">ApplicationCommand</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Get all application commands.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>server_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The ID of the server to get the commands from. Global if <code>nil</code>.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="ApplicationCommand.html" title="Discordrb::ApplicationCommand (class)">ApplicationCommand</a></span>&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+749
+750
+751
+752
+753
+754
+755
+756
+757
+758
+759</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 749</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_application_commands'>get_application_commands</span><span class='lparen'>(</span><span class='label'>server_id:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_resp'>resp</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='id identifier rubyid_server_id'>server_id</span>
+           <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Application.html" title="Discordrb::API::Application (module)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_get_guild_commands'><span class='object_link'><a href="API/Application.html#get_guild_commands-class_method" title="Discordrb::API::Application.get_guild_commands (method)">get_guild_commands</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='rparen'>)</span>
+         <span class='kw'>else</span>
+           <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Application.html" title="Discordrb::API::Application (module)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_get_global_commands'><span class='object_link'><a href="API/Application.html#get_global_commands-class_method" title="Discordrb::API::Application.get_global_commands (method)">get_global_commands</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
+         <span class='kw'>end</span>
+
+  <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_resp'>resp</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_command_data'>command_data</span><span class='op'>|</span>
+    <span class='const'><span class='object_link'><a href="ApplicationCommand.html" title="Discordrb::ApplicationCommand (class)">ApplicationCommand</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_command_data'>command_data</span><span class='comma'>,</span> <span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -5398,31 +5511,31 @@ to edit user data like the current username (see <span class='object_link'><a hr
       <pre class="lines">
 
 
-772
-773
-774
-775
-776
-777
-778
-779
-780
-781
-782
-783
-784
-785
-786
 787
 788
 789
 790
 791
 792
-793</pre>
+793
+794
+795
+796
+797
+798
+799
+800
+801
+802
+803
+804
+805
+806
+807
+808</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 772</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 787</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_register_application_command'>register_application_command</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>server_id:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>default_permission:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='symbol'>:chat_input</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ApplicationCommand.html" title="Discordrb::ApplicationCommand (class)">ApplicationCommand</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="ApplicationCommand.html#TYPES-constant" title="Discordrb::ApplicationCommand::TYPES (constant)">TYPES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_type'>type</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_type'>type</span>
@@ -7227,7 +7340,7 @@ directly, you should leave it as true.</p>
 </div>
 
       <div id="footer">
-  Generated on Tue Nov 30 03:12:17 2021 by
+  Generated on Wed Dec  1 23:12:26 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.6.9).
 </div>
