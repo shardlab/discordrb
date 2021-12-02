@@ -44,13 +44,13 @@ module Discordrb::API::Application
 
   # Edit a global application command.
   # https://discord.com/developers/docs/interactions/slash-commands#edit-global-application-command
-  def edit_global_command(token, application_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1)
+  def edit_global_command(token, application_id, command_id, command_data)
     Discordrb::API.request(
       :applications_aid_commands_cid,
       nil,
       :patch,
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands/#{command_id}",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type }.compact.to_json,
+      command_data.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -122,13 +122,13 @@ module Discordrb::API::Application
 
   # Edit an application command for a guild.
   # https://discord.com/developers/docs/interactions/slash-commands#edit-guild-application-command
-  def edit_guild_command(token, application_id, guild_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1)
+  def edit_guild_command(token, application_id, guild_id, command_id, command_data)
     Discordrb::API.request(
       :applications_aid_guilds_gid_commands_cid,
       guild_id,
       :patch,
       "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands/#{command_id}",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type }.compact.to_json,
+      command_data.to_json,
       Authorization: token,
       content_type: :json
     )
