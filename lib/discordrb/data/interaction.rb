@@ -312,6 +312,59 @@ module Discordrb
 
   # Objects specific to Interactions.
   module Interactions
+    class ApplicationCommandBuilder
+      attr_accessor :name, :description, :default_permission
+      attr_reader :type
+
+      # @param name [Symbol, String, nil]
+      # @param description [String, nil]
+      # @param default_permission [Boolean, nil] Whether the command is enabled by default when the app is added to a server.
+      # @param type [Symbol, Integer]
+      #
+      # @yieldparam [OptionBuilder]
+      # @yieldparam [PermissionBuilder]
+      def initialize(name: nil, description: nil, default_permission: nil, type: :chat_input, &block)
+        @name = name
+        @description = description
+        @default_permission = default_permission
+        self.type = type
+        @options_builder = OptionBuilder.new
+        @permission_builder = PermissionBuilder.new
+
+        yield(@options_builder, @permission_builder) if block_given?
+      end
+
+      # @param value [Symbol, Integer]
+      def type=(value)
+        @type = ApplicationCommand::TYPES[value] || value
+      end
+
+      # @yieldparam [OptionBuilder]
+      # @return OptionBuilder
+      def options
+        yield @options_builder if block_given?
+        @options_builder
+      end
+
+      # @yieldparam [PermissionBuilder]
+      # @return PermissionBuilder
+      def permissions
+        yield @permission_builder if block_given?
+        @permission_builder
+      end
+
+      # @return [Hash]
+      def to_hash
+        {
+          name: name,
+          description: description,
+          options: options.to_a,
+          default_permission: default_permission,
+          type: type
+        }.compact
+      end
+    end
+
     # A builder for defining slash commands options.
     class OptionBuilder
       # @!visibility private

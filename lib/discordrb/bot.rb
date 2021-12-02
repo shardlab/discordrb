@@ -770,8 +770,17 @@ module Discordrb
       ApplicationCommand.new(JSON.parse(resp), self, server_id)
     end
 
+    # @param name [Symbol, String]
+    # @param description [String]
+    # @param server_id [String, Integer, nil] The ID of the server to register the command in. Global if `nil`.
+    # @param default_permission [Boolean, nil] Whether the command is enabled by default when the app is added to a server.
+    # @param type [Symbol, Integer]
+    #
     # @yieldparam [OptionBuilder]
     # @yieldparam [PermissionBuilder]
+    #
+    # @return [ApplicationCommand]
+    #
     # @example
     #   bot.register_application_command(:reddit, 'Reddit Commands') do |cmd|
     #     cmd.subcommand_group(:subreddit, 'Subreddit Commands') do |group|
@@ -784,50 +793,64 @@ module Discordrb
     #       end
     #     end
     #   end
-    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input)
-      type = ApplicationCommand::TYPES[type] || type
-
-      builder = Interactions::OptionBuilder.new
-      permission_builder = Interactions::PermissionBuilder.new
-      yield(builder, permission_builder) if block_given?
+    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, &block)
+      builder = Interactions::ApplicationCommandBuilder.new(
+        name: name,
+        description: description,
+        default_permission: default_permission,
+        type: type,
+        &block
+      )
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type)
+               API::Application.create_guild_command(@token, profile.id, server_id, builder.to_hash)
              else
-               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type)
+               API::Application.create_global_command(@token, profile.id, builder.to_hash)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
-      if permission_builder.to_a.any?
+      if builder.permissions.to_a.any?
         raise ArgumentError, 'Permissions can only be set for guild commands' unless server_id
 
-        edit_application_command_permissions(cmd.id, server_id, permission_builder.to_a)
+        edit_application_command_permissions(cmd.id, server_id, builder.permissions.to_a)
       end
 
       cmd
     end
 
+    # @param command_id [String, Integer]
+    # @param server_id [String, Integer, nil] The ID of the server to edit the command from. Global if `nil`.
+    # @param name [Symbol, String, nil]
+    # @param description [String, nil]
+    # @param default_permission [Boolean, nil] Whether the command is enabled by default when the app is added to a server.
+    # @param type [Symbol, Integer]
+    #
     # @yieldparam [OptionBuilder]
     # @yieldparam [PermissionBuilder]
-    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input)
-      type = ApplicationCommand::TYPES[type] || type
+    #
+    # @return [ApplicationCommand]
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, &block)
+      builder = Interactions::ApplicationCommandBuilder.new(
+        name: name,
+        description: description,
+        default_permission: default_permission,
+        type: type,
+        &block
+      )
 
-      builder = Interactions::OptionBuilder.new
-      permission_builder = Interactions::PermissionBuilder.new
-
-      yield(builder, permission_builder) if block_given?
+      builder.name
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, builder.to_hash)
              else
-               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type)
+               API::Application.edit_guild_command(@token, profile.id, command_id, builder.to_hash)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
-      if permission_builder.to_a.any?
+      if builder.permissions.to_a.any?
         raise ArgumentError, 'Permissions can only be set for guild commands' unless server_id
 
-        edit_application_command_permissions(cmd.id, server_id, permission_builder.to_a)
+        edit_application_command_permissions(cmd.id, server_id, builder.permissions.to_a)
       end
 
       cmd

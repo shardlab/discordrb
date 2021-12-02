@@ -30,13 +30,13 @@ module Discordrb::API::Application
 
   # Create a global application command.
   # https://discord.com/developers/docs/interactions/slash-commands#create-global-application-command
-  def create_global_command(token, application_id, name, description, options = [], default_permission = nil, type = 1)
+  def create_global_command(token, application_id, command_data)
     Discordrb::API.request(
       :applications_aid_commands,
       nil,
       :post,
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type }.to_json,
+      command_data.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -108,13 +108,13 @@ module Discordrb::API::Application
 
   # Create an application command for a guild.
   # https://discord.com/developers/docs/interactions/slash-commands#create-guild-application-command
-  def create_guild_command(token, application_id, guild_id, name, description, options = nil, default_permission = nil, type = 1)
+  def create_guild_command(token, application_id, guild_id, command_data)
     Discordrb::API.request(
       :applications_aid_guilds_gid_commands,
       guild_id,
       :post,
       "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type }.to_json,
+      command_data.to_json,
       Authorization: token,
       content_type: :json
     )
