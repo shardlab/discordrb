@@ -872,6 +872,35 @@ module Discordrb
       API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
     end
 
+    # @param server_id [String, Integer, nil] The ID of the server to register this commands in. Global if `nil`.
+    # @yieldparam [Interactions::ApplicationCommandSetBuilder]
+    # @return [Array<ApplicationCommand>, nil]
+    #
+    # @example
+    #   bot.bulk_overwrite_application_commands do |app|
+    #     app.command(:ping, "Pong!")
+    #
+    #     app.command(:echo, "Echo some text") do |cmd|
+    #       cmd.string(:text, "Text to echo")
+    #     end
+    #   end
+    def bulk_overwrite_application_commands(server_id: nil)
+      builder = Interactions::ApplicationCommandSetBuilder.new
+      yield builder
+
+      return if builder.commands.none?
+
+      resp = if server_id
+               API::Application.bulk_overwrite_guild_commands(@token, profile.id, server_id, builder.to_a)
+             else
+               API::Application.bulk_overwrite_global_commands(@token, profile.id, builder.to_a)
+             end
+
+      JSON.parse(resp).map do |command_data|
+        ApplicationCommand.new(command_data, self, server_id)
+      end
+    end
+
     private
 
     # Throws a useful exception if there's currently no gateway connection.
