@@ -312,6 +312,36 @@ module Discordrb
 
   # Objects specific to Interactions.
   module Interactions
+    class ApplicationCommandSetBuilder
+      attr_reader :commands
+
+      def initialize
+        @commands = []
+      end
+
+      # @param name [Symbol, String]
+      # @param default_permission [Boolean, nil] Whether the command is enabled by default when the app is added to a server.
+      # @param type [Symbol, Integer]
+      # @param description [String]
+      #
+      # @yieldparam [OptionBuilder]
+      # @yieldparam [PermissionBuilder]
+      def command(name, description, default_permission: nil, type: nil, &block)
+        commands << ApplicationCommandBuilder.new(
+          name: name,
+          description: description,
+          default_permission: default_permission,
+          type: type,
+          &block
+        )
+      end
+
+      # @return [Array<Hash>]
+      def to_a
+        commands.map(&:to_hash)
+      end
+    end
+
     class ApplicationCommandBuilder
       attr_accessor :name, :description, :default_permission
       attr_reader :type

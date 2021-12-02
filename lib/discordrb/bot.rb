@@ -770,14 +770,11 @@ module Discordrb
       ApplicationCommand.new(JSON.parse(resp), self, server_id)
     end
 
-    # @param name [Symbol, String]
-    # @param description [String]
     # @param server_id [String, Integer, nil] The ID of the server to register the command in. Global if `nil`.
-    # @param default_permission [Boolean, nil] Whether the command is enabled by default when the app is added to a server.
-    # @param type [Symbol, Integer]
+    # @param (see Interactions::ApplicationCommandSetBuilder#command)
     #
-    # @yieldparam [OptionBuilder]
-    # @yieldparam [PermissionBuilder]
+    # @yieldparam [Interactions::OptionBuilder]
+    # @yieldparam [Interactions::PermissionBuilder]
     #
     # @return [ApplicationCommand]
     #
@@ -820,13 +817,10 @@ module Discordrb
 
     # @param command_id [String, Integer]
     # @param server_id [String, Integer, nil] The ID of the server to edit the command from. Global if `nil`.
-    # @param name [Symbol, String, nil]
-    # @param description [String, nil]
-    # @param default_permission [Boolean, nil] Whether the command is enabled by default when the app is added to a server.
-    # @param type [Symbol, Integer]
+    # @param (see Interactions::ApplicationCommandBuilder#initialize)
     #
-    # @yieldparam [OptionBuilder]
-    # @yieldparam [PermissionBuilder]
+    # @yieldparam [Interactions::OptionBuilder]
+    # @yieldparam [Interactions::PermissionBuilder]
     #
     # @return [ApplicationCommand]
     def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, &block)
