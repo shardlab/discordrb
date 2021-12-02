@@ -770,8 +770,11 @@ module Discordrb
       ApplicationCommand.new(JSON.parse(resp), self, server_id)
     end
 
+    # @param name [Symbol, String]
+    # @param description [String]
     # @param server_id [String, Integer, nil] The ID of the server to register the command in. Global if `nil`.
-    # @param (see Interactions::ApplicationCommandSetBuilder#command)
+    # @param default_permission [Boolean, nil] Whether the command is enabled by default when the app is added to a server.
+    # @param type [Symbol, Integer]
     #
     # @yieldparam options [Interactions::OptionBuilder]
     # @yieldparam permissions [Interactions::PermissionBuilder]
@@ -817,7 +820,10 @@ module Discordrb
 
     # @param command_id [String, Integer]
     # @param server_id [String, Integer, nil] The ID of the server to edit the command from. Global if `nil`.
-    # @param (see Interactions::ApplicationCommandBuilder#initialize)
+    # @param name [Symbol, String, nil]
+    # @param description [String, nil]
+    # @param default_permission [Boolean, nil] Default permission
+    # @param type [Symbol, Integer]
     #
     # @yieldparam options [Interactions::OptionBuilder]
     # @yieldparam permissions [Interactions::PermissionBuilder]
