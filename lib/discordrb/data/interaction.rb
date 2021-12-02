@@ -312,17 +312,20 @@ module Discordrb
 
   # Objects specific to Interactions.
   module Interactions
+    # A builder for defining a set of application commands.
     class ApplicationCommandSetBuilder
+      # @return [Array<ApplicationCommandBuilder>]
       attr_reader :commands
 
+      # @!visibility private
       def initialize
         @commands = []
       end
 
       # @param name [Symbol, String]
+      # @param description [String]
       # @param default_permission [Boolean, nil] Whether the command is enabled by default when the app is added to a server.
       # @param type [Symbol, Integer]
-      # @param description [String]
       #
       # @yieldparam [OptionBuilder]
       # @yieldparam [PermissionBuilder]
@@ -342,8 +345,18 @@ module Discordrb
       end
     end
 
+    # A builder for defining an application command.
     class ApplicationCommandBuilder
-      attr_accessor :name, :description, :default_permission
+      # @return [Symbol, String, nil]
+      attr_accessor :name
+
+      # @return [String, nil]
+      attr_accessor :description
+
+      # @return [Boolean, nil]
+      attr_accessor :default_permission
+
+      # @return [Symbol, Integer]
       attr_reader :type
 
       # @param name [Symbol, String, nil]
@@ -351,9 +364,9 @@ module Discordrb
       # @param default_permission [Boolean, nil] Whether the command is enabled by default when the app is added to a server.
       # @param type [Symbol, Integer]
       #
-      # @yieldparam [OptionBuilder]
-      # @yieldparam [PermissionBuilder]
-      def initialize(name: nil, description: nil, default_permission: nil, type: :chat_input, &block)
+      # @yieldparam options [OptionBuilder]
+      # @yieldparam permissions [PermissionBuilder]
+      def initialize(name: nil, description: nil, default_permission: nil, type: :chat_input)
         @name = name
         @description = description
         @default_permission = default_permission
@@ -369,14 +382,14 @@ module Discordrb
         @type = ApplicationCommand::TYPES[value] || value
       end
 
-      # @yieldparam [OptionBuilder]
+      # @yieldparam options [OptionBuilder]
       # @return OptionBuilder
       def options
         yield @options_builder if block_given?
         @options_builder
       end
 
-      # @yieldparam [PermissionBuilder]
+      # @yieldparam permissions [PermissionBuilder]
       # @return PermissionBuilder
       def permissions
         yield @permission_builder if block_given?
