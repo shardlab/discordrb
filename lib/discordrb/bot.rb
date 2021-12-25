@@ -1047,6 +1047,7 @@ module Discordrb
       member.update_roles(data['roles'])
       member.update_nick(data['nick'])
       member.update_boosting_since(data['premium_since'])
+      member.update_communication_disabled_until(data['communication_disabled_until'])
     end
 
     # Internal handler for GUILD_MEMBER_DELETE
