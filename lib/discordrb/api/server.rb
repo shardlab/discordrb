@@ -153,7 +153,7 @@ module Discordrb::API::Server
         deaf: deaf,
         channel_id: channel_id,
         communication_disabled_until: communication_disabled_until
-      }.reject {|_, v| v == :undef }.to_json,
+      }.reject { |_, v| v == :undef }.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
