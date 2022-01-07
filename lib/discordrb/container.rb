@@ -632,7 +632,7 @@ module Discordrb
     # @param container [Module] A module that `extend`s {EventContainer} from which the handlers will be added.
     def include_events(container)
       application_command_handlers = container.instance_variable_get(:@application_commands)
-      handlers = container.instance_variable_get '@event_handlers'
+      handlers = container.instance_variable_get :@event_handlers
       return unless handlers || application_command_handlers
 
       @event_handlers ||= {}
