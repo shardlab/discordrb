@@ -136,6 +136,36 @@
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#communication_disabled_until-instance_method" title="#communication_disabled_until (instance method)">#<strong>communication_disabled_until</strong>  &#x21d2; Time </a>
+    
+
+    
+      (also: #timeout)
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>When the user&#39;s timeout will expire.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#joined_at-instance_method" title="#joined_at (instance method)">#<strong>joined_at</strong>  &#x21d2; Time </a>
     
 
@@ -309,6 +339,69 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_boosting_since'>boosting_since</span>
   <span class='ivar'>@boosting_since</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="communication_disabled_until-instance_method">
+  
+    #<strong>communication_disabled_until</strong>  &#x21d2; <tt>Time</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='timeout-instance_method'>timeout</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns When the user&#39;s timeout will expire.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Time</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>When the user&#39;s timeout will expire.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+23
+24
+25</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/member.rb', line 23</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_communication_disabled_until'>communication_disabled_until</span>
+  <span class='ivar'>@communication_disabled_until</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -561,7 +654,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Jan  6 22:29:42 2022 by
+  Generated on Fri Jan  7 20:28:08 2022 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.6.9).
 </div>

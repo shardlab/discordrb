@@ -3290,7 +3290,7 @@ setting some kind of uptime variable or whatever else. The only limit is yoursel
 
 <span class='kw'>def</span> <span class='id identifier rubyid_include_events'>include_events</span><span class='lparen'>(</span><span class='id identifier rubyid_container'>container</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_application_command_handlers'>application_command_handlers</span> <span class='op'>=</span> <span class='id identifier rubyid_container'>container</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_get'>instance_variable_get</span><span class='lparen'>(</span><span class='symbol'>:@application_commands</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_handlers'>handlers</span> <span class='op'>=</span> <span class='id identifier rubyid_container'>container</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_get'>instance_variable_get</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>@event_handlers</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_handlers'>handlers</span> <span class='op'>=</span> <span class='id identifier rubyid_container'>container</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_get'>instance_variable_get</span> <span class='symbol'>:@event_handlers</span>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_handlers'>handlers</span> <span class='op'>||</span> <span class='id identifier rubyid_application_command_handlers'>application_command_handlers</span>
 
   <span class='ivar'>@event_handlers</span> <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -9226,7 +9226,7 @@ moves between voice channels, as well as their mute and deaf status for themselv
 </div>
 
       <div id="footer">
-  Generated on Thu Jan  6 22:29:42 2022 by
+  Generated on Fri Jan  7 20:28:07 2022 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.6.9).
 </div>

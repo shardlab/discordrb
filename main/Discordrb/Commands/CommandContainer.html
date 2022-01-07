@@ -864,7 +864,7 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
       <pre class="code"><span class="info file"># File 'lib/discordrb/commands/container.rb', line 88</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_include_commands'>include_commands</span><span class='lparen'>(</span><span class='id identifier rubyid_container'>container</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_handlers'>handlers</span> <span class='op'>=</span> <span class='id identifier rubyid_container'>container</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_get'>instance_variable_get</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>@commands</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_handlers'>handlers</span> <span class='op'>=</span> <span class='id identifier rubyid_container'>container</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_get'>instance_variable_get</span> <span class='symbol'>:@commands</span>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_handlers'>handlers</span>
 
   <span class='ivar'>@commands</span> <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -941,7 +941,7 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
 </div>
 
       <div id="footer">
-  Generated on Thu Jan  6 22:29:42 2022 by
+  Generated on Fri Jan  7 20:28:08 2022 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.6.9).
 </div>
