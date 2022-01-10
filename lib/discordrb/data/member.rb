@@ -159,7 +159,7 @@ module Discordrb
     def modify_roles(add, remove, reason = nil)
       add_role_ids = role_id_array(add)
       remove_role_ids = role_id_array(remove)
-      old_role_ids = @role_ids
+      old_role_ids = resolve_role_ids
       new_role_ids = (old_role_ids - remove_role_ids + add_role_ids).uniq
 
       API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
@@ -174,7 +174,7 @@ module Discordrb
       if role_ids.count == 1
         API::Server.add_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
-        old_role_ids = @role_ids
+        old_role_ids = resolve_role_ids
         new_role_ids = (old_role_ids + role_ids).uniq
         API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
       end
@@ -189,7 +189,7 @@ module Discordrb
       if role_ids.count == 1
         API::Server.remove_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
-        old_role_ids = @role_ids
+        old_role_ids = resolve_role_ids
         new_role_ids = old_role_ids.reject { |i| role_ids.include?(i) }
         API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
       end
@@ -362,6 +362,10 @@ module Discordrb
     def voice_state_attribute(name)
       voice_state = server.voice_states[@user.id]
       voice_state&.send name
+    end
+
+    def resolve_role_ids
+      @roles ? @roles.collect(&:id) : @role_ids
     end
   end
 end
