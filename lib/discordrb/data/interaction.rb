@@ -169,7 +169,7 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = builder.to_json_hash
       resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
@@ -197,10 +197,10 @@ module Discordrb
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, components: components.to_a }.compact)
+      data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, data[:tts], nil, data[:embeds], data[:allowed_mentions], flags, data[:components]
+        @token, @application_id, true, data[:content], nil, nil, data[:tts], nil, data[:embeds], data[:allowed_mentions], flags, components.to_a
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -218,10 +218,10 @@ module Discordrb
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components.to_a }.compact)
+      data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], data[:components]
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -257,8 +257,12 @@ module Discordrb
 
     private
 
+    # Set builder defaults from parameters
+    # @param builder [Discordrb::Webhooks::Builder]
+    # @param content [String, nil]
+    # @param embeds [Array<Hash, Discordrb::Webhooks::Embed>, nil]
+    # @param allowed_mentions [AllowedMentions, Hash, nil]
     def prepare_builder(builder, content, embeds, allowed_mentions)
-      # Set builder defaults from parameters
       builder.content = content
       builder.allowed_mentions = allowed_mentions
       embeds&.each { |embed| builder << embed }
