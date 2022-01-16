@@ -305,7 +305,7 @@ module Discordrb
       @bot = bot
       @id = data['id'].to_i
       @application_id = data['application_id'].to_i
-      @server_id = server_id.to_i
+      @server_id = server_id&.to_i
 
       @name = data['name']
       @description = data['description']
