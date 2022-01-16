@@ -321,7 +321,6 @@ module Discordrb::Events
     def initialize(data, bot)
       super
 
-      data['message']['author'] = data['member']
       @message = Discordrb::Interactions::Message.new(data['message'], bot, @interaction)
       @custom_id = data['data']['custom_id']
     end
