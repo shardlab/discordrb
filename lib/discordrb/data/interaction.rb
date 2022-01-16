@@ -91,10 +91,7 @@ module Discordrb
       view = Discordrb::Webhooks::View.new
 
       # Set builder defaults from parameters
-      builder.content = content
-      builder.allowed_mentions = allowed_mentions
-      embeds&.each { |embed| builder << embed }
-
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
@@ -144,10 +141,11 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = builder.to_json_hash
 
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
 
@@ -167,6 +165,7 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
@@ -194,6 +193,7 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield builder, view if block_given?
 
       components ||= view
@@ -214,6 +214,7 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield builder, view if block_given?
 
       components ||= view
@@ -252,6 +253,15 @@ module Discordrb
           return button if button.custom_id == @data['custom_id']
         end
       end
+    end
+
+    private
+
+    def prepare_builder(builder, content, embeds, allowed_mentions)
+      # Set builder defaults from parameters
+      builder.content = content
+      builder.allowed_mentions = allowed_mentions
+      embeds&.each { |embed| builder << embed }
     end
   end
 
