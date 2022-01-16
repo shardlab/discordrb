@@ -200,7 +200,7 @@ module Discordrb
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, data[:tts], nil, data[:embeds], data[:allowed_mentions], flags, components.to_a
+        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
