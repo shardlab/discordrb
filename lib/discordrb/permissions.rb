@@ -169,6 +169,11 @@ module Discordrb
     #   has_manage_channels = member.defined_permission?(:manage_channels)
     # @return [true, false] whether or not this user has the permission defined.
     def defined_permission?(action, channel = nil)
+      # For slash commands we may not have access to the server or role
+      # permissions. In this case we use the permissions given to us by the
+      # interaction.
+      return @permissions.__send__(action) if @server.nil? && @permissions
+
       # Get the permission the user's roles have
       role_permission = defined_role_permission?(action, channel)
 

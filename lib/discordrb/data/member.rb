@@ -76,6 +76,7 @@ module Discordrb
       @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
       timeout_until = data['communication_disabled_until']
       @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
+      @permissions = Permissions.new(data['permissions']) if data['permissions']
     end
 
     # @return [Server] the server this member is on.
