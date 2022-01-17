@@ -98,6 +98,9 @@ module Discordrb
       # @return [Symbol] the type of target being performed on. (:server, :channel, :user, :role, :invite, :webhook, :emoji, :unknown)
       attr_reader :target_type
 
+      # @return [Integer, nil] the channel in which the entities were targeted.
+      attr_reader :channel_id
+
       # @return [Integer, nil] the amount of messages deleted. Only present if the action is `:message_delete`.
       attr_reader :count
       alias_method :amount, :count
@@ -105,11 +108,23 @@ module Discordrb
       # @return [Integer, nil] the amount of days the members were inactive for. Only present if the action is `:member_prune`.
       attr_reader :days
 
+      # @return [Integer, nil] the id of the overwritten entity.
+      attr_reader :id
+
       # @return [Integer, nil] the amount of members removed. Only present if the action is `:member_prune`.
       attr_reader :members_removed
 
+      # @return [Integer, nil] the id of the message that was targeted. Only present if the action is `:message_pin` or `:message_unpin`.
+      attr_reader :message_id
+
+      # @return [Integer, nil] the name of the role if type is "0".
+      attr_reader :role_name
+
       # @return [String, nil] the reason for this action occurring.
       attr_reader :reason
+
+      # @return [Integer, nil] the type of overwritten entity - 0 for "role" or 1 for "member".
+      attr_reader :type
 
       # @return [Hash<String => Change>, RoleChange, nil] the changes from this log, listing the key as the key changed. Will be a RoleChange object if the action is `:member_role_update`. Will be nil if the action is either `:message_delete` or `:member_prune`.
       attr_reader :changes
@@ -136,10 +151,7 @@ module Discordrb
         return unless data.include?('options')
 
         # Checks and sets variables for special action options.
-        @count = data['options']['count'].to_i unless data['options']['count'].nil?
-        @channel_id = data['options']['channel'].to_i unless data['options']['channel'].nil?
-        @days = data['options']['delete_member_days'].to_i unless data['options']['delete_member_days'].nil?
-        @members_removed = data['options']['members_removed'].to_i unless data['options']['members_removed'].nil?
+        process_options(data['options'])
       end
 
       # @return [Server, Channel, Member, User, Role, Invite, Webhook, Emoji, nil] the target being performed on.
@@ -190,6 +202,17 @@ module Discordrb
           change = Change.new(element, @server, @bot, self)
           @changes[change.key] = change
         end
+      end
+
+      def process_options(options)
+        @channel_id = options['channel'].to_i if options['channel']
+        @count = options['count'].to_i if options['count']
+        @days = options['delete_member_days'].to_i if options['delete_member_days']
+        @id = options['id'].to_i if options['id']
+        @members_removed = options['members_removed'].to_i if options['members_removed']
+        @message_id = options['message_id'].to_i if options['message_id']
+        @role_name = options['role_name'] if options['role_name']
+        @type = options['type'].to_i if options['type']
       end
     end
 
