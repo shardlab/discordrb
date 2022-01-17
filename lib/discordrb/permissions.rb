@@ -171,8 +171,9 @@ module Discordrb
     def defined_permission?(action, channel = nil)
       # For slash commands we may not have access to the server or role
       # permissions. In this case we use the permissions given to us by the
-      # interaction.
-      return @permissions.__send__(action) if @server.nil? && @permissions
+      # interaction. If attempting to check against a specific channel the check
+      # is skipped.
+      return @permissions.__send__(action) if @permissions && channel.nil?
 
       # Get the permission the user's roles have
       role_permission = defined_role_permission?(action, channel)
