@@ -21,7 +21,7 @@ module Discordrb
       update_message: 7
     }.freeze
 
-    # @return [User] The user that initiated the interaction.
+    # @return [User, Member] The user that initiated the interaction.
     attr_reader :user
 
     # @return [Integer, nil] The ID of the server this interaction originates from.
