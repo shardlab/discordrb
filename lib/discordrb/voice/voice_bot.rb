@@ -15,11 +15,6 @@ module Discordrb::Voice
   # This class represents a connection to a Discord voice server and channel. It can be used to play audio files and
   # streams and to control playback on currently playing tracks. The method {Bot#voice_connect} can be used to connect
   # to a voice channel.
-  #
-  # discordrb does latency adjustments every now and then to improve playback quality. I made sure to put useful
-  # defaults for the adjustment parameters, but if the sound is patchy or too fast (or the speed varies a lot) you
-  # should check the parameters and adjust them to your connection: {VoiceBot#adjust_interval},
-  # {VoiceBot#adjust_offset}, and {VoiceBot#adjust_average}.
   class VoiceBot
     # @return [Channel] the current voice channel
     attr_reader :channel
@@ -33,42 +28,25 @@ module Discordrb::Voice
     # @return [Encoder] the encoder used to encode audio files into the format required by Discord.
     attr_reader :encoder
 
-    # discordrb will occasionally measure the time it takes to send a packet, and adjust future delay times based
-    # on that data. This makes voice playback more smooth, because if packets are sent too slowly, the audio will
-    # sound patchy, and if they're sent too quickly, packets will "pile up" and occasionally skip some data or
-    # play parts back too fast. How often these measurements should be done depends a lot on the system, and if it's
-    # done too quickly, especially on slow connections, the playback speed will vary wildly; if it's done too slowly
-    # however, small errors will cause quality problems for a longer time.
-    # @return [Integer] how frequently audio length adjustments should be done, in ideal packets (20ms).
+    # @deprecated The adjustment parameters no longer have any effect on voice timing, as other measures have been
+    #   implemented that reduce skipping artifacts more than setting these parameters could ever have achieved.
     attr_accessor :adjust_interval
 
-    # This particular value is also important because ffmpeg may take longer to process the first few packets. It is
-    # recommended to set this to 10 at maximum, otherwise it will take too long to make the first adjustment, but it
-    # shouldn't be any higher than {#adjust_interval}, otherwise no adjustments will take place. If {#adjust_interval}
-    # is at a value higher than 10, this value should not be changed at all.
-    # @see #adjust_interval
-    # @return [Integer] the packet number (1 packet = 20ms) at which length adjustments should start.
+    # @deprecated The adjustment parameters no longer have any effect on voice timing, as other measures have been
+    #   implemented that reduce skipping artifacts more than setting these parameters could ever have achieved.
     attr_accessor :adjust_offset
 
-    # This value determines whether or not the adjustment length should be averaged with the previous value. This may
-    # be useful on slower connections where latencies vary a lot. In general, it will make adjustments more smooth,
-    # but whether that is desired behaviour should be tried on a case-by-case basis.
-    # @see #adjust_interval
-    # @return [true, false] whether adjustment lengths should be averaged with the respective previous value.
+    # @deprecated The adjustment parameters no longer have any effect on voice timing, as other measures have been
+    #   implemented that reduce skipping artifacts more than setting these parameters could ever have achieved.
     attr_accessor :adjust_average
 
-    # Disable the debug message for length adjustment specifically, as it can get quite spammy with very low intervals
-    # @see #adjust_interval
-    # @return [true, false] whether length adjustment debug messages should be printed
+    # @deprecated The adjustment parameters no longer have any effect on voice timing, as other measures have been
+    #   implemented that reduce skipping artifacts more than setting these parameters could ever have achieved.
     attr_accessor :adjust_debug
 
-    # If this value is set, no length adjustments will ever be done and this value will always be used as the length
-    # (i.e. packets will be sent every N seconds). Be careful not to set it too low as to not spam Discord's servers.
-    # The ideal length is 20ms (accessible by the {Discordrb::Voice::IDEAL_LENGTH} constant), this value should be
-    # slightly lower than that because encoding + sending takes time. Note that sending DCA files is significantly
-    # faster than sending regular audio files (usually about four times as fast), so you might want to set this value
-    # to something else if you're sending a DCA file.
-    # @return [Float] the packet length that should be used instead of calculating it during the adjustments, in ms.
+    # Forces the wait time after sending a voice packet to be exactly this value, rather than calculating it
+    # dynamically every time from the amount of time it took to encode and send the voice data.
+    # @return [Float] the voice-send delay time, in milliseconds, that should be used instead of the default 20 ms.
     attr_accessor :length_override
 
     # The factor the audio's volume should be multiplied with. `1` is no change in volume, `0` is completely silent,
@@ -86,11 +64,6 @@ module Discordrb::Voice
 
       @sequence = @time = 0
       @skips = 0
-
-      @adjust_interval = 100
-      @adjust_offset = 10
-      @adjust_average = false
-      @adjust_debug = true
 
       @sleep_correction = 0
 
