@@ -270,12 +270,24 @@ Manage Roles)</p>
 180
 181
 182
-183</pre>
+183
+184
+185
+186
+187
+188
+189</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 171</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_defined_permission?'>defined_permission?</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_channel'>channel</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='comment'># For slash commands we may not have access to the server or role
+</span>  <span class='comment'># permissions. In this case we use the permissions given to us by the
+</span>  <span class='comment'># interaction. If attempting to check against a specific channel the check
+</span>  <span class='comment'># is skipped.
+</span>  <span class='kw'>return</span> <span class='ivar'>@permissions</span><span class='period'>.</span><span class='id identifier rubyid___send__'>__send__</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@permissions</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
   <span class='comment'># Get the permission the user&#39;s roles have
 </span>  <span class='id identifier rubyid_role_permission'>role_permission</span> <span class='op'>=</span> <span class='id identifier rubyid_defined_role_permission?'>defined_role_permission?</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_channel'>channel</span><span class='rparen'>)</span>
 
@@ -424,7 +436,7 @@ through for example being the server owner or having the Manage Roles permission
 </div>
 
       <div id="footer">
-  Generated on Sun Jan 16 18:33:59 2022 by
+  Generated on Tue Jan 18 17:43:02 2022 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.27 (ruby-2.6.9).
 </div>
