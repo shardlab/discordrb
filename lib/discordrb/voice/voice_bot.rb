@@ -92,6 +92,8 @@ module Discordrb::Voice
       @adjust_average = false
       @adjust_debug = true
 
+      @sleep_correction = 0
+
       @volume = 1.0
       @playing = false
 
@@ -354,7 +356,7 @@ module Discordrb::Voice
 
         if @length.positive?
           # Wait `length` ms, then send the next packet
-          sleep @length / 1000.0
+          precise_sleep @length / 1000.0
         else
           Discordrb::LOGGER.warn('Audio encoding and sending together took longer than Discord expects one packet to be (20 ms)! This may be indicative of network problems.')
         end
@@ -389,6 +391,17 @@ module Discordrb::Voice
     def total_nsec
       now = Time.now
       (now.to_i * (10**9)) + now.nsec
+    end
+
+    # Try to sleep precisely the given amount of seconds. Accounts for systemic inaccuracies by measuring the wall-clock time
+    # that was actually slept, calculating the difference to the given duration, and subtracting this correction value
+    # from the duration the next time.
+    def precise_sleep(duration)
+      corrected_duration = duration - @sleep_correction
+      nsec_before = total_nsec
+      sleep corrected_duration
+      nsec_after = total_nsec
+      @sleep_correction = ((nsec_after - nsec_before) / 1_000_000_000.0) - corrected_duration
     end
   end
 end
