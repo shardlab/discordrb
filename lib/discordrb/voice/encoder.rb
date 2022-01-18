@@ -29,9 +29,17 @@ module Discordrb::Voice
       channels = 2
       @filter_volume = 1
 
-      raise LoadError, 'Opus unavailable - voice not supported! Please install opus for voice support to work.' unless OPUS_AVAILABLE
-
-      @opus = Opus::Encoder.new(sample_rate, frame_size, channels)
+      if OPUS_AVAILABLE
+        @opus = Opus::Encoder.new(sample_rate, frame_size, channels)
+      else
+        # Define an ad-hoc "encoder" that raises an error whenever something tries to use it
+        @opus = Object.new
+        %i[bitrate= encode].each do |method_name|
+          @opus.define_singleton_method(method_name) do |_|
+            raise 'Opus is not available, thus encoding from other formats is not supported! (Only DCA files are supported without opus installed.) Please install opus for full voice support to work.'
+          end
+        end
+      end
     end
 
     # Set the opus encoding bitrate
