@@ -339,7 +339,7 @@ module Discordrb::Voice
         @udp.send_audio(buf, @sequence, @time)
 
         # Set the stream time (for tracking how long we've been playing)
-        @stream_time = count * @length / 1000
+        @stream_time = count * IDEAL_LENGTH / 1000
 
         if @length_override # If the user has specified a voice timing override value, use it
           @length = @length_override
