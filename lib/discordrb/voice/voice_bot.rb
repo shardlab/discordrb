@@ -311,7 +311,7 @@ module Discordrb::Voice
       self.speaking = true
       loop do
         # Record the wall-clock time before doing anything else, to allow for precise timing
-        nsec_before = Time.now.nsec
+        nsec_before = total_nsec
 
         break unless @playing
 
@@ -344,7 +344,7 @@ module Discordrb::Voice
         if @length_override # If the user has specified a voice timing override value, use it
           @length = @length_override
         else # Otherwise, calculate the time it took to encode and send data
-          nsec_after = Time.now.nsec
+          nsec_after = total_nsec
           ms_diff = (nsec_after - nsec_before) / 1_000_000.0
           @length = IDEAL_LENGTH - ms_diff
         end
@@ -383,6 +383,12 @@ module Discordrb::Voice
     def increment_packet_headers
       @sequence + 10 < 65_535 ? @sequence += 1 : @sequence = 0
       @time + 9600 < 4_294_967_295 ? @time += 960 : @time = 0
+    end
+
+    # Get the wall-clock time as a nanosecond-level precision Unix timestamp
+    def total_nsec
+      now = Time.now
+      (now.to_i * (10**9)) + now.nsec
     end
   end
 end
