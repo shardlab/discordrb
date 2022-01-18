@@ -310,11 +310,8 @@ module Discordrb::Voice
 
       self.speaking = true
       loop do
-        # Starting from the tenth packet, perform length adjustment every 100 packets (2 seconds)
-        should_adjust_this_packet = (count % @adjust_interval == @adjust_offset)
-
-        # If we should adjust, start now
-        @length_adjust = Time.now.nsec if should_adjust_this_packet
+        # Record the wall-clock time before doing anything else, to allow for precise timing
+        nsec_before = Time.now.nsec
 
         break unless @playing
 
@@ -338,35 +335,18 @@ module Discordrb::Voice
         # Proceed to the next packet if we got nil
         next unless buf
 
-        # Track intermediate adjustment so we can measure how much encoding contributes to the total time
-        @intermediate_adjust = Time.now.nsec if should_adjust_this_packet
-
         # Send the packet
         @udp.send_audio(buf, @sequence, @time)
 
         # Set the stream time (for tracking how long we've been playing)
         @stream_time = count * @length / 1000
 
-        if @length_override # Don't do adjustment because the user has manually specified an override value
+        if @length_override # If the user has specified a voice timing override value, use it
           @length = @length_override
-        elsif @length_adjust # Perform length adjustment
-          # Define the time once so it doesn't get inaccurate
-          now = Time.now.nsec
-
-          # Difference between length_adjust and now in ms
-          ms_diff = (now - @length_adjust) / 1_000_000.0
-          if ms_diff >= 0
-            @length = if @adjust_average
-                        (IDEAL_LENGTH - ms_diff + @length) / 2.0
-                      else
-                        IDEAL_LENGTH - ms_diff
-                      end
-
-            # Track the time it took to encode
-            encode_ms = (@intermediate_adjust - @length_adjust) / 1_000_000.0
-            @bot.debug("Length adjustment: new length #{@length} (measured #{ms_diff}, #{(100 * encode_ms) / ms_diff}% encoding)") if @adjust_debug
-          end
-          @length_adjust = nil
+        else # Otherwise, calculate the time it took to encode and send data
+          nsec_after = Time.now.nsec
+          ms_diff = (nsec_after - nsec_before) / 1_000_000.0
+          @length = IDEAL_LENGTH - ms_diff
         end
 
         # If paused, wait
