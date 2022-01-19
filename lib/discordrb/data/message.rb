@@ -70,6 +70,10 @@ module Discordrb
     # @return [Array<Component>]
     attr_reader :components
 
+    # @return [Array<Sticker>] array of message sticker item objects
+    attr_reader :sticker_items
+    alias sticker_items stickers
+
     # The discriminator that webhook user accounts have.
     ZERO_DISCRIM = '0000'
 
@@ -155,6 +159,8 @@ module Discordrb
 
       @components = []
       @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+
+      @sticker_items = data['sticker_items'].map { |sticker_item| Sticker.new(sticker_item, @bot) } || []
     end
 
     # Replies to this message with the specified content.

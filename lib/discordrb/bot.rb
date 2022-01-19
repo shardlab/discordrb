@@ -1495,6 +1495,36 @@ module Discordrb
           event = ServerEmojiUpdateEvent.new(server, old_emoji_data[e], new_emoji_data[e], self)
           raise_event(event)
         end
+      when :GUILD_STICKERS_UPDATE
+        server_id = data['guild_id'].to_i
+        server = @servers[server_id]
+        old_stickers_data = server.stickers.clone
+        update_guild_stickers(data)
+        new_stickers_data = server.stickers
+
+        created_ids = new_stickers_data.keys - old_stickers_data.keys
+        deleted_ids = old_stickers_data.keys - new_stickers_data.keys
+        updated_ids = old_stickers_data.select do |k, v|
+          new_stickers_data[k] && (v.name != new_stickers_data[k].name || v.roles != new_stickers_data[k].roles)
+        end.keys
+
+#         event = ServerStickerChangeEvent.new(server, data, self)
+#         raise_event(event)
+# 
+#         created_ids.each do |e|
+#           event = ServerStickerCreateEvent.new(server, new_stickers_data[e], self)
+#           raise_event(event)
+#         end
+# 
+#         deleted_ids.each do |e|
+#           event = ServerStickerDeleteEvent.new(server, old_stickers_data[e], self)
+#           raise_event(event)
+#         end
+# 
+#         updated_ids.each do |e|
+#           event = ServerStickerUpdateEvent.new(server, old_stickers_data[e], new_stickers_data[e], self)
+#           raise_event(event)
+#         end
       when :INTERACTION_CREATE
         event = InteractionCreateEvent.new(data, self)
         raise_event(event)

@@ -61,6 +61,10 @@ module Discordrb
     # @return [Integer] the boost level, 0 if no level.
     attr_reader :boost_level
 
+    # The server's custom stickers.
+    # @return [Array<Sticker>] array of stickers.
+    attr_reader :stickers
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -843,6 +847,11 @@ module Discordrb
       @splash_id = new_data['splash'] || @splash_id
       @banner_id = new_data['banner'] || @banner_id
       @features = new_data['features'] ? new_data['features'].map { |element| element.downcase.to_sym } : @features || []
+
+      @stickers = new_data['stickers'].each_with_object({}) do |data, hash|
+        s = Sticker.new(data, @bot)
+        hash[s.id] = s
+      end
 
       process_channels(new_data['channels']) if new_data['channels']
       process_roles(new_data['roles']) if new_data['roles']
