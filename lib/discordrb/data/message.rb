@@ -160,7 +160,10 @@ module Discordrb
       @components = []
       @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
 
-      @sticker_items = data['sticker_items'].map { |sticker_item| Sticker.new(sticker_item, @bot) } || []
+      sticker_data = data['sticker_items'] || []
+      @sticker_items = sticker_data.map do |sticker_item|
+        @bot.stickers(sticker_item['id']) || Sticker.new(sticker_item, @bot)
+      end
     end
 
     # Replies to this message with the specified content.

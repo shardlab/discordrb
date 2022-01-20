@@ -210,6 +210,18 @@ module Discordrb
       emoji.find { |element| element.name == name }
     end
 
+    def stickers(id = nil)
+      stickers_hash = servers.values.map(&:stickers).reduce(&:merge)
+      if id
+        id = id.resolve_id
+        stickers_hash[id]
+      else
+        stickers_hash.values
+      end
+    end
+
+    alias all_stickers stickers
+
     # The bot's user profile. This special user object can be used
     # to edit user data like the current username (see {Profile#username=}).
     # @return [Profile] The bot's profile that can be used to edit data.
@@ -1118,6 +1130,13 @@ module Discordrb
       server.update_emoji_data(data)
     end
 
+    # Internal handler for GUILD_STICKERS_UPDATE
+    def update_guild_stickers(data)
+      server_id = data['guild_id'].to_i
+      server = @servers[server_id]
+      server.update_sticker_data(data)
+    end
+
     # Internal handler for MESSAGE_CREATE
     def create_message(data); end
 
@@ -1508,23 +1527,23 @@ module Discordrb
           new_stickers_data[k] && (v.name != new_stickers_data[k].name || v.roles != new_stickers_data[k].roles)
         end.keys
 
-#         event = ServerStickerChangeEvent.new(server, data, self)
-#         raise_event(event)
-# 
-#         created_ids.each do |e|
-#           event = ServerStickerCreateEvent.new(server, new_stickers_data[e], self)
-#           raise_event(event)
-#         end
-# 
-#         deleted_ids.each do |e|
-#           event = ServerStickerDeleteEvent.new(server, old_stickers_data[e], self)
-#           raise_event(event)
-#         end
-# 
-#         updated_ids.each do |e|
-#           event = ServerStickerUpdateEvent.new(server, old_stickers_data[e], new_stickers_data[e], self)
-#           raise_event(event)
-#         end
+        event = ServerStickerChangeEvent.new(server, data, self)
+        raise_event(event)
+
+        created_ids.each do |e|
+          event = ServerStickerCreateEvent.new(server, new_stickers_data[e], self)
+          raise_event(event)
+        end
+
+        deleted_ids.each do |e|
+          event = ServerStickerDeleteEvent.new(server, old_stickers_data[e], self)
+          raise_event(event)
+        end
+
+        updated_ids.each do |e|
+          event = ServerStickerUpdateEvent.new(server, old_stickers_data[e], new_stickers_data[e], self)
+          raise_event(event)
+        end
       when :INTERACTION_CREATE
         event = InteractionCreateEvent.new(data, self)
         raise_event(event)

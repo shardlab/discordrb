@@ -190,4 +190,121 @@ module Discordrb::Events
       ].reduce(true, &:&)
     end
   end
+
+  class ServerStickerChangeEvent < ServerEvent
+    # @return [Server] the server in question.
+    attr_reader :server
+
+    # @return [Array<Sticker>] array of stickers.
+    attr_reader :stickers
+
+    def initialize(server, data, bot)
+      @bot = bot
+      @server = server
+      process_stickers(data)
+    end
+
+    # @!visibility private
+    def process_stickers(data)
+      @stickers = data['stickers'].map do |s|
+        @server.stickers[s['id']]
+      end
+    end
+  end
+
+  # Event handler for {ServerStickerChangeEvent}
+  class ServerStickerChangeEventHandler < ServerEventHandler; end
+
+  # Generic event helper for when an sticker is either created or deleted
+  class ServerStickerCDEvent < ServerEvent
+    # @return [Server] the server in question.
+    attr_reader :server
+
+    # @return [Sticker] the sticker data.
+    attr_reader :sticker
+
+    def initialize(server, sticker, bot)
+      @bot = bot
+      @sticker = sticker
+      @server = server
+    end
+  end
+
+  # Sticker is created
+  class ServerStickerCreateEvent < ServerStickerCDEvent; end
+
+  # Sticker is deleted
+  class ServerStickerDeleteEvent < ServerStickerCDEvent; end
+
+  # Generic handler for sticker create and delete
+  class ServerStickerCDEventHandler < ServerEventHandler
+    def matches?(event)
+      # Check for the proper event type
+      return false unless event.is_a? ServerStickerCDEvent
+
+      [
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a == case a
+               when String
+                 e.name
+               when Integer
+                 e.id
+               else
+                 e
+               end
+        end,
+        matches_all(@attributes[:id], event.sticker.id) { |a, e| a.resolve_id == e.resolve_id },
+        matches_all(@attributes[:name], event.sticker.name) { |a, e| a == e }
+      ].reduce(true, &:&)
+    end
+  end
+
+  # Event handler for {ServerStickerCreateEvent}
+  class ServerStickerCreateEventHandler < ServerStickerCDEventHandler; end
+
+  # Event handler for {ServerStickerDeleteEvent}
+  class ServerStickerDeleteEventHandler < ServerStickerCDEventHandler; end
+
+  # Sticker is updated
+  class ServerStickerUpdateEvent < ServerEvent
+    # @return [Server] the server in question.
+    attr_reader :server
+
+    # @return [Sticker, nil] the sticker data before the event.
+    attr_reader :old_sticker
+
+    # @return [Sticker, nil] the updated sticker data.
+    attr_reader :sticker
+
+    def initialize(server, old_sticker, sticker, bot)
+      @bot = bot
+      @old_sticker = old_sticker
+      @sticker = sticker
+      @server = server
+    end
+  end
+
+  # Event handler for {ServerStickerUpdateEvent}
+  class ServerStickerUpdateEventHandler < EventHandler
+    def matches?(event)
+      # Check for the proper event type
+      return false unless event.is_a? ServerStickerUpdateEvent
+
+      [
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a == case a
+               when String
+                 e.name
+               when Integer
+                 e.id
+               else
+                 e
+               end
+        end,
+        matches_all(@attributes[:id], event.old_sticker.id) { |a, e| a.resolve_id == e.resolve_id },
+        matches_all(@attributes[:old_name], event.old_sticker.name) { |a, e| a == e },
+        matches_all(@attributes[:name], event.sticker.name) { |a, e| a == e }
+      ].reduce(true, &:&)
+    end
+  end
 end

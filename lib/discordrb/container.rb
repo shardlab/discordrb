@@ -423,6 +423,52 @@ module Discordrb
       register_event(ServerEmojiUpdateEvent, attributes, block)
     end
 
+    # This **event** is raised when an sticker or collection of stickers is created/deleted/updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the server.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerStickerChangeEvent] The event that was raised.
+    # @return [ServerStickerChangeEventHandler] the event handler that was registered.
+    def server_sticker(attributes = {}, &block)
+      register_event(ServerStickerChangeEvent, attributes, block)
+    end
+
+    # This **event** is raised when a sticker is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the server.
+    # @option attributes [String] :name Matches the name of the sticker.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerStickerCreateEvent] The event that was raised.
+    # @return [ServerStickerCreateEventHandler] the event handler that was registered.
+    def server_sticker_create(attributes = {}, &block)
+      register_event(ServerStickerCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised when an sticker is deleted.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the server.
+    # @option attributes [String, Integer] :id Matches the ID of the sticker.
+    # @option attributes [String] :name Matches the name of the sticker.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerStickerDeleteEvent] The event that was raised.
+    # @return [ServerStickerDeleteEventHandler] the event handler that was registered.
+    def server_sticker_delete(attributes = {}, &block)
+      register_event(ServerStickerDeleteEvent, attributes, block)
+    end
+
+    # This **event** is raised when an sticker is updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the server.
+    # @option attributes [String, Integer] :id Matches the ID of the sticker.
+    # @option attributes [String] :name Matches the name of the sticker.
+    # @option attributes [String] :old_name Matches the name of the sticker before the update.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerStickerUpdateEvent] The event that was raised.
+    # @return [ServerStickerUpdateEventHandler] the event handler that was registered.
+    def server_sticker_update(attributes = {}, &block)
+      register_event(ServerStickerUpdateEvent, attributes, block)
+    end
+
     # This **event** is raised when a role is created.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String] :name Matches the role name.

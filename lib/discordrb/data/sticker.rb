@@ -44,6 +44,16 @@ module Discordrb
       @sort_value = data[:sort_value]
     end
 
+
+    def update(**attributes)
+      data = attributes.slice(:name, :description, :tags, :reason)
+      Discordrb::API::Sticker.modify(@bot.token, guild_id, id, data)
+    end
+
+    def destroy(reason)
+      Discordrb::API::Sticker.destroy(@bot.token, @guild_id, id, reason)
+    end
+
     # The inspect method is overwritten to give more useful output
     def inspect
       "<Sticker name=\"#{name}\" id=#{id} format_type=#{format_type} user=#{@user}>"

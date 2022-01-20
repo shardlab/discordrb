@@ -848,16 +848,12 @@ module Discordrb
       @banner_id = new_data['banner'] || @banner_id
       @features = new_data['features'] ? new_data['features'].map { |element| element.downcase.to_sym } : @features || []
 
-      @stickers = new_data['stickers'].each_with_object({}) do |data, hash|
-        s = Sticker.new(data, @bot)
-        hash[s.id] = s
-      end
-
       process_channels(new_data['channels']) if new_data['channels']
       process_roles(new_data['roles']) if new_data['roles']
       process_emoji(new_data['emojis']) if new_data['emojis']
       process_members(new_data['members']) if new_data['members']
       process_presences(new_data['presences']) if new_data['presences']
+      process_stickers(new_data['stickers']) if new_data['stickers']
       process_voice_states(new_data['voice_states']) if new_data['voice_states']
     end
 
@@ -883,6 +879,13 @@ module Discordrb
     def update_emoji_data(new_data)
       @emoji = {}
       process_emoji(new_data['emojis'])
+    end
+
+    # Updates the cached sticker data with new data
+    # @note For internal use only
+    # @!visibility private
+    def update_sticker_data(new_data)
+      process_stickers(new_data['stickers'])
     end
 
     # The inspect method is overwritten to give more useful output
@@ -927,6 +930,13 @@ module Discordrb
       emoji.each do |element|
         new_emoji = Emoji.new(element, @bot, self)
         @emoji[new_emoji.id] = new_emoji
+      end
+    end
+
+    def process_stickers(stickers)
+      @stickers = stickers.each_with_object({}) do |data, hash|
+        s = Sticker.new(data, @bot)
+        hash[s.id] = s
       end
     end
 
