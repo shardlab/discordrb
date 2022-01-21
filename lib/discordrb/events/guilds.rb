@@ -191,6 +191,7 @@ module Discordrb::Events
     end
   end
 
+  # Sticker is changed
   class ServerStickerChangeEvent < ServerEvent
     # @return [Server] the server in question.
     attr_reader :server

@@ -44,7 +44,7 @@ module Discordrb
       82 => :integration_delete,
       90 => :sticker_create,
       91 => :sticker_update,
-      92 => :sticker_delete,
+      92 => :sticker_delete
     }.freeze
 
     # @!visibility private

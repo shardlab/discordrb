@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module Discordrb
   module API
+    # API calls for Sticker object
     module Sticker
       module_function
 
@@ -26,7 +29,7 @@ module Discordrb
           Authorization: token
         )
       end
-      
+
       # List Server Stickers
       # https://discord.com/developers/docs/resources/sticker#list-guild-stickers
       def server_stickers(token, server_id)
@@ -60,13 +63,11 @@ module Discordrb
       # https://discord.com/developers/docs/resources/sticker#create-guild-sticker
       def create(token, server_id, **attributes)
         reason = attributes.delete(:reason)
-        if attributes[:tags].respond_to?(:join)
-          attributes[:tags] = attributes[:tags].join(',')
-        end
+        attributes[:tags] = attributes[:tags].join(',') if attributes[:tags].respond_to?(:join)
         body = attributes.slice(:name, :description, :tags, :file)
 
         raise(ArgumentError, 'Invalid file argument') unless body[:file].is_a?(File)
-        
+
         Discordrb::API.request(
           :guild_stickers,
           server_id,
@@ -87,9 +88,7 @@ module Discordrb
       # https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
       def modify(token, server_id, sticker_id, **attributes)
         reason = attributes.delete(:reason)
-        if attributes[:tags].respond_to?(:join)
-          attributes[:tags] = attributes[:tags].join(',')
-        end
+        attributes[:tags] = attributes[:tags].join(',') if attributes[:tags].respond_to?(:join)
         body = attributes.slice(:name, :description, :tags)
 
         Discordrb::API.request(

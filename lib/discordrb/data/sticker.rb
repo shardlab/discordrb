@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Discordrb
+  # A Discord Sticker
   class Sticker
     include IDObject
 
@@ -15,19 +16,8 @@ module Discordrb
       guild: 2
     }.freeze
 
-    attr_reader :pack_id
-    attr_reader :name
-    attr_reader :description
-    attr_reader :tags
-    attr_reader :type
-    attr_reader :format_type
-    attr_reader :available
-    attr_reader :guild_id
-
-    attr_reader :user
-    alias user author
-
-    attr_reader :sort_value
+    attr_reader :pack_id, :name, :description, :tags, :type, :format_type, :available, :guild_id, :user, :sort_value
+    alias author user
 
     def initialize(data, bot)
       data.symbolize_keys!
@@ -44,7 +34,6 @@ module Discordrb
       @sort_value = data[:sort_value]
     end
 
-
     def update(**attributes)
       data = attributes.slice(:name, :description, :tags, :reason)
       Discordrb::API::Sticker.modify(@bot.token, guild_id, id, data)
@@ -57,14 +46,6 @@ module Discordrb
     # The inspect method is overwritten to give more useful output
     def inspect
       "<Sticker name=\"#{name}\" id=#{id} format_type=#{format_type} user=#{@user}>"
-    end
-
-    private
-
-    def parse_format_type(type)
-      raise ArgumentError, 'Invalid sticker format type specified' unless FORMAT_TYPE.keys.include?(type)
-
-      FORMAT_TYPE[type]
     end
   end
 end

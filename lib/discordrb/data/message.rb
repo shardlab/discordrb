@@ -72,7 +72,7 @@ module Discordrb
 
     # @return [Array<Sticker>] array of message sticker item objects
     attr_reader :sticker_items
-    alias sticker_items stickers
+    alias stickers sticker_items
 
     # The discriminator that webhook user accounts have.
     ZERO_DISCRIM = '0000'
