@@ -10,12 +10,6 @@ module Discordrb
     alias_method :text, :content
     alias_method :to_s, :content
 
-    # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
-    #   {User} for old messages when the author has left the server since then)
-    attr_reader :author
-    alias_method :user, :author
-    alias_method :writer, :author
-
     # @return [Channel] the channel in which this message was sent.
     attr_reader :channel
 
@@ -88,34 +82,20 @@ module Discordrb
 
       @server = @channel.server
 
-      @author = if data['author']
-                  if data['author']['discriminator'] == ZERO_DISCRIM
-                    # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
-                    # a User and return that instead.
-                    Discordrb::LOGGER.debug("Webhook user: #{data['author']['id']}")
-                    User.new(data['author'], @bot)
-                  elsif @channel.private?
-                    # Turn the message user into a recipient - we can't use the channel recipient
-                    # directly because the bot may also send messages to the channel
-                    Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
-                  else
-                    member = @channel.server.member(data['author']['id'].to_i)
-
-                    if member
-                      member.update_data(data['member']) if data['member']
-                    else
-                      Discordrb::LOGGER.debug("Member with ID #{data['author']['id']} not cached (possibly left the server).")
-                      member = if data['member']
-                                 member_data = data['author'].merge(data['member'])
-                                 Member.new(member_data, @server, bot)
-                               else
-                                 @bot.ensure_user(data['author'])
-                               end
-                    end
-
-                    member
-                  end
-                end
+      if data['author']
+        if data['author']['discriminator'] == ZERO_DISCRIM
+          # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
+          # a User and return that instead.
+          Discordrb::LOGGER.debug("Webhook user: #{data['author']['id']}")
+          @author = User.new(data['author'], @bot)
+        elsif @channel.private?
+          # Turn the message user into a recipient - we can't use the channel recipient
+          # directly because the bot may also send messages to the channel
+          @author = Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
+        else
+          @author_id = data['author']['id'].to_i
+        end
+      end
 
       @webhook_id = data['webhook_id'].to_i if data['webhook_id']
 
@@ -157,6 +137,22 @@ module Discordrb
       @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
     end
 
+    # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
+    #   {User} for old messages when the author has left the server since then)
+    def author
+      return @author if @author
+      
+      if @channel.server
+        @author = @channel.server.member(@author_id)        
+        Discordrb::LOGGER.debug("Member with ID #{@author_id} not cached (possibly left the server).") unless @author
+      end
+
+      @author||= @bot.user(@author_id)
+    end
+
+    alias_method :user, :author
+    alias_method :writer, :author
+    
     # Replies to this message with the specified content.
     # @deprecated Please use {#respond}.
     # @see Channel#send_message
