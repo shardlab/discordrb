@@ -636,6 +636,9 @@ module Discordrb
       # @return [Hash, nil]
       attr_reader :message_reference
 
+      # @return [Array<Component>]
+      attr_reader :components
+
       # @!visibility private
       def initialize(data, bot, interaction)
         @bot = bot
@@ -673,6 +676,7 @@ module Discordrb
         @mention_everyone = data['mention_everyone']
         @flags = data['flags']
         @pinned = data['pinned']
+        @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
       end
 
       # @return [Member, nil] This will return nil if the bot does not have access to the
