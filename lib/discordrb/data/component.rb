@@ -24,17 +24,17 @@ module Discordrb
       include Enumerable
 
       # @return [Array<Button>]
-      attr_reader :componenets
+      attr_reader :components
 
       # @!visibility private
       def initialize(data, bot)
         @bot = bot
-        @componenets = data['components'].map { |component_data| Components.from_data(component_data, @bot) }
+        @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) }
       end
 
       # Iterate over each component in the row.
       def each(&block)
-        @componenets.each(&block)
+        @components.each(&block)
       end
 
       # Get all buttons in this row
