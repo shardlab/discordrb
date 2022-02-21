@@ -79,8 +79,12 @@ jobs:
             - docs
 
   pages:
-    machine: true
+    docker:
+      - image: alpine
     steps:
+      - run:
+          name: Install OS packages
+          command: apk add git openssh-client-default
       - attach_workspace:
           at: /tmp/workspace
       - run:
