@@ -38,7 +38,7 @@ describe Discordrb::Events do
 
   describe 'matches_all' do
     it 'returns true for a nil attribute' do
-      expect(described_class.matches_all(nil, nil)).to eq true
+      expect(described_class.matches_all(nil, nil)).to be true
     end
 
     it 'is truthy if the block is truthy' do
@@ -150,7 +150,7 @@ describe Discordrb::Events do
   describe Discordrb::Events::TrueEventHandler do
     describe 'matches?' do
       it 'returns true' do
-        expect(described_class.new({}, nil).matches?(nil)).to eq true
+        expect(described_class.new({}, nil).matches?(nil)).to be true
       end
 
       it 'always calls the block given' do

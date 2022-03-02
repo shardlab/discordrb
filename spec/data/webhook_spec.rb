@@ -46,7 +46,7 @@ describe Discordrb::Webhook do
       before { webhook.instance_variable_set(:@owner, nil) }
 
       it 'doesn\'t set owner' do
-        expect(webhook.owner).to eq nil
+        expect(webhook.owner).to be_nil
       end
     end
 
@@ -152,7 +152,7 @@ describe Discordrb::Webhook do
   describe '#token?' do
     context 'when webhook is from auth' do
       it 'returns false' do
-        expect(webhook.token?).to eq false
+        expect(webhook.token?).to be false
       end
     end
 
@@ -160,7 +160,7 @@ describe Discordrb::Webhook do
       before { webhook.instance_variable_set(:@owner, nil) }
 
       it 'returns true' do
-        expect(webhook.token?).to eq true
+        expect(webhook.token?).to be true
       end
     end
   end

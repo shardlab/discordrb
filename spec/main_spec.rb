@@ -33,16 +33,16 @@ describe Discordrb do
     describe '#==' do
       it 'matches identical values' do
         ido = SimpleIDObject.new(123)
-        expect(ido == SimpleIDObject.new(123)).to eq(true)
-        expect(ido == 123).to eq(true)
-        expect(ido == '123').to eq(true)
+        expect(ido == SimpleIDObject.new(123)).to be(true)
+        expect(ido == 123).to be(true)
+        expect(ido == '123').to be(true)
       end
 
       it 'does not match different values' do
         ido = SimpleIDObject.new(123)
-        expect(ido == SimpleIDObject.new(124)).to eq(false)
-        expect(ido == 124).to eq(false)
-        expect(ido == '124').to eq(false)
+        expect(ido == SimpleIDObject.new(124)).to be(false)
+        expect(ido == 124).to be(false)
+        expect(ido == '124').to be(false)
       end
     end
 
