@@ -12,7 +12,7 @@ describe Discordrb::Permissions do
         permissions_list.respond_to?(:"can_#{flag}=")
       end
 
-      expect(responds_to_methods.all?).to eq true
+      expect(responds_to_methods.all?).to be true
     end
 
     it 'calls #write on its writer' do
@@ -113,11 +113,11 @@ describe Discordrb::PermissionCalculator do
       example_calculator.server = instance_double(Discordrb::Server, everyone_role: everyone_role)
       example_calculator.roles = [role_a, role_b]
       permission = example_calculator.__send__(:defined_role_permission?, :manage_messages, channel)
-      expect(permission).to eq true
+      expect(permission).to be true
 
       example_calculator.roles = [role_b, role_a]
       permission = example_calculator.__send__(:defined_role_permission?, :manage_messages, channel)
-      expect(permission).to eq true
+      expect(permission).to be true
     end
 
     it 'takes overwrites into account' do

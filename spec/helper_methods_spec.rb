@@ -4,7 +4,7 @@ describe HelperMethods do
   describe '#load_data_file' do
     it 'loads the test data correctly' do
       data = load_data_file(:test)
-      expect(data['success']).to eq(true)
+      expect(data['success']).to be(true)
     end
   end
 
@@ -12,7 +12,7 @@ describe HelperMethods do
     fixture :data, [:test]
 
     it 'loads the test data correctly' do
-      expect(data['success']).to eq(true)
+      expect(data['success']).to be(true)
     end
   end
 
@@ -22,7 +22,7 @@ describe HelperMethods do
     fixture_property :data_success_str, :data, ['success'], :to_s
 
     it 'defines the test property correctly' do
-      expect(data_success).to eq(true)
+      expect(data_success).to be(true)
     end
 
     it 'filters data correctly' do

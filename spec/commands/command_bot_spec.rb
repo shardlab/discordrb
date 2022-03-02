@@ -180,7 +180,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         it 'does not respond with one role missing', skip: true do
           plain_event = command_event_double_with_channel(first_channel)
           result = bot.execute_command(:user_has_one, plain_event, [])
-          expect(result).to eq nil
+          expect(result).to be_nil
         end
       end
 
@@ -206,7 +206,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         it 'does not respond to a user with none of the roles' do
           plain_event = command_event_double_with_channel(first_channel)
           result = bot.execute_command(:any_role, plain_event, [])
-          expect(result).to eq nil
+          expect(result).to be_nil
         end
       end
     end
