@@ -70,7 +70,7 @@ jobs:
       - setup-env
       - run:
           name: Run Rubocop
-          command: bundle exec rubocop -P
+          command: bundle exec rubocop
 
   yard:
     docker:
