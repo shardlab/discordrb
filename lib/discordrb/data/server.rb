@@ -62,7 +62,7 @@ module Discordrb
     attr_reader :boost_level
 
     # The server's custom stickers.
-    # @return [Array<Sticker>] array of stickers.
+    # @return [Array<Sticker>, nil] array of stickers.
     attr_reader :stickers
 
     # @!visibility private

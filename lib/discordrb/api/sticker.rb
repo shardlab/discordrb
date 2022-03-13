@@ -10,7 +10,7 @@ module Discordrb
       # https://discord.com/developers/docs/resources/sticker#get-sticker
       def resolve(token, sticker_id)
         Discordrb::API.request(
-          :sticker,
+          :stickers_sid,
           sticker_id,
           :get,
           "#{Discordrb::API.api_base}/stickers/#{sticker_id}",
@@ -22,7 +22,7 @@ module Discordrb
       # https://discord.com/developers/docs/resources/sticker#list-nitro-sticker-packs
       def packs(token)
         Discordrb::API.request(
-          :nitro_sticker,
+          :sticker_packs,
           nil,
           :get,
           "#{Discordrb::API.api_base}/sticker-packs",
@@ -34,10 +34,10 @@ module Discordrb
       # https://discord.com/developers/docs/resources/sticker#list-guild-stickers
       def server_stickers(token, server_id)
         Discordrb::API.request(
-          :guild_stickers,
+          :guilds_sid_stickers,
           server_id,
           :get,
-          "#{Discordrb::API.api_base}/#{server_id}/stickers",
+          "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers",
           Authorization: token
         )
       end
@@ -46,10 +46,10 @@ module Discordrb
       # https://discord.com/developers/docs/resources/sticker#get-guild-sticker
       def resolve_server_stickers(token, server_id, sticker_id)
         Discordrb::API.request(
-          :guild_stickers,
+          :guilds_sid_stickers_sid,
           server_id,
           :get,
-          "#{Discordrb::API.api_base}/#{server_id}/stickers/#{sticker_id}",
+          "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers/#{sticker_id}",
           Authorization: token
         )
       end
@@ -69,10 +69,10 @@ module Discordrb
         raise(ArgumentError, 'Invalid file argument') unless body[:file].is_a?(File)
 
         Discordrb::API.request(
-          :guild_stickers,
+          :guilds_sid_stickers,
           server_id,
           :post,
-          "#{Discordrb::API.api_base}/#{server_id}/stickers",
+          "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers",
           body,
           Authorization: token,
           'X-Audit-Log-Reason': reason
@@ -93,10 +93,10 @@ module Discordrb
         body = attributes.slice(:name, :description, :tags)
 
         Discordrb::API.request(
-          :guild_stickers,
+          :guilds_sid_stickers_sid,
           server_id,
           :patch,
-          "#{Discordrb::API.api_base}/#{server_id}/stickers/#{sticker_id}",
+          "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers/#{sticker_id}",
           body,
           Authorization: token,
           'X-Audit-Log-Reason': reason
@@ -107,10 +107,10 @@ module Discordrb
       # https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
       def delete(token, server_id, sticker_id, reason = nil)
         Discordrb::API.request(
-          :guild_stickers,
+          :guilds_sid_stickers_sid,
           server_id,
           :delete,
-          "#{Discordrb::API.api_base}/#{server_id}/stickers/#{sticker_id}",
+          "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers/#{sticker_id}",
           Authorization: token,
           'X-Audit-Log-Reason': reason
         )
