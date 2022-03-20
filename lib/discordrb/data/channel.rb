@@ -829,13 +829,13 @@ module Discordrb
     end
 
     # Start a thread.
-    # @param title [String] The name of the thread.
+    # @param name [String] The name of the thread.
     # @param auto_archive_duration [60, 1440, 4320, 10080] How long before a thread is automatically
     #   archived.
     # @param message [Message, Integer, String] The message to reference when starting this thread.
     # @param type [Symbol, Integer] The type of thread to create. Can be a key from {TYPES} or the value.
     # @return [Channel]
-    def start_thread(_title, auto_archive_duration, message: nil, type: 11)
+    def start_thread(name, auto_archive_duration, message: nil, type: 11)
       message_id = message&.id || message
       type = TYPES[type] || type
 
