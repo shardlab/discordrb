@@ -174,14 +174,12 @@ module Discordrb
 
     # Ensures a given thread member object is cached.
     # @param data [Hash] Thread member data.
-    # @param channel [Channel, Integer, String]
-    # @param user [User, Integer, String]
-    def ensure_thread_member(data, channel, user)
-      channel_id = channel.resolve_id
-      user_id = user.resolve_id
+    def ensure_thread_member(data)
+      thread_id = data['id'].to_i
+      user_id = data['user_id'].to_i
 
-      @thread_members[channel_id] ||= {}
-      @thread_members[channel_id][user_id] = data
+      @thread_members[thread_id] ||= {}
+      @thread_members[thread_id][user_id] = data.slice('join_timestamp', 'flags')
     end
 
     # Requests member chunks for a given server ID.

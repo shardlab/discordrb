@@ -182,6 +182,14 @@ module Discordrb
       @servers
     end
 
+    # The list of members in threads the bot can see.
+    # @return [Hash<Integer => Hash<Integer => Hash<String => Object>>]
+    def thread_members
+      gateway_check
+      unavailable_servers_check
+      @thread_members
+    end
+
     # @overload emoji(id)
     #   Return an emoji by its ID
     #   @param id [String, Integer] The emoji's ID.
@@ -1563,32 +1571,36 @@ module Discordrb
       when :THREAD_CREATE
         create_channel(data)
 
-        # raise ThreadCreateEvent
+        event = ThreadCreateEvent.new(data, bot)
+        raise_event(event)
       when :THREAD_UPDATE
         update_channel(data)
 
-        # raise ThreadUpdateEvent
+        event = ThreadUpdateEvent.new(data, bot)
+        raise_event(event)
       when :THREAD_DELETE
         channel_delete(data)
         @thread_members.delete(data['id'])
 
         # raise ThreadDeleteEvent
       when :THREAD_LIST_SYNC
-        data['members'].map { |member| ensure_thread_member(member, member['id'], member['user_id']) }
+        data['members'].map { |member| ensure_thread_member(member) }
         data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
 
         # raise ThreadListSyncEvent?
       when :THREAD_MEMBER_UPDATE
-        ensure_thread_member(data, data['id'], data['user_id'])
-
-        # raise ThreadMemberUpdateEvent
+        ensure_thread_member(data)
       when :THREAD_MEMBERS_UPDATE
-        data['added_members'].each do |member|
-          thread_data = member.slice('join_timestamp', 'flags')
-          ensure_thread_member(thread_data, data['id'], member['user_id'])
+        data['added_members'].each do |added_member|
+          ensure_thread_member(added_member) if added_member['user_id']
         end
 
-        # raise ThreadMembersUpdate
+        data['removed_member_ids'].each do |member_id|
+          @thread_members[channel_id].delete(member_id)
+        end
+
+        event = ThreadMembersUpdateEvent.new(data, self)
+        raise_event(event)
       else
         # another event that we don't support yet
         debug "Event #{type} has been received but is unsupported. Raising UnknownEvent"

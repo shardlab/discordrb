@@ -86,6 +86,10 @@ module Discordrb
     # @return [Integer, nil] Member flags for this thread, used for notifications.
     attr_reader :member_flags
 
+    # @return [true, false] For private threads, determines whether non-moderators can add other non-moderators to
+    #   a thread.
+    attr_reader :invitable
+
     # @return [true, false] whether or not this channel is a PM or group channel.
     def private?
       pm? || group?
@@ -143,6 +147,7 @@ module Discordrb
         @auto_archive_duration = metadata['auto_archive_duration']
         @archive_timestamp = Time.iso8601(metadata['archive_timestamp'])
         @locked = metadata['locked']
+        @invitable = metadata['invitable']
       end
 
       if (member = data['member'])
@@ -860,9 +865,9 @@ module Discordrb
       @bot.leave_thread(@id)
     end
 
-    # @todo Need to handle thread_member cache first
+    # Members in the thread.
     def members
-      @bot.thread_members[@id]
+      @bot.thread_members[@id].collect { |id| @server_id ? @bot.member(@server_id, id) : @bot.user(id) }
     end
 
     # Add a member to the thread
