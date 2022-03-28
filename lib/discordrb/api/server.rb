@@ -540,4 +540,13 @@ module Discordrb::API::Server
       Authorization: token
     )
   end
+
+  def avatar_url(guild_id, user_id, avatar_id, format = nil)
+    format ||= if avatar_id.start_with?('a_')
+                 'gif'
+               else
+                 'webp'
+               end
+    "#{Discordrb::API.cdn_url}/guilds/#{guild_id}/users/#{user_id}/avatars/#{avatar_id}.#{format}"
+  end
 end
