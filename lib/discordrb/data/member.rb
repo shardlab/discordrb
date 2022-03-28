@@ -24,8 +24,8 @@ module Discordrb
     alias_method :timeout, :communication_disabled_until
 
     # @!attribute [r] avatar_id
-    #   @return [String, nil] the ID of this user's current avatar, can be used to generate an avatar URL.
-    #   @see User#avatar_url
+    #   @return [String, nil] the ID of this member's current avatar, can be used to generate an avatar URL.
+    #   @see Member#avatar_url
     def avatar_id
       @avatar || @user.avatar_id
     end
@@ -302,7 +302,7 @@ module Discordrb
       nickname || username
     end
 
-    # (BoSee User#avatar_url)
+    # (See User#avatar_url)
     def avatar_url(format = nil)
       return @user.avatar_url(format) unless @avatar_id
 

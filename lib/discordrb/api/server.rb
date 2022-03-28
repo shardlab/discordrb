@@ -541,6 +541,7 @@ module Discordrb::API::Server
     )
   end
 
+  # Make an avatar URL from the guild, user and avatar IDs
   def avatar_url(guild_id, user_id, avatar_id, format = nil)
     format ||= if avatar_id.start_with?('a_')
                  'gif'
