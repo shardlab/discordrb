@@ -186,16 +186,18 @@ module Discordrb
 
       # Utility function to get an Asset's large image URL.
       # @param format [String, nil] If `nil`, the URL will default to `webp`. You can otherwise specify one of `webp`, `jpg`, or `png`.
+      # @param size [Integer, nil] If `nil`, no size will be specified in the URL. You can otherwise specify one of `128`, `256`, `512`, `1024`, `2048`, or `4096`.
       # @return [String] the URL to the large image asset.
-      def large_image_url(format = 'webp')
-        API.asset_url(@application_id, @large_image_id, format)
+      def large_image_url(format = 'webp', size: nil)
+        API.asset_url(@application_id, @large_image_id, format, size: size)
       end
 
       # Utility function to get an Asset's large image URL.
       # @param format [String, nil] If `nil`, the URL will default to `webp`. You can otherwise specify one of `webp`, `jpg`, or `png`.
+      # @param size [Integer, nil] If `nil`, no size will be specified in the URL. You can otherwise specify one of `128`, `256`, `512`, `1024`, `2048`, or `4096`.
       # @return [String] the URL to the small image asset.
-      def small_image_url(format = 'webp')
-        API.asset_url(@application_id, @small_image_id, format)
+      def small_image_url(format = 'webp', size: nil)
+        API.asset_url(@application_id, @small_image_id, format, size: size)
       end
     end
 

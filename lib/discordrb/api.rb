@@ -183,14 +183,24 @@ module Discordrb::API
     end
   end
 
+  # Process image size parameter for the icon URL methods.
+  # @param size [Integer, nil] The size of the icon.
+  # @return [String, nil] The formatted icon size querystring or `nil` if the requested size is nil.
+  # @!visibility private
+  def icon_size(size)
+    return if size.nil?
+
+    "?size=#{size}"
+  end
+
   # Make an icon URL from server and icon IDs
-  def icon_url(server_id, icon_id, format = 'webp')
-    "#{cdn_url}/icons/#{server_id}/#{icon_id}.#{format}"
+  def icon_url(server_id, icon_id, format = 'webp', size: nil)
+    "#{cdn_url}/icons/#{server_id}/#{icon_id}.#{format}#{icon_size(size)}"
   end
 
   # Make an icon URL from application and icon IDs
-  def app_icon_url(app_id, icon_id, format = 'webp')
-    "#{cdn_url}/app-icons/#{app_id}/#{icon_id}.#{format}"
+  def app_icon_url(app_id, icon_id, format = 'webp', size: nil)
+    "#{cdn_url}/app-icons/#{app_id}/#{icon_id}.#{format}#{icon_size(size)}"
   end
 
   # Make a widget picture URL from server ID
@@ -199,28 +209,28 @@ module Discordrb::API
   end
 
   # Make a splash URL from server and splash IDs
-  def splash_url(server_id, splash_id, format = 'webp')
-    "#{cdn_url}/splashes/#{server_id}/#{splash_id}.#{format}"
+  def splash_url(server_id, splash_id, format = 'webp', size: nil)
+    "#{cdn_url}/splashes/#{server_id}/#{splash_id}.#{format}#{icon_size(size)}"
   end
 
   # Make a banner URL from server and banner IDs
-  def banner_url(server_id, banner_id, format = 'webp')
-    "#{cdn_url}/banners/#{server_id}/#{banner_id}.#{format}"
+  def banner_url(server_id, banner_id, format = 'webp', size: nil)
+    "#{cdn_url}/banners/#{server_id}/#{banner_id}.#{format}#{icon_size(size)}"
   end
 
   # Make an emoji icon URL from emoji ID
-  def emoji_icon_url(emoji_id, format = 'webp')
-    "#{cdn_url}/emojis/#{emoji_id}.#{format}"
+  def emoji_icon_url(emoji_id, format = 'webp', size: nil)
+    "#{cdn_url}/emojis/#{emoji_id}.#{format}#{icon_size(size)}"
   end
 
   # Make an asset URL from application and asset IDs
-  def asset_url(application_id, asset_id, format = 'webp')
-    "#{cdn_url}/app-assets/#{application_id}/#{asset_id}.#{format}"
+  def asset_url(application_id, asset_id, format = 'webp', size: nil)
+    "#{cdn_url}/app-assets/#{application_id}/#{asset_id}.#{format}#{icon_size(size)}"
   end
 
   # Make an achievement icon URL from application ID, achievement ID, and icon hash
-  def achievement_icon_url(application_id, achievement_id, icon_hash, format = 'webp')
-    "#{cdn_url}/app-assets/#{application_id}/achievements/#{achievement_id}/icons/#{icon_hash}.#{format}"
+  def achievement_icon_url(application_id, achievement_id, icon_hash, format = 'webp', size: nil)
+    "#{cdn_url}/app-assets/#{application_id}/achievements/#{achievement_id}/icons/#{icon_hash}.#{format}#{icon_size(size)}"
   end
 
   # @param role_id [String, Integer]

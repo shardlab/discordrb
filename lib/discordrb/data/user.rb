@@ -74,16 +74,17 @@ module Discordrb
 
     # Utility function to get a user's avatar URL.
     # @param format [String, nil] If `nil`, the URL will default to `webp` for static avatars, and will detect if the user has a `gif` avatar. You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this. Will always be PNG for default avatars.
+    # @param size [Integer, nil] If `nil`, no size will be specified in the URL. You can otherwise specify one of `128`, `256`, `512`, `1024`, `2048`, or `4096`.
     # @return [String] the URL to the avatar image.
     # TODO: Maybe change this method again after discriminator removal ?
-    def avatar_url(format = nil)
+    def avatar_url(format = nil, size: nil)
       unless @avatar_id
         return API::User.default_avatar(@discriminator, legacy: true) if @discriminator && @discriminator != '0'
 
         return API::User.default_avatar(@id)
       end
 
-      API::User.avatar_url(@id, @avatar_id, format)
+      API::User.avatar_url(@id, @avatar_id, format, size: size)
     end
 
     # @return [Integer] the public flags on a user's account

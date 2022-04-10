@@ -3,7 +3,7 @@
 require 'discordrb'
 
 describe Discordrb::API do
-  describe '.icon_size', pending: 'implementing' do
+  describe '.icon_size' do
     it 'returns nil if argument is nil' do
       expect(Discordrb::API.icon_size(nil)).to be_nil
     end
