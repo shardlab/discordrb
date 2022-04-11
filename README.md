@@ -63,7 +63,7 @@ Using [Bundler](https://bundler.io/#getting-started), you can add discordrb to y
 
 And then install via `bundle install`.
 
-Run the [ping example](https://github.com/shardlab/discordrb/blob/master/examples/ping.rb) to verify that the installation works (make sure to replace the token and client ID in there with your bots'!):
+Run the [ping example](https://github.com/shardlab/discordrb/blob/main/examples/ping.rb) to verify that the installation works (make sure to replace the token and client ID in there with your bots'!):
 
 To run the bot while using bundler:
 
@@ -109,7 +109,7 @@ bot.run
 
 This bot responds to every "Ping!" with a "Pong!".
 
-See [additional examples here](https://github.com/shardlab/discordrb/tree/master/examples).
+See [additional examples here](https://github.com/shardlab/discordrb/tree/main/examples).
 
 You can find examples of projects that use discordrb by [searching for the discordrb topic on GitHub](https://github.com/topics/discordrb).
 

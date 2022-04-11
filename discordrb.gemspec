@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.metadata = {
-    'changelog_uri' => 'https://github.com/shardlab/discordrb/blob/master/CHANGELOG.md',
+    'changelog_uri' => 'https://github.com/shardlab/discordrb/blob/main/CHANGELOG.md',
     'rubygems_mfa_required' => 'true'
   }
   spec.require_paths = ['lib']
