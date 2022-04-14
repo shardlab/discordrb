@@ -34,7 +34,9 @@ jobs:
       - setup-env
       - run:
           name: Run RSpec
-          command: bundle exec rspec
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
+      - store_test_results:
+          path: ~/rspec
 
   test_ruby_27:
     docker:
@@ -43,7 +45,9 @@ jobs:
       - setup-env
       - run:
           name: Run RSpec
-          command: bundle exec rspec
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
+      - store_test_results:
+          path: ~/rspec
 
   test_ruby_30:
     docker:
@@ -52,7 +56,10 @@ jobs:
       - setup-env
       - run:
           name: Run RSpec
-          command: bundle exec rspec
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
+      - store_test_results:
+          path: ~/rspec
+
 
   test_ruby_31:
     docker:
