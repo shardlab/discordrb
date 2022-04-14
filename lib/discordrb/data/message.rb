@@ -159,6 +159,8 @@ module Discordrb
 
     # Replies to this message with the specified content.
     # @deprecated Please use {#respond}.
+    # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
+    # @return (see #respond)
     # @see Channel#send_message
     def reply(content)
       @channel.send_message(content)
@@ -172,7 +174,7 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param mention_user [true, false] Whether the user that is being replied to should be pinged by the reply.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @return [Message] the message that was sent.
+    # @return (see #respond)
     def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil)
       allowed_mentions = { parse: [] } if allowed_mentions == false
       allowed_mentions = allowed_mentions.to_hash.transform_keys(&:to_sym)
