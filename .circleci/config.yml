@@ -54,6 +54,15 @@ jobs:
           name: Run RSpec
           command: bundle exec rspec
 
+  test_ruby_31:
+    docker:
+      - image: ruby:3.1-alpine
+    steps:
+      - setup-env
+      - run:
+          name: Run RSpec
+          command: bundle exec rspec
+
   rubocop:
     docker:
       - image: ruby:2.6-alpine
@@ -61,7 +70,7 @@ jobs:
       - setup-env
       - run:
           name: Run Rubocop
-          command: bundle exec rubocop -P
+          command: bundle exec rubocop
 
   yard:
     docker:
@@ -114,6 +123,7 @@ workflows:
       - test_ruby_26
       - test_ruby_27
       - test_ruby_30
+      - test_ruby_31
       - rubocop
       - yard
   deploy:

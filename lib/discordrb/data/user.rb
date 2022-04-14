@@ -161,7 +161,7 @@ module Discordrb
 
     # @!visibility private
     def process_client_status(client_status)
-      (client_status || {}).map { |k, v| [k.to_sym, v.to_sym] }.to_h
+      (client_status || {}).to_h { |k, v| [k.to_sym, v.to_sym] }
     end
 
     # @!method offline?

@@ -212,7 +212,7 @@ module Discordrb::Events
     end
 
     def transform_options_hash(hash)
-      hash.map { |opt| [opt['name'], opt['options'] || opt['value']] }.to_h
+      hash.to_h { |opt| [opt['name'], opt['options'] || opt['value']] }
     end
   end
 
