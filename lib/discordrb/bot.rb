@@ -182,6 +182,14 @@ module Discordrb
       @servers
     end
 
+    # The list of members in threads the bot can see.
+    # @return [Hash<Integer => Hash<Integer => Hash<String => Object>>]
+    def thread_members
+      gateway_check
+      unavailable_servers_check
+      @thread_members
+    end
+
     # @overload emoji(id)
     #   Return an emoji by its ID
     #   @param id [String, Integer] The emoji's ID.
@@ -437,6 +445,7 @@ module Discordrb
         end
         # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L160
         file.define_singleton_method(:original_filename) { filename } if filename
+        file.define_singleton_method(:path) { filename } if filename
       end
 
       channel = channel.resolve_id
@@ -616,6 +625,36 @@ module Discordrb
       update_status(:invisible, @activity, nil)
     end
 
+    # Join a thread
+    # @param channel [Channel, Integer, String]
+    def join_thread(channel)
+      API::Channel.join_thread(@token, channel.resolve_id)
+      nil
+    end
+
+    # Leave a thread
+    # @param channel [Channel, Integer, String]
+    def leave_thread(channel)
+      API::Channel.leave_thread(@token, channel.resolve_id)
+      nil
+    end
+
+    # Add a member to a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def add_thread_member(channel, member)
+      API::Channel.add_thread_member(@token, channel.resolve_id, member.resolve_id)
+      nil
+    end
+
+    # Remove a member from a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def remove_thread_member(channel, member)
+      API::Channel.remove_thread_member(@token, channel.resolve_id, member.resolve_id)
+      nil
+    end
+
     # Sets debug mode. If debug mode is on, many things will be outputted to STDOUT.
     def debug=(new_debug)
       LOGGER.debug = new_debug
@@ -742,6 +781,21 @@ module Discordrb
       end
     end
 
+    # Get all application commands.
+    # @param server_id [String, Integer, nil] The ID of the server to get the commands from. Global if `nil`.
+    # @return [Array<ApplicationCommand>]
+    def get_application_commands(server_id: nil)
+      resp = if server_id
+               API::Application.get_guild_commands(@token, profile.id, server_id)
+             else
+               API::Application.get_global_commands(@token, profile.id)
+             end
+
+      JSON.parse(resp).map do |command_data|
+        ApplicationCommand.new(command_data, self, server_id)
+      end
+    end
+
     # Get an application command by ID.
     # @param command_id [String, Integer]
     # @param server_id [String, Integer, nil] The ID of the server to get the command from. Global if `nil`.
@@ -755,6 +809,7 @@ module Discordrb
     end
 
     # @yieldparam [OptionBuilder]
+    # @yieldparam [PermissionBuilder]
     # @example
     #   bot.register_application_command(:reddit, 'Reddit Commands') do |cmd|
     #     cmd.subcommand_group(:subreddit, 'Subreddit Commands') do |group|
@@ -771,28 +826,49 @@ module Discordrb
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
-      yield(builder) if block_given?
+      permission_builder = Interactions::PermissionBuilder.new
+      yield(builder, permission_builder) if block_given?
 
       resp = if server_id
                API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type)
              else
                API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type)
              end
-      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+      cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
+
+      if permission_builder.to_a.any?
+        raise ArgumentError, 'Permissions can only be set for guild commands' unless server_id
+
+        edit_application_command_permissions(cmd.id, server_id, permission_builder.to_a)
+      end
+
+      cmd
     end
 
+    # @yieldparam [OptionBuilder]
+    # @yieldparam [PermissionBuilder]
     def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
-      yield(builder) if block_given?
+      permission_builder = Interactions::PermissionBuilder.new
+
+      yield(builder, permission_builder) if block_given?
 
       resp = if server_id
                API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type)
              else
                API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type)
              end
-      ApplicationCommand.new(JSON.parse(resp), self, server_id)
+      cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
+
+      if permission_builder.to_a.any?
+        raise ArgumentError, 'Permissions can only be set for guild commands' unless server_id
+
+        edit_application_command_permissions(cmd.id, server_id, permission_builder.to_a)
+      end
+
+      cmd
     end
 
     # Remove an application command from the commands registered with discord.
@@ -804,6 +880,17 @@ module Discordrb
       else
         API::Application.delete_global_command(@token, profile.id, command_id)
       end
+    end
+
+    # @param command_id [Integer, String]
+    # @param server_id [Integer, String]
+    # @param permissions [Array<Hash>] An array of objects formatted as `{ id: ENTITY_ID, type: 1 or 2, permission: true or false }`
+    def edit_application_command_permissions(command_id, server_id, permissions = [])
+      builder = Interactions::PermissionBuilder.new
+      yield builder if block_given?
+
+      permissions += builder.to_a
+      API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
     end
 
     private
@@ -958,6 +1045,8 @@ module Discordrb
       elsif channel.group?
         @channels.delete(channel.id)
       end
+
+      @thread_members.delete(channel.id) if channel.thread?
     end
 
     # Internal handler for CHANNEL_RECIPIENT_ADD
@@ -998,6 +1087,7 @@ module Discordrb
       member.update_roles(data['roles'])
       member.update_nick(data['nick'])
       member.update_boosting_since(data['premium_since'])
+      member.update_communication_disabled_until(data['communication_disabled_until'])
     end
 
     # Internal handler for GUILD_MEMBER_DELETE
@@ -1014,7 +1104,7 @@ module Discordrb
 
     # Internal handler for GUILD_CREATE
     def create_guild(data)
-      ensure_server(data)
+      ensure_server(data, true)
     end
 
     # Internal handler for GUILD_UPDATE
@@ -1142,14 +1232,14 @@ module Discordrb
         data['guilds'].each do |element|
           # Check for true specifically because unavailable=false indicates that a previously unavailable server has
           # come online
-          if element['unavailable'].is_a? TrueClass
+          if element['unavailable']
             @unavailable_servers += 1
 
             # Ignore any unavailable servers
             next
           end
 
-          ensure_server(element)
+          ensure_server(element, true)
         end
 
         # Add PM and group channels
@@ -1174,7 +1264,7 @@ module Discordrb
       when :GUILD_MEMBERS_CHUNK
         id = data['guild_id'].to_i
         server = server(id)
-        server.process_chunk(data['members'])
+        server.process_chunk(data['members'], data['chunk_index'], data['chunk_count'])
       when :INVITE_CREATE
         invite = Invite.new(data, self)
         raise_event(InviteCreateEvent.new(data, invite, self))
@@ -1466,11 +1556,11 @@ module Discordrb
           end
         when Interaction::TYPES[:component]
           case data['data']['component_type']
-          when Components::TYPES[:button]
+          when Webhooks::View::COMPONENT_TYPES[:button]
             event = ButtonEvent.new(data, self)
 
             raise_event(event)
-          when Components::TYPES[:select_menu]
+          when Webhooks::View::COMPONENT_TYPES[:select_menu]
             event = SelectMenuEvent.new(data, self)
 
             raise_event(event)
@@ -1478,6 +1568,39 @@ module Discordrb
         end
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)
+        raise_event(event)
+      when :THREAD_CREATE
+        create_channel(data)
+
+        event = ThreadCreateEvent.new(data, bot)
+        raise_event(event)
+      when :THREAD_UPDATE
+        update_channel(data)
+
+        event = ThreadUpdateEvent.new(data, bot)
+        raise_event(event)
+      when :THREAD_DELETE
+        channel_delete(data)
+        @thread_members.delete(data['id'])
+
+        # raise ThreadDeleteEvent
+      when :THREAD_LIST_SYNC
+        data['members'].map { |member| ensure_thread_member(member) }
+        data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
+
+        # raise ThreadListSyncEvent?
+      when :THREAD_MEMBER_UPDATE
+        ensure_thread_member(data)
+      when :THREAD_MEMBERS_UPDATE
+        data['added_members'].each do |added_member|
+          ensure_thread_member(added_member) if added_member['user_id']
+        end
+
+        data['removed_member_ids'].each do |member_id|
+          @thread_members[channel_id].delete(member_id)
+        end
+
+        event = ThreadMembersUpdateEvent.new(data, self)
         raise_event(event)
       else
         # another event that we don't support yet

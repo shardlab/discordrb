@@ -21,7 +21,7 @@ module Discordrb
       update_message: 7
     }.freeze
 
-    # @return [User] The user that initiated the interaction.
+    # @return [User, Member] The user that initiated the interaction.
     attr_reader :user
 
     # @return [Integer, nil] The ID of the server this interaction originates from.
@@ -63,7 +63,7 @@ module Discordrb
       @channel_id = data['channel_id']&.to_i
       @user = if data['member']
                 data['member']['guild_id'] = @server_id
-                Discordrb::Member.new(data['member'], nil, bot)
+                Discordrb::Member.new(data['member'], bot.servers[@server_id], bot)
               else
                 bot.ensure_user(data['user'])
               end
@@ -83,17 +83,19 @@ module Discordrb
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @param components [Array<#to_h>] An array of components
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    # @yieldparam view [Components::View] A builder for creating interaction components.
+    # @yieldparam view [Webhooks::View] A builder for creating interaction components.
     def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
       flags |= 1 << 6 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
+      # Set builder defaults from parameters
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = builder.to_json_hash
 
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
 
@@ -132,17 +134,18 @@ module Discordrb
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @param components [Array<#to_h>] An array of components
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    # @yieldparam view [Components::View] A builder for creating interaction components.
+    # @yieldparam view [Webhooks::View] A builder for creating interaction components.
     def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
       flags |= 1 << 6 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = builder.to_json_hash
 
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
 
@@ -160,12 +163,13 @@ module Discordrb
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil)
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = builder.to_json_hash
       resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
@@ -187,15 +191,16 @@ module Discordrb
       flags |= 64 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, componenets: components.to_a }.compact)
+      data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, data[:tts], nil, data[:embeds], data[:allowed_mentions], flags, data[:components]
+        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -207,15 +212,16 @@ module Discordrb
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil)
       builder = Discordrb::Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, componenets: components.to_a }.compact)
+      data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], data[:components]
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -248,6 +254,19 @@ module Discordrb
         end
       end
     end
+
+    private
+
+    # Set builder defaults from parameters
+    # @param builder [Discordrb::Webhooks::Builder]
+    # @param content [String, nil]
+    # @param embeds [Array<Hash, Discordrb::Webhooks::Embed>, nil]
+    # @param allowed_mentions [AllowedMentions, Hash, nil]
+    def prepare_builder(builder, content, embeds, allowed_mentions)
+      builder.content = content
+      builder.allowed_mentions = allowed_mentions
+      embeds&.each { |embed| builder << embed }
+    end
   end
 
   # An ApplicationCommand for slash commands.
@@ -278,12 +297,15 @@ module Discordrb
     # @return [Hash]
     attr_reader :options
 
+    # @return [Integer]
+    attr_reader :id
+
     # @!visibility private
     def initialize(data, bot, server_id = nil)
       @bot = bot
       @id = data['id'].to_i
       @application_id = data['application_id'].to_i
-      @server_id = server_id.to_i
+      @server_id = server_id&.to_i
 
       @name = data['name']
       @description = data['description']
@@ -321,7 +343,23 @@ module Discordrb
         user: 6,
         channel: 7,
         role: 8,
-        mentionable: 9
+        mentionable: 9,
+        number: 10
+      }.freeze
+
+      # Channel types that can be provided to #channel
+      CHANNEL_TYPES = {
+        text: 0,
+        dm: 1,
+        voice: 2,
+        group_dm: 3,
+        category: 4,
+        news: 5,
+        store: 6,
+        news_thread: 10,
+        public_thread: 11,
+        private_thread: 12,
+        stage: 13
       }.freeze
 
       # @return [Array<Hash>]
@@ -405,9 +443,11 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param types [Array<Symbol, Integer>] See {CHANNEL_TYPES}
       # @return (see #option)
-      def channel(name, description, required: nil)
-        option(TYPES[:channel], name, description, required: required)
+      def channel(name, description, required: nil, types: nil)
+        types = types&.collect { |type| type.is_a?(Numeric) ? type : CHANNEL_TYPES[type] }
+        option(TYPES[:channel], name, description, required: required, channel_types: types)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -426,17 +466,31 @@ module Discordrb
         option(TYPES[:mentionable], name, description, required: required)
       end
 
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil)
+        option(TYPES[:number], name, description,
+               required: required, min_value: min_value, max_value: max_value, choices: choices)
+      end
+
       # @!visibility private
       # @param type [Integer] The argument type.
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_value [Integer, Float] A minimum value for integer and number options.
+      # @param max_value [Integer, Float] A maximum value for integer and number options.
+      # @param channel_types [Array<Integer>] Channel types that can be provides for channel options.
       # @return Hash
-      def option(type, name, description, required: nil, choices: nil, options: nil)
+      def option(type, name, description, required: nil, choices: nil, options: nil, min_value: nil, max_value: nil,
+                 channel_types: nil)
         opt = { type: type, name: name, description: description }
         choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
 
-        opt.merge!({ required: required, choices: choices, options: options }.compact)
+        opt.merge!({ required: required, choices: choices, options: options, min_value: min_value,
+                     max_value: max_value, channel_types: channel_types }.compact)
 
         @options << opt
         opt
@@ -445,6 +499,91 @@ module Discordrb
       # @return [Array<Hash>]
       def to_a
         @options
+      end
+    end
+
+    # Builder for creating server application command permissions.
+    # @deprecated This system is being replaced in the near future.
+    class PermissionBuilder
+      # Role permission type
+      ROLE = 1
+      # User permission type
+      USER = 2
+
+      # @!visibility hidden
+      def initialize
+        @permissions = []
+      end
+
+      # Allow a role to use this command.
+      # @param role_id [Integer]
+      # @return [PermissionBuilder]
+      def allow_role(role_id)
+        create_entry(role_id, ROLE, true)
+      end
+
+      # Deny a role usage of this command.
+      # @param role_id [Integer]
+      # @return [PermissionBuilder]
+      def deny_role(role_id)
+        create_entry(role_id, ROLE, false)
+      end
+
+      # Allow a user to use this command.
+      # @param user_id [Integer]
+      # @return [PermissionBuilder]
+      def allow_user(user_id)
+        create_entry(user_id, USER, true)
+      end
+
+      # Deny a user usage of this command.
+      # @param user_id [Integer]
+      # @return [PermissionBuilder]
+      def deny_user(user_id)
+        create_entry(user_id, USER, false)
+      end
+
+      # Allow an entity to use this command.
+      # @param object [Role, User, Member]
+      # @return [PermissionBuilder]
+      # @raise [ArgumentError]
+      def allow(object)
+        case object
+        when Discordrb::User, Discordrb::Member
+          create_entry(object.id, USER, true)
+        when Discordrb::Role
+          create_entry(object.id, ROLE, true)
+        else
+          raise ArgumentError, "Unable to create permission for unknown type: #{object.class}"
+        end
+      end
+
+      # Deny an entity usage of this command.
+      # @param object [Role, User, Member]
+      # @return [PermissionBuilder]
+      # @raise [ArgumentError]
+      def deny(object)
+        case object
+        when Discordrb::User, Discordrb::Member
+          create_entry(object.id, USER, false)
+        when Discordrb::Role
+          create_entry(object.id, ROLE, false)
+        else
+          raise ArgumentError, "Unable to create permission for unknown type: #{object.class}"
+        end
+      end
+
+      # @!visibility private
+      # @return [Array<Hash>]
+      def to_a
+        @permissions
+      end
+
+      private
+
+      def create_entry(id, type, permission)
+        @permissions << { id: id, type: type, permission: permission }
+        self
       end
     end
 
@@ -497,6 +636,9 @@ module Discordrb
       # @return [Hash, nil]
       attr_reader :message_reference
 
+      # @return [Array<Component>]
+      attr_reader :components
+
       # @!visibility private
       def initialize(data, bot, interaction)
         @bot = bot
@@ -534,6 +676,7 @@ module Discordrb
         @mention_everyone = data['mention_everyone']
         @flags = data['flags']
         @pinned = data['pinned']
+        @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
       end
 
       # @return [Member, nil] This will return nil if the bot does not have access to the

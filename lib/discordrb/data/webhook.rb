@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'discordrb/webhooks/builder'
+require 'discordrb/webhooks/view'
 
 module Discordrb
   # A webhook on a server channel
@@ -137,16 +138,17 @@ module Discordrb
     def execute(content: nil, username: nil, avatar_url: nil, tts: nil, file: nil, embeds: nil, allowed_mentions: nil, wait: true, builder: nil, components: nil)
       raise Discordrb::Errors::UnauthorizedWebhook unless @token
 
-      params = { content: content, username: username, avatar_url: avatar_url, tts: tts, file: file, embeds: embeds, allowed_mentions: allowed_mentions, components: components }
+      params = { content: content, username: username, avatar_url: avatar_url, tts: tts, file: file, embeds: embeds, allowed_mentions: allowed_mentions }
 
       builder ||= Webhooks::Builder.new
-      view = Discordrb::Components::View.new
+      view = Webhooks::View.new
+
       yield(builder, view) if block_given?
 
       data = builder.to_json_hash.merge(params.compact)
-      data[:components] ||= view
+      components ||= view
 
-      resp = API::Webhook.token_execute_webhook(@token, @id, wait, data[:content], data[:username], data[:avatar_url], data[:tts], data[:file], data[:embeds], data[:allowed_mentions], data[:components])
+      resp = API::Webhook.token_execute_webhook(@token, @id, wait, data[:content], data[:username], data[:avatar_url], data[:tts], data[:file], data[:embeds], data[:allowed_mentions], nil, components.to_a)
 
       Message.new(JSON.parse(resp), @bot) if wait
     end
@@ -173,14 +175,17 @@ module Discordrb
     def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, builder: nil, components: nil)
       raise Discordrb::Errors::UnauthorizedWebhook unless @token
 
-      params = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, componenets: components }.compact
+      params = { content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact
 
       builder ||= Webhooks::Builder.new
-      yield(builder) if block_given?
+      view ||= Webhooks::View.new
+
+      yield(builder, view) if block_given?
 
       data = builder.to_json_hash.merge(params.compact)
+      components ||= view
 
-      resp = API::Webhook.token_edit_message(@token, @id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], data[:components])
+      resp = API::Webhook.token_edit_message(@token, @id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
       Message.new(JSON.parse(resp), @bot)
     end
 

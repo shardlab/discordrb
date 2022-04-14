@@ -86,7 +86,7 @@ module Discordrb::Commands
     # Adds all commands from another container into this one. Existing commands will be overwritten.
     # @param container [Module] A module that `extend`s {CommandContainer} from which the commands will be added.
     def include_commands(container)
-      handlers = container.instance_variable_get '@commands'
+      handlers = container.instance_variable_get :@commands
       return unless handlers
 
       @commands ||= {}

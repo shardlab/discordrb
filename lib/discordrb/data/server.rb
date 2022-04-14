@@ -66,28 +66,15 @@ module Discordrb
       @bot = bot
       @owner_id = data['owner_id'].to_i
       @id = data['id'].to_i
-
-      process_channels(data['channels'])
-      update_data(data)
-
-      @large = data['large']
-      @member_count = data['member_count'] || 0
-      @splash_id = nil
-      @banner_id = nil
-      @features = data['features'].map { |element| element.downcase.to_sym }
       @members = {}
       @voice_states = {}
       @emoji = {}
 
-      process_roles(data['roles'])
-      process_emoji(data['emojis'])
-      process_members(data['members'])
-      process_presences(data['presences'])
-      process_voice_states(data['voice_states'])
+      process_channels(data['channels'])
+      update_data(data)
 
       # Whether this server's members have been chunked (resolved using op 8 and GUILD_MEMBERS_CHUNK) yet
       @chunked = false
-      @processed_chunk_members = 0
 
       @booster_count = data['premium_subscription_count'] || 0
       @boost_level = data['premium_tier']
@@ -805,19 +792,16 @@ module Discordrb
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
     # @note For internal use only
     # @!visibility private
-    def process_chunk(members)
+    def process_chunk(members, chunk_index, chunk_count)
       process_members(members)
-      @processed_chunk_members += members.length
-      LOGGER.debug("Processed one chunk on server #{@id} - length #{members.length}")
+      LOGGER.debug("Processed chunk #{chunk_index + 1}/#{chunk_count} server #{@id} - index #{chunk_index} - length #{members.length}")
 
-      # Don't bother with the rest of the method if it's not truly the last packet
-      return unless @processed_chunk_members == @member_count
+      return if chunk_index + 1 < chunk_count
 
       LOGGER.debug("Finished chunking server #{@id}")
 
       # Reset everything to normal
       @chunked = true
-      @processed_chunk_members = 0
     end
 
     # @return [Channel, nil] the AFK voice channel of this server, or `nil` if none is set.
@@ -853,6 +837,19 @@ module Discordrb
       @verification_level = new_data[:verification_level] || new_data['verification_level'] || @verification_level
       @explicit_content_filter = new_data[:explicit_content_filter] || new_data['explicit_content_filter'] || @explicit_content_filter
       @default_message_notifications = new_data[:default_message_notifications] || new_data['default_message_notifications'] || @default_message_notifications
+
+      @large = new_data.key?('large') ? new_data['large'] : @large
+      @member_count = new_data['member_count'] || @member_count || 0
+      @splash_id = new_data['splash'] || @splash_id
+      @banner_id = new_data['banner'] || @banner_id
+      @features = new_data['features'] ? new_data['features'].map { |element| element.downcase.to_sym } : @features || []
+
+      process_channels(new_data['channels']) if new_data['channels']
+      process_roles(new_data['roles']) if new_data['roles']
+      process_emoji(new_data['emojis']) if new_data['emojis']
+      process_members(new_data['members']) if new_data['members']
+      process_presences(new_data['presences']) if new_data['presences']
+      process_voice_states(new_data['voice_states']) if new_data['voice_states']
     end
 
     # Adds a channel to this server's cache

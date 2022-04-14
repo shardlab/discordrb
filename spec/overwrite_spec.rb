@@ -29,7 +29,7 @@ describe Discordrb::Overwrite do
     context 'when object is a User type' do
       let(:user_types) { [Discordrb::User, Discordrb::Member, Discordrb::Recipient, Discordrb::Profile] }
       let(:users) do
-        user_types.collect { |k| [k, instance_double(k)] }.to_h
+        user_types.to_h { |k| [k, instance_double(k)] }
       end
 
       before do
