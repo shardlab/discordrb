@@ -332,6 +332,7 @@ module Discordrb::API::Channel
   end
 
   # Create an empty group channel.
+  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
   # https://discord.com/developers/docs/resources/user#create-group-dm
   def create_empty_group(token, bot_user_id)
     Discordrb::API.request(
@@ -346,6 +347,7 @@ module Discordrb::API::Channel
   end
 
   # Create a group channel.
+  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
   # https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
   def create_group(token, pm_channel_id, user_id)
     Discordrb::API.request(
@@ -366,6 +368,7 @@ module Discordrb::API::Channel
   end
 
   # Add a user to a group channel.
+  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
   # https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
   def add_group_user(token, group_channel_id, user_id)
     Discordrb::API.request(
@@ -380,6 +383,7 @@ module Discordrb::API::Channel
   end
 
   # Remove a user from a group channel.
+  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
   # https://discord.com/developers/docs/resources/channel#group-dm-remove-recipient
   def remove_group_user(token, group_channel_id, user_id)
     Discordrb::API.request(
@@ -393,6 +397,7 @@ module Discordrb::API::Channel
   end
 
   # Leave a group channel.
+  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
   # https://discord.com/developers/docs/resources/channel#deleteclose-channel
   def leave_group(token, group_channel_id)
     Discordrb::API.request(
