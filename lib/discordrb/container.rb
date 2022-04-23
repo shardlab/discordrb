@@ -458,10 +458,30 @@ module Discordrb
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String] :name Matches the scheduled event name.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [ScheduledEventCreateEvent] The event that was raised.
-    # @return [ScheduledEventCreateEventHandler] the event handler that was registered.
-    def scheduled_event_create(attributes = {}, &block)
-      register_event(ScheduledEventCreateEvent, attributes, block)
+    # @yieldparam event [ServerScheduledEventCreateEvent] The event that was raised.
+    # @return [ServerScheduledEventCreateEventHandler] the event handler that was registered.
+    def server_scheduled_event_create(attributes = {}, &block)
+      register_event(ServerScheduledEventCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised when a scheduled event is updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :id Matches the scheduled event ID.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerScheduledEventUpdateEvent] The event that was raised.
+    # @return [ServerScheduledEventUpdateEventHandler] the event handler that was registered.
+    def server_scheduled_event_update(attributes = {}, &block)
+      register_event(ServerScheduledEventUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised when a scheduled event is deleted.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :id Matches the scheduled event ID.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerScheduledEventDeleteEvent] The event that was raised.
+    # @return [ServerScheduledEventDeleteEventHandler] the event handler that was registered.
+    def server_scheduled_event_delete(attributes = {}, &block)
+      register_event(ServerScheduledEventDeleteEvent, attributes, block)
     end
 
     # This **event** is raised when a webhook is updated.
