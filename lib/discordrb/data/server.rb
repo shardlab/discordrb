@@ -789,6 +789,13 @@ module Discordrb
       invites.map { |invite| Invite.new(invite, @bot) }
     end
 
+    # Requests a list of Scheduled Events on the server.
+    # @return [Array<ScheduledEvent>] scheduled events on the server.
+    def scheduled_events
+      scheduled_events = JSON.parse(API::Server.scheduled_events(@bot.token, @id))
+      scheduled_events.map { |scheduled_event| ScheduledEvent.new(scheduled_event, @bot) }
+    end
+
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
     # @note For internal use only
     # @!visibility private
