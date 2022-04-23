@@ -315,6 +315,18 @@ module Discordrb::API::Server
     )
   end
 
+  # Get server scheduled events
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild
+  def scheduled_events(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events",
+      Authorization: token
+    )
+  end
+
   # Get server prune count
   # https://discord.com/developers/docs/resources/guild#get-guild-prune-count
   def prune_count(token, server_id, days)

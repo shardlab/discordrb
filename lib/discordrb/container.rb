@@ -14,6 +14,7 @@ require 'discordrb/events/await'
 require 'discordrb/events/bans'
 require 'discordrb/events/reactions'
 require 'discordrb/events/interactions'
+require 'discordrb/events/scheduled_events'
 
 require 'discordrb/await'
 
@@ -451,6 +452,16 @@ module Discordrb
     # @return [ServerRoleUpdateEventHandler] the event handler that was registered.
     def server_role_update(attributes = {}, &block)
       register_event(ServerRoleUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised when a scheduled event is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String] :name Matches the scheduled event name.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ScheduledEventCreateEvent] The event that was raised.
+    # @return [ScheduledEventCreateEventHandler] the event handler that was registered.
+    def scheduled_event_create(attributes = {}, &block)
+      register_event(ScheduledEventCreateEvent, attributes, block)
     end
 
     # This **event** is raised when a webhook is updated.
