@@ -2,7 +2,7 @@
 
 module Discordrb
   # Server Scheduled Event
-  # 
+  #
   # Note that this should not be confused with Discordrb::Events, which
   # represent events sent whenever something occurs in a guild or on a user
   # (e.g. Guild creation, message sending, etc).
@@ -116,7 +116,7 @@ module Discordrb
     end
 
     alias_method :cancelled?, :canceled?
-    
+
     # @return [Boolean] Whether the event has completed.
     def completed?
       @status == :completed
@@ -131,6 +131,5 @@ module Discordrb
     def inspect
       "<ScheduledEvent name=\"#{@name}\" id=#{@id} description=\"#{@description}\" scheduled_start_time=#{@scheduled_start_time} scheduled_end_time=#{@scheduled_end_time} status=#{@status}>"
     end
-
   end
 end
