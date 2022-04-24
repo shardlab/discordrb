@@ -456,7 +456,7 @@ module Discordrb
 
     # This **event** is raised when a scheduled event is created.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String] :name Matches the scheduled event name.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server ID.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ServerScheduledEventCreateEvent] The event that was raised.
     # @return [ServerScheduledEventCreateEventHandler] the event handler that was registered.
@@ -466,7 +466,7 @@ module Discordrb
 
     # This **event** is raised when a scheduled event is updated.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer] :id Matches the scheduled event ID.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server ID.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ServerScheduledEventUpdateEvent] The event that was raised.
     # @return [ServerScheduledEventUpdateEventHandler] the event handler that was registered.
@@ -476,6 +476,7 @@ module Discordrb
 
     # This **event** is raised when a scheduled event is deleted.
     # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server ID.
     # @option attributes [String, Integer] :id Matches the scheduled event ID.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ServerScheduledEventDeleteEvent] The event that was raised.
@@ -486,6 +487,7 @@ module Discordrb
 
     # This **event** is raised when a user is added to a scheduled event.
     # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server ID.
     # @option attributes [String, Integer] :id Matches the scheduled event ID.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ServerScheduledEventUserAddEvent] The event that was raised.
@@ -496,6 +498,7 @@ module Discordrb
 
     # This **event** is raised when a user is removed from a scheduled event.
     # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server ID.
     # @option attributes [String, Integer] :id Matches the scheduled event ID.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ServerScheduledEventUserRemoveEvent] The event that was raised.

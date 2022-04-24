@@ -1604,15 +1604,23 @@ module Discordrb
         event = ThreadMembersUpdateEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_CREATE
-        # TODO
+        # TODO: Add a method here to update the cached scheduled events on the given server.
+        event = ServerScheduledEventCreateEvent.new(data, self)
+        raise_event(event)
       when :GUILD_SCHEDULED_EVENT_UPDATE
-        # TODO
+        # TODO: Add a method here to update the cached scheduled events on the given server.
+        event = ServerScheduledEventUpdateEvent.new(data, self)
+        raise_event(event)
       when :GUILD_SCHEDULED_EVENT_DELETE
-        # TODO
+        # TODO: Add a method here to update the cached scheduled events on the given server.
+        event = ServerScheduledEventDeleteEvent.new(data, self)
+        raise_event(event)
       when :GUILD_SCHEDULED_EVENT_USER_ADD
-        # TODO
+        event = ServerScheduledEventUserAddEvent.new(data, self)
+        raise_event(event)
       when :GUILD_SCHEDULED_EVENT_USER_REMOVE
-        # TODO
+        event = ServerScheduledEventUserRemoveEvent.new(data, self)
+        raise_event(event)
       else
         # another event that we don't support yet
         debug "Event #{type} has been received but is unsupported. Raising UnknownEvent"

@@ -35,12 +35,8 @@ module Discordrb::Events
       return false unless event.is_a? ServerScheduledEventCreateEvent
 
       [
-        matches_all(@attributes[:name], event.name) do |a, e|
-          a == if a.is_a? String
-                 e.to_s
-               else
-                 e
-               end
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a.resolve_id == e.resolve_id
         end
       ].reduce(true, &:&)
     end
@@ -72,6 +68,9 @@ module Discordrb::Events
       return false unless event.is_a? ServerScheduledEventDeleteEvent
 
       [
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a.resolve_id == e.resolve_id
+        end,
         matches_all(@attributes[:id], event.id) do |a, e|
           a.resolve_id == e.resolve_id
         end
@@ -121,12 +120,11 @@ module Discordrb::Events
       return false unless event.is_a? ServerScheduledEventUserAddEvent
 
       [
-        matches_all(@attributes[:name], event.name) do |a, e|
-          a == if a.is_a? String
-                 e.to_s
-               else
-                 e
-               end
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a.resolve_id == e.resolve_id
+        end,
+        matches_all(@attributes[:id], event.id) do |a, e|
+          a.resolve_id == e.resolve_id
         end
       ].reduce(true, &:&)
     end
@@ -168,12 +166,11 @@ module Discordrb::Events
       return false unless event.is_a? ServerScheduledEventUserRemoveEvent
 
       [
-        matches_all(@attributes[:name], event.name) do |a, e|
-          a == if a.is_a? String
-                 e.to_s
-               else
-                 e
-               end
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a.resolve_id == e.resolve_id
+        end,
+        matches_all(@attributes[:id], event.id) do |a, e|
+          a.resolve_id == e.resolve_id
         end
       ].reduce(true, &:&)
     end
