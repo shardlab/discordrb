@@ -131,5 +131,13 @@ module Discordrb
     def inspect
       "<ScheduledEvent name=\"#{@name}\" id=#{@id} description=\"#{@description}\" scheduled_start_time=#{@scheduled_start_time} scheduled_end_time=#{@scheduled_end_time} status=#{@status}>"
     end
+
+    # Deletes this scheduled event.
+    # @param reason [String, nil] The reason for deleting this event, for the audit log.
+    # @return [nil]
+    def delete(reason = nil)
+      API::Server.delete_scheduled_event(@bot.token, @server.id, @id, reason)
+      nil
+    end
   end
 end
