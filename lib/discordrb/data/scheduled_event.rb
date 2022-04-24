@@ -129,7 +129,7 @@ module Discordrb
 
     # The inspect method is overwritten to give more useful output
     def inspect
-      "<ScheduledEvent name=#{@name} id=#{@id} description=\"#{@description}\" scheduled_start_time=#{@scheduled_start_time} scheduled_end_time=#{@scheduled_end_time} status=#{@status}>"
+      "<ScheduledEvent name=\"#{@name}\" id=#{@id} description=\"#{@description}\" scheduled_start_time=#{@scheduled_start_time} scheduled_end_time=#{@scheduled_end_time} status=#{@status}>"
     end
 
   end
