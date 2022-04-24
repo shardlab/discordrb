@@ -484,6 +484,26 @@ module Discordrb
       register_event(ServerScheduledEventDeleteEvent, attributes, block)
     end
 
+    # This **event** is raised when a user is added to a scheduled event.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :id Matches the scheduled event ID.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerScheduledEventUserAddEvent] The event that was raised.
+    # @return [ServerScheduledEventUserAddEventHandler] the event handler that was registered.
+    def server_scheduled_event_user_add(attributes = {}, &block)
+      register_event(ServerScheduledEventUserAddEvent, attributes, block)
+    end
+
+    # This **event** is raised when a user is removed from a scheduled event.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :id Matches the scheduled event ID.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerScheduledEventUserRemoveEvent] The event that was raised.
+    # @return [ServerScheduledEventUserRemoveEventHandler] the event handler that was registered.
+    def server_scheduled_event_user_remove(attributes = {}, &block)
+      register_event(ServerScheduledEventUserRemoveEvent, attributes, block)
+    end
+
     # This **event** is raised when a webhook is updated.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, Server] :server Matches the server by name, ID or instance.
