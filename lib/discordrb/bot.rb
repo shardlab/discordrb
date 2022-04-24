@@ -1603,6 +1603,16 @@ module Discordrb
 
         event = ThreadMembersUpdateEvent.new(data, self)
         raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_CREATE
+        # TODO
+      when :GUILD_SCHEDULED_EVENT_UPDATE
+        # TODO
+      when :GUILD_SCHEDULED_EVENT_DELETE
+        # TODO
+      when :GUILD_SCHEDULED_EVENT_USER_ADD
+        # TODO
+      when :GUILD_SCHEDULED_EVENT_USER_REMOVE
+        # TODO
       else
         # another event that we don't support yet
         debug "Event #{type} has been received but is unsupported. Raising UnknownEvent"
