@@ -97,7 +97,7 @@ module Discordrb
       @entity_id = data['entity_id']
       @entity_metadata = data['entity_metadata']
 
-      @image = data['image']
+      @image = data['image'] ? API.scheduled_event_cover_url(id, data['image']) : nil
     end
 
     # @return [Boolean] Whether the event is scheduled.
