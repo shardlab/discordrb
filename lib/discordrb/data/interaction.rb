@@ -725,7 +725,7 @@ module Discordrb
         Discordrb::Message.new(@data, @bot)
       end
 
-      alias_method :to_message, :message
+      alias_method :message, :to_message
 
       # @!visibility private
       def inspect
