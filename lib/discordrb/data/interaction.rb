@@ -725,6 +725,8 @@ module Discordrb
         Discordrb::Message.new(@data, @bot)
       end
 
+      alias_method :to_message, :message
+
       # @!visibility private
       def inspect
         "<Interaction::Message content=#{@content.inspect} embeds=#{@embeds.inspect} channel_id=#{@channel_id} server_id=#{@server_id} author=#{@author.inspect}>"
