@@ -396,7 +396,5 @@ module Discordrb
     def to_message
       self
     end
-
-    alias_method :to_m, :to_message
   end
 end
