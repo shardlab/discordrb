@@ -3,6 +3,8 @@
 require 'discordrb'
 
 describe Discordrb::Events do
+  RSpec::Matchers.alias_matcher :be_a_match_of, :be_matches
+
   describe Discordrb::Events::Negated do
     it 'should initialize without errors' do
       Discordrb::Events::Negated.new(:test)
@@ -34,13 +36,13 @@ describe Discordrb::Events do
       expect(Discordrb::Events.matches_all(:a, :e) { 1 }).to be_truthy
       expect(Discordrb::Events.matches_all(:a, :e) { 0 }).to be_truthy
       expect(Discordrb::Events.matches_all(:a, :e) { 'string' }).to be_truthy
-      expect(Discordrb::Events.matches_all(:a, :e) { false }).to_not be_truthy
+      expect(Discordrb::Events.matches_all(:a, :e) { false }).not_to be_truthy
     end
 
     it 'should be falsey if the block is falsey' do
       expect(Discordrb::Events.matches_all(:a, :e) { nil }).to be_falsy
       expect(Discordrb::Events.matches_all(:a, :e) { false }).to be_falsy
-      expect(Discordrb::Events.matches_all(:a, :e) { 0 }).to_not be_falsy
+      expect(Discordrb::Events.matches_all(:a, :e) { 0 }).not_to be_falsy
     end
 
     it 'should correctly pass the arguments given' do
@@ -66,10 +68,10 @@ describe Discordrb::Events do
       expect(Discordrb::Events.matches_all(not!(:a), :e) { 1 }).to be_falsy
       expect(Discordrb::Events.matches_all(not!(:a), :e) { 0 }).to be_falsy
       expect(Discordrb::Events.matches_all(not!(:a), :e) { 'string' }).to be_falsy
-      expect(Discordrb::Events.matches_all(not!(:a), :e) { false }).to_not be_falsy
+      expect(Discordrb::Events.matches_all(not!(:a), :e) { false }).not_to be_falsy
       expect(Discordrb::Events.matches_all(not!(:a), :e) { nil }).to be_truthy
       expect(Discordrb::Events.matches_all(not!(:a), :e) { false }).to be_truthy
-      expect(Discordrb::Events.matches_all(not!(:a), :e) { 0 }).to_not be_truthy
+      expect(Discordrb::Events.matches_all(not!(:a), :e) { 0 }).not_to be_truthy
       expect(Discordrb::Events.matches_all(not!(1), 1) { |a, e| a == e }).to be_falsy
       expect(Discordrb::Events.matches_all(not!(1), 0) { |a, e| a == e }).to be_truthy
       expect(Discordrb::Events.matches_all(not!(0), 1) { |a, e| a == e }).to be_truthy
@@ -171,14 +173,14 @@ describe Discordrb::Events do
           handler = Discordrb::Events::MessageEventHandler.new({ end_with: expr }, double('proc'))
           event = double('event', channel: double('channel', private?: false), author: double('author'), timestamp: double('timestamp'), content: matching)
           allow(event).to receive(:is_a?).with(Discordrb::Events::MessageEvent).and_return(true)
-          expect(handler.matches?(event)).to be_truthy
+          expect(handler).to be_a_match_of(event)
         end
 
         it "doesn't match #{non_matching}" do
           handler = Discordrb::Events::MessageEventHandler.new({ end_with: expr }, double('proc'))
           event = double('event', channel: double('channel', private?: false), author: double('author'), timestamp: double('timestamp'), content: non_matching)
           allow(event).to receive(:is_a?).with(Discordrb::Events::MessageEvent).and_return(true)
-          expect(handler.matches?(event)).to be_falsy
+          expect(handler).not_to be_a_match_of(event)
         end
       end
     end
@@ -231,17 +233,17 @@ describe Discordrb::Events do
     describe '#matches?' do
       it 'matches server names' do
         handler = described_class.new({ server: SERVER_NAME }, nil)
-        expect(handler.matches?(event)).to be_truthy
+        expect(handler).to be_a_match_of(event)
       end
 
       it 'matches server ids' do
         handler = described_class.new({ server: SERVER_ID }, nil)
-        expect(handler.matches?(event)).to be_truthy
+        expect(handler).to be_a_match_of(event)
       end
 
       it 'matches server object' do
         handler = described_class.new({ server: server }, nil)
-        expect(handler.matches?(event)).to be_truthy
+        expect(handler).to be_a_match_of(event)
       end
     end
   end
@@ -250,12 +252,12 @@ describe Discordrb::Events do
     describe '#matches?' do
       it 'matches emoji id' do
         handler = described_class.new({ id: EMOJI1_ID }, nil)
-        expect(handler.matches?(event)).to be_truthy
+        expect(handler).to be_a_match_of(event)
       end
 
       it 'matches emoji name' do
         handler = described_class.new({ name: EMOJI1_NAME }, nil)
-        expect(handler.matches?(event)).to be_truthy
+        expect(handler).to be_a_match_of(event)
       end
     end
   end
@@ -363,7 +365,7 @@ describe Discordrb::Events do
     describe '#matches?' do
       it 'matches old emoji name' do
         handler = described_class.new({ old_name: EMOJI2_NAME }, nil)
-        expect(handler.matches?(event)).to be_truthy
+        expect(handler).to be_a_match_of(event)
       end
     end
   end

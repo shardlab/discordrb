@@ -221,7 +221,7 @@ describe Discordrb::Webhook do
         data = double('data', :[] => nil)
         allow(JSON).to receive(:parse).and_return(data)
         allow(Discordrb::API::Webhook).to receive(:update_webhook)
-        expect(webhook).to_not receive(:update_internal)
+        expect(webhook).not_to receive(:update_internal)
         webhook.send(:update_webhook, double('data', delete: reason))
       end
     end
