@@ -101,13 +101,13 @@ describe Discordrb::Events do
   end
 
   describe Discordrb::Events::MessageEvent do
-    let(:bot) { double }
-    let(:channel) { double }
-    let(:message) { double('message', channel: channel) }
-
     subject :event do
       described_class.new(message, bot)
     end
+
+    let(:bot) { double }
+    let(:channel) { double }
+    let(:message) { double('message', channel: channel) }
 
     describe 'after_call' do
       subject :handler do
@@ -220,6 +220,7 @@ describe Discordrb::Events do
       it 'sets bot' do
         expect(event.bot).to eq(bot)
       end
+
       it 'sets server' do
         expect(event.server).to eq(server)
       end
@@ -260,24 +261,24 @@ describe Discordrb::Events do
   end
 
   describe Discordrb::Events::ServerEvent do
-    let(:bot) { double('bot', server: server) }
-    let(:server) { double }
-
     subject(:event) do
       described_class.new({ SERVER_ID => nil }, bot)
     end
+
+    let(:bot) { double('bot', server: server) }
+    let(:server) { double }
 
     it_behaves_like 'ServerEvent'
   end
 
   describe Discordrb::Events::ServerEmojiCDEvent do
-    let(:bot) { double }
-    let(:server) { double }
-    let(:emoji) { double }
-
     subject(:event) do
       described_class.new(server, emoji, bot)
     end
+
+    let(:bot) { double }
+    let(:server) { double }
+    let(:emoji) { double }
 
     it_behaves_like 'ServerEvent'
 
@@ -294,12 +295,12 @@ describe Discordrb::Events do
     fixture_property :emoji_1_id, :dispatch, ['emojis', 0, 'id'], :to_i
     fixture_property :emoji_2_id, :dispatch, ['emojis', 1, 'id'], :to_i
 
-    let(:bot) { double }
-    let(:server) { double('server', emoji: { emoji_1_id => nil, emoji_2_id => nil }) }
-
     subject(:event) do
       described_class.new(server, dispatch, bot)
     end
+
+    let(:bot) { double }
+    let(:server) { double('server', emoji: { emoji_1_id => nil, emoji_2_id => nil }) }
 
     it_behaves_like 'ServerEvent'
 
@@ -311,14 +312,14 @@ describe Discordrb::Events do
   end
 
   describe Discordrb::Events::ServerEmojiUpdateEvent do
+    subject(:event) do
+      described_class.new(server, old_emoji, emoji, bot)
+    end
+
     let(:bot) { double }
     let(:server) { double }
     let(:old_emoji) { double }
     let(:emoji) { double }
-
-    subject(:event) do
-      described_class.new(server, old_emoji, emoji, bot)
-    end
 
     it_behaves_like 'ServerEvent'
 
@@ -326,6 +327,7 @@ describe Discordrb::Events do
       it 'sets emoji' do
         expect(event.emoji).to eq(emoji)
       end
+
       it 'sets old_emoji' do
         expect(event.old_emoji).to eq(old_emoji)
       end

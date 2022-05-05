@@ -3,12 +3,12 @@
 require 'discordrb'
 
 describe Discordrb::Role do
-  let(:server) { double('server', id: double) }
-  let(:bot) { double('bot', token: double) }
-
   subject(:role) do
     described_class.new(role_data, bot, server)
   end
+
+  let(:server) { double('server', id: double) }
+  let(:bot) { double('bot', token: double) }
 
   fixture :role_data, %i[role]
 

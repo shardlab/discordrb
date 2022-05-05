@@ -6,15 +6,15 @@ require 'mock/api_mock'
 using APIMock
 
 describe Discordrb::Channel do
+  subject(:channel) do
+    allow(bot).to receive(:token).and_return('fake token')
+    described_class.new(data, bot, server)
+  end
+
   let(:data) { load_data_file(:text_channel) }
   # Instantiate the doubles here so we can apply mocks in the specs
   let(:bot) { double('bot') }
   let(:server) { double('server', id: double) }
-
-  subject(:channel) do
-    allow(bot).to receive(:token) { 'fake token' }
-    described_class.new(data, bot, server)
-  end
 
   shared_examples 'a Channel property' do |property_name|
     it 'should call #update_channel_data with data' do
@@ -44,6 +44,7 @@ describe Discordrb::Channel do
 
     context 'when toggled from true to false' do
       subject(:channel) { described_class.new(data.merge('nsfw' => true), double, server) }
+
       it_behaves_like 'a Channel property', :nsfw do
         let(:property_value) { false }
       end
@@ -182,6 +183,7 @@ describe Discordrb::Channel do
           expect { channel.__send__(:update_data, new_data) }.to change { channel.__send__(property_name) }.to test_data
         end
       end
+
       context 'when we don\'t have new data' do
         it 'should keep the cached value' do
           new_data = double('new data', :[] => double('property'), key?: double)
@@ -247,7 +249,7 @@ describe Discordrb::Channel do
       messages = [1, 2, 3, 4]
       allow(Discordrb::IDObject).to receive(:synthesise).and_return(3)
       allow(Discordrb::API::Channel).to receive(:bulk_delete_messages)
-      expect(Discordrb::LOGGER).to receive(:warn).exactly(2).times
+      expect(Discordrb::LOGGER).to receive(:warn).twice
       channel.__send__(:bulk_delete, messages)
     end
 
