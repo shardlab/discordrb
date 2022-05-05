@@ -185,8 +185,8 @@ describe Discordrb::Message do
 
   describe '#reply!' do
     let(:message) { described_class.new(message_data, bot) }
-    let(:content) { instance_double('String', 'content') }
-    let(:mention) { instance_double('TrueClass', 'mention') }
+    let(:content) { instance_double(String, :content) }
+    let(:mention) { instance_double(TrueClass, :mention) }
 
     it 'responds with a message_reference' do
       expect(message).to receive(:respond).with(content, false, nil, nil, hash_including(:replied_user), message, nil)
@@ -211,9 +211,9 @@ describe Discordrb::Message do
     end
 
     context 'when allowed_mentions is an AllowedMentions' do
-      let(:hash) { instance_double('Hash', 'hash') }
-      let(:allowed_mentions) { instance_double('Discordrb::AllowedMentions', 'allowed_mentions') }
-      let(:mention_user) { instance_double('TrueClass', 'mention_user') }
+      let(:hash) { instance_double(Hash, :hash) }
+      let(:allowed_mentions) { instance_double(Discordrb::AllowedMentions, :allowed_mentions) }
+      let(:mention_user) { instance_double(TrueClass, :mention_user) }
 
       before do
         allow(allowed_mentions).to receive(:to_hash).and_return(hash)
@@ -230,7 +230,7 @@ describe Discordrb::Message do
 
   describe '#reply' do
     let(:message) { described_class.new(message_data, bot) }
-    let(:content) { instance_double('String', 'content') }
+    let(:content) { instance_double(String, :content) }
 
     it 'sends a message to a channel' do
       expect(channel).to receive(:send_message).with(content)
@@ -241,13 +241,13 @@ describe Discordrb::Message do
 
   describe '#respond' do
     let(:message) { described_class.new(message_data, bot) }
-    let(:content) { instance_double('String', 'content') }
-    let(:tts) { instance_double('TrueClass', 'tts') }
-    let(:embed) { instance_double('Discordrb::Webhooks::Embed', 'embed') }
-    let(:attachments) { instance_double('Array', 'attachments') }
-    let(:allowed_mentions) { instance_double('Hash', 'allowed_mentions') }
-    let(:message_reference) { instance_double('Discordrb::Message') }
-    let(:components) { instance_double('Discordrb::Webhooks::View') }
+    let(:content) { instance_double(String, :content) }
+    let(:tts) { instance_double(TrueClass, :tts) }
+    let(:embed) { instance_double(Discordrb::Webhooks::Embed, :embed) }
+    let(:attachments) { instance_double(Array, :attachments) }
+    let(:allowed_mentions) { instance_double(Hash, :allowed_mentions) }
+    let(:message_reference) { instance_double(described_class, :message_reference) }
+    let(:components) { instance_double(Discordrb::Webhooks::View, :components) }
 
     it 'forwards arguments to Channel#send_message' do
       expect(channel).to receive(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference, components)
