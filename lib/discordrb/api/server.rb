@@ -216,7 +216,7 @@ module Discordrb::API::Server
   # Updates a users voice state inside of a Stage channel
   # The passed channel_id must point to a Stage channel.
   # The passed user_id must be inside of the Stage channel.
-  # TODO: docs_link
+  # https://discord.com/developers/docs/resources/guild#modify-user-voice-state
   def update_voice_state(token, server_id, channel_id, user_id, suppress)
     Discordrb::API.request(
       :guilds_sid_voicestate,
