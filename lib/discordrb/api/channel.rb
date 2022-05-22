@@ -123,7 +123,7 @@ module Discordrb::API::Channel
       channel_id,
       :patch,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}",
-      { content: message, mentions: mentions, embed: embed, components: components }.to_json,
+      { content: message, mentions: mentions, embed: embed, components: components&.to_a }.to_json,
       Authorization: token,
       content_type: :json
     )
