@@ -224,6 +224,20 @@ module Discordrb::API::Channel
     )
   end
 
+  # Deletes all the reactions for a given emoji on a message
+  # https://discord.com/developers/docs/resources/channel#delete-all-reactions-for-emoji
+  def delete_all_emoji_reactions(token, channel_id, message_id, emoji)
+    emoji = URI.encode_www_form_component(emoji) unless emoji.ascii_only?
+
+    Discordrb::API.request(
+      :channels_cid_messages_mid_reactions_emoji,
+      channel_id,
+      :delete,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/reactions/#{emoji}",
+      Authorization: token
+    )
+  end
+
   # Update a channels permission for a role or member
   # https://discord.com/developers/docs/resources/channel#edit-channel-permissions
   def update_permission(token, channel_id, overwrite_id, allow, deny, type, reason = nil)

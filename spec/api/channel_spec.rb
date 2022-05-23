@@ -52,4 +52,27 @@ describe Discordrb::API::Channel do
       Discordrb::API::Channel.get_reactions(token, channel_id, message_id, 'test', before_id, after_id, nil)
     end
   end
+
+  describe '.delete_all_emoji_reactions' do
+    let(:message_id) { double('message_id', to_s: 'message_id') }
+    let(:emoji) { '\u{1F525}' }
+
+    before do
+      allow(Discordrb::API).to receive(:request)
+        .with(anything, channel_id, :delete, kind_of(String), any_args)
+    end
+
+    it 'sends requests' do
+      expect(Discordrb::API).to receive(:request)
+        .with(
+          anything,
+          channel_id,
+          :delete,
+          "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/reactions/%F0%9F%94%A5",
+          any_args
+        )
+
+      Discordrb::API::Channel.delete_all_emoji_reactions(token, channel_id, message_id, emoji)
+    end
+  end
 end
