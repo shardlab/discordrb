@@ -68,7 +68,7 @@ describe Discordrb::API::Channel do
           anything,
           channel_id,
           :delete,
-          "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/reactions/%F0%9F%94%A5",
+          "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/reactions/#{emoji}",
           any_args
         )
 
