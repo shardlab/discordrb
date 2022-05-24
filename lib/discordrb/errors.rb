@@ -45,7 +45,7 @@ module Discordrb
       end
 
       # @return [String] A message including the message and flattened errors.
-      def full_message
+      def full_message(*)
         error_list = @errors.collect { |err| "\t- #{err}" }
 
         "#{@message}\n#{error_list.join("\n")}"
