@@ -54,7 +54,7 @@ describe Discordrb::API::Channel do
   end
 
   describe '.delete_all_emoji_reactions' do
-    let(:message_id) { double('message_id', to_s: 'message_id') }
+    let(:message_id) { instance_double(String, :message_id, to_s: 'message_id') }
     let(:emoji) { '\u{1F525}' }
 
     before do
@@ -72,7 +72,7 @@ describe Discordrb::API::Channel do
           any_args
         )
 
-      Discordrb::API::Channel.delete_all_emoji_reactions(token, channel_id, message_id, emoji)
+      described_class.delete_all_emoji_reactions(token, channel_id, message_id, emoji)
     end
   end
 end
