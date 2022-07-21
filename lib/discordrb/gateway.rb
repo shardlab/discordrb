@@ -166,7 +166,7 @@ module Discordrb
       @ws_thread = Thread.new do
         Thread.current[:discordrb_name] = 'websocket'
         connect_loop
-        LOGGER.warn('The WS loop exited! Not sure if this is a good thing')
+        LOGGER.debug('The WS loop exited! Not sure if this is a good thing')
       end
 
       LOGGER.debug('WS thread created! Now waiting for confirmation that everything worked')
@@ -553,7 +553,7 @@ module Discordrb
     end
 
     def connect
-      LOGGER.debug('Connecting')
+      LOGGER.info('Connecting to gateway')
 
       # Get the URI we should connect to
       url = process_gateway
@@ -745,13 +745,7 @@ module Discordrb
     # Op 9
     def handle_invalidate_session
       LOGGER.debug('Received op 9, invalidating session and re-identifying.')
-
-      if @session
-        @session.invalidate
-      else
-        LOGGER.warn('Received op 9 without a running session! Not invalidating, we *should* be fine though.')
-      end
-
+      @session&.invalidate
       identify
     end
 
@@ -819,10 +813,10 @@ module Discordrb
         @should_reconnect = false if FATAL_CLOSE_CODES.include?(e.code)
       elsif e.is_a? Exception
         # Log the exception
-        LOGGER.error('The websocket connection has closed due to an error!')
+        LOGGER.error('The gateway connection has closed due to an error!')
         LOGGER.log_exception(e)
       else
-        LOGGER.error("The websocket connection has closed: #{e&.inspect || '(no information)'}")
+        LOGGER.error("The gateway connection has closed: #{e&.inspect}")
       end
     end
 
