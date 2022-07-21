@@ -897,7 +897,11 @@ module Discordrb
 
     # Throws a useful exception if there's currently no gateway connection.
     def gateway_check
-      raise "A gateway connection is necessary to call this method! You'll have to do it inside any event (e.g. `ready`) or after `bot.run :async`." unless connected?
+      return if connected?
+
+      raise RuntimeError,
+            "A gateway connection is necessary to call this method! You'll have to do it inside any event (e.g. `ready`) or after `bot.run :async`.",
+            caller
     end
 
     # Logs a warning if there are servers which are still unavailable.
