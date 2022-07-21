@@ -793,7 +793,8 @@ module Discordrb
     def handle_close(e)
       @bot.__send__(:raise_event, Events::DisconnectEvent.new(@bot))
 
-      if e.respond_to? :code
+      case e
+      when ::WebSocket::Frame::Incoming::Client
         # It is a proper close frame we're dealing with, print reason and message to console
         LOGGER.error('Websocket close frame received!')
         LOGGER.error("Code: #{e.code}")
@@ -811,7 +812,7 @@ module Discordrb
         end
 
         @should_reconnect = false if FATAL_CLOSE_CODES.include?(e.code)
-      elsif e.is_a? Exception
+      when Exception
         # Log the exception
         LOGGER.error('The gateway connection has closed due to an error!')
         LOGGER.log_exception(e)
