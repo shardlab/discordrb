@@ -3,6 +3,23 @@
 module Discordrb
   # Mixin for the attributes users should have
   module UserAttributes
+    FLAGS = {
+      staff: 1 << 0,
+      partner: 1 << 1,
+      hypesquad: 1 << 2,
+      bug_hunter_level_1: 1 << 3,
+      hypesquad_online_house_1: 1 << 6,
+      hypesquad_online_house_2: 1 << 7,
+      hypesquad_online_house_3: 1 << 8,
+      premium_early_supporter: 1 << 9,
+      team_pseudo_user: 1 << 10,
+      bug_hunter_level_2: 1 << 14,
+      verified_bot: 1 << 16,
+      verified_developer: 1 << 17,
+      certified_moderator: 1 << 18,
+      bot_http_interactions: 1 << 19,
+    }.freeze
+
     # @return [String] this user's username
     attr_reader :username
     alias_method :name, :username
@@ -41,6 +58,15 @@ module Discordrb
 
       API::User.avatar_url(@id, @avatar_id, format)
     end
+
+    # @return [Integer] the public flags on a user's account
+    attr_reader :public_flags
+
+    FLAGS.each do |name, value|
+      define_method("#{name}?") do
+        @public_flags & value > 0
+      end
+    end
   end
 
   # User on Discord, including internal data like discriminators
@@ -68,6 +94,7 @@ module Discordrb
       @avatar_id = data['avatar']
       @roles = {}
       @activities = Discordrb::ActivitySet.new
+      @public_flags = data['public_flags'] || 0
 
       @bot_account = false
       @bot_account = true if data['bot']
