@@ -3,6 +3,7 @@
 module Discordrb
   # Mixin for the attributes users should have
   module UserAttributes
+    # rubocop:disable Naming/VariableNumber
     FLAGS = {
       staff: 1 << 0,
       partner: 1 << 1,
@@ -17,8 +18,9 @@ module Discordrb
       verified_bot: 1 << 16,
       verified_developer: 1 << 17,
       certified_moderator: 1 << 18,
-      bot_http_interactions: 1 << 19,
+      bot_http_interactions: 1 << 19
     }.freeze
+    # rubocop:enable Naming/VariableNumber
 
     # @return [String] this user's username
     attr_reader :username
@@ -64,7 +66,7 @@ module Discordrb
 
     FLAGS.each do |name, value|
       define_method("#{name}?") do
-        @public_flags & value > 0
+        (@public_flags & value).positive?
       end
     end
   end
