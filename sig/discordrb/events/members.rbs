@@ -1,0 +1,60 @@
+module Discordrb::Events
+  # Generic subclass for server member events (add/update/delete)
+  class ServerMemberEvent < Event
+    # @return [Member] the member in question.
+    attr_reader user: untyped
+
+    alias member user
+
+    # @return [Array<Role>] the member's roles.
+    attr_reader roles: untyped
+
+    # @return [Server] the server on which the event happened.
+    attr_reader server: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+
+    private
+
+    def init_user: (untyped data, untyped _) -> untyped
+
+    def init_roles: (untyped data, untyped _) -> (nil | untyped)
+  end
+
+  # Generic event handler for member events
+  class ServerMemberEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Member joins
+  # @see Discordrb::EventContainer#member_join
+  class ServerMemberAddEvent < ServerMemberEvent
+  end
+
+  # Event handler for {ServerMemberAddEvent}
+  class ServerMemberAddEventHandler < ServerMemberEventHandler
+  end
+
+  # Member is updated (roles added or deleted)
+  # @see Discordrb::EventContainer#member_update
+  class ServerMemberUpdateEvent < ServerMemberEvent
+  end
+
+  # Event handler for {ServerMemberUpdateEvent}
+  class ServerMemberUpdateEventHandler < ServerMemberEventHandler
+  end
+
+  # Member leaves
+  # @see Discordrb::EventContainer#member_leave
+  class ServerMemberDeleteEvent < ServerMemberEvent
+    # Override init_user to account for the deleted user on the server
+    def init_user: (untyped data, untyped `bot`) -> untyped
+
+    # @return [User] the user in question.
+    attr_reader user: untyped
+  end
+
+  # Event handler for {ServerMemberDeleteEvent}
+  class ServerMemberDeleteEventHandler < ServerMemberEventHandler
+  end
+end

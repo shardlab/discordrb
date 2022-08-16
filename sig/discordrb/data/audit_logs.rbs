@@ -1,0 +1,189 @@
+module Discordrb
+  # A server's audit logs
+  class AuditLogs
+    # The numbers associated with the type of action.
+    ACTIONS: ::Hash[::Integer, ::Symbol]
+
+    # @!visibility private
+    CREATE_ACTIONS: ::Array[::Symbol]
+
+    # @!visibility private
+    DELETE_ACTIONS: ::Array[::Symbol]
+
+    # @!visibility private
+    UPDATE_ACTIONS: ::Array[::Symbol]
+
+    # @return [Hash<String => User>] the users included in the audit logs.
+    attr_reader users: ::Hash[::String, Discordrb::User]
+
+    # @return [Hash<String => Webhook>] the webhooks included in the audit logs.
+    attr_reader webhooks: ::Hash[::String, Discordrb::Webhook]
+
+    # @return [Array<Entry>] the entries listed in the audit logs.
+    attr_reader entries: ::Array[Entry]
+
+    @bot: Discordrb::Bot
+    @server: Discordrb::Server
+
+    # @!visibility private
+    def initialize: (Discordrb::Server server, Discordrb::Bot bot, ::Hash[::String, untyped] data) -> void
+
+    # An entry in a server's audit logs.
+    class Entry
+      include IDObject
+
+      # @return [Symbol] the action that was performed.
+      attr_reader action: untyped
+
+      # @return [Symbol] the type action that was performed. (:create, :delete, :update, :unknown)
+      attr_reader action_type: untyped
+
+      # @return [Symbol] the type of target being performed on. (:server, :channel, :user, :role, :invite, :webhook, :emoji, :unknown)
+      attr_reader target_type: untyped
+
+      # @return [Integer, nil] the amount of messages deleted. Only present if the action is `:message_delete`.
+      attr_reader count: untyped
+
+      alias amount count
+
+      # @return [Integer, nil] the amount of days the members were inactive for. Only present if the action is `:member_prune`.
+      attr_reader days: untyped
+
+      # @return [Integer, nil] the amount of members removed. Only present if the action is `:member_prune`.
+      attr_reader members_removed: untyped
+
+      # @return [String, nil] the reason for this action occurring.
+      attr_reader reason: untyped
+
+      # @return [Hash<String => Change>, RoleChange, nil] the changes from this log, listing the key as the key changed. Will be a RoleChange object if the action is `:member_role_update`. Will be nil if the action is either `:message_delete` or `:member_prune`.
+      attr_reader changes: untyped
+
+      @bot: Discordrb::Bot
+      @logs: AuditLogs
+      @server: Discordrb::Server
+      @data: ::Hash[::String, untyped]
+      @channel_id: ::Integer?
+      @target: untyped
+      @user: Discordrb::User?
+      @channel: Discordrb::Channel
+
+      # @!visibility private
+      def initialize: (AuditLogs logs, Discordrb::Server server, Discordrb::Bot bot, ::Hash[::String, untyped] data) -> void
+
+      # @return [Server, Channel, Member, User, Role, Invite, Webhook, Emoji, nil] the target being performed on.
+      def target: () -> untyped
+
+      # @return [Member, User] the user that authored this action. Can be a User object if the user no longer exists in the server.
+      def user: () -> untyped
+
+      alias author user
+
+      # @return [Channel, nil] the amount of messages deleted. Won't be nil if the action is `:message_delete`.
+      def channel: () -> (nil | untyped)
+
+      # @!visibility private
+      def process_target: (untyped id, untyped `type`) -> untyped
+
+      # The inspect method is overwritten to give more useful output
+      def inspect: () -> ::String
+
+      # Process action changes
+      # @note For internal use only
+      # @!visibility private
+      def process_changes: (untyped changes) -> (nil | untyped)
+    end
+
+    # A change in a audit log entry.
+    class Change
+      # @return [String] the key that was changed.
+      # @note You should check with the Discord API Documentation on what key gives out what value.
+      attr_reader key: untyped
+
+      # @return [String, Integer, true, false, Permissions, Overwrite, nil] the value that was changed from.
+      attr_reader old: untyped
+
+      alias old_value old
+
+      # @return [String, Integer, true, false, Permissions, Overwrite, nil] the value that was changed to.
+      attr_reader new: untyped
+
+      @bot: Discordrb::Bot
+      @logs: AuditLogs
+      @server: Discordrb::Server
+
+      alias new_value new
+
+      # @!visibility private
+      def initialize: (untyped data, untyped server, untyped `bot`, untyped logs) -> void
+
+      # @return [Channel, nil] the channel that was previously used in the server widget. Only present if the key for this change is `widget_channel_id`.
+      def old_widget_channel: () -> (untyped | nil)
+
+      # @return [Channel, nil] the channel that is used in the server widget prior to this change. Only present if the key for this change is `widget_channel_id`.
+      def new_widget_channel: () -> (untyped | nil)
+
+      # @return [Channel, nil] the channel that was previously used in the server as an AFK channel. Only present if the key for this change is `afk_channel_id`.
+      def old_afk_channel: () -> (untyped | nil)
+
+      # @return [Channel, nil] the channel that is used in the server as an AFK channel prior to this change. Only present if the key for this change is `afk_channel_id`.
+      def new_afk_channel: () -> (untyped | nil)
+
+      # @return [Member, User, nil] the member that used to be the owner of the server. Only present if the for key for this change is `owner_id`.
+      def old_owner: () -> (untyped | nil)
+
+      # @return [Member, User, nil] the member that is now the owner of the server prior to this change. Only present if the key for this change is `owner_id`.
+      def new_owner: () -> (untyped | nil)
+    end
+
+    # A change that includes roles.
+    class RoleChange
+      # @return [Symbol] what type of change this is: (:add, :remove)
+      attr_reader type: ::Symbol
+
+      @role_id: ::Integer
+      @role: Discordrb::Role
+      @server: Discordrb::Server
+
+      # @!visibility private
+      def initialize: (untyped data, untyped server) -> void
+
+      # @return [Role] the role being used.
+      def role: () -> untyped
+    end
+
+    # @return [Entry] the latest entry in the audit logs.
+    def latest: () -> untyped
+
+    alias first latest
+
+    # Gets a user in the audit logs data based on user ID
+    # @note This only uses data given by the audit logs request
+    # @param id [String, Integer] The user ID to look for
+    def user: (untyped id) -> untyped
+
+    # Gets a webhook in the audit logs data based on webhook ID
+    # @note This only uses data given by the audit logs request
+    # @param id [String, Integer] The webhook ID to look for
+    def webhook: (untyped id) -> untyped
+
+    # Process user objects given by the request
+    # @note For internal use only
+    # @!visibility private
+    def process_users: (untyped users) -> untyped
+
+    # Process webhook objects given by the request
+    # @note For internal use only
+    # @!visibility private
+    def process_webhooks: (untyped webhooks) -> untyped
+
+    # Find the type of target by it's action number
+    # @note For internal use only
+    # @!visibility private
+    def self.target_type_for: (untyped action) -> untyped
+
+    # Find the type of action by its action number
+    # @note For internal use only
+    # @!visibility private
+    def self.action_type_for: (untyped action) -> (:create | :delete | :update | :unknown)
+  end
+end

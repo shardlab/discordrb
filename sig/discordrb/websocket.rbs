@@ -1,0 +1,54 @@
+# The WSCS module which we're hooking
+# @see Websocket::Client::Simple::Client
+module WebSocket
+end
+
+module WebSocket::Client
+end
+
+module WebSocket::Client::Simple
+end
+
+module WebSocket::Client::Simple
+  # Patch to the WSCS class to allow reading the internal thread
+  class Client
+    # @return [Thread] the internal thread this client is using for the event loop.
+    attr_reader thread: untyped
+  end
+end
+
+module Discordrb
+  # Utility wrapper class that abstracts an instance of WSCS. Useful should we decide that WSCS isn't good either -
+  # in that case we can just switch to something else
+  class WebSocket
+    attr_reader open_handler: untyped
+
+    attr_reader message_handler: untyped
+
+    attr_reader close_handler: untyped
+
+    attr_reader error_handler: untyped
+
+    # Create a new WebSocket and connect to the given endpoint.
+    # @param endpoint [String] Where to connect to.
+    # @param open_handler [#call] The handler that should be called when the websocket has opened successfully.
+    # @param message_handler [#call] The handler that should be called when the websocket receives a message. The
+    #   handler can take one parameter which will have a `data` attribute for normal messages and `code` and `data` for
+    #   close frames.
+    # @param close_handler [#call] The handler that should be called when the websocket is closed due to an internal
+    #   error. The error will be passed as the first parameter to the handler.
+    # @param error_handler [#call] The handler that should be called when an error occurs in another handler. The error
+    #   will be passed as the first parameter to the handler.
+    def initialize: (untyped endpoint, untyped open_handler, untyped message_handler, untyped close_handler, untyped error_handler) -> void
+
+    # Send data over this WebSocket
+    # @param data [String] What to send
+    def send: (untyped data) -> untyped
+
+    # Close the WebSocket connection
+    def close: () -> untyped
+
+    # @return [Thread] the internal WSCS thread
+    def thread: () -> untyped
+  end
+end

@@ -842,7 +842,6 @@ module Discordrb
     # @return [Channel]
     def start_thread(name, auto_archive_duration, message: nil, type: 11)
       message_id = message&.id || message
-      type = TYPES[type] || type
 
       data = if message
                API::Channel.start_thread_with_message(@bot.token, @id, message_id, name, auto_archive_duration)
@@ -946,13 +945,14 @@ module Discordrb
       min_snowflake = IDObject.synthesise(Time.now - TWO_WEEKS)
 
       ids.reject! do |e|
-        next unless e < min_snowflake
+        unless e < min_snowflake
 
-        message = "Attempted to bulk_delete message #{e} which is too old (min = #{min_snowflake})"
-        raise ArgumentError, message if strict
+          message = "Attempted to bulk_delete message #{e} which is too old (min = #{min_snowflake})"
+          raise ArgumentError, message if strict
 
-        Discordrb::LOGGER.warn(message)
-        true
+          Discordrb::LOGGER.warn(message)
+          true
+        end
       end
 
       API::Channel.bulk_delete_messages(@bot.token, @id, ids, reason)

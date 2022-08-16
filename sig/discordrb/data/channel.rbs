@@ -1,0 +1,539 @@
+module Discordrb
+  # A Discord channel, including data like the topic
+  class Channel
+    include IDObject
+
+    # Map of channel types
+    TYPES: ::Hash[::Symbol, ::Integer]
+
+    @permission_overwrites: untyped
+
+    # @return [String] this channel's name.
+    attr_reader name: untyped
+
+    # @return [Integer, nil] the ID of the parent channel, if this channel is inside a category. If this channel is a
+    #   thread, this is the text channel it is a child to.
+    attr_reader parent_id: untyped
+
+    # @return [Integer] the type of this channel
+    # @see TYPES
+    attr_reader type: untyped
+
+    # @return [Integer, nil] the ID of the owner of the group channel or nil if this is not a group channel. If this
+    #   channel is a thread, this is the member that started the thread.
+    attr_reader owner_id: untyped
+
+    # @return [Array<Recipient>, nil] the array of recipients of the private messages, or nil if this is not a Private channel
+    attr_reader recipients: untyped
+
+    # @return [String] the channel's topic
+    attr_reader topic: untyped
+
+    # @return [Integer] the bitrate (in bps) of the channel
+    attr_reader bitrate: untyped
+
+    # @return [Integer] the amount of users that can be in the channel. `0` means it is unlimited.
+    attr_reader user_limit: untyped
+
+    alias limit user_limit
+
+    # @return [Integer] the channel's position on the channel list
+    attr_reader position: untyped
+
+    # @return [true, false] if this channel is marked as nsfw
+    attr_reader nsfw: untyped
+
+    alias nsfw? nsfw
+
+    # @return [Integer] the amount of time (in seconds) users need to wait to send in between messages.
+    attr_reader rate_limit_per_user: untyped
+
+    alias slowmode_rate rate_limit_per_user
+
+    # @return [Integer, nil] An approximate count of messages sent in a thread. Stops counting at 50.
+    attr_reader message_count: untyped
+
+    # @return [Integer, nil] An approximate count of members in a thread. Stops counting at 50.
+    attr_reader member_count: untyped
+
+    # @return [true, false, nil] Whether or not this thread is archived.
+    attr_reader archived: untyped
+
+    # @return [Integer, nil] How long after the last message before a thread is automatically archived.
+    attr_reader auto_archive_duration: untyped
+
+    # @return [Time, nil] The timestamp of when this threads status last changed.
+    attr_reader archive_timestamp: untyped
+
+    # @return [true, false, nil] Whether this thread is locked or not.
+    attr_reader locked: untyped
+
+    alias locked? locked
+
+    # @return [Time, nil] When the current user joined this thread.
+    attr_reader join_timestamp: untyped
+
+    # @return [Integer, nil] Member flags for this thread, used for notifications.
+    attr_reader member_flags: untyped
+
+    # @return [true, false] For private threads, determines whether non-moderators can add other non-moderators to
+    #   a thread.
+    attr_reader invitable: untyped
+
+    # @return [true, false] whether or not this channel is a PM or group channel.
+    def private?: () -> untyped
+
+    # @return [String] a string that will mention the channel as a clickable link on Discord.
+    def mention: () -> ::String
+
+    # @return [Recipient, nil] the recipient of the private messages, or nil if this is not a PM channel
+    def recipient: () -> (untyped | nil)
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`, ?untyped? server) -> void
+
+    # @return [Server, nil] the server this channel is on. If this channel is a PM channel, it will be nil.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    #   authorized with the `bot` scope.
+    def server: () -> (untyped | nil)
+
+    # @return [true, false] whether or not this channel is a text channel
+    def text?: () -> untyped
+
+    # @return [true, false] whether or not this channel is a PM channel.
+    def pm?: () -> untyped
+
+    # @return [true, false] whether or not this channel is a voice channel.
+    def voice?: () -> untyped
+
+    # @return [true, false] whether or not this channel is a group channel.
+    def group?: () -> untyped
+
+    # @return [true, false] whether or not this channel is a category channel.
+    def category?: () -> untyped
+
+    # @return [true, false] whether or not this channel is a news channel.
+    def news?: () -> untyped
+
+    # @return [true, false] whether or not this channel is a store channel.
+    def store?: () -> untyped
+
+    # @return [true, false] whether or not this channel is a news thread.
+    def news_thread?: () -> untyped
+
+    # @return [true, false] whether or not this channel is a public thread.
+    def public_thread?: () -> untyped
+
+    # @return [true, false] whether or not this channel is a private thread.
+    def private_thread?: () -> untyped
+
+    # @return [true, false] whether or not this channel is a thread.
+    def thread?: () -> untyped
+
+    # @return [Channel, nil] the category channel, if this channel is in a category
+    def category: () -> (untyped | nil)
+
+    alias parent category
+
+    # Sets this channels parent category
+    # @param channel [Channel, String, Integer] the target category channel, or its ID
+    # @raise [ArgumentError] if the target channel isn't a category
+    def category=: (untyped channel) -> untyped
+
+    alias parent= category=
+
+    # Sorts this channel's position to follow another channel.
+    # @param other [Channel, String, Integer, nil] The channel, or its ID, below which this channel should be sorted. If the given
+    #   channel is a category, this channel will be sorted at the top of that category. If it is `nil`, the channel will
+    #   be sorted at the top of the channel list.
+    # @param lock_permissions [true, false] Whether the channel's permissions should be synced to the category's
+    def sort_after: (?untyped? other, ?bool lock_permissions) -> untyped
+
+    # Sets whether this channel is NSFW
+    # @param nsfw [true, false]
+    # @raise [ArgumentError] if value isn't one of true, false
+    def nsfw=: (untyped nsfw) -> untyped
+
+    # This channel's permission overwrites
+    # @overload permission_overwrites
+    #   The overwrites represented as a hash of role/user ID
+    #   to an Overwrite object
+    #   @return [Hash<Integer => Overwrite>] the channel's permission overwrites
+    # @overload permission_overwrites(type)
+    #   Return an array of a certain type of overwrite
+    #   @param type [Symbol] the kind of overwrite to return
+    #   @return [Array<Overwrite>]
+    def permission_overwrites: (?untyped? `type`) -> untyped
+
+    alias overwrites permission_overwrites
+
+    # Bulk sets this channels permission overwrites
+    # @param overwrites [Array<Overwrite>]
+    def permission_overwrites=: (untyped overwrites) -> untyped
+
+    # Sets the amount of time (in seconds) users have to wait in between sending messages.
+    # @param rate [Integer]
+    # @raise [ArgumentError] if value isn't between 0 and 120
+    def rate_limit_per_user=: (untyped rate) -> untyped
+
+    alias slowmode_rate= rate_limit_per_user=
+
+    # Syncs this channels overwrites with its parent category
+    # @raise [RuntimeError] if this channel is not in a category
+    def sync_overwrites: () -> untyped
+
+    alias sync sync_overwrites
+
+    # @return [true, false, nil] whether this channels permissions match the permission overwrites of the category that it's in, or nil if it is not in a category
+    def synchronized?: () -> (nil | untyped)
+
+    alias synced? synchronized?
+
+    # Returns the children of this channel, if it is a category. Otherwise returns an empty array.
+    # @return [Array<Channel>]
+    def children: () -> (::Array[untyped] | untyped)
+
+    alias channels children
+
+    # Returns the text channels in this category, if it is a category channel. Otherwise returns an empty array.
+    # @return [Array<Channel>]
+    def text_channels: () -> untyped
+
+    # Returns the voice channels in this category, if it is a category channel. Otherwise returns an empty array.
+    # @return [Array<Channel>]
+    def voice_channels: () -> untyped
+
+    # @return [Overwrite] any member-type permission overwrites on this channel
+    def member_overwrites: () -> untyped
+
+    # @return [Overwrite] any role-type permission overwrites on this channel
+    def role_overwrites: () -> untyped
+
+    # @return [true, false] whether or not this channel is the default channel
+    def default_channel?: () -> untyped
+
+    alias default? default_channel?
+
+    # @return [true, false] whether or not this channel has slowmode enabled
+    def slowmode?: () -> untyped
+
+    # Sends a message to this channel.
+    # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
+    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @return [Message] the message that was sent.
+    def send_message: (untyped content, ?bool tts, ?untyped? embed, ?untyped? attachments, ?untyped? allowed_mentions, ?untyped? message_reference, ?untyped? components) -> untyped
+
+    alias send send_message
+
+    # Sends a temporary message to this channel.
+    # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
+    # @param timeout [Float] The amount of time in seconds after which the message sent will be deleted.
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
+    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    def send_temporary_message: (untyped content, untyped timeout, ?bool tts, ?untyped? embed, ?untyped? attachments, ?untyped? allowed_mentions, ?untyped? message_reference, ?untyped? components) -> untyped
+
+    # Convenience method to send a message with an embed.
+    # @example Send a message with an embed
+    #   channel.send_embed do |embed|
+    #     embed.title = 'The Ruby logo'
+    #     embed.image = Discordrb::Webhooks::EmbedImage.new(url: 'https://www.ruby-lang.org/images/header-ruby-logo.png')
+    #   end
+    # @param message [String] The message that should be sent along with the embed. If this is the empty string, only the embed will be shown.
+    # @param embed [Discordrb::Webhooks::Embed, nil] The embed to start the building process with, or nil if one should be created anew.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
+    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @yield [embed] Yields the embed to allow for easy building inside a block.
+    # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
+    # @return [Message] The resulting message.
+    def send_embed: (?::String message, ?untyped? embed, ?untyped? attachments, ?bool tts, ?untyped? allowed_mentions, ?untyped? message_reference, ?untyped? components) { (untyped, untyped) -> untyped } -> untyped
+
+    # Sends multiple messages to a channel
+    # @param content [Array<String>] The messages to send.
+    def send_multiple: (untyped content) -> untyped
+
+    # Splits a message into chunks whose length is at most the Discord character limit, then sends them individually.
+    # Useful for sending long messages, but be wary of rate limits!
+    def split_send: (untyped content) -> nil
+
+    # Sends a file to this channel. If it is an image, it will be embedded.
+    # @param file [File] The file to send. There's no clear size limit for this, you'll have to attempt it for yourself (most non-image files are fine, large images may fail to embed)
+    # @param caption [string] The caption for the file.
+    # @param tts [true, false] Whether or not this file's caption should be sent using Discord text-to-speech.
+    # @param filename [String] Overrides the filename of the uploaded file
+    # @param spoiler [true, false] Whether or not this file should appear as a spoiler.
+    # @example Send a file from disk
+    #   channel.send_file(File.open('rubytaco.png', 'r'))
+    def send_file: (untyped file, ?caption: untyped?, ?tts: bool, ?filename: untyped?, ?spoiler: untyped?) -> untyped
+
+    # Deletes a message on this channel. Mostly useful in case a message needs to be deleted when only the ID is known
+    # @param message [Message, String, Integer, String, Integer] The message, or its ID, that should be deleted.
+    def delete_message: (untyped message) -> untyped
+
+    # Permanently deletes this channel
+    # @param reason [String] The reason the for the channel deletion.
+    def delete: (?untyped? reason) -> untyped
+
+    # Sets this channel's name. The name must be alphanumeric with dashes, unless this is a voice channel (then there are no limitations)
+    # @param name [String] The new name.
+    def name=: (untyped name) -> untyped
+
+    # Sets this channel's topic.
+    # @param topic [String] The new topic.
+    def topic=: (untyped topic) -> untyped
+
+    # Sets this channel's bitrate.
+    # @param bitrate [Integer] The new bitrate (in bps). Number has to be between 8000-96000 (128000 for VIP servers)
+    def bitrate=: (untyped bitrate) -> untyped
+
+    # Sets this channel's user limit.
+    # @param limit [Integer] The new user limit. `0` for unlimited, has to be a number between 0-99
+    def user_limit=: (untyped limit) -> untyped
+
+    alias limit= user_limit=
+
+    # Sets this channel's position in the list.
+    # @param position [Integer] The new position.
+    def position=: (untyped position) -> untyped
+
+    # Defines a permission overwrite for this channel that sets the specified thing to the specified allow and deny
+    # permission sets, or change an existing one.
+    # @overload define_overwrite(overwrite)
+    #   @param thing [Overwrite] an Overwrite object to apply to this channel
+    #   @param reason [String] The reason the for defining the overwrite.
+    # @overload define_overwrite(thing, allow, deny)
+    #   @param thing [User, Role] What to define an overwrite for.
+    #   @param allow [#bits, Permissions, Integer] The permission sets that should receive an `allow` override (i.e. a
+    #     green checkmark on Discord)
+    #   @param deny [#bits, Permissions, Integer] The permission sets that should receive a `deny` override (i.e. a red
+    #     cross on Discord)
+    #   @param reason [String] The reason the for defining the overwrite.
+    #   @example Define a permission overwrite for a user that can then mention everyone and use TTS, but not create any invites
+    #     allow = Discordrb::Permissions.new
+    #     allow.can_mention_everyone = true
+    #     allow.can_send_tts_messages = true
+    #
+    #     deny = Discordrb::Permissions.new
+    #     deny.can_create_instant_invite = true
+    #
+    #     channel.define_overwrite(user, allow, deny)
+    def define_overwrite: (untyped thing, ?(::Integer | Discordrb::Permissions) allow, ?(::Integer | Discordrb::Permissions) deny, ?reason: untyped?) -> untyped
+
+    # Deletes a permission overwrite for this channel
+    # @param target [Member, User, Role, Profile, Recipient, String, Integer] What permission overwrite to delete
+    #   @param reason [String] The reason the for the overwrite deletion.
+    def delete_overwrite: (untyped target, ?untyped? reason) -> untyped
+
+    # Updates the cached data from another channel.
+    # @note For internal use only
+    # @!visibility private
+    def update_from: (untyped other) -> untyped
+
+    # The list of users currently in this channel. For a voice channel, it will return all the members currently
+    # in that channel. For a text channel, it will return all online members that have permission to read it.
+    # @return [Array<Member>] the users in this channel
+    def users: () -> (untyped | untyped | nil)
+
+    # Retrieves some of this channel's message history.
+    # @param amount [Integer] How many messages to retrieve. This must be less than or equal to 100, if it is higher
+    #   than 100 it will be treated as 100 on Discord's side.
+    # @param before_id [Integer] The ID of the most recent message the retrieval should start at, or nil if it should
+    #   start at the current message.
+    # @param after_id [Integer] The ID of the oldest message the retrieval should start at, or nil if it should start
+    #   as soon as possible with the specified amount.
+    # @param around_id [Integer] The ID of the message retrieval should start from, reading in both directions
+    # @example Count the number of messages in the last 50 messages that contain the letter 'e'.
+    #   message_count = channel.history(50).count {|message| message.content.include? "e"}
+    # @example Get the last 10 messages before the provided message.
+    #   last_ten_messages = channel.history(10, message.id)
+    # @return [Array<Message>] the retrieved messages.
+    def history: (untyped amount, ?untyped? before_id, ?untyped? after_id, ?untyped? around_id) -> untyped
+
+    # Retrieves message history, but only message IDs for use with prune.
+    # @note For internal use only
+    # @!visibility private
+    def history_ids: (untyped amount, ?untyped? before_id, ?untyped? after_id, ?untyped? around_id) -> untyped
+
+    # Returns a single message from this channel's history by ID.
+    # @param message_id [Integer] The ID of the message to retrieve.
+    # @return [Message, nil] the retrieved message, or `nil` if it couldn't be found.
+    def load_message: (untyped message_id) -> untyped
+
+    alias message load_message
+
+    # Requests all pinned messages in a channel.
+    # @return [Array<Message>] the received messages.
+    def pins: () -> untyped
+
+    # Delete the last N messages on this channel.
+    # @param amount [Integer] The amount of message history to consider for pruning. Must be a value between 2 and 100 (Discord limitation)
+    # @param strict [true, false] Whether an error should be raised when a message is reached that is too old to be bulk
+    #   deleted. If this is false only a warning message will be output to the console.
+    # @param reason [String, nil] The reason for pruning
+    # @raise [ArgumentError] if the amount of messages is not a value between 2 and 100
+    # @yield [message] Yields each message in this channels history for filtering the messages to delete
+    # @example Pruning messages from a specific user ID
+    #   channel.prune(100) { |m| m.author.id == 83283213010599936 }
+    # @return [Integer] The amount of messages that were successfully deleted
+    def prune: (untyped amount, ?bool strict, ?untyped? reason) ?{ () -> untyped } -> untyped
+
+    # Deletes a collection of messages
+    # @param messages [Array<Message, String, Integer>] the messages (or message IDs) to delete. Total must be an amount between 2 and 100 (Discord limitation)
+    # @param strict [true, false] Whether an error should be raised when a message is reached that is too old to be bulk
+    #   deleted. If this is false only a warning message will be output to the console.
+    # @param reason [String, nil] The reason for deleting the messages
+    # @raise [ArgumentError] if the amount of messages is not a value between 2 and 100
+    # @return [Integer] The amount of messages that were successfully deleted
+    def delete_messages: (untyped messages, ?bool strict, ?untyped? reason) -> untyped
+
+    # Updates the cached permission overwrites
+    # @note For internal use only
+    # @!visibility private
+    def update_overwrites: (untyped overwrites) -> untyped
+
+    # Add an {Await} for a message in this channel. This is identical in functionality to adding a
+    # {Discordrb::Events::MessageEvent} await with the `in` attribute as this channel.
+    # @see Bot#add_await
+    # @deprecated Will be changed to blocking behavior in v4.0. Use {#await!} instead.
+    def await: (untyped key, ?::Hash[untyped, untyped] attributes) ?{ () -> untyped } -> untyped
+
+    # Add a blocking {Await} for a message in this channel. This is identical in functionality to adding a
+    # {Discordrb::Events::MessageEvent} await with the `in` attribute as this channel.
+    # @see Bot#add_await!
+    def await!: (?::Hash[untyped, untyped] attributes) ?{ () -> untyped } -> untyped
+
+    # Creates a new invite to this channel.
+    # @param max_age [Integer] How many seconds this invite should last.
+    # @param max_uses [Integer] How many times this invite should be able to be used.
+    # @param temporary [true, false] Whether membership should be temporary (kicked after going offline).
+    # @param unique [true, false] If true, Discord will always send a unique invite instead of possibly re-using a similar one
+    # @param reason [String] The reason the for the creation of this invite.
+    # @return [Invite] the created invite.
+    def make_invite: (?::Integer max_age, ?::Integer max_uses, ?bool temporary, ?bool unique, ?untyped? reason) -> untyped
+
+    alias invite make_invite
+
+    # Starts typing, which displays the typing indicator on the client for five seconds.
+    # If you want to keep typing you'll have to resend this every five seconds. (An abstraction
+    # for this will eventually be coming)
+    # @example Send a typing indicator for the bot in a given channel.
+    #   channel.start_typing()
+    def start_typing: () -> untyped
+
+    # Creates a Group channel
+    # @param user_ids [Array<Integer>] Array of user IDs to add to the new group channel (Excluding
+    #   the recipient of the PM channel).
+    # @return [Channel] the created channel.
+    def create_group: (untyped user_ids) -> untyped
+
+    # Adds a user to a group channel.
+    # @param user_ids [Array<String, Integer>, String, Integer] User ID or array of user IDs to add to the group channel.
+    # @return [Channel] the group channel.
+    def add_group_users: (untyped user_ids) -> self
+
+    alias add_group_user add_group_users
+
+    # Removes a user from a group channel.
+    # @param user_ids [Array<String, Integer>, String, Integer] User ID or array of user IDs to remove from the group channel.
+    # @return [Channel] the group channel.
+    def remove_group_users: (untyped user_ids) -> self
+
+    alias remove_group_user remove_group_users
+
+    # Leaves the group.
+    def leave_group: () -> untyped
+
+    alias leave leave_group
+
+    # Creates a webhook in this channel
+    # @param name [String] the default name of this webhook.
+    # @param avatar [String] the default avatar URL to give this webhook.
+    # @param reason [String] the reason for the webhook creation.
+    # @raise [ArgumentError] if the channel isn't a text channel in a server.
+    # @return [Webhook] the created webhook.
+    def create_webhook: (untyped name, ?untyped? avatar, ?untyped? reason) -> untyped
+
+    # Requests a list of Webhooks on the channel.
+    # @return [Array<Webhook>] webhooks on the channel.
+    def webhooks: () -> untyped
+
+    # Requests a list of Invites to the channel.
+    # @return [Array<Invite>] invites to the channel.
+    def invites: () -> untyped
+
+    # Start a thread.
+    # @param name [String] The name of the thread.
+    # @param auto_archive_duration [60, 1440, 4320, 10080] How long before a thread is automatically
+    #   archived.
+    # @param message [Message, Integer, String] The message to reference when starting this thread.
+    # @param type [Symbol, Integer] The type of thread to create. Can be a key from {TYPES} or the value.
+    # @return [Channel]
+    def start_thread: (untyped name, untyped auto_archive_duration, ?message: untyped?, ?type: ::Integer) -> untyped
+
+    # Join this thread.
+    def join_thread: () -> untyped
+
+    # Leave this thread
+    def leave_thread: () -> untyped
+
+    # Members in the thread.
+    def members: () -> untyped
+
+    # Add a member to the thread
+    # @param member [Member, Integer, String] The member, or ID of the member, to add to this thread.
+    def add_member: (untyped member) -> untyped
+
+    # @param member [Member, Integer, String] The member, or ID of the member, to remove from a thread.
+    def remove_member: (untyped member) -> untyped
+
+    # The default `inspect` method is overwritten to give more useful output.
+    def inspect: () -> ::String
+
+    # Adds a recipient to a group channel.
+    # @param recipient [Recipient] the recipient to add to the group
+    # @raise [ArgumentError] if tried to add a non-recipient
+    # @note For internal use only
+    # @!visibility private
+    def add_recipient: (untyped recipient) -> untyped
+
+    # Removes a recipient from a group channel.
+    # @param recipient [Recipient] the recipient to remove from the group
+    # @raise [ArgumentError] if tried to remove a non-recipient
+    # @note For internal use only
+    # @!visibility private
+    def remove_recipient: (untyped recipient) -> untyped
+
+    # Updates the cached data with new data
+    # @note For internal use only
+    # @!visibility private
+    def update_data: (?untyped? new_data) -> untyped
+
+    # @return [String] a URL that a user can use to navigate to this channel in the client
+    def link: () -> ::String
+
+    alias jump_link link
+
+    private
+
+    # For bulk_delete checking
+    TWO_WEEKS: untyped
+
+    # Deletes a list of messages on this channel using bulk delete.
+    def bulk_delete: (untyped ids, ?bool strict, ?untyped? reason) -> untyped
+
+    def update_channel_data: (untyped new_data) -> untyped
+
+    def process_permission_overwrites: (untyped overwrites) -> (nil | untyped)
+  end
+end

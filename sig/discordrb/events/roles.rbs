@@ -1,0 +1,43 @@
+module Discordrb::Events
+  # Raised when a role is created on a server
+  class ServerRoleCreateEvent < Event
+    # @return [Role] the role that got created
+    attr_reader role: untyped
+
+    # @return [Server] the server on which a role got created
+    attr_reader server: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+
+    def name: () -> ::String
+  end
+
+  # Event handler for ServerRoleCreateEvent
+  class ServerRoleCreateEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Raised when a role is deleted from a server
+  class ServerRoleDeleteEvent < Event
+    # @return [Integer] the ID of the role that got deleted.
+    attr_reader id: untyped
+
+    # @return [Server] the server on which a role got deleted.
+    attr_reader server: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # EventHandler for ServerRoleDeleteEvent
+  class ServerRoleDeleteEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Event raised when a role updates on a server
+  class ServerRoleUpdateEvent < ServerRoleCreateEvent
+  end
+
+  # Event handler for ServerRoleUpdateEvent
+  class ServerRoleUpdateEventHandler < ServerRoleCreateEventHandler
+  end
+end

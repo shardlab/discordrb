@@ -113,7 +113,7 @@ module Discordrb::Events
         matches_all(@attributes[:user], event.user) do |a, e|
           a.resolve_id == e.id
         end
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 
@@ -284,7 +284,7 @@ module Discordrb::Events
         matches_all(@attributes[:name], event.command_name) do |a, e|
           a.to_sym == e.to_sym
         end
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 

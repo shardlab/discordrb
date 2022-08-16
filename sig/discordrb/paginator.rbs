@@ -1,0 +1,25 @@
+module Discordrb
+  # Utility class for wrapping paginated endpoints. It is [Enumerable](https://ruby-doc.org/core-2.5.1/Enumerable.html),
+  # similar to an `Array`, so most of the same methods can be used to filter the results of the request
+  # that it wraps. If you simply want an array of all of the results, `#to_a` can be called.
+  class Paginator[T]
+    include Enumerable[T]
+
+    # Creates a new {Paginator}
+    # @param limit [Integer] the maximum number of items to request before stopping
+    # @param direction [:up, :down] the order in which results are returned in
+    # @yield [Array, nil] the last page of results, or nil if this is the first iteration.
+    #   This should be used to request the next page of results.
+    # @yieldreturn [Array] the next page of results
+    def initialize: (untyped limit, untyped direction) ?{ (untyped) -> untyped } -> void
+
+    # Yields every item produced by the wrapped request, until it returns
+    # no more results or the configured `limit` is reached.
+    def each: () { (untyped) -> untyped } -> (nil | untyped)
+
+    private
+
+    # Whether the paginator limit has been exceeded
+    def limit_check: () -> (false | untyped)
+  end
+end

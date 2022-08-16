@@ -1,0 +1,49 @@
+module Discordrb
+  # Server emoji
+  class Emoji
+    include IDObject
+
+    # @return [String] the emoji name
+    attr_reader name: untyped
+
+    # @return [Server, nil] the server of this emoji
+    attr_reader server: untyped
+
+    # @return [Array<Role>, nil] roles this emoji is active for, or nil if the emoji's server is unknown
+    attr_reader roles: untyped
+
+    # @return [true, false] if the emoji is animated
+    attr_reader animated: untyped
+
+    @bot: Discordrb::Bot
+
+    alias animated? animated
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`, ?untyped? server) -> void
+
+    # ID or name based comparison
+    def ==: (untyped other) -> (false | untyped)
+
+    alias eql? ==
+
+    # @return [String] the layout to mention it (or have it used) in a message
+    def mention: () -> (untyped | ::String)
+
+    alias use mention
+
+    alias to_s mention
+
+    # @return [String] the layout to use this emoji in a reaction
+    def to_reaction: () -> (untyped | ::String)
+
+    # @return [String] the icon URL of the emoji
+    def icon_url: () -> untyped
+
+    # The inspect method is overwritten to give more useful output
+    def inspect: () -> ::String
+
+    # @!visibility private
+    def process_roles: (untyped roles) -> (nil | untyped)
+  end
+end

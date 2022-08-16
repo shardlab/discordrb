@@ -1,0 +1,82 @@
+module Discordrb::Webhooks
+  # A client for a particular webhook added to a Discord channel.
+  class Client
+    # Create a new webhook
+    # @param url [String] The URL to post messages to.
+    # @param id [Integer] The webhook's ID. Will only be used if `url` is not
+    #   set.
+    # @param token [String] The webhook's authorisation token. Will only be used
+    #   if `url` is not set.
+    def initialize: (?url: untyped?, ?id: untyped?, ?token: untyped?) -> void
+
+    # Executes the webhook this client points to with the given data.
+    # @param builder [Builder, nil] The builder to start out with, or nil if one should be created anew.
+    # @param wait [true, false] Whether Discord should wait for the message to be successfully received by clients, or
+    #   whether it should return immediately after sending the message.
+    # @yield [builder] Gives the builder to the block to add additional steps, or to do the entire building process.
+    # @yieldparam builder [Builder] The builder given as a parameter which is used as the initial step to start from.
+    # @example Execute the webhook with an already existing builder
+    #   builder = Discordrb::Webhooks::Builder.new # ...
+    #   client.execute(builder)
+    # @example Execute the webhook by building a new message
+    #   client.execute do |builder|
+    #     builder.content = 'Testing'
+    #     builder.username = 'discordrb'
+    #     builder.add_embed do |embed|
+    #       embed.timestamp = Time.now
+    #       embed.title = 'Testing'
+    #       embed.image = Discordrb::Webhooks::EmbedImage.new(url: 'https://i.imgur.com/PcMltU7.jpg')
+    #     end
+    #   end
+    # @return [RestClient::Response] the response returned by Discord.
+    def execute: (?untyped? builder, ?bool wait, ?untyped? components) { (untyped, untyped) -> untyped } -> untyped
+
+    # Modify this webhook's properties.
+    # @param name [String, nil] The default name.
+    # @param avatar [String, #read, nil] The new avatar, in base64-encoded JPG format.
+    # @param channel_id [String, Integer, nil] The channel to move the webhook to.
+    # @return [RestClient::Response] the response returned by Discord.
+    def modify: (?name: untyped?, ?avatar: untyped?, ?channel_id: untyped?) -> untyped
+
+    # Delete this webhook.
+    # @param reason [String, nil] The reason this webhook was deleted.
+    # @return [RestClient::Response] the response returned by Discord.
+    # @note This is permanent and cannot be undone.
+    def delete: (?reason: untyped?) -> untyped
+
+    # Edit a message from this webhook.
+    # @param message_id [String, Integer] The ID of the message to edit.
+    # @param builder [Builder, nil] The builder to start out with, or nil if one should be created anew.
+    # @param content [String] The message content.
+    # @param embeds [Array<Embed, Hash>]
+    # @param allowed_mentions [Hash]
+    # @return [RestClient::Response] the response returned by Discord.
+    # @example Edit message content
+    #   client.edit_message(message_id, content: 'goodbye world!')
+    # @example Edit a message via builder
+    #   client.edit_message(message_id) do |builder|
+    #     builder.add_embed do |e|
+    #       e.description = 'Hello World!'
+    #     end
+    #   end
+    # @note Not all builder options are available when editing.
+    def edit_message: (untyped message_id, ?builder: untyped?, ?content: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?) { (untyped) -> untyped } -> untyped
+
+    # Delete a message created by this webhook.
+    # @param message_id [String, Integer] The ID of the message to delete.
+    # @return [RestClient::Response] the response returned by Discord.
+    def delete_message: (untyped message_id) -> untyped
+
+    private
+
+    # Convert an avatar to API ready data.
+    # @param avatar [String, #read] Avatar data.
+    def avatarise: (untyped avatar) -> (::String | untyped)
+
+    def post_json: (untyped builder, untyped components, untyped wait) -> untyped
+
+    def post_multipart: (untyped builder, untyped components, untyped wait) -> untyped
+
+    def generate_url: (untyped id, untyped token) -> ::String
+  end
+end

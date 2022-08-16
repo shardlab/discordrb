@@ -15,7 +15,7 @@ module Discordrb::Events
     # @!attribute [r] name
     #   @return [String] this role's name
     #   @see Role#name
-    delegate :name, to: :role
+    # delegate :name, to: :role
 
     def initialize(data, bot)
       @bot = bot
@@ -25,6 +25,10 @@ module Discordrb::Events
 
       role_id = data['role']['id'].to_i
       @role = @server.roles.find { |r| r.id == role_id }
+    end
+
+    def name
+      role.name
     end
   end
 
@@ -42,7 +46,7 @@ module Discordrb::Events
                  e
                end
         end
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 
@@ -76,7 +80,7 @@ module Discordrb::Events
         matches_all(@attributes[:id], event.id) do |a, e|
           a.resolve_id == e.resolve_id
         end
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 

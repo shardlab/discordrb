@@ -1,0 +1,76 @@
+module Discordrb
+  # List of permissions Discord uses
+  class Permissions
+    # This hash maps bit positions to logical permissions.
+    FLAGS: ::Hash[::Integer, ::Symbol]
+
+    attr_reader bits: untyped
+
+    # Set the raw bitset of this permission object
+    # @param bits [Integer] A number whose binary representation is the desired bitset.
+    def bits=: (untyped bits) -> untyped
+
+    # Initialize the instance variables based on the bitset.
+    def init_vars: () -> untyped
+
+    # Return the corresponding bits for an array of permission flag symbols.
+    # This is a class method that can be used to calculate bits instead
+    # of instancing a new Permissions object.
+    # @example Get the bits for permissions that could allow/deny read messages, connect, and speak
+    #   Permissions.bits [:read_messages, :connect, :speak] #=> 3146752
+    # @param list [Array<Symbol>]
+    # @return [Integer] the computed permissions integer
+    def self.bits: (untyped list) -> untyped
+
+    # Create a new Permissions object either as a blank slate to add permissions to (for example for
+    #   {Channel#define_overwrite}) or from existing bit data to read out.
+    # @example Create a permissions object that could allow/deny read messages, connect, and speak by setting flags
+    #   permission = Permissions.new
+    #   permission.can_read_messages = true
+    #   permission.can_connect = true
+    #   permission.can_speak = true
+    # @example Create a permissions object that could allow/deny read messages, connect, and speak by an array of symbols
+    #   Permissions.new [:read_messages, :connect, :speak]
+    # @param bits [String, Integer, Array<Symbol>] The permission bits that should be set from the beginning, or an array of permission flag symbols
+    # @param writer [RoleWriter] The writer that should be used to update data when a permission is set.
+    def initialize: (?::Integer bits, ?untyped? writer) -> void
+
+    # Return an array of permission flag symbols for this class's permissions
+    # @example Get the permissions for the bits "9"
+    #   permissions = Permissions.new(9)
+    #   permissions.defined_permissions #=> [:create_instant_invite, :administrator]
+    # @return [Array<Symbol>] the permissions
+    def defined_permissions: () -> untyped
+
+    # Comparison based on permission bits
+    def ==: (untyped other) -> untyped
+  end
+
+  # Mixin to calculate resulting permissions from overrides etc.
+  module PermissionCalculator
+    # Checks whether this user can do the particular action, regardless of whether it has the permission defined,
+    # through for example being the server owner or having the Manage Roles permission
+    # @param action [Symbol] The permission that should be checked. See also {Permissions::FLAGS} for a list.
+    # @param channel [Channel, nil] If channel overrides should be checked too, this channel specifies where the overrides should be checked.
+    # @example Check if the bot can send messages to a specific channel in a server.
+    #   bot_profile = bot.profile.on(event.server)
+    #   can_send_messages = bot_profile.permission?(:send_messages, channel)
+    # @return [true, false] whether or not this user has the permission.
+    def permission?: (untyped action, ?untyped? channel) -> (true | untyped)
+
+    # Checks whether this user has a particular permission defined (i.e. not implicit, through for example
+    # Manage Roles)
+    # @param action [Symbol] The permission that should be checked. See also {Permissions::FLAGS} for a list.
+    # @param channel [Channel, nil] If channel overrides should be checked too, this channel specifies where the overrides should be checked.
+    # @example Check if a member has the Manage Channels permission defined in the server.
+    #   has_manage_channels = member.defined_permission?(:manage_channels)
+    # @return [true, false] whether or not this user has the permission defined.
+    def defined_permission?: (untyped action, ?untyped? channel) -> untyped
+
+    private
+
+    def defined_role_permission?: (untyped action, untyped channel) -> untyped
+
+    def permission_overwrite: (untyped action, untyped channel, untyped id) -> (nil | untyped)
+  end
+end

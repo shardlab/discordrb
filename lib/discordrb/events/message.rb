@@ -117,7 +117,7 @@ module Discordrb::Events
     # @!attribute [r] timestamp
     #   @return [Time] the time at which the message was sent.
     #   @see Message#timestamp
-    delegate :author, :channel, :content, :timestamp, to: :message
+    # delegate :author, :channel, :content, :timestamp, to: :message
 
     # @!attribute [r] server
     #   @return [Server, nil] the server where this message was sent, or nil if it was sent in PM.
@@ -178,6 +178,22 @@ module Discordrb::Events
     # @return [VoiceBot, nil] the voice bot connected to this message's server, or nil if there is none connected
     def voice
       @bot.voice(@message.channel.server.id)
+    end
+
+    def author
+      message.author
+    end
+
+    def channel
+      message.channel
+    end
+
+    def content
+      message.content
+    end
+
+    def timestamp
+      message.timestamp
     end
 
     alias_method :user, :author
@@ -250,7 +266,7 @@ module Discordrb::Events
         matches_all(@attributes[:after], event.timestamp) { |a, e| a > e },
         matches_all(@attributes[:before], event.timestamp) { |a, e| a < e },
         matches_all(@attributes[:private], event.channel.private?) { |a, e| !e == !a }
-      ].reduce(true, &:&)
+      ].reduce(true) {|res, elem| res & elem}
     end
 
     # @see EventHandler#after_call
@@ -312,7 +328,7 @@ module Discordrb::Events
             a == e
           end
         end
-      ].reduce(true, &:&)
+      ].reduce(true) {|res, elem| res & elem}
     end
   end
 

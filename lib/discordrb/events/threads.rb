@@ -6,11 +6,33 @@ module Discordrb::Events
     # @return [Channel] the thread in question.
     attr_reader :thread
 
-    delegate :name, :server, :owner, :parent_channel, :thread_metadata, to: :thread
+    # delegate :name, :server, :owner, :parent_channel, :thread_metadata, to: :thread
 
     def initialize(data, bot)
       @bot = bot
       @thread = data.is_a?(Discordrb::Channel) ? data : bot.channel(data['id'].to_i)
+    end
+    # delegate :name, :server, :owner, :parent_channel, :thread_metadata, to: :thread
+
+
+    def name
+      thread.name
+    end
+
+    def server
+      thread.server
+    end
+
+    def owner
+      thread.owner
+    end
+
+    def parent_channel
+      thread.parent_channel
+    end
+
+    def thread_metadata
+      thread.thread_metadata
     end
   end
 
@@ -40,7 +62,7 @@ module Discordrb::Events
         matches_all(@attributes[:channel], event.thread.parent) do |a, e|
           a.resolve_id == e.resolve_id
         end
-      ].reduce(true, &:&)
+      ].reduce(true) {|res, e| res & e}
     end
   end
 

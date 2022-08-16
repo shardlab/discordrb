@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'json'
 
 # API calls for slash commands.
 module Discordrb::API::Application
