@@ -347,7 +347,7 @@ module Discordrb
     # @param rate [Integer]
     # @raise [ArgumentError] if value isn't between 0 and 21600
     def rate_limit_per_user=(rate)
-      raise ArgumentError, 'rate_limit_per_user must be between 0 and 21600' unless rate.between?(0, 21600)
+      raise ArgumentError, 'rate_limit_per_user must be between 0 and 21600' unless rate.between?(0, 21_600)
 
       update_channel_data(rate_limit_per_user: rate)
     end
