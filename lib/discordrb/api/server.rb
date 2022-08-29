@@ -315,6 +315,95 @@ module Discordrb::API::Server
     )
   end
 
+  # Get server scheduled events
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild
+  def scheduled_events(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events",
+      Authorization: token
+    )
+  end
+
+  # Get a scheduled event
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event
+  def scheduled_event(token, server_id, scheduled_event_id)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events_seid,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events/#{scheduled_event_id}",
+      Authorization: token
+    )
+  end
+
+  # Create a scheduled event
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event
+  def create_scheduled_event(token, server_id, channel_id, entity_metadata, name, privacy_level, scheduled_start_time, scheduled_end_time, description, entity_type, status, image, reason = nil)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events,
+      server_id,
+      :post,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events",
+      {
+        channel_id: channel_id,
+        entity_metadata: entity_metadata,
+        name: name,
+        privacy_level: privacy_level,
+        scheduled_start_time: scheduled_start_time,
+        scheduled_end_time: scheduled_end_time,
+        description: description,
+        entity_type: entity_type,
+        status: status,
+        image: image
+      }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Update a scheduled event
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#modify-guild-scheduled-event
+  def update_scheduled_event(token, server_id, scheduled_event_id, channel_id, entity_metadata, name, privacy_level, scheduled_start_time, scheduled_end_time, description, entity_type, status, image, reason = nil)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events_seid,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events/#{scheduled_event_id}",
+      {
+        channel_id: channel_id,
+        entity_metadata: entity_metadata,
+        name: name,
+        privacy_level: privacy_level,
+        scheduled_start_time: scheduled_start_time,
+        scheduled_end_time: scheduled_end_time,
+        description: description,
+        entity_type: entity_type,
+        status: status,
+        image: image
+      }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Delete a scheduled event
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#delete-guild-scheduled-event
+  def delete_scheduled_event(token, server_id, scheduled_event_id, reason = nil)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events_seid,
+      server_id,
+      :delete,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events/#{scheduled_event_id}",
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Get server prune count
   # https://discord.com/developers/docs/resources/guild#get-guild-prune-count
   def prune_count(token, server_id, days)

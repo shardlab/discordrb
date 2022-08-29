@@ -20,6 +20,7 @@ require 'discordrb/events/reactions'
 require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
+require 'discordrb/events/scheduled_events'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -1601,6 +1602,24 @@ module Discordrb
         end
 
         event = ThreadMembersUpdateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_CREATE
+        # TODO: Add a method here to update the cached scheduled events on the given server.
+        event = ServerScheduledEventCreateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_UPDATE
+        # TODO: Add a method here to update the cached scheduled events on the given server.
+        event = ServerScheduledEventUpdateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_DELETE
+        # TODO: Add a method here to update the cached scheduled events on the given server.
+        event = ServerScheduledEventDeleteEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_USER_ADD
+        event = ServerScheduledEventUserAddEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_USER_REMOVE
+        event = ServerScheduledEventUserRemoveEvent.new(data, self)
         raise_event(event)
       else
         # another event that we don't support yet
