@@ -47,6 +47,16 @@ module Discordrb
       voice_state_attribute(:self_deaf)
     end
 
+    # @return [true, false] whether this member is suppressed.
+    def suppress
+      voice_state_attribute(:suppress)
+    end
+
+    # @return [true, false] whether this member has requested to speak.
+    def requested_to_speak?
+      !voice_state_attribute(:request_to_speak_timestamp).nil?
+    end
+
     # @return [Channel] the voice channel this member is in.
     def voice_channel
       voice_state_attribute(:voice_channel)
@@ -56,6 +66,7 @@ module Discordrb
     alias_method :deafened?, :deaf
     alias_method :self_muted?, :self_mute
     alias_method :self_deafened?, :self_deaf
+    alias_method :suppressed?, :suppress
 
     include MemberAttributes
 

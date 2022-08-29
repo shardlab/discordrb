@@ -43,6 +43,25 @@ module Discordrb::API::User
     )
   end
 
+  # Modifies the current bot's voice state on a server in a Stage channel.
+  # The passed channel_id must be a Stage channel, and the bot must be inside of it.
+  # https://discord.com/developers/docs/resources/guild#modify-current-user-voice-state
+  def modify_own_voice_state(token, server_id, channel_id, suppress = nil, request_to_speak_timestamp = nil)
+    Discordrb::API.request(
+      :guilds_sid_voicestate,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/voice-states/@me",
+      {
+        channel_id: channel_id,
+        suppress: suppress,
+        request_to_speak_timestamp: request_to_speak_timestamp
+      }.compact.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
   # Update user data
   # https://discord.com/developers/docs/resources/user#modify-current-user
   def update_profile(token, email, password, new_username, avatar, new_password = nil)
