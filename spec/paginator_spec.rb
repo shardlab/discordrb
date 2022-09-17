@@ -3,7 +3,7 @@
 require 'discordrb'
 
 describe Discordrb::Paginator do
-  context 'direction down' do
+  context 'when direction down' do
     it 'requests all pages until empty' do
       data = [
         [1, 2, 3],
@@ -13,7 +13,7 @@ describe Discordrb::Paginator do
       ]
 
       index = 0
-      paginator = Discordrb::Paginator.new(nil, :down) do |last_page|
+      paginator = described_class.new(nil, :down) do |last_page|
         expect(last_page).to eq data[index - 1] if last_page
         next_page = data[index]
         index += 1
@@ -24,7 +24,7 @@ describe Discordrb::Paginator do
     end
   end
 
-  context 'direction up' do
+  context 'when direction up' do
     it 'requests all pages until empty' do
       data = [
         [6, 7],
@@ -34,7 +34,7 @@ describe Discordrb::Paginator do
       ]
 
       index = 0
-      paginator = Discordrb::Paginator.new(nil, :up) do |last_page|
+      paginator = described_class.new(nil, :up) do |last_page|
         expect(last_page).to eq data[index - 1] if last_page
         next_page = data[index]
         index += 1
@@ -53,7 +53,7 @@ describe Discordrb::Paginator do
     ]
 
     index = 0
-    paginator = Discordrb::Paginator.new(2, :down) do |_last_page|
+    paginator = described_class.new(2, :down) do |_last_page|
       next_page = data[index]
       index += 1
       next_page

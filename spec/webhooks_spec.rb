@@ -5,8 +5,8 @@ require 'discordrb/webhooks'
 
 describe Discordrb::Webhooks do
   describe Discordrb::Webhooks::Builder do
-    it 'should be able to add embeds' do
-      builder = Discordrb::Webhooks::Builder.new
+    it 'is able to add embeds' do
+      builder = described_class.new
 
       embed = builder.add_embed do |e|
         e.title = 'a'
@@ -19,8 +19,8 @@ describe Discordrb::Webhooks do
   end
 
   describe Discordrb::Webhooks::Embed do
-    it 'should be able to have fields added' do
-      embed = Discordrb::Webhooks::Embed.new
+    it 'is able to have fields added' do
+      embed = described_class.new
 
       embed.add_field(name: 'a', value: 'b', inline: true)
 
@@ -28,54 +28,54 @@ describe Discordrb::Webhooks do
     end
 
     describe '#colour=' do
-      it 'should accept colours in decimal format' do
-        embed = Discordrb::Webhooks::Embed.new
+      it 'accepts colours in decimal format' do
+        embed = described_class.new
         colour = 1234
 
         embed.colour = colour
         expect(embed.colour).to eq colour
       end
 
-      it 'should raise if the colour value is too high' do
-        embed = Discordrb::Webhooks::Embed.new
+      it 'raises if the colour value is too high' do
+        embed = described_class.new
         colour = 100_000_000
 
         expect { embed.colour = colour }.to raise_error(ArgumentError)
       end
 
-      it 'should accept colours in hex format' do
-        embed = Discordrb::Webhooks::Embed.new
+      it 'accepts colours in hex format' do
+        embed = described_class.new
         colour = '162a3f'
 
         embed.colour = colour
         expect(embed.colour).to eq 1_452_607
       end
 
-      it 'should accept colours in hex format with a # in front' do
-        embed = Discordrb::Webhooks::Embed.new
+      it 'accepts colours in hex format with a # in front' do
+        embed = described_class.new
         colour = '#162a3f'
 
         embed.colour = colour
         expect(embed.colour).to eq 1_452_607
       end
 
-      it 'should accept colours as a RGB tuple' do
-        embed = Discordrb::Webhooks::Embed.new
+      it 'accepts colours as a RGB tuple' do
+        embed = described_class.new
         colour = [22, 42, 63]
 
         embed.colour = colour
         expect(embed.colour).to eq 1_452_607
       end
 
-      it 'should raise if a RGB tuple is of the wrong size' do
-        embed = Discordrb::Webhooks::Embed.new
+      it 'raises if a RGB tuple is of the wrong size' do
+        embed = described_class.new
 
         expect { embed.colour = [0, 1] }.to raise_error(ArgumentError)
         expect { embed.colour = [0, 1, 2, 3] }.to raise_error(ArgumentError)
       end
 
-      it 'should raise if a RGB tuple results in a too large value' do
-        embed = Discordrb::Webhooks::Embed.new
+      it 'raises if a RGB tuple results in a too large value' do
+        embed = described_class.new
 
         expect { embed.colour = [2000, 1, 2] }.to raise_error(ArgumentError)
       end
@@ -83,11 +83,11 @@ describe Discordrb::Webhooks do
   end
 
   describe Discordrb::Webhooks::Client do
+    subject(:webhooks_client) { described_class.new(url: provided_url) }
+
     let(:id) { SecureRandom.bytes(8) }
     let(:token) { SecureRandom.bytes(24) }
     let(:provided_url) { instance_double(String) }
-
-    subject { described_class.new(url: provided_url) }
 
     describe '#initialize' do
       it 'generates a url from id and token' do
@@ -110,18 +110,18 @@ describe Discordrb::Webhooks do
       let(:default_builder) { instance_double(Discordrb::Webhooks::Builder, to_json_hash: json_hash) }
 
       before do
-        allow(subject).to receive(:post_json).with(any_args)
-        allow(subject).to receive(:post_multipart).with(any_args)
+        allow(webhooks_client).to receive(:post_json).with(any_args)
+        allow(webhooks_client).to receive(:post_multipart).with(any_args)
         allow(default_builder).to receive(:file).and_return(nil)
       end
 
       it 'takes a default builder' do
-        expect { |b| subject.execute(default_builder, &b) }.to yield_with_args(default_builder, instance_of(Discordrb::Webhooks::View))
+        expect { |b| webhooks_client.execute(default_builder, &b) }.to yield_with_args(default_builder, instance_of(Discordrb::Webhooks::View))
       end
 
       context 'when a builder is not provided' do
         it 'creates a new builder if none is provided' do
-          expect { |b| subject.execute(&b) }.to yield_with_args(
+          expect { |b| webhooks_client.execute(&b) }.to yield_with_args(
             instance_of(Discordrb::Webhooks::Builder),
             instance_of(Discordrb::Webhooks::View)
           )
@@ -132,17 +132,17 @@ describe Discordrb::Webhooks do
         it 'POSTs multipart data' do
           allow(default_builder).to receive(:file).and_return(true)
 
-          subject.execute(default_builder)
+          webhooks_client.execute(default_builder)
 
-          expect(subject).to have_received(:post_multipart).with(default_builder, any_args)
+          expect(webhooks_client).to have_received(:post_multipart).with(default_builder, any_args)
         end
       end
 
       context 'when a file is not provided' do
         it 'POSTs json data' do
-          subject.execute(default_builder)
+          webhooks_client.execute(default_builder)
 
-          expect(subject).to have_received(:post_json).with(default_builder, any_args)
+          expect(webhooks_client).to have_received(:post_json).with(default_builder, any_args)
         end
       end
     end
@@ -155,7 +155,7 @@ describe Discordrb::Webhooks do
       end
 
       it 'sends a PATCH request to the URL' do
-        subject.modify
+        webhooks_client.modify
 
         expect(RestClient).to have_received(:patch).with(provided_url, anything, content_type: :json)
       end
@@ -169,7 +169,7 @@ describe Discordrb::Webhooks do
       it 'sends a DELETE request to the URL' do
         reason = instance_double(String)
 
-        subject.delete(reason: reason)
+        webhooks_client.delete(reason: reason)
 
         expect(RestClient).to have_received(:delete).with(provided_url, 'X-Audit-Log-Reason': reason)
       end
@@ -185,34 +185,34 @@ describe Discordrb::Webhooks do
       end
 
       it 'creates a new builder if one is not provided' do
-        expect { |b| subject.edit_message(message_id, &b) }.to yield_with_args(instance_of(Discordrb::Webhooks::Builder))
+        expect { |b| webhooks_client.edit_message(message_id, &b) }.to yield_with_args(instance_of(Discordrb::Webhooks::Builder))
       end
 
       it 'uses the provided builder' do
-        expect { |b| subject.edit_message(message_id, builder: default_builder, &b) }.to yield_with_args(default_builder)
+        expect { |b| webhooks_client.edit_message(message_id, builder: default_builder, &b) }.to yield_with_args(default_builder)
       end
 
       it 'sends a PATCH request to the message URL' do
-        url = subject.instance_variable_get(:@url)
+        url = webhooks_client.instance_variable_get(:@url)
 
-        subject.edit_message(message_id)
+        webhooks_client.edit_message(message_id)
 
         expect(RestClient).to have_received(:patch).with("#{url}/messages/#{message_id}", instance_of(String), content_type: :json)
       end
     end
 
     describe '#delete_message' do
+      subject(:webhooks_client_with_base_url) { described_class.new(url: base_url) }
+
       let(:base_url) { 'url' }
       let(:message_id) { SecureRandom.bytes(8) }
-
-      subject { described_class.new(url: base_url) }
 
       before do
         allow(RestClient).to receive(:delete).with(any_args)
       end
 
       it 'sends a DELETE request to the message URL' do
-        subject.delete_message(message_id)
+        webhooks_client_with_base_url.delete_message(message_id)
 
         expect(RestClient).to have_received(:delete).with("#{base_url}/messages/#{message_id}")
       end
@@ -227,13 +227,13 @@ describe Discordrb::Webhooks do
       end
 
       it 'makes a POST request with JSON data' do
-        subject.__send__(:post_json, builder, [], false)
+        webhooks_client.__send__(:post_json, builder, [], false)
 
         expect(RestClient).to have_received(:post).with(provided_url, builder.to_json_hash.merge({ components: [] }).to_json, content_type: :json)
       end
 
       it 'waits when wait=true' do
-        subject.__send__(:post_json, builder, [], true)
+        webhooks_client.__send__(:post_json, builder, [], true)
 
         expect(provided_url).to have_received(:+).with('?wait=true')
       end
@@ -251,13 +251,13 @@ describe Discordrb::Webhooks do
       end
 
       it 'makes a POST request with multipart data' do
-        subject.__send__(:post_multipart, builder, [], false)
+        webhooks_client.__send__(:post_multipart, builder, [], false)
 
         expect(RestClient).to have_received(:post).with(provided_url, post_data)
       end
 
       it 'waits for a response when wait=true' do
-        subject.__send__(:post_multipart, builder, [], true)
+        webhooks_client.__send__(:post_multipart, builder, [], true)
 
         expect(provided_url).to have_received(:+).with('?wait=true')
       end
@@ -267,11 +267,11 @@ describe Discordrb::Webhooks do
       let(:data) { SecureRandom.bytes(24) }
 
       it 'makes no changes if the argument does not respond to read' do
-        expect(subject.__send__(:avatarise, data)).to be data
+        expect(webhooks_client.__send__(:avatarise, data)).to be data
       end
 
       it 'returns multipart data if the argument responds to read' do
-        encoded = subject.__send__(:avatarise, StringIO.new(data))
+        encoded = webhooks_client.__send__(:avatarise, StringIO.new(data))
         expect(encoded).to eq "data:image/jpg;base64,#{Base64.strict_encode64(data)}"
       end
     end

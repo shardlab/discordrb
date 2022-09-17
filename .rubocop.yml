@@ -1,16 +1,20 @@
+inherit_from: .rubocop_todo.yml
+
 require:
   - rubocop-performance
   - rubocop-rake
+  - rubocop-rspec
 
 inherit_mode:
   merge:
     - AllowedNames
+    - CustomTransform
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 2.7
 
-# Disable line length checks
+# Disable line length checks, may be useful but too noisy for default runs
 Layout/LineLength:
   Enabled: false
 
@@ -22,7 +26,7 @@ Lint/MissingSuper:
 Lint/RescueException:
   Enabled: false
 
-# Disable all metrics.
+# These may be useful to try sometime but are too noisy to enable by default
 Metrics:
   Enabled: false
 
@@ -30,6 +34,36 @@ Metrics:
 Naming/MethodParameterName:
   AllowedNames:
     - e
+
+# Allow a more permissive list of prefixes for context docstrings
+RSpec/ContextWording:
+  Prefixes:
+    - when
+    - with
+    - without
+    - if
+    - unless
+    - for
+
+# Disabling due to noise level, just like the Metrics department & Layout/LineLength.
+# This doesn't mean it isn't useful, just that we don't want it for every single run.
+RSpec/ExampleLength:
+  CountAsOne: ['array', 'hash', 'heredoc'] # When we do have the cop enabled, these only count as a single line
+  Enabled: false
+
+# This is set so that it doesn't suggest moving most of our spec files under `spec/discordrb`.
+RSpec/FilePath:
+  CustomTransform:
+    Discordrb: ''
+
+# The default for this cop is 3, which is a bit restrictive
+RSpec/NestedGroups:
+  Max: 4
+
+# The main offender here is our API specs, so this should be re-enabled when we
+# refactor using webmock (or whatever solution we end up with).
+RSpec/SubjectStub:
+  Enabled: false
 
 # Ignore `eval` in the examples folder
 Security/Eval:

@@ -32,7 +32,7 @@ describe Discordrb::Bot do
     bot.instance_variable_set(:@servers, server_id => server)
   end
 
-  it 'should set up' do
+  it 'sets up' do
     expect(bot.server(server_id)).to eq(server)
     expect(bot.server(server_id).emoji.size).to eq(2)
   end
@@ -44,8 +44,8 @@ describe Discordrb::Bot do
 
   describe '#parse_mentions' do
     it 'parses user mentions' do
-      user_a = double(:user_a)
-      user_b = double(:user_b)
+      user_a = instance_double(Discordrb::User, :user_a)
+      user_b = instance_double(Discordrb::User, :user_b)
       allow(bot).to receive(:user).with('123').and_return(user_a)
       allow(bot).to receive(:user).with('456').and_return(user_b)
       mentions = bot.parse_mentions('<@!123><@!456>', server)
@@ -53,8 +53,8 @@ describe Discordrb::Bot do
     end
 
     it 'parses channel mentions' do
-      channel_a = double(:channel_a)
-      channel_b = double(:channel_b)
+      channel_a = instance_double(Discordrb::Channel, :channel_a)
+      channel_b = instance_double(Discordrb::Channel, :channel_b)
       allow(bot).to receive(:channel).with('123', server).and_return(channel_a)
       allow(bot).to receive(:channel).with('456', server).and_return(channel_b)
       mentions = bot.parse_mentions('<#123><#456>', server)
@@ -62,8 +62,8 @@ describe Discordrb::Bot do
     end
 
     it 'parses role mentions' do
-      role_a = double(:role_a)
-      role_b = double(:role_b)
+      role_a = instance_double(Discordrb::Role, :role_a)
+      role_b = instance_double(Discordrb::Role, :role_b)
       allow(server).to receive(:role).with('123').and_return(role_a)
       allow(server).to receive(:role).with('456').and_return(role_b)
       mentions = bot.parse_mentions('<@&123><@&456>')
@@ -71,8 +71,8 @@ describe Discordrb::Bot do
     end
 
     it 'parses emoji mentions' do
-      emoji_a = double(:emoji_a)
-      emoji_b = double(:emoji_b)
+      emoji_a = instance_double(Discordrb::Emoji, :emoji_a)
+      emoji_b = instance_double(Discordrb::Emoji, :emoji_b)
       allow(bot).to receive(:emoji).with('123').and_return(emoji_a)
       allow(bot).to receive(:emoji).with('456').and_return(emoji_b)
       mentions = bot.parse_mentions('<a:foo:123><a:bar:456>')
@@ -104,11 +104,11 @@ describe Discordrb::Bot do
     end
 
     context 'when handling a PRESENCE_UPDATE' do
-      let(:user) { instance_double(Discordrb::User, activities: [], id: 12_345, client_status: nil) }
+      let(:user) { instance_double(Discordrb::User, :user, activities: [], id: 12_345, client_status: nil) }
       let(:guild_id) { 123_456 }
-      let(:activity) { instance_double(Discordrb::Activity, name: 'name') }
+      let(:activity) { instance_double(Discordrb::Activity, :activity, name: 'name') }
       let(:activity_fixture) { { 'name' => 'New Activity' } }
-      let(:old_activity) { instance_double(Discordrb::Activity, 'old_activity', name: 'Old Activity') }
+      let(:old_activity) { instance_double(Discordrb::Activity, :old_activity, name: 'Old Activity') }
 
       before do
         allow(bot.instance_variable_get(:@users)).to receive(:[]).with(user.id).and_return(user)
@@ -116,7 +116,7 @@ describe Discordrb::Bot do
         allow(bot).to receive(:raise_event).with(kind_of(Discordrb::Events::PresenceEvent))
         allow(bot).to receive(:raise_event).with(kind_of(Discordrb::Events::PlayingEvent))
         allow(bot).to receive(:user).with(user.id).and_return(user)
-        allow(bot).to receive(:server).with(guild_id).and_return(instance_double(Discordrb::Server))
+        allow(bot).to receive(:server).with(guild_id).and_return(instance_double(Discordrb::Server, :server))
       end
 
       it 'raises a PlayingEvent for each new activity' do
@@ -146,12 +146,12 @@ describe Discordrb::Bot do
     end
 
     context 'when handling a MESSAGE_CREATE event' do
-      let(:channel_id) { instance_double(Integer, 'channel_id') }
-      let(:channel) { instance_double(Discordrb::Channel, recipient: author, server: nil) }
-      let(:user_id) { instance_double(Integer, 'user_id') }
-      let(:author) { instance_double(Discordrb::User, id: user_id) }
+      let(:channel_id) { instance_double(Integer, :channel_id) }
+      let(:channel) { instance_double(Discordrb::Channel, :channel, recipient: author, server: nil) }
+      let(:user_id) { instance_double(Integer, :user_id) }
+      let(:author) { instance_double(Discordrb::User, :author, id: user_id) }
       let(:message_fixture) { { 'author' => { 'id' => user_id }, 'channel_id' => channel_id } }
-      let(:message) { instance_double(Discordrb::Message, channel: channel, from_bot?: false, mentions: []) }
+      let(:message) { instance_double(Discordrb::Message, :message, channel: channel, from_bot?: false, mentions: []) }
 
       before do
         allow(bot).to receive(:channel).with(channel_id).and_return(channel)
@@ -176,7 +176,7 @@ describe Discordrb::Bot do
 
         bot.send(:handle_dispatch, :MESSAGE_CREATE, message_fixture)
 
-        expect(bot).to_not have_received(:raise_event).with(instance_of(Discordrb::Events::ChannelCreateEvent))
+        expect(bot).not_to have_received(:raise_event).with(instance_of(Discordrb::Events::ChannelCreateEvent))
       end
     end
   end
@@ -220,12 +220,12 @@ describe Discordrb::Bot do
   end
 
   describe '#send_file' do
-    let(:channel) { double(:channel, resolve_id: double) }
+    let(:channel) { instance_double(Discordrb::Channel, :channel, resolve_id: double) }
 
     it 'defines original_filename when filename is passed' do
-      original_filename = double(:original_filename)
-      file = double(:file, original_filename: original_filename, read: true)
-      new_filename = double('new filename')
+      original_filename = instance_double(String, :original_filename)
+      file = double(:file, original_filename: original_filename, read: true) # rubocop:disable RSpec/VerifiedDoubles
+      new_filename = 'new filename'
 
       allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
@@ -235,8 +235,8 @@ describe Discordrb::Bot do
     end
 
     it 'does not define original_filename when filename is nil' do
-      original_filename = double(:original_filename)
-      file = double(:file, read: true, original_filename: original_filename)
+      original_filename = instance_double(String, :original_filename)
+      file = double(:file, read: true, original_filename: original_filename) # rubocop:disable RSpec/VerifiedDoubles
 
       allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
@@ -246,7 +246,7 @@ describe Discordrb::Bot do
     end
 
     it 'prepends "SPOILER_" when spoiler is truthy and the filename does not start with "SPOILER_"' do
-      file = double(:file, read: true)
+      file = instance_double(File, :file, read: true)
 
       allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
@@ -256,7 +256,7 @@ describe Discordrb::Bot do
     end
 
     it 'does not prepend "SPOILER_" if the filename starts with "SPOILER_"' do
-      file = double(:file, read: true, path: 'SPOILER_file.txt')
+      file = instance_double(File, 'file with SPOILER_ in filename', read: true, path: 'SPOILER_file.txt')
 
       allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
@@ -266,7 +266,7 @@ describe Discordrb::Bot do
     end
 
     it 'uses the original filename when spoiler is truthy and filename is nil' do
-      file = double(:file, read: true, path: 'file.txt')
+      file = instance_double(File, :file, read: true, path: 'file.txt')
 
       allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
@@ -278,7 +278,7 @@ describe Discordrb::Bot do
 
   describe '#voice_connect' do
     it 'requires encryption' do
-      channel = double(:channel, resolve_id: double)
+      channel = instance_double(Discordrb::Channel, :channel, resolve_id: double)
       expect { bot.voice_connect(channel, false) }.to raise_error ArgumentError
     end
   end

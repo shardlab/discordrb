@@ -3,29 +3,29 @@
 require 'discordrb'
 
 describe Discordrb::Logger do
-  it 'should log messages' do
+  it 'logs messages' do
     stream = spy
-    logger = Discordrb::Logger.new(false, [stream])
+    logger = described_class.new(false, [stream])
 
     logger.error('Testing')
 
     expect(stream).to have_received(:puts).with(something_including('Testing'))
   end
 
-  it 'should respect the log mode' do
+  it 'respects the log mode' do
     stream = spy
-    logger = Discordrb::Logger.new(false, [stream])
+    logger = described_class.new(false, [stream])
     logger.mode = :silent
 
     logger.error('Testing')
 
-    expect(stream).to_not have_received(:puts)
+    expect(stream).not_to have_received(:puts)
   end
 
-  context 'fancy mode' do
-    it 'should log messages' do
+  context 'when using fancy mode' do
+    it 'logs messages' do
       stream = spy
-      logger = Discordrb::Logger.new(true, [stream])
+      logger = described_class.new(true, [stream])
 
       logger.error('Testing')
 
@@ -33,10 +33,10 @@ describe Discordrb::Logger do
     end
   end
 
-  context 'redacted token' do
-    it 'should redact the token from messages' do
+  context 'when redacted token is enabled' do
+    it 'redacts the token from messages' do
       stream = spy
-      logger = Discordrb::Logger.new(true, [stream])
+      logger = described_class.new(true, [stream])
       logger.token = 'asdfg'
 
       logger.error('this message contains a token that should be redacted: asdfg')

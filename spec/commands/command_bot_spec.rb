@@ -13,7 +13,7 @@ TEST_CHANNELS = [
 ].freeze
 
 describe Discordrb::Commands::CommandBot, order: :defined do
-  let(:server) { double('server', id: 123) }
+  let(:server) { instance_double(Discordrb::Server, id: 123) }
   let(:text_channel_data) { load_data_file(:text_channel) }
   let(:default_channel_id) { 123 }
   let(:default_channel_name) { 'test-channel' }
@@ -28,13 +28,12 @@ describe Discordrb::Commands::CommandBot, order: :defined do
   let(:fourth_channel) { test_channels[3] }
   let(:fifth_channel) { test_channels[4] }
   let(:sixth_channel) do
-    bot = double('bot')
-    allow(bot).to receive(:token) { 'fake token' }
+    bot = instance_double(Discordrb::Bot, token: 'fake token')
     Discordrb::Channel.new(text_channel_data, bot, server)
   end
 
   def command_event_double
-    double('event').tap do |event|
+    instance_double(Discordrb::Commands::CommandEvent).tap do |event|
       allow(event).to receive :command=
       allow(event).to receive(:drain_into) { |e| e }
       allow(event).to receive(:server)
@@ -44,21 +43,21 @@ describe Discordrb::Commands::CommandBot, order: :defined do
 
   def append_author_to_double(event)
     allow(event).to receive(:author) do
-      double('member').tap do |member|
+      instance_double(Discordrb::Member).tap do |member|
         allow(member).to receive(:id) { user_id }
         allow(member).to receive(:roles) { user_roles }
-        allow(member).to receive(:permission?) { true }
-        allow(member).to receive(:webhook?) { false }
+        allow(member).to receive(:permission?).and_return(true)
+        allow(member).to receive(:webhook?).and_return(false)
       end
     end
   end
 
   def append_bot_to_double(event)
     allow(event).to receive(:bot) do
-      double('bot').tap do |bot|
-        allow(bot).to receive(:token) { 'fake token' }
-        allow(bot).to receive(:rate_limited?) { false }
-        allow(bot).to receive(:attributes) { {} }
+      instance_double(Discordrb::Commands::CommandBot).tap do |bot|
+        allow(bot).to receive(:token).and_return('fake token')
+        allow(bot).to receive(:rate_limited?).and_return(false)
+        allow(bot).to receive(:attributes).and_return({})
       end
     end
   end
@@ -87,33 +86,33 @@ describe Discordrb::Commands::CommandBot, order: :defined do
     end
   end
 
-  context 'no defined commands' do
-    bot = Discordrb::Commands::CommandBot.new token: 'token', help_available: false
+  context 'without defined commands' do
+    bot = described_class.new token: 'token', help_available: false
 
-    it 'should successfully trigger the command' do
+    it 'successfully triggers the command' do
       event = double
 
       bot.execute_command(:test, event, [], false, false)
     end
 
-    it 'should not send anything to the channel' do
+    it 'does not send anything to the channel' do
       event = spy
 
       bot.execute_command(:test, event, [], false, false)
 
-      expect(spy).to_not have_received :respond
+      expect(spy).not_to have_received :respond
     end
   end
 
-  context 'single command' do
-    bot = Discordrb::Commands::CommandBot.new token: 'token', help_available: false
+  context 'with a single command' do
+    bot = described_class.new token: 'token', help_available: false
 
     bot.command :name do
       SIMPLE_RESPONSE
     end
 
-    context 'regular user' do
-      it 'should return the response' do
+    context 'for a regular user' do
+      it 'returns the response' do
         result = bot.execute_command(:name, command_event_double, [], false, false)
 
         expect(result).to eq SIMPLE_RESPONSE
@@ -124,8 +123,8 @@ describe Discordrb::Commands::CommandBot, order: :defined do
   context 'with :command_doesnt_exist_message attribute' do
     let(:plain_event) { command_event_double_for_channel(first_channel) }
 
-    context 'as a string' do
-      bot = Discordrb::Commands::CommandBot.new(token: 'token', command_doesnt_exist_message: 'command %command% does not exist!')
+    context 'with a string' do
+      bot = described_class.new(token: 'token', command_doesnt_exist_message: 'command %command% does not exist!')
 
       it 'replies with the message including % substitution' do
         expect(plain_event).to receive(:respond).with('command bleep_blorp does not exist!')
@@ -134,8 +133,8 @@ describe Discordrb::Commands::CommandBot, order: :defined do
       end
     end
 
-    context 'as a lambda' do
-      bot = Discordrb::Commands::CommandBot.new(token: 'token', command_doesnt_exist_message: ->(event) { "command %command% does not exist in #{event.channel.name} and 1+2=#{1 + 2}" })
+    context 'with a lambda' do
+      bot = described_class.new(token: 'token', command_doesnt_exist_message: ->(event) { "command %command% does not exist in #{event.channel.name} and 1+2=#{1 + 2}" })
 
       it 'executes the lambda and replies with a message including % substitution' do
         expect(plain_event).to receive(:respond).with('command bleep_blorp does not exist in test-channel and 1+2=3')
@@ -145,10 +144,10 @@ describe Discordrb::Commands::CommandBot, order: :defined do
     end
 
     context 'with a nil' do
-      bot = Discordrb::Commands::CommandBot.new(token: 'token', command_doesnt_exist_message: ->(_event) {})
+      bot = described_class.new(token: 'token', command_doesnt_exist_message: ->(_event) {})
 
       it 'does not reply' do
-        expect(plain_event).to_not receive(:respond)
+        expect(plain_event).not_to receive(:respond)
         result = bot.execute_command(:bleep_blorp, plain_event, [])
         expect(result).to be_nil
       end
@@ -157,7 +156,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
 
   describe '#execute_command', order: :defined do
     context 'with role filter', order: :defined do
-      bot = Discordrb::Commands::CommandBot.new(token: 'token', help_available: false)
+      bot = described_class.new(token: 'token', help_available: false)
 
       describe 'required_roles' do
         before do
@@ -181,7 +180,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         it 'does not respond with one role missing', skip: true do
           plain_event = command_event_double_with_channel(first_channel)
           result = bot.execute_command(:user_has_one, plain_event, [])
-          expect(result).to eq nil
+          expect(result).to be_nil
         end
       end
 
@@ -207,14 +206,14 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         it 'does not respond to a user with none of the roles' do
           plain_event = command_event_double_with_channel(first_channel)
           result = bot.execute_command(:any_role, plain_event, [])
-          expect(result).to eq nil
+          expect(result).to be_nil
         end
       end
     end
 
     context 'with channel filter', order: :defined do
       context 'when list is not initialized in bot parameters', order: :defined do
-        bot = Discordrb::Commands::CommandBot.new(token: 'token', help_available: false)
+        bot = described_class.new(token: 'token', help_available: false)
 
         bot.command :name do
           SIMPLE_RESPONSE
@@ -259,7 +258,7 @@ describe Discordrb::Commands::CommandBot, order: :defined do
       end
 
       context 'when list is initialized in bot parameters', order: :defined do
-        bot = Discordrb::Commands::CommandBot.new(token: 'token', help_available: false, channels: [TEST_CHANNELS[0]])
+        bot = described_class.new(token: 'token', help_available: false, channels: [TEST_CHANNELS[0]])
 
         bot.command :name do
           SIMPLE_RESPONSE
@@ -318,8 +317,8 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         end
       end
 
-      context 'listed as a channel name', order: :defined do
-        bot = Discordrb::Commands::CommandBot.new(token: 'token', help_available: false)
+      context 'when listed as a channel name', order: :defined do
+        bot = described_class.new(token: 'token', help_available: false)
 
         bot.command :name do
           SIMPLE_RESPONSE
@@ -347,8 +346,8 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         end
       end
 
-      context 'listed as an object', order: :defined do
-        bot = Discordrb::Commands::CommandBot.new(token: 'token', help_available: false)
+      context 'when listed as an object', order: :defined do
+        bot = described_class.new(token: 'token', help_available: false)
 
         bot.command :name do
           SIMPLE_RESPONSE
@@ -376,8 +375,8 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         end
       end
 
-      context 'command_bot#channels=', order: :defined do
-        bot = Discordrb::Commands::CommandBot.new(token: 'token', help_available: false, channels: [TEST_CHANNELS[0], TEST_CHANNELS[1]])
+      describe '#channels=', order: :defined do
+        bot = described_class.new(token: 'token', help_available: false, channels: [TEST_CHANNELS[0], TEST_CHANNELS[1]])
 
         bot.command :name do
           SIMPLE_RESPONSE
