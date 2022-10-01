@@ -98,5 +98,13 @@ module Discordrb::Webhooks
         allowed_mentions: @allowed_mentions&.to_hash
       }
     end
+
+    # @return [Hash] a hash representation of the created message, for either json or multipart format depending if a
+    # file is present in the builder
+    def to_payload_hash
+      return to_multipart_hash if @file
+
+      to_json_hash
+    end
   end
 end

@@ -95,7 +95,7 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_payload_hash
 
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
 
@@ -145,7 +145,7 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_payload_hash
 
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
 
@@ -170,7 +170,7 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_payload_hash
       resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
@@ -198,7 +198,7 @@ module Discordrb
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_payload_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
         @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a
@@ -219,7 +219,7 @@ module Discordrb
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_payload_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
         @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a
