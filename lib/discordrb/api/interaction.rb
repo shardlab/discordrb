@@ -6,16 +6,21 @@ module Discordrb::API::Interaction
 
   # Respond to an interaction.
   # https://discord.com/developers/docs/interactions/slash-commands#create-interaction-response
-  def create_interaction_response(interaction_token, interaction_id, type, content = nil, tts = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil)
+  def create_interaction_response(interaction_token, interaction_id, type, content = nil, tts = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil, file = nil)
     data = { tts: tts, content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, components: components }.compact
+
+    payload = { type: type, data: data }.to_json
+    payload = { file: file, payload_json: payload } if file
+
+    headers = { content_type: :json } unless file
 
     Discordrb::API.request(
       :interactions_iid_token_callback,
       interaction_id,
       :post,
       "#{Discordrb::API.api_base}/interactions/#{interaction_id}/#{interaction_token}/callback",
-      { type: type, data: data }.to_json,
-      content_type: :json
+      payload,
+      headers
     )
   end
 
