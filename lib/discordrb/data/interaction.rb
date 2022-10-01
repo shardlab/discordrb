@@ -171,7 +171,7 @@ module Discordrb
 
       components ||= view
       data = builder.to_payload_hash
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
+      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, data[:file])
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end

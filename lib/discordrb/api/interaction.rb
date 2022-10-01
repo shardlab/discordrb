@@ -32,8 +32,8 @@ module Discordrb::API::Interaction
 
   # Edit the original response to an interaction.
   # https://discord.com/developers/docs/interactions/slash-commands#edit-original-interaction-response
-  def edit_original_interaction_response(interaction_token, application_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil)
-    Discordrb::API::Webhook.token_edit_message(interaction_token, application_id, '@original', content, embeds, allowed_mentions, components)
+  def edit_original_interaction_response(interaction_token, application_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil, file = nil)
+    Discordrb::API::Webhook.token_edit_message(interaction_token, application_id, '@original', content, embeds, allowed_mentions, components, file)
   end
 
   # Delete the original response to an interaction.
