@@ -26,7 +26,7 @@ describe Discordrb::API::Interaction do
         interaction_token,
         interaction_id,
         callback_type,
-        'hello world'
+        content
       )
     end
 
@@ -44,7 +44,7 @@ describe Discordrb::API::Interaction do
         interaction_token,
         interaction_id,
         callback_type,
-        'hello world',
+        content,
         nil, # tts
         nil, # embeds
         nil, # allowed_mentions
