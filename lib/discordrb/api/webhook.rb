@@ -31,11 +31,9 @@ module Discordrb::API::Webhook
   # https://discord.com/developers/docs/resources/webhook#execute-webhook
   def token_execute_webhook(webhook_token, webhook_id, wait = false, content = nil, username = nil, avatar_url = nil, tts = nil, file = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil)
     body = { content: content, username: username, avatar_url: avatar_url, tts: tts, embeds: embeds&.map(&:to_hash),  allowed_mentions: allowed_mentions, flags: flags, components: components }
-    body = if file
-             { file: file, payload_json: body.to_json }
-           else
-             body.to_json
-           end
+
+    payload = body.to_json
+    payload = { file: file, payload_json: payload } if file
 
     headers = { content_type: :json } unless file
 
@@ -44,7 +42,7 @@ module Discordrb::API::Webhook
       webhook_id,
       :post,
       "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}?wait=#{wait}",
-      body,
+      payload,
       headers
     )
   end
