@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'base64'
 require 'securerandom'
 require 'discordrb/webhooks'
 
@@ -18,6 +19,8 @@ describe Discordrb::Webhooks do
     end
 
     describe '#to_payload_hash' do
+      let(:file) { double(File) }
+
       it 'should return json hash when a file is not present' do
         builder = Discordrb::Webhooks::Builder.new
 
@@ -32,16 +35,14 @@ describe Discordrb::Webhooks do
       end
 
       it 'should return multipart hash when a file is present' do
-        Tempfile.create('example') do |file|
-          builder = Discordrb::Webhooks::Builder.new
+        builder = Discordrb::Webhooks::Builder.new
 
-          builder.file = file
+        builder.file = file
 
-          payload = builder.to_payload_hash
+        payload = builder.to_payload_hash
 
-          expect(payload).to include(:file)
-          expect(payload).to_not include(:embeds)
-        end
+        expect(payload).to include(:file)
+        expect(payload).to_not include(:embeds)
       end
     end
   end
