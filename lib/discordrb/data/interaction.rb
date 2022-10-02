@@ -222,7 +222,7 @@ module Discordrb
       data = builder.to_payload_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, data[:file]
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
