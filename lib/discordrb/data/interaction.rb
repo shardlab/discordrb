@@ -318,8 +318,10 @@ module Discordrb
     # @param subcommand_group [String, nil] The subcommand group to mention.
     # @return [String] the layout to mention it in a message
     def mention(subcommand_group: nil, subcommand: nil)
-      if subcommand_group
+      if subcommand_group && subcommand
         "</#{name} #{subcommand_group} #{subcommand}:#{id}>"
+      elsif subcommand_group
+        "</#{name} #{subcommand_group}:#{id}>"
       elsif subcommand
         "</#{name} #{subcommand}:#{id}>"
       else
