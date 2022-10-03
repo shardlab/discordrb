@@ -280,9 +280,9 @@ module Discordrb
     def identify
       compress = @compress_mode == :large
       send_identify(@token, {
-                      '$os': RUBY_PLATFORM,
-                      '$browser': 'discordrb',
-                      '$device': 'discordrb',
+                      'os': RUBY_PLATFORM,
+                      'browser': 'discordrb',
+                      'device': 'discordrb',
                       '$referrer': '',
                       '$referring_domain': ''
                     }, compress, LARGE_THRESHOLD, @shard_key, @intents)
