@@ -295,11 +295,11 @@ module Discordrb
     # @param properties [Hash<Symbol => String>] A list of properties for Discord to use in analytics. The following
     #   keys are recognised:
     #
-    #    - "$os" (recommended value: the operating system the bot is running on)
-    #    - "$browser" (recommended value: library name)
-    #    - "$device" (recommended value: library name)
-    #    - "$referrer" (recommended value: empty)
-    #    - "$referring_domain" (recommended value: empty)
+    #    - "os" (recommended value: the operating system the bot is running on)
+    #    - "browser" (recommended value: library name)
+    #    - "device" (recommended value: library name)
+    #    - "referrer" (recommended value: empty)
+    #    - "referring_domain" (recommended value: empty)
     #
     # @param compress [true, false] Whether certain large packets should be compressed using zlib.
     # @param large_threshold [Integer] The member threshold after which a server counts as large and will have to have
