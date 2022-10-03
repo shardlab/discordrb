@@ -277,14 +277,14 @@ module Discordrb
 
     # Identifies to Discord with the default parameters.
     # @see #send_identify
-    def identify
+   def identify
       compress = @compress_mode == :large
       send_identify(@token, {
-                      'os': RUBY_PLATFORM,
-                      'browser': 'discordrb',
-                      'device': 'discordrb',
-                      'referrer': '',
-                      'referring_domain': ''
+                      os: RUBY_PLATFORM,
+                      browser: 'discordrb',
+                      device: 'discordrb',
+                      referrer: '',
+                      referring_domain: ''
                     }, compress, LARGE_THRESHOLD, @shard_key, @intents)
     end
 
