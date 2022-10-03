@@ -313,7 +313,15 @@ module Discordrb
       @default_permission = data['default_permission']
       @options = data['options']
     end
+    
+    # @return [String] the layout to mention it (or have it used) in a message
+    def mention
+      "</#{name}:#{id}>"
+    end
 
+    alias_method :use, :mention
+    alias_method :to_s, :mention
+    
     # @param name [String] The name to use for this command.
     # @param description [String] The description of this command.
     # @param default_permission [true, false] Whether this command is available with default permissions.
