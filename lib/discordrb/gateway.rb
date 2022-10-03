@@ -283,8 +283,8 @@ module Discordrb
                       'os': RUBY_PLATFORM,
                       'browser': 'discordrb',
                       'device': 'discordrb',
-                      '$referrer': '',
-                      '$referring_domain': ''
+                      'referrer': '',
+                      'referring_domain': ''
                     }, compress, LARGE_THRESHOLD, @shard_key, @intents)
     end
 
