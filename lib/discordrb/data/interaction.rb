@@ -313,10 +313,18 @@ module Discordrb
       @default_permission = data['default_permission']
       @options = data['options']
     end
-    
-    # @return [String] the layout to mention it (or have it used) in a message
-    def mention
-      "</#{name}:#{id}>"
+
+    # @param subcommand [String, nil] The subcommand to mention.
+    # @param subcommand_group [String, nil] The subcommand group to mention.
+    # @return [String] the layout to mention it in a message
+    def mention(subcommand_group: nil, subcommand: nil)
+      if subcommand_group
+        "</#{name} #{subcommand_group} #{subcommand}:#{id}>"
+      elsif subcommand
+        "</#{name} #{subcommand}:#{id}>"
+      else
+        "</#{name}:#{id}>"
+      end
     end
 
     alias_method :to_s, :mention
