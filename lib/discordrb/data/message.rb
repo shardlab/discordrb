@@ -79,6 +79,7 @@ module Discordrb
       @content = data['content']
       @channel = bot.channel(data['channel_id'].to_i)
       @pinned = data['pinned']
+      @type = data['type']
       @tts = data['tts']
       @nonce = data['nonce']
       @mention_everyone = data['mention_everyone']
