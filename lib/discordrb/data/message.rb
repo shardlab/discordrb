@@ -375,7 +375,7 @@ module Discordrb
     # Whether or not this was an application command response
     # @return [true, false]
     def application_command_response?
-      @type==20
+      if @type==20
         true
       else
         false
