@@ -60,10 +60,10 @@ module Discordrb
     # @return [true, false] whether the message is pinned or not.
     attr_reader :pinned
     alias_method :pinned?, :pinned
-    
+
     # @return [Integer] what the type of the message is
     attr_reader :type
-    
+
     # @return [Server, nil] the server in which this message was sent.
     attr_reader :server
 
