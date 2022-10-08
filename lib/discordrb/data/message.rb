@@ -368,6 +368,20 @@ module Discordrb
       !@referenced_message.nil?
     end
 
+    # Whether or not this was an application command response
+    # @return [true, false]
+    def application_command_response?
+        if @type==20
+            true
+        else 
+            false
+        end
+    end
+
+    alias_method :slash_command_response?, :application_command_response?
+    alias_method :slash_command_reply?, :application_command_response?
+    alias_method :application_command_reply?, :application_command_response?
+
     # @return [Message, nil] the Message this Message was sent in reply to.
     def referenced_message
       return @referenced_message if @referenced_message
