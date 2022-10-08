@@ -375,7 +375,7 @@ module Discordrb
     # Whether or not this was an application command response
     # @return [true, false]
     def application_command_response?
-      @type==20
+      @type == 20
     end
 
     alias_method :slash_command_response?, :application_command_response?
