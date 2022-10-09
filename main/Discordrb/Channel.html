@@ -146,7 +146,10 @@
   <span class='label'>store:</span> <span class='int'>6</span><span class='comma'>,</span>
   <span class='label'>news_thread:</span> <span class='int'>10</span><span class='comma'>,</span>
   <span class='label'>public_thread:</span> <span class='int'>11</span><span class='comma'>,</span>
-  <span class='label'>private_thread:</span> <span class='int'>12</span>
+  <span class='label'>private_thread:</span> <span class='int'>12</span><span class='comma'>,</span>
+  <span class='label'>stage_voice:</span> <span class='int'>13</span><span class='comma'>,</span>
+  <span class='label'>directory:</span> <span class='int'>14</span><span class='comma'>,</span>
+  <span class='label'>forum:</span> <span class='int'>15</span>
 <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
     </dl>
@@ -2300,12 +2303,12 @@
       <pre class="lines">
 
 
-77
-78
-79</pre>
+80
+81
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 80</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_archive_timestamp'>archive_timestamp</span>
   <span class='ivar'>@archive_timestamp</span>
@@ -2359,12 +2362,12 @@
       <pre class="lines">
 
 
-71
-72
-73</pre>
+74
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 71</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 74</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_archived'>archived</span>
   <span class='ivar'>@archived</span>
@@ -2418,12 +2421,12 @@
       <pre class="lines">
 
 
-74
-75
-76</pre>
+77
+78
+79</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 77</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_auto_archive_duration'>auto_archive_duration</span>
   <span class='ivar'>@auto_archive_duration</span>
@@ -2477,12 +2480,12 @@
       <pre class="lines">
 
 
-47
-48
-49</pre>
+50
+51
+52</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 50</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bitrate'>bitrate</span>
   <span class='ivar'>@bitrate</span>
@@ -2538,12 +2541,12 @@ a thread.</p>
       <pre class="lines">
 
 
-91
-92
-93</pre>
+94
+95
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 91</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invitable'>invitable</span>
   <span class='ivar'>@invitable</span>
@@ -2597,12 +2600,12 @@ a thread.</p>
       <pre class="lines">
 
 
-84
-85
-86</pre>
+87
+88
+89</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 84</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_join_timestamp'>join_timestamp</span>
   <span class='ivar'>@join_timestamp</span>
@@ -2660,12 +2663,12 @@ a thread.</p>
       <pre class="lines">
 
 
-80
-81
-82</pre>
+83
+84
+85</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 80</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 83</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_locked'>locked</span>
   <span class='ivar'>@locked</span>
@@ -2719,12 +2722,12 @@ a thread.</p>
       <pre class="lines">
 
 
-68
-69
-70</pre>
+71
+72
+73</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_member_count'>member_count</span>
   <span class='ivar'>@member_count</span>
@@ -2778,12 +2781,12 @@ a thread.</p>
       <pre class="lines">
 
 
-87
-88
-89</pre>
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 87</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_member_flags'>member_flags</span>
   <span class='ivar'>@member_flags</span>
@@ -2837,12 +2840,12 @@ a thread.</p>
       <pre class="lines">
 
 
-65
-66
-67</pre>
+68
+69
+70</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 65</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 68</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_message_count'>message_count</span>
   <span class='ivar'>@message_count</span>
@@ -2896,12 +2899,12 @@ a thread.</p>
       <pre class="lines">
 
 
-26
-27
-28</pre>
+29
+30
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 26</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_name'>name</span>
   <span class='ivar'>@name</span>
@@ -2959,12 +2962,12 @@ a thread.</p>
       <pre class="lines">
 
 
-57
-58
-59</pre>
+60
+61
+62</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 57</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 60</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_nsfw'>nsfw</span>
   <span class='ivar'>@nsfw</span>
@@ -3020,12 +3023,12 @@ channel is a thread, this is the member that started the thread.</p>
       <pre class="lines">
 
 
-38
-39
-40</pre>
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 41</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_owner_id'>owner_id</span>
   <span class='ivar'>@owner_id</span>
@@ -3081,12 +3084,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-30
-31
-32</pre>
+33
+34
+35</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 33</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parent_id'>parent_id</span>
   <span class='ivar'>@parent_id</span>
@@ -3140,12 +3143,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-54
-55
-56</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 54</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_position'>position</span>
   <span class='ivar'>@position</span>
@@ -3203,12 +3206,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-61
-62
-63</pre>
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 61</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_rate_limit_per_user'>rate_limit_per_user</span>
   <span class='ivar'>@rate_limit_per_user</span>
@@ -3262,12 +3265,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-41
-42
-43</pre>
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_recipients'>recipients</span>
   <span class='ivar'>@recipients</span>
@@ -3321,12 +3324,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-44
-45
-46</pre>
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_topic'>topic</span>
   <span class='ivar'>@topic</span>
@@ -3387,12 +3390,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-34
-35
-36</pre>
+37
+38
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 34</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_type'>type</span>
   <span class='ivar'>@type</span>
@@ -3450,12 +3453,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-50
-51
-52</pre>
+53
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 53</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user_limit'>user_limit</span>
   <span class='ivar'>@user_limit</span>
@@ -3537,18 +3540,18 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-768
-769
-770
 771
 772
 773
 774
 775
-776</pre>
+776
+777
+778
+779</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 768</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 771</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_group_users'>add_group_users</span><span class='lparen'>(</span><span class='id identifier rubyid_user_ids'>user_ids</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Attempted to add a user to a non-group channel!</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_group?'>group?</span>
@@ -3608,12 +3611,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-875
-876
-877</pre>
+878
+879
+880</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 875</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 878</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_member'>add_member</span><span class='lparen'>(</span><span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_add_thread_member'>add_thread_member</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span>
@@ -3658,12 +3661,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-719
-720
-721</pre>
+722
+723
+724</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 719</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 722</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_await'>await</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_add_await'>add_await</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events.html" title="Discordrb::Events (module)">Events</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events/MessageEvent.html" title="Discordrb::Events::MessageEvent (class)">MessageEvent</a></span></span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>in:</span> <span class='ivar'>@id</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3706,12 +3709,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-726
-727
-728</pre>
+729
+730
+731</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 726</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 729</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_await!'>await!</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_add_await!'>add_await!</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events.html" title="Discordrb::Events (module)">Events</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events/MessageEvent.html" title="Discordrb::Events::MessageEvent (class)">MessageEvent</a></span></span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>in:</span> <span class='ivar'>@id</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3767,12 +3770,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-230
-231
-232</pre>
+233
+234
+235</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 230</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 233</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_category'>category</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_channel'>channel</span><span class='lparen'>(</span><span class='ivar'>@parent_id</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@parent_id</span>
@@ -3847,15 +3850,15 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-239
-240
-241
 242
 243
-244</pre>
+244
+245
+246
+247</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 239</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 242</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_category='>category=</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_channel'>channel</span> <span class='op'>=</span> <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_channel'>channel</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='rparen'>)</span>
@@ -3910,12 +3913,12 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-195
-196
-197</pre>
+198
+199
+200</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 195</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 198</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_category?'>category?</span>
   <span class='ivar'>@type</span> <span class='op'>==</span> <span class='int'>4</span>
@@ -3967,14 +3970,14 @@ thread, this is the text channel it is a child to.</p>
       <pre class="lines">
 
 
-378
-379
-380
 381
-382</pre>
+382
+383
+384
+385</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 378</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 381</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_children'>children</span>
   <span class='kw'>return</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='kw'>unless</span> <span class='id identifier rubyid_category?'>category?</span>
@@ -4048,16 +4051,16 @@ the recipient of the PM channel).</p>
       <pre class="lines">
 
 
-757
-758
-759
 760
 761
 762
-763</pre>
+763
+764
+765
+766</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 757</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 760</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_group'>create_group</span><span class='lparen'>(</span><span class='id identifier rubyid_user_ids'>user_ids</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Attempted to create group channel on a non-pm channel!</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_pm?'>pm?</span>
@@ -4183,16 +4186,16 @@ the recipient of the PM channel).</p>
       <pre class="lines">
 
 
-810
-811
-812
 813
 814
 815
-816</pre>
+816
+817
+818
+819</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 810</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 813</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_webhook'>create_webhook</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_avatar'>avatar</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Tried to create a webhook in a non-server channel</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_server'>server</span>
@@ -4252,12 +4255,12 @@ the recipient of the PM channel).</p>
       <pre class="lines">
 
 
-409
-410
-411</pre>
+412
+413
+414</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 409</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 412</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_channel?'>default_channel?</span>
   <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_default_channel'>default_channel</span> <span class='op'>==</span> <span class='kw'>self</span>
@@ -4450,19 +4453,19 @@ cross on Discord)</p>
       <pre class="lines">
 
 
-569
-570
-571
 572
 573
 574
 575
 576
 577
-578</pre>
+578
+579
+580
+581</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 569</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 572</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_define_overwrite'>define_overwrite</span><span class='lparen'>(</span><span class='id identifier rubyid_thing'>thing</span><span class='comma'>,</span> <span class='id identifier rubyid_allow'>allow</span> <span class='op'>=</span> <span class='int'>0</span><span class='comma'>,</span> <span class='id identifier rubyid_deny'>deny</span> <span class='op'>=</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>reason:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>unless</span> <span class='id identifier rubyid_thing'>thing</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="Overwrite.html" title="Discordrb::Overwrite (class)">Overwrite</a></span></span>
@@ -4525,12 +4528,12 @@ cross on Discord)</p>
       <pre class="lines">
 
 
-506
-507
-508</pre>
+509
+510
+511</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 506</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 509</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete'><span class='object_link'><a href="API/Channel.html#delete-class_method" title="Discordrb::API::Channel.delete (method)">delete</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span><span class='rparen'>)</span>
@@ -4584,12 +4587,12 @@ cross on Discord)</p>
       <pre class="lines">
 
 
-500
-501
-502</pre>
+503
+504
+505</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 500</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 503</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_message'>delete_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_message'><span class='object_link'><a href="API/Channel.html#delete_message-class_method" title="Discordrb::API::Channel.delete_message (method)">delete_message</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='rparen'>)</span>
@@ -4712,15 +4715,15 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-701
-702
-703
 704
 705
-706</pre>
+706
+707
+708
+709</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 701</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 704</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_messages'>delete_messages</span><span class='lparen'>(</span><span class='id identifier rubyid_messages'>messages</span><span class='comma'>,</span> <span class='id identifier rubyid_strict'>strict</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Can only delete between 2 and 100 messages!</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_messages'>messages</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span><span class='period'>.</span><span class='id identifier rubyid_between?'>between?</span><span class='lparen'>(</span><span class='int'>2</span><span class='comma'>,</span> <span class='int'>100</span><span class='rparen'>)</span>
@@ -4778,14 +4781,14 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-583
-584
-585
 586
-587</pre>
+587
+588
+589
+590</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 583</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 586</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_overwrite'>delete_overwrite</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Tried deleting a overwrite for an invalid target</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_target'>target</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Member.html" title="Discordrb::Member (class)">Member</a></span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_target'>target</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="User.html" title="Discordrb::User (class)">User</a></span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_target'>target</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Role.html" title="Discordrb::Role (class)">Role</a></span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_target'>target</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Profile.html" title="Discordrb::Profile (class)">Profile</a></span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_target'>target</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Recipient.html" title="Discordrb::Recipient (class)">Recipient</a></span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_target'>target</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:resolve_id</span><span class='rparen'>)</span>
@@ -4839,12 +4842,12 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-190
-191
-192</pre>
+193
+194
+195</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 190</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 193</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_group?'>group?</span>
   <span class='ivar'>@type</span> <span class='op'>==</span> <span class='int'>3</span>
@@ -4986,13 +4989,13 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-629
-630
-631
-632</pre>
+632
+633
+634
+635</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 629</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 632</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_history'>history</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_before_id'>before_id</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_after_id'>after_id</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_around_id'>around_id</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_logs'>logs</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_messages'><span class='object_link'><a href="API/Channel.html#messages-class_method" title="Discordrb::API::Channel.messages (method)">messages</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_before_id'>before_id</span><span class='comma'>,</span> <span class='id identifier rubyid_after_id'>after_id</span><span class='comma'>,</span> <span class='id identifier rubyid_around_id'>around_id</span><span class='rparen'>)</span>
@@ -5028,12 +5031,12 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-887
-888
-889</pre>
+890
+891
+892</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 887</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 890</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;Channel name=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@name</span><span class='embexpr_end'>}</span><span class='tstring_content'> id=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_content'> topic=\&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@topic</span><span class='embexpr_end'>}</span><span class='tstring_content'>\&quot; type=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@type</span><span class='embexpr_end'>}</span><span class='tstring_content'> position=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@position</span><span class='embexpr_end'>}</span><span class='tstring_content'> server=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@server</span> <span class='op'>||</span> <span class='ivar'>@server_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
@@ -5085,15 +5088,15 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-829
-830
-831
 832
 833
-834</pre>
+834
+835
+836
+837</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 829</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 832</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invites'>invites</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Tried to request invites from a non-server channel</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_server'>server</span>
@@ -5131,12 +5134,12 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-859
-860
-861</pre>
+862
+863
+864</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 859</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 862</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_join_thread'>join_thread</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_join_thread'>join_thread</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='rparen'>)</span>
@@ -5175,14 +5178,14 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-796
-797
-798
 799
-800</pre>
+800
+801
+802
+803</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 796</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 799</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_leave_group'>leave_group</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Attempted to leave a non-group channel!</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_group?'>group?</span>
@@ -5219,12 +5222,12 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-864
-865
-866</pre>
+867
+868
+869</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 864</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 867</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_leave_thread'>leave_thread</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_leave_thread'>leave_thread</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='rparen'>)</span>
@@ -5280,12 +5283,12 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-933
-934
-935</pre>
+936
+937
+938</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 933</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 936</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_link'>link</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>https://discord.com/channels/</span><span class='embexpr_beg'>#{</span><span class='ivar'>@server_id</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>@me</span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>/</span><span class='embexpr_beg'>#{</span><span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -5360,17 +5363,17 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-645
-646
-647
 648
 649
 650
 651
-652</pre>
+652
+653
+654
+655</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 645</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 648</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_load_message'>load_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message_id'>message_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>message_id cannot be nil</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_message_id'>message_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -5520,13 +5523,13 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-737
-738
-739
-740</pre>
+740
+741
+742
+743</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 737</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 740</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_make_invite'>make_invite</span><span class='lparen'>(</span><span class='id identifier rubyid_max_age'>max_age</span> <span class='op'>=</span> <span class='int'>0</span><span class='comma'>,</span> <span class='id identifier rubyid_max_uses'>max_uses</span> <span class='op'>=</span> <span class='int'>0</span><span class='comma'>,</span> <span class='id identifier rubyid_temporary'>temporary</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_unique'>unique</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create_invite'><span class='object_link'><a href="API/Channel.html#create_invite-class_method" title="Discordrb::API::Channel.create_invite (method)">create_invite</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_max_age'>max_age</span><span class='comma'>,</span> <span class='id identifier rubyid_max_uses'>max_uses</span><span class='comma'>,</span> <span class='id identifier rubyid_temporary'>temporary</span><span class='comma'>,</span> <span class='id identifier rubyid_unique'>unique</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span><span class='rparen'>)</span>
@@ -5579,12 +5582,12 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-399
-400
-401</pre>
+402
+403
+404</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 399</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 402</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_member_overwrites'>member_overwrites</span>
   <span class='id identifier rubyid_permission_overwrites'>permission_overwrites</span> <span class='symbol'>:member</span>
@@ -5619,12 +5622,12 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-869
-870
-871</pre>
+872
+873
+874</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 869</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 872</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_members'>members</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_thread_members'>thread_members</span><span class='lbracket'>[</span><span class='ivar'>@id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_collect'>collect</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_id'>id</span><span class='op'>|</span> <span class='ivar'>@server_id</span> <span class='op'>?</span> <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_member'>member</span><span class='lparen'>(</span><span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -5676,12 +5679,12 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-99
-100
-101</pre>
+102
+103
+104</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 99</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 102</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mention'>mention</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;#</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
@@ -5733,12 +5736,12 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-200
-201
-202</pre>
+203
+204
+205</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 200</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 203</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_news?'>news?</span>
   <span class='ivar'>@type</span> <span class='op'>==</span> <span class='int'>5</span>
@@ -5790,12 +5793,12 @@ as soon as possible with the specified amount.</p>
       <pre class="lines">
 
 
-210
-211
-212</pre>
+213
+214
+215</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 210</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 213</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_news_thread?'>news_thread?</span>
   <span class='ivar'>@type</span> <span class='op'>==</span> <span class='int'>10</span>
@@ -5925,14 +5928,14 @@ to an Overwrite object</p>
       <pre class="lines">
 
 
-332
-333
-334
 335
-336</pre>
+336
+337
+338
+339</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 332</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 335</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_permission_overwrites'>permission_overwrites</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='ivar'>@permission_overwrites</span> <span class='kw'>unless</span> <span class='id identifier rubyid_type'>type</span>
@@ -5984,12 +5987,12 @@ to an Overwrite object</p>
       <pre class="lines">
 
 
-342
-343
-344</pre>
+345
+346
+347</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 342</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 345</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_permission_overwrites='>permission_overwrites=</span><span class='lparen'>(</span><span class='id identifier rubyid_overwrites'>overwrites</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_update_channel_data'>update_channel_data</span><span class='lparen'>(</span><span class='label'>permission_overwrites:</span> <span class='id identifier rubyid_overwrites'>overwrites</span><span class='rparen'>)</span>
@@ -6041,13 +6044,13 @@ to an Overwrite object</p>
       <pre class="lines">
 
 
-658
-659
-660
-661</pre>
+661
+662
+663
+664</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 658</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 661</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_pins'>pins</span>
   <span class='id identifier rubyid_msgs'>msgs</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_pinned_messages'><span class='object_link'><a href="API/Channel.html#pinned_messages-class_method" title="Discordrb::API::Channel.pinned_messages (method)">pinned_messages</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='rparen'>)</span>
@@ -6100,12 +6103,12 @@ to an Overwrite object</p>
       <pre class="lines">
 
 
-180
-181
-182</pre>
+183
+184
+185</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 180</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 183</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_pm?'>pm?</span>
   <span class='ivar'>@type</span> <span class='op'>==</span> <span class='int'>1</span>
@@ -6157,12 +6160,12 @@ to an Overwrite object</p>
       <pre class="lines">
 
 
-94
-95
-96</pre>
+97
+98
+99</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 94</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 97</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_private?'>private?</span>
   <span class='id identifier rubyid_pm?'>pm?</span> <span class='op'>||</span> <span class='id identifier rubyid_group?'>group?</span>
@@ -6214,12 +6217,12 @@ to an Overwrite object</p>
       <pre class="lines">
 
 
-220
-221
-222</pre>
+223
+224
+225</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 220</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 223</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_private_thread?'>private_thread?</span>
   <span class='ivar'>@type</span> <span class='op'>==</span> <span class='int'>12</span>
@@ -6370,9 +6373,6 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-673
-674
-675
 676
 677
 678
@@ -6389,10 +6389,13 @@ deleted. If this is false only a warning message will be output to the console.<
 689
 690
 691
-692</pre>
+692
+693
+694
+695</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 673</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 676</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_prune'>prune</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_strict'>strict</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Can only delete between 1 and 100 messages!</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_amount'>amount</span><span class='period'>.</span><span class='id identifier rubyid_between?'>between?</span><span class='lparen'>(</span><span class='int'>1</span><span class='comma'>,</span> <span class='int'>100</span><span class='rparen'>)</span>
@@ -6461,12 +6464,12 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-215
-216
-217</pre>
+218
+219
+220</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 215</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 218</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_public_thread?'>public_thread?</span>
   <span class='ivar'>@type</span> <span class='op'>==</span> <span class='int'>11</span>
@@ -6518,12 +6521,12 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-104
-105
-106</pre>
+107
+108
+109</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 104</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 107</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_recipient'>recipient</span>
   <span class='ivar'>@recipients</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span> <span class='kw'>if</span> <span class='id identifier rubyid_pm?'>pm?</span>
@@ -6598,18 +6601,18 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-783
-784
-785
 786
 787
 788
 789
 790
-791</pre>
+791
+792
+793
+794</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 783</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 786</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_group_users'>remove_group_users</span><span class='lparen'>(</span><span class='id identifier rubyid_user_ids'>user_ids</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Attempted to remove a user from a non-group channel!</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_group?'>group?</span>
@@ -6668,12 +6671,12 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-880
-881
-882</pre>
+883
+884
+885</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 880</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 883</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_member'>remove_member</span><span class='lparen'>(</span><span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_remove_thread_member'>remove_thread_member</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span>
@@ -6725,12 +6728,12 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-404
-405
-406</pre>
+407
+408
+409</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 404</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 407</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_role_overwrites'>role_overwrites</span>
   <span class='id identifier rubyid_permission_overwrites'>permission_overwrites</span> <span class='symbol'>:role</span>
@@ -6955,17 +6958,17 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-464
-465
-466
 467
 468
 469
 470
-471</pre>
+471
+472
+473
+474</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 464</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 467</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_embed'>send_embed</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_message_reference'>message_reference</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_embed'>embed</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/Embed.html" title="Discordrb::Webhooks::Embed (class)">Embed</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Webhooks/Embed.html#initialize-instance_method" title="Discordrb::Webhooks::Embed#initialize (method)">new</a></span></span>
@@ -7103,12 +7106,12 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-494
-495
-496</pre>
+497
+498
+499</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 494</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 497</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_file'>send_file</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='comma'>,</span> <span class='label'>caption:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>filename:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>spoiler:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_send_file'>send_file</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_file'>file</span><span class='comma'>,</span> <span class='label'>caption:</span> <span class='id identifier rubyid_caption'>caption</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='id identifier rubyid_tts'>tts</span><span class='comma'>,</span> <span class='label'>filename:</span> <span class='id identifier rubyid_filename'>filename</span><span class='comma'>,</span> <span class='label'>spoiler:</span> <span class='id identifier rubyid_spoiler'>spoiler</span><span class='rparen'>)</span>
@@ -7285,12 +7288,12 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-429
-430
-431</pre>
+432
+433
+434</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 429</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 432</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_message_reference'>message_reference</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span><span class='comma'>,</span> <span class='id identifier rubyid_message_reference'>message_reference</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span><span class='rparen'>)</span>
@@ -7344,12 +7347,12 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-475
-476
-477</pre>
+478
+479
+480</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 475</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 478</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_multiple'>send_multiple</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_content'>content</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_e'>e</span><span class='op'>|</span> <span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -7520,12 +7523,12 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-444
-445
-446</pre>
+447
+448
+449</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 444</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 447</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_temporary_message'>send_temporary_message</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_timeout'>timeout</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_message_reference'>message_reference</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_send_temporary_message'>send_temporary_message</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_timeout'>timeout</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span><span class='comma'>,</span> <span class='id identifier rubyid_message_reference'>message_reference</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span><span class='rparen'>)</span>
@@ -7595,18 +7598,18 @@ authorized with the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-164
-165
-166
 167
 168
 169
 170
 171
-172</pre>
+172
+173
+174
+175</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 164</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 167</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server'>server</span>
   <span class='kw'>return</span> <span class='ivar'>@server</span> <span class='kw'>if</span> <span class='ivar'>@server</span>
@@ -7664,12 +7667,12 @@ authorized with the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-416
-417
-418</pre>
+419
+420
+421</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 416</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 419</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_slowmode?'>slowmode?</span>
   <span class='ivar'>@rate_limit_per_user</span> <span class='op'>!=</span> <span class='int'>0</span>
@@ -7757,9 +7760,6 @@ be sorted at the top of the channel list.</p>
       <pre class="lines">
 
 
-253
-254
-255
 256
 257
 258
@@ -7816,10 +7816,13 @@ be sorted at the top of the channel list.</p>
 309
 310
 311
-312</pre>
+312
+313
+314
+315</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 253</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 256</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sort_after'>sort_after</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_lock_permissions'>lock_permissions</span> <span class='op'>=</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>TypeError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>other must be one of Channel, NilClass, String, or Integer</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="Discordrb::Channel (class)">Channel</a></span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:resolve_id</span><span class='rparen'>)</span>
@@ -7912,13 +7915,13 @@ Useful for sending long messages, but be wary of rate limits!</p>
       <pre class="lines">
 
 
-481
-482
-483
-484</pre>
+484
+485
+486
+487</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 481</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 484</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_split_send'>split_send</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_send_multiple'>send_multiple</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='period'>.</span><span class='id identifier rubyid_split_message'><span class='object_link'><a href="../Discordrb.html#split_message-class_method" title="Discordrb.split_message (method)">split_message</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -8036,9 +8039,6 @@ archived.</p>
       <pre class="lines">
 
 
-843
-844
-845
 846
 847
 848
@@ -8047,10 +8047,13 @@ archived.</p>
 851
 852
 853
-854</pre>
+854
+855
+856
+857</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 843</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 846</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_start_thread'>start_thread</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_auto_archive_duration'>auto_archive_duration</span><span class='comma'>,</span> <span class='label'>message:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='int'>11</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_message_id'>message_id</span> <span class='op'>=</span> <span class='id identifier rubyid_message'>message</span><span class='op'>&amp;.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>||</span> <span class='id identifier rubyid_message'>message</span>
@@ -8107,12 +8110,12 @@ for this will eventually be coming)</p>
       <pre class="lines">
 
 
-749
-750
-751</pre>
+752
+753
+754</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 749</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 752</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_start_typing'>start_typing</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_start_typing'><span class='object_link'><a href="API/Channel.html#start_typing-class_method" title="Discordrb::API::Channel.start_typing (method)">start_typing</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='rparen'>)</span>
@@ -8164,12 +8167,12 @@ for this will eventually be coming)</p>
       <pre class="lines">
 
 
-205
-206
-207</pre>
+208
+209
+210</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 205</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 208</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_store?'>store?</span>
   <span class='ivar'>@type</span> <span class='op'>==</span> <span class='int'>6</span>
@@ -8225,14 +8228,14 @@ for this will eventually be coming)</p>
       <pre class="lines">
 
 
-359
-360
-361
 362
-363</pre>
+363
+364
+365
+366</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 359</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 362</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sync_overwrites'>sync_overwrites</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Cannot sync overwrites on a channel with no parent category</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_parent'>parent</span>
@@ -8290,14 +8293,14 @@ for this will eventually be coming)</p>
       <pre class="lines">
 
 
-368
-369
-370
 371
-372</pre>
+372
+373
+374
+375</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 368</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 371</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_synchronized?'>synchronized?</span>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_parent'>parent</span>
@@ -8351,12 +8354,12 @@ for this will eventually be coming)</p>
       <pre class="lines">
 
 
-175
-176
-177</pre>
+178
+179
+180</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 175</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 178</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_text?'>text?</span>
   <span class='ivar'>@type</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span>
@@ -8404,12 +8407,12 @@ for this will eventually be coming)</p>
       <pre class="lines">
 
 
-388
-389
-390</pre>
+391
+392
+393</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 388</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 391</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_text_channels'>text_channels</span>
   <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:text?</span><span class='rparen'>)</span>
@@ -8461,12 +8464,12 @@ for this will eventually be coming)</p>
       <pre class="lines">
 
 
-225
-226
-227</pre>
+228
+229
+230</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 225</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 228</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_thread?'>thread?</span>
   <span class='id identifier rubyid_news_thread?'>news_thread?</span> <span class='op'>||</span> <span class='id identifier rubyid_public_thread?'>public_thread?</span> <span class='op'>||</span> <span class='id identifier rubyid_private_thread?'>private_thread?</span>
@@ -8519,16 +8522,16 @@ in that channel. For a text channel, it will return all online members that have
       <pre class="lines">
 
 
-608
-609
-610
 611
 612
 613
-614</pre>
+614
+615
+616
+617</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 608</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 611</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_users'>users</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_text?'>text?</span>
@@ -8584,12 +8587,12 @@ in that channel. For a text channel, it will return all online members that have
       <pre class="lines">
 
 
-185
-186
-187</pre>
+188
+189
+190</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 185</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 188</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_voice?'>voice?</span>
   <span class='ivar'>@type</span> <span class='op'>==</span> <span class='int'>2</span>
@@ -8637,12 +8640,12 @@ in that channel. For a text channel, it will return all online members that have
       <pre class="lines">
 
 
-394
-395
-396</pre>
+397
+398
+399</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 394</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 397</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_voice_channels'>voice_channels</span>
   <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:voice?</span><span class='rparen'>)</span>
@@ -8694,15 +8697,15 @@ in that channel. For a text channel, it will return all online members that have
       <pre class="lines">
 
 
-820
-821
-822
 823
 824
-825</pre>
+825
+826
+827
+828</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 820</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 823</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_webhooks'>webhooks</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Tried to request webhooks from a non-server channel</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_server'>server</span>
@@ -8720,7 +8723,7 @@ in that channel. For a text channel, it will return all online members that have
 </div>
 
       <div id="footer">
-  Generated on Sun Oct  9 01:33:52 2022 by
+  Generated on Sun Oct  9 01:36:04 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.6.10).
 </div>
