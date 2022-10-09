@@ -378,6 +378,12 @@ module Discordrb
       @type == 20
     end
 
+    # Whether or not this message was an application command response
+    # @return [true, false]
+    def application_command_response?
+      @type == 20 || @type == 23
+    end
+
     # @return [Message, nil] the Message this Message was sent in reply to.
     def referenced_message
       return @referenced_message if @referenced_message
