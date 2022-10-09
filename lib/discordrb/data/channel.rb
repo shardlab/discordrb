@@ -612,7 +612,7 @@ module Discordrb
       if text?
         server.online_members(include_idle: true).select { |u| u.can_read_messages? self }
       elsif voice?
-        server.voice_states.map { |id, voice_state| server.member(id) if !voice_state.voice_channel.nil? && voice_state.voice_channel.id == @id }.compact
+        server.voice_states.filter_map { |id, voice_state| server.member(id) if !voice_state.voice_channel.nil? && voice_state.voice_channel.id == @id }
       end
     end
 
