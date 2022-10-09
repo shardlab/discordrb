@@ -99,6 +99,47 @@
   
 
 </div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="FLAGS-constant" class="">FLAGS =
+          <div class="docstring">
+  <div class="discussion">
+    <p>rubocop:disable Naming/VariableNumber</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>staff:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>0</span><span class='comma'>,</span>
+  <span class='label'>partner:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>1</span><span class='comma'>,</span>
+  <span class='label'>hypesquad:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>2</span><span class='comma'>,</span>
+  <span class='label'>bug_hunter_level_1:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>3</span><span class='comma'>,</span>
+  <span class='label'>hypesquad_online_house_1:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>6</span><span class='comma'>,</span>
+  <span class='label'>hypesquad_online_house_2:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>7</span><span class='comma'>,</span>
+  <span class='label'>hypesquad_online_house_3:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>8</span><span class='comma'>,</span>
+  <span class='label'>premium_early_supporter:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>9</span><span class='comma'>,</span>
+  <span class='label'>team_pseudo_user:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>10</span><span class='comma'>,</span>
+  <span class='label'>bug_hunter_level_2:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>14</span><span class='comma'>,</span>
+  <span class='label'>verified_bot:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>16</span><span class='comma'>,</span>
+  <span class='label'>verified_developer:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>17</span><span class='comma'>,</span>
+  <span class='label'>certified_moderator:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>18</span><span class='comma'>,</span>
+  <span class='label'>bot_http_interactions:</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>19</span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
 
 
 
@@ -186,6 +227,34 @@
 
   
     <span class="summary_desc"><div class='inline'><p>This user&#39;s discriminator which is used internally to identify users with identical usernames.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#public_flags-instance_method" title="#public_flags (instance method)">#<strong>public_flags</strong>  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The public flags on a user&#39;s account.</p>
 </div></span>
   
 </li>
@@ -361,12 +430,12 @@
       <pre class="lines">
 
 
-22
-23
-24</pre>
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 22</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 41</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_avatar_id'>avatar_id</span>
   <span class='ivar'>@avatar_id</span>
@@ -424,12 +493,12 @@
       <pre class="lines">
 
 
-17
-18
-19</pre>
+36
+37
+38</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 17</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 36</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bot_account'>bot_account</span>
   <span class='ivar'>@bot_account</span>
@@ -487,15 +556,74 @@
       <pre class="lines">
 
 
-11
-12
-13</pre>
+30
+31
+32</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 11</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 30</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_discriminator'>discriminator</span>
   <span class='ivar'>@discriminator</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="public_flags-instance_method">
+  
+    #<strong>public_flags</strong>  &#x21d2; <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the public flags on a user&#39;s account.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the public flags on a user&#39;s account</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+65
+66
+67</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 65</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_public_flags'>public_flags</span>
+  <span class='ivar'>@public_flags</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -550,12 +678,12 @@
       <pre class="lines">
 
 
-7
-8
-9</pre>
+26
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 7</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_username'>username</span>
   <span class='ivar'>@username</span>
@@ -635,14 +763,14 @@
       <pre class="lines">
 
 
-39
-40
-41
-42
-43</pre>
+58
+59
+60
+61
+62</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_avatar_url'>avatar_url</span><span class='lparen'>(</span><span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/User.html" title="Discordrb::API::User (module)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_avatar'><span class='object_link'><a href="API/User.html#default_avatar-class_method" title="Discordrb::API::User.default_avatar (method)">default_avatar</a></span></span><span class='lparen'>(</span><span class='ivar'>@discriminator</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='ivar'>@avatar_id</span>
@@ -696,12 +824,12 @@
       <pre class="lines">
 
 
-32
-33
-34</pre>
+51
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 32</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_distinct'>distinct</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@username</span><span class='embexpr_end'>}</span><span class='tstring_content'>#</span><span class='embexpr_beg'>#{</span><span class='ivar'>@discriminator</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -753,12 +881,12 @@
       <pre class="lines">
 
 
-26
-27
-28</pre>
+45
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 26</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/user.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mention'>mention</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;@</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
@@ -773,7 +901,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Oct  9 01:38:12 2022 by
+  Generated on Sun Oct  9 01:42:54 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.6.10).
 </div>
