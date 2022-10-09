@@ -469,6 +469,28 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#get_component-instance_method" title="#get_component (instance method)">#<strong>get_component</strong>(custom_id)  &#x21d2; TextInput, ... </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(data, bot)  &#x21d2; InteractionCreateEvent </a>
     
 
@@ -532,6 +554,29 @@
 
   
     <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#show_modal-instance_method" title="#show_modal (instance method)">#<strong>show_modal</strong>(title:, custom_id:, components: nil) {|A| ... } &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Create a modal as a response.</p>
+</div></span>
   
 </li>
 
@@ -1131,12 +1176,12 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-84
-85
-86</pre>
+89
+90
+91</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 84</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 89</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_defer_update'>defer_update</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_defer_update'>defer_update</span>
@@ -1189,12 +1234,12 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-79
-80
-81</pre>
+84
+85
+86</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 79</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 84</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_message'>delete_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_delete_message'>delete_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
@@ -1229,12 +1274,12 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-64
-65
-66</pre>
+69
+70
+71</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 69</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_response'>delete_response</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_delete_response'>delete_response</span>
@@ -1357,12 +1402,12 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-74
-75
-76</pre>
+79
+80
+81</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 79</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_message'>edit_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_edit_message'>edit_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='label'>content:</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='id identifier rubyid_embeds'>embeds</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -1505,15 +1550,67 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-59
-60
-61</pre>
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_response'>edit_response</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_edit_response'>edit_response</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='id identifier rubyid_embeds'>embeds</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='id identifier rubyid_components'>components</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="get_component-instance_method">
+  
+    #<strong>get_component</strong>(custom_id)  &#x21d2; <tt>TextInput</tt>, ... 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>TextInput</tt>, <tt>Button</tt>, <tt>SelectMenu</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+94
+95
+96</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 94</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_component'>get_component</span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='rparen'>)</span>
+  <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_get_component'>get_component</span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1883,15 +1980,125 @@ Further messages can be sent with <span class='object_link'><a href="../Interact
       <pre class="lines">
 
 
-69
-70
-71</pre>
+74
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 69</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 74</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>flags:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>ephemeral:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='id identifier rubyid_embeds'>embeds</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='id identifier rubyid_tts'>tts</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span><span class='comma'>,</span> <span class='label'>flags:</span> <span class='id identifier rubyid_flags'>flags</span><span class='comma'>,</span> <span class='label'>ephemeral:</span> <span class='id identifier rubyid_ephemeral'>ephemeral</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='id identifier rubyid_components'>components</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="show_modal-instance_method">
+  
+    #<strong>show_modal</strong>(title:, custom_id:, components: nil) {|A| ... } &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Create a modal as a response.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>title</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The title of the modal being shown.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The custom_id used to identify the modal and store data.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>components</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Component, Hash&gt;</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>An array of components. These can be defined through the block as well.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>A</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Webhooks/Modal.html" title="Discordrb::Webhooks::Modal (class)">Discordrb::Webhooks::Modal</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>builder for the modal&#39;s components.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+59
+60
+61</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 59</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_show_modal'>show_modal</span><span class='lparen'>(</span><span class='label'>title:</span><span class='comma'>,</span> <span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_show_modal'>show_modal</span><span class='lparen'>(</span><span class='label'>title:</span> <span class='id identifier rubyid_title'>title</span><span class='comma'>,</span> <span class='label'>custom_id:</span> <span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='id identifier rubyid_components'>components</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2121,7 +2328,7 @@ Further messages can be sent with <span class='object_link'><a href="../Interact
 </div>
 
       <div id="footer">
-  Generated on Sun Oct  9 01:36:08 2022 by
+  Generated on Sun Oct  9 01:37:34 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.6.10).
 </div>

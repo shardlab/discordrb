@@ -207,6 +207,29 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#text_inputs-instance_method" title="#text_inputs (instance method)">#<strong>text_inputs</strong>  &#x21d2; Array&lt;Button&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Get all buttons in this row.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -254,12 +277,12 @@
       <pre class="lines">
 
 
-27
-28
-29</pre>
+29
+30
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_components'>components</span>
   <span class='ivar'>@components</span>
@@ -314,12 +337,12 @@
       <pre class="lines">
 
 
-42
-43
-44</pre>
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_buttons'>buttons</span>
   <span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_component'>component</span><span class='op'>|</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="Button.html" title="Discordrb::Components::Button (class)">Button</a></span></span> <span class='rbrace'>}</span>
@@ -354,15 +377,68 @@
       <pre class="lines">
 
 
-36
-37
-38</pre>
+38
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 36</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 38</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_each'>each</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@components</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="text_inputs-instance_method">
+  
+    #<strong>text_inputs</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="Button.html" title="Discordrb::Components::Button (class)">Button</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Get all buttons in this row</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="Button.html" title="Discordrb::Components::Button (class)">Button</a></span>&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+50
+51
+52</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 50</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_text_inputs'>text_inputs</span>
+  <span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_component'>component</span><span class='op'>|</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="TextInput.html" title="Discordrb::Components::TextInput (class)">TextInput</a></span></span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -374,7 +450,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Oct  9 01:36:06 2022 by
+  Generated on Sun Oct  9 01:37:31 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.6.10).
 </div>

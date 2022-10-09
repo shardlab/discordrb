@@ -492,12 +492,12 @@
       <pre class="lines">
 
 
-384
-385
-386</pre>
+422
+423
+424</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 384</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 422</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@options</span>
@@ -607,12 +607,12 @@
       <pre class="lines">
 
 
-449
-450
-451</pre>
+487
+488
+489</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 449</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 487</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_boolean'>boolean</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_option'>option</span><span class='lparen'>(</span><span class='const'>TYPES</span><span class='lbracket'>[</span><span class='symbol'>:boolean</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='id identifier rubyid_required'>required</span><span class='rparen'>)</span>
@@ -732,13 +732,13 @@
       <pre class="lines">
 
 
-466
-467
-468
-469</pre>
+504
+505
+506
+507</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 466</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 504</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channel'>channel</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>types:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_types'>types</span> <span class='op'>=</span> <span class='id identifier rubyid_types'>types</span><span class='op'>&amp;.</span><span class='id identifier rubyid_collect'>collect</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_type'>type</span><span class='op'>|</span> <span class='id identifier rubyid_type'>type</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Numeric</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_type'>type</span> <span class='op'>:</span> <span class='const'><span class='object_link'><a href="#CHANNEL_TYPES-constant" title="Discordrb::Interactions::OptionBuilder::CHANNEL_TYPES (constant)">CHANNEL_TYPES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_type'>type</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
@@ -859,12 +859,12 @@
       <pre class="lines">
 
 
-441
-442
-443</pre>
+479
+480
+481</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 441</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 479</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_integer'>integer</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>choices:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_option'>option</span><span class='lparen'>(</span><span class='const'>TYPES</span><span class='lbracket'>[</span><span class='symbol'>:integer</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='id identifier rubyid_required'>required</span><span class='comma'>,</span> <span class='label'>choices:</span> <span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
@@ -967,12 +967,12 @@
       <pre class="lines">
 
 
-483
-484
-485</pre>
+521
+522
+523</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 483</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 521</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mentionable'>mentionable</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_option'>option</span><span class='lparen'>(</span><span class='const'>TYPES</span><span class='lbracket'>[</span><span class='symbol'>:mentionable</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='id identifier rubyid_required'>required</span><span class='rparen'>)</span>
@@ -1075,13 +1075,13 @@
       <pre class="lines">
 
 
-491
-492
-493
-494</pre>
+529
+530
+531
+532</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 491</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 529</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_number'>number</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>min_value:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>max_value:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>choices:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_option'>option</span><span class='lparen'>(</span><span class='const'>TYPES</span><span class='lbracket'>[</span><span class='symbol'>:number</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span>
@@ -1185,12 +1185,12 @@
       <pre class="lines">
 
 
-475
-476
-477</pre>
+513
+514
+515</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 475</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 513</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_role'>role</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_option'>option</span><span class='lparen'>(</span><span class='const'>TYPES</span><span class='lbracket'>[</span><span class='symbol'>:role</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='id identifier rubyid_required'>required</span><span class='rparen'>)</span>
@@ -1310,12 +1310,12 @@
       <pre class="lines">
 
 
-432
-433
-434</pre>
+470
+471
+472</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 432</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 470</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_string'>string</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>choices:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_option'>option</span><span class='lparen'>(</span><span class='const'>TYPES</span><span class='lbracket'>[</span><span class='symbol'>:string</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='id identifier rubyid_required'>required</span><span class='comma'>,</span> <span class='label'>choices:</span> <span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
@@ -1428,15 +1428,15 @@
       <pre class="lines">
 
 
-401
-402
-403
-404
-405
-406</pre>
+439
+440
+441
+442
+443
+444</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 401</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 439</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_subcommand'>subcommand</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_builder'>builder</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::Interactions::OptionBuilder (class)">OptionBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
@@ -1554,15 +1554,15 @@ end</code></pre>
       <pre class="lines">
 
 
-420
-421
-422
-423
-424
-425</pre>
+458
+459
+460
+461
+462
+463</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 420</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 458</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_subcommand_group'>subcommand_group</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_builder'>builder</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::Interactions::OptionBuilder (class)">OptionBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
@@ -1612,12 +1612,12 @@ end</code></pre>
       <pre class="lines">
 
 
-518
-519
-520</pre>
+556
+557
+558</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 518</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 556</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_a'>to_a</span>
   <span class='ivar'>@options</span>
@@ -1720,12 +1720,12 @@ end</code></pre>
       <pre class="lines">
 
 
-457
-458
-459</pre>
+495
+496
+497</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 457</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 495</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_option'>option</span><span class='lparen'>(</span><span class='const'>TYPES</span><span class='lbracket'>[</span><span class='symbol'>:user</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='id identifier rubyid_required'>required</span><span class='rparen'>)</span>
@@ -1740,7 +1740,7 @@ end</code></pre>
 </div>
 
       <div id="footer">
-  Generated on Sun Oct  9 01:36:08 2022 by
+  Generated on Sun Oct  9 01:37:34 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.6.10).
 </div>
