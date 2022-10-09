@@ -1060,11 +1060,11 @@ before it), or if none have been received yet, with 0.</p>
 <span class='kw'>def</span> <span class='id identifier rubyid_identify'>identify</span>
   <span class='id identifier rubyid_compress'>compress</span> <span class='op'>=</span> <span class='ivar'>@compress_mode</span> <span class='op'>==</span> <span class='symbol'>:large</span>
   <span class='id identifier rubyid_send_identify'>send_identify</span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='lbrace'>{</span>
-                  <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>$os</span><span class='label_end'>&#39;:</span> <span class='const'>RUBY_PLATFORM</span><span class='comma'>,</span>
-                  <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>$browser</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>discordrb</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-                  <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>$device</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>discordrb</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-                  <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>$referrer</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-                  <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>$referring_domain</span><span class='label_end'>&#39;:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
+                  <span class='label'>os:</span> <span class='const'>RUBY_PLATFORM</span><span class='comma'>,</span>
+                  <span class='label'>browser:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>discordrb</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                  <span class='label'>device:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>discordrb</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                  <span class='label'>referrer:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                  <span class='label'>referring_domain:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
                 <span class='rbrace'>}</span><span class='comma'>,</span> <span class='id identifier rubyid_compress'>compress</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#LARGE_THRESHOLD-constant" title="Discordrb::Gateway::LARGE_THRESHOLD (constant)">LARGE_THRESHOLD</a></span></span><span class='comma'>,</span> <span class='ivar'>@shard_key</span><span class='comma'>,</span> <span class='ivar'>@intents</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1708,11 +1708,11 @@ prefixed with &quot;Bot &quot;.</p>
 keys are recognised:</p>
 
 <ul>
-<li>&quot;$os&quot; (recommended value: the operating system the bot is running on)</li>
-<li>&quot;$browser&quot; (recommended value: library name)</li>
-<li>&quot;$device&quot; (recommended value: library name)</li>
-<li>&quot;$referrer&quot; (recommended value: empty)</li>
-<li>&quot;$referring_domain&quot; (recommended value: empty)</li>
+<li>&quot;os&quot; (recommended value: the operating system the bot is running on)</li>
+<li>&quot;browser&quot; (recommended value: library name)</li>
+<li>&quot;device&quot; (recommended value: library name)</li>
+<li>&quot;referrer&quot; (recommended value: empty)</li>
+<li>&quot;referring_domain&quot; (recommended value: empty)</li>
 </ul>
 </div>
       
@@ -2526,7 +2526,7 @@ Discord is immediately aware of the closed connection and makes the bot appear o
 </div>
 
       <div id="footer">
-  Generated on Tue Aug 16 14:25:53 2022 by
+  Generated on Sun Oct  9 01:25:07 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.6.10).
 </div>
