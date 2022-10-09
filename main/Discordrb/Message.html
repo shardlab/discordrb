@@ -1337,6 +1337,31 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#to_message-instance_method" title="#to_message (instance method)">#<strong>to_message</strong>  &#x21d2; Discordrb::Message </a>
+    
+
+    
+      (also: #message)
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>to_message -&gt; self or message.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#unpin-instance_method" title="#unpin (instance method)">#<strong>unpin</strong>(reason = nil)  &#x21d2; Object </a>
     
 
@@ -4486,6 +4511,63 @@ You can only edit your own messages.</p>
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="to_message-instance_method">
+  
+    #<strong>to_message</strong>  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Message (class)">Discordrb::Message</a></span></tt> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='message-instance_method'>message</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>to_message -&gt; self or message</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Discordrb::Message (class)">Discordrb::Message</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+406
+407
+408</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 406</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_message'>to_message</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="unpin-instance_method">
   
     #<strong>unpin</strong>(reason = nil)  &#x21d2; <tt>Object</tt> 
@@ -4591,7 +4673,7 @@ You can only edit your own messages.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Oct  9 18:54:02 2022 by
+  Generated on Sun Oct  9 20:11:50 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.7.6).
 </div>
