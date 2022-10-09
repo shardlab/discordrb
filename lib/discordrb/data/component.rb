@@ -16,6 +16,8 @@ module Discordrb
         Button.new(data, bot)
       when Webhooks::View::COMPONENT_TYPES[:select_menu]
         SelectMenu.new(data, bot)
+      when Webhooks::Modal::COMPONENT_TYPES[:text_input]
+        TextInput.new(data, bot)
       end
     end
 
@@ -41,6 +43,12 @@ module Discordrb
       # @return [Array<Button>]
       def buttons
         select { |component| component.is_a? Button }
+      end
+
+      # Get all buttons in this row
+      # @return [Array<Button>]
+      def text_inputs
+        select { |component| component.is_a? TextInput }
       end
 
       # @!visibility private
@@ -158,6 +166,63 @@ module Discordrb
         @custom_id = data['custom_id']
         @emoji = Emoji.new(data['emoji'], @bot) if data['emoji']
         @options = data['options'].map { |opt| Option.new(opt) }
+      end
+    end
+
+    # Text input component for use in modals. Can be either a line (`short`), or a multi line (`paragraph`) block.
+    class TextInput
+      # Single line text input
+      SHORT = 1
+      # Multi-line text input
+      PARAGRAPH = 2
+
+      # @return [String]
+      attr_reader :custom_id
+
+      # @return [Symbol]
+      attr_reader :style
+
+      # @return [String]
+      attr_reader :label
+
+      # @return [Integer, nil]
+      attr_reader :min_length
+
+      # @return [Integer, nil]
+      attr_reader :max_length
+
+      # @return [true, false]
+      attr_reader :required
+
+      # @return [String, nil]
+      attr_reader :value
+
+      # @return [String, nil]
+      attr_reader :placeholder
+
+      # @!visibility private
+      def initialize(data, bot)
+        @bot = bot
+        @style = data['style'] == SHORT ? :short : :paragraph
+        @label = data['label']
+        @min_length = data['min_length']
+        @max_length = data['max_length']
+        @required = data['required']
+        @value = data['value']
+        @placeholder = data['placeholder']
+        @custom_id = data['custom_id']
+      end
+
+      def short?
+        @style == :short
+      end
+
+      def paragraph?
+        @style == :paragraph
+      end
+
+      def required?
+        @required
       end
     end
   end

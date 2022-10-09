@@ -61,6 +61,9 @@ module Discordrb
     attr_reader :pinned
     alias_method :pinned?, :pinned
 
+    # @return [Integer] what the type of the message is
+    attr_reader :type
+
     # @return [Server, nil] the server in which this message was sent.
     attr_reader :server
 
@@ -79,6 +82,7 @@ module Discordrb
       @content = data['content']
       @channel = bot.channel(data['channel_id'].to_i)
       @pinned = data['pinned']
+      @type = data['type']
       @tts = data['tts']
       @nonce = data['nonce']
       @mention_everyone = data['mention_everyone']
@@ -368,6 +372,12 @@ module Discordrb
       !@referenced_message.nil?
     end
 
+    # Whether or not this message was of type "CHAT_INPUT_COMMAND"
+    # @return [true, false]
+    def chat_input_command?
+      @type == 20
+    end
+
     # @return [Message, nil] the Message this Message was sent in reply to.
     def referenced_message
       return @referenced_message if @referenced_message
@@ -390,5 +400,13 @@ module Discordrb
 
       results.flatten.compact
     end
+
+    # to_message -> self or message
+    # @return [Discordrb::Message]
+    def to_message
+      self
+    end
+
+    alias_method :message, :to_message
   end
 end
