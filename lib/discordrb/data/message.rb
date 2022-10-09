@@ -378,8 +378,6 @@ module Discordrb
       @type == 20
     end
 
-    alias_method :application_command_response?, :chat_input_command?
-
     # @return [Message, nil] the Message this Message was sent in reply to.
     def referenced_message
       return @referenced_message if @referenced_message
