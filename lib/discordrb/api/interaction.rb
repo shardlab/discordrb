@@ -19,6 +19,21 @@ module Discordrb::API::Interaction
     )
   end
 
+  # Create a response that results in a modal.
+  # https://discord.com/developers/docs/interactions/slash-commands#create-interaction-response
+  def create_interaction_modal_response(interaction_token, interaction_id, custom_id, title, components)
+    data = { custom_id: custom_id, title: title, components: components.to_a }.compact
+
+    Discordrb::API.request(
+      :interactions_iid_token_callback,
+      interaction_id,
+      :post,
+      "#{Discordrb::API.api_base}/interactions/#{interaction_id}/#{interaction_token}/callback",
+      { type: 9, data: data }.to_json,
+      content_type: :json
+    )
+  end
+
   # Get the original response to an interaction.
   # https://discord.com/developers/docs/interactions/slash-commands#get-original-interaction-response
   def get_original_interaction_response(interaction_token, application_id)
