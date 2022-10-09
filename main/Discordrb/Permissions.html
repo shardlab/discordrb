@@ -728,7 +728,7 @@ of instancing a new Permissions object.</p>
       <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 129</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_defined_permissions'>defined_permissions</span>
-  <span class='const'><span class='object_link'><a href="#FLAGS-constant" title="Discordrb::Permissions::FLAGS (constant)">FLAGS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_collect'>collect</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='op'>|</span> <span class='lparen'>(</span><span class='ivar'>@bits</span> <span class='op'>&amp;</span> <span class='lparen'>(</span><span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span> <span class='op'>?</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>:</span> <span class='kw'>nil</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+  <span class='const'><span class='object_link'><a href="#FLAGS-constant" title="Discordrb::Permissions::FLAGS (constant)">FLAGS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_filter_map'>filter_map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='op'>|</span> <span class='lparen'>(</span><span class='ivar'>@bits</span> <span class='op'>&amp;</span> <span class='lparen'>(</span><span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span> <span class='op'>?</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>:</span> <span class='kw'>nil</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -786,9 +786,9 @@ of instancing a new Permissions object.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Oct  9 01:59:45 2022 by
+  Generated on Sun Oct  9 02:02:03 2022 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.28 (ruby-2.6.10).
+  0.9.28 (ruby-2.7.6).
 </div>
 
     </div>
