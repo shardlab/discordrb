@@ -54,6 +54,10 @@ module Discordrb::Events
     # @return [Bot] the bot used to initialize this event.
     attr_reader :bot
 
+    def initialize(bot)
+      @bot = bot
+    end
+
     class << self
       protected
 
