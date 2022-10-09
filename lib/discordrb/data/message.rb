@@ -400,5 +400,13 @@ module Discordrb
 
       results.flatten.compact
     end
+
+    # to_message -> self or message
+    # @return [Discordrb::Message]
+    def to_message
+      self
+    end
+
+    alias_method :message, :to_message
   end
 end

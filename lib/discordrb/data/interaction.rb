@@ -697,6 +697,7 @@ module Discordrb
 
       # @!visibility private
       def initialize(data, bot, interaction)
+        @data = data
         @bot = bot
         @interaction = interaction
         @content = data['content']
@@ -773,6 +774,13 @@ module Discordrb
       def edit(content: nil, embeds: nil, allowed_mentions: nil, components: nil, &block)
         @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, &block)
       end
+
+      # @return [Discordrb::Message]
+      def to_message
+        Discordrb::Message.new(@data, @bot)
+      end
+
+      alias_method :message, :to_message
 
       # @!visibility private
       def inspect
