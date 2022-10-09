@@ -19,7 +19,10 @@ module Discordrb
       store: 6,
       news_thread: 10,
       public_thread: 11,
-      private_thread: 12
+      private_thread: 12,
+      stage_voice: 13,
+      directory: 14,
+      forum: 15
     }.freeze
 
     # @return [String] this channel's name.
