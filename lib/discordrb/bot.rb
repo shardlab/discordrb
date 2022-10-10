@@ -803,9 +803,9 @@ module Discordrb
       )
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, builder.to_hash)
+               API::Application.create_guild_command(@token, profile.id, server_id, builder.name, builder.description, builder.options.to_a, builder.default_permission, builder.type)
              else
-               API::Application.create_global_command(@token, profile.id, builder.to_hash)
+               API::Application.create_global_command(@token, profile.id, builder.name, builder.description, builder.options.to_a, builder.default_permission, builder.type)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -841,9 +841,9 @@ module Discordrb
       builder.name
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, builder.to_hash)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, builder.name, builder.description, builder.options.to_a, builder.default_permission, builder.type)
              else
-               API::Application.edit_guild_command(@token, profile.id, command_id, builder.to_hash)
+               API::Application.edit_guild_command(@token, profile.id, command_id, builder.name, builder.description, builder.options.to_a, builder.default_permission, builder.type)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
