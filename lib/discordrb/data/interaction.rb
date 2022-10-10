@@ -158,7 +158,7 @@ module Discordrb
       nil
     end
 
-    # For components, edit the message the component was attached to.    
+    # For components, edit the message the component was attached to.
     # The response may be modified with {Interaction#edit_response} or deleted with {Interaction#delete_response}.
     # Further messages can be sent with {Interaction#send_message}.
     # @param content [String] The content of the message.
