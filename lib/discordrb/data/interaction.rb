@@ -105,7 +105,18 @@ module Discordrb
       components ||= view
       data = builder.to_payload_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, data[:file])
+      Discordrb::API::Interaction.create_interaction_response(
+        @token,
+        @id,
+        CALLBACK_TYPES[:channel_message],
+        data[:content],
+        tts,
+        data[:embeds],
+        data[:allowed_mentions],
+        flags,
+        components.to_a,
+        data[:attachments]
+      )
 
       return unless wait
 
@@ -172,7 +183,7 @@ module Discordrb
       components ||= view
       data = builder.to_payload_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, data[:file])
+      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, data[:attachments])
 
       return unless wait
 
@@ -196,7 +207,7 @@ module Discordrb
 
       components ||= view
       data = builder.to_payload_hash
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, data[:file])
+      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, data[:attachments])
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -226,7 +237,19 @@ module Discordrb
       data = builder.to_payload_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, tts, data[:file], data[:embeds], data[:allowed_mentions], flags, components.to_a
+        @token,
+        @application_id,
+        true,
+        data[:content],
+        nil, # username
+        nil, # avatar_url
+        tts,
+        data[:file], # deprecated
+        data[:embeds],
+        data[:allowed_mentions],
+        flags,
+        components.to_a,
+        data[:attachments]
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -247,7 +270,7 @@ module Discordrb
       data = builder.to_payload_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, data[:file]
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, data[:attachments]
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end

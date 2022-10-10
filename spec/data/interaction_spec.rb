@@ -11,6 +11,7 @@ describe Discordrb::Interaction do
   let(:application_id) { SecureRandom.random_number(1000) }
   let(:content) { 'hello world' }
   let(:file) { double(File) }
+  let(:attachments) { [double(File), double(File)] }
   let(:user) { double(Discordrb::Member) }
   let(:bot) do
     bot = double('bot')
@@ -23,7 +24,7 @@ describe Discordrb::Interaction do
       'application_id' => application_id,
       'type' => -1,
       'message' => nil,
-      'data' => double,
+      'data' => {},
       'server_id' => guild_id,
       'channel_id' => channel_id,
       'user' => double,
@@ -60,13 +61,13 @@ describe Discordrb::Interaction do
         nil, # allowed_mentions
         0, # flags
         [], # components
-        nil # file
+        nil # attachments
       ).and_return('null')
 
       interaction.respond(content: content)
     end
 
-    it 'calls interaction api with correct parameters when file is added to builder' do
+    it 'calls interaction api with correct parameters when attachments are added to builder' do
       expect(Discordrb::API::Interaction).to receive(:create_interaction_response).with(
         interaction_token,
         interaction_id,
@@ -77,11 +78,11 @@ describe Discordrb::Interaction do
         nil, # allowed_mentions
         0, # flags
         [], # components
-        file
+        attachments
       ).and_return('null')
 
       interaction.respond(content: content) do |builder|
-        builder.file = file
+        builder.attachments = attachments
       end
     end
   end
@@ -100,13 +101,13 @@ describe Discordrb::Interaction do
         nil, # allowed_mentions
         0, # flags
         [], # components
-        nil # file
+        nil # attachments
       ).and_return('null')
 
       interaction.update_message(content: content)
     end
 
-    it 'calls interaction api with correct parameters when file is added to builder' do
+    it 'calls interaction api with correct parameters when attachments are added to builder' do
       expect(Discordrb::API::Interaction).to receive(:create_interaction_response).with(
         interaction_token,
         interaction_id,
@@ -117,11 +118,11 @@ describe Discordrb::Interaction do
         nil, # allowed_mentions
         0, # flags
         [], # components
-        file
+        attachments
       ).and_return('null')
 
       interaction.update_message(content: content) do |builder|
-        builder.file = file
+        builder.attachments = attachments
       end
     end
   end
@@ -135,13 +136,13 @@ describe Discordrb::Interaction do
         [], # embeds,
         nil, # allowed_mentions
         [], # components
-        nil # file
+        nil # attachments
       ).and_return('null')
 
       interaction.edit_response(content: content)
     end
 
-    it 'calls interaction api with correct parameters when file is added to builder' do
+    it 'calls interaction api with correct parameters when attachments are added to builder' do
       expect(Discordrb::API::Interaction).to receive(:edit_original_interaction_response).with(
         interaction_token,
         application_id,
@@ -149,11 +150,11 @@ describe Discordrb::Interaction do
         nil, # embeds,
         nil, # allowed_mentions
         [], # components
-        file # file
+        attachments # attachments
       ).and_return('null')
 
       interaction.edit_response(content: content) do |builder|
-        builder.file = file
+        builder.attachments = attachments
       end
     end
   end
@@ -172,12 +173,14 @@ describe Discordrb::Interaction do
         [], # embeds
         nil, # allowed_mentions
         0, # flags
-        [] # components
+        [], # components
+        nil # attachments
       ).and_return('null')
 
       interaction.send_message(content: content)
     end
 
+    # this test case is for deprecated behavior
     it 'calls webhook api with correct parameters when file is added to builder' do
       expect(Discordrb::API::Webhook).to receive(:token_execute_webhook).with(
         interaction_token,
@@ -191,11 +194,34 @@ describe Discordrb::Interaction do
         nil, # embeds
         nil, # allowed_mentions
         0, # flags
-        [] # components
+        [], # components
+        nil # attachments
       ).and_return('null')
 
       interaction.send_message(content: content) do |builder|
         builder.file = file
+      end
+    end
+
+    it 'calls webhook api with correct parameters when attachments are added to builder' do
+      expect(Discordrb::API::Webhook).to receive(:token_execute_webhook).with(
+        interaction_token,
+        application_id,
+        true, # wait
+        content,
+        nil, # username
+        nil, # avatar_url
+        false, # tts
+        nil, # file (deprecated)
+        nil, # embeds
+        nil, # allowed_mentions
+        0, # flags
+        [], # components
+        attachments
+      ).and_return('null')
+
+      interaction.send_message(content: content) do |builder|
+        builder.attachments = attachments
       end
     end
   end
@@ -210,13 +236,13 @@ describe Discordrb::Interaction do
         [], # embeds
         nil, # allowed_mentions
         [], # components
-        nil # file
+        nil # attachments
       ).and_return('null')
 
       interaction.edit_message(message, content: content)
     end
 
-    it 'calls webhook api with correct parameters when file is added to builder' do
+    it 'calls webhook api with correct parameters when attachments are added to builder' do
       expect(Discordrb::API::Webhook).to receive(:token_edit_message).with(
         interaction_token,
         application_id,
@@ -225,11 +251,11 @@ describe Discordrb::Interaction do
         nil, # embeds
         nil, # allowed_mentions
         [], # components
-        file # file
+        attachments
       ).and_return('null')
 
       interaction.edit_message(message, content: content) do |builder|
-        builder.file = file
+        builder.attachments = attachments
       end
     end
   end

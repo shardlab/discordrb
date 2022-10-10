@@ -9,7 +9,7 @@ describe Discordrb::API::Interaction do
   let(:application_id) { SecureRandom.random_number(1000) }
   let(:content) { 'hello world' }
   let(:callback_type) { Discordrb::Interaction::CALLBACK_TYPES[:channel_message] }
-  let(:file) { double(File) }
+  let(:attachments) { [double(File), double(File)] }
 
   describe '#create_interaction_response' do
     it 'sends a JSON payload with headers when file is not specified' do
@@ -30,13 +30,13 @@ describe Discordrb::API::Interaction do
       )
     end
 
-    it 'sends a multipart payload when a file is specified' do
+    it 'sends a multipart payload when attachments are specified' do
       expect(Discordrb::API).to receive(:request).with(
         :interactions_iid_token_callback,
         interaction_id,
         :post,
         "#{Discordrb::API.api_base}/interactions/#{interaction_id}/#{interaction_token}/callback",
-        { file: file, payload_json: { type: callback_type, data: { content: content } }.to_json },
+        { 0 => attachments[0], 1 => attachments[1], payload_json: { type: callback_type, data: { content: content } }.to_json },
         nil
       )
 
@@ -50,7 +50,7 @@ describe Discordrb::API::Interaction do
         nil, # allowed_mentions
         nil, # flags
         nil, # components
-        file
+        attachments
       )
     end
   end
@@ -80,7 +80,7 @@ describe Discordrb::API::Interaction do
         nil, # embeds
         nil, # allowed_mentions
         nil, # components
-        file
+        attachments
       )
 
       Discordrb::API::Interaction.edit_original_interaction_response(
@@ -90,7 +90,7 @@ describe Discordrb::API::Interaction do
         nil, # embeds
         nil, # allowed_mentions
         nil, # components
-        file
+        attachments
       )
     end
   end
