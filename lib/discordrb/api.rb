@@ -9,7 +9,7 @@ require 'discordrb/errors'
 # List of methods representing endpoints in Discord's API
 module Discordrb::API
   # The base URL of the Discord REST API.
-  APIBASE = 'https://discord.com/api/v8'
+  APIBASE = 'https://discord.com/api/v9'
 
   # The URL of Discord's CDN
   CDN_URL = 'https://cdn.discordapp.com'
@@ -143,7 +143,7 @@ module Discordrb::API
 
       unless mutex.locked?
         response = JSON.parse(e.response)
-        wait_seconds = response['retry_after'].to_i / 1000.0
+        wait_seconds = response['retry_after'] ? response['retry_after'].to_f : e.response.headers[:retry_after].to_i
         Discordrb::LOGGER.ratelimit("Locking RL mutex (key: #{key}) for #{wait_seconds} seconds due to Discord rate limiting")
         trace("429 #{key.join(' ')}")
 
@@ -221,6 +221,14 @@ module Discordrb::API
   # Make an achievement icon URL from application ID, achievement ID, and icon hash
   def achievement_icon_url(application_id, achievement_id, icon_hash, format = 'webp')
     "#{cdn_url}/app-assets/#{application_id}/achievements/#{achievement_id}/icons/#{icon_hash}.#{format}"
+  end
+
+  # @param role_id [String, Integer]
+  # @param icon_hash [String]
+  # @param format ['webp', 'png', 'jpeg']
+  # @return [String]
+  def role_icon_url(role_id, icon_hash, format = 'webp')
+    "#{cdn_url}/role-icons/#{role_id}/#{icon_hash}.#{format}"
   end
 
   # Login to the server

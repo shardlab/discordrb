@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'discordrb/webhooks'
+
 module Discordrb
   # Base class for interaction objects.
   class Interaction
@@ -8,7 +10,8 @@ module Discordrb
     TYPES = {
       ping: 1,
       command: 2,
-      component: 3
+      component: 3,
+      modal_submit: 5
     }.freeze
 
     # Interaction response types.
@@ -18,10 +21,11 @@ module Discordrb
       channel_message: 4,
       deferred_message: 5,
       deferred_update: 6,
-      update_message: 7
+      update_message: 7,
+      modal: 9
     }.freeze
 
-    # @return [User] The user that initiated the interaction.
+    # @return [User, Member] The user that initiated the interaction.
     attr_reader :user
 
     # @return [Integer, nil] The ID of the server this interaction originates from.
@@ -50,6 +54,9 @@ module Discordrb
     # @return [Hash] The interaction data.
     attr_reader :data
 
+    # @return [Array<ActionRow>]
+    attr_reader :components
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -63,12 +70,13 @@ module Discordrb
       @channel_id = data['channel_id']&.to_i
       @user = if data['member']
                 data['member']['guild_id'] = @server_id
-                Discordrb::Member.new(data['member'], nil, bot)
+                Discordrb::Member.new(data['member'], bot.servers[@server_id], bot)
               else
                 bot.ensure_user(data['user'])
               end
       @token = data['token']
       @version = data['version']
+      @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
@@ -90,10 +98,12 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      # Set builder defaults from parameters
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = builder.to_json_hash
 
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
 
@@ -120,6 +130,23 @@ module Discordrb
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:deferred_update])
     end
 
+    # Create a modal as a response.
+    # @param title [String] The title of the modal being shown.
+    # @param custom_id [String] The custom_id used to identify the modal and store data.
+    # @param components [Array<Component, Hash>, nil] An array of components. These can be defined through the block as well.
+    # @yieldparam [Discordrb::Webhooks::Modal] A builder for the modal's components.
+    def show_modal(title:, custom_id:, components: nil)
+      if block_given?
+        modal_builder = Discordrb::Webhooks::Modal.new
+        yield modal_builder
+
+        components = modal_builder.to_a
+      end
+
+      Discordrb::API::Interaction.create_interaction_modal_response(@token, @id, custom_id, title, components.to_a)
+      nil
+    end
+
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
     # The response may be modified with {Interaction#edit_response} or deleted with {Interaction#delete_response}.
     # Further messages can be sent with {Interaction#send_message}.
@@ -139,10 +166,11 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = builder.to_json_hash
 
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
 
@@ -156,16 +184,18 @@ module Discordrb
     # @param content [String] The content of the message.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param components [Array<#to_h>] An array of components
     # @return [InteractionMessage] The updated response message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = builder.to_json_hash
       resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
@@ -189,13 +219,14 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, components: components.to_a }.compact)
+      data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, data[:tts], nil, data[:embeds], data[:allowed_mentions], flags, data[:components]
+        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -209,13 +240,14 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components.to_a }.compact)
+      data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], data[:components]
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -247,6 +279,32 @@ module Discordrb
           return button if button.custom_id == @data['custom_id']
         end
       end
+    end
+
+    # @return [Array<TextInput>]
+    def text_inputs
+      @components&.select { |component| component.is_a? TextInput } | []
+    end
+
+    # @return [TextInput, Button, SelectMenu]
+    def get_component(custom_id)
+      top_level = @components.flat_map(&:components) || []
+      message_level = @message&.components&.flat_map { |r| r.components } || []
+      components = top_level.concat(message_level)
+      components.find { |component| component.custom_id == custom_id }
+    end
+
+    private
+
+    # Set builder defaults from parameters
+    # @param builder [Discordrb::Webhooks::Builder]
+    # @param content [String, nil]
+    # @param embeds [Array<Hash, Discordrb::Webhooks::Embed>, nil]
+    # @param allowed_mentions [AllowedMentions, Hash, nil]
+    def prepare_builder(builder, content, embeds, allowed_mentions)
+      builder.content = content
+      builder.allowed_mentions = allowed_mentions
+      embeds&.each { |embed| builder << embed }
     end
   end
 
@@ -286,13 +344,30 @@ module Discordrb
       @bot = bot
       @id = data['id'].to_i
       @application_id = data['application_id'].to_i
-      @server_id = server_id.to_i
+      @server_id = server_id&.to_i
 
       @name = data['name']
       @description = data['description']
       @default_permission = data['default_permission']
       @options = data['options']
     end
+
+    # @param subcommand [String, nil] The subcommand to mention.
+    # @param subcommand_group [String, nil] The subcommand group to mention.
+    # @return [String] the layout to mention it in a message
+    def mention(subcommand_group: nil, subcommand: nil)
+      if subcommand_group && subcommand
+        "</#{name} #{subcommand_group} #{subcommand}:#{id}>"
+      elsif subcommand_group
+        "</#{name} #{subcommand_group}:#{id}>"
+      elsif subcommand
+        "</#{name} #{subcommand}:#{id}>"
+      else
+        "</#{name}:#{id}>"
+      end
+    end
+
+    alias_method :to_s, :mention
 
     # @param name [String] The name to use for this command.
     # @param description [String] The description of this command.
@@ -713,8 +788,12 @@ module Discordrb
       # @return [Hash, nil]
       attr_reader :message_reference
 
+      # @return [Array<Component>]
+      attr_reader :components
+
       # @!visibility private
       def initialize(data, bot, interaction)
+        @data = data
         @bot = bot
         @interaction = interaction
         @content = data['content']
@@ -750,6 +829,7 @@ module Discordrb
         @mention_everyone = data['mention_everyone']
         @flags = data['flags']
         @pinned = data['pinned']
+        @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
       end
 
       # @return [Member, nil] This will return nil if the bot does not have access to the
@@ -790,6 +870,13 @@ module Discordrb
       def edit(content: nil, embeds: nil, allowed_mentions: nil, components: nil, &block)
         @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, &block)
       end
+
+      # @return [Discordrb::Message]
+      def to_message
+        Discordrb::Message.new(@data, @bot)
+      end
+
+      alias_method :message, :to_message
 
       # @!visibility private
       def inspect

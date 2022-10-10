@@ -140,7 +140,8 @@ module Discordrb::API::Server
 
   # Update a user properties
   # https://discord.com/developers/docs/resources/guild#modify-guild-member
-  def update_member(token, server_id, user_id, nick: nil, roles: nil, mute: nil, deaf: nil, channel_id: nil, reason: nil)
+  def update_member(token, server_id, user_id, nick: :undef, roles: :undef, mute: :undef, deaf: :undef, channel_id: :undef,
+                    communication_disabled_until: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid_members_uid,
       server_id,
@@ -150,8 +151,9 @@ module Discordrb::API::Server
         nick: nick,
         mute: mute,
         deaf: deaf,
-        channel_id: channel_id
-      }.compact.to_json,
+        channel_id: channel_id,
+        communication_disabled_until: communication_disabled_until
+      }.reject { |_, v| v == :undef }.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
@@ -246,13 +248,28 @@ module Discordrb::API::Server
   # sending TTS messages, embedding links, sending files, reading the history, mentioning everybody,
   # connecting to voice, speaking and voice activity (push-to-talk isn't mandatory)
   # https://discord.com/developers/docs/resources/guild#batch-modify-guild-role
-  def update_role(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil)
+  # @param icon [:undef, File]
+  def update_role(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef)
+    data = { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions }
+
+    if icon != :undef && icon
+      path_method = %i[original_filename path local_path].find { |meth| icon.respond_to?(meth) }
+
+      raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
+      raise ArgumentError, 'File must respond to read' unless icon.respond_to? :read
+
+      mime_type = MIME::Types.type_for(icon.__send__(path_method)).first&.to_s || 'image/jpeg'
+      data[:icon] = "data:#{mime_type};base64,#{Base64.encode64(icon.read).strip}"
+    elsif icon.nil?
+      data[:icon] = nil
+    end
+
     Discordrb::API.request(
       :guilds_sid_roles_rid,
       server_id,
       :patch,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/#{role_id}",
-      { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions }.to_json,
+      data.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason

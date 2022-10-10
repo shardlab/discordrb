@@ -27,15 +27,6 @@ commands:
             - ./vendor/bundle
 
 jobs:
-  test_ruby_26:
-    docker:
-      - image: ruby:2.6-alpine
-    steps:
-      - setup-env
-      - run:
-          name: Run RSpec
-          command: bundle exec rspec
-
   test_ruby_27:
     docker:
       - image: ruby:2.7-alpine
@@ -43,7 +34,9 @@ jobs:
       - setup-env
       - run:
           name: Run RSpec
-          command: bundle exec rspec
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
+      - store_test_results:
+          path: ~/rspec
 
   test_ruby_30:
     docker:
@@ -52,20 +45,32 @@ jobs:
       - setup-env
       - run:
           name: Run RSpec
-          command: bundle exec rspec
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
+      - store_test_results:
+          path: ~/rspec
+
+
+  test_ruby_31:
+    docker:
+      - image: ruby:3.1-alpine
+    steps:
+      - setup-env
+      - run:
+          name: Run RSpec
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
 
   rubocop:
     docker:
-      - image: ruby:2.6-alpine
+      - image: ruby:2.7-alpine
     steps:
       - setup-env
       - run:
           name: Run Rubocop
-          command: bundle exec rubocop -P
+          command: bundle exec rubocop
 
   yard:
     docker:
-      - image: ruby:2.6-alpine
+      - image: ruby:2.7-alpine
     steps:
       - setup-env
       - attach_workspace:
@@ -79,13 +84,22 @@ jobs:
             - docs
 
   pages:
-    machine: true
+    docker:
+      - image: alpine
     steps:
+      - run:
+          name: Install OS packages
+          command: apk add git openssh-client-default
       - attach_workspace:
           at: /tmp/workspace
       - run:
           name: Clone docs
-          command: git clone $CIRCLE_REPOSITORY_URL -b gh-pages .
+          command: |
+            mkdir -p ~/.ssh
+
+            echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==' >> ~/.ssh/known_hosts
+
+            git clone $CIRCLE_REPOSITORY_URL -b gh-pages .
       - add_ssh_keys:
           fingerprints:
             - "9a:4c:50:94:23:46:81:74:41:97:87:04:4e:59:4b:4e"
@@ -111,9 +125,9 @@ jobs:
 workflows:
   test:
     jobs:
-      - test_ruby_26
       - test_ruby_27
       - test_ruby_30
+      - test_ruby_31
       - rubocop
       - yard
   deploy:

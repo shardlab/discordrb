@@ -2,16 +2,16 @@
 
 require 'discordrb'
 
-bot = Discordrb::Bot.new(token: ENV['SLASH_COMMAND_BOT_TOKEN'], intents: [:server_messages])
+bot = Discordrb::Bot.new(token: ENV.fetch('SLASH_COMMAND_BOT_TOKEN', nil), intents: [:server_messages])
 
-# We need to register our application comomands separately from the handlers with a special DSL.
+# We need to register our application commands separately from the handlers with a special DSL.
 # This example uses server specific commands so that they appear immediately for testing,
 # but you can omit the server_id as well to register a global command that can take up to an hour
 # to appear.
 #
 # You may want to have a separate script for registering your commands so you don't need to do this every
 # time you start your bot.
-bot.register_application_command(:example, 'Example commands', server_id: ENV['SLASH_COMMAND_BOT_SERVER_ID']) do |cmd|
+bot.register_application_command(:example, 'Example commands', server_id: ENV.fetch('SLASH_COMMAND_BOT_SERVER_ID', nil)) do |cmd|
   cmd.subcommand_group(:fun, 'Fun things!') do |group|
     group.subcommand('8ball', 'Shake the magic 8 ball') do |sub|
       sub.string('question', 'Ask a question to receive wisdom', required: true)
@@ -29,7 +29,7 @@ bot.register_application_command(:example, 'Example commands', server_id: ENV['S
   end
 end
 
-bot.register_application_command(:spongecase, 'Are you mocking me?', server_id: ENV['SLASH_COMMAND_BOT_SERVER_ID']) do |cmd|
+bot.register_application_command(:spongecase, 'Are you mocking me?', server_id: ENV.fetch('SLASH_COMMAND_BOT_SERVER_ID', nil)) do |cmd|
   cmd.string('message', 'Message to spongecase')
   cmd.boolean('with_picture', 'Show the mocking sponge?')
 end

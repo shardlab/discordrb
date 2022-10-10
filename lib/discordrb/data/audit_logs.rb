@@ -177,7 +177,7 @@ module Discordrb
 
       # The inspect method is overwritten to give more useful output
       def inspect
-        "<AuditLogs::Entry id=#{@id} action=#{@action} reason=#{@reason} action_type=#{@action_type} target_type=#{@target_type} count=#{@count} days=#{@days} members_removed=#{@members_removed}>"
+        "<AuditLogs::Entry id=#{@id} key=#{@key} action=#{@action} reason=#{@reason} action_type=#{@action_type} target_type=#{@target_type} count=#{@count} days=#{@days} members_removed=#{@members_removed}>"
       end
 
       # Process action changes
@@ -219,8 +219,8 @@ module Discordrb
         @old = Permissions.new(@old) if @old && @key == 'permissions'
         @new = Permissions.new(@new) if @new && @key == 'permissions'
 
-        @old = @old.map { |o| Overwrite.new(o['id'], type: o['type'].to_sym, allow: o['allow'], deny: o['deny']) } if @old && @key == 'permission_overwrites'
-        @new = @new.map { |o| Overwrite.new(o['id'], type: o['type'].to_sym, allow: o['allow'], deny: o['deny']) } if @new && @key == 'permission_overwrites'
+        @old = @old.map { |o| Overwrite.new(o['id'], type: o['type'], allow: o['allow'], deny: o['deny']) } if @old && @key == 'permission_overwrites'
+        @new = @new.map { |o| Overwrite.new(o['id'], type: o['type'], allow: o['allow'], deny: o['deny']) } if @new && @key == 'permission_overwrites'
       end
 
       # @return [Channel, nil] the channel that was previously used in the server widget. Only present if the key for this change is `widget_channel_id`.

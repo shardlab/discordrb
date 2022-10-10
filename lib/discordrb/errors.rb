@@ -45,7 +45,7 @@ module Discordrb
       end
 
       # @return [String] A message including the message and flattened errors.
-      def full_message
+      def full_message(*)
         error_list = @errors.collect { |err| "\t- #{err}" }
 
         "#{@message}\n#{error_list.join("\n")}"
@@ -87,7 +87,7 @@ module Discordrb
     # rubocop:disable Naming/MethodName
     def self.Code(code)
       classy = Class.new(CodeError)
-      classy.instance_variable_set('@code', code)
+      classy.instance_variable_set(:@code, code)
 
       @code_classes ||= {}
       @code_classes[code] = classy

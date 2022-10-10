@@ -182,6 +182,14 @@ module Discordrb
       @servers
     end
 
+    # The list of members in threads the bot can see.
+    # @return [Hash<Integer => Hash<Integer => Hash<String => Object>>]
+    def thread_members
+      gateway_check
+      unavailable_servers_check
+      @thread_members
+    end
+
     # @overload emoji(id)
     #   Return an emoji by its ID
     #   @param id [String, Integer] The emoji's ID.
@@ -615,6 +623,36 @@ module Discordrb
     def invisible
       gateway_check
       update_status(:invisible, @activity, nil)
+    end
+
+    # Join a thread
+    # @param channel [Channel, Integer, String]
+    def join_thread(channel)
+      API::Channel.join_thread(@token, channel.resolve_id)
+      nil
+    end
+
+    # Leave a thread
+    # @param channel [Channel, Integer, String]
+    def leave_thread(channel)
+      API::Channel.leave_thread(@token, channel.resolve_id)
+      nil
+    end
+
+    # Add a member to a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def add_thread_member(channel, member)
+      API::Channel.add_thread_member(@token, channel.resolve_id, member.resolve_id)
+      nil
+    end
+
+    # Remove a member from a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def remove_thread_member(channel, member)
+      API::Channel.remove_thread_member(@token, channel.resolve_id, member.resolve_id)
+      nil
     end
 
     # Sets debug mode. If debug mode is on, many things will be outputted to STDOUT.
@@ -1054,6 +1092,8 @@ module Discordrb
       elsif channel.group?
         @channels.delete(channel.id)
       end
+
+      @thread_members.delete(channel.id) if channel.thread?
     end
 
     # Internal handler for CHANNEL_RECIPIENT_ADD
@@ -1094,6 +1134,7 @@ module Discordrb
       member.update_roles(data['roles'])
       member.update_nick(data['nick'])
       member.update_boosting_since(data['premium_since'])
+      member.update_communication_disabled_until(data['communication_disabled_until'])
     end
 
     # Internal handler for GUILD_MEMBER_DELETE
@@ -1571,9 +1612,46 @@ module Discordrb
 
             raise_event(event)
           end
+        when Interaction::TYPES[:modal_submit]
+
+          event = ModalSubmitEvent.new(data, self)
+          raise_event(event)
         end
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)
+        raise_event(event)
+      when :THREAD_CREATE
+        create_channel(data)
+
+        event = ThreadCreateEvent.new(data, bot)
+        raise_event(event)
+      when :THREAD_UPDATE
+        update_channel(data)
+
+        event = ThreadUpdateEvent.new(data, bot)
+        raise_event(event)
+      when :THREAD_DELETE
+        channel_delete(data)
+        @thread_members.delete(data['id'])
+
+        # raise ThreadDeleteEvent
+      when :THREAD_LIST_SYNC
+        data['members'].map { |member| ensure_thread_member(member) }
+        data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
+
+        # raise ThreadListSyncEvent?
+      when :THREAD_MEMBER_UPDATE
+        ensure_thread_member(data)
+      when :THREAD_MEMBERS_UPDATE
+        data['added_members'].each do |added_member|
+          ensure_thread_member(added_member) if added_member['user_id']
+        end
+
+        data['removed_member_ids'].each do |member_id|
+          @thread_members[channel_id].delete(member_id)
+        end
+
+        event = ThreadMembersUpdateEvent.new(data, self)
         raise_event(event)
       else
         # another event that we don't support yet

@@ -10,7 +10,7 @@ module Discordrb
   Thread.current[:discordrb_name] = 'main'
 
   # The default debug logger used by discordrb.
-  LOGGER = Logger.new(ENV['DISCORDRB_FANCY_LOG'])
+  LOGGER = Logger.new(ENV.fetch('DISCORDRB_FANCY_LOG', false))
 
   # The Unix timestamp Discord IDs are based on
   DISCORD_EPOCH = 1_420_070_400_000
