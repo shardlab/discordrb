@@ -1596,11 +1596,11 @@ module Discordrb
       when :THREAD_MEMBER_UPDATE
         ensure_thread_member(data)
       when :THREAD_MEMBERS_UPDATE
-        data['added_members'].each do |added_member|
+        data['added_members']&.each do |added_member|
           ensure_thread_member(added_member) if added_member['user_id']
         end
 
-        data['removed_member_ids'].each do |member_id|
+        data['removed_member_ids']&.each do |member_id|
           @thread_members[channel_id].delete(member_id)
         end
 
