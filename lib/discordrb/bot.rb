@@ -825,8 +825,6 @@ module Discordrb
     def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input)
       type = ApplicationCommand::TYPES[type] || type
 
-      cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
-
       builder = Interactions::OptionBuilder.new
       permission_builder = Interactions::PermissionBuilder.new
       name_localization_builder = Interactions::NameLocalizationBuilder.new
@@ -839,6 +837,7 @@ module Discordrb
              else
                API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, name_localization_builder.to_a, description_localization_builder.to_a)
              end
+      cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
       if permission_builder.to_a.any?
         raise ArgumentError, 'Permissions can only be set for guild commands' unless server_id
