@@ -833,9 +833,9 @@ module Discordrb
       yield(builder, permission_builder, name_localization_builder, description_localization_builder) if block_given?
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, name_localization_builder.to_a,  description_localization_builder.to_a)
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, name_localization_builder.to_a, description_localization_builder.to_a)
              else
-               API::Application.create_global_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, name_localization_builder.to_a,  description_localization_builder.to_a)
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, name_localization_builder.to_a, description_localization_builder.to_a)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -861,9 +861,9 @@ module Discordrb
       yield(builder, permission_builder, name_localization_builder, description_localization_builder) if block_given?
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, name_localization_builder.to_a, description_localization_builder.to_a, default_permission, type)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, name_localization_builder.to_a, description_localization_builder.to_a)
              else
-               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, name_localization_builder.to_a, description_localization_builder.to_a, default_permission.type)
+               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type, name_localization_builder.to_a, description_localization_builder.to_a)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
