@@ -143,7 +143,7 @@ module Discordrb
         components = modal_builder.to_a
       end
 
-      Discordrb::API::Interaction.create_interaction_modal_response(@token, @id, custom_id, title, components.to_a)
+      Discordrb::API::Interaction.create_interaction_modal_response(@token, @id, custom_id, title, components.to_a) unless type == Interaction::TYPES[:modal_submit]
       nil
     end
 
