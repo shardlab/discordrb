@@ -57,6 +57,16 @@ module Discordrb
     # @return [Array<ActionRow>]
     attr_reader :components
 
+    # @return [String] The selected locale of the invoking user
+    attr_reader :locale 
+    alias_method :language, :locale
+
+    # @return [String, nil] The preferred locale of the server the interaction was invoked in
+    attr_reader :guild_locale
+    alias_method :server_locale, :guild_locale
+    alias_method :server_language, :guild_locale
+    alias_method :guild_language, :guild_locale
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -77,6 +87,8 @@ module Discordrb
       @token = data['token']
       @version = data['version']
       @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
+      @guild_locale = data['guild_locale']
+      @locale = data['locale']
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
