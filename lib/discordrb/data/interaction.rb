@@ -58,7 +58,7 @@ module Discordrb
     attr_reader :components
 
     # @return [String] The selected locale of the invoking user
-    attr_reader :locale 
+    attr_reader :locale
     alias_method :language, :locale
 
     # @return [String, nil] The preferred locale of the server the interaction was invoked in
