@@ -599,7 +599,7 @@ module Discordrb
       end
 
       # @param locale [String] The locale/language to create a localization for
-      # @param name [String] The localization description
+      # @param description [String] The localization description
       # @return [Hash]
       def description_localization(locale, description)
         @description_localizations[locale] = description
