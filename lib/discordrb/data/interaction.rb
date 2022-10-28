@@ -430,48 +430,49 @@ module Discordrb
         stage: 13
       }.freeze
 
+      # @return [Array<Hash>]
       attr_reader :options
 
-       # @!visibility private
-        def initialize
-         @options = []
-       end
+      # @!visibility private
+      def initialize
+        @options = []
+      end
 
-       # @param name [String, Symbol] The name of the subcommand.
-       # @param description [String] A description of the subcommand.
-       # @yieldparam [OptionBuilder]
-       # @return (see #option)
-       # @example
-       #   bot.register_application_command(:test, 'Test command') do |cmd|
-       #     cmd.subcommand(:echo) do |sub|
-       #       sub.string('message', 'What to echo back', required: true)
-       #     end
-       #   end
-       def subcommand(name, description)
-         builder = OptionBuilder.new
-         yield builder if block_given?
+      # @param name [String, Symbol] The name of the subcommand.
+      # @param description [String] A description of the subcommand.
+      # @yieldparam [OptionBuilder]
+      # @return (see #option)
+      # @example
+      #   bot.register_application_command(:test, 'Test command') do |cmd|
+      #     cmd.subcommand(:echo) do |sub|
+      #       sub.string('message', 'What to echo back', required: true)
+      #     end
+      #   end
+      def subcommand(name, description)
+        builder = OptionBuilder.new
+        yield builder if block_given?
 
-         option(TYPES[:subcommand], name, description, options: builder.to_a)
-       end
+        option(TYPES[:subcommand], name, description, options: builder.to_a)
+      end
 
-       # @param name [String, Symbol] The name of the subcommand group.
-       # @param description [String] A description of the subcommand group.
-       # @yieldparam [OptionBuilder]
-       # @return (see #option)
-       # @example
-       #   bot.register_application_command(:test, 'Test command') do |cmd|
-       #     cmd.subcommand_group(:fun) do |group|
-       #       group.subcommand(:8ball) do |sub|
-       #         sub.string(:question, 'What do you ask the mighty 8ball?')
-       #       end
-       #     end
-       #   end
-       def subcommand_group(name, description)
-         builder = OptionBuilder.new
-         yield builder
+      # @param name [String, Symbol] The name of the subcommand group.
+      # @param description [String] A description of the subcommand group.
+      # @yieldparam [OptionBuilder]
+      # @return (see #option)
+      # @example
+      #   bot.register_application_command(:test, 'Test command') do |cmd|
+      #     cmd.subcommand_group(:fun) do |group|
+      #       group.subcommand(:8ball) do |sub|
+      #         sub.string(:question, 'What do you ask the mighty 8ball?')
+      #       end
+      #     end
+      #   end
+      def subcommand_group(name, description)
+        builder = OptionBuilder.new
+        yield builder
 
-         option(TYPES[:subcommand_group], name, description, options: builder.to_a)
-       end
+        option(TYPES[:subcommand_group], name, description, options: builder.to_a)
+      end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
