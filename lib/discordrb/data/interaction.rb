@@ -430,49 +430,48 @@ module Discordrb
         stage: 13
       }.freeze
 
-      # @return [Array<Hash>]
       attr_reader :options
 
-      # @!visibility private
-      def initialize
-        @options = []
-      end
+       # @!visibility private
+        def initialize
+         @options = []
+       end
 
-      # @param name [String, Symbol] The name of the subcommand.
-      # @param description [String] A description of the subcommand.
-      # @yieldparam [OptionBuilder]
-      # @return (see #option)
-      # @example
-      #   bot.register_application_command(:test, 'Test command') do |cmd|
-      #     cmd.subcommand(:echo) do |sub|
-      #       sub.string('message', 'What to echo back', required: true)
-      #     end
-      #   end
-      def subcommand(name, description)
-        builder = OptionBuilder.new
-        yield builder if block_given?
+       # @param name [String, Symbol] The name of the subcommand.
+       # @param description [String] A description of the subcommand.
+       # @yieldparam [OptionBuilder]
+       # @return (see #option)
+       # @example
+       #   bot.register_application_command(:test, 'Test command') do |cmd|
+       #     cmd.subcommand(:echo) do |sub|
+       #       sub.string('message', 'What to echo back', required: true)
+       #     end
+       #   end
+       def subcommand(name, description)
+         builder = OptionBuilder.new
+         yield builder if block_given?
 
-        option(TYPES[:subcommand], name, description, options: builder.to_a)
-      end
+         option(TYPES[:subcommand], name, description, options: builder.to_a)
+       end
 
-      # @param name [String, Symbol] The name of the subcommand group.
-      # @param description [String] A description of the subcommand group.
-      # @yieldparam [OptionBuilder]
-      # @return (see #option)
-      # @example
-      #   bot.register_application_command(:test, 'Test command') do |cmd|
-      #     cmd.subcommand_group(:fun) do |group|
-      #       group.subcommand(:8ball) do |sub|
-      #         sub.string(:question, 'What do you ask the mighty 8ball?')
-      #       end
-      #     end
-      #   end
-      def subcommand_group(name, description)
-        builder = OptionBuilder.new
-        yield builder
+       # @param name [String, Symbol] The name of the subcommand group.
+       # @param description [String] A description of the subcommand group.
+       # @yieldparam [OptionBuilder]
+       # @return (see #option)
+       # @example
+       #   bot.register_application_command(:test, 'Test command') do |cmd|
+       #     cmd.subcommand_group(:fun) do |group|
+       #       group.subcommand(:8ball) do |sub|
+       #         sub.string(:question, 'What do you ask the mighty 8ball?')
+       #       end
+       #     end
+       #   end
+       def subcommand_group(name, description)
+         builder = OptionBuilder.new
+         yield builder
 
-        option(TYPES[:subcommand_group], name, description, options: builder.to_a)
-      end
+         option(TYPES[:subcommand_group], name, description, options: builder.to_a)
+       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
@@ -480,7 +479,11 @@ module Discordrb
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
       # @return (see #option)
       def string(name, description, required: nil, choices: nil)
-        option(TYPES[:string], name, description, required: required, choices: choices)
+        name_localization_builder = NameLocalizationBuilder.new
+        description_localization_builder = DescriptionLocalizationBuilder.new
+        yield(name_localization_builder, description_localization_builder) if iterator?
+
+        option(TYPES[:string], name, description, required: required, choices: choices, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -489,7 +492,11 @@ module Discordrb
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
       # @return (see #option)
       def integer(name, description, required: nil, choices: nil)
-        option(TYPES[:integer], name, description, required: required, choices: choices)
+        name_localization_builder = NameLocalizationBuilder.new
+        description_localization_builder = DescriptionLocalizationBuilder.new
+        yield(name_localization_builder, description_localization_builder) if iterator?
+
+        option(TYPES[:integer], name, description, required: required, choices: choices, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -497,7 +504,11 @@ module Discordrb
       # @param required [true, false] Whether this option must be provided.
       # @return (see #option)
       def boolean(name, description, required: nil)
-        option(TYPES[:boolean], name, description, required: required)
+        name_localization_builder = NameLocalizationBuilder.new
+        description_localization_builder = DescriptionLocalizationBuilder.new
+        yield(name_localization_builder, description_localization_builder) if iterator?
+
+        option(TYPES[:boolean], name, description, required: required, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -505,7 +516,11 @@ module Discordrb
       # @param required [true, false] Whether this option must be provided.
       # @return (see #option)
       def user(name, description, required: nil)
-        option(TYPES[:user], name, description, required: required)
+        name_localization_builder = NameLocalizationBuilder.new
+        description_localization_builder = DescriptionLocalizationBuilder.new
+        yield(name_localization_builder, description_localization_builder) if iterator?
+
+        option(TYPES[:user], name, description, required: required, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -515,7 +530,11 @@ module Discordrb
       # @return (see #option)
       def channel(name, description, required: nil, types: nil)
         types = types&.collect { |type| type.is_a?(Numeric) ? type : CHANNEL_TYPES[type] }
-        option(TYPES[:channel], name, description, required: required, channel_types: types)
+        name_localization_builder = NameLocalizationBuilder.new
+        description_localization_builder = DescriptionLocalizationBuilder.new
+        yield(name_localization_builder, description_localization_builder) if iterator?
+
+        option(TYPES[:channel], name, description, required: required, channel_types: types, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -523,7 +542,11 @@ module Discordrb
       # @param required [true, false] Whether this option must be provided.
       # @return (see #option)
       def role(name, description, required: nil)
-        option(TYPES[:role], name, description, required: required)
+        name_localization_builder = NameLocalizationBuilder.new
+        description_localization_builder = DescriptionLocalizationBuilder.new
+        yield(name_localization_builder, description_localization_builder) if iterator?
+
+        option(TYPES[:role], name, description, required: required, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -531,7 +554,11 @@ module Discordrb
       # @param required [true, false] Whether this option must be provided.
       # @return (see #option)
       def mentionable(name, description, required: nil)
-        option(TYPES[:mentionable], name, description, required: required)
+        name_localization_builder = NameLocalizationBuilder.new
+        description_localization_builder = DescriptionLocalizationBuilder.new
+        yield(name_localization_builder, description_localization_builder) if iterator?
+
+        option(TYPES[:mentionable], name, description, required: required, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -539,8 +566,12 @@ module Discordrb
       # @param required [true, false] Whether this option must be provided.
       # @return (see #option)
       def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil)
+        name_localization_builder = NameLocalizationBuilder.new
+        description_localization_builder = DescriptionLocalizationBuilder.new
+        yield(name_localization_builder, description_localization_builder) if iterator?
+
         option(TYPES[:number], name, description,
-               required: required, min_value: min_value, max_value: max_value, choices: choices)
+               required: required, min_value: min_value, max_value: max_value, choices: choices, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
 
       # @!visibility private
@@ -551,14 +582,16 @@ module Discordrb
       # @param min_value [Integer, Float] A minimum value for integer and number options.
       # @param max_value [Integer, Float] A maximum value for integer and number options.
       # @param channel_types [Array<Integer>] Channel types that can be provides for channel options.
+      # @param name_localizations [Hash] Name localizations for this option
+      # @param description_localizations [Hash] Description localizations for this option
       # @return Hash
       def option(type, name, description, required: nil, choices: nil, options: nil, min_value: nil, max_value: nil,
-                 channel_types: nil)
+                 channel_types: nil, name_localizations: nil, description_localizations: nil)
         opt = { type: type, name: name, description: description }
         choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
 
         opt.merge!({ required: required, choices: choices, options: options, min_value: min_value,
-                     max_value: max_value, channel_types: channel_types }.compact)
+                     max_value: max_value, channel_types: channel_types, name_localizations: name_localizations, description_localizations: description_localizations }.compact)
 
         @options << opt
         opt
@@ -599,7 +632,7 @@ module Discordrb
       end
 
       # @param locale [String] The locale/language to create a localization for
-      # @param description [String] The localization description
+      # @param name [String] The localization description
       # @return [Hash]
       def description_localization(locale, description)
         @description_localizations[locale] = description
