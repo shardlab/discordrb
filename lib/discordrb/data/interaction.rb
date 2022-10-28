@@ -482,7 +482,7 @@ module Discordrb
       def string(name, description, required: nil, choices: nil)
         name_localization_builder = NameLocalizationBuilder.new
         description_localization_builder = DescriptionLocalizationBuilder.new
-        yield(name_localization_builder, description_localization_builder) if iterator?
+        yield(name_localization_builder, description_localization_builder) if block_given?
 
         option(TYPES[:string], name, description, required: required, choices: choices, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
@@ -495,7 +495,7 @@ module Discordrb
       def integer(name, description, required: nil, choices: nil)
         name_localization_builder = NameLocalizationBuilder.new
         description_localization_builder = DescriptionLocalizationBuilder.new
-        yield(name_localization_builder, description_localization_builder) if iterator?
+        yield(name_localization_builder, description_localization_builder) if block_given?
 
         option(TYPES[:integer], name, description, required: required, choices: choices, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
@@ -507,7 +507,7 @@ module Discordrb
       def boolean(name, description, required: nil)
         name_localization_builder = NameLocalizationBuilder.new
         description_localization_builder = DescriptionLocalizationBuilder.new
-        yield(name_localization_builder, description_localization_builder) if iterator?
+        yield(name_localization_builder, description_localization_builder) if block_given?
 
         option(TYPES[:boolean], name, description, required: required, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
@@ -519,7 +519,7 @@ module Discordrb
       def user(name, description, required: nil)
         name_localization_builder = NameLocalizationBuilder.new
         description_localization_builder = DescriptionLocalizationBuilder.new
-        yield(name_localization_builder, description_localization_builder) if iterator?
+        yield(name_localization_builder, description_localization_builder) if block_given?
 
         option(TYPES[:user], name, description, required: required, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
@@ -533,7 +533,7 @@ module Discordrb
         types = types&.collect { |type| type.is_a?(Numeric) ? type : CHANNEL_TYPES[type] }
         name_localization_builder = NameLocalizationBuilder.new
         description_localization_builder = DescriptionLocalizationBuilder.new
-        yield(name_localization_builder, description_localization_builder) if iterator?
+        yield(name_localization_builder, description_localization_builder) if block_given?
 
         option(TYPES[:channel], name, description, required: required, channel_types: types, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
@@ -545,7 +545,7 @@ module Discordrb
       def role(name, description, required: nil)
         name_localization_builder = NameLocalizationBuilder.new
         description_localization_builder = DescriptionLocalizationBuilder.new
-        yield(name_localization_builder, description_localization_builder) if iterator?
+        yield(name_localization_builder, description_localization_builder) if block_given?
 
         option(TYPES[:role], name, description, required: required, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
@@ -557,7 +557,7 @@ module Discordrb
       def mentionable(name, description, required: nil)
         name_localization_builder = NameLocalizationBuilder.new
         description_localization_builder = DescriptionLocalizationBuilder.new
-        yield(name_localization_builder, description_localization_builder) if iterator?
+        yield(name_localization_builder, description_localization_builder) if block_given?
 
         option(TYPES[:mentionable], name, description, required: required, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
       end
@@ -569,7 +569,7 @@ module Discordrb
       def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil)
         name_localization_builder = NameLocalizationBuilder.new
         description_localization_builder = DescriptionLocalizationBuilder.new
-        yield(name_localization_builder, description_localization_builder) if iterator?
+        yield(name_localization_builder, description_localization_builder) if block_given?
 
         option(TYPES[:number], name, description,
                required: required, min_value: min_value, max_value: max_value, choices: choices, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
