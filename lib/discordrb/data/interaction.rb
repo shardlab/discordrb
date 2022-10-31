@@ -450,8 +450,8 @@ module Discordrb
       #   end
       def subcommand(name, description)
         builder = OptionBuilder.new
-        name_localization_builder = NameLocalizationBuilder.new 
-        description_localization_builder = DescriptionLocalizationBuilder.new 
+        name_localization_builder = NameLocalizationBuilder.new
+        description_localization_builder = DescriptionLocalizationBuilder.new
         yield(builder, name_localization_builder, description_localization_builder) if block_given?
 
         option(TYPES[:subcommand], name, description, options: builder.to_a, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
@@ -471,8 +471,8 @@ module Discordrb
       #   end
       def subcommand_group(name, description)
         builder = OptionBuilder.new
-        name_localization_builder = NameLocalizationBuilder.new 
-        description_localization_builder = DescriptionLocalizationBuilder.new 
+        name_localization_builder = NameLocalizationBuilder.new
+        description_localization_builder = DescriptionLocalizationBuilder.new
         yield(builder, name_localization_builder, description_localization_builder) if block_given?
 
         option(TYPES[:subcommand_group], name, description, options: builder.to_a, name_localizations: name_localization_builder.to_a, description_localizations: description_localization_builder.to_a)
@@ -637,7 +637,7 @@ module Discordrb
       end
 
       # @param locale [String] The locale/language to create a localization for
-      # @param name [String] The localization description
+      # @param description [String] The localization description
       # @return [Hash]
       def description_localization(locale, description)
         @description_localizations[locale] = description
