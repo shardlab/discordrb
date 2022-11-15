@@ -1560,8 +1560,24 @@ module Discordrb
             event = ButtonEvent.new(data, self)
 
             raise_event(event)
-          when Webhooks::View::COMPONENT_TYPES[:select_menu]
-            event = SelectMenuEvent.new(data, self)
+          when Webhooks::View::COMPONENT_TYPES[:string_select]
+            event = StringSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:user_select]
+            event = UserSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:role_select]
+            event = RoleSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:mentionable_select]
+            event = MentionableSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:channel_select]
+            event = ChannelSelectEvent.new(data, self)
 
             raise_event(event)
           end

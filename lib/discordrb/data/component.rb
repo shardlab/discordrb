@@ -14,7 +14,7 @@ module Discordrb
         ActionRow.new(data, bot)
       when Webhooks::View::COMPONENT_TYPES[:button]
         Button.new(data, bot)
-      when Webhooks::View::COMPONENT_TYPES[:select_menu]
+      when Webhooks::View::COMPONENT_TYPES[:string_select]
         SelectMenu.new(data, bot)
       when Webhooks::Modal::COMPONENT_TYPES[:text_input]
         TextInput.new(data, bot)
