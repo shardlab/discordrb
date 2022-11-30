@@ -195,10 +195,14 @@ module Discordrb
     # Edits this message to have the specified content instead.
     # You can only edit your own messages.
     # @param new_content [String] the new content the message should have.
-    # @param new_embed [Hash, Discordrb::Webhooks::Embed, nil] The new embed the message should have. If `nil` the message will be changed to have no embed.
+    # @param new_embeds [Hash, Discordrb::Webhooks::Embed, Array<Hash>, Array<Discordrb::Webhooks::Embed>, nil] The new embeds the message should have. If `nil` the message will be changed to have no embeds.
+    # @param new_components [View, Array<Hash>] The new components the message should have. If `nil` the message will be changed to have no components.
     # @return [Message] the resulting message.
-    def edit(new_content, new_embed = nil, components = nil)
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embed ? new_embed.to_hash : nil, components)
+    def edit(new_content, new_embeds = nil, new_components = nil)
+      new_embeds = (new_embeds.instance_of?(Array) ? new_embeds.map(&:to_hash) : [new_embeds&.to_hash]).compact
+      new_components = new_components&.to_a || []
+
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embeds, new_components)
       Message.new(JSON.parse(response), @bot)
     end
 
