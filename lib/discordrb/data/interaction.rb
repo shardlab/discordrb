@@ -400,7 +400,8 @@ module Discordrb
         channel: 7,
         role: 8,
         mentionable: 9,
-        number: 10
+        number: 10,
+        attachment: 11
       }.freeze
 
       # Channel types that can be provided to #channel
@@ -529,6 +530,14 @@ module Discordrb
       def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil)
         option(TYPES[:number], name, description,
                required: required, min_value: min_value, max_value: max_value, choices: choices)
+      end
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def attachment(name, description, required: nil)
+        option(TYPES[:attachment], name, description, required: required)
       end
 
       # @!visibility private
