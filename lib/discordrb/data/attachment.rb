@@ -27,6 +27,16 @@ module Discordrb
     # @return [Integer, nil] the height of an image file, in pixels, or `nil` if the file is not an image.
     attr_reader :height
 
+    # @return [String, nil] the attachment's description.
+    attr_reader :description
+
+    # @return [String, nil] the attachment's media type.
+    attr_reader :content_type
+
+    # @return [true, false] whether this attachment is ephemeral.
+    attr_reader :ephemeral
+    alias_method :ephemeral?, :ephemeral
+
     # @!visibility private
     def initialize(data, message, bot)
       @bot = bot
@@ -41,6 +51,11 @@ module Discordrb
 
       @width = data['width']
       @height = data['height']
+
+      @description = data['description']
+      @content_type = data['content_type']
+
+      @ephemeral = data['ephemeral']
     end
 
     # @return [true, false] whether this file is an image file.
