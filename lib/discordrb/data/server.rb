@@ -573,7 +573,7 @@ module Discordrb
     # The amount of emoji the server can have, based on its current Nitro Boost Level.
     # @return [Integer] the max amount of emoji
     def max_emoji
-      case @level
+      case @boost_level
       when 1
         100
       when 2
