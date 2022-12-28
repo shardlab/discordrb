@@ -15,11 +15,17 @@ TEST_CHANNELS = [
 describe Discordrb::Commands::CommandBot, order: :defined do
   let(:server) { double('server', id: 123) }
   let(:text_channel_data) { load_data_file(:text_channel) }
+  let(:forum_channel_data) { load_data_file(:text_channel) }
   let(:default_channel_id) { 123 }
   let(:default_channel_name) { 'test-channel' }
   let(:user_id) { 321 }
   let(:user_roles) { [load_data_file(:text_channel), load_data_file(:text_channel)] }
-  let(:role1) { user_roles[0].tap { |r| r['id'] = 240_172_879_361_212_417 }['id'] } # So we don't have the same ID in both roles.
+  # So we don't have the same ID in both roles.
+  let(:role1) do
+    user_roles[0].tap do |r|
+      r['id'] = 240_172_879_361_212_417
+    end['id']
+  end
   let(:role2) { user_roles[1]['id'].to_i }
   let(:test_channels) { TEST_CHANNELS }
   let(:first_channel) { test_channels[0] }
@@ -31,6 +37,11 @@ describe Discordrb::Commands::CommandBot, order: :defined do
     bot = double('bot')
     allow(bot).to receive(:token) { 'fake token' }
     Discordrb::Channel.new(text_channel_data, bot, server)
+  end
+  let(:forum_channel) do
+    bot = double('bot')
+    allow(bot).to receive(:token) { 'fake token' }
+    Discordrb::Channel.new(forum_channel_data, bot, server)
   end
 
   def command_event_double
@@ -125,7 +136,8 @@ describe Discordrb::Commands::CommandBot, order: :defined do
     let(:plain_event) { command_event_double_for_channel(first_channel) }
 
     context 'as a string' do
-      bot = Discordrb::Commands::CommandBot.new(token: 'token', command_doesnt_exist_message: 'command %command% does not exist!')
+      bot = Discordrb::Commands::CommandBot.new(token: 'token',
+                                                command_doesnt_exist_message: 'command %command% does not exist!')
 
       it 'replies with the message including % substitution' do
         expect(plain_event).to receive(:respond).with('command bleep_blorp does not exist!')
@@ -135,7 +147,9 @@ describe Discordrb::Commands::CommandBot, order: :defined do
     end
 
     context 'as a lambda' do
-      bot = Discordrb::Commands::CommandBot.new(token: 'token', command_doesnt_exist_message: ->(event) { "command %command% does not exist in #{event.channel.name} and 1+2=#{1 + 2}" })
+      bot = Discordrb::Commands::CommandBot.new(token: 'token', command_doesnt_exist_message: lambda { |event|
+                                                                                                "command %command% does not exist in #{event.channel.name} and 1+2=#{1 + 2}"
+                                                                                              })
 
       it 'executes the lambda and replies with a message including % substitution' do
         expect(plain_event).to receive(:respond).with('command bleep_blorp does not exist in test-channel and 1+2=3')
@@ -347,6 +361,29 @@ describe Discordrb::Commands::CommandBot, order: :defined do
         end
       end
 
+      context 'listed as an object(Forum Channel)', order: :defined do
+        bot = Discordrb::Commands::CommandBot.new(token: 'token', help_available: false)
+
+        bot.command :name do
+          SIMPLE_RESPONSE
+        end
+
+        it 'allows adding a channel object' do
+          bot.add_channel(forum_channel)
+          expect(bot.attributes[:channels]).to contain_exactly(forum_channel)
+        end
+
+        it 'responds when channel objects are used' do
+          event = command_event_double_with_channel(forum_channel)
+          result = bot.execute_command(:name, event, [])
+          expect(result).to eq SIMPLE_RESPONSE
+        end
+
+        it 'does not modify the list while respond to a channel object' do
+          expect(bot.attributes[:channels]).to contain_exactly(forum_channel)
+        end
+      end
+
       context 'listed as an object', order: :defined do
         bot = Discordrb::Commands::CommandBot.new(token: 'token', help_available: false)
 
@@ -377,7 +414,8 @@ describe Discordrb::Commands::CommandBot, order: :defined do
       end
 
       context 'command_bot#channels=', order: :defined do
-        bot = Discordrb::Commands::CommandBot.new(token: 'token', help_available: false, channels: [TEST_CHANNELS[0], TEST_CHANNELS[1]])
+        bot = Discordrb::Commands::CommandBot.new(token: 'token', help_available: false,
+                                                  channels: [TEST_CHANNELS[0], TEST_CHANNELS[1]])
 
         bot.command :name do
           SIMPLE_RESPONSE
