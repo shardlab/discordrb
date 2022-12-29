@@ -426,6 +426,11 @@ describe Discordrb::Commands::CommandBot, order: :defined do
           expect(bot.attributes[:channels]).to contain_exactly(third_channel, sixth_channel)
         end
 
+        it 'new channels should replace old channels(forum channel)' do
+          bot.channels = [third_channel, forum_channel]
+          expect(bot.attributes[:channels]).to contain_exactly(third_channel, forum_channel)
+        end
+
         it 'responds only in the new channels' do
           event = command_event_double_for_channel(third_channel)
           result = bot.execute_command(:name, event, [])
