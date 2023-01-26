@@ -200,24 +200,26 @@ module Discordrb
     private
 
     def defined_role_permission?(action, channel)
-      roles_to_check = [@server.everyone_role] + roles
+      roles_to_check = ([@server.everyone_role] + roles).uniq
 
-      # For each role, check if
-      #   (1) the channel explicitly allows or permits an action for the role and
-      #   (2) if the user is allowed to do the action if the channel doesn't specify
-      roles_to_check.sort_by(&:position).reduce(false) do |can_act, role|
-        # Get the override defined for the role on the channel
+      # Regarding to permission hierarchy https://discord.com/developers/docs/topics/permissions#permission-overwrites
+      # Firstly check if some of member's roles are included in channel#permission_overwrites and are either allowed or not allowed to do the action
+      channel_permission_overwrites_allow = false
+      channel_permission_overwrites_deny = false
+      roles_to_check.sort_by(&:position).each do |role|
         channel_allow = permission_overwrite(action, channel, role.id)
         if channel_allow
-          # If the channel has an override, check whether it is an allow - if yes,
-          # the user can act, if not, it can't
-          break true if channel_allow == :allow
-
-          false
-        else
-          # Otherwise defer to the role
-          role.permissions.instance_variable_get("@#{action}") || can_act
+          channel_permission_overwrites_allow = channel_allow == :allow
+          channel_permission_overwrites_deny = channel_allow == :deny
         end
+      end
+
+      return true if channel_permission_overwrites_allow
+      return false if channel_permission_overwrites_deny
+
+      # Otherwise check if member's role is explicitly allowed or not allowed to do the action
+      roles_to_check.sort_by(&:position).reduce(false) do |can_act, role|
+        role.permissions.instance_variable_get("@#{action}") || can_act
       end
     end
 
