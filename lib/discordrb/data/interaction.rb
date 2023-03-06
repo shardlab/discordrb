@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'discordrb/webhooks'
+
 module Discordrb
   # Base class for interaction objects.
   class Interaction
@@ -8,7 +10,8 @@ module Discordrb
     TYPES = {
       ping: 1,
       command: 2,
-      component: 3
+      component: 3,
+      modal_submit: 5
     }.freeze
 
     # Interaction response types.
@@ -18,7 +21,8 @@ module Discordrb
       channel_message: 4,
       deferred_message: 5,
       deferred_update: 6,
-      update_message: 7
+      update_message: 7,
+      modal: 9
     }.freeze
 
     # @return [User, Member] The user that initiated the interaction.
@@ -50,6 +54,9 @@ module Discordrb
     # @return [Hash] The interaction data.
     attr_reader :data
 
+    # @return [Array<ActionRow>]
+    attr_reader :components
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -69,6 +76,7 @@ module Discordrb
               end
       @token = data['token']
       @version = data['version']
+      @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
@@ -120,6 +128,23 @@ module Discordrb
     # Defer an update to an interaction. This is can only currently used by Button interactions.
     def defer_update
       Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:deferred_update])
+    end
+
+    # Create a modal as a response.
+    # @param title [String] The title of the modal being shown.
+    # @param custom_id [String] The custom_id used to identify the modal and store data.
+    # @param components [Array<Component, Hash>, nil] An array of components. These can be defined through the block as well.
+    # @yieldparam [Discordrb::Webhooks::Modal] A builder for the modal's components.
+    def show_modal(title:, custom_id:, components: nil)
+      if block_given?
+        modal_builder = Discordrb::Webhooks::Modal.new
+        yield modal_builder
+
+        components = modal_builder.to_a
+      end
+
+      Discordrb::API::Interaction.create_interaction_modal_response(@token, @id, custom_id, title, components.to_a)
+      nil
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
@@ -256,6 +281,19 @@ module Discordrb
       end
     end
 
+    # @return [Array<TextInput>]
+    def text_inputs
+      @components&.select { |component| component.is_a? TextInput } | []
+    end
+
+    # @return [TextInput, Button, SelectMenu]
+    def get_component(custom_id)
+      top_level = @components.flat_map(&:components) || []
+      message_level = @message&.components&.flat_map { |r| r.components } || []
+      components = top_level.concat(message_level)
+      components.find { |component| component.custom_id == custom_id }
+    end
+
     private
 
     # Set builder defaults from parameters
@@ -313,6 +351,23 @@ module Discordrb
       @default_permission = data['default_permission']
       @options = data['options']
     end
+
+    # @param subcommand [String, nil] The subcommand to mention.
+    # @param subcommand_group [String, nil] The subcommand group to mention.
+    # @return [String] the layout to mention it in a message
+    def mention(subcommand_group: nil, subcommand: nil)
+      if subcommand_group && subcommand
+        "</#{name} #{subcommand_group} #{subcommand}:#{id}>"
+      elsif subcommand_group
+        "</#{name} #{subcommand_group}:#{id}>"
+      elsif subcommand
+        "</#{name} #{subcommand}:#{id}>"
+      else
+        "</#{name}:#{id}>"
+      end
+    end
+
+    alias_method :to_s, :mention
 
     # @param name [String] The name to use for this command.
     # @param description [String] The description of this command.
@@ -642,6 +697,7 @@ module Discordrb
 
       # @!visibility private
       def initialize(data, bot, interaction)
+        @data = data
         @bot = bot
         @interaction = interaction
         @content = data['content']
@@ -718,6 +774,13 @@ module Discordrb
       def edit(content: nil, embeds: nil, allowed_mentions: nil, components: nil, &block)
         @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, &block)
       end
+
+      # @return [Discordrb::Message]
+      def to_message
+        Discordrb::Message.new(@data, @bot)
+      end
+
+      alias_method :message, :to_message
 
       # @!visibility private
       def inspect

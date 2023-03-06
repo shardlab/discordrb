@@ -528,8 +528,8 @@ module Discordrb
     # @option attributes [Integer, Symbol, String] :type The interaction type, can be the integer value or the name
     #   of the key in {Discordrb::Interaction::TYPES}.
     # @option attributes [String, Integer, Server, nil] :server The server where this event was created. `nil` for DM channels.
-    # @option attribtues [String, Integer, Channel] :channel The channel where this event was created.
-    # @option attribtues [String, Integer, User] :user The user that triggered this event.
+    # @option attributes [String, Integer, Channel] :channel The channel where this event was created.
+    # @option attributes [String, Integer, User] :user The user that triggered this event.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [InteractionCreateEvent] The event that was raised.
     # @return [InteractionCreateEventHandler] The event handler that was registered.
@@ -574,6 +574,19 @@ module Discordrb
     # @return [SelectMenuEventHandler] The event handler that was registered.
     def select_menu(attributes = {}, &block)
       register_event(SelectMenuEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a modal is submitted.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :custom_id A custom_id to match against.
+    # @option attributes [String, Integer, Message] :message The message to filter for.
+    # @option attributes [String, Integer, Server, nil] :server The server where this event was created. `nil` for DM channels.
+    # @option attributes [String, Integer, Channel] :channel The channel where this event was created.
+    # @option attributes [String, Integer, User] :user The user that triggered this event.    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ModalSubmitEvent] The event that was raised.
+    # @return [ModalSubmitEventHandler] The event handler that was registered.
+    def modal_submit(attributes = {}, &block)
+      register_event(ModalSubmitEvent, attributes, block)
     end
 
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
@@ -681,6 +694,7 @@ module Discordrb
 
     include Discordrb::Events
 
+    # @return [EventHandler]
     def register_event(clazz, attributes, block)
       handler = EventContainer.handler_class(clazz).new(attributes, block)
 

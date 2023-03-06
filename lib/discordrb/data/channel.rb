@@ -19,7 +19,10 @@ module Discordrb
       store: 6,
       news_thread: 10,
       public_thread: 11,
-      private_thread: 12
+      private_thread: 12,
+      stage_voice: 13,
+      directory: 14,
+      forum: 15
     }.freeze
 
     # @return [String] this channel's name.
@@ -345,9 +348,9 @@ module Discordrb
 
     # Sets the amount of time (in seconds) users have to wait in between sending messages.
     # @param rate [Integer]
-    # @raise [ArgumentError] if value isn't between 0 and 120
+    # @raise [ArgumentError] if value isn't between 0 and 21600
     def rate_limit_per_user=(rate)
-      raise ArgumentError, 'rate_limit_per_user must be between 0 and 120' unless rate.between?(0, 120)
+      raise ArgumentError, 'rate_limit_per_user must be between 0 and 21600' unless rate.between?(0, 21_600)
 
       update_channel_data(rate_limit_per_user: rate)
     end
@@ -609,7 +612,7 @@ module Discordrb
       if text?
         server.online_members(include_idle: true).select { |u| u.can_read_messages? self }
       elsif voice?
-        server.voice_states.map { |id, voice_state| server.member(id) if !voice_state.voice_channel.nil? && voice_state.voice_channel.id == @id }.compact
+        server.voice_states.filter_map { |id, voice_state| server.member(id) if !voice_state.voice_channel.nil? && voice_state.voice_channel.id == @id }
       end
     end
 

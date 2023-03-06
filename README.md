@@ -1,22 +1,23 @@
+# discordrb
+
 [![Gem](https://img.shields.io/gem/v/discordrb.svg)](https://rubygems.org/gems/discordrb)
 [![Gem](https://img.shields.io/gem/dt/discordrb.svg)](https://rubygems.org/gems/discordrb)
 [![CircleCI](https://circleci.com/gh/shardlab/discordrb.svg?style=svg)](https://circleci.com/gh/shardlab/discordrb)
-[![Inline docs](http://inch-ci.org/github/shardlab/discordrb.svg?branch=main)](https://drb.shardlab.dev/v3.4.0/)
+[![Inline docs](https://inch-ci.org/github/shardlab/discordrb.svg?branch=main)](https://drb.shardlab.dev/v3.4.0/)
 [![Join Discord](https://img.shields.io/badge/discord-join-7289DA.svg)](https://discord.gg/cyK3Hjm)
-# discordrb
 
 An implementation of the [Discord](https://discord.com/) API using Ruby.
 
 ## Quick links to sections
 
-* [Introduction](https://github.com/shardlab/discordrb#introduction)
-* [Dependencies](https://github.com/shardlab/discordrb#dependencies)
-* [Installation](https://github.com/shardlab/discordrb#installation)
-* [Usage](https://github.com/shardlab/discordrb#usage)
-* [Webhooks Client](https://github.com/shardlab/discordrb#webhooks-client)
-* [Support](https://github.com/shardlab/discordrb#support)
-* [Development](https://github.com/shardlab/discordrb#development), [Contributing](https://github.com/shardlab/discordrb#contributing)
-* [License](https://github.com/shardlab/discordrb#license)
+- [Introduction](https://github.com/shardlab/discordrb#introduction)
+- [Dependencies](https://github.com/shardlab/discordrb#dependencies)
+- [Installation](https://github.com/shardlab/discordrb#installation)
+- [Usage](https://github.com/shardlab/discordrb#usage)
+- [Webhooks Client](https://github.com/shardlab/discordrb#webhooks-client)
+- [Support](https://github.com/shardlab/discordrb#support)
+- [Development](https://github.com/shardlab/discordrb#development), [Contributing](https://github.com/shardlab/discordrb#contributing)
+- [License](https://github.com/shardlab/discordrb#license)
 
 See also: [Documentation](https://drb.shardlab.dev/v3.4.0/), [Tutorials](https://github.com/shardlab/discordrb/wiki)
 
@@ -43,15 +44,16 @@ If you enjoy using the library, consider getting involved with the community to 
 
 ## Dependencies
 
-* Ruby >= 2.6 supported
+* Ruby >= 2.7 supported
 * An installed build system for native extensions (on Windows, make sure you download the "Ruby+Devkit" version of [RubyInstaller](https://rubyinstaller.org/downloads/))
 
 ### Voice dependencies
 
 This section only applies to you if you want to use voice functionality.
-* [libsodium](https://github.com/shardlab/discordrb/wiki/Installing-libsodium)
-* A compiled libopus distribution for your system, anywhere the script can find it. See [here](https://github.com/shardlab/discordrb/wiki/Installing-libopus) for installation instructions.
-* [FFmpeg](https://www.ffmpeg.org/download.html) installed and in your PATH
+
+- [libsodium](https://github.com/shardlab/discordrb/wiki/Installing-libsodium)
+- A compiled libopus distribution for your system, anywhere the script can find it. See [here](https://github.com/shardlab/discordrb/wiki/Installing-libopus) for installation instructions.
+- [FFmpeg](https://www.ffmpeg.org/download.html) installed and in your PATH
 
 ## Installation
 
@@ -59,7 +61,9 @@ This section only applies to you if you want to use voice functionality.
 
 Using [Bundler](https://bundler.io/#getting-started), you can add discordrb to your Gemfile:
 
-    gem 'discordrb'
+```ruby
+gem 'discordrb'
+```
 
 And then install via `bundle install`.
 
@@ -67,7 +71,9 @@ Run the [ping example](https://github.com/shardlab/discordrb/blob/main/examples/
 
 To run the bot while using bundler:
 
-    bundle exec ruby ping.rb
+```sh
+bundle exec ruby ping.rb
+```
 
 ### With Gem
 
@@ -75,21 +81,27 @@ Alternatively, while Bundler is the recommended option, you can also install dis
 
 #### Linux / macOS
 
-    gem install discordrb
+```sh
+gem install discordrb
+```
 
 #### Windows
 
 > **Make sure you have the DevKit installed! See the [Dependencies](https://github.com/shardlab/discordrb#dependencies) section)**
 
-    gem install discordrb --platform=ruby
+```sh
+gem install discordrb --platform=ruby
+```
 
 To run the bot:
 
-    ruby ping.rb
+```sh
+ruby ping.rb
+```
 
 ### Installation Troubleshooting
 
-See https://github.com/shardlab/discordrb/wiki/FAQ#installation for a list of common problems and solutions when installing `discordrb`.
+See <https://github.com/shardlab/discordrb/wiki/FAQ#installation> for a list of common problems and solutions when installing `discordrb`.
 
 ## Usage
 
@@ -153,7 +165,7 @@ If you need help or have a question, you can:
 ## Contributing
 
 Thank you for your interest in contributing!
-Bug reports and pull requests are welcome on GitHub at https://github.com/shardlab/discordrb.
+Bug reports and pull requests are welcome on GitHub at <https://github.com/shardlab/discordrb>.
 
 In general, we recommend starting by discussing what you would like to contribute in the [Discord channel](https://discord.gg/cyK3Hjm).
 There are usually a handful of people working on things for the library, and what you're looking for may already be on the way.
