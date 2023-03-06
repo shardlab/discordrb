@@ -376,8 +376,8 @@ module Discordrb
 
     alias_method :message, :to_message
 
-    # The user who sent this message message. Will be a {Member} most of the time, a {User} in the case
-    # that the user has left the server, or a {Recipient} if the message was sent in a private channel.
+    # The user who sent this message. Will be a {Member} most of the time, a {User} in the case that the
+    # user has left the server, or a {Recipient} if the message was sent in a private channel.
     # @return [Member, User, Recipient]
     def author
       author_id = @author_data['id'].to_i
