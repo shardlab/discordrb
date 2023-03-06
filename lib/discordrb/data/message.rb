@@ -10,12 +10,6 @@ module Discordrb
     alias_method :text, :content
     alias_method :to_s, :content
 
-    # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
-    #   {User} for old messages when the author has left the server since then)
-    attr_reader :author
-    alias_method :user, :author
-    alias_method :writer, :author
-
     # @return [Channel] the channel in which this message was sent.
     attr_reader :channel
 
@@ -88,34 +82,7 @@ module Discordrb
 
       @server = @channel.server
 
-      @author = if data['author']
-                  if data['author']['discriminator'] == ZERO_DISCRIM
-                    # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
-                    # a User and return that instead.
-                    Discordrb::LOGGER.debug("Webhook user: #{data['author']['id']}")
-                    User.new(data['author'], @bot)
-                  elsif @channel.private?
-                    # Turn the message user into a recipient - we can't use the channel recipient
-                    # directly because the bot may also send messages to the channel
-                    Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
-                  else
-                    member = @channel.server.member(data['author']['id'].to_i)
-
-                    if member
-                      member.update_data(data['member']) if data['member']
-                    else
-                      Discordrb::LOGGER.debug("Member with ID #{data['author']['id']} not cached (possibly left the server).")
-                      member = if data['member']
-                                 member_data = data['author'].merge(data['member'])
-                                 Member.new(member_data, @server, bot)
-                               else
-                                 @bot.ensure_user(data['author'])
-                               end
-                    end
-
-                    member
-                  end
-                end
+      @author_data = data['author']
 
       @webhook_id = data['webhook_id'].to_i if data['webhook_id']
 
@@ -352,7 +319,7 @@ module Discordrb
 
     # The inspect method is overwritten to give more useful output
     def inspect
-      "<Message content=\"#{@content}\" id=#{@id} timestamp=#{@timestamp} author=#{@author} channel=#{@channel}>"
+      "<Message content=\"#{@content}\" id=#{@id} timestamp=#{@timestamp} author=#{author} channel=#{@channel}>"
     end
 
     # @return [String] a URL that a user can use to navigate to this message in the client
@@ -390,5 +357,36 @@ module Discordrb
 
       results.flatten.compact
     end
+
+    # The user who sent this message message. Will be a {Member} most of the time, a {User} in the case
+    # that the user has left the server, or a {Recipient} if the message was sent in a private channel.
+    def author
+      author_id = @author_data['id'].to_i
+      return unless author_id
+
+      if @author_data['discriminator'] == ZERO_DISCRIM
+        # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
+        # a User and return that instead.
+        Discordrb::LOGGER.debug("Webhook user: #{author_id}")
+        User.new(data['author'], @bot)
+      elsif @channel.private?
+        # Turn the message user into a recipient - we can't use the channel recipient
+        # directly because the bot may also send messages to the channel
+        Recipient.new(@bot.user(author_id), @channel, @bot)
+      else
+        author = @channel.server.member(author_id) || @bot.user(author_id)
+        case author
+        when Member
+          author.update_data(@author_data)
+        when User
+          Discordrb::LOGGER.debug("Member with ID #{author_id} not available (probably left the server).")
+        end
+        # @bot.ensure_user(@author_data)  # unsure of point of this
+        author
+      end
+    end
+
+    alias_method :user, :author
+    alias_method :writer, :author
   end
 end
