@@ -360,6 +360,7 @@ module Discordrb
 
     # The user who sent this message message. Will be a {Member} most of the time, a {User} in the case
     # that the user has left the server, or a {Recipient} if the message was sent in a private channel.
+    # @return [Member, User, Recipient]
     def author
       author_id = @author_data['id'].to_i
       return unless author_id
@@ -367,7 +368,7 @@ module Discordrb
       if @author_data['discriminator'] == ZERO_DISCRIM
         # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
         # a User and return that instead.
-        Discordrb::LOGGER.debug("Webhook user: #{author_id}")
+        LOGGER.debug("Webhook user: #{author_id}")
         User.new(data['author'], @bot)
       elsif @channel.private?
         # Turn the message user into a recipient - we can't use the channel recipient
@@ -375,14 +376,9 @@ module Discordrb
         Recipient.new(@bot.user(author_id), @channel, @bot)
       else
         author = @channel.server.member(author_id) || @bot.user(author_id)
-        case author
-        when Member
-          author.update_data(@author_data)
-        when User
-          Discordrb::LOGGER.debug("Member with ID #{author_id} not available (probably left the server).")
+        author.tap do
+          LOGGER.debug("Member with ID #{author_id} not available (possibly left the server).") if author.is_a? User
         end
-        # @bot.ensure_user(@author_data)  # unsure of point of this
-        author
       end
     end
 
