@@ -289,7 +289,7 @@ module Discordrb
     # @return [TextInput, Button, SelectMenu]
     def get_component(custom_id)
       top_level = @components.flat_map(&:components) || []
-      message_level = @message&.components&.flat_map { |r| r.components } || []
+      message_level = @message&.components&.flat_map(&:components) || []
       components = top_level.concat(message_level)
       components.find { |component| component.custom_id == custom_id }
     end
