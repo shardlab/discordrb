@@ -58,8 +58,8 @@ class Discordrb::Webhooks::View
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @yieldparam builder [SelectMenuBuilder]
-    def select_menu(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil)
-      builder = SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values)
+    def select_menu(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
+      builder = SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values, disabled)
 
       yield builder if block_given?
 
@@ -75,12 +75,13 @@ class Discordrb::Webhooks::View
   # A builder to assist in adding options to select menus.
   class SelectMenuBuilder
     # @!visibility hidden
-    def initialize(custom_id, options = [], placeholder = nil, min_values = nil, max_values = nil)
+    def initialize(custom_id, options = [], placeholder = nil, min_values = nil, max_values = nil, disabled = nil)
       @custom_id = custom_id
       @options = options
       @placeholder = placeholder
       @min_values = min_values
       @max_values = max_values
+      @disabled = disabled
     end
 
     # Add an option to this select menu.
@@ -109,7 +110,8 @@ class Discordrb::Webhooks::View
         placeholder: @placeholder,
         min_values: @min_values,
         max_values: @max_values,
-        custom_id: @custom_id
+        custom_id: @custom_id,
+        disabled: @disabled
       }
     end
   end
