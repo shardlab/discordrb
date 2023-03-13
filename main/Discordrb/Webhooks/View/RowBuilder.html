@@ -152,7 +152,7 @@ and dropdowns have a weight of 5.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#select_menu-instance_method" title="#select_menu (instance method)">#<strong>select_menu</strong>(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil) {|builder| ... } &#x21d2; Object </a>
+      <a href="#select_menu-instance_method" title="#select_menu (instance method)">#<strong>select_menu</strong>(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil, disabled: nil) {|builder| ... } &#x21d2; Object </a>
     
 
     
@@ -348,7 +348,7 @@ There is a limit of 100 characters to each custom_id.</p>
       <div class="method_details ">
   <h3 class="signature " id="select_menu-instance_method">
   
-    #<strong>select_menu</strong>(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil) {|builder| ... } &#x21d2; <tt>Object</tt> 
+    #<strong>select_menu</strong>(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil, disabled: nil) {|builder| ... } &#x21d2; <tt>Object</tt> 
   
 
   
@@ -484,8 +484,8 @@ There is a limit of 100 characters to each custom_id.</p>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 61</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_select_menu'>select_menu</span><span class='lparen'>(</span><span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>placeholder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>min_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>max_values:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_builder'>builder</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="SelectMenuBuilder.html" title="Discordrb::Webhooks::View::SelectMenuBuilder (class)">SelectMenuBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SelectMenuBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::View::SelectMenuBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='comma'>,</span> <span class='id identifier rubyid_placeholder'>placeholder</span><span class='comma'>,</span> <span class='id identifier rubyid_min_values'>min_values</span><span class='comma'>,</span> <span class='id identifier rubyid_max_values'>max_values</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_select_menu'>select_menu</span><span class='lparen'>(</span><span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>placeholder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>min_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>max_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_builder'>builder</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="SelectMenuBuilder.html" title="Discordrb::Webhooks::View::SelectMenuBuilder (class)">SelectMenuBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SelectMenuBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::View::SelectMenuBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='comma'>,</span> <span class='id identifier rubyid_placeholder'>placeholder</span><span class='comma'>,</span> <span class='id identifier rubyid_min_values'>min_values</span><span class='comma'>,</span> <span class='id identifier rubyid_max_values'>max_values</span><span class='comma'>,</span> <span class='id identifier rubyid_disabled'>disabled</span><span class='rparen'>)</span>
 
   <span class='kw'>yield</span> <span class='id identifier rubyid_builder'>builder</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
 
@@ -501,7 +501,7 @@ There is a limit of 100 characters to each custom_id.</p>
 </div>
 
       <div id="footer">
-  Generated on Thu Mar  9 20:34:32 2023 by
+  Generated on Mon Mar 13 06:35:12 2023 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.7.7).
 </div>
