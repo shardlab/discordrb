@@ -827,15 +827,14 @@ module Discordrb
 
       builder = Interactions::OptionBuilder.new
       permission_builder = Interactions::PermissionBuilder.new
-      name_localization_builder = Interactions::NameLocalizationBuilder.new
-      description_localization_builder = Interactions::DescriptionLocalizationBuilder.new
+      localization_builder = Interactions::LocalizationBuilder.new
 
-      yield(builder, permission_builder, name_localization_builder, description_localization_builder) if block_given?
+      yield(builder, permission_builder, localization_builder) if block_given?
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, name_localization_builder.to_a, description_localization_builder.to_a)
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, localization_builder.to_a[0], localization_builder.to_a[1])
              else
-               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, name_localization_builder.to_a, description_localization_builder.to_a)
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, localization_builder.to_a[0], localization_builder.to_a[1])
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -852,18 +851,16 @@ module Discordrb
     # @yieldparam [PermissionBuilder]
     def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input)
       type = ApplicationCommand::TYPES[type] || type
-
       builder = Interactions::OptionBuilder.new
       permission_builder = Interactions::PermissionBuilder.new
-      name_localization_builder = Interactions::NameLocalizationBuilder.new
-      description_localization_builder = Interactions::DescriptionLocalizationBuilder.new
+      localization_builder = Interactions::LocalizationBuilder.new
 
       yield(builder, permission_builder, name_localization_builder, description_localization_builder) if block_given?
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, name_localization_builder.to_a, description_localization_builder.to_a)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, localization_builder.to_a[0], localization_builder.to_a[1])
              else
-               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type, name_localization_builder.to_a, description_localization_builder.to_a)
+               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type, localization_builder.to_a[0], localization_builder.to_a[1])
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
