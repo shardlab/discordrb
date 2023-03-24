@@ -597,48 +597,6 @@ module Discordrb
       end
     end
 
-    # Builder for setting name locazalitions
-    class NameLocalizationBuilder
-      # @!visibility private
-      def initialize
-        @name_localizations = {}
-      end
-
-      # @param locale [String] The locale/language to create a localization for
-      # @param name [String] The localization name
-      # @return [Hash]
-      def name_localization(locale, name)
-        @name_localizations[locale] = name
-        @name_localizations[locale]
-      end
-
-      # @return [Hash]
-      def to_a
-        @name_localizations
-      end
-    end
-
-    # Builder for setting description locazalitions
-    class DescriptionLocalizationBuilder
-      # @!visibility private
-      def initialize
-        @description_localizations = {}
-      end
-
-      # @param locale [String] The locale/language to create a localization for
-      # @param description [String] The localization description
-      # @return [Hash]
-      def description_localization(locale, description)
-        @description_localizations[locale] = description
-        @description_localizations[locale]
-      end
-
-      # @return [Hash]
-      def to_a
-        @description_localizations
-      end
-    end
-
     # Builder for setting localizations
     class LocalizationBuilder
       # @!visibility private
