@@ -615,7 +615,7 @@ module Discordrb
           @name_localizations[locale] = name
           [@name_localizations[locale], @description_localizations[locale]]
         else
-          raise ArgumentError "You must give at least one field to add a localization to."
+          raise ArgumentError 'You must give at least one field to add a localization to.'
         end
       end
 
