@@ -55,7 +55,7 @@ describe Discordrb::API::Channel do
 
   describe '.delete_all_emoji_reactions' do
     let(:message_id) { double('message_id', to_s: 'message_id') }
-    let(:emoji) { "\u{1F525}" }
+    let(:emoji) { '\u{1F525}' }
 
     before do
       allow(Discordrb::API).to receive(:request)
