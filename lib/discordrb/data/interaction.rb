@@ -609,14 +609,12 @@ module Discordrb
       # @param name [String] The localization name
       # @param description [String] The localization description
       # @return [Array<Hash>]
-      def make_localization(locale, name: '', description: '')
-        if name || description
+      def make_localization(locale, name: '', description: ''
+        raise ArgumentError 'You must give at least one field to add a localization to.' unless name || description
           @description_localizations[locale] = description
           @name_localizations[locale] = name
           [@name_localizations[locale], @description_localizations[locale]]
         else
-          raise ArgumentError 'You must give at least one field to add a localization to.'
-        end
       end
 
       # @return [Hash]
