@@ -614,7 +614,6 @@ module Discordrb
           @description_localizations[locale] = description
           @name_localizations[locale] = name
           [@name_localizations[locale], @description_localizations[locale]]
-        else
       end
 
       # @return [Hash]
