@@ -458,21 +458,21 @@ circle around users on Discord, and obtaining UDP connection info.</p>
       <pre class="lines">
 
 
-170
-171
-172
-173
-174
-175
-176
-177
-178
-179
-180
-181</pre>
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 170</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 181</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_bot'>bot</span><span class='comma'>,</span> <span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_session'>session</span><span class='comma'>,</span> <span class='id identifier rubyid_endpoint'>endpoint</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>libsodium is unavailable - unable to create voice bot! Please read https://github.com/shardlab/discordrb/wiki/Installing-libsodium</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='const'>LIBSODIUM_AVAILABLE</span>
@@ -540,12 +540,12 @@ circle around users on Discord, and obtaining UDP connection info.</p>
       <pre class="lines">
 
 
-162
-163
-164</pre>
+173
+174
+175</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 162</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 173</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_udp'>udp</span>
   <span class='ivar'>@udp</span>
@@ -600,17 +600,6 @@ websocket opcode 1 -&gt;    |
       <pre class="lines">
 
 
-296
-297
-298
-299
-300
-301
-302
-303
-304
-305
-306
 307
 308
 309
@@ -620,10 +609,21 @@ websocket opcode 1 -&gt;    |
 313
 314
 315
-316</pre>
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 296</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 307</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connect'>connect</span>
   <span class='comment'># Connect websocket
@@ -676,12 +676,12 @@ websocket opcode 1 -&gt;    |
       <pre class="lines">
 
 
-319
-320
-321</pre>
+330
+331
+332</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 319</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 330</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_destroy'>destroy</span>
   <span class='ivar'>@heartbeat_running</span> <span class='op'>=</span> <span class='kw'>false</span>
@@ -716,18 +716,18 @@ websocket opcode 1 -&gt;    |
       <pre class="lines">
 
 
-219
-220
-221
-222
-223
-224
-225
-226
-227</pre>
+230
+231
+232
+233
+234
+235
+236
+237
+238</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 219</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 230</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_heartbeat'>send_heartbeat</span>
   <span class='id identifier rubyid_millis'>millis</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_strftime'>strftime</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>%s%L</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
@@ -832,20 +832,20 @@ websocket opcode 1 -&gt;    |
       <pre class="lines">
 
 
-188
-189
-190
-191
-192
-193
-194
-195
-196
-197
-198</pre>
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 188</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 199</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_init'>send_init</span><span class='lparen'>(</span><span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_bot_user_id'>bot_user_id</span><span class='comma'>,</span> <span class='id identifier rubyid_session_id'>session_id</span><span class='comma'>,</span> <span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
   <span class='ivar'>@client</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='lbrace'>{</span>
@@ -907,19 +907,19 @@ websocket opcode 1 -&gt;    |
       <pre class="lines">
 
 
-231
-232
-233
-234
-235
-236
-237
-238
-239
-240</pre>
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 231</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 242</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_speaking'>send_speaking</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Speaking: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_value'>value</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -1010,22 +1010,22 @@ websocket opcode 1 -&gt;    |
       <pre class="lines">
 
 
-204
-205
-206
-207
-208
-209
-210
-211
-212
-213
-214
 215
-216</pre>
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 204</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/voice/network.rb', line 215</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_udp_connection'>send_udp_connection</span><span class='lparen'>(</span><span class='id identifier rubyid_ip'>ip</span><span class='comma'>,</span> <span class='id identifier rubyid_port'>port</span><span class='comma'>,</span> <span class='id identifier rubyid_mode'>mode</span><span class='rparen'>)</span>
   <span class='ivar'>@client</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='lbrace'>{</span>
@@ -1050,7 +1050,7 @@ websocket opcode 1 -&gt;    |
 </div>
 
       <div id="footer">
-  Generated on Mon Mar 20 18:14:58 2023 by
+  Generated on Sun Mar 26 17:03:48 2023 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.7.7).
 </div>

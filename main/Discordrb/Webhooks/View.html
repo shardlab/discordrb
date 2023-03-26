@@ -176,7 +176,12 @@
         <dd><pre class="code"><span class='lbrace'>{</span>
   <span class='label'>action_row:</span> <span class='int'>1</span><span class='comma'>,</span>
   <span class='label'>button:</span> <span class='int'>2</span><span class='comma'>,</span>
-  <span class='label'>select_menu:</span> <span class='int'>3</span>
+  <span class='label'>string_select:</span> <span class='int'>3</span><span class='comma'>,</span>
+  <span class='comment'># text_input: 4, # (defined in modal.rb)
+</span>  <span class='label'>user_select:</span> <span class='int'>5</span><span class='comma'>,</span>
+  <span class='label'>role_select:</span> <span class='int'>6</span><span class='comma'>,</span>
+  <span class='label'>mentionable_select:</span> <span class='int'>7</span><span class='comma'>,</span>
+  <span class='label'>channel_select:</span> <span class='int'>8</span>
 <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
     </dl>
@@ -340,14 +345,14 @@
       <pre class="lines">
 
 
-121
-122
-123
-124
-125</pre>
+169
+170
+171
+172
+173</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 121</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 169</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span>
   <span class='ivar'>@rows</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -391,12 +396,12 @@
       <pre class="lines">
 
 
-119
-120
-121</pre>
+167
+168
+169</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 119</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 167</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_rows'>rows</span>
   <span class='ivar'>@rows</span>
@@ -453,16 +458,16 @@
       <pre class="lines">
 
 
-129
-130
-131
-132
-133
-134
-135</pre>
+177
+178
+179
+180
+181
+182
+183</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 129</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 177</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_row'>row</span>
   <span class='id identifier rubyid_new_row'>new_row</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="View/RowBuilder.html" title="Discordrb::Webhooks::View::RowBuilder (class)">RowBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
@@ -481,7 +486,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Mar 20 18:14:58 2023 by
+  Generated on Sun Mar 26 17:03:48 2023 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.7.7).
 </div>

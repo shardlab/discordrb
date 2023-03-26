@@ -2100,9 +2100,9 @@ whether it should return immediately after sending the message. If <code>true</c
 <span class='kw'>def</span> <span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
   <span class='comment'># Only pass a value for avatar if the key is defined as sending nil will delete the
 </span>  <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:avatar</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_avatarise'>avatarise</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:avatar</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:avatar</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:channel_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:channel</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
+  <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:channel_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:channel</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
   <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:channel</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_update_webhook'>update_webhook</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_update_webhook'>update_webhook</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2114,7 +2114,7 @@ whether it should return immediately after sending the message. If <code>true</c
 </div>
 
       <div id="footer">
-  Generated on Mon Mar 20 18:14:57 2023 by
+  Generated on Sun Mar 26 17:03:47 2023 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.28 (ruby-2.7.7).
 </div>
