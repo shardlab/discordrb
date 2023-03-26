@@ -590,7 +590,7 @@ module Discordrb
     # @param before_id [Integer] Consider only users before given user id.
     # @param after_id [Integer] Consider only users after given user id.
     # @return [Array<ServerBan>] a list of banned users on this server and the reason they were banned.
-    def bans(limit = nil, before_id = nil, after_id = nil)
+    def bans(limit: nil, before_id: nil, after_id: nil)
       response = JSON.parse(API::Server.bans(@bot.token, @id, limit, before_id, after_id))
       response.map do |e|
         ServerBan.new(self, User.new(e['user'], @bot), e['reason'])
