@@ -368,6 +368,27 @@ module Discordrb::Events
   class ButtonEvent < ComponentEvent
   end
 
+  # Event handler for a Button interaction event.
+  class ButtonEventHandler < ComponentEventHandler
+  end
+
+  # Event for when a user interacts with a select string component.
+  class StringSelectEvent < ComponentEvent
+    # @return [Array<String>] Selected values.
+    attr_reader :values
+
+    # @!visibility private
+    def initialize(data, bot)
+      super
+
+      @values = data['data']['values']
+    end
+  end
+
+  # Event handler for a select string component.
+  class StringSelectEventHandler < ComponentEventHandler
+  end
+
   # An event for when a user submits a modal.
   class ModalSubmitEvent < ComponentEvent
     # @return [Array<TextInputComponent>]
@@ -381,28 +402,77 @@ module Discordrb::Events
     end
   end
 
-  # Event handler for a Button interaction event.
-  class ButtonEventHandler < ComponentEventHandler
+  # Event handler for a modal submission.
+  class ModalSubmitEventHandler < ComponentEventHandler
   end
 
-  # Event for when a user interacts with a select menu component.
-  class SelectMenuEvent < ComponentEvent
-    # @return [Array<String>] Selected values.
+  # Event for when a user interacts with a select user component.
+  class UserSelectEvent < ComponentEvent
+    # @return [Array<User>] Selected values.
     attr_reader :values
 
     # @!visibility private
     def initialize(data, bot)
       super
 
-      @values = data['data']['values']
+      @values = data['data']['values'].map { |e| bot.user(e) }
     end
   end
 
-  # Event handler for a select menu component.
-  class SelectMenuEventHandler < ComponentEventHandler
+  # Event handler for a select user component.
+  class UserSelectEventHandler < ComponentEventHandler
   end
 
-  # Event handler for a modal submission.
-  class ModalSubmitEventHandler < ComponentEventHandler
+  # Event for when a user interacts with a select role component.
+  class RoleSelectEvent < ComponentEvent
+    # @return [Array<Role>] Selected values.
+    attr_reader :values
+
+    # @!visibility private
+    def initialize(data, bot)
+      super
+
+      @values = data['data']['values'].map { |e| bot.server(data['guild_id']).role(e) }
+    end
+  end
+
+  # Event handler for a select role component.
+  class RoleSelectEventHandler < ComponentEventHandler
+  end
+
+  # Event for when a user interacts with a select mentionable component.
+  class MentionableSelectEvent < ComponentEvent
+    # @return [Hash<Symbol => Array<User>, Symbol => Array<Role>>] Selected values.
+    attr_reader :values
+
+    # @!visibility private
+    def initialize(data, bot)
+      super
+
+      users   = data['data']['resolved']['users'].keys.map { |e| bot.user(e) }
+      roles   = data['data']['resolved']['roles'] ? data['data']['resolved']['roles'].keys.map { |e| bot.server(data['guild_id']).role(e) } : []
+      @values = { users: users, roles: roles }
+    end
+  end
+
+  # Event handler for a select mentionable component.
+  class MentionableSelectEventHandler < ComponentEventHandler
+  end
+
+  # Event for when a user interacts with a select channel component.
+  class ChannelSelectEvent < ComponentEvent
+    # @return [Array<Channel>] Selected values.
+    attr_reader :values
+
+    # @!visibility private
+    def initialize(data, bot)
+      super
+
+      @values = data['data']['values'].map { |e| bot.channel(e, bot.server(data['guild_id'])) }
+    end
+  end
+
+  # Event handler for a select channel component.
+  class ChannelSelectEventHandler < ComponentEventHandler
   end
 end

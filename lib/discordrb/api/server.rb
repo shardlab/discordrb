@@ -176,12 +176,13 @@ module Discordrb::API::Server
 
   # Get a server's banned users
   # https://discord.com/developers/docs/resources/guild#get-guild-bans
-  def bans(token, server_id)
+  def bans(token, server_id, limit = nil, before = nil, after = nil)
+    query_string = URI.encode_www_form({ limit: limit, before: before, after: after }.compact)
     Discordrb::API.request(
       :guilds_sid_bans,
       server_id,
       :get,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/bans",
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/bans?#{query_string}",
       Authorization: token
     )
   end

@@ -3,9 +3,9 @@
 require 'discordrb'
 require 'securerandom'
 
-bot = Discordrb::Bot.new(token: ENV['DISCORDRB_TOKEN'])
-bot.register_application_command(:modal_test, 'Test out a spiffy modal', server_id: ENV['DISCORDRB_SERVER_ID'])
-bot.register_application_command(:modal_await_test, 'Test out the await style', server_id: ENV['DISCORDRB_SERVER_ID'])
+bot = Discordrb::Bot.new(token: ENV.fetch('DISCORDRB_TOKEN'))
+bot.register_application_command(:modal_test, 'Test out a spiffy modal', server_id: ENV.fetch('DISCORDRB_SERVER_ID'))
+bot.register_application_command(:modal_await_test, 'Test out the await style', server_id: ENV.fetch('DISCORDRB_SERVER_ID'))
 
 bot.application_command :modal_test do |event|
   event.show_modal(title: 'Test modal', custom_id: 'test1234') do |modal|
