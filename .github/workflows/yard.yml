@@ -1,0 +1,51 @@
+name: "Yard"
+
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+  pull_request:
+    branches-ignore:
+      - gh-pages
+
+jobs:
+  yard:
+    name: Yard
+    runs-on: ubuntu-latest
+    env:
+      api-dir: ./
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Ruby 2.7
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.7'
+        bundler-cache: true
+
+    - name: Run bundle install
+      working-directory: ${{env.api-dir}}
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+
+    - name: Generate Yard docs
+      working-directory: ${{env.api-dir}}
+      run: bundle exec yard --output-dir /tmp/docs
+
+    - name: Compress docs to prevent error 429
+      run: |
+        cd /tmp/docs
+        tar -cvf /tmp/docs.tar .
+
+    - name: Keep temporary the generated docs
+      uses: actions/upload-artifact@v3
+      with:
+        name: docs_${{ github.run_number }}
+        path: /tmp/docs.tar
+        retention-days: 30

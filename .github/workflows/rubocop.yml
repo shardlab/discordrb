@@ -1,0 +1,39 @@
+name: "Rubocop"
+
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+  pull_request:
+    branches-ignore:
+      - gh-pages
+
+jobs:
+  rubocop:
+    name: Rubocop
+    runs-on: ubuntu-latest
+    env:
+      api-dir: ./
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Ruby 2.7
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.7'
+        bundler-cache: true
+
+    - name: Run bundle install
+      working-directory: ${{env.api-dir}}
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+
+    - name: Rubocop checks
+      working-directory: ${{env.api-dir}}
+      run: bundle exec rubocop
