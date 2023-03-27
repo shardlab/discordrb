@@ -391,9 +391,9 @@ module Discordrb
       elsif @channel.private?
         # Turn the message user into a recipient - we can't use the channel recipient
         # directly because the bot may also send messages to the channel
-        Recipient.new(@bot.user(author_id), @channel, @bot)
+        Recipient.new(@bot.ensure_user(@author_data), @channel, @bot)
       else
-        author = @channel.server.member(author_id) || @bot.user(author_id)
+        author = @channel.server.member(author_id) || @bot.ensure_user(@author_data)
         author.tap do
           LOGGER.debug("Member with ID #{author_id} not available (possibly left the server).") if author.is_a? User
         end
