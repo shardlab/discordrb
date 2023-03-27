@@ -1,0 +1,53 @@
+name: "Rspec"
+
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+  pull_request:
+    branches-ignore:
+      - gh-pages
+
+jobs:
+  rspec:
+    name: Rspec
+    runs-on: ubuntu-latest
+    env:
+      api-dir: ./
+
+    strategy:
+      fail-fast: false
+      matrix:
+        versions: [ '2.7', '3.0', '3.1', '3.2' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup libraries
+      run: |
+        sudo apt update
+        sudo apt install -y libsodium-dev
+
+    - name: Setup Ruby ${{ matrix.versions }}
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.versions }}
+        bundler-cache: true
+
+    - name: Run bundle install (Ruby ${{ matrix.versions }})
+      working-directory: ${{env.api-dir}}
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+
+    - name: Rspec spec (Ruby ${{ matrix.versions }})
+      working-directory: ${{env.api-dir}}
+      run: bundle exec rspec spec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
+
+    - name: Save test results (Ruby ${{ matrix.versions }})
+      uses: actions/upload-artifact@v3
+      with:
+        name: rspec_results_${{ matrix.versions }}
+        path: ~/rspec/rspec.xml
+        retention-days: 30
