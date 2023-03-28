@@ -2,8 +2,10 @@
 
 [![Gem](https://img.shields.io/gem/v/discordrb.svg)](https://rubygems.org/gems/discordrb)
 [![Gem](https://img.shields.io/gem/dt/discordrb.svg)](https://rubygems.org/gems/discordrb)
-[![CircleCI](https://circleci.com/gh/shardlab/discordrb.svg?style=svg)](https://circleci.com/gh/shardlab/discordrb)
-[![Inline docs](https://inch-ci.org/github/shardlab/discordrb.svg?branch=main)](https://drb.shardlab.dev/v3.4.0/)
+[![Gem](https://img.shields.io/badge/docs-v3.4.0-979797.svg)](https://drb.shardlab.dev/v3.4.0/)
+[![Github Actions Rspec](https://github.com/shardlab/discordrb/actions/workflows/rspec.yml/badge.svg?branch=main&event=push)](https://github.com/shardlab/discordrb/actions/workflows/rspec.yml)
+[![Github Actions Rubocop](https://github.com/shardlab/discordrb/actions/workflows/rubocop.yml/badge.svg?branch=main&event=push)](https://github.com/shardlab/discordrb/actions/workflows/rubocop.yml)
+[![Inline docs](https://img.shields.io/badge/docs-main-979797.svg)](https://drb.shardlab.dev/main/)
 [![Join Discord](https://img.shields.io/badge/discord-join-7289DA.svg)](https://discord.gg/cyK3Hjm)
 
 An implementation of the [Discord](https://discord.com/) API using Ruby.
@@ -66,6 +68,13 @@ gem 'discordrb'
 ```
 
 And then install via `bundle install`.
+
+_If you want to run the latest code instead, use this gem line instead:_
+```ruby
+gem 'discordrb', github: 'shardlab/discordrb', branch: 'main'
+```
+
+⚠️ **Note that main may contain breaking changes or other unstable code !**
 
 Run the [ping example](https://github.com/shardlab/discordrb/blob/main/examples/ping.rb) to verify that the installation works (make sure to replace the token and client ID in there with your bots'!):
 
