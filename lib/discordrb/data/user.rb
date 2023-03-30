@@ -90,7 +90,7 @@ module Discordrb
     attr_reader :public_flags
 
     FLAGS.each do |name, value|
-      define_method("#{name}?") do
+      define_method(:"#{name}?") do
         (@public_flags & value).positive?
       end
     end
@@ -233,7 +233,7 @@ module Discordrb
     # @!method dnd?
     #   @return [true, false] whether this user is set to do not disturb.
     %i[offline idle online dnd].each do |e|
-      define_method("#{e}?") do
+      define_method(:"#{e}?") do
         @status.to_sym == e
       end
     end

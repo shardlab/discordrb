@@ -28,10 +28,10 @@ jobs:
           sudo apt update
           sudo apt install -y git openssh-client
 
-      - name: Setup Ruby 2.7
+      - name: Setup Ruby 3.1
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: '3.1'
           bundler-cache: true
 
       - name: Checkout repository for Github Pages

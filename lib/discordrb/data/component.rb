@@ -100,7 +100,7 @@ module Discordrb
       # @method link?
       #   @return [true, false]
       Webhooks::View::BUTTON_STYLES.each do |name, value|
-        define_method("#{name}?") do
+        define_method(:"#{name}?") do
           @style == value
         end
       end

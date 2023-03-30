@@ -76,7 +76,7 @@ module Discordrb
               end
       @token = data['token']
       @version = data['version']
-      @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
+      @components = @data['components']&.filter_map { |component| Components.from_data(component, @bot) } || []
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,

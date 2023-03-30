@@ -49,7 +49,7 @@ bot.message do |event|
     puts(event.bot.channel(CHANNEL_EDIT, event.server).permission_overwrites.map { |_, v| "#{v.type} - #{v.id} - #{v.allow.bits} / #{v.deny.bits}" })
 
     # Bulk edit from permission_overwrites return values (this method return a Hash and not an Array)
-    event.bot.channel(CHANNEL_EDIT, event.server).permission_overwrites = event.bot.channel(CHANNEL_EDIT, event.server).permission_overwrites
+    event.bot.channel(CHANNEL_EDIT, event.server).permission_overwrites = event.bot.channel(CHANNEL_EDIT, event.server).permission_overwrites # rubocop:disable Lint/SelfAssignment
     puts(event.bot.channel(CHANNEL_EDIT, event.server).permission_overwrites.map { |_, v| "#{v.type} - #{v.id} - #{v.allow.bits} / #{v.deny.bits}" })
 
     # Send nil to check if permission_overwrites not changed

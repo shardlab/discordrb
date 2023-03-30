@@ -53,7 +53,7 @@ module Discordrb::Light
 
     # @!visibility private
     def initialize(data, bot)
-      super(data, bot)
+      super
 
       @bot_is_owner = data['owner']
       @bot_permissions = Discordrb::Permissions.new(data['permissions'])

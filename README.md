@@ -46,7 +46,7 @@ If you enjoy using the library, consider getting involved with the community to 
 
 ## Dependencies
 
-* Ruby >= 2.7 supported
+* Ruby >= 3.1 supported
 * An installed build system for native extensions (on Windows, make sure you download the "Ruby+Devkit" version of [RubyInstaller](https://rubyinstaller.org/downloads/))
 
 ### Voice dependencies
