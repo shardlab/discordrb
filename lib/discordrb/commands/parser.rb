@@ -159,7 +159,7 @@ module Discordrb::Commands
       escaped = false
       hacky_delim, hacky_space, hacky_prev, hacky_newline = [0xe001, 0xe002, 0xe003, 0xe004].pack('U*').chars
 
-      @chain.each_char.each_with_index do |char, index|
+      @chain.each_char.with_index do |char, index|
         # Escape character
         if char == '\\' && !escaped
           escaped = true

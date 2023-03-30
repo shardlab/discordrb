@@ -198,7 +198,7 @@ module Discordrb
     # @return [Message] the resulting message.
     def edit(new_content, new_embeds = nil, new_components = nil)
       new_embeds = (new_embeds.instance_of?(Array) ? new_embeds.map(&:to_hash) : [new_embeds&.to_hash]).compact
-      new_components = new_components&.to_a || []
+      new_components = new_components.to_a
 
       response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embeds, new_components)
       Message.new(JSON.parse(response), @bot)

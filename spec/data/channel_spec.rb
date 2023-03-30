@@ -19,7 +19,7 @@ describe Discordrb::Channel do
   shared_examples 'a Channel property' do |property_name|
     it 'should call #update_channel_data with data' do
       expect(channel).to receive(:update_channel_data).with(property_name => property_value)
-      channel.__send__("#{property_name}=", property_value)
+      channel.__send__(:"#{property_name}=", property_value)
     end
   end
 

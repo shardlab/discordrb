@@ -339,7 +339,7 @@ module Discordrb
       return nil unless channel
 
       server_id = channel.server.id
-      return @voices[server_id] if @voices[server_id]
+      @voices[server_id]
     end
 
     # Connects to a voice channel, initializes network connections and returns the {Voice::VoiceBot} over which audio
@@ -1396,7 +1396,7 @@ module Discordrb
 
         new_activities = (data['activities'] || []).map { |act_data| Activity.new(act_data, self) }
         presence_user = @users[data['user']['id'].to_i]
-        old_activities = (presence_user&.activities || [])
+        old_activities = presence_user&.activities || []
         update_presence(data)
 
         # Starting a new game
@@ -1700,7 +1700,7 @@ module Discordrb
 
     def handle_awaits(event)
       @awaits ||= {}
-      @awaits.each do |_, await|
+      @awaits.each_value do |await|
         key, should_delete = await.match(event)
         next unless key
 
