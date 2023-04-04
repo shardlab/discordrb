@@ -32,6 +32,15 @@ bot.message do |event|
       'user_select', false, nil, nil, nil, nil,
       Discordrb::Components::View.new do |builder|
         builder.row do |r|
+          r.user_select(custom_id: 'user_select', placeholder: 'Test of UserSelect', max_values: 3, disabled: true)
+        end
+      end
+    )
+
+    event.channel.send_message(
+      'user_select', false, nil, nil, nil, nil,
+      Discordrb::Components::View.new do |builder|
+        builder.row do |r|
           r.user_select(custom_id: 'user_select', placeholder: 'Test of UserSelect', max_values: 3)
         end
       end

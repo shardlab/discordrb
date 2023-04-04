@@ -64,8 +64,8 @@ class Discordrb::Webhooks::View
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param disabled [true, false, nil] Grey out the component to make it unusable.
     # @yieldparam builder [SelectMenuBuilder]
-    def string_select(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil, disabled: nil, select_type: :string_select)
-      builder = SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values, disabled, select_type: select_type)
+    def string_select(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
+      builder = SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values, disabled, select_type: :string_select)
 
       yield builder if block_given?
 
