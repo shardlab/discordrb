@@ -62,9 +62,10 @@ class Discordrb::Webhooks::View
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
+    # @param disabled [true, false, nil] Grey out the component to make it unusable.
     # @yieldparam builder [SelectMenuBuilder]
     def string_select(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil, disabled: nil, select_type: :string_select)
-      builder = SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values, disabled, select_type)
+      builder = SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values, disabled, select_type: select_type)
 
       yield builder if block_given?
 
@@ -79,8 +80,9 @@ class Discordrb::Webhooks::View
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
-    def user_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil)
-      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, select_type: :user_select).to_h
+    # @param disabled [true, false, nil] Grey out the component to make it unusable.
+    def user_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :user_select).to_h
     end
 
     # Add a select role to this action row.
@@ -89,8 +91,9 @@ class Discordrb::Webhooks::View
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
-    def role_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil)
-      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, select_type: :role_select).to_h
+    # @param disabled [true, false, nil] Grey out the component to make it unusable.
+    def role_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :role_select).to_h
     end
 
     # Add a select mentionable to this action row.
@@ -99,8 +102,9 @@ class Discordrb::Webhooks::View
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
-    def mentionable_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil)
-      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, select_type: :mentionable_select).to_h
+    # @param disabled [true, false, nil] Grey out the component to make it unusable.
+    def mentionable_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :mentionable_select).to_h
     end
 
     # Add a select channel to this action row.
@@ -109,8 +113,9 @@ class Discordrb::Webhooks::View
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
-    def channel_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil)
-      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, select_type: :channel_select).to_h
+    # @param disabled [true, false, nil] Grey out the component to make it unusable.
+    def channel_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :channel_select).to_h
     end
 
     # @!visibility private
