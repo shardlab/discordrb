@@ -122,7 +122,7 @@ class Discordrb::Webhooks::View
   # A builder to assist in adding options to select menus.
   class SelectMenuBuilder
     # @!visibility hidden
-    def initialize(custom_id, options = [], placeholder = nil, min_values = nil, max_values = nil, disabled = nil, select_type: :string_select)
+    def initialize(custom_id, options = [], placeholder = nil, min_values = nil, max_values = nil, disabled = nil, select_type = :string_select)
       @custom_id = custom_id
       @options = options
       @placeholder = placeholder
