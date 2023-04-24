@@ -2,11 +2,11 @@ name: "Yard"
 
 on:
   push:
-    branches-ignore:
-      - gh-pages
+    branches:
+      - main
   pull_request:
-    branches-ignore:
-      - gh-pages
+    branches:
+      - main
 
 jobs:
   yard:
