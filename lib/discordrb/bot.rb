@@ -20,6 +20,7 @@ require 'discordrb/events/reactions'
 require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
+require 'discordrb/events/threads'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -1593,16 +1594,16 @@ module Discordrb
       when :THREAD_CREATE
         create_channel(data)
 
-        event = ThreadCreateEvent.new(data, bot)
+        event = ThreadCreateEvent.new(data, self)
         raise_event(event)
       when :THREAD_UPDATE
         update_channel(data)
 
-        event = ThreadUpdateEvent.new(data, bot)
+        event = ThreadUpdateEvent.new(data, self)
         raise_event(event)
       when :THREAD_DELETE
         channel_delete(data)
-        @thread_members.delete(data['id'])
+        @thread_members.delete(data['id']&.resolve_id)
 
         # raise ThreadDeleteEvent
       when :THREAD_LIST_SYNC
@@ -1613,12 +1614,12 @@ module Discordrb
       when :THREAD_MEMBER_UPDATE
         ensure_thread_member(data)
       when :THREAD_MEMBERS_UPDATE
-        data['added_members'].each do |added_member|
+        data['added_members']&.each do |added_member|
           ensure_thread_member(added_member) if added_member['user_id']
         end
 
-        data['removed_member_ids'].each do |member_id|
-          @thread_members[channel_id].delete(member_id)
+        data['removed_member_ids']&.each do |member_id|
+          @thread_members[data['id']&.resolve_id]&.delete(member_id&.resolve_id)
         end
 
         event = ThreadMembersUpdateEvent.new(data, self)
