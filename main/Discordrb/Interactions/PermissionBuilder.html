@@ -361,12 +361,12 @@
       <pre class="lines">
 
 
-570
-571
-572</pre>
+579
+580
+581</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 570</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 579</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span>
   <span class='ivar'>@permissions</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -449,19 +449,19 @@
       <pre class="lines">
 
 
-606
-607
-608
-609
-610
-611
-612
-613
-614
-615</pre>
+615
+616
+617
+618
+619
+620
+621
+622
+623
+624</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 606</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 615</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_allow'>allow</span><span class='lparen'>(</span><span class='id identifier rubyid_object'>object</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_object'>object</span>
@@ -531,12 +531,12 @@
       <pre class="lines">
 
 
-577
-578
-579</pre>
+586
+587
+588</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 577</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 586</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_allow_role'>allow_role</span><span class='lparen'>(</span><span class='id identifier rubyid_role_id'>role_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_create_entry'>create_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_role_id'>role_id</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ROLE-constant" title="Discordrb::Interactions::PermissionBuilder::ROLE (constant)">ROLE</a></span></span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span>
@@ -599,12 +599,12 @@
       <pre class="lines">
 
 
-591
-592
-593</pre>
+600
+601
+602</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 591</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 600</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_allow_user'>allow_user</span><span class='lparen'>(</span><span class='id identifier rubyid_user_id'>user_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_create_entry'>create_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_user_id'>user_id</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#USER-constant" title="Discordrb::Interactions::PermissionBuilder::USER (constant)">USER</a></span></span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span>
@@ -680,19 +680,19 @@
       <pre class="lines">
 
 
-621
-622
-623
-624
-625
-626
-627
-628
-629
-630</pre>
+630
+631
+632
+633
+634
+635
+636
+637
+638
+639</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 621</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 630</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_deny'>deny</span><span class='lparen'>(</span><span class='id identifier rubyid_object'>object</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_object'>object</span>
@@ -762,12 +762,12 @@
       <pre class="lines">
 
 
-584
-585
-586</pre>
+593
+594
+595</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 584</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 593</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_deny_role'>deny_role</span><span class='lparen'>(</span><span class='id identifier rubyid_role_id'>role_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_create_entry'>create_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_role_id'>role_id</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ROLE-constant" title="Discordrb::Interactions::PermissionBuilder::ROLE (constant)">ROLE</a></span></span><span class='comma'>,</span> <span class='kw'>false</span><span class='rparen'>)</span>
@@ -830,12 +830,12 @@
       <pre class="lines">
 
 
-598
-599
-600</pre>
+607
+608
+609</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 598</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 607</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_deny_user'>deny_user</span><span class='lparen'>(</span><span class='id identifier rubyid_user_id'>user_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_create_entry'>create_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_user_id'>user_id</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#USER-constant" title="Discordrb::Interactions::PermissionBuilder::USER (constant)">USER</a></span></span><span class='comma'>,</span> <span class='kw'>false</span><span class='rparen'>)</span>
@@ -850,7 +850,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Apr 25 21:11:13 2023 by
+  Generated on Thu May 18 13:44:10 2023 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.34 (ruby-2.7.8).
 </div>
