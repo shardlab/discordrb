@@ -130,7 +130,7 @@ module Discordrb::Events
   # Event for ApplicationCommand interactions.
   class ApplicationCommandEvent < InteractionCreateEvent
     # Struct to allow accessing data via [] or methods.
-    Resolved = Struct.new('Resolved', :channels, :members, :messages, :roles, :users) # rubocop:disable Lint/StructNewOverride
+    Resolved = Struct.new('Resolved', :channels, :members, :messages, :roles, :users, :attachments) # rubocop:disable Lint/StructNewOverride
 
     # @return [String] The name of the command.
     attr_reader :command_name
@@ -162,7 +162,7 @@ module Discordrb::Events
       @command_name = command_data['name'].to_sym
 
       @target_id = command_data['target_id']&.to_i
-      @resolved = Resolved.new({}, {}, {}, {}, {})
+      @resolved = Resolved.new({}, {}, {}, {}, {}, {})
       process_resolved(command_data['resolved']) if command_data['resolved']
 
       options = command_data['options'] || []
@@ -218,6 +218,10 @@ module Discordrb::Events
 
       resolved_data['messages']&.each do |id, data|
         @resolved[:messages][id.to_i] = Discordrb::Message.new(data, @bot)
+      end
+
+      resolved_data['attachments']&.each do |id, data|
+        @resolved[:attachments][id.to_i] = Discordrb::Attachment.new(data, nil, @bot)
       end
     end
 
