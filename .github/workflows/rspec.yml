@@ -1,4 +1,4 @@
-name: "Rspec"
+name: "RSpec"
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   rspec:
-    name: Rspec
+    name: RSpec
     runs-on: ubuntu-latest
     env:
       api-dir: ./
@@ -41,7 +41,7 @@ jobs:
         gem install bundler
         bundle install --jobs 4 --retry 3
 
-    - name: Rspec spec (Ruby ${{ matrix.versions }})
+    - name: RSpec spec (Ruby ${{ matrix.versions }})
       working-directory: ${{env.api-dir}}
       run: bundle exec rspec spec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
 
