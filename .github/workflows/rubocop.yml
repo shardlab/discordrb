@@ -1,4 +1,4 @@
-name: "Rubocop"
+name: "RuboCop"
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   rubocop:
-    name: Rubocop
+    name: RuboCop
     runs-on: ubuntu-latest
     env:
       api-dir: ./
@@ -34,6 +34,6 @@ jobs:
         gem install bundler
         bundle install --jobs 4 --retry 3
 
-    - name: Rubocop checks
+    - name: RuboCop checks
       working-directory: ${{env.api-dir}}
       run: bundle exec rubocop
