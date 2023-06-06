@@ -620,10 +620,11 @@ module Discordrb
     end
 
     # Forcibly moves a user into a different voice channel. Only works if the bot has the permission needed.
+    # Can't move user if he's not already connected to a server voice channel.
     # @param user [User, String, Integer] The user to move.
-    # @param channel [Channel, String, Integer] The voice channel to move into.
+    # @param channel [Channel, String, Integer, nil] The voice channel to move into. (If nil, the user is disconnected from the voice channel)
     def move(user, channel)
-      API::Server.update_member(@bot.token, @id, user.resolve_id, channel_id: channel.resolve_id)
+      API::Server.update_member(@bot.token, @id, user.resolve_id, channel_id: channel&.resolve_id)
     end
 
     # Deletes this server. Be aware that this is permanent and impossible to undo, so be careful!
