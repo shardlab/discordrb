@@ -39,6 +39,11 @@ module Discordrb
     attr_reader :bot_account
     alias_method :bot_account?, :bot_account
 
+    # @return [true, false] whether this is fake user for a webhook message
+    attr_reader :webhook_account
+    alias_method :webhook_account?, :webhook_account
+    alias_method :webhook?, :webhook_account
+
     # @return [String] the ID of this user's current avatar, can be used to generate an avatar URL.
     # @see #avatar_url
     attr_accessor :avatar_id
@@ -121,6 +126,9 @@ module Discordrb
       @bot_account = false
       @bot_account = true if data['bot']
 
+      @webhook_account = false
+      @webhook_account = true if data['_webhook']
+
       @status = :offline
       @client_status = process_client_status(data['client_status'])
     end
@@ -201,11 +209,6 @@ module Discordrb
     # @return [true, false] whether this user is the bot
     def current_bot?
       @bot.profile.id == @id
-    end
-
-    # @return [true, false] whether this user is a fake user for a webhook message
-    def webhook?
-      @discriminator == Message::ZERO_DISCRIM
     end
 
     # @!visibility private

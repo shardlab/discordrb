@@ -73,9 +73,6 @@ module Discordrb
     # @return [Array<Component>]
     attr_reader :components
 
-    # The discriminator that webhook user accounts have.
-    ZERO_DISCRIM = '0000'
-
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -92,12 +89,14 @@ module Discordrb
 
       @server = @channel.server
 
+      @webhook_id = data['webhook_id']&.to_i
+
       @author = if data['author']
-                  if data['author']['discriminator'] == ZERO_DISCRIM
+                  if @webhook_id
                     # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
                     # a User and return that instead.
                     Discordrb::LOGGER.debug("Webhook user: #{data['author']['id']}")
-                    User.new(data['author'], @bot)
+                    User.new(data['author'].merge({'_webhook' => true}), @bot)
                   elsif @channel.private?
                     # Turn the message user into a recipient - we can't use the channel recipient
                     # directly because the bot may also send messages to the channel
@@ -120,8 +119,6 @@ module Discordrb
                     member
                   end
                 end
-
-      @webhook_id = data['webhook_id'].to_i if data['webhook_id']
 
       @timestamp = Time.parse(data['timestamp']) if data['timestamp']
       @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
