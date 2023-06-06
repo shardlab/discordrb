@@ -132,9 +132,14 @@ module Discordrb::API::User
     )
   end
 
-  # Returns one of the "default" discord avatars from the CDN given a discriminator
-  def default_avatar(discrim = 0)
-    index = discrim.to_i % 5
+  # Returns one of the "default" discord avatars from the CDN given a discriminator or id since new usernames
+  # TODO: Maybe change this method again after discriminator removal ?
+  def default_avatar(discrim_id = 0, legacy: false)
+    index = if legacy
+              discrim_id.to_i % 5
+            else
+              (discrim_id.to_i >> 22) % 5
+            end
     "#{Discordrb::API.cdn_url}/embed/avatars/#{index}.png"
   end
 

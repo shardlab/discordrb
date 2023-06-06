@@ -26,6 +26,9 @@ module Discordrb
     attr_reader :username
     alias_method :name, :username
 
+    # @return [String, nil] this user's global name
+    attr_reader :global_name
+
     # @return [String] this user's discriminator which is used internally to identify users with identical usernames.
     attr_reader :discriminator
     alias_method :discrim, :discriminator
@@ -40,6 +43,12 @@ module Discordrb
     # @see #avatar_url
     attr_accessor :avatar_id
 
+    # Utility function to get Discord's display name of a user not in server
+    # @return [String] the name the user displays as (global_name if they have one, username otherwise)
+    def display_name
+      global_name || username
+    end
+
     # Utility function to mention users in messages
     # @return [String] the mention code in the form of <@id>
     def mention
@@ -48,15 +57,25 @@ module Discordrb
 
     # Utility function to get Discord's distinct representation of a user, i.e. username + discriminator
     # @return [String] distinct representation of user
+    # TODO: Maybe change this method again after discriminator removal ?
     def distinct
-      "#{@username}##{@discriminator}"
+      if @discriminator && @discriminator != '0'
+        "#{@username}##{@discriminator}"
+      else
+        @username.to_s
+      end
     end
 
     # Utility function to get a user's avatar URL.
     # @param format [String, nil] If `nil`, the URL will default to `webp` for static avatars, and will detect if the user has a `gif` avatar. You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this. Will always be PNG for default avatars.
     # @return [String] the URL to the avatar image.
+    # TODO: Maybe change this method again after discriminator removal ?
     def avatar_url(format = nil)
-      return API::User.default_avatar(@discriminator) unless @avatar_id
+      unless @avatar_id
+        return API::User.default_avatar(@discriminator, legacy: true) if @discriminator && @discriminator != '0'
+
+        return API::User.default_avatar(@id)
+      end
 
       API::User.avatar_url(@id, @avatar_id, format)
     end
@@ -91,6 +110,7 @@ module Discordrb
       @bot = bot
 
       @username = data['username']
+      @global_name = data['global_name']
       @id = data['id'].to_i
       @discriminator = data['discriminator']
       @avatar_id = data['avatar']
