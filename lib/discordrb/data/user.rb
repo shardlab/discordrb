@@ -167,11 +167,18 @@ module Discordrb
       pm.send_file(file, caption: caption, filename: filename, spoiler: spoiler)
     end
 
-    # Set the user's name
+    # Set the user's username
     # @note for internal use only
     # @!visibility private
     def update_username(username)
       @username = username
+    end
+
+    # Set the user's global_name
+    # @note For internal use only.
+    # @!visibility private
+    def update_global_name(global_name)
+      @global_name = global_name
     end
 
     # Set the user's presence data

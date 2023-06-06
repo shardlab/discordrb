@@ -106,6 +106,7 @@ module Discordrb
 
                     if member
                       member.update_data(data['member']) if data['member']
+                      member.update_global_name(data['author']['global_name']) if data['author']['global_name']
                     else
                       Discordrb::LOGGER.debug("Member with ID #{data['author']['id']} not cached (possibly left the server).")
                       member = if data['member']
