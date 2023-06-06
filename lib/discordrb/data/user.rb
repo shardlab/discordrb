@@ -18,7 +18,8 @@ module Discordrb
       verified_bot: 1 << 16,
       verified_developer: 1 << 17,
       certified_moderator: 1 << 18,
-      bot_http_interactions: 1 << 19
+      bot_http_interactions: 1 << 19,
+      active_developer: 1 << 22
     }.freeze
     # rubocop:enable Naming/VariableNumber
 
