@@ -96,7 +96,7 @@ module Discordrb
                     # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
                     # a User and return that instead.
                     Discordrb::LOGGER.debug("Webhook user: #{data['author']['id']}")
-                    User.new(data['author'].merge({'_webhook' => true}), @bot)
+                    User.new(data['author'].merge({ '_webhook' => true }), @bot)
                   elsif @channel.private?
                     # Turn the message user into a recipient - we can't use the channel recipient
                     # directly because the bot may also send messages to the channel
