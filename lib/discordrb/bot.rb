@@ -1602,7 +1602,7 @@ module Discordrb
         event = ThreadUpdateEvent.new(data, self)
         raise_event(event)
       when :THREAD_DELETE
-        channel_delete(data)
+        delete_channel(data)
         @thread_members.delete(data['id']&.resolve_id)
 
         # raise ThreadDeleteEvent
