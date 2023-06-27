@@ -59,7 +59,7 @@ module Discordrb
       attr_reader :guild_connections
 
       def initialize(data)
-        @bot_id = data['bot_id']
+        @bot_id = data['bot_id']&.resolve_id
         @integration_id = data['integration_id']
         @premium_subscriber = data.key?('premium_subscriber')
         @subscription_listing_id = data['subscription_listing_id']
