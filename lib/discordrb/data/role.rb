@@ -35,11 +35,11 @@ module Discordrb
     # @return [String, nil] The icon hash for this role.
     attr_reader :icon
 
-    # @return [RoleTags, nil] The role tags
+    # @return [Tags, nil] The role tags
     attr_reader :tags
 
     # Wrapper for the role tags
-    class RoleTags
+    class Tags
       # @return [Integer, nil] The ID of the bot this role belongs to
       attr_reader :bot_id
 
@@ -106,7 +106,7 @@ module Discordrb
 
       @icon = data['icon']
 
-      @tags = RoleTags.new(data['tags']) if data['tags']
+      @tags = Tags.new(data['tags']) if data['tags']
     end
 
     # @return [String] a string that will mention this role, if it is mentionable.
