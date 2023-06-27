@@ -62,7 +62,7 @@ module Discordrb
         @bot_id = data['bot_id']&.resolve_id
         @integration_id = data['integration_id']&.resolve_id
         @premium_subscriber = data.key?('premium_subscriber')
-        @subscription_listing_id = data['subscription_listing_id']
+        @subscription_listing_id = data['subscription_listing_id']&.resolve_id
         @available_for_purchase = data.key?('available_for_purchase')
         @guild_connections = data.key?('guild_connections')
       end
