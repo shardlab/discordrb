@@ -35,6 +35,39 @@ module Discordrb
     # @return [String, nil] The icon hash for this role.
     attr_reader :icon
 
+    # @return [Tags, nil] The role tags
+    attr_reader :tags
+
+    # Wrapper for the role tags
+    class Tags
+      # @return [Integer, nil] The ID of the bot this role belongs to
+      attr_reader :bot_id
+
+      # @return [Integer, nil] The ID of the integration this role belongs to
+      attr_reader :integration_id
+
+      # @return [true, false] Whether this is the guild's Booster role
+      attr_reader :premium_subscriber
+
+      # @return [Integer, nil] The id of this role's subscription sku and listing
+      attr_reader :subscription_listing_id
+
+      # @return [true, false] Whether this role is available for purchase
+      attr_reader :available_for_purchase
+
+      # @return [true, false] Whether this role is a guild's linked role
+      attr_reader :guild_connections
+
+      def initialize(data)
+        @bot_id = data['bot_id']&.resolve_id
+        @integration_id = data['integration_id']&.resolve_id
+        @premium_subscriber = data.key?('premium_subscriber')
+        @subscription_listing_id = data['subscription_listing_id']&.resolve_id
+        @available_for_purchase = data.key?('available_for_purchase')
+        @guild_connections = data.key?('guild_connections')
+      end
+    end
+
     # This class is used internally as a wrapper to a Role object that allows easy writing of permission data.
     class RoleWriter
       # @!visibility private
@@ -72,6 +105,8 @@ module Discordrb
       @colour = ColourRGB.new(data['color'])
 
       @icon = data['icon']
+
+      @tags = Tags.new(data['tags']) if data['tags']
     end
 
     # @return [String] a string that will mention this role, if it is mentionable.
