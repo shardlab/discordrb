@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Discordrb::Webhooks::Modal::RowBuilder
+  
+    &mdash; Documentation by YARD 0.9.34
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Discordrb::Webhooks::Modal::RowBuilder";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Modal.html" title="Discordrb::Webhooks::Modal (class)">Modal</a></span></span>
+     &raquo; 
+    <span class="title">RowBuilder</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Discordrb::Webhooks::Modal::RowBuilder
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Discordrb::Webhooks::Modal::RowBuilder</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/discordrb/webhooks/modal.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>This builder is used when constructing an ActionRow. All current components must be within an action row, but this can
+change in the future. A message can have 5 action rows, each action row can hold a weight of 5. Buttons have a weight of 1,
+and dropdowns have a weight of 5.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="TEXT_INPUT_STYLES-constant" class="">TEXT_INPUT_STYLES =
+          <div class="docstring">
+  <div class="discussion">
+    <p>A mapping of short names to types of input styles. <code>short</code> is a single line where <code>paragraph</code> is a block.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>short:</span> <span class='int'>1</span><span class='comma'>,</span>
+  <span class='label'>paragraph:</span> <span class='int'>2</span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#text_input-instance_method" title="#text_input (instance method)">#<strong>text_input</strong>(style:, custom_id:, label: nil, min_length: nil, max_length: nil, required: nil, value: nil, placeholder: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Add a text input to this action row.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="text_input-instance_method">
+  
+    #<strong>text_input</strong>(style:, custom_id:, label: nil, min_length: nil, max_length: nil, required: nil, value: nil, placeholder: nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Add a text input to this action row.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>style</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The text input&#39;s style type. See <span class='object_link'><a href="#TEXT_INPUT_STYLES-constant" title="Discordrb::Webhooks::Modal::RowBuilder::TEXT_INPUT_STYLES (constant)">TEXT_INPUT_STYLES</a></span></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Custom IDs are used to pass state to the events that are raised from interactions.
+There is a limit of 100 characters to each custom_id.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>label</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The text label for the field.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>min_length</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The minimum input length for a text input, min 0, max 4000.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>max_length</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The maximum input length for a text input, min 1, max 4000.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>required</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether this component is required to be filled, default true.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>A pre-filled value for this component, max 4000 characters.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>placeholder</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Custom placeholder text if the input is empty, max 100 characters</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/modal.rb', line 36</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_text_input'>text_input</span><span class='lparen'>(</span><span class='label'>style:</span><span class='comma'>,</span> <span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>min_length:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>max_length:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>placeholder:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_style'>style</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#TEXT_INPUT_STYLES-constant" title="Discordrb::Webhooks::Modal::RowBuilder::TEXT_INPUT_STYLES (constant)">TEXT_INPUT_STYLES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_style'>style</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_style'>style</span>
+
+  <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span>
+    <span class='label'>style:</span> <span class='id identifier rubyid_style'>style</span><span class='comma'>,</span>
+    <span class='label'>custom_id:</span> <span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span>
+    <span class='label'>type:</span> <span class='const'><span class='object_link'><a href="../Modal.html#COMPONENT_TYPES-constant" title="Discordrb::Webhooks::Modal::COMPONENT_TYPES (constant)">COMPONENT_TYPES</a></span></span><span class='lbracket'>[</span><span class='symbol'>:text_input</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>label:</span> <span class='id identifier rubyid_label'>label</span><span class='comma'>,</span>
+    <span class='label'>min_length:</span> <span class='id identifier rubyid_min_length'>min_length</span><span class='comma'>,</span>
+    <span class='label'>max_length:</span> <span class='id identifier rubyid_max_length'>max_length</span><span class='comma'>,</span>
+    <span class='label'>required:</span> <span class='id identifier rubyid_required'>required</span><span class='comma'>,</span>
+    <span class='label'>value:</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span>
+    <span class='label'>placeholder:</span> <span class='id identifier rubyid_placeholder'>placeholder</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Wed Jul  5 16:01:54 2023 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-2.7.8).
+</div>
+
+    </div>
+  </body>
+</html>

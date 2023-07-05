@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Discordrb::Webhooks::View::RowBuilder
+  
+    &mdash; Documentation by YARD 0.9.34
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Discordrb::Webhooks::View::RowBuilder";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span>
+     &raquo; 
+    <span class="title">RowBuilder</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Discordrb::Webhooks::View::RowBuilder
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Discordrb::Webhooks::View::RowBuilder</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/discordrb/webhooks/view.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>This builder is used when constructing an ActionRow. All current components must be within an action row, but this can
+change in the future. A message can have 5 action rows, each action row can hold a weight of 5. Buttons have a weight of 1,
+and dropdowns have a weight of 5.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#button-instance_method" title="#button (instance method)">#<strong>button</strong>(style:, label: nil, emoji: nil, custom_id: nil, disabled: nil, url: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Add a button to this action row.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#channel_select-instance_method" title="#channel_select (instance method)">#<strong>channel_select</strong>(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Add a select channel to this action row.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#mentionable_select-instance_method" title="#mentionable_select (instance method)">#<strong>mentionable_select</strong>(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Add a select mentionable to this action row.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#role_select-instance_method" title="#role_select (instance method)">#<strong>role_select</strong>(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Add a select role to this action row.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#string_select-instance_method" title="#string_select (instance method)">#<strong>string_select</strong>(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil, disabled: nil) {|builder| ... } &#x21d2; Object </a>
+    
+
+    
+      (also: #select_menu)
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Add a select string to this action row.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#user_select-instance_method" title="#user_select (instance method)">#<strong>user_select</strong>(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Add a select user to this action row.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="button-instance_method">
+  
+    #<strong>button</strong>(style:, label: nil, emoji: nil, custom_id: nil, disabled: nil, url: nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Add a button to this action row.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>style</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The button&#39;s style type. See <span class='object_link'><a href="../View.html#BUTTON_STYLES-constant" title="Discordrb::Webhooks::View::BUTTON_STYLES (constant)">BUTTON_STYLES</a></span></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>label</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The text label for the button. Either a label or emoji must be provided.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>emoji</span>
+      
+      
+        <span class='type'>(<tt>#<span class='object_link'>to_h</span></tt>, <tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>An emoji ID, or unicode emoji to attach to the button. Can also be a object
+that responds to <code>#to_h</code> which returns a hash in the format of <code>{ id: Integer, name: string }</code>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Custom IDs are used to pass state to the events that are raised from interactions.
+There is a limit of 100 characters to each custom_id.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>disabled</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether this button is disabled and shown as greyed out.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>url</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The URL, when using a link style button.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 45</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_button'>button</span><span class='lparen'>(</span><span class='label'>style:</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>emoji:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>custom_id:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>url:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_style'>style</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../View.html#BUTTON_STYLES-constant" title="Discordrb::Webhooks::View::BUTTON_STYLES (constant)">BUTTON_STYLES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_style'>style</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_style'>style</span>
+
+  <span class='id identifier rubyid_emoji'>emoji</span> <span class='op'>=</span> <span class='kw'>case</span> <span class='id identifier rubyid_emoji'>emoji</span>
+          <span class='kw'>when</span> <span class='const'><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></span>
+            <span class='id identifier rubyid_emoji'>emoji</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span> <span class='op'>?</span> <span class='lbrace'>{</span> <span class='label'>id:</span> <span class='id identifier rubyid_emoji'>emoji</span> <span class='rbrace'>}</span> <span class='op'>:</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='id identifier rubyid_emoji'>emoji</span> <span class='rbrace'>}</span>
+          <span class='kw'>else</span>
+            <span class='id identifier rubyid_emoji'>emoji</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+          <span class='kw'>end</span>
+
+  <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span> <span class='label'>type:</span> <span class='const'><span class='object_link'><a href="../View.html#COMPONENT_TYPES-constant" title="Discordrb::Webhooks::View::COMPONENT_TYPES (constant)">COMPONENT_TYPES</a></span></span><span class='lbracket'>[</span><span class='symbol'>:button</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='id identifier rubyid_label'>label</span><span class='comma'>,</span> <span class='label'>emoji:</span> <span class='id identifier rubyid_emoji'>emoji</span><span class='comma'>,</span> <span class='label'>style:</span> <span class='id identifier rubyid_style'>style</span><span class='comma'>,</span> <span class='label'>custom_id:</span> <span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='id identifier rubyid_disabled'>disabled</span><span class='comma'>,</span> <span class='label'>url:</span> <span class='id identifier rubyid_url'>url</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="channel_select-instance_method">
+  
+    #<strong>channel_select</strong>(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Add a select channel to this action row.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Custom IDs are used to pass state to the events that are raised from interactions.
+There is a limit of 100 characters to each custom_id.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>placeholder</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Default text to show when no entries are selected.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>min_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The minimum amount of values a user must select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>max_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The maximum amount of values a user can select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>disabled</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Grey out the component to make it unusable.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+117
+118
+119</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 117</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_channel_select'>channel_select</span><span class='lparen'>(</span><span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>placeholder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>min_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>max_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='const'><span class='object_link'><a href="SelectMenuBuilder.html" title="Discordrb::Webhooks::View::SelectMenuBuilder (class)">SelectMenuBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SelectMenuBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::View::SelectMenuBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_placeholder'>placeholder</span><span class='comma'>,</span> <span class='id identifier rubyid_min_values'>min_values</span><span class='comma'>,</span> <span class='id identifier rubyid_max_values'>max_values</span><span class='comma'>,</span> <span class='id identifier rubyid_disabled'>disabled</span><span class='comma'>,</span> <span class='label'>select_type:</span> <span class='symbol'>:channel_select</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="mentionable_select-instance_method">
+  
+    #<strong>mentionable_select</strong>(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Add a select mentionable to this action row.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Custom IDs are used to pass state to the events that are raised from interactions.
+There is a limit of 100 characters to each custom_id.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>placeholder</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Default text to show when no entries are selected.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>min_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The minimum amount of values a user must select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>max_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The maximum amount of values a user can select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>disabled</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Grey out the component to make it unusable.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+106
+107
+108</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 106</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_mentionable_select'>mentionable_select</span><span class='lparen'>(</span><span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>placeholder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>min_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>max_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='const'><span class='object_link'><a href="SelectMenuBuilder.html" title="Discordrb::Webhooks::View::SelectMenuBuilder (class)">SelectMenuBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SelectMenuBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::View::SelectMenuBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_placeholder'>placeholder</span><span class='comma'>,</span> <span class='id identifier rubyid_min_values'>min_values</span><span class='comma'>,</span> <span class='id identifier rubyid_max_values'>max_values</span><span class='comma'>,</span> <span class='id identifier rubyid_disabled'>disabled</span><span class='comma'>,</span> <span class='label'>select_type:</span> <span class='symbol'>:mentionable_select</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="role_select-instance_method">
+  
+    #<strong>role_select</strong>(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Add a select role to this action row.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Custom IDs are used to pass state to the events that are raised from interactions.
+There is a limit of 100 characters to each custom_id.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>placeholder</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Default text to show when no entries are selected.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>min_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The minimum amount of values a user must select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>max_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The maximum amount of values a user can select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>disabled</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Grey out the component to make it unusable.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+95
+96
+97</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 95</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_role_select'>role_select</span><span class='lparen'>(</span><span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>placeholder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>min_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>max_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='const'><span class='object_link'><a href="SelectMenuBuilder.html" title="Discordrb::Webhooks::View::SelectMenuBuilder (class)">SelectMenuBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SelectMenuBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::View::SelectMenuBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_placeholder'>placeholder</span><span class='comma'>,</span> <span class='id identifier rubyid_min_values'>min_values</span><span class='comma'>,</span> <span class='id identifier rubyid_max_values'>max_values</span><span class='comma'>,</span> <span class='id identifier rubyid_disabled'>disabled</span><span class='comma'>,</span> <span class='label'>select_type:</span> <span class='symbol'>:role_select</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="string_select-instance_method">
+  
+    #<strong>string_select</strong>(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil, disabled: nil) {|builder| ... } &#x21d2; <tt>Object</tt> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='select_menu-instance_method'>select_menu</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Add a select string to this action row.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Custom IDs are used to pass state to the events that are raised from interactions.
+There is a limit of 100 characters to each custom_id.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>[]</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Options that can be selected in this menu. Can also be provided via the yielded builder.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>placeholder</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Default text to show when no entries are selected.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>min_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The minimum amount of values a user must select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>max_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The maximum amount of values a user can select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>disabled</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Grey out the component to make it unusable.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>builder</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="SelectMenuBuilder.html" title="Discordrb::Webhooks::View::SelectMenuBuilder (class)">SelectMenuBuilder</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+67
+68
+69
+70
+71
+72
+73</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 67</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_string_select'>string_select</span><span class='lparen'>(</span><span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>placeholder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>min_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>max_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_builder'>builder</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="SelectMenuBuilder.html" title="Discordrb::Webhooks::View::SelectMenuBuilder (class)">SelectMenuBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SelectMenuBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::View::SelectMenuBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='comma'>,</span> <span class='id identifier rubyid_placeholder'>placeholder</span><span class='comma'>,</span> <span class='id identifier rubyid_min_values'>min_values</span><span class='comma'>,</span> <span class='id identifier rubyid_max_values'>max_values</span><span class='comma'>,</span> <span class='id identifier rubyid_disabled'>disabled</span><span class='comma'>,</span> <span class='label'>select_type:</span> <span class='symbol'>:string_select</span><span class='rparen'>)</span>
+
+  <span class='kw'>yield</span> <span class='id identifier rubyid_builder'>builder</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+
+  <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_builder'>builder</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="user_select-instance_method">
+  
+    #<strong>user_select</strong>(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Add a select user to this action row.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Custom IDs are used to pass state to the events that are raised from interactions.
+There is a limit of 100 characters to each custom_id.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>placeholder</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Default text to show when no entries are selected.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>min_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The minimum amount of values a user must select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>max_values</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The maximum amount of values a user can select.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>disabled</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Grey out the component to make it unusable.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+84
+85
+86</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 84</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_user_select'>user_select</span><span class='lparen'>(</span><span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>placeholder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>min_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>max_values:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='const'><span class='object_link'><a href="SelectMenuBuilder.html" title="Discordrb::Webhooks::View::SelectMenuBuilder (class)">SelectMenuBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="SelectMenuBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::View::SelectMenuBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_placeholder'>placeholder</span><span class='comma'>,</span> <span class='id identifier rubyid_min_values'>min_values</span><span class='comma'>,</span> <span class='id identifier rubyid_max_values'>max_values</span><span class='comma'>,</span> <span class='id identifier rubyid_disabled'>disabled</span><span class='comma'>,</span> <span class='label'>select_type:</span> <span class='symbol'>:user_select</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Wed Jul  5 16:01:53 2023 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.34 (ruby-2.7.8).
+</div>
+
+    </div>
+  </body>
+</html>
