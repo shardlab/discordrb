@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.0] - 2023-07-05
+[3.5.0]: https://github.com/shardlab/discordrb/releases/tag/v3.5.0
+
+[View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.4.2..v3.5.0)
+
+### Summary
+
+Lots of changes, Discord is changing their API and we're trying to keep up. This release is a bit of a mess, but it's a necessary one.
+
 ## [3.4.2] - 2020-02-05
 
 [3.4.2]: https://github.com/shardlab/discordrb/releases/tag/v3.4.2
