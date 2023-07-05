@@ -946,8 +946,14 @@ module Discordrb
 
       username = data['user']['username']
       if username && !member_is_new # Don't set the username for newly-cached members
-        debug "Implicitly updating presence-obtained information for member #{user_id}"
+        debug "Implicitly updating presence-obtained information username for member #{user_id}"
         member.update_username(username)
+      end
+
+      global_name = data['user']['global_name']
+      if global_name && !member_is_new # Don't set the global_name for newly-cached members
+        debug "Implicitly updating presence-obtained information global_name for member #{user_id}"
+        member.update_global_name(global_name)
       end
 
       member.update_presence(data)
@@ -1088,6 +1094,7 @@ module Discordrb
       member = server.member(data['user']['id'].to_i)
       member.update_roles(data['roles'])
       member.update_nick(data['nick'])
+      member.update_global_name(data['user']['global_name']) if data['user']['global_name']
       member.update_boosting_since(data['premium_since'])
       member.update_communication_disabled_until(data['communication_disabled_until'])
     end

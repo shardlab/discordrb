@@ -192,7 +192,7 @@ module Discordrb
     # Utility function to get a webhook's avatar URL.
     # @return [String] the URL to the avatar image
     def avatar_url
-      return API::User.default_avatar unless @avatar
+      return API::User.default_avatar(@id) unless @avatar
 
       API::User.avatar_url(@id, @avatar)
     end
