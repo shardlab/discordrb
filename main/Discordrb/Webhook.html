@@ -1130,7 +1130,7 @@ ID and avatar if the bot cannot reach the owner</p>
       <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 194</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_avatar_url'>avatar_url</span>
-  <span class='kw'>return</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/User.html" title="Discordrb::API::User (module)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_avatar'><span class='object_link'><a href="API/User.html#default_avatar-class_method" title="Discordrb::API::User.default_avatar (method)">default_avatar</a></span></span> <span class='kw'>unless</span> <span class='ivar'>@avatar</span>
+  <span class='kw'>return</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/User.html" title="Discordrb::API::User (module)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_avatar'><span class='object_link'><a href="API/User.html#default_avatar-class_method" title="Discordrb::API::User.default_avatar (method)">default_avatar</a></span></span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='ivar'>@avatar</span>
 
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/User.html" title="Discordrb::API::User (module)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_avatar_url'><span class='object_link'><a href="API/User.html#avatar_url-class_method" title="Discordrb::API::User.avatar_url (method)">avatar_url</a></span></span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='ivar'>@avatar</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -2114,7 +2114,7 @@ whether it should return immediately after sending the message. If <code>true</c
 </div>
 
       <div id="footer">
-  Generated on Wed Jun 28 19:38:41 2023 by
+  Generated on Wed Jul  5 15:46:26 2023 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.34 (ruby-2.7.8).
 </div>
