@@ -44,4 +44,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop-rake', '~> 0.6.0'
   spec.add_development_dependency 'simplecov', '~> 0.21.0'
   spec.add_development_dependency 'yard', '~> 0.9.9'
+  spec.add_development_dependency 'pry-byebug'
 end
