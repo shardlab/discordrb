@@ -307,13 +307,21 @@ module Discordrb
     # Creates an OAuth invite URL that can be used to invite this bot to a particular server.
     # @param server [Server, nil] The server the bot should be invited to, or nil if a general invite should be created.
     # @param permission_bits [String, Integer] Permission bits that should be appended to invite url.
+    # @param redirect_uri [String] Redirect URI that should be appended to invite url.
+    # @param scopes [Array<String>] Scopes that should be appended to invite url.
     # @return [String] the OAuth invite URL.
-    def invite_url(server: nil, permission_bits: nil)
+    def invite_url(server: nil, permission_bits: nil, redirect_uri: nil, scopes: ['bot'])
       @client_id ||= bot_application.id
 
-      server_id_str = server ? "&guild_id=#{server.id}" : ''
-      permission_bits_str = permission_bits ? "&permissions=#{permission_bits}" : ''
-      "https://discord.com/oauth2/authorize?&client_id=#{@client_id}#{server_id_str}#{permission_bits_str}&scope=bot"
+      query = URI.encode_www_form({
+        client_id: @client_id,
+        guild_id: server&.id,
+        permissions: permission_bits,
+        redirect_uri: redirect_uri,
+        scope: scopes.join(' ')
+      }.compact)
+
+      "https://discord.com/oauth2/authorize?#{query}"
     end
 
     # @return [Hash<Integer => VoiceBot>] the voice connections this bot currently has, by the server ID to which they are connected.
