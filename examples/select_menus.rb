@@ -68,7 +68,7 @@ bot.message do |event|
       'channel_select', false, nil, nil, nil, nil,
       Discordrb::Components::View.new do |builder|
         builder.row do |r|
-          r.channel_select(custom_id: 'channel_select', placeholder: 'Test of ChannelSelect', max_values: 3, channel_types: %i[guild_text guild_voice])
+          r.channel_select(custom_id: 'channel_select', placeholder: 'Test of ChannelSelect', max_values: 3, channel_types: %i[text voice])
         end
       end
     )

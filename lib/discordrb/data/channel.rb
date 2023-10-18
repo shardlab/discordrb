@@ -9,6 +9,7 @@ module Discordrb
     include IDObject
 
     # Map of channel types
+    # @see https://discord.com/developers/docs/resources/channel#channel-object-channel-types
     TYPES = {
       text: 0,
       dm: 1,
@@ -22,7 +23,8 @@ module Discordrb
       private_thread: 12,
       stage_voice: 13,
       directory: 14,
-      forum: 15
+      forum: 15,
+      media: 16
     }.freeze
 
     # @return [String] this channel's name.

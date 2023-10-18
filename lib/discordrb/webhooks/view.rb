@@ -24,24 +24,6 @@ class Discordrb::Webhooks::View
     channel_select: 8
   }.freeze
 
-  # Channel types.
-  # @see https://discord.com/developers/docs/resources/channel#channel-object-channel-types
-  CHANNEL_TYPES = {
-    guild_text: 0,
-    dm: 1,
-    guild_voice: 2,
-    group_dm: 3,
-    guild_category: 4,
-    guild_announcement: 5,
-    announcement_thread: 10,
-    public_thread: 11,
-    private_thread: 12,
-    guild_stage_voice: 13,
-    guild_directory: 14,
-    guild_forum: 15,
-    guild_media: 16
-  }.freeze
-
   # This builder is used when constructing an ActionRow. All current components must be within an action row, but this can
   # change in the future. A message can have 5 action rows, each action row can hold a weight of 5. Buttons have a weight of 1,
   # and dropdowns have a weight of 5.
@@ -132,12 +114,12 @@ class Discordrb::Webhooks::View
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param disabled [true, false, nil] Grey out the component to make it unusable.
-    # @param channel_types [Array<CHANNEL_TYPES>, nil] Display only the specific channel type(s).
+    # @param channel_types [Array<Discordrb::Channel::TYPES>, nil] Display only the specific channel type(s).
     def channel_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil, channel_types: nil)
       builder = SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :channel_select).to_h
 
       if channel_types
-        types_selected = CHANNEL_TYPES.values_at(*channel_types)
+        types_selected = Discordrb::Channel::TYPES.values_at(*channel_types)
         builder[:channel_types] = types_selected
       end
 
