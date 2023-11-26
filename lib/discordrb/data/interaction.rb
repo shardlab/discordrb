@@ -343,8 +343,14 @@ module Discordrb
     # @return [String]
     attr_reader :name
 
+    # @return [Hash, nil]
+    attr_reader :name_localizations
+
     # @return [String]
     attr_reader :description
+
+    # @return [Hash, nil]
+    attr_reader :description_localizations
 
     # @return [true, false]
     attr_reader :default_permission
@@ -366,7 +372,9 @@ module Discordrb
       @server_id = server_id&.to_i
 
       @name = data['name']
+      @name_localizations = data['name_localizations']
       @description = data['description']
+      @description_localizations = data['description_localizations']
       @default_permission = data['default_permission']
       @options = data['options']
       @nsfw = data['nsfw'] || false
