@@ -401,10 +401,12 @@ module Discordrb
     # @param description [String] The description of this command.
     # @param default_permission [true, false] Whether this command is available with default permissions.
     # @param nsfw [true, false] Whether this command should be marked as age-restricted.
+    # @param name_localizations [Hash] The localized names of the command.
+    # @param description_localizations [Hash] The localized descriptions of the command.
     # @yieldparam (see Bot#edit_application_command)
     # @return (see Bot#edit_application_command)
-    def edit(name: nil, description: nil, default_permission: nil, nsfw: nil, &block)
-      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, nsfw: nsfw, &block)
+    def edit(name: nil, description: nil, default_permission: nil, nsfw: nil, name_localizations: nil, description_localizations: nil, &block)
+      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, nsfw: nsfw, name_localizations: name_localizations, description_localizations: description_localizations, &block)
     end
 
     # Delete this application command.
