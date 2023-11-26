@@ -380,10 +380,12 @@ module Discordrb
     # @param name [String] The name to use for this command.
     # @param description [String] The description of this command.
     # @param default_permission [true, false] Whether this command is available with default permissions.
+    # @param name_localizations [Hash] The localized names of the command.
+    # @param description_localizations [Hash] The localized descriptions of the command.
     # @yieldparam (see Bot#edit_application_command)
     # @return (see Bot#edit_application_command)
-    def edit(name: nil, description: nil, default_permission: nil, &block)
-      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, &block)
+    def edit(name: nil, description: nil, default_permission: nil, name_localizations: nil, description_localizations: nil, &block)
+      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, name_localizations: name_localizations, description_localizations: description_localizations, &block)
     end
 
     # Delete this application command.
