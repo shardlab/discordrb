@@ -237,8 +237,8 @@ module Discordrb::API
   # @param icon_hash [String]
   # @param format ['webp', 'png', 'jpeg']
   # @return [String]
-  def role_icon_url(role_id, icon_hash, format = 'webp')
-    "#{cdn_url}/role-icons/#{role_id}/#{icon_hash}.#{format}"
+  def role_icon_url(role_id, icon_hash, format = 'webp', size: nil)
+    "#{cdn_url}/role-icons/#{role_id}/#{icon_hash}.#{format}#{icon_size(size)}"
   end
 
   # Login to the server

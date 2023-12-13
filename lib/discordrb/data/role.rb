@@ -177,10 +177,10 @@ module Discordrb
 
     # @param format ['webp', 'png', 'jpeg']
     # @return [String] URL to the icon on Discord's CDN.
-    def icon_url(format = 'webp')
+    def icon_url(format = 'webp', size: nil)
       return nil unless @icon
 
-      Discordrb::API.role_icon_url(@id, @icon, format)
+      Discordrb::API.role_icon_url(@id, @icon, format, size: size)
     end
 
     alias_method :color=, :colour=
