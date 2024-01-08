@@ -52,7 +52,7 @@ module Discordrb
     FLAGS.each do |position, flag|
       attr_reader flag
 
-      define_method "can_#{flag}=" do |value|
+      define_method :"can_#{flag}=" do |value|
         new_bits = @bits
         if value
           new_bits |= (1 << position)
@@ -81,7 +81,7 @@ module Discordrb
     def init_vars
       FLAGS.each do |position, flag|
         flag_set = ((@bits >> position) & 0x1) == 1
-        instance_variable_set "@#{flag}", flag_set
+        instance_variable_set :"@#{flag}", flag_set
       end
     end
 
@@ -194,7 +194,7 @@ module Discordrb
 
     # Define methods for querying permissions
     Discordrb::Permissions::FLAGS.each_value do |flag|
-      define_method "can_#{flag}?" do |channel = nil|
+      define_method :"can_#{flag}?" do |channel = nil|
         permission? flag, channel
       end
     end
@@ -220,7 +220,7 @@ module Discordrb
           false
         else
           # Otherwise defer to the role
-          role.permissions.instance_variable_get("@#{action}") || can_act
+          role.permissions.instance_variable_get(:"@#{action}") || can_act
         end
       end
     end
@@ -232,9 +232,9 @@ module Discordrb
       # Otherwise, check the allow and deny objects
       allow = channel.permission_overwrites[id].allow
       deny = channel.permission_overwrites[id].deny
-      if allow.instance_variable_get("@#{action}")
+      if allow.instance_variable_get(:"@#{action}")
         :allow
-      elsif deny.instance_variable_get("@#{action}")
+      elsif deny.instance_variable_get(:"@#{action}")
         :deny
       end
 

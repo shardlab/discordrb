@@ -397,7 +397,7 @@ module Discordrb
     # @!visibility private
     def delete_role(role_id)
       @roles.reject! { |r| r.id == role_id }
-      @members.each do |_, member|
+      @members.each_value do |member|
         new_roles = member.roles.reject { |r| r.id == role_id }
         member.update_roles(new_roles)
       end
@@ -515,7 +515,7 @@ module Discordrb
     # @param reason [String] The reason the for the creation of this role.
     # @return [Role] the created role.
     def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, reason: nil)
-      colour = colour.respond_to?(:combined) ? colour.combined : colour
+      colour = colour.combined if colour.respond_to?(:combined)
 
       permissions = if permissions.is_a?(Array)
                       Permissions.bits(permissions)
@@ -830,11 +830,11 @@ module Discordrb
       @afk_timeout = new_data[:afk_timeout] || new_data['afk_timeout'] || @afk_timeout
 
       afk_channel_id = new_data[:afk_channel_id] || new_data['afk_channel_id'] || @afk_channel
-      @afk_channel_id = afk_channel_id.nil? ? nil : afk_channel_id.resolve_id
+      @afk_channel_id = afk_channel_id&.resolve_id
       widget_channel_id = new_data[:widget_channel_id] || new_data['widget_channel_id'] || @widget_channel
-      @widget_channel_id = widget_channel_id.nil? ? nil : widget_channel_id.resolve_id
+      @widget_channel_id = widget_channel_id&.resolve_id
       system_channel_id = new_data[:system_channel_id] || new_data['system_channel_id'] || @system_channel
-      @system_channel_id = system_channel_id.nil? ? nil : system_channel_id.resolve_id
+      @system_channel_id = system_channel_id&.resolve_id
 
       @widget_enabled = new_data[:widget_enabled] || new_data['widget_enabled']
       @splash = new_data[:splash_id] || new_data['splash_id'] || @splash_id

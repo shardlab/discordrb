@@ -40,7 +40,7 @@ describe Discordrb::Overwrite do
       end
 
       it 'infers type from a User object' do
-        users.each do |_user_type, user|
+        users.each_value do |user|
           expect(described_class.new(user).type).to eq :member
         end
       end
