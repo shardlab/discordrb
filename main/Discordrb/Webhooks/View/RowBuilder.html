@@ -429,7 +429,7 @@ There is a limit of 100 characters to each custom_id.</p>
           <span class='kw'>when</span> <span class='const'><span class='object_link'><a href="../../../Integer.html" title="Integer (class)">Integer</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../../../String.html" title="String (class)">String</a></span></span>
             <span class='id identifier rubyid_emoji'>emoji</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span> <span class='op'>?</span> <span class='lbrace'>{</span> <span class='label'>id:</span> <span class='id identifier rubyid_emoji'>emoji</span> <span class='rbrace'>}</span> <span class='op'>:</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='id identifier rubyid_emoji'>emoji</span> <span class='rbrace'>}</span>
           <span class='kw'>else</span>
-            <span class='id identifier rubyid_emoji'>emoji</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+            <span class='id identifier rubyid_emoji'>emoji</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_h'>to_h</span>
           <span class='kw'>end</span>
 
   <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span> <span class='label'>type:</span> <span class='const'><span class='object_link'><a href="../View.html#COMPONENT_TYPES-constant" title="Discordrb::Webhooks::View::COMPONENT_TYPES (constant)">COMPONENT_TYPES</a></span></span><span class='lbracket'>[</span><span class='symbol'>:button</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='id identifier rubyid_label'>label</span><span class='comma'>,</span> <span class='label'>emoji:</span> <span class='id identifier rubyid_emoji'>emoji</span><span class='comma'>,</span> <span class='label'>style:</span> <span class='id identifier rubyid_style'>style</span><span class='comma'>,</span> <span class='label'>custom_id:</span> <span class='id identifier rubyid_custom_id'>custom_id</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='id identifier rubyid_disabled'>disabled</span><span class='comma'>,</span> <span class='label'>url:</span> <span class='id identifier rubyid_url'>url</span> <span class='rbrace'>}</span>
@@ -1128,7 +1128,7 @@ There is a limit of 100 characters to each custom_id.</p>
 </div>
 
       <div id="footer">
-  Generated on Fri Nov  3 11:04:07 2023 by
+  Generated on Mon Jan  8 19:49:21 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.34 (ruby-2.7.8).
 </div>
