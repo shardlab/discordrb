@@ -49,7 +49,7 @@ class Discordrb::Webhooks::View
               when Integer, String
                 emoji.to_i.positive? ? { id: emoji } : { name: emoji }
               else
-                emoji.to_h
+                emoji&.to_h
               end
 
       @components << { type: COMPONENT_TYPES[:button], label: label, emoji: emoji, style: style, custom_id: custom_id, disabled: disabled, url: url }
@@ -149,7 +149,7 @@ class Discordrb::Webhooks::View
               when Integer, String
                 emoji.to_i.positive? ? { id: emoji } : { name: emoji }
               else
-                emoji.to_h
+                emoji&.to_h
               end
 
       @options << { label: label, value: value, description: description, emoji: emoji, default: default }
