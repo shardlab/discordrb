@@ -26,7 +26,7 @@ bot.message do |event|
 
   if event.message.content == 'EDIT_TWO'
     wh = event.channel.webhooks.first
-    wh.update(avatar: BASE64_SMALL_PICTURE, reason: 'Edition test two')
+    wh.update({ avatar: BASE64_SMALL_PICTURE, reason: 'Edition test two' })
 
     puts wh.inspect
     wh.execute(content: '[EDIT TWO]')
