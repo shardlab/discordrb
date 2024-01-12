@@ -259,4 +259,24 @@ describe Discordrb::Message do
       message.respond(content, tts, embed, attachments, allowed_mentions, message_reference, components)
     end
   end
+
+  describe '#suppress_embeds' do
+    let(:message) { described_class.new(message_data, bot) }
+    let(:message_without_embeds) do
+      message_data.merge(
+        flags: 1 << 2,
+        embeds: []
+      )
+    end
+
+    it 'removes all the embeds' do
+      expect(Discordrb::API::Channel).to receive(:suppress_embeds)
+        .with(token, channel_id, message.id).and_return(message_without_embeds.to_json)
+
+      new_message = message.suppress_embeds
+
+      expect(new_message.embeds).to be_empty
+      expect(new_message.flags).to eq(1 << 2)
+    end
+  end
 end
