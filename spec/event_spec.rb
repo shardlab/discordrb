@@ -159,43 +159,43 @@ describe Discordrb::Events do
     let(:bot) { double('bot', server: server) }
     let(:server) { double }
     let(:interaction) { double('Discordrb::Interaction') }
-    let(:user) { double{'Discordrb::User'} }
+    let(:user) { double { 'Discordrb::User' } }
 
     shared_examples 'type name attributes' do |type, matching, non_matching|
       it "matches #{matching} as :#{type.to_sym}" do
-        event = double('Discordrb::Events::InteractionCreateEvent', type: matching, interaction: interaction, user: user )
+        event = double('Discordrb::Events::InteractionCreateEvent', type: matching, interaction: interaction, user: user)
         allow(event).to receive(:is_a?).with(Discordrb::Events::InteractionCreateEvent).and_return(true)
-        handler = Discordrb::Events::InteractionCreateEventHandler.new({type: type.to_sym}, double('proc'))
+        handler = Discordrb::Events::InteractionCreateEventHandler.new({ type: type.to_sym }, double('proc'))
         expect(handler.matches?(event)).to be_truthy
       end
 
-      it "matches #{matching} as '#{type.to_s}'" do
-        event = double('Discordrb::Events::InteractionCreateEvent', type: matching, interaction: interaction, user: user )
+      it "matches #{matching} as '#{type}'" do
+        event = double('Discordrb::Events::InteractionCreateEvent', type: matching, interaction: interaction, user: user)
         allow(event).to receive(:is_a?).with(Discordrb::Events::InteractionCreateEvent).and_return(true)
-        handler = Discordrb::Events::InteractionCreateEventHandler.new({type: type.to_s}, double('proc'))
+        handler = Discordrb::Events::InteractionCreateEventHandler.new({ type: type.to_s }, double('proc')) # rubocop:disable Lint/RedundantStringCoercion
         expect(handler.matches?(event)).to be_truthy
       end
 
       it "doesn't match #{non_matching} as :#{type.to_sym}" do
-        event = double('Discordrb::Events::InteractionCreateEvent', type: non_matching, interaction: interaction, user: user )
+        event = double('Discordrb::Events::InteractionCreateEvent', type: non_matching, interaction: interaction, user: user)
         allow(event).to receive(:is_a?).with(Discordrb::Events::InteractionCreateEvent).and_return(true)
-        handler = Discordrb::Events::InteractionCreateEventHandler.new({type: type}, double('proc'))
+        handler = Discordrb::Events::InteractionCreateEventHandler.new({ type: type }, double('proc'))
         expect(handler.matches?(event)).to be_falsy
       end
     end
 
     shared_examples 'type value attributes' do |type, matching, non_matching|
       it "matches #{matching}" do
-        event = double('Discordrb::Events::InteractionCreateEvent', type: matching, interaction: interaction, user: user )
+        event = double('Discordrb::Events::InteractionCreateEvent', type: matching, interaction: interaction, user: user)
         allow(event).to receive(:is_a?).with(Discordrb::Events::InteractionCreateEvent).and_return(true)
-        handler = Discordrb::Events::InteractionCreateEventHandler.new({type: type}, double('proc'))
+        handler = Discordrb::Events::InteractionCreateEventHandler.new({ type: type }, double('proc'))
         expect(handler.matches?(event)).to be_truthy
       end
 
       it "doesn't match #{non_matching}" do
-        event = double('Discordrb::Events::InteractionCreateEvent', type: non_matching, interaction: interaction, user: user )
+        event = double('Discordrb::Events::InteractionCreateEvent', type: non_matching, interaction: interaction, user: user)
         allow(event).to receive(:is_a?).with(Discordrb::Events::InteractionCreateEvent).and_return(true)
-        handler = Discordrb::Events::InteractionCreateEventHandler.new({type: type}, double('proc'))
+        handler = Discordrb::Events::InteractionCreateEventHandler.new({ type: type }, double('proc'))
         expect(handler.matches?(event)).to be_falsy
       end
     end
