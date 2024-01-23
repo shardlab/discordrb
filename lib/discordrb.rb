@@ -36,7 +36,7 @@ module Discordrb
   }.freeze
 
   # All available intents
-  ALL_INTENTS = INTENTS.values.reduce(&:|)
+  ALL_INTENTS = INTENTS.values.reduce { |result, val| result | val}
 
   # All unprivileged intents
   # @see https://discord.com/developers/docs/topics/gateway#privileged-intents

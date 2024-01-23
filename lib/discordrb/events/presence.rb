@@ -53,7 +53,7 @@ module Discordrb::Events
                  e
                end
         end
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 
@@ -76,7 +76,7 @@ module Discordrb::Events
 
     # @!attribute [r] type
     #   @return [Integer] the type of play. See {Discordrb::Activity}
-    delegate :url, :details, :type, to: :activity
+    # delegate :url, :details, :type, to: :activity
 
     # @return [Hash<Symbol, Symbol>] the current online status (`:online`, `:idle` or `:dnd`) of the user
     #   on various device types (`:desktop`, `:mobile`, or `:web`). The value will be `nil` if the user is offline or invisible.
@@ -94,6 +94,18 @@ module Discordrb::Events
     # @return [String] the name of the new game the user is playing.
     def game
       @activity.name
+    end
+
+    def url
+      activity.url
+    end
+
+    def details
+      activity.details
+    end
+
+    def type
+      activity.type
     end
   end
 
@@ -123,7 +135,7 @@ module Discordrb::Events
         matches_all(@attributes[:client_status], event.client_status) do |a, e|
           e.slice(a.keys) == a
         end
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 end

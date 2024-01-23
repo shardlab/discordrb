@@ -1,0 +1,22 @@
+module Discordrb
+  # Builder class for `allowed_mentions` when sending messages.
+  class AllowedMentions
+    # @return [Array<"users", "roles", "everyone">, nil]
+    attr_accessor parse: untyped
+
+    # @return [Array<String, Integer>, nil]
+    attr_accessor users: untyped
+
+    # @return [Array<String, Integer>, nil]
+    attr_accessor roles: untyped
+
+    # @param parse [Array<"users", "roles", "everyone">] Mention types that can be inferred from the message.
+    #   `users` and `roles` allow for all mentions of the respective type to ping. `everyone` allows usage of `@everyone` and `@here`
+    # @param users [Array<User, String, Integer>] Users or user IDs that can be pinged. Cannot be used in conjunction with `"users"` in `parse`
+    # @param roles [Array<Role, String, Integer>] Roles or role IDs that can be pinged. Cannot be used in conjunction with `"roles"` in `parse`
+    def initialize: (?parse: untyped?, ?users: untyped?, ?roles: untyped?) -> void
+
+    # @!visibility private
+    def to_hash: () -> untyped
+  end
+end

@@ -1,0 +1,548 @@
+module Discordrb
+  # Represents a Discord bot, including servers, users, etc.
+  class Bot
+    # The list of currently running threads used to parse and call events.
+    # The threads will have a local variable `:discordrb_name` in the format of `et-1234`, where
+    # "et" stands for "event thread" and the number is a continually incrementing number representing
+    # how many events were executed before.
+    # @return [Array<Thread>] The threads.
+    attr_reader event_threads: untyped
+
+    # @return [true, false] whether or not the bot should parse its own messages. Off by default.
+    attr_accessor should_parse_self: untyped
+
+    # The bot's name which discordrb sends to Discord when making any request, so Discord can identify bots with the
+    # same codebase. Not required but I recommend setting it anyway.
+    # @return [String] The bot's name.
+    attr_accessor name: untyped
+
+    # @return [Array(Integer, Integer)] the current shard key
+    attr_reader shard_key: untyped
+
+    # @return [Hash<Symbol => Await>] the list of registered {Await}s.
+    attr_reader awaits: untyped
+
+    # The gateway connection is an internal detail that is useless to most people. It is however essential while
+    # debugging or developing discordrb itself, or while writing very custom bots.
+    # @return [Gateway] the underlying {Gateway} object.
+    attr_reader gateway: untyped
+
+    include EventContainer
+
+    include Cache
+
+    # Makes a new bot with the given authentication data. It will be ready to be added event handlers to and can
+    # eventually be run with {#run}.
+    #
+    # As support for logging in using username and password has been removed in version 3.0.0, only a token login is
+    # possible. Be sure to specify the `type` parameter as `:user` if you're logging in as a user.
+    #
+    # Simply creating a bot won't be enough to start sending messages etc. with, only a limited set of methods can
+    # be used after logging in. If you want to do something when the bot has connected successfully, either do it in the
+    # {#ready} event, or use the {#run} method with the :async parameter and do the processing after that.
+    # @param log_mode [Symbol] The mode this bot should use for logging. See {Logger#mode=} for a list of modes.
+    # @param token [String] The token that should be used to log in. If your bot is a bot account, you have to specify
+    #   this. If you're logging in as a user, make sure to also set the account type to :user so discordrb doesn't think
+    #   you're trying to log in as a bot.
+    # @param client_id [Integer] If you're logging in as a bot, the bot's client ID. This is optional, and may be fetched
+    #   from the API by calling {Bot#bot_application} (see {Application}).
+    # @param type [Symbol] This parameter lets you manually overwrite the account type. This needs to be set when
+    #   logging in as a user, otherwise discordrb will treat you as a bot account. Valid values are `:user` and `:bot`.
+    # @param name [String] Your bot's name. This will be sent to Discord with any API requests, who will use this to
+    #   trace the source of excessive API requests; it's recommended to set this to something if you make bots that many
+    #   people will host on their servers separately.
+    # @param fancy_log [true, false] Whether the output log should be made extra fancy using ANSI escape codes. (Your
+    #   terminal may not support this.)
+    # @param suppress_ready [true, false] Whether the READY packet should be exempt from being printed to console.
+    #   Useful for very large bots running in debug or verbose log_mode.
+    # @param parse_self [true, false] Whether the bot should react on its own messages. It's best to turn this off
+    #   unless you really need this so you don't inadvertently create infinite loops.
+    # @param shard_id [Integer] The number of the shard this bot should handle. See
+    #   https://github.com/discord/discord-api-docs/issues/17 for how to do sharding.
+    # @param num_shards [Integer] The total number of shards that should be running. See
+    #   https://github.com/discord/discord-api-docs/issues/17 for how to do sharding.
+    # @param redact_token [true, false] Whether the bot should redact the token in logs. Default is true.
+    # @param ignore_bots [true, false] Whether the bot should ignore bot accounts or not. Default is false.
+    # @param compress_mode [:none, :large, :stream] Sets which compression mode should be used when connecting
+    #   to Discord's gateway. `:none` will request that no payloads are received compressed (not recommended for
+    #   production bots). `:large` will request that large payloads are received compressed. `:stream` will request
+    #   that all data be received in a continuous compressed stream.
+    # @param intents [:all, :unprivileged, Array<Symbol>, :none] Gateway intents that this bot requires. `:all` will
+    #   request all intents. `:unprivileged` will request only intents that are not defined as "Privileged". `:none`
+    #   will request no intents. An array of symbols will request only those intents specified.
+    # @see Discordrb::INTENTS
+    def initialize: (?log_mode: ::Symbol, ?token: untyped?, ?client_id: untyped?, ?type: untyped?, ?name: ::String, ?fancy_log: bool, ?suppress_ready: bool, ?parse_self: bool, ?shard_id: untyped?, ?num_shards: untyped?, ?redact_token: bool, ?ignore_bots: bool, ?compress_mode: ::Symbol, ?intents: ::Symbol) -> void
+
+    # The list of users the bot shares a server with.
+    # @return [Hash<Integer => User>] The users by ID.
+    def users: () -> untyped
+
+    # The list of servers the bot is currently in.
+    # @return [Hash<Integer => Server>] The servers by ID.
+    def servers: () -> untyped
+
+    # The list of members in threads the bot can see.
+    # @return [Hash<Integer => Hash<Integer => Hash<String => Object>>]
+    def thread_members: () -> untyped
+
+    # @overload emoji(id)
+    #   Return an emoji by its ID
+    #   @param id [String, Integer] The emoji's ID.
+    #   @return [Emoji, nil] the emoji object. `nil` if the emoji was not found.
+    # @overload emoji
+    #   The list of emoji the bot can use.
+    #   @return [Array<Emoji>] the emoji available.
+    def emoji: (?untyped? id) -> untyped
+
+    alias emojis emoji
+
+    alias all_emoji emoji
+
+    # Finds an emoji by its name.
+    # @param name [String] The emoji name that should be resolved.
+    # @return [GlobalEmoji, nil] the emoji identified by the name, or `nil` if it couldn't be found.
+    def find_emoji: (untyped name) -> untyped
+
+    # The bot's user profile. This special user object can be used
+    # to edit user data like the current username (see {Profile#username=}).
+    # @return [Profile] The bot's profile that can be used to edit data.
+    def profile: () -> untyped
+
+    alias bot_user profile
+
+    # The bot's OAuth application.
+    # @return [Application, nil] The bot's application info. Returns `nil` if bot is not a bot account.
+    def bot_application: () -> (nil | untyped)
+
+    alias bot_app bot_application
+
+    # The Discord API token received when logging in. Useful to explicitly call
+    # {API} methods.
+    # @return [String] The API token.
+    def token: () -> untyped
+
+    # @return [String] the raw token, without any prefix
+    # @see #token
+    def raw_token: () -> untyped
+
+    # Runs the bot, which logs into Discord and connects the WebSocket. This
+    # prevents all further execution unless it is executed with
+    # `background` = `true`.
+    # @param background [true, false] If it is `true`, then the bot will run in
+    #   another thread to allow further execution. If it is `false`, this method
+    #   will block until {#stop} is called. If the bot is run with `true`, make
+    #   sure to eventually call {#join} so the script doesn't stop prematurely.
+    # @note Running the bot in the background means that you can call some
+    #   methods that require a gateway connection *before* that connection is
+    #   established. In most cases an exception will be raised if you try to do
+    #   this. If you need a way to safely run code after the bot is fully
+    #   connected, use a {#ready} event handler instead.
+    def run: (?bool background) -> (nil | untyped)
+
+    # Joins the bot's connection thread with the current thread.
+    # This blocks execution until the websocket stops, which should only happen
+    # manually triggered. or due to an error. This is necessary to have a
+    # continuously running bot.
+    def join: () -> untyped
+
+    alias sync join
+
+    # Stops the bot gracefully, disconnecting the websocket without immediately killing the thread. This means that
+    # Discord is immediately aware of the closed connection and makes the bot appear offline instantly.
+    # @note This method no longer takes an argument as of 3.4.0
+    def stop: (?untyped? _no_sync) -> untyped
+
+    # @return [true, false] whether or not the bot is currently connected to Discord.
+    def connected?: () -> untyped
+
+    # Makes the bot join an invite to a server.
+    # @param invite [String, Invite] The invite to join. For possible formats see {#resolve_invite_code}.
+    def accept_invite: (untyped invite) -> untyped
+
+    # Creates an OAuth invite URL that can be used to invite this bot to a particular server.
+    # @param server [Server, nil] The server the bot should be invited to, or nil if a general invite should be created.
+    # @param permission_bits [String, Integer] Permission bits that should be appended to invite url.
+    # @return [String] the OAuth invite URL.
+    def invite_url: (?server: untyped?, ?permission_bits: untyped?) -> ::String
+
+    # @return [Hash<Integer => VoiceBot>] the voice connections this bot currently has, by the server ID to which they are connected.
+    attr_reader voices: untyped
+
+    # Gets the voice bot for a particular server or channel. You can connect to a new channel using the {#voice_connect}
+    # method.
+    # @param thing [Channel, Server, Integer] the server or channel you want to get the voice bot for, or its ID.
+    # @return [Voice::VoiceBot, nil] the VoiceBot for the thing you specified, or nil if there is no connection yet
+    def voice: (untyped thing) -> (untyped | nil)
+
+    # Connects to a voice channel, initializes network connections and returns the {Voice::VoiceBot} over which audio
+    # data can then be sent. After connecting, the bot can also be accessed using {#voice}. If the bot is already
+    # connected to voice, the existing connection will be terminated - you don't have to call
+    # {Discordrb::Voice::VoiceBot#destroy} before calling this method.
+    # @param chan [Channel, String, Integer] The voice channel, or its ID, to connect to.
+    # @param encrypted [true, false] Whether voice communication should be encrypted using
+    #   (uses an XSalsa20 stream cipher for encryption and Poly1305 for authentication)
+    # @return [Voice::VoiceBot] the initialized bot over which audio data can then be sent.
+    def voice_connect: (untyped chan, ?bool encrypted) -> untyped
+
+    # Disconnects the client from a specific voice connection given the server ID. Usually it's more convenient to use
+    # {Discordrb::Voice::VoiceBot#destroy} rather than this.
+    # @param server [Server, String, Integer] The server, or server ID, the voice connection is on.
+    # @param destroy_vws [true, false] Whether or not the VWS should also be destroyed. If you're calling this method
+    #   directly, you should leave it as true.
+    def voice_destroy: (untyped server, ?bool destroy_vws) -> untyped
+
+    # Revokes an invite to a server. Will fail unless you have the *Manage Server* permission.
+    # It is recommended that you use {Invite#delete} instead.
+    # @param code [String, Invite] The invite to revoke. For possible formats see {#resolve_invite_code}.
+    def delete_invite: (untyped code) -> untyped
+
+    # Sends a text message to a channel given its ID and the message's content.
+    # @param channel [Channel, String, Integer] The channel, or its ID, to send something to.
+    # @param content [String] The text that should be sent as a message. It is limited to 2000 characters (Discord imposed).
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
+    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @return [Message] The message that was sent.
+    def send_message: (untyped channel, untyped content, ?bool tts, ?untyped? embed, ?untyped? attachments, ?untyped? allowed_mentions, ?untyped? message_reference, ?untyped? components) -> untyped
+
+    # Sends a text message to a channel given its ID and the message's content,
+    # then deletes it after the specified timeout in seconds.
+    # @param channel [Channel, String, Integer] The channel, or its ID, to send something to.
+    # @param content [String] The text that should be sent as a message. It is limited to 2000 characters (Discord imposed).
+    # @param timeout [Float] The amount of time in seconds after which the message sent will be deleted.
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
+    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    def send_temporary_message: (untyped channel, untyped content, untyped timeout, ?bool tts, ?untyped? embed, ?untyped? attachments, ?untyped? allowed_mentions, ?untyped? message_reference, ?untyped? components) -> nil
+
+    # Sends a file to a channel. If it is an image, it will automatically be embedded.
+    # @note This executes in a blocking way, so if you're sending long files, be wary of delays.
+    # @param channel [Channel, String, Integer] The channel, or its ID, to send something to.
+    # @param file [File] The file that should be sent.
+    # @param caption [string] The caption for the file.
+    # @param tts [true, false] Whether or not this file's caption should be sent using Discord text-to-speech.
+    # @param filename [String] Overrides the filename of the uploaded file
+    # @param spoiler [true, false] Whether or not this file should appear as a spoiler.
+    # @example Send a file from disk
+    #   bot.send_file(83281822225530880, File.open('rubytaco.png', 'r'))
+    def send_file: (untyped channel, untyped file, ?caption: untyped?, ?tts: bool, ?filename: untyped?, ?spoiler: untyped?) -> untyped
+
+    # Creates a server on Discord with a specified name and a region.
+    # @note Discord's API doesn't directly return the server when creating it, so this method
+    #   waits until the data has been received via the websocket. This may make the execution take a while.
+    # @param name [String] The name the new server should have. Doesn't have to be alphanumeric.
+    # @param region [Symbol] The region where the server should be created, for example 'eu-central' or 'hongkong'.
+    # @return [Server] The server that was created.
+    def create_server: (untyped name, ?::Symbol region) -> untyped
+
+    # Creates a new application to do OAuth authorization with. This allows you to use OAuth to authorize users using
+    # Discord. For information how to use this, see the docs: https://discord.com/developers/docs/topics/oauth2
+    # @param name [String] What your application should be called.
+    # @param redirect_uris [Array<String>] URIs that Discord should redirect your users to after authorizing.
+    # @return [Array(String, String)] your applications' client ID and client secret to be used in OAuth authorization.
+    def create_oauth_application: (untyped name, untyped redirect_uris) -> ::Array[untyped]
+
+    # Changes information about your OAuth application
+    # @param name [String] What your application should be called.
+    # @param redirect_uris [Array<String>] URIs that Discord should redirect your users to after authorizing.
+    # @param description [String] A string that describes what your application does.
+    # @param icon [String, nil] A data URI for your icon image (for example a base 64 encoded image), or nil if no icon
+    #   should be set or changed.
+    def update_oauth_application: (untyped name, untyped redirect_uris, ?::String description, ?untyped? icon) -> untyped
+
+    # Gets the users, channels, roles and emoji from a string.
+    # @param mentions [String] The mentions, which should look like `<@12314873129>`, `<#123456789>`, `<@&123456789>` or `<:name:126328:>`.
+    # @param server [Server, nil] The server of the associated mentions. (recommended for role parsing, to speed things up)
+    # @return [Array<User, Channel, Role, Emoji>] The array of users, channels, roles and emoji identified by the mentions, or `nil` if none exists.
+    def parse_mentions: (untyped mentions, ?untyped? server) -> untyped
+
+    # Gets the user, channel, role or emoji from a string.
+    # @param mention [String] The mention, which should look like `<@12314873129>`, `<#123456789>`, `<@&123456789>` or `<:name:126328:>`.
+    # @param server [Server, nil] The server of the associated mention. (recommended for role parsing, to speed things up)
+    # @return [User, Channel, Role, Emoji] The user, channel, role or emoji identified by the mention, or `nil` if none exists.
+    def parse_mention: (untyped mention, ?untyped? server) -> untyped
+
+    # Updates presence status.
+    # @param status [String] The status the bot should show up as. Can be `online`, `dnd`, `idle`, or `invisible`
+    # @param activity [String, nil] The name of the activity to be played/watched/listened to/stream name on the stream.
+    # @param url [String, nil] The Twitch URL to display as a stream. nil for no stream.
+    # @param since [Integer] When this status was set.
+    # @param afk [true, false] Whether the bot is AFK.
+    # @param activity_type [Integer] The type of activity status to display.
+    #   Can be 0 (Playing), 1 (Streaming), 2 (Listening), 3 (Watching), or 5 (Competing).
+    # @see Gateway#send_status_update
+    def update_status: (untyped status, untyped activity, untyped url, ?::Integer since, ?bool afk, ?::Integer activity_type) -> untyped
+
+    # Sets the currently playing game to the specified game.
+    # @param name [String] The name of the game to be played.
+    # @return [String] The game that is being played now.
+    def game=: (untyped name) -> untyped
+
+    alias playing= game=
+
+    # Sets the current listening status to the specified name.
+    # @param name [String] The thing to be listened to.
+    # @return [String] The thing that is now being listened to.
+    def listening=: (untyped name) -> untyped
+
+    # Sets the current watching status to the specified name.
+    # @param name [String] The thing to be watched.
+    # @return [String] The thing that is now being watched.
+    def watching=: (untyped name) -> untyped
+
+    # Sets the currently online stream to the specified name and Twitch URL.
+    # @param name [String] The name of the stream to display.
+    # @param url [String] The url of the current Twitch stream.
+    # @return [String] The stream name that is being displayed now.
+    def stream: (untyped name, untyped url) -> untyped
+
+    # Sets the currently competing status to the specified name.
+    # @param name [String] The name of the game to be competing in.
+    # @return [String] The game that is being competed in now.
+    def competing=: (untyped name) -> untyped
+
+    # Sets status to online.
+    def online: () -> untyped
+
+    alias on online
+
+    # Sets status to idle.
+    def idle: () -> untyped
+
+    alias away idle
+
+    # Sets the bot's status to DnD (red icon).
+    def dnd: () -> untyped
+
+    # Sets the bot's status to invisible (appears offline).
+    def invisible: () -> untyped
+
+    # Join a thread
+    # @param channel [Channel, Integer, String]
+    def join_thread: (untyped channel) -> nil
+
+    # Leave a thread
+    # @param channel [Channel, Integer, String]
+    def leave_thread: (untyped channel) -> nil
+
+    # Add a member to a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def add_thread_member: (untyped channel, untyped member) -> nil
+
+    # Remove a member from a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def remove_thread_member: (untyped channel, untyped member) -> nil
+
+    # Sets debug mode. If debug mode is on, many things will be outputted to STDOUT.
+    def debug=: (untyped new_debug) -> untyped
+
+    # Sets the logging mode
+    # @see Logger#mode=
+    def mode=: (untyped new_mode) -> untyped
+
+    # Prevents the READY packet from being printed regardless of debug mode.
+    def suppress_ready_debug: () -> untyped
+
+    # Add an await the bot should listen to. For information on awaits, see {Await}.
+    # @param key [Symbol] The key that uniquely identifies the await for {AwaitEvent}s to listen to (see {#await}).
+    # @param type [Class] The event class that should be listened for.
+    # @param attributes [Hash] The attributes the event should check for. The block will only be executed if all attributes match.
+    # @yield Is executed when the await is triggered.
+    # @yieldparam event [Event] The event object that was triggered.
+    # @return [Await] The await that was created.
+    # @deprecated Will be changed to blocking behavior in v4.0. Use {#add_await!} instead.
+    def add_await: (untyped key, untyped `type`, ?::Hash[untyped, untyped] attributes) ?{ () -> untyped } -> untyped
+
+    # Awaits an event, blocking the current thread until a response is received.
+    # @param type [Class] The event class that should be listened for.
+    # @option attributes [Numeric] :timeout the amount of time (in seconds) to wait for a response before returning `nil`. Waits forever if omitted.
+    # @yield Executed when a matching event is received.
+    # @yieldparam event [Event] The event object that was triggered.
+    # @yieldreturn [true, false] Whether the event matches extra await criteria described by the block
+    # @return [Event, nil] The event object that was triggered, or `nil` if a `timeout` was set and no event was raised in time.
+    # @raise [ArgumentError] if `timeout` is given and is not a positive numeric value
+    def add_await!: (untyped `type`, ?::Hash[untyped, untyped] attributes) { (untyped) -> untyped } -> untyped
+
+    # Add a user to the list of ignored users. Those users will be ignored in message events at event processing level.
+    # @note Ignoring a user only prevents any message events (including mentions, commands etc.) from them! Typing and
+    #   presence and any other events will still be received.
+    # @param user [User, String, Integer] The user, or its ID, to be ignored.
+    def ignore_user: (untyped user) -> untyped
+
+    # Remove a user from the ignore list.
+    # @param user [User, String, Integer] The user, or its ID, to be unignored.
+    def unignore_user: (untyped user) -> untyped
+
+    # Checks whether a user is being ignored.
+    # @param user [User, String, Integer] The user, or its ID, to check.
+    # @return [true, false] whether or not the user is ignored.
+    def ignored?: (untyped user) -> untyped
+
+    # @see Logger#debug
+    def debug: (untyped message) -> untyped
+
+    # @see Logger#log_exception
+    def log_exception: (untyped e) -> untyped
+
+    # Dispatches an event to this bot. Called by the gateway connection handler used internally.
+    def dispatch: (untyped `type`, untyped data) -> untyped
+
+    # Raises a heartbeat event. Called by the gateway connection handler used internally.
+    def raise_heartbeat_event: () -> untyped
+
+    # Makes the bot leave any groups with no recipients remaining
+    def prune_empty_groups: () -> untyped
+
+    # Get all application commands.
+    # @param server_id [String, Integer, nil] The ID of the server to get the commands from. Global if `nil`.
+    # @return [Array<ApplicationCommand>]
+    def get_application_commands: (?server_id: untyped?) -> untyped
+
+    # Get an application command by ID.
+    # @param command_id [String, Integer]
+    # @param server_id [String, Integer, nil] The ID of the server to get the command from. Global if `nil`.
+    def get_application_command: (untyped command_id, ?server_id: untyped?) -> untyped
+
+    # @yieldparam [OptionBuilder]
+    # @yieldparam [PermissionBuilder]
+    # @example
+    #   bot.register_application_command(:reddit, 'Reddit Commands') do |cmd|
+    #     cmd.subcommand_group(:subreddit, 'Subreddit Commands') do |group|
+    #       group.subcommand(:hot, "What's trending") do |sub|
+    #         sub.string(:subreddit, 'Subreddit to search')
+    #       end
+    #       group.subcommand(:new, "What's new") do |sub|
+    #         sub.string(:since, 'How long ago', choices: ['this hour', 'today', 'this week', 'this month', 'this year', 'all time'])
+    #         sub.string(:subreddit, 'Subreddit to search')
+    #       end
+    #     end
+    #   end
+    def register_application_command: (untyped name, untyped description, ?server_id: untyped?, ?default_permission: untyped?, ?type: ::Symbol) { (untyped, untyped) -> untyped } -> untyped
+
+    # @yieldparam [OptionBuilder]
+    # @yieldparam [PermissionBuilder]
+    def edit_application_command: (untyped command_id, ?server_id: untyped?, ?name: untyped?, ?description: untyped?, ?default_permission: untyped?, ?type: ::Symbol) { (untyped, untyped) -> untyped } -> untyped
+
+    # Remove an application command from the commands registered with discord.
+    # @param command_id [String, Integer] The ID of the command to remove.
+    # @param server_id [String, Integer] The ID of the server to delete this command from, global if `nil`.
+    def delete_application_command: (untyped command_id, ?server_id: untyped?) -> untyped
+
+    # @param command_id [Integer, String]
+    # @param server_id [Integer, String]
+    # @param permissions [Array<Hash>] An array of objects formatted as `{ id: ENTITY_ID, type: 1 or 2, permission: true or false }`
+    def edit_application_command_permissions: (untyped command_id, untyped server_id, ?untyped permissions) { (untyped) -> untyped } -> untyped
+
+    private
+
+    # Throws a useful exception if there's currently no gateway connection.
+    def gateway_check: () -> (untyped | nil)
+
+    # Logs a warning if there are servers which are still unavailable.
+    # e.g. due to a Discord outage or because the servers are large and taking a while to load.
+    def unavailable_servers_check: () -> (nil | untyped)
+
+    # Internal handler for PRESENCE_UPDATE
+    def update_presence: (untyped data) -> (nil | untyped)
+
+    # Internal handler for VOICE_STATE_UPDATE
+    def update_voice_state: (untyped data) -> (nil | untyped)
+
+    # Internal handler for VOICE_SERVER_UPDATE
+    def update_voice_server: (untyped data) -> (nil | untyped)
+
+    # Internal handler for CHANNEL_CREATE
+    def create_channel: (untyped data) -> untyped
+
+    # Internal handler for CHANNEL_UPDATE
+    def update_channel: (untyped data) -> (nil | untyped)
+
+    # Internal handler for CHANNEL_DELETE
+    def delete_channel: (untyped data) -> untyped
+
+    # Internal handler for CHANNEL_RECIPIENT_ADD
+    def add_recipient: (untyped data) -> untyped
+
+    # Internal handler for CHANNEL_RECIPIENT_REMOVE
+    def remove_recipient: (untyped data) -> untyped
+
+    # Internal handler for GUILD_MEMBER_ADD
+    def add_guild_member: (untyped data) -> untyped
+
+    # Internal handler for GUILD_MEMBER_UPDATE
+    def update_guild_member: (untyped data) -> untyped
+
+    # Internal handler for GUILD_MEMBER_DELETE
+    def delete_guild_member: (untyped data) -> untyped
+
+    # Internal handler for GUILD_CREATE
+    def create_guild: (untyped data) -> untyped
+
+    # Internal handler for GUILD_UPDATE
+    def update_guild: (untyped data) -> untyped
+
+    # Internal handler for GUILD_DELETE
+    def delete_guild: (untyped data) -> untyped
+
+    # Internal handler for GUILD_ROLE_UPDATE
+    def update_guild_role: (untyped data) -> untyped
+
+    # Internal handler for GUILD_ROLE_CREATE
+    def create_guild_role: (untyped data) -> untyped
+
+    # Internal handler for GUILD_ROLE_DELETE
+    def delete_guild_role: (untyped data) -> untyped
+
+    # Internal handler for GUILD_EMOJIS_UPDATE
+    def update_guild_emoji: (untyped data) -> untyped
+
+    # Internal handler for MESSAGE_CREATE
+    def create_message: (untyped data) -> nil
+
+    # Internal handler for TYPING_START
+    def start_typing: (untyped data) -> nil
+
+    # Internal handler for MESSAGE_UPDATE
+    def update_message: (untyped data) -> nil
+
+    # Internal handler for MESSAGE_DELETE
+    def delete_message: (untyped data) -> nil
+
+    # Internal handler for MESSAGE_REACTION_ADD
+    def add_message_reaction: (untyped data) -> nil
+
+    # Internal handler for MESSAGE_REACTION_REMOVE
+    def remove_message_reaction: (untyped data) -> nil
+
+    # Internal handler for MESSAGE_REACTION_REMOVE_ALL
+    def remove_all_message_reactions: (untyped data) -> nil
+
+    # Internal handler for GUILD_BAN_ADD
+    def add_user_ban: (untyped data) -> nil
+
+    # Internal handler for GUILD_BAN_REMOVE
+    def remove_user_ban: (untyped data) -> nil
+
+    def process_token: (untyped `type`, untyped token) -> untyped
+
+    def handle_dispatch: (untyped `type`, untyped data) -> untyped
+
+    # Notifies everything there is to be notified that the connection is now ready
+    def notify_ready: () -> untyped
+
+    def raise_event: (untyped event) -> (nil | untyped)
+
+    def call_event: (untyped handler, untyped event) -> untyped
+
+    def handle_awaits: (untyped event) -> untyped
+
+    def calculate_intents: (untyped intents) -> untyped
+  end
+end

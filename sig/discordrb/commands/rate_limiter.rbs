@@ -1,0 +1,64 @@
+module Discordrb::Commands
+  # This class represents a bucket for rate limiting - it keeps track of how many requests have been made and when
+  # exactly the user should be rate limited.
+  class Bucket
+    # Makes a new bucket
+    # @param limit [Integer, nil] How many requests the user may perform in the given time_span, or nil if there should be no limit.
+    # @param time_span [Integer, nil] The time span after which the request count is reset, in seconds, or nil if the bucket should never be reset. (If this is nil, limit should be nil too)
+    # @param delay [Integer, nil] The delay for which the user has to wait after performing a request, in seconds, or nil if the user shouldn't have to wait.
+    def initialize: (untyped limit, untyped time_span, untyped delay) -> void
+
+    # Cleans the bucket, removing all elements that aren't necessary anymore
+    # @param rate_limit_time [Time] The time to base the cleaning on, only useful for testing.
+    def clean: (?untyped? rate_limit_time) -> (false | untyped)
+
+    # Performs a rate limiting request
+    # @param thing [String, Integer, Symbol] The particular thing that should be rate-limited (usually a user/channel, but you can also choose arbitrary integers or symbols)
+    # @param rate_limit_time [Time] The time to base the rate limiting on, only useful for testing.
+    # @param increment [Integer] How much to increment the rate-limit counter. Default is 1.
+    # @return [Integer, false] the waiting time until the next request, in seconds, or false if the request succeeded
+    def rate_limited?: (untyped thing, ?untyped? rate_limit_time, ?increment: ::Integer) -> (false | untyped)
+
+    private
+
+    def resolve_key: (untyped thing) -> untyped
+  end
+
+  # Represents a collection of {Bucket}s.
+  module RateLimiter
+    # Defines a new bucket for this rate limiter.
+    # @param key [Symbol] The name for this new bucket.
+    # @param attributes [Hash] The attributes to initialize the bucket with.
+    # @option attributes [Integer] :limit The limit of requests to perform in the given time span.
+    # @option attributes [Integer] :time_span How many seconds until the limit should be reset.
+    # @option attributes [Integer] :delay How many seconds the user has to wait after each request.
+    # @see Bucket#initialize
+    # @return [Bucket] the created bucket.
+    def bucket: (untyped key, untyped attributes) -> untyped
+
+    # Performs a rate limit request.
+    # @param key [Symbol] Which bucket to perform the request for.
+    # @param thing [String, Integer, Symbol] What should be rate-limited.
+    # @param increment (see Bucket#rate_limited?)
+    # @see Bucket#rate_limited?
+    # @return [Integer, false] How much time to wait or false if the request succeeded.
+    def rate_limited?: (untyped key, untyped thing, ?increment: ::Integer) -> (false | untyped)
+
+    # Cleans all buckets
+    # @see Bucket#clean
+    def clean: () -> untyped
+
+    # Adds all the buckets from another RateLimiter onto this one.
+    # @param limiter [Module] Another {RateLimiter} module
+    def include_buckets: (untyped limiter) -> untyped
+  end
+
+  # This class provides a convenient way to do rate-limiting on non-command events.
+  # @see RateLimiter
+  class SimpleRateLimiter
+    include RateLimiter
+
+    # Makes a new rate limiter
+    def initialize: () -> void
+  end
+end

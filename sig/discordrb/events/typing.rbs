@@ -1,0 +1,27 @@
+module Discordrb::Events
+  # Event raised when a user starts typing
+  class TypingEvent < Event
+    include Respondable
+
+    # @return [Channel] the channel on which a user started typing.
+    attr_reader channel: untyped
+
+    # @return [User, Member, Recipient] the user that started typing.
+    attr_reader user: untyped
+
+    @channel_id: ::Integer
+    @user_id: ::Integer
+
+    alias member user
+
+    # @return [Time] when the typing happened.
+    attr_reader timestamp: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Event handler for TypingEvent
+  class TypingEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+end

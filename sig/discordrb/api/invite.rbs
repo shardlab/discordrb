@@ -1,0 +1,14 @@
+# API calls for Invite object
+module Discordrb::API::Invite
+  # Resolve an invite
+  # https://discord.com/developers/docs/resources/invite#get-invite
+  def self?.resolve: (untyped token, untyped invite_code, ?bool counts) -> untyped
+
+  # Delete an invite by code
+  # https://discord.com/developers/docs/resources/invite#delete-invite
+  def self?.delete: (untyped token, untyped code, ?untyped? reason) -> untyped
+
+  # Join a server using an invite
+  # https://discord.com/developers/docs/resources/invite#accept-invite
+  def self?.accept: (untyped token, untyped invite_code) -> untyped
+end

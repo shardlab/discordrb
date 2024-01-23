@@ -1,0 +1,5 @@
+module Discordrb
+  # Webhook client
+  module Webhooks
+  end
+end

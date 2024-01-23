@@ -1,0 +1,76 @@
+module Discordrb::Events
+  # Generic superclass for events about adding and removing reactions
+  class ReactionEvent < Event
+    include Respondable
+
+    # @return [Emoji] the emoji that was reacted with.
+    attr_reader emoji: untyped
+
+    # @!visibility private
+    attr_reader message_id: untyped
+
+    @server: Discordrb::Server
+    @message: Discordrb::Message
+    @user: (Discordrb::User | Discordrb::Member)
+    @channel_id: ::Integer
+    @user_id: ::Integer
+
+    def initialize: (untyped data, untyped `bot`) -> void
+
+    # @return [User, Member] the user that reacted to this message, or member if a server exists.
+    def user: () -> untyped
+
+    # @return [Message] the message that was reacted to.
+    def message: () -> untyped
+
+    # @return [Channel] the channel that was reacted in.
+    def channel: () -> untyped
+
+    # @return [Server, nil] the server that was reacted in. If reacted in a PM channel, it will be nil.
+    def server: () -> untyped
+  end
+
+  # Generic superclass for event handlers pertaining to adding and removing reactions
+  class ReactionEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Event raised when somebody reacts to a message
+  class ReactionAddEvent < ReactionEvent
+  end
+
+  # Event handler for {ReactionAddEvent}
+  class ReactionAddEventHandler < ReactionEventHandler
+  end
+
+  # Event raised when somebody removes a reaction to a message
+  class ReactionRemoveEvent < ReactionEvent
+  end
+
+  # Event handler for {ReactionRemoveEvent}
+  class ReactionRemoveEventHandler < ReactionEventHandler
+  end
+
+  # Event raised when somebody removes all reactions from a message
+  class ReactionRemoveAllEvent < Event
+    include Respondable
+
+    # @!visibility private
+    attr_reader message_id: untyped
+    @message: Discordrb::Message
+    @channel_id: ::Integer
+
+    def initialize: (untyped data, untyped `bot`) -> void
+
+    # @return [Channel] the channel where the removal occurred.
+    def channel: () -> untyped
+
+    # @return [Message] the message all reactions were removed from.
+    def message: () -> untyped
+  end
+
+  # Event handler for {ReactionRemoveAllEvent}
+  class ReactionRemoveAllEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+end

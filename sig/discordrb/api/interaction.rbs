@@ -1,0 +1,18 @@
+# API calls for interactions.
+module Discordrb::API::Interaction
+  # Respond to an interaction.
+  # https://discord.com/developers/docs/interactions/slash-commands#create-interaction-response
+  def self?.create_interaction_response: (untyped interaction_token, untyped interaction_id, untyped `type`, ?untyped? content, ?untyped? tts, ?untyped? embeds, ?untyped? allowed_mentions, ?untyped? flags, ?untyped? components) -> untyped
+
+  # Get the original response to an interaction.
+  # https://discord.com/developers/docs/interactions/slash-commands#get-original-interaction-response
+  def self?.get_original_interaction_response: (untyped interaction_token, untyped application_id) -> untyped
+
+  # Edit the original response to an interaction.
+  # https://discord.com/developers/docs/interactions/slash-commands#edit-original-interaction-response
+  def self?.edit_original_interaction_response: (untyped interaction_token, untyped application_id, ?untyped? content, ?untyped? embeds, ?untyped? allowed_mentions, ?untyped? components) -> untyped
+
+  # Delete the original response to an interaction.
+  # https://discord.com/developers/docs/interactions/slash-commands#delete-original-interaction-response
+  def self?.delete_original_interaction_response: (untyped interaction_token, untyped application_id) -> untyped
+end

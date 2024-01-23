@@ -1,0 +1,91 @@
+module Discordrb
+  # Integration Account
+  class IntegrationAccount
+    # @return [String] this account's name.
+    attr_reader name: untyped
+
+    # @return [Integer] this account's ID.
+    attr_reader id: untyped
+
+    def initialize: (untyped data) -> void
+  end
+
+  # Bot/OAuth2 application for discord integrations
+  class IntegrationApplication
+    # @return [Integer] the ID of the application.
+    attr_reader id: untyped
+
+    # @return [String] the name of the application.
+    attr_reader name: untyped
+
+    # @return [String, nil] the icon hash of the application.
+    attr_reader icon: untyped
+
+    # @return [String] the description of the application.
+    attr_reader description: untyped
+
+    # @return [String] the summary of the application.
+    attr_reader summary: untyped
+
+    # @return [User, nil] the bot associated with this application.
+    attr_reader bot: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Server integration
+  class Integration
+    include IDObject
+
+    # @return [String] the integration name
+    attr_reader name: untyped
+
+    # @return [Server] the server the integration is linked to
+    attr_reader server: untyped
+
+    # @return [User] the user the integration is linked to
+    attr_reader user: untyped
+
+    # @return [Integer, nil] the role that this integration uses for "subscribers"
+    attr_reader role_id: untyped
+
+    # @return [true, false] whether emoticons are enabled
+    attr_reader emoticon: untyped
+
+    alias emoticon? emoticon
+
+    # @return [String] the integration type (YouTube, Twitch, etc.)
+    attr_reader type: untyped
+
+    # @return [true, false] whether the integration is enabled
+    attr_reader enabled: untyped
+
+    # @return [true, false] whether the integration is syncing
+    attr_reader syncing: untyped
+
+    # @return [IntegrationAccount] the integration account information
+    attr_reader account: untyped
+
+    # @return [Time] the time the integration was synced at
+    attr_reader synced_at: untyped
+
+    # @return [Symbol] the behaviour of expiring subscribers (:remove = Remove User from role; :kick = Kick User from server)
+    attr_reader expire_behaviour: untyped
+
+    alias expire_behavior expire_behaviour
+
+    # @return [Integer] the grace period before subscribers expire (in days)
+    attr_reader expire_grace_period: untyped
+
+    # @return [Integer, nil] how many subscribers this integration has.
+    attr_reader subscriber_count: untyped
+
+    # @return [true, false] has this integration been revoked.
+    attr_reader revoked: untyped
+
+    def initialize: (untyped data, untyped `bot`, untyped server) -> void
+
+    # The inspect method is overwritten to give more useful output
+    def inspect: () -> ::String
+  end
+end

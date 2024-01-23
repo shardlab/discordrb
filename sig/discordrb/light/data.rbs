@@ -1,0 +1,41 @@
+module Discordrb::Light
+  # Represents the bot account used for the light bot, but without any methods to change anything.
+  class LightProfile
+    include Discordrb::IDObject
+
+    include Discordrb::UserAttributes
+
+    @bot: Discordrb::Bot
+    @email: ::String
+    @verified: bool
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # A server that only has an icon, a name, and an ID associated with it, like for example an integration's server.
+  class UltraLightServer
+    include Discordrb::IDObject
+
+    include Discordrb::ServerAttributes
+
+    @bot: Discordrb::Bot
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Represents a light server which only has a fraction of the properties of any other server.
+  class LightServer < UltraLightServer
+    # @return [true, false] whether or not the LightBot this server belongs to is the owner of the server.
+    attr_reader bot_is_owner: untyped
+
+    alias bot_is_owner? bot_is_owner
+
+    # @return [Discordrb::Permissions] the permissions the LightBot has on this server
+    attr_reader bot_permissions: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+end

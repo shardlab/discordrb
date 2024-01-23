@@ -1,0 +1,56 @@
+module Discordrb::Commands
+  # Command that can be called in a chain
+  class Command
+    # @return [Hash] the attributes the command was initialized with
+    attr_reader attributes: untyped
+
+    # @return [Symbol] the name of this command
+    attr_reader name: untyped
+
+    # @!visibility private
+    def initialize: (untyped name, ?::Hash[untyped, untyped] attributes) ?{ () -> untyped } -> void
+
+    # Calls this command and executes the code inside.
+    # @param event [CommandEvent] The event to call the command with.
+    # @param arguments [Array<String>] The attributes for the command.
+    # @param chained [true, false] Whether or not this command is part of a command chain.
+    # @param check_permissions [true, false] Whether the user's permission to execute the command (i.e. rate limits)
+    #   should be checked.
+    # @return [String] the result of the execution.
+    def call: (untyped event, untyped arguments, ?bool chained, ?bool check_permissions) -> untyped
+  end
+
+  # A command that references another command
+  class CommandAlias
+    # @return [Symbol] the name of this alias
+    attr_reader name: untyped
+
+    # @return [Command] the command this alias points to
+    attr_reader aliased_command: untyped
+
+    def initialize: (untyped name, untyped aliased_command) -> void
+  end
+
+  # Command chain, may have multiple commands, nested and commands
+  class CommandChain
+    # @param chain [String] The string the chain should be parsed from.
+    # @param bot [CommandBot] The bot that executes this command chain.
+    # @param subchain [true, false] Whether this chain is a sub chain of another chain.
+    def initialize: (untyped chain, untyped `bot`, ?bool subchain) -> void
+
+    # Parses the command chain itself, including sub-chains, and executes it. Executes only the command chain, without
+    # its chain arguments.
+    # @param event [CommandEvent] The event to execute the chain with.
+    # @return [String] the result of the execution.
+    def execute_bare: (untyped event) -> untyped
+
+    # Divides the command chain into chain arguments and command chain, then executes them both.
+    # @param event [CommandEvent] The event to execute the command with.
+    # @return [String] the result of the command chain execution.
+    def execute: (untyped event) -> untyped
+
+    private
+
+    def divide_chain: (untyped chain) -> ::Array[untyped]
+  end
+end

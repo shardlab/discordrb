@@ -1,0 +1,42 @@
+# API calls for Webhook object
+module Discordrb::API::Webhook
+  # Get a webhook
+  # https://discord.com/developers/docs/resources/webhook#get-webhook
+  def self?.webhook: (untyped token, untyped webhook_id) -> untyped
+
+  # Get a webhook via webhook token
+  # https://discord.com/developers/docs/resources/webhook#get-webhook-with-token
+  def self?.token_webhook: (untyped webhook_token, untyped webhook_id) -> untyped
+
+  # Execute a webhook via token.
+  # https://discord.com/developers/docs/resources/webhook#execute-webhook
+  def self?.token_execute_webhook: (untyped webhook_token, untyped webhook_id, ?bool wait, ?untyped? content, ?untyped? username, ?untyped? avatar_url, ?untyped? tts, ?untyped? file, ?untyped? embeds, ?untyped? allowed_mentions, ?untyped? flags, ?untyped? components) -> untyped
+
+  # Update a webhook
+  # https://discord.com/developers/docs/resources/webhook#modify-webhook
+  def self?.update_webhook: (untyped token, untyped webhook_id, untyped data, ?untyped? reason) -> untyped
+
+  # Update a webhook via webhook token
+  # https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token
+  def self?.token_update_webhook: (untyped webhook_token, untyped webhook_id, untyped data, ?untyped? reason) -> untyped
+
+  # Deletes a webhook
+  # https://discord.com/developers/docs/resources/webhook#delete-webhook
+  def self?.delete_webhook: (untyped token, untyped webhook_id, ?untyped? reason) -> untyped
+
+  # Deletes a webhook via webhook token
+  # https://discord.com/developers/docs/resources/webhook#delete-webhook-with-token
+  def self?.token_delete_webhook: (untyped webhook_token, untyped webhook_id, ?untyped? reason) -> untyped
+
+  # Get a message that was created by the webhook corresponding to the provided token.
+  # https://discord.com/developers/docs/resources/webhook#get-webhook-message
+  def self?.token_get_message: (untyped webhook_token, untyped webhook_id, untyped message_id) -> untyped
+
+  # Edit a webhook message via webhook token
+  # https://discord.com/developers/docs/resources/webhook#edit-webhook-message
+  def self?.token_edit_message: (untyped webhook_token, untyped webhook_id, untyped message_id, ?untyped? content, ?untyped? embeds, ?untyped? allowed_mentions, ?untyped? components) -> untyped
+
+  # Delete a webhook message via webhook token.
+  # https://discord.com/developers/docs/resources/webhook#delete-webhook-message
+  def self?.token_delete_message: (untyped webhook_token, untyped webhook_id, untyped message_id) -> untyped
+end

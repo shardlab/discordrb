@@ -1,0 +1,54 @@
+module Discordrb::Events
+  # Event raised when a user's presence state updates (idle or online)
+  class PresenceEvent < Event
+    # @return [Server] the server on which the presence update happened.
+    attr_reader server: untyped
+
+    # @return [User] the user whose status got updated.
+    attr_reader user: untyped
+
+    # @return [Symbol] the new status.
+    attr_reader status: untyped
+
+    # @return [Hash<Symbol, Symbol>] the current online status (`:online`, `:idle` or `:dnd`) of the user
+    #   on various device types (`:desktop`, `:mobile`, or `:web`). The value will be `nil` if the user is offline or invisible.
+    attr_reader client_status: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+
+    def type: () -> untyped
+    def url: () -> untyped
+    def details: () -> untyped
+  end
+
+  # Event handler for PresenceEvent
+  class PresenceEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Event raised when a user starts or stops playing a game
+  class PlayingEvent < Event
+    # @return [Server] the server on which the presence update happened.
+    attr_reader server: untyped
+
+    # @return [User] the user whose status got updated.
+    attr_reader user: untyped
+
+    # @return [Discordrb::Activity] The new activity
+    attr_reader activity: untyped
+
+    # @return [Hash<Symbol, Symbol>] the current online status (`:online`, `:idle` or `:dnd`) of the user
+    #   on various device types (`:desktop`, `:mobile`, or `:web`). The value will be `nil` if the user is offline or invisible.
+    attr_reader client_status: untyped
+
+    def initialize: (untyped data, untyped activity, untyped `bot`) -> void
+
+    # @return [String] the name of the new game the user is playing.
+    def game: () -> untyped
+  end
+
+  # Event handler for PlayingEvent
+  class PlayingEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+end

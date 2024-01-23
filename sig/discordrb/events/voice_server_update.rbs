@@ -1,0 +1,24 @@
+module Discordrb::Events
+  # Event raised when a server's voice server is updating.
+  # Sent when initially connecting to voice and when a voice instance fails
+  # over to a new server.
+  # This event is exposed for use with library agnostic interfaces like telecom and
+  # lavalink.
+  class VoiceServerUpdateEvent < Event
+    # @return [String] The voice connection token
+    attr_reader token: untyped
+
+    # @return [Server] The server this update is for.
+    attr_reader server: untyped
+
+    # @return [String] The voice server host.
+    attr_reader endpoint: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Event handler for VoiceServerUpdateEvent
+  class VoiceServerUpdateEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | ::Array[untyped])
+  end
+end

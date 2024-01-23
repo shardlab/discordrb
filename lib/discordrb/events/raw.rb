@@ -35,7 +35,7 @@ module Discordrb::Events
             e.to_s.casecmp(a.to_s).zero?
           end
         end
-      ].reduce(true, &:&)
+      ].reduce(true) {|res, elem| res & elem}
     end
   end
 

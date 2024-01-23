@@ -1,0 +1,213 @@
+module Discordrb
+  # Mixin for the attributes members and private members should have
+  module MemberAttributes
+    # @return [Time] when this member joined the server.
+    attr_reader joined_at: untyped
+
+    # @return [Time, nil] when this member boosted this server, `nil` if they haven't.
+    attr_reader boosting_since: untyped
+
+    # @return [String, nil] the nickname this member has, or `nil` if it has none.
+    attr_reader nick: untyped
+
+    alias nickname nick
+
+    # @return [Array<Role>] the roles this member has.
+    attr_reader roles: untyped
+
+    # @return [Server] the server this member is on.
+    attr_reader server: untyped
+
+    # @return [Time] When the user's timeout will expire.
+    attr_reader communication_disabled_until: untyped
+
+    alias timeout communication_disabled_until
+  end
+
+  # A member is a user on a server. It differs from regular users in that it has roles, voice statuses and things like
+  # that.
+  class Member
+    # @return [true, false] whether this member is muted server-wide.
+    def mute: () -> untyped
+
+    # @return [true, false] whether this member is deafened server-wide.
+    def deaf: () -> untyped
+
+    # @return [true, false] whether this member has muted themselves.
+    def self_mute: () -> untyped
+
+    # @return [true, false] whether this member has deafened themselves.
+    def self_deaf: () -> untyped
+
+    # @return [Channel] the voice channel this member is in.
+    def voice_channel: () -> untyped
+
+    alias muted? mute
+
+    alias deafened? deaf
+
+    alias self_muted? self_mute
+
+    alias self_deafened? self_deaf
+
+    include MemberAttributes
+
+    # @!visibility private
+    def initialize: (untyped data, untyped server, untyped `bot`) -> void
+
+    # @return [Server] the server this member is on.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    #   authorized with the `bot` scope.
+    def server: () -> untyped
+
+    # @return [Array<Role>] the roles this member has.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    #   authorized with the `bot` scope.
+    def roles: () -> untyped
+
+    # @return [true, false] if this user is a Nitro Booster of this server.
+    def boosting?: () -> untyped
+
+    # @return [true, false] whether this member is the server owner.
+    def owner?: () -> untyped
+
+    # @param role [Role, String, Integer] the role to check or its ID.
+    # @return [true, false] whether this member has the specified role.
+    def role?: (untyped role) -> untyped
+
+    # @see Member#set_roles
+    def roles=: (untyped role) -> untyped
+
+    # Check if the current user has communication disabled.
+    # @return [true, false]
+    def communication_disabled?: () -> untyped
+
+    alias timeout? communication_disabled?
+
+    # Set a user's timeout duration, or remove it by setting the timeout to `nil`.
+    # @param timeout_until [Time, nil] When the timeout will end.
+    def communication_disabled_until=: (untyped timeout_until) -> untyped
+
+    alias timeout= communication_disabled_until=
+
+    # Bulk sets a member's roles.
+    # @param role [Role, Array<Role>] The role(s) to set.
+    # @param reason [String] The reason the user's roles are being changed.
+    def set_roles: (untyped role, ?untyped? reason) -> untyped
+
+    # Adds and removes roles from a member.
+    # @param add [Role, Array<Role>] The role(s) to add.
+    # @param remove [Role, Array<Role>] The role(s) to remove.
+    # @param reason [String] The reason the user's roles are being changed.
+    # @example Remove the 'Member' role from a user, and add the 'Muted' role to them.
+    #   to_add = server.roles.find {|role| role.name == 'Muted'}
+    #   to_remove = server.roles.find {|role| role.name == 'Member'}
+    #   member.modify_roles(to_add, to_remove)
+    def modify_roles: (untyped add, untyped remove, ?untyped? reason) -> untyped
+
+    # Adds one or more roles to this member.
+    # @param role [Role, Array<Role, String, Integer>, String, Integer] The role(s), or their ID(s), to add.
+    # @param reason [String] The reason the user's roles are being changed.
+    def add_role: (untyped role, ?untyped? reason) -> untyped
+
+    # Removes one or more roles from this member.
+    # @param role [Role, Array<Role>] The role(s) to remove.
+    # @param reason [String] The reason the user's roles are being changed.
+    def remove_role: (untyped role, ?untyped? reason) -> untyped
+
+    # @return [Role] the highest role this member has.
+    def highest_role: () -> untyped
+
+    # @return [Role, nil] the role this member is being hoisted with.
+    def hoist_role: () -> (nil | untyped)
+
+    # @return [Role, nil] the role this member is basing their colour on.
+    def colour_role: () -> (nil | untyped)
+
+    alias color_role colour_role
+
+    # @return [ColourRGB, nil] the colour this member has.
+    def colour: () -> (nil | untyped)
+
+    alias color colour
+
+    # Server deafens this member.
+    def server_deafen: () -> untyped
+
+    # Server undeafens this member.
+    def server_undeafen: () -> untyped
+
+    # Server mutes this member.
+    def server_mute: () -> untyped
+
+    # Server unmutes this member.
+    def server_unmute: () -> untyped
+
+    # Bans this member from the server.
+    # @param message_days [Integer] How many days worth of messages sent by the member should be deleted.
+    # @param reason [String] The reason this member is being banned.
+    def ban: (?::Integer message_days, ?reason: untyped?) -> untyped
+
+    # Unbans this member from the server.
+    # @param reason [String] The reason this member is being unbanned.
+    def unban: (?untyped? reason) -> untyped
+
+    # Kicks this member from the server.
+    # @param reason [String] The reason this member is being kicked.
+    def kick: (?untyped? reason) -> untyped
+
+    # @see Member#set_nick
+    def nick=: (untyped nick) -> untyped
+
+    alias nickname= nick=
+
+    # Sets or resets this member's nickname. Requires the Change Nickname permission for the bot itself and Manage
+    # Nicknames for other users.
+    # @param nick [String, nil] The string to set the nickname to, or nil if it should be reset.
+    # @param reason [String] The reason the user's nickname is being changed.
+    def set_nick: (untyped nick, ?untyped? reason) -> untyped
+
+    alias set_nickname set_nick
+
+    # @return [String] the name the user displays as (nickname if they have one, username otherwise)
+    def display_name: () -> untyped
+
+    # Update this member's roles
+    # @note For internal use only.
+    # @!visibility private
+    def update_roles: (untyped role_ids) -> untyped
+
+    # Update this member's nick
+    # @note For internal use only.
+    # @!visibility private
+    def update_nick: (untyped nick) -> untyped
+
+    # Update this member's boosting timestamp
+    # @note For internal user only.
+    # @!visibility private
+    def update_boosting_since: (untyped time) -> untyped
+
+    # @!visibility private
+    def update_communication_disabled_until: (untyped time) -> untyped
+
+    # Update this member
+    # @note For internal use only.
+    # @!visibility private
+    def update_data: (untyped data) -> untyped
+
+    include PermissionCalculator
+
+    # Overwriting inspect for debug purposes
+    def inspect: () -> ::String
+
+    private
+
+    # Utility method to get a list of role IDs from one role or an array of roles
+    def role_id_array: (untyped role) -> (untyped | ::Array[untyped])
+
+    # Utility method to get data out of this member's voice state
+    def voice_state_attribute: (untyped name) -> untyped
+
+    def resolve_role_ids: () -> untyped
+  end
+end

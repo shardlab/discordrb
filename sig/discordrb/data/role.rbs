@@ -1,0 +1,120 @@
+module Discordrb
+  # A Discord role that contains permissions and applies to certain users
+  class Role
+    include IDObject
+
+    # @return [Permissions] this role's permissions.
+    attr_reader permissions: untyped
+
+    # @return [String] this role's name ("new role" if it hasn't been changed)
+    attr_reader name: untyped
+
+    # @return [Server] the server this role belongs to
+    attr_reader server: untyped
+
+    # @return [true, false] whether or not this role should be displayed separately from other users
+    attr_reader hoist: untyped
+
+    # @return [true, false] whether or not this role is managed by an integration or a bot
+    attr_reader managed: untyped
+
+    alias managed? managed
+
+    # @return [true, false] whether this role can be mentioned using a role mention
+    attr_reader mentionable: untyped
+
+    alias mentionable? mentionable
+
+    # @return [ColourRGB] the role colour
+    attr_reader colour: untyped
+
+    alias color colour
+
+    # @return [Integer] the position of this role in the hierarchy
+    attr_reader position: untyped
+
+    # This class is used internally as a wrapper to a Role object that allows easy writing of permission data.
+    class RoleWriter
+      # @!visibility private
+      def initialize: (untyped role, untyped token) -> void
+
+      # Write the specified permission data to the role, without updating the permission cache
+      # @param bits [Integer] The packed permissions to write.
+      def write: (untyped bits) -> untyped
+
+      # The inspect method is overridden, in this case to prevent the token being leaked
+      def inspect: () -> ::String
+    end
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`, ?untyped? server) -> void
+
+    # @return [String] a string that will mention this role, if it is mentionable.
+    def mention: () -> ::String
+
+    # @return [Array<Member>] an array of members who have this role.
+    # @note This requests a member chunk if it hasn't for the server before, which may be slow initially
+    def members: () -> untyped
+
+    alias users members
+
+    # Updates the data cache from another Role object
+    # @note For internal use only
+    # @!visibility private
+    def update_from: (untyped other) -> untyped
+
+    # Updates the data cache from a hash containing data
+    # @note For internal use only
+    # @!visibility private
+    def update_data: (untyped new_data) -> untyped
+
+    # Sets the role name to something new
+    # @param name [String] The name that should be set
+    def name=: (untyped name) -> untyped
+
+    # Changes whether or not this role is displayed at the top of the user list
+    # @param hoist [true, false] The value it should be changed to
+    def hoist=: (untyped hoist) -> untyped
+
+    # Changes whether or not this role can be mentioned
+    # @param mentionable [true, false] The value it should be changed to
+    def mentionable=: (untyped mentionable) -> untyped
+
+    # Sets the role colour to something new
+    # @param colour [ColourRGB] The new colour
+    def colour=: (untyped colour) -> untyped
+
+    alias color= colour=
+
+    # Changes this role's permissions to a fixed bitfield. This allows setting multiple permissions at once with just
+    # one API call.
+    #
+    # Information on how this bitfield is structured can be found at
+    # https://discord.com/developers/docs/topics/permissions.
+    # @example Remove all permissions from a role
+    #   role.packed = 0
+    # @param packed [Integer] A bitfield with the desired permissions value.
+    # @param update_perms [true, false] Whether the internal data should also be updated. This should always be true
+    #   when calling externally.
+    def packed=: (untyped packed, ?bool update_perms) -> untyped
+
+    # Moves this role above another role in the list.
+    # @param other [Role, String, Integer, nil] The role, or its ID, above which this role should be moved. If it is `nil`,
+    #   the role will be moved above the @everyone role.
+    # @return [Integer] the new position of this role
+    def sort_above: (?untyped? other) -> untyped
+
+    alias move_above sort_above
+
+    # Deletes this role. This cannot be undone without recreating the role!
+    # @param reason [String] the reason for this role's deletion
+    def delete: (?untyped? reason) -> untyped
+
+    # The inspect method is overwritten to give more useful output
+    def inspect: () -> ::String
+
+    private
+
+    def update_role_data: (untyped new_data) -> untyped
+  end
+end

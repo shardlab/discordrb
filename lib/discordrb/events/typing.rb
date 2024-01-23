@@ -66,7 +66,7 @@ module Discordrb::Events
         end,
         matches_all(@attributes[:after], event.timestamp) { |a, e| a > e },
         matches_all(@attributes[:before], event.timestamp) { |a, e| a < e }
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e| res & e}
     end
   end
 end

@@ -87,9 +87,13 @@ module Discordrb::Events
                  e
                end
         end,
-        matches_all(@attributes[:temporary], event.temporary?, &:==),
-        matches_all(@attributes[:inviter], event.inviter, &:==)
-      ].reduce(true, &:&)
+        matches_all(@attributes[:temporary], event.temporary?) do |a, e|
+          a == e
+        end,
+        matches_all(@attributes[:inviter], event.inviter) do |a, e|
+          a == e
+        end
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 
@@ -119,7 +123,7 @@ module Discordrb::Events
                  e
                end
         end
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 end

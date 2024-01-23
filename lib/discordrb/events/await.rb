@@ -42,7 +42,7 @@ module Discordrb::Events
       [
         matches_all(@attributes[:key], event.key) { |a, e| a == e },
         matches_all(@attributes[:type], event.type) { |a, e| a == e }
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 end

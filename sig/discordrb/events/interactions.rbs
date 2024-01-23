@@ -1,0 +1,157 @@
+module Discordrb::Events
+  # Generic subclass for interaction events
+  class InteractionCreateEvent < Event
+    # @return [Interaction] The interaction for this event.
+    attr_reader interaction: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+
+    # (see Interaction#respond)
+    def respond: (?content: untyped?, ?tts: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?flags: ::Integer, ?ephemeral: untyped?, ?wait: bool, ?components: untyped?) ?{ () -> untyped } -> untyped
+
+    # (see Interaction#defer)
+    def defer: (?flags: ::Integer, ?ephemeral: bool) -> untyped
+
+    # (see Interaction#update_message)
+    def update_message: (?content: untyped?, ?tts: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?flags: ::Integer, ?ephemeral: untyped?, ?wait: bool, ?components: untyped?) ?{ () -> untyped } -> untyped
+
+    # (see Interaction#edit_response)
+    def edit_response: (?content: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?components: untyped?) ?{ () -> untyped } -> untyped
+
+    # (see Interaction#delete_response)
+    def delete_response: () -> untyped
+
+    # (see Interaction#send_message)
+    def send_message: (?content: untyped?, ?embeds: untyped?, ?tts: bool, ?allowed_mentions: untyped?, ?flags: ::Integer, ?ephemeral: untyped?, ?components: untyped?) ?{ () -> untyped } -> untyped
+
+    # (see Interaction#edit_message)
+    def edit_message: (untyped message, ?content: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?) ?{ () -> untyped } -> untyped
+
+    # (see Interaction#delete_message)
+    def delete_message: (untyped message) -> untyped
+
+    # (see Interaction#defer_update)
+    def defer_update: () -> untyped
+  end
+
+  # Event handler for INTERACTION_CREATE events.
+  class InteractionCreateEventHandler < EventHandler
+    # @!visibility private
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Event for ApplicationCommand interactions.
+  class ApplicationCommandEvent < InteractionCreateEvent
+    # Struct to allow accessing data via [] or methods.
+    Resolved: untyped
+
+    # @return [String] The name of the command.
+    attr_reader command_name: untyped
+
+    # @return [Integer] The ID of the command.
+    attr_reader command_id: untyped
+
+    # @return [String, nil] The name of the subcommand group relevant to this event.
+    attr_reader subcommand_group: untyped
+
+    # @return [String, nil] The name of the subcommand relevant to this event.
+    attr_reader subcommand: untyped
+
+    # @return [Resolved]
+    attr_reader resolved: untyped
+
+    # @return [Hash<Symbol, Object>] Arguments provided to the command, mapped as `Name => Value`.
+    attr_reader options: untyped
+
+    # @return [Integer, nil] The target of this command when it is a context command.
+    attr_reader target_id: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+
+    # @return [Message, User, nil] The target of this command, for context commands.
+    def target: () -> (nil | untyped)
+
+    private
+
+    def process_resolved: (untyped resolved_data) -> untyped
+
+    def transform_options_hash: (untyped hash) -> untyped
+  end
+
+  # Event handler for ApplicationCommandEvents.
+  class ApplicationCommandEventHandler < EventHandler
+    # @return [Hash]
+    attr_reader subcommands: untyped
+
+    # @!visibility private
+    def initialize: (untyped attributes, untyped block) -> void
+
+    # @param name [Symbol, String]
+    # @yieldparam [SubcommandBuilder]
+    # @return [ApplicationCommandEventHandler]
+    def group: (untyped name) { (untyped) -> untyped } -> self
+
+    # @param name [String, Symbol]
+    # @yieldparam [SubcommandBuilder]
+    # @return [ApplicationCommandEventHandler]
+    def subcommand: (untyped name) ?{ () -> untyped } -> self
+
+    # @!visibility private
+    # @param event [Event]
+    def call: (untyped event) -> (nil | untyped)
+
+    # @!visibility private
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Builder for adding subcommands to an ApplicationCommandHandler
+  class SubcommandBuilder
+    # @!visibility private
+    # @param group [String, Symbol, nil]
+    def initialize: (?untyped? group) -> void
+
+    # @param name [Symbol, String]
+    # @yieldparam [ApplicationCommandEvent]
+    def subcommand: (untyped name) ?{ () -> untyped } -> untyped
+
+    # @!visibility private
+    def to_h: () -> (::Hash[untyped, untyped] | untyped)
+  end
+
+  # An event for when a user interacts with a component.
+  class ComponentEvent < InteractionCreateEvent
+    # @return [String] User provided data for this button.
+    attr_reader custom_id: untyped
+
+    # @return [Interactions::Message] The message the button originates from.
+    attr_reader message: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Generic handler for component events.
+  class ComponentEventHandler < InteractionCreateEventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  class ButtonEvent < ComponentEvent
+  end
+
+  # Event handler for a Button interaction event.
+  class ButtonEventHandler < ComponentEventHandler
+  end
+
+  # Event for when a user interacts with a select menu component.
+  class SelectMenuEvent < ComponentEvent
+    # @return [Array<String>] Selected values.
+    attr_reader values: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Event handler for a select menu component.
+  class SelectMenuEventHandler < ComponentEventHandler
+  end
+end

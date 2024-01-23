@@ -1,0 +1,190 @@
+module Discordrb::Events
+  # Module to make sending messages easier with the presence of a text channel in an event
+  module Respondable
+    # @return [Channel] the channel in which this event occurred
+    attr_reader channel: untyped
+
+    @saved_message: ::String
+
+    # Sends a message to the channel this message was sent in, right now. It is usually preferable to use {#<<} instead
+    # because it avoids rate limiting problems
+    # @param content [String] The message to send to the channel
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
+    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>, nil] A collection of components to attach to the message.
+    # @return [Discordrb::Message] the message that was sent
+    def send_message: (untyped content, ?bool tts, ?untyped? embed, ?untyped? attachments, ?untyped? allowed_mentions, ?untyped? message_reference, ?untyped? components) -> untyped
+
+    # The same as {#send_message}, but yields a {Webhooks::Embed} for easy building of embedded content inside a block.
+    # @see Channel#send_embed
+    # @param message [String] The message that should be sent along with the embed. If this is the empty string, only the embed will be shown.
+    # @param embed [Discordrb::Webhooks::Embed, nil] The embed to start the building process with, or nil if one should be created anew.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
+    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>, nil] A collection of components to attach to the message.
+    # @yield [embed] Yields the embed to allow for easy building inside a block.
+    # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
+    # @return [Message] The resulting message.
+    def send_embed: (?::String message, ?untyped? embed, ?untyped? attachments, ?bool tts, ?untyped? allowed_mentions, ?untyped? message_reference, ?untyped? components) ?{ () -> untyped } -> untyped
+
+    # Sends a temporary message to the channel this message was sent in, right now.
+    # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
+    # @param timeout [Float] The amount of time in seconds after which the message sent will be deleted.
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
+    # @param components [View, Array<Hash>, nil] A collection of components to attach to the message.
+    def send_temporary_message: (untyped content, untyped timeout, ?bool tts, ?untyped? embed, ?untyped? attachments, ?untyped? allowed_mentions, ?untyped? components) -> untyped
+
+    # Adds a string to be sent after the event has finished execution. Avoids problems with rate limiting because only
+    # one message is ever sent. If it is used multiple times, the strings will bunch up into one message (separated by
+    # newlines)
+    # @param message [String] The message to send to the channel
+    def <<: (untyped message) -> nil
+
+    # Drains the currently saved message, which clears it out, resulting in everything being saved before being
+    # thrown away and nothing being sent to the channel (unless there is something saved after this).
+    # @see #<<
+    def drain: () -> nil
+
+    # Drains the currently saved message into a result string. This prepends it before that string, clears the saved
+    # message and returns the concatenation.
+    # @param result [String] The result string to drain into.
+    # @return [String] a string formed by concatenating the saved message and the argument.
+    def drain_into: (untyped result) -> (nil | untyped)
+
+    alias send send_message
+
+    alias respond send_message
+
+    alias send_temp send_temporary_message
+  end
+
+  # Event raised when a text message is sent to a channel
+  class MessageEvent < Event
+    include Respondable
+
+    # @return [Message] the message which triggered this event.
+    attr_reader message: untyped
+
+    # @return [String] the message that has been saved by calls to {#<<} and will be sent to Discord upon completion.
+    attr_reader saved_message: untyped
+
+    # @return [File] the file that has been saved by a call to {#attach_file} and will be sent to Discord upon completion.
+    attr_reader file: untyped
+
+    # @return [String] the filename set in {#attach_file} that will override the original filename when sent.
+    attr_reader filename: untyped
+
+    # @return [true, false] Whether or not this file should appear as a spoiler. Set by {#attach_file}
+    attr_reader file_spoiler: untyped
+
+    def initialize: (untyped message, untyped `bot`) -> void
+
+    # Sends file with a caption to the channel this message was sent in, right now.
+    # It is usually preferable to use {#<<} and {#attach_file} instead
+    # because it avoids rate limiting problems
+    # @param file [File] The file to send to the channel
+    # @param caption [String] The caption attached to the file
+    # @param filename [String] Overrides the filename of the uploaded file
+    # @param spoiler [true, false] Whether or not this file should appear as a spoiler.
+    # @return [Discordrb::Message] the message that was sent
+    # @example Send a file from disk
+    #   event.send_file(File.open('rubytaco.png', 'r'))
+    def send_file: (untyped file, ?caption: untyped?, ?filename: untyped?, ?spoiler: untyped?) -> untyped
+
+    # Attaches a file to the message event and converts the message into
+    # a caption.
+    # @param file [File] The file to be attached
+    # @param filename [String] Overrides the filename of the uploaded file
+    # @param spoiler [true, false] Whether or not this file should appear as a spoiler.
+    def attach_file: (untyped file, ?filename: untyped?, ?spoiler: untyped?) -> nil
+
+    # Detaches a file from the message event.
+    def detach_file: () -> untyped
+
+    # @return [true, false] whether or not this message was sent by the bot itself
+    def from_bot?: () -> untyped
+
+    # Utility method to get the voice bot for the current server
+    # @return [VoiceBot, nil] the voice bot connected to this message's server, or nil if there is none connected
+    def voice: () -> untyped
+    def author: () -> untyped
+    def channel: () -> untyped
+    def content: () -> untyped
+    def timestamp: () -> untyped
+  end
+
+  # Event handler for MessageEvent
+  class MessageEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+
+    # @see EventHandler#after_call
+    def after_call: (untyped event) -> (untyped | nil | untyped)
+  end
+
+  # @see Discordrb::EventContainer#mention
+  class MentionEvent < MessageEvent
+  end
+
+  # Event handler for {MentionEvent}
+  class MentionEventHandler < MessageEventHandler
+  end
+
+  # @see Discordrb::EventContainer#pm
+  class PrivateMessageEvent < MessageEvent
+  end
+
+  # Event handler for {PrivateMessageEvent}
+  class PrivateMessageEventHandler < MessageEventHandler
+  end
+
+  # A subset of MessageEvent that only contains a message ID and a channel
+  class MessageIDEvent < Event
+    include Respondable
+
+    # @return [Integer] the ID associated with this event
+    attr_reader id: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Event handler for {MessageIDEvent}
+  class MessageIDEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Raised when a message is edited
+  # @see Discordrb::EventContainer#message_edit
+  class MessageEditEvent < MessageEvent
+  end
+
+  # Event handler for {MessageEditEvent}
+  class MessageEditEventHandler < MessageEventHandler
+  end
+
+  # Raised when a message is deleted
+  # @see Discordrb::EventContainer#message_delete
+  class MessageDeleteEvent < MessageIDEvent
+  end
+
+  # Event handler for {MessageDeleteEvent}
+  class MessageDeleteEventHandler < MessageIDEventHandler
+  end
+
+  # Raised whenever a MESSAGE_UPDATE is received
+  # @see Discordrb::EventContainer#message_update
+  class MessageUpdateEvent < MessageEvent
+  end
+
+  # Event handler for {MessageUpdateEvent}
+  class MessageUpdateEventHandler < MessageEventHandler
+  end
+end

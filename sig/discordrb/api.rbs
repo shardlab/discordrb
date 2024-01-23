@@ -1,0 +1,114 @@
+# List of methods representing endpoints in Discord's API
+module Discordrb::API
+  # The base URL of the Discord REST API.
+  APIBASE: "https://discord.com/api/v9"
+
+  # The URL of Discord's CDN
+  CDN_URL: "https://cdn.discordapp.com"
+
+  # @return [String] the currently used API base URL.
+  def self?.api_base: () -> untyped
+
+  # Sets the API base URL to something.
+  def self?.api_base=: (untyped value) -> untyped
+
+  # @return [String] the currently used CDN url
+  def self?.cdn_url: () -> untyped
+
+  # @return [String] the bot name, previously specified using {.bot_name=}.
+  def self?.bot_name: () -> untyped
+
+  # Sets the bot name to something. Used in {.user_agent}. For the bot's username, see {Profile#username=}.
+  def self?.bot_name=: (untyped value) -> untyped
+
+  # Changes the rate limit tracing behaviour. If rate limit tracing is on, a full backtrace will be logged on every RL
+  # hit.
+  # @param value [true, false] whether or not to enable rate limit tracing
+  def self?.trace=: (untyped value) -> untyped
+
+  # Generate a user agent identifying this requester as discordrb.
+  def self?.user_agent: () -> ::String
+
+  # Resets all rate limit mutexes
+  def self?.reset_mutexes: () -> untyped
+
+  # Wait a specified amount of time synchronised with the specified mutex.
+  def self?.sync_wait: (untyped time, untyped mutex) -> untyped
+
+  # Wait for a specified mutex to unlock and do nothing with it afterwards.
+  def self?.mutex_wait: (untyped mutex) -> untyped
+
+  # Performs a RestClient request.
+  # @param type [Symbol] The type of HTTP request to use.
+  # @param attributes [Array] The attributes for the request.
+  def self?.raw_request: (untyped `type`, untyped attributes) -> untyped
+
+  # Make an API request, including rate limit handling.
+  def self?.request: (untyped key, untyped major_parameter, untyped `type`, *untyped attributes) -> untyped
+
+  # Handles pre-emptive rate limiting by waiting the given mutex by the difference of the Date header to the
+  # X-Ratelimit-Reset header, thus making sure we don't get 429'd in any subsequent requests.
+  def self?.handle_preemptive_rl: (untyped headers, untyped mutex, untyped key) -> untyped
+
+  # Perform rate limit tracing. All this method does is log the current backtrace to the console with the `:ratelimit`
+  # level.
+  # @param reason [String] the reason to include with the backtrace.
+  def self?.trace: (untyped reason) -> (nil | untyped)
+
+  # Make an icon URL from server and icon IDs
+  def self?.icon_url: (untyped server_id, untyped icon_id, ?::String format) -> ::String
+
+  # Make an icon URL from application and icon IDs
+  def self?.app_icon_url: (untyped app_id, untyped icon_id, ?::String format) -> ::String
+
+  # Make a widget picture URL from server ID
+  def self?.widget_url: (untyped server_id, ?::String style) -> ::String
+
+  # Make a splash URL from server and splash IDs
+  def self?.splash_url: (untyped server_id, untyped splash_id, ?::String format) -> ::String
+
+  # Make a banner URL from server and banner IDs
+  def self?.banner_url: (untyped server_id, untyped banner_id, ?::String format) -> ::String
+
+  # Make an emoji icon URL from emoji ID
+  def self?.emoji_icon_url: (untyped emoji_id, ?::String format) -> ::String
+
+  # Make an asset URL from application and asset IDs
+  def self?.asset_url: (untyped application_id, untyped asset_id, ?::String format) -> ::String
+
+  # Make an achievement icon URL from application ID, achievement ID, and icon hash
+  def self?.achievement_icon_url: (untyped application_id, untyped achievement_id, untyped icon_hash, ?::String format) -> ::String
+
+  # Login to the server
+  def self?.login: (untyped email, untyped password) -> untyped
+
+  # Logout from the server
+  def self?.logout: (untyped token) -> untyped
+
+  # Create an OAuth application
+  def self?.create_oauth_application: (untyped token, untyped name, untyped redirect_uris) -> untyped
+
+  # Change an OAuth application's properties
+  def self?.update_oauth_application: (untyped token, untyped name, untyped redirect_uris, ?::String description, ?untyped? icon) -> untyped
+
+  # Get the bot's OAuth application's information
+  def self?.oauth_application: (untyped token) -> untyped
+
+  # Acknowledge that a message has been received
+  # The last acknowledged message will be sent in the ready packet,
+  # so this is an easy way to catch up on messages
+  def self?.acknowledge_message: (untyped token, untyped channel_id, untyped message_id) -> untyped
+
+  # Get the gateway to be used
+  def self?.gateway: (untyped token) -> untyped
+
+  # Get the gateway to be used, with additional information for sharding and
+  # session start limits
+  def self?.gateway_bot: (untyped token) -> untyped
+
+  # Validate a token (this request will fail if the token is invalid)
+  def self?.validate_token: (untyped token) -> untyped
+
+  # Get a list of available voice regions
+  def self?.voice_regions: (untyped token) -> untyped
+end

@@ -83,7 +83,7 @@ module Discordrb
       @created_at = Time.at(data['created_at'].to_i)
 
       @timestamps = Timestamps.new(data['timestamps']) if data['timestamps']
-      @secrets = Secret.new(data['secrets']) if data['secrets']
+      @secrets = Secrets.new(data['secrets']) if data['secrets']
       @assets = Assets.new(data['assets'], @application_id) if data['assets']
       @party = Party.new(data['party']) if data['party']
       @emoji = Emoji.new(data['emoji'], bot, nil) if data['emoji']

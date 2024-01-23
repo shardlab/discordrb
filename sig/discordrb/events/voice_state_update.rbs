@@ -1,0 +1,34 @@
+module Discordrb::Events
+  # Event raised when a user's voice state updates
+  class VoiceStateUpdateEvent < Event
+    attr_reader user: untyped
+
+    attr_reader token: untyped
+
+    attr_reader suppress: untyped
+
+    attr_reader session_id: untyped
+
+    attr_reader self_mute: untyped
+
+    attr_reader self_deaf: untyped
+
+    attr_reader mute: untyped
+
+    attr_reader deaf: untyped
+
+    attr_reader server: untyped
+
+    attr_reader channel: untyped
+
+    # @return [Channel, nil] the old channel this user was on, or nil if the user is newly joining voice.
+    attr_reader old_channel: untyped
+
+    def initialize: (untyped data, untyped old_channel_id, untyped `bot`) -> void
+  end
+
+  # Event handler for VoiceStateUpdateEvent
+  class VoiceStateUpdateEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+end

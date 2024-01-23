@@ -1,0 +1,62 @@
+# API calls for slash commands.
+module Discordrb::API::Application
+  # Get a list of global application commands.
+  # https://discord.com/developers/docs/interactions/slash-commands#get-global-application-commands
+  def self?.get_global_commands: (untyped token, untyped application_id) -> untyped
+
+  # Get a global application command by ID.
+  # https://discord.com/developers/docs/interactions/slash-commands#get-global-application-command
+  def self?.get_global_command: (untyped token, untyped application_id, untyped command_id) -> untyped
+
+  # Create a global application command.
+  # https://discord.com/developers/docs/interactions/slash-commands#create-global-application-command
+  def self?.create_global_command: (untyped token, untyped application_id, untyped name, untyped description, ?untyped options, ?untyped? default_permission, ?::Integer `type`) -> untyped
+
+  # Edit a global application command.
+  # https://discord.com/developers/docs/interactions/slash-commands#edit-global-application-command
+  def self?.edit_global_command: (untyped token, untyped application_id, untyped command_id, ?untyped? name, ?untyped? description, ?untyped? options, ?untyped? default_permission, ?::Integer `type`) -> untyped
+
+  # Delete a global application command.
+  # https://discord.com/developers/docs/interactions/slash-commands#delete-global-application-command
+  def self?.delete_global_command: (untyped token, untyped application_id, untyped command_id) -> untyped
+
+  # Set global application commands in bulk.
+  # https://discord.com/developers/docs/interactions/slash-commands#bulk-overwrite-global-application-commands
+  def self?.bulk_overwrite_global_commands: (untyped token, untyped application_id, untyped commands) -> untyped
+
+  # Get a guild's commands for an application.
+  # https://discord.com/developers/docs/interactions/slash-commands#get-guild-application-commands
+  def self?.get_guild_commands: (untyped token, untyped application_id, untyped guild_id) -> untyped
+
+  # Get a guild command by ID.
+  # https://discord.com/developers/docs/interactions/slash-commands#get-guild-application-command
+  def self?.get_guild_command: (untyped token, untyped application_id, untyped guild_id, untyped command_id) -> untyped
+
+  # Create an application command for a guild.
+  # https://discord.com/developers/docs/interactions/slash-commands#create-guild-application-command
+  def self?.create_guild_command: (untyped token, untyped application_id, untyped guild_id, untyped name, untyped description, ?untyped? options, ?untyped? default_permission, ?::Integer `type`) -> untyped
+
+  # Edit an application command for a guild.
+  # https://discord.com/developers/docs/interactions/slash-commands#edit-guild-application-command
+  def self?.edit_guild_command: (untyped token, untyped application_id, untyped guild_id, untyped command_id, ?untyped? name, ?untyped? description, ?untyped? options, ?untyped? default_permission, ?::Integer `type`) -> untyped
+
+  # Delete an application command for a guild.
+  # https://discord.com/developers/docs/interactions/slash-commands#delete-guild-application-command
+  def self?.delete_guild_command: (untyped token, untyped application_id, untyped guild_id, untyped command_id) -> untyped
+
+  # Set guild commands in bulk.
+  # https://discord.com/developers/docs/interactions/slash-commands#bulk-overwrite-guild-application-commands
+  def self?.bulk_overwrite_guild_commands: (untyped token, untyped application_id, untyped guild_id, untyped commands) -> untyped
+
+  # Get the permissions for a specific guild command.
+  # https://discord.com/developers/docs/interactions/slash-commands#get-application-command-permissions
+  def self?.get_guild_command_permissions: (untyped token, untyped application_id, untyped guild_id) -> untyped
+
+  # Edit the permissions for a specific guild command.
+  # https://discord.com/developers/docs/interactions/slash-commands#edit-application-command-permissions
+  def self?.edit_guild_command_permissions: (untyped token, untyped application_id, untyped guild_id, untyped command_id, untyped permissions) -> untyped
+
+  # Edit permissions for all commands in a guild.
+  # https://discord.com/developers/docs/interactions/slash-commands#batch-edit-application-command-permissions
+  def self?.batch_edit_command_permissions: (untyped token, untyped application_id, untyped guild_id, untyped permissions) -> untyped
+end

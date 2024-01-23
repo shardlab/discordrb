@@ -1,0 +1,58 @@
+# All discordrb functionality, to be extended by other files
+module Discordrb
+  # The default debug logger used by discordrb.
+  ENV: ::Hash[::String, bool]
+  LOGGER: untyped
+
+  # The Unix timestamp Discord IDs are based on
+  DISCORD_EPOCH: ::Integer
+
+  # Used to declare what events you wish to recieve from Discord.
+  # @see https://discord.com/developers/docs/topics/gateway#gateway-intents
+  INTENTS: ::Hash[::Symbol, ::Integer]
+
+  # All available intents
+  ALL_INTENTS: untyped
+
+  # All unprivileged intents
+  # @see https://discord.com/developers/docs/topics/gateway#privileged-intents
+  UNPRIVILEGED_INTENTS: untyped
+
+  # No intents
+  NO_INTENTS: 0
+
+  # Compares two objects based on IDs - either the objects' IDs are equal, or one object is equal to the other's ID.
+  def self.id_compare: (untyped one_id, untyped other) -> untyped
+
+  # The maximum length a Discord message can have
+  CHARACTER_LIMIT: 2000
+
+  # For creating timestamps with {timestamp}
+  # @see https://discord.com/developers/docs/reference#message-formatting-timestamp-styles
+  TIMESTAMP_STYLES: ::Hash[::Symbol, ::String]
+
+  # Splits a message into chunks of 2000 characters. Attempts to split by lines if possible.
+  # @param msg [String] The message to split.
+  # @return [Array<String>] the message split into chunks
+  def self.split_message: (untyped msg) -> (::Array[untyped] | untyped)
+
+  # @param time [Time, Integer] The time to create the timestamp from, or a unix timestamp integer.
+  # @param style [Symbol, String] One of the keys from {TIMESTAMP_STYLES} or a string with the style.
+  # @return [String]
+  # @example
+  #   Discordrb.timestamp(Time.now, :short_time)
+  #   # => "<t:1632146954:t>"
+  def self.timestamp: (untyped time, ?untyped? style) -> ::String
+end
+
+# In discordrb, Integer and {String} are monkey-patched to allow for easy resolution of IDs
+class Integer
+  # @return [Integer] The Discord ID represented by this integer, i.e. the integer itself
+  def resolve_id: () -> self
+end
+
+# In discordrb, {Integer} and String are monkey-patched to allow for easy resolution of IDs
+class String
+  # @return [Integer] The Discord ID represented by this string, i.e. the string converted to an integer
+  def resolve_id: () -> untyped
+end

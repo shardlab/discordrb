@@ -1,0 +1,132 @@
+module Discordrb
+  # A webhook on a server channel
+  class Webhook
+    include IDObject
+
+    # @return [String] the webhook name.
+    attr_reader name: untyped
+
+    # @return [Channel] the channel that the webhook is currently connected to.
+    attr_reader channel: untyped
+
+    # @return [Server] the server that the webhook is currently connected to.
+    attr_reader server: untyped
+
+    # @return [String, nil] the webhook's token, if this is an Incoming Webhook.
+    attr_reader token: untyped
+
+    # @return [String] the webhook's avatar id.
+    attr_reader avatar: untyped
+
+    # @return [Integer] the webhook's type (1: Incoming, 2: Channel Follower)
+    attr_reader type: untyped
+
+    # Gets the user object of the creator of the webhook. May be limited to username, discriminator,
+    # ID and avatar if the bot cannot reach the owner
+    # @return [Member, User, nil] the user object of the owner or nil if the webhook was requested using the token.
+    attr_reader owner: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+
+    # Sets the webhook's avatar.
+    # @param avatar [String, #read] The new avatar, in base64-encoded JPG format.
+    def avatar=: (untyped avatar) -> untyped
+
+    # Deletes the webhook's avatar.
+    def delete_avatar: () -> untyped
+
+    # Sets the webhook's channel
+    # @param channel [Channel, String, Integer] The channel the webhook should use.
+    def channel=: (untyped channel) -> untyped
+
+    # Sets the webhook's name.
+    # @param name [String] The webhook's new name.
+    def name=: (untyped name) -> untyped
+
+    # Updates the webhook if you need to edit more than 1 attribute.
+    # @param data [Hash] the data to update.
+    # @option data [String, #read, nil] :avatar The new avatar, in base64-encoded JPG format, or nil to delete the avatar.
+    # @option data [Channel, String, Integer] :channel The channel the webhook should use.
+    # @option data [String] :name The webhook's new name.
+    # @option data [String] :reason The reason for the webhook changes.
+    def update: (untyped data) -> untyped
+
+    # Deletes the webhook.
+    # @param reason [String] The reason the webhook is being deleted.
+    def delete: (?untyped? reason) -> untyped
+
+    # Execute a webhook.
+    # @param content [String] The content of the message. May be 2000 characters long at most.
+    # @param username [String] The username the webhook will display as. If this is not set, the default username set in the webhook's settings.
+    # @param avatar_url [String] The URL of an image file to be used as an avatar. If this is not set, the default avatar from the webhook's
+    # @param tts [true, false] Whether this message should use TTS or not. By default, it doesn't.
+    # @param file [File] File to be sent together with the message. Mutually exclusive with embeds; a webhook message can contain
+    #   either a file to be sent or embeds.
+    # @param embeds [Array<Webhooks::Embed, Hash>] Embeds to attach to this message.
+    # @param allowed_mentions [AllowedMentions, Hash] Mentions that are allowed to ping in the `content`.
+    # @param wait [true, false] Whether Discord should wait for the message to be successfully received by clients, or
+    #   whether it should return immediately after sending the message. If `true` a {Message} object will be returned.
+    # @yield [builder] Gives the builder to the block to add additional steps, or to do the entire building process.
+    # @yieldparam builder [Builder] The builder given as a parameter which is used as the initial step to start from.
+    # @example Execute the webhook with kwargs
+    #   client.execute(
+    #     content: 'Testing',
+    #     username: 'discordrb',
+    #     embeds: [
+    #       { timestamp: Time.now.iso8601, title: 'testing', image: { url: 'https://i.imgur.com/PcMltU7.jpg' } }
+    #     ])
+    # @example Execute the webhook with an already existing builder
+    #   builder = Discordrb::Webhooks::Builder.new # ...
+    #   client.execute(builder)
+    # @example Execute the webhook by building a new message
+    #   client.execute do |builder|
+    #     builder.content = 'Testing'
+    #     builder.username = 'discordrb'
+    #     builder.add_embed do |embed|
+    #       embed.timestamp = Time.now
+    #       embed.title = 'Testing'
+    #       embed.image = Discordrb::Webhooks::EmbedImage.new(url: 'https://i.imgur.com/PcMltU7.jpg')
+    #     end
+    #   end
+    # @return [Message, nil] If `wait` is `true`, a {Message} will be returned. Otherwise this method will return `nil`.
+    # @note This is only available to webhooks with publically exposed tokens. This excludes channel follow webhooks and webhooks retrieved
+    #   via the audit log.
+    def execute: (?content: untyped?, ?username: untyped?, ?avatar_url: untyped?, ?tts: untyped?, ?file: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?wait: bool, ?builder: untyped?, ?components: untyped?) { (untyped, untyped) -> untyped } -> untyped
+
+    # Delete a message created by this webhook.
+    # @param message [Message, String, Integer] The ID of the message to delete.
+    def delete_message: (untyped message) -> untyped
+
+    # Edit a message created by this webhook.
+    # @param message [Message, String, Integer] The ID of the message to edit.
+    # @param content [String] The content of the message. May be 2000 characters long at most.
+    # @param embeds [Array<Webhooks::Embed, Hash>] Embeds to be attached to the message.
+    # @param allowed_mentions [AllowedMentions, Hash] Mentions that are allowed to ping in the `content`.
+    # @param builder [Builder, nil] The builder to start out with, or nil if one should be created anew.
+    # @yield [builder] Gives the builder to the block to add additional steps, or to do the entire building process.
+    # @yieldparam builder [Webhooks::Builder] The builder given as a parameter which is used as the initial step to start from.
+    # @return [Message] The updated message.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @note When editing `allowed_mentions`, it will update visually in the client but not alert the user with a notification.
+    def edit_message: (untyped message, ?content: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?builder: untyped?, ?components: untyped?) { (untyped, untyped) -> untyped } -> untyped
+
+    # Utility function to get a webhook's avatar URL.
+    # @return [String] the URL to the avatar image
+    def avatar_url: () -> untyped
+
+    # The `inspect` method is overwritten to give more useful output.
+    def inspect: () -> ::String
+
+    # Utility function to know if the webhook was requested through a webhook token, rather than auth.
+    # @return [true, false] whether the webhook was requested by token or not.
+    def token?: () -> untyped
+
+    private
+
+    def avatarise: (untyped avatar) -> (::String | untyped)
+
+    def update_internal: (untyped data) -> untyped
+
+    def update_webhook: (untyped new_data) -> untyped
+  end
+end

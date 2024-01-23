@@ -1,0 +1,205 @@
+module Discordrb
+  # Custom errors raised in various places
+  module Errors
+    # Raised when authentication data is invalid or incorrect.
+    class InvalidAuthenticationError < RuntimeError
+      # Default message for this exception
+      def message: () -> "User login failed due to an invalid email or password!"
+    end
+
+    # Raised when a message is over the character limit
+    class MessageTooLong < RuntimeError
+    end
+
+    # Raised when the bot can't do something because its permissions on the server are insufficient
+    class NoPermission < RuntimeError
+    end
+
+    # Raised when the bot gets a HTTP 502 error, which is usually caused by Cloudflare.
+    class CloudflareError < RuntimeError
+    end
+
+    # Raised when using a webhook method without an associated token.
+    class UnauthorizedWebhook < RuntimeError
+    end
+
+    # Generic class for errors denoted by API error codes
+    class CodeError < RuntimeError
+      # @return [Integer] The error code represented by this error class.
+      attr_reader self.code: untyped
+
+      # Create a new error with a particular message (the code should be defined by the class instance variable)
+      # @param message [String] the message to use
+      # @param errors [Hash] API errors
+
+      def initialize: (untyped message, ?untyped? errors) -> void
+
+      # @return [Integer] The error code represented by this error.
+      def code: () -> untyped
+
+      # @return [String] A message including the message and flattened errors.
+      def full_message: () -> ::String
+
+      # @return [String] This error's represented message
+      attr_reader message: untyped
+
+      # @return [Hash] More precise errors
+      attr_reader errors: untyped
+
+      private
+
+      # @!visibility hidden
+      # Flattens errors into a more easily read format.
+      # @example Flattening errors of a bad field
+      #   flatten_errors(data['errors'])
+      #   # => ["embed.fields[0].name: This field is required", "embed.fields[0].value: This field is required"]
+      def flatten_errors: (untyped err, ?untyped? prev_key) -> untyped
+    end
+
+    # Create a new code error class
+    # rubocop:disable Naming/MethodName
+    def self.Code: (untyped code) -> untyped
+
+    # @param code [Integer] The code to check
+    # @return [Class] the error class for the given code
+    def self.error_class_for: (untyped code) -> untyped
+
+    # Used when Discord doesn't provide a more specific code
+    UnknownError: untyped
+
+    # Unknown Account
+    UnknownAccount: untyped
+
+    # Unknown Application
+    UnknownApplication: untyped
+
+    # Unknown Channel
+    UnknownChannel: untyped
+
+    # Unknown Server
+    UnknownServer: untyped
+
+    # Unknown Integration
+    UnknownIntegration: untyped
+
+    # Unknown Invite
+    UnknownInvite: untyped
+
+    # Unknown Member
+    UnknownMember: untyped
+
+    # Unknown Message
+    UnknownMessage: untyped
+
+    # Unknown Overwrite
+    UnknownOverwrite: untyped
+
+    # Unknown Provider
+    UnknownProvider: untyped
+
+    # Unknown Role
+    UnknownRole: untyped
+
+    # Unknown Token
+    UnknownToken: untyped
+
+    # Unknown User
+    UnknownUser: untyped
+
+    # Unknown Emoji
+    UnknownEmoji: untyped
+
+    # Bots cannot use this endpoint
+    EndpointNotForBots: untyped
+
+    # Only bots can use this endpoint
+    EndpointOnlyForBots: untyped
+
+    # Maximum number of servers reached (100)
+    ServerLimitReached: untyped
+
+    # Maximum number of friends reached (1000)
+    FriendLimitReached: untyped
+
+    # Maximum number of pins reached (50)
+    PinLimitReached: untyped
+
+    # Maximum number of guild roles reached (250)
+    RoleLimitReached: untyped
+
+    # Too many reactions
+    ReactionLimitReached: untyped
+
+    # Maximum number of guild channels reached (500)
+    ChannelLimitReached: untyped
+
+    # Unauthorized
+    Unauthorized: untyped
+
+    # Missing Access
+    MissingAccess: untyped
+
+    # Invalid Account Type
+    InvalidAccountType: untyped
+
+    # Cannot execute action on a DM channel
+    InvalidActionForDM: untyped
+
+    # Embed Disabled
+    EmbedDisabled: untyped
+
+    # Cannot edit a message authored by another user
+    MessageAuthoredByOtherUser: untyped
+
+    # Cannot send an empty message
+    MessageEmpty: untyped
+
+    # Cannot send messages to this user
+    NoMessagesToUser: untyped
+
+    # Cannot send messages in a voice channel
+    NoMessagesInVoiceChannel: untyped
+
+    # Channel verification level is too high
+    VerificationLevelTooHigh: untyped
+
+    # OAuth2 application does not have a bot
+    NoBotForApplication: untyped
+
+    # OAuth2 application limit reached
+    ApplicationLimitReached: untyped
+
+    # Invalid OAuth State
+    InvalidOAuthState: untyped
+
+    # Missing Permissions
+    MissingPermissions: untyped
+
+    # Invalid authentication token
+    InvalidAuthToken: untyped
+
+    # Note is too long
+    NoteTooLong: untyped
+
+    # Provided too few or too many messages to delete. Must provide at least 2 and fewer than 100 messages to delete.
+    InvalidBulkDeleteCount: untyped
+
+    # A message can only be pinned to the channel it was sent in
+    CannotPinInDifferentChannel: untyped
+
+    # Cannot execute action on a system message
+    InvalidActionForSystemMessage: untyped
+
+    # A message provided was too old to bulk delete
+    MessageTooOld: untyped
+
+    # Invalid Form Body
+    InvalidFormBody: untyped
+
+    # An invite was accepted to a guild the application's bot is not in
+    MissingBotMember: untyped
+
+    # Reaction Blocked
+    ReactionBlocked: untyped
+  end
+end

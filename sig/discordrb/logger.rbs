@@ -1,0 +1,56 @@
+module Discordrb
+  LOG_TIMESTAMP_FORMAT: ::String
+  class Logger
+    public
+    @enabled_modes: ::Array[::Symbol?]
+    @streams: untyped
+    @fancy: bool
+
+    def debug: (untyped message) -> untyped
+
+    def debug=: (untyped value) -> untyped
+
+    def error: (untyped message) -> untyped
+
+    def fancy=: (untyped) -> untyped
+
+    def good: (untyped message) -> untyped
+
+    def in: (untyped message) -> untyped
+
+    def info: (untyped message) -> untyped
+
+    def log_exception: (untyped e) -> untyped
+
+    def mode=: (untyped value) -> untyped
+
+    def out: (untyped message) -> untyped
+
+    def ratelimit: (untyped message) -> untyped
+
+    def streams: () -> untyped
+
+    def streams=: (untyped) -> untyped
+
+    def token=: (untyped) -> untyped
+
+    def warn: (untyped message) -> untyped
+
+    private
+
+    def fancy_write: (untyped stream, untyped message, untyped mode, untyped thread_name, untyped timestamp) -> untyped
+
+    def initialize: (?untyped fancy, ?untyped streams) -> void
+
+    def simple_write: (untyped stream, untyped message, untyped mode, untyped thread_name, untyped timestamp) -> untyped
+
+    def write: (untyped message, untyped mode) -> untyped
+    def self.write: (untyped message, untyped mode) -> untyped
+
+    FORMAT_BOLD: String
+
+    FORMAT_RESET: String
+
+    MODES: Hash[untyped, untyped]
+  end
+end

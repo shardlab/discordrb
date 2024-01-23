@@ -1,0 +1,146 @@
+module Discordrb::Commands
+  # Bot that supports commands and command chains
+  class CommandBot < Discordrb::Bot
+    # @return [Hash] this bot's attributes.
+    attr_reader attributes: untyped
+
+    # @return [String, Array<String>, #call] the prefix commands are triggered with.
+    # @see #initialize
+    attr_reader prefix: untyped
+
+    include CommandContainer
+
+    # Creates a new CommandBot and logs in to Discord.
+    # @param attributes [Hash] The attributes to initialize the CommandBot with.
+    # @see Discordrb::Bot#initialize Discordrb::Bot#initialize for other attributes that should be used to create the underlying regular bot.
+    # @option attributes [String, Array<String>, #call] :prefix The prefix that should trigger this bot's commands. It
+    #   can be:
+    #
+    #   * Any string (including the empty string). This has the effect that if a message starts with the prefix, the
+    #     prefix will be stripped and the rest of the chain will be parsed as a command chain. Note that it will be
+    #     literal - if the prefix is "hi" then the corresponding trigger string for a command called "test" would be
+    #     "hitest". Don't forget to put spaces in if you need them!
+    #   * An array of prefixes. Those will behave similarly to setting one string as a prefix, but instead of only one
+    #     string, any of the strings in the array can be used.
+    #   * Something Proc-like (responds to :call) that takes a {Message} object as an argument and returns either
+    #     the command chain in raw form or `nil` if the given message shouldn't be parsed. This can be used to make more
+    #     complicated dynamic prefixes (e. g. based on server), or even something else entirely (suffixes, or most
+    #     adventurous, infixes).
+    # @option attributes [true, false] :advanced_functionality Whether to enable advanced functionality (very powerful
+    #   way to nest commands into chains, see https://github.com/shardlab/discordrb/wiki/Commands#command-chain-syntax
+    #   for info. Default is false.
+    # @option attributes [Symbol, Array<Symbol>, false] :help_command The name of the command that displays info for
+    #   other commands. Use an array if you want to have aliases. Default is "help". If none should be created, use
+    #   `false` as the value.
+    # @option attributes [String, #call] :command_doesnt_exist_message The message that should be displayed if a user attempts
+    #   to use a command that does not exist. If none is specified, no message will be displayed. In the message, you
+    #   can use the string '%command%' that will be replaced with the name of the command. Anything responding to call
+    #   such as a proc will be called with the event, and is expected to return a String or nil.
+    # @option attributes [String] :no_permission_message The message to be displayed when `NoPermission` error is raised.
+    # @option attributes [true, false] :spaces_allowed Whether spaces are allowed to occur between the prefix and the
+    #   command. Default is false.
+    # @option attributes [true, false] :webhook_commands Whether messages sent by webhooks are allowed to trigger
+    #   commands. Default is true.
+    # @option attributes [Array<String, Integer, Channel>] :channels The channels this command bot accepts commands on.
+    #   Superseded if a command has a 'channels' attribute.
+    # @option attributes [String] :previous Character that should designate the result of the previous command in
+    #   a command chain (see :advanced_functionality). Default is '~'. Set to an empty string to disable.
+    # @option attributes [String] :chain_delimiter Character that should designate that a new command begins in the
+    #   command chain (see :advanced_functionality). Default is '>'. Set to an empty string to disable.
+    # @option attributes [String] :chain_args_delim Character that should separate the command chain arguments from the
+    #   chain itself (see :advanced_functionality). Default is ':'. Set to an empty string to disable.
+    # @option attributes [String] :sub_chain_start Character that should start a sub-chain (see
+    #   :advanced_functionality). Default is '['. Set to an empty string to disable.
+    # @option attributes [String] :sub_chain_end Character that should end a sub-chain (see
+    #   :advanced_functionality). Default is ']'. Set to an empty string to disable.
+    # @option attributes [String] :quote_start Character that should start a quoted string (see
+    #   :advanced_functionality). Default is '"'. Set to an empty string to disable.
+    # @option attributes [String] :quote_end Character that should end a quoted string (see
+    #   :advanced_functionality). Default is '"' or the same as :quote_start. Set to an empty string to disable.
+    # @option attributes [true, false] :ignore_bots Whether the bot should ignore bot accounts or not. Default is false.
+    def initialize: (**untyped attributes) -> void
+
+    # Returns all aliases for the command with the given name
+    # @param name [Symbol] the name of the `Command`
+    # @return [Array<CommandAlias>]
+    def command_aliases: (untyped name) -> untyped
+
+    # Executes a particular command on the bot. Mostly useful for internal stuff, but one can never know.
+    # @param name [Symbol] The command to execute.
+    # @param event [CommandEvent] The event to pass to the command.
+    # @param arguments [Array<String>] The arguments to pass to the command.
+    # @param chained [true, false] Whether or not it should be executed as part of a command chain. If this is false,
+    #   commands that have chain_usable set to false will not work.
+    # @param check_permissions [true, false] Whether permission parameters such as `required_permission` or
+    #   `permission_level` should be checked.
+    # @return [String, nil] the command's result, if there is any.
+    def execute_command: (untyped name, untyped event, untyped arguments, ?bool chained, ?bool check_permissions) -> untyped
+
+    # Transforms an array of string arguments based on types array.
+    # For example, `['1', '10..14']` with types `[Integer, Range]` would turn into `[1, 10..14]`.
+    def arg_check: (untyped args, ?untyped? types, ?untyped? server) -> untyped
+
+    # Executes a command in a simple manner, without command chains or permissions.
+    # @param chain [String] The command with its arguments separated by spaces.
+    # @param event [CommandEvent] The event to pass to the command.
+    # @return [String, nil] the command's result, if there is any.
+    def simple_execute: (untyped chain, untyped event) -> (nil | untyped)
+
+    # Sets the permission level of a user
+    # @param id [Integer] the ID of the user whose level to set
+    # @param level [Integer] the level to set the permission to
+    def set_user_permission: (untyped id, untyped level) -> untyped
+
+    # Sets the permission level of a role - this applies to all users in the role
+    # @param id [Integer] the ID of the role whose level to set
+    # @param level [Integer] the level to set the permission to
+    def set_role_permission: (untyped id, untyped level) -> untyped
+
+    # Check if a user has permission to do something
+    # @param user [User] The user to check
+    # @param level [Integer] The minimum permission level the user should have (inclusive)
+    # @param server [Server] The server on which to check
+    # @return [true, false] whether or not the user has the given permission
+    def permission?: (untyped user, untyped level, untyped server) -> untyped
+
+    # @see CommandBot#update_channels
+    def channels=: (untyped channels) -> untyped
+
+    # Update the list of channels the bot accepts commands from.
+    # @param channels [Array<String, Integer, Channel>] The channels this command bot accepts commands on.
+    def update_channels: (?untyped channels) -> untyped
+
+    # Add a channel to the list of channels the bot accepts commands from.
+    # @param channel [String, Integer, Channel] The channel name, integer ID, or `Channel` object to be added
+    def add_channel: (untyped channel) -> (nil | untyped)
+
+    # Remove a channel from the list of channels the bot accepts commands from.
+    # @param channel [String, Integer, Channel] The channel name, integer ID, or `Channel` object to be removed
+    def remove_channel: (untyped channel) -> untyped
+
+    private
+
+    # Internal handler for MESSAGE_CREATE that is overwritten to allow for command handling
+    def create_message: (untyped data) -> (untyped | nil)
+
+    # Check whether a message should trigger command execution, and if it does, return the raw chain
+    def trigger?: (untyped message) -> (untyped | untyped | untyped | nil)
+
+    def standard_prefix_trigger: (untyped message, untyped prefix) -> (nil | untyped)
+
+    def required_permissions?: (untyped member, untyped required, ?untyped? channel) -> untyped
+
+    def required_roles?: (untyped member, untyped required) -> (true | untyped)
+
+    def allowed_roles?: (untyped member, untyped required) -> (true | untyped)
+
+    def check_multiple_roles: (untyped member, untyped required, ?bool all_roles) -> untyped
+
+    def channels?: (untyped channel, untyped channels) -> (true | untyped)
+
+    def execute_chain: (untyped chain, untyped event) -> untyped
+
+    # Turns the object into a string, using to_s by default
+    def stringify: (untyped object) -> ("" | untyped)
+  end
+end

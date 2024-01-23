@@ -1,0 +1,190 @@
+module Discordrb
+  # An Embed object that is contained in a message
+  # A freshly generated embed object will not appear in a message object
+  # unless grabbed from its ID in a channel.
+  class Embed
+    # @return [Message] the message this embed object is contained in.
+    attr_reader message: untyped
+
+    # @return [String] the URL this embed object is based on.
+    attr_reader url: untyped
+
+    # @return [String, nil] the title of the embed object. `nil` if there is not a title
+    attr_reader title: untyped
+
+    # @return [String, nil] the description of the embed object. `nil` if there is not a description
+    attr_reader description: untyped
+
+    # @return [Symbol] the type of the embed object. Possible types are:
+    #
+    #   * `:link`
+    #   * `:video`
+    #   * `:image`
+    attr_reader type: untyped
+
+    # @return [Time, nil] the timestamp of the embed object. `nil` if there is not a timestamp
+    attr_reader timestamp: untyped
+
+    # @return [String, nil] the color of the embed object. `nil` if there is not a color
+    attr_reader color: untyped
+
+    alias colour color
+
+    # @return [EmbedFooter, nil] the footer of the embed object. `nil` if there is not a footer
+    attr_reader footer: untyped
+
+    # @return [EmbedProvider, nil] the provider of the embed object. `nil` if there is not a provider
+    attr_reader provider: untyped
+
+    # @return [EmbedImage, nil] the image of the embed object. `nil` if there is not an image
+    attr_reader image: untyped
+
+    # @return [EmbedThumbnail, nil] the thumbnail of the embed object. `nil` if there is not a thumbnail
+    attr_reader thumbnail: untyped
+
+    # @return [EmbedVideo, nil] the video of the embed object. `nil` if there is not a video
+    attr_reader video: untyped
+
+    # @return [EmbedAuthor, nil] the author of the embed object. `nil` if there is not an author
+    attr_reader author: untyped
+
+    # @return [Array<EmbedField>, nil] the fields of the embed object. `nil` if there are no fields
+    attr_reader fields: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped message) -> void
+  end
+
+  # An Embed footer for the embed object.
+  class EmbedFooter
+    # @return [Embed] the embed object this is based on.
+    attr_reader embed: untyped
+
+    # @return [String] the footer text.
+    attr_reader text: untyped
+
+    # @return [String] the URL of the footer icon.
+    attr_reader icon_url: untyped
+
+    # @return [String] the proxied URL of the footer icon.
+    attr_reader proxy_icon_url: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped embed) -> void
+  end
+
+  # An Embed image for the embed object.
+  class EmbedImage
+    # @return [Embed] the embed object this is based on.
+    attr_reader embed: untyped
+
+    # @return [String] the source URL of the image.
+    attr_reader url: untyped
+
+    # @return [String] the proxy URL of the image.
+    attr_reader proxy_url: untyped
+
+    # @return [Integer] the width of the image, in pixels.
+    attr_reader width: untyped
+
+    # @return [Integer] the height of the image, in pixels.
+    attr_reader height: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped embed) -> void
+  end
+
+  # An Embed video for the embed object
+  class EmbedVideo
+    # @return [Embed] the embed object this is based on.
+    attr_reader embed: untyped
+
+    # @return [String] the source URL of the video.
+    attr_reader url: untyped
+
+    # @return [Integer] the width of the video, in pixels.
+    attr_reader width: untyped
+
+    # @return [Integer] the height of the video, in pixels.
+    attr_reader height: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped embed) -> void
+  end
+
+  # An Embed thumbnail for the embed object
+  class EmbedThumbnail
+    # @return [Embed] the embed object this is based on.
+    attr_reader embed: untyped
+
+    # @return [String] the CDN URL this thumbnail can be downloaded at.
+    attr_reader url: untyped
+
+    # @return [String] the thumbnail's proxy URL - I'm not sure what exactly this does, but I think it has something to
+    #   do with CDNs.
+    attr_reader proxy_url: untyped
+
+    # @return [Integer] the width of this thumbnail file, in pixels.
+    attr_reader width: untyped
+
+    # @return [Integer] the height of this thumbnail file, in pixels.
+    attr_reader height: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped embed) -> void
+  end
+
+  # An Embed provider for the embed object
+  class EmbedProvider
+    # @return [Embed] the embed object this is based on.
+    attr_reader embed: untyped
+
+    # @return [String] the provider's name.
+    attr_reader name: untyped
+
+    # @return [String, nil] the URL of the provider, or `nil` if there is no URL.
+    attr_reader url: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped embed) -> void
+  end
+
+  # An Embed author for the embed object
+  class EmbedAuthor
+    # @return [Embed] the embed object this is based on.
+    attr_reader embed: untyped
+
+    # @return [String] the author's name.
+    attr_reader name: untyped
+
+    # @return [String, nil] the URL of the author's website, or `nil` if there is no URL.
+    attr_reader url: untyped
+
+    # @return [String, nil] the icon of the author, or `nil` if there is no icon.
+    attr_reader icon_url: untyped
+
+    # @return [String, nil] the Discord proxy URL, or `nil` if there is no `icon_url`.
+    attr_reader proxy_icon_url: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped embed) -> void
+  end
+
+  # An Embed field for the embed object
+  class EmbedField
+    # @return [Embed] the embed object this is based on.
+    attr_reader embed: untyped
+
+    # @return [String] the field's name.
+    attr_reader name: untyped
+
+    # @return [String] the field's value.
+    attr_reader value: untyped
+
+    # @return [true, false] whether this field is inline.
+    attr_reader inline: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped embed) -> void
+  end
+end

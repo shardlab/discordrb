@@ -1,0 +1,168 @@
+# API calls for Server
+module Discordrb::API::Server
+  # Create a server
+  # https://discord.com/developers/docs/resources/guild#create-guild
+  def self?.create: (untyped token, untyped name, ?::Symbol region) -> untyped
+
+  # Get a server's data
+  # https://discord.com/developers/docs/resources/guild#get-guild
+  def self?.resolve: (untyped token, untyped server_id, ?untyped? with_counts) -> untyped
+
+  # Update a server
+  # https://discord.com/developers/docs/resources/guild#modify-guild
+  def self?.update: (untyped token, untyped server_id, untyped name, untyped region, untyped icon, untyped afk_channel_id, untyped afk_timeout, untyped splash, untyped default_message_notifications, untyped verification_level, untyped explicit_content_filter, untyped system_channel_id, ?untyped? reason) -> untyped
+
+  # Transfer server ownership
+  # https://discord.com/developers/docs/resources/guild#modify-guild
+  def self?.transfer_ownership: (untyped token, untyped server_id, untyped user_id, ?untyped? reason) -> untyped
+
+  # Delete a server
+  # https://discord.com/developers/docs/resources/guild#delete-guild
+  def self?.delete: (untyped token, untyped server_id) -> untyped
+
+  # Get a server's channels list
+  # https://discord.com/developers/docs/resources/guild#get-guild-channels
+  def self?.channels: (untyped token, untyped server_id) -> untyped
+
+  # Create a channel
+  # https://discord.com/developers/docs/resources/guild#create-guild-channel
+  def self?.create_channel: (untyped token, untyped server_id, untyped name, untyped `type`, untyped topic, untyped bitrate, untyped user_limit, untyped permission_overwrites, untyped parent_id, untyped nsfw, untyped rate_limit_per_user, untyped position, ?untyped? reason) -> untyped
+
+  # Update a channels position
+  # https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions
+  def self?.update_channel_positions: (untyped token, untyped server_id, untyped positions) -> untyped
+
+  # Get a member's data
+  # https://discord.com/developers/docs/resources/guild#get-guild-member
+  def self?.resolve_member: (untyped token, untyped server_id, untyped user_id) -> untyped
+
+  # Gets members from the server
+  # https://discord.com/developers/docs/resources/guild#list-guild-members
+  def self?.resolve_members: (untyped token, untyped server_id, untyped limit, ?untyped? after) -> untyped
+
+  # Update a user properties
+  # https://discord.com/developers/docs/resources/guild#modify-guild-member
+  def self?.update_member: (untyped token, untyped server_id, untyped user_id, ?nick: ::Symbol, ?roles: ::Symbol, ?mute: ::Symbol, ?deaf: ::Symbol, ?channel_id: ::Symbol, ?communication_disabled_until: ::Symbol, ?reason: untyped?) -> untyped
+
+  # Remove user from server
+  # https://discord.com/developers/docs/resources/guild#remove-guild-member
+  def self?.remove_member: (untyped token, untyped server_id, untyped user_id, ?untyped? reason) -> untyped
+
+  # Get a server's banned users
+  # https://discord.com/developers/docs/resources/guild#get-guild-bans
+  def self?.bans: (untyped token, untyped server_id) -> untyped
+
+  # Ban a user from a server and delete their messages from the last message_days days
+  # https://discord.com/developers/docs/resources/guild#create-guild-ban
+  def self?.ban_user: (untyped token, untyped server_id, untyped user_id, untyped message_days, ?untyped? reason) -> untyped
+
+  # Unban a user from a server
+  # https://discord.com/developers/docs/resources/guild#remove-guild-ban
+  def self?.unban_user: (untyped token, untyped server_id, untyped user_id, ?untyped? reason) -> untyped
+
+  # Get server roles
+  # https://discord.com/developers/docs/resources/guild#get-guild-roles
+  def self?.roles: (untyped token, untyped server_id) -> untyped
+
+  # Create a role (parameters such as name and colour if not set can be set by update_role afterwards)
+  # Permissions are the Discord defaults; allowed: invite creation, reading/sending messages,
+  # sending TTS messages, embedding links, sending files, reading the history, mentioning everybody,
+  # connecting to voice, speaking and voice activity (push-to-talk isn't mandatory)
+  # https://discord.com/developers/docs/resources/guild#get-guild-roles
+  def self?.create_role: (untyped token, untyped server_id, untyped name, untyped colour, untyped hoist, untyped mentionable, untyped packed_permissions, ?untyped? reason) -> untyped
+
+  # Update a role
+  # Permissions are the Discord defaults; allowed: invite creation, reading/sending messages,
+  # sending TTS messages, embedding links, sending files, reading the history, mentioning everybody,
+  # connecting to voice, speaking and voice activity (push-to-talk isn't mandatory)
+  # https://discord.com/developers/docs/resources/guild#batch-modify-guild-role
+  def self?.update_role: (untyped token, untyped server_id, untyped role_id, untyped name, untyped colour, ?bool hoist, ?bool mentionable, ?::Integer packed_permissions, ?untyped? reason) -> untyped
+
+  # Update role positions
+  # https://discord.com/developers/docs/resources/guild#modify-guild-role-positions
+  def self?.update_role_positions: (untyped token, untyped server_id, untyped roles) -> untyped
+
+  # Delete a role
+  # https://discord.com/developers/docs/resources/guild#delete-guild-role
+  def self?.delete_role: (untyped token, untyped server_id, untyped role_id, ?untyped? reason) -> untyped
+
+  # Adds a single role to a member
+  # https://discord.com/developers/docs/resources/guild#add-guild-member-role
+  def self?.add_member_role: (untyped token, untyped server_id, untyped user_id, untyped role_id, ?untyped? reason) -> untyped
+
+  # Removes a single role from a member
+  # https://discord.com/developers/docs/resources/guild#remove-guild-member-role
+  def self?.remove_member_role: (untyped token, untyped server_id, untyped user_id, untyped role_id, ?untyped? reason) -> untyped
+
+  # Get server prune count
+  # https://discord.com/developers/docs/resources/guild#get-guild-prune-count
+  def self?.prune_count: (untyped token, untyped server_id, untyped days) -> untyped
+
+  # Begin server prune
+  # https://discord.com/developers/docs/resources/guild#begin-guild-prune
+  def self?.begin_prune: (untyped token, untyped server_id, untyped days, ?untyped? reason) -> untyped
+
+  # Get invites from server
+  # https://discord.com/developers/docs/resources/guild#get-guild-invites
+  def self?.invites: (untyped token, untyped server_id) -> untyped
+
+  # Gets a server's audit logs
+  # https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
+  def self?.audit_logs: (untyped token, untyped server_id, untyped limit, ?untyped? user_id, ?untyped? action_type, ?untyped? before) -> untyped
+
+  # Get server integrations
+  # https://discord.com/developers/docs/resources/guild#get-guild-integrations
+  def self?.integrations: (untyped token, untyped server_id) -> untyped
+
+  # Create a server integration
+  # https://discord.com/developers/docs/resources/guild#create-guild-integration
+  def self?.create_integration: (untyped token, untyped server_id, untyped `type`, untyped id, ?untyped? reason) -> untyped
+
+  # Update integration from server
+  # https://discord.com/developers/docs/resources/guild#modify-guild-integration
+  def self?.update_integration: (untyped token, untyped server_id, untyped integration_id, untyped expire_behavior, untyped expire_grace_period, untyped enable_emoticons) -> untyped
+
+  # Delete a server integration
+  # https://discord.com/developers/docs/resources/guild#delete-guild-integration
+  def self?.delete_integration: (untyped token, untyped server_id, untyped integration_id, ?untyped? reason) -> untyped
+
+  # Sync an integration
+  # https://discord.com/developers/docs/resources/guild#sync-guild-integration
+  def self?.sync_integration: (untyped token, untyped server_id, untyped integration_id) -> untyped
+
+  # Retrieves a server's widget information
+  # https://discord.com/developers/docs/resources/guild#get-guild-widget
+  def self?.widget: (untyped token, untyped server_id) -> untyped
+
+  alias embed widget
+
+  # Modify a server's widget settings
+  # https://discord.com/developers/docs/resources/guild#modify-guild-widget
+  def self?.modify_widget: (untyped token, untyped server_id, untyped enabled, untyped channel_id, ?untyped? reason) -> untyped
+
+  alias modify_embed modify_widget
+
+  # Adds a custom emoji.
+  # https://discord.com/developers/docs/resources/emoji#create-guild-emoji
+  def self?.add_emoji: (untyped token, untyped server_id, untyped image, untyped name, ?untyped roles, ?untyped? reason) -> untyped
+
+  # Changes an emoji name and/or roles.
+  # https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
+  def self?.edit_emoji: (untyped token, untyped server_id, untyped emoji_id, untyped name, ?untyped? roles, ?untyped? reason) -> untyped
+
+  # Deletes a custom emoji
+  # https://discord.com/developers/docs/resources/emoji#delete-guild-emoji
+  def self?.delete_emoji: (untyped token, untyped server_id, untyped emoji_id, ?untyped? reason) -> untyped
+
+  # Available voice regions for this server
+  # https://discord.com/developers/docs/resources/guild#get-guild-voice-regions
+  def self?.regions: (untyped token, untyped server_id) -> untyped
+
+  # Get server webhooks
+  # https://discord.com/developers/docs/resources/webhook#get-guild-webhooks
+  def self?.webhooks: (untyped token, untyped server_id) -> untyped
+
+  # Adds a member to a server with an OAuth2 Bearer token that has been granted `guilds.join`
+  # https://discord.com/developers/docs/resources/guild#add-guild-member
+  def self?.add_member: (untyped token, untyped server_id, untyped user_id, untyped access_token, ?untyped? nick, ?untyped roles, ?bool mute, ?bool deaf) -> untyped
+end
