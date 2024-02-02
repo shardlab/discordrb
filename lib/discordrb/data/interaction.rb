@@ -466,19 +466,25 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_length [Integer] A minimum length for option value.
+      # @param max_length [Integer] A maximum length for option value.
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
       # @return (see #option)
-      def string(name, description, required: nil, choices: nil)
-        option(TYPES[:string], name, description, required: required, choices: choices)
+      def string(name, description, required: nil, min_length: nil, max_length: nil, choices: nil)
+        option(TYPES[:string], name, description,
+               required: required, min_length: min_length, max_length: max_length, choices: choices)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_value [Integer] A minimum value for option.
+      # @param max_value [Integer] A maximum value for option.
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
       # @return (see #option)
-      def integer(name, description, required: nil, choices: nil)
-        option(TYPES[:integer], name, description, required: required, choices: choices)
+      def integer(name, description, required: nil, min_value: nil, max_value: nil, choices: nil)
+        option(TYPES[:integer], name, description,
+               required: required, min_value: min_value, max_value: max_value, choices: choices)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -526,6 +532,8 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_value [Float] A minimum value for option.
+      # @param max_value [Float] A maximum value for option.
       # @return (see #option)
       def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil)
         option(TYPES[:number], name, description,
@@ -547,15 +555,18 @@ module Discordrb
       # @param required [true, false] Whether this option must be provided.
       # @param min_value [Integer, Float] A minimum value for integer and number options.
       # @param max_value [Integer, Float] A maximum value for integer and number options.
+      # @param min_length [Integer] A minimum length for string option value.
+      # @param max_length [Integer] A maximum length for string option value.
       # @param channel_types [Array<Integer>] Channel types that can be provides for channel options.
       # @return Hash
       def option(type, name, description, required: nil, choices: nil, options: nil, min_value: nil, max_value: nil,
-                 channel_types: nil)
+                 min_length: nil, max_length: nil, channel_types: nil)
         opt = { type: type, name: name, description: description }
         choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
 
         opt.merge!({ required: required, choices: choices, options: options, min_value: min_value,
-                     max_value: max_value, channel_types: channel_types }.compact)
+                     max_value: max_value, min_length: min_length, max_length: max_length,
+                     channel_types: channel_types }.compact)
 
         @options << opt
         opt
