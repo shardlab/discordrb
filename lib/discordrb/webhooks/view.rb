@@ -180,8 +180,6 @@ class Discordrb::Webhooks::View
     @rows.map(&:to_h)
   end
 
-  private_class_method :get_emoji
-
   # @!visibility private
   def self.get_emoji(emoji)
     case emoji
