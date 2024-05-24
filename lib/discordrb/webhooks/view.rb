@@ -180,13 +180,14 @@ class Discordrb::Webhooks::View
     @rows.map(&:to_h)
   end
 
-  private
+  private_class_method :get_emoji
 
   # @!visibility private
   def self.get_emoji(emoji)
     case emoji
     when Integer
       raise ArgumentError, 'Emoji ID must be positive' if emoji.to_i.negative?
+
       { id: emoji }
     when String
       { name: emoji }
