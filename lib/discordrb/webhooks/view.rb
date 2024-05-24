@@ -44,13 +44,7 @@ class Discordrb::Webhooks::View
     # @param url [String, nil] The URL, when using a link style button.
     def button(style:, label: nil, emoji: nil, custom_id: nil, disabled: nil, url: nil)
       style = BUTTON_STYLES[style] || style
-
-      emoji = case emoji
-              when Integer, String
-                emoji.to_i.positive? ? { id: emoji } : { name: emoji }
-              else
-                emoji&.to_h
-              end
+      emoji = Discordrb::Webhooks::View.get_emoji(emoji)
 
       @components << { type: COMPONENT_TYPES[:button], label: label, emoji: emoji, style: style, custom_id: custom_id, disabled: disabled, url: url }
     end
@@ -145,13 +139,7 @@ class Discordrb::Webhooks::View
     #   that responds to `#to_h` which returns a hash in the format of `{ id: Integer, name: string }`.
     # @param default [true, false, nil] Whether this is the default selected option.
     def option(label:, value:, description: nil, emoji: nil, default: nil)
-      emoji = case emoji
-              when Integer, String
-                emoji.to_i.positive? ? { id: emoji } : { name: emoji }
-              else
-                emoji&.to_h
-              end
-
+      emoji = Discordrb::Webhooks::View.get_emoji(emoji)
       @options << { label: label, value: value, description: description, emoji: emoji, default: default }
     end
 
@@ -190,5 +178,22 @@ class Discordrb::Webhooks::View
   # @!visibility private
   def to_a
     @rows.map(&:to_h)
+  end
+
+  private
+
+  # @!visibility private
+  def self.get_emoji(emoji)
+    case emoji
+    when Integer
+      raise ArgumentError, 'Emoji ID must be positive' if emoji.to_i.negative?
+      { id: emoji }
+    when String
+      { name: emoji }
+    when NilClass
+      nil
+    else
+      emoji.to_h
+    end
   end
 end
