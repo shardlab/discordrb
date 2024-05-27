@@ -57,7 +57,7 @@ bot.application_command(:voice).subcommand(:youtube) do |event|
       voice_channel.play_io(youtube_video_io(url))
       event.edit_response(content: 'Finished playing!')
     else
-      event.respond(content: 'Invalid YouTube URL'!)
+      event.respond(content: 'Invalid YouTube URL!')
     end
   else
     event.respond(content: 'Please connect to voice with `/voice connect` first')
