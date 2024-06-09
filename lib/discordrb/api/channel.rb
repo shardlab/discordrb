@@ -129,6 +129,19 @@ module Discordrb::API::Channel
     )
   end
 
+  # Suppress embeds on a message
+  def suppress_embeds(token, channel_id, message_id)
+    Discordrb::API.request(
+      :channels_cid_messages_mid,
+      channel_id,
+      :patch,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}",
+      { flags: 1 << 2 }.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
   # Delete a message
   # https://discord.com/developers/docs/resources/channel#delete-message
   def delete_message(token, channel_id, message_id, reason = nil)
