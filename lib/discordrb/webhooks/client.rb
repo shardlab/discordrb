@@ -128,7 +128,7 @@ module Discordrb::Webhooks
     end
 
     def generate_url(id, token)
-      "https://discord.com/api/v8/webhooks/#{id}/#{token}"
+      "https://discord.com/api/v9/webhooks/#{id}/#{token}"
     end
   end
 end

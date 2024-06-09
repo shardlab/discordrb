@@ -94,7 +94,7 @@ describe Discordrb::Webhooks do
         client = described_class.new(id: id, token: token)
         url = client.instance_variable_get(:@url)
 
-        expect(url).to eq "https://discord.com/api/v8/webhooks/#{id}/#{token}"
+        expect(url).to eq "https://discord.com/api/v9/webhooks/#{id}/#{token}"
       end
 
       it 'takes a provided url' do
