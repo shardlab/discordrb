@@ -1,0 +1,39 @@
+module Discordrb::Events
+  # Raised when an invite is created.
+  class InviteCreateEvent < Event
+    # @return [Invite] The invite that was created.
+    attr_reader invite: untyped
+
+    # @return [Server, nil] The server the invite was created for.
+    attr_reader server: untyped
+
+    # @return [Channel] The channel the invite was created for.
+    attr_reader channel: untyped
+
+    def initialize: (untyped data, untyped invite, untyped `bot`) -> void
+  end
+
+  # Raised when an invite is deleted.
+  class InviteDeleteEvent < Event
+    # @return [Channel] The channel the deleted invite was for.
+    attr_reader channel: untyped
+
+    # @return [Server, nil] The server the deleted invite was for.
+    attr_reader server: untyped
+
+    # @return [String] The code of the deleted invite.
+    attr_reader code: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Event handler for InviteCreateEvent.
+  class InviteCreateEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Event handler for InviteDeleteEvent
+  class InviteDeleteEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+end

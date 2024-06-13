@@ -1,0 +1,26 @@
+module Discordrb::Events
+  # Raised when a user is banned
+  class UserBanEvent < Event
+    # @return [User] the user that was banned
+    attr_reader user: untyped
+
+    # @return [Server] the server from which the user was banned
+    attr_reader server: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Event handler for {UserBanEvent}
+  class UserBanEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Raised when a user is unbanned from a server
+  class UserUnbanEvent < UserBanEvent
+  end
+
+  # Event handler for {UserUnbanEvent}
+  class UserUnbanEventHandler < UserBanEventHandler
+  end
+end

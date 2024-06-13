@@ -1,0 +1,120 @@
+module Discordrb::Events
+  # Generic subclass for server events (create/update/delete)
+  class ServerEvent < Event
+    # @return [Server] the server in question.
+    attr_reader server: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+
+    # Initializes this event with server data. Should be overwritten in case the server doesn't exist at the time
+    # of event creation (e. g. {ServerDeleteEvent})
+    def init_server: (untyped data, untyped `bot`) -> untyped
+  end
+
+  # Generic event handler for member events
+  class ServerEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Server is created
+  # @see Discordrb::EventContainer#server_create
+  class ServerCreateEvent < ServerEvent
+  end
+
+  # Event handler for {ServerCreateEvent}
+  class ServerCreateEventHandler < ServerEventHandler
+  end
+
+  # Server is updated (e.g. name changed)
+  # @see Discordrb::EventContainer#server_update
+  class ServerUpdateEvent < ServerEvent
+  end
+
+  # Event handler for {ServerUpdateEvent}
+  class ServerUpdateEventHandler < ServerEventHandler
+  end
+
+  # Server is deleted, the server was left because the bot was kicked, or the
+  # bot made itself leave the server.
+  # @see Discordrb::EventContainer#server_delete
+  class ServerDeleteEvent < ServerEvent
+    # @return [Integer] The ID of the server that was left.
+    attr_reader server: untyped
+
+    # Override init_server to account for the deleted server
+    def init_server: (untyped data, untyped _bot) -> untyped
+  end
+
+  # Event handler for {ServerDeleteEvent}
+  class ServerDeleteEventHandler < ServerEventHandler
+  end
+
+  # Emoji is created/deleted/updated
+  class ServerEmojiChangeEvent < ServerEvent
+    # @return [Server] the server in question.
+    attr_reader server: untyped
+
+    # @return [Array<Emoji>] array of emojis.
+    attr_reader emoji: untyped
+
+    def initialize: (untyped server, untyped data, untyped `bot`) -> void
+
+    # @!visibility private
+    def process_emoji: (untyped data) -> untyped
+  end
+
+  # Generic event helper for when an emoji is either created or deleted
+  class ServerEmojiCDEvent < ServerEvent
+    # @return [Server] the server in question.
+    attr_reader server: untyped
+
+    # @return [Emoji] the emoji data.
+    attr_reader emoji: untyped
+
+    def initialize: (untyped server, untyped emoji, untyped `bot`) -> void
+  end
+
+  # Emoji is created
+  class ServerEmojiCreateEvent < ServerEmojiCDEvent
+  end
+
+  # Emoji is deleted
+  class ServerEmojiDeleteEvent < ServerEmojiCDEvent
+  end
+
+  # Emoji is updated
+  class ServerEmojiUpdateEvent < ServerEvent
+    # @return [Server] the server in question.
+    attr_reader server: untyped
+
+    # @return [Emoji, nil] the emoji data before the event.
+    attr_reader old_emoji: untyped
+
+    # @return [Emoji, nil] the updated emoji data.
+    attr_reader emoji: untyped
+
+    def initialize: (untyped server, untyped old_emoji, untyped emoji, untyped `bot`) -> void
+  end
+
+  # Event handler for {ServerEmojiChangeEvent}
+  class ServerEmojiChangeEventHandler < ServerEventHandler
+  end
+
+  # Generic handler for emoji create and delete
+  class ServerEmojiCDEventHandler < ServerEventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Event handler for {ServerEmojiCreateEvent}
+  class ServerEmojiCreateEventHandler < ServerEmojiCDEventHandler
+  end
+
+  # Event handler for {ServerEmojiDeleteEvent}
+  class ServerEmojiDeleteEventHandler < ServerEmojiCDEventHandler
+  end
+
+  # Event handler for {ServerEmojiUpdateEvent}
+  class ServerEmojiUpdateEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+end

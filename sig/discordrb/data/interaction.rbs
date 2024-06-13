@@ -1,0 +1,425 @@
+module Discordrb
+  # Base class for interaction objects.
+  class Interaction
+    # Interaction types.
+    # @see https://discord.com/developers/docs/interactions/slash-commands#interaction-interactiontype
+    TYPES: { ping: 1, command: 2, component: 3 }
+
+    # Interaction response types.
+    # @see https://discord.com/developers/docs/interactions/slash-commands#interaction-response-interactioncallbacktype
+    CALLBACK_TYPES: { pong: 1, channel_message: 4, deferred_message: 5, deferred_update: 6, update_message: 7 }
+
+    # @return [User, Member] The user that initiated the interaction.
+    attr_reader user: untyped
+
+    # @return [Integer, nil] The ID of the server this interaction originates from.
+    attr_reader server_id: untyped
+
+    # @return [Integer] The ID of the channel this interaction originates from.
+    attr_reader channel_id: untyped
+
+    # @return [Integer] The ID of this interaction.
+    attr_reader id: untyped
+
+    # @return [Integer] The ID of the application associated with this interaction.
+    attr_reader application_id: untyped
+
+    # @return [String] The interaction token.
+    attr_reader token: untyped
+
+    # @!visibility private
+    # @return [Integer] Currently pointless
+    attr_reader version: untyped
+
+    # @return [Integer] The type of this interaction.
+    # @see TYPES
+    attr_reader type: untyped
+
+    # @return [Hash] The interaction data.
+    attr_reader data: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`) -> void
+
+    # Respond to the creation of this interaction. An interaction must be responded to or deferred,
+    # The response may be modified with {Interaction#edit_response} or deleted with {Interaction#delete_response}.
+    # Further messages can be sent with {Interaction#send_message}.
+    # @param content [String] The content of the message.
+    # @param tts [true, false]
+    # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
+    # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param flags [Integer] Message flags.
+    # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
+    # @param wait [true, false] Whether this method should return a Message object of the interaction response.
+    # @param components [Array<#to_h>] An array of components
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
+    # @yieldparam view [Webhooks::View] A builder for creating interaction components.
+    def respond: (?content: untyped?, ?tts: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?flags: ::Integer, ?ephemeral: untyped?, ?wait: bool, ?components: untyped?) { (untyped, untyped) -> untyped } -> (nil | untyped)
+
+    # Defer an interaction, setting a temporary response that can be later overriden by {Interaction#send_message}.
+    # This method is used when you want to use a single message for your response but require additional processing time, or to simply ack
+    # an interaction so an error is not displayed.
+    # @param flags [Integer] Message flags.
+    # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
+    def defer: (?flags: ::Integer, ?ephemeral: bool) -> nil
+
+    # Defer an update to an interaction. This is can only currently used by Button interactions.
+    def defer_update: () -> untyped
+
+    # Respond to the creation of this interaction. An interaction must be responded to or deferred,
+    # The response may be modified with {Interaction#edit_response} or deleted with {Interaction#delete_response}.
+    # Further messages can be sent with {Interaction#send_message}.
+    # @param content [String] The content of the message.
+    # @param tts [true, false]
+    # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
+    # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param flags [Integer] Message flags.
+    # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
+    # @param wait [true, false] Whether this method should return a Message object of the interaction response.
+    # @param components [Array<#to_h>] An array of components
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
+    # @yieldparam view [Webhooks::View] A builder for creating interaction components.
+    def update_message: (?content: untyped?, ?tts: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?flags: ::Integer, ?ephemeral: untyped?, ?wait: bool, ?components: untyped?) { (untyped, untyped) -> untyped } -> (nil | untyped)
+
+    # Edit the original response to this interaction.
+    # @param content [String] The content of the message.
+    # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
+    # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param components [Array<#to_h>] An array of components
+    # @return [InteractionMessage] The updated response message.
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
+    def edit_response: (?content: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?components: untyped?) { (untyped, untyped) -> untyped } -> untyped
+
+    # Delete the original interaction response.
+    def delete_response: () -> untyped
+
+    # @param content [String] The content of the message.
+    # @param tts [true, false]
+    # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
+    # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param flags [Integer] Message flags.
+    # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
+    def send_message: (?content: untyped?, ?embeds: untyped?, ?tts: bool, ?allowed_mentions: untyped?, ?flags: ::Integer, ?ephemeral: bool, ?components: untyped?) { (untyped, untyped) -> untyped } -> untyped
+
+    # @param message [String, Integer, InteractionMessage, Message] The message created by this interaction to be edited.
+    # @param content [String] The message content.
+    # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
+    # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
+    def edit_message: (untyped message, ?content: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?components: untyped?) { (untyped, untyped) -> untyped } -> untyped
+
+    # @param message [Integer, String, InteractionMessage, Message] The message created by this interaction to be deleted.
+    def delete_message: (untyped message) -> nil
+
+    # @return [Server, nil] This will be nil for interactions that occur in DM channels or servers where the bot
+    #   does not have the `bot` scope.
+    def server: () -> untyped
+
+    # @return [Channel, nil]
+    # @raise [Errors::NoPermission] When the bot is not in the server associated with this interaction.
+    def channel: () -> untyped
+
+    # @return [Hash, nil] Returns the button that triggered this interaction if applicable, otherwise nil
+    def button: () -> (nil | untyped)
+
+    private
+
+    # Set builder defaults from parameters
+    # @param builder [Discordrb::Webhooks::Builder]
+    # @param content [String, nil]
+    # @param embeds [Array<Hash, Discordrb::Webhooks::Embed>, nil]
+    # @param allowed_mentions [AllowedMentions, Hash, nil]
+    def prepare_builder: (untyped builder, untyped content, untyped embeds, untyped allowed_mentions) -> untyped
+  end
+
+  # An ApplicationCommand for slash commands.
+  class ApplicationCommand
+    # Command types. `chat_input` is a command that appears in the text input field. `user` and `message` types appear as context menus
+    # for the respective resource.
+    TYPES: { chat_input: 1, user: 2, message: 3 }
+
+    # @return [Integer]
+    attr_reader application_id: untyped
+
+    # @return [Integer, nil]
+    attr_reader server_id: untyped
+
+    # @return [String]
+    attr_reader name: untyped
+
+    # @return [String]
+    attr_reader description: untyped
+
+    # @return [true, false]
+    attr_reader default_permission: untyped
+
+    # @return [Hash]
+    attr_reader options: untyped
+
+    # @return [Integer]
+    attr_reader id: untyped
+
+    # @!visibility private
+    def initialize: (untyped data, untyped `bot`, ?untyped? server_id) -> void
+
+    # @param name [String] The name to use for this command.
+    # @param description [String] The description of this command.
+    # @param default_permission [true, false] Whether this command is available with default permissions.
+    # @yieldparam (see Bot#edit_application_command)
+    # @return (see Bot#edit_application_command)
+    def edit: (?name: untyped?, ?description: untyped?, ?default_permission: untyped?) ?{ () -> untyped } -> untyped
+
+    # Delete this application command.
+    # @return (see Bot#delete_application_command)
+    def delete: () -> untyped
+  end
+
+  # Objects specific to Interactions.
+  module Interactions
+    # A builder for defining slash commands options.
+    class OptionBuilder
+      # @!visibility private
+      TYPES: { subcommand: 1, subcommand_group: 2, string: 3, integer: 4, boolean: 5, user: 6, channel: 7, role: 8, mentionable: 9, number: 10 }
+
+      # Channel types that can be provided to #channel
+      CHANNEL_TYPES: { text: 0, dm: 1, voice: 2, group_dm: 3, category: 4, news: 5, store: 6, news_thread: 10, public_thread: 11, private_thread: 12, stage: 13 }
+
+      # @return [Array<Hash>]
+      attr_reader options: untyped
+
+      # @!visibility private
+      def initialize: () -> void
+
+      # @param name [String, Symbol] The name of the subcommand.
+      # @param description [String] A description of the subcommand.
+      # @yieldparam [OptionBuilder]
+      # @return (see #option)
+      # @example
+      #   bot.register_application_command(:test, 'Test command') do |cmd|
+      #     cmd.subcommand(:echo) do |sub|
+      #       sub.string('message', 'What to echo back', required: true)
+      #     end
+      #   end
+      def subcommand: (untyped name, untyped description) { (untyped) -> untyped } -> untyped
+
+      # @param name [String, Symbol] The name of the subcommand group.
+      # @param description [String] A description of the subcommand group.
+      # @yieldparam [OptionBuilder]
+      # @return (see #option)
+      # @example
+      #   bot.register_application_command(:test, 'Test command') do |cmd|
+      #     cmd.subcommand_group(:fun) do |group|
+      #       group.subcommand(:8ball) do |sub|
+      #         sub.string(:question, 'What do you ask the mighty 8ball?')
+      #       end
+      #     end
+      #   end
+      def subcommand_group: (untyped name, untyped description) { (untyped) -> untyped } -> untyped
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
+      # @return (see #option)
+      def string: (untyped name, untyped description, ?required: untyped?, ?choices: untyped?) -> untyped
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
+      # @return (see #option)
+      def integer: (untyped name, untyped description, ?required: untyped?, ?choices: untyped?) -> untyped
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def boolean: (untyped name, untyped description, ?required: untyped?) -> untyped
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def user: (untyped name, untyped description, ?required: untyped?) -> untyped
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @param types [Array<Symbol, Integer>] See {CHANNEL_TYPES}
+      # @return (see #option)
+      def channel: (untyped name, untyped description, ?required: untyped?, ?types: untyped?) -> untyped
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def role: (untyped name, untyped description, ?required: untyped?) -> untyped
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def mentionable: (untyped name, untyped description, ?required: untyped?) -> untyped
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @return (see #option)
+      def number: (untyped name, untyped description, ?required: untyped?, ?min_value: untyped?, ?max_value: untyped?, ?choices: untyped?) -> untyped
+
+      # @!visibility private
+      # @param type [Integer] The argument type.
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @param min_value [Integer, Float] A minimum value for integer and number options.
+      # @param max_value [Integer, Float] A maximum value for integer and number options.
+      # @param channel_types [Array<Integer>] Channel types that can be provides for channel options.
+      # @return Hash
+      def option: (untyped `type`, untyped name, untyped description, ?required: untyped?, ?choices: untyped?, ?options: untyped?, ?min_value: untyped?, ?max_value: untyped?, ?channel_types: untyped?) -> untyped
+
+      # @return [Array<Hash>]
+      def to_a: () -> untyped
+    end
+
+    # Builder for creating server application command permissions.
+    # @deprecated This system is being replaced in the near future.
+    class PermissionBuilder
+      # Role permission type
+      ROLE: 1
+
+      # User permission type
+      USER: 2
+
+      # @!visibility hidden
+      def initialize: () -> void
+
+      # Allow a role to use this command.
+      # @param role_id [Integer]
+      # @return [PermissionBuilder]
+      def allow_role: (untyped role_id) -> untyped
+
+      # Deny a role usage of this command.
+      # @param role_id [Integer]
+      # @return [PermissionBuilder]
+      def deny_role: (untyped role_id) -> untyped
+
+      # Allow a user to use this command.
+      # @param user_id [Integer]
+      # @return [PermissionBuilder]
+      def allow_user: (untyped user_id) -> untyped
+
+      # Deny a user usage of this command.
+      # @param user_id [Integer]
+      # @return [PermissionBuilder]
+      def deny_user: (untyped user_id) -> untyped
+
+      # Allow an entity to use this command.
+      # @param object [Role, User, Member]
+      # @return [PermissionBuilder]
+      # @raise [ArgumentError]
+      def allow: (untyped object) -> untyped
+
+      # Deny an entity usage of this command.
+      # @param object [Role, User, Member]
+      # @return [PermissionBuilder]
+      # @raise [ArgumentError]
+      def deny: (untyped object) -> untyped
+
+      # @!visibility private
+      # @return [Array<Hash>]
+      def to_a: () -> untyped
+
+      private
+
+      def create_entry: (untyped id, untyped `type`, untyped permission) -> self
+    end
+
+    # A message partial for interactions.
+    class Message
+      include IDObject
+
+      # @return [Interaction] The interaction that created this message.
+      attr_reader interaction: untyped
+
+      # @return [String, nil] The content of the message.
+      attr_reader content: untyped
+
+      # @return [true, false] Whether this message is pinned in the channel it belongs to.
+      attr_reader pinned: untyped
+
+      # @return [true, false]
+      attr_reader tts: untyped
+
+      # @return [Time]
+      attr_reader timestamp: untyped
+
+      # @return [Time, nil]
+      attr_reader edited_timestamp: untyped
+
+      # @return [true, false]
+      attr_reader edited: untyped
+
+      # @return [Integer]
+      attr_reader id: untyped
+
+      # @return [User] The user of the application.
+      attr_reader author: untyped
+
+      # @return [Attachment]
+      attr_reader attachments: untyped
+
+      # @return [Array<Embed>]
+      attr_reader embeds: untyped
+
+      # @return [Array<User>]
+      attr_reader mentions: untyped
+
+      # @return [Integer]
+      attr_reader flags: untyped
+
+      # @return [Integer]
+      attr_reader channel_id: untyped
+
+      # @return [Hash, nil]
+      attr_reader message_reference: untyped
+
+      # @return [Array<Component>]
+      attr_reader components: untyped
+
+      # @!visibility private
+      def initialize: (untyped data, untyped `bot`, untyped interaction) -> void
+
+      # @return [Member, nil] This will return nil if the bot does not have access to the
+      #   server the interaction originated in.
+      def member: () -> untyped
+
+      # @return [Server, nil] This will return nil if the bot does not have access to the
+      #   server the interaction originated in.
+      def server: () -> untyped
+
+      # @return [Channel] The channel the interaction originates from.
+      # @raise [Errors::NoPermission] When the bot is not in the server associated with this interaction.
+      def channel: () -> untyped
+
+      # Respond to this message.
+      # @param (see Interaction#send_message)
+      # @yieldparam (see Interaction#send_message)
+      def respond: (?content: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?flags: ::Integer, ?ephemeral: bool, ?components: untyped?) ?{ () -> untyped } -> untyped
+
+      # Delete this message.
+      def delete: () -> untyped
+
+      # Edit this message's data.
+      # @param content (see Interaction#send_message)
+      # @param embeds (see Interaction#send_message)
+      # @param allowed_mentions (see Interaction#send_message)
+      # @yieldparam (see Interaction#send_message)
+      def edit: (?content: untyped?, ?embeds: untyped?, ?allowed_mentions: untyped?, ?components: untyped?) ?{ () -> untyped } -> untyped
+
+      # @!visibility private
+      def inspect: () -> ::String
+    end
+  end
+end

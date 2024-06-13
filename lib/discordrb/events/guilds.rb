@@ -39,7 +39,7 @@ module Discordrb::Events
                  e
                end
         end
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 
@@ -157,7 +157,7 @@ module Discordrb::Events
         end,
         matches_all(@attributes[:id], event.emoji.id) { |a, e| a.resolve_id == e.resolve_id },
         matches_all(@attributes[:name], event.emoji.name) { |a, e| a == e }
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 
@@ -187,7 +187,7 @@ module Discordrb::Events
         matches_all(@attributes[:id], event.old_emoji.id) { |a, e| a.resolve_id == e.resolve_id },
         matches_all(@attributes[:old_name], event.old_emoji.name) { |a, e| a == e },
         matches_all(@attributes[:name], event.emoji.name) { |a, e| a == e }
-      ].reduce(true, &:&)
+      ].reduce(true) { |res, e|  res & e }
     end
   end
 end

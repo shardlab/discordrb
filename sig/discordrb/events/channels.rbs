@@ -1,0 +1,85 @@
+module Discordrb::Events
+  # Raised when a channel is created
+  class ChannelCreateEvent < Event
+    # @return [Channel] the channel in question.
+    attr_reader channel: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Event handler for ChannelCreateEvent
+  class ChannelCreateEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Raised when a channel is deleted
+  class ChannelDeleteEvent < Event
+    # @return [Integer] the channel's type (0: text, 1: private, 2: voice, 3: group).
+    attr_reader type: untyped
+
+    # @return [String] the channel's topic
+    attr_reader topic: untyped
+
+    # @return [Integer] the position of the channel on the list
+    attr_reader position: untyped
+
+    # @return [String] the channel's name
+    attr_reader name: untyped
+
+    # @return [Integer] the channel's ID
+    attr_reader id: untyped
+
+    # @return [Server] the channel's server
+    attr_reader server: untyped
+
+    # @return [Integer, nil] the channel's owner ID if this is a group channel
+    attr_reader owner_id: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Event handler for ChannelDeleteEvent
+  class ChannelDeleteEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+
+  # Generic subclass for recipient events (add/remove)
+  class ChannelRecipientEvent < Event
+    # @return [Channel] the channel in question.
+    attr_reader channel: untyped
+
+    # @return [Recipient] the recipient that was added/removed from the group
+    attr_reader recipient: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Generic event handler for channel recipient events
+  class ChannelRecipientEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | ::Array[untyped])
+  end
+
+  # Raised when a user is added to a private channel
+  class ChannelRecipientAddEvent < ChannelRecipientEvent
+  end
+
+  # Event handler for ChannelRecipientAddEvent
+  class ChannelRecipientAddEventHandler < ChannelRecipientEventHandler
+  end
+
+  # Raised when a recipient that isn't the bot leaves or is kicked from a group channel
+  class ChannelRecipientRemoveEvent < ChannelRecipientEvent
+  end
+
+  # Event handler for ChannelRecipientRemoveEvent
+  class ChannelRecipientRemoveEventHandler < ChannelRecipientEventHandler
+  end
+
+  # Raised when a channel is updated (e.g. topic changes)
+  class ChannelUpdateEvent < ChannelCreateEvent
+  end
+
+  # Event handler for ChannelUpdateEvent
+  class ChannelUpdateEventHandler < ChannelCreateEventHandler
+  end
+end

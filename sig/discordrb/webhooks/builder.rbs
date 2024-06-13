@@ -1,0 +1,59 @@
+module Discordrb::Webhooks
+  # A class that acts as a builder for a webhook message object.
+  class Builder
+    def initialize: (?content: ::String, ?username: untyped?, ?avatar_url: untyped?, ?tts: bool, ?file: untyped?, ?embeds: untyped, ?allowed_mentions: untyped?) -> void
+
+    # The content of the message. May be 2000 characters long at most.
+    # @return [String] the content of the message.
+    attr_accessor content: untyped
+
+    # The username the webhook will display as. If this is not set, the default username set in the webhook's settings
+    # will be used instead.
+    # @return [String] the username.
+    attr_accessor username: untyped
+
+    # The URL of an image file to be used as an avatar. If this is not set, the default avatar from the webhook's
+    # settings will be used instead.
+    # @return [String] the avatar URL.
+    attr_accessor avatar_url: untyped
+
+    # Whether this message should use TTS or not. By default, it doesn't.
+    # @return [true, false] the TTS status.
+    attr_accessor tts: untyped
+
+    # Sets a file to be sent together with the message. Mutually exclusive with embeds; a webhook message can contain
+    # either a file to be sent or an embed.
+    # @param file [File] A file to be sent.
+    def file=: (untyped file) -> untyped
+
+    # Adds an embed to this message.
+    # @param embed [Embed] The embed to add.
+    def <<: (untyped embed) -> untyped
+
+    # Convenience method to add an embed using a block-style builder pattern
+    # @example Add an embed to a message
+    #   builder.add_embed do |embed|
+    #     embed.title = 'Testing'
+    #     embed.image = Discordrb::Webhooks::EmbedImage.new(url: 'https://i.imgur.com/PcMltU7.jpg')
+    #   end
+    # @param embed [Embed, nil] The embed to start the building process with, or nil if one should be created anew.
+    # @return [Embed] The created embed.
+    def add_embed: (?untyped? embed) { (untyped) -> untyped } -> untyped
+
+    # @return [File, nil] the file attached to this message.
+    attr_reader file: untyped
+
+    # @return [Array<Embed>] the embeds attached to this message.
+    attr_reader embeds: untyped
+
+    # @return [Discordrb::AllowedMentions, Hash] Mentions that are allowed to ping in this message.
+    # @see https://discord.com/developers/docs/resources/channel#allowed-mentions-object
+    attr_accessor allowed_mentions: untyped
+
+    # @return [Hash] a hash representation of the created message, for JSON format.
+    def to_json_hash: () -> { content: untyped, username: untyped, avatar_url: untyped, tts: untyped, embeds: untyped, allowed_mentions: untyped }
+
+    # @return [Hash] a hash representation of the created message, for multipart format.
+    def to_multipart_hash: () -> { content: untyped, username: untyped, avatar_url: untyped, tts: untyped, file: untyped, allowed_mentions: untyped }
+  end
+end

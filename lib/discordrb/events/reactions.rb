@@ -90,7 +90,7 @@ module Discordrb::Events
             a == e
           end
         end
-      ].reduce(true, &:&)
+      ].reduce(true) {|res, elem| res & elem}
     end
   end
 
@@ -152,7 +152,7 @@ module Discordrb::Events
             a == e
           end
         end
-      ].reduce(true, &:&)
+      ].reduce(true) {|res, elem| res & elem}
     end
   end
 end

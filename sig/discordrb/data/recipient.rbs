@@ -1,0 +1,16 @@
+module Discordrb
+  # Recipients are members on private channels - they exist for completeness purposes, but all
+  # the attributes will be empty.
+  class Recipient
+    include MemberAttributes
+
+    # @return [Channel] the private channel this recipient is the recipient of.
+    attr_reader channel: untyped
+
+    # @!visibility private
+    def initialize: (untyped user, untyped channel, untyped `bot`) -> void
+
+    # Overwriting inspect for debug purposes
+    def inspect: () -> ::String
+  end
+end

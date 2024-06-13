@@ -1,0 +1,28 @@
+module Discordrb
+  # Mixin for objects that have IDs
+  module IDObject
+    # @return [Integer] the ID which uniquely identifies this object across Discord.
+    attr_reader id: untyped
+
+    alias resolve_id id
+
+    alias hash id
+
+    # ID based comparison
+    def ==: (untyped other) -> untyped
+
+    alias eql? ==
+
+    # Estimates the time this object was generated on based on the beginning of the ID. This is fairly accurate but
+    # shouldn't be relied on as Discord might change its algorithm at any time
+    # @return [Time] when this object was created at
+    def creation_time: () -> untyped
+
+    # Creates an artificial snowflake at the given point in time. Useful for comparing against.
+    # @param time [Time] The time the snowflake should represent.
+    # @return [Integer] a snowflake with the timestamp data as the given time
+    def self.synthesise: (untyped time) -> untyped
+
+    alias self.synthesize self.synthesise
+  end
+end

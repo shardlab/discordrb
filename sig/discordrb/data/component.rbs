@@ -1,0 +1,101 @@
+module Discordrb
+  # Components are interactable interfaces that can be attached to messages.
+  module Components
+    # @deprecated This alias will be removed in future releases.
+    class View < Webhooks::View
+    end
+
+    # @!visibility private
+    def self.from_data: (::Hash[::String, untyped] data, Discordrb::Bot bot) -> (Discordrb::Components::ActionRow | Discordrb::Components::Button | Discordrb::Components::SelectMenu)
+
+    # Represents a row of components
+    class ActionRow
+      include Enumerable[untyped]
+
+      # @return [Array<Button>]
+      attr_reader components: untyped
+
+      # @!visibility private
+      def initialize: (untyped data, untyped `bot`) -> void
+
+      # Iterate over each component in the row.
+      def each: () ?{ () -> untyped } -> untyped
+
+      # Get all buttons in this row
+      # @return [Array<Button>]
+      def buttons: () -> untyped
+
+      # @!visibility private
+      def to_a: () -> untyped
+    end
+
+    # An interactable button component.
+    class Button
+      # @return [String]
+      attr_reader label: untyped
+
+      # @return [Integer]
+      attr_reader style: untyped
+
+      # @return [String]
+      attr_reader custom_id: untyped
+
+      # @return [true, false]
+      attr_reader disabled: untyped
+
+      # @return [String, nil]
+      attr_reader url: untyped
+
+      # @return [Emoji, nil]
+      attr_reader emoji: untyped
+
+      # @!visibility private
+      def initialize: (untyped data, untyped `bot`) -> void
+
+      # Await a button click
+      def await_click: (untyped key, **untyped attributes) ?{ () -> untyped } -> untyped
+
+      # Await a button click, blocking.
+      def await_click!: (**untyped attributes) ?{ () -> untyped } -> untyped
+    end
+
+    # An interactable select menu component.
+    class SelectMenu
+      # A select menu option.
+      class Option
+        # @return [String]
+        attr_reader label: untyped
+
+        # @return [String]
+        attr_reader value: untyped
+
+        # @return [String, nil]
+        attr_reader description: untyped
+
+        # @return [Emoji, nil]
+        attr_reader emoji: untyped
+
+        # @!visibility hidden
+        def initialize: (untyped data) -> void
+      end
+
+      # @return [String]
+      attr_reader custom_id: untyped
+
+      # @return [Integer, nil]
+      attr_reader max_values: untyped
+
+      # @return [Integer, nil]
+      attr_reader min_values: untyped
+
+      # @return [String, nil]
+      attr_reader placeholder: untyped
+
+      # @return [Array<Option>]
+      attr_reader options: untyped
+
+      # @!visibility private
+      def initialize: (untyped data, untyped `bot`) -> void
+    end
+  end
+end

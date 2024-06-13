@@ -1,0 +1,20 @@
+module Discordrb::Events
+  # @see Bot#await
+  class AwaitEvent < Event
+    # The await that was triggered.
+    # @return [Await] The await
+    attr_reader await: untyped
+
+    # The event that triggered the await.
+    # @return [Event] The event
+    attr_reader event: untyped
+
+    # For internal use only
+    def initialize: (untyped await, untyped event, untyped `bot`) -> void
+  end
+
+  # Event handler for {AwaitEvent}
+  class AwaitEventHandler < EventHandler
+    def matches?: (untyped event) -> (false | untyped)
+  end
+end

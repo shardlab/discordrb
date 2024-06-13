@@ -1,0 +1,17 @@
+module Discordrb::Events
+  # Event raised when a webhook is updated
+  class WebhookUpdateEvent < Event
+    # @return [Server] the server where the webhook updated
+    attr_reader server: untyped
+
+    # @return [Channel] the channel the webhook is associated to
+    attr_reader channel: untyped
+
+    def initialize: (untyped data, untyped `bot`) -> void
+  end
+
+  # Event handler for {WebhookUpdateEvent}
+  class WebhookUpdateEventHandler < EventHandler
+    def matches?: (WebhookUpdateEvent event) -> boolish
+  end
+end

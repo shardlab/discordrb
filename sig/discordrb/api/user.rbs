@@ -1,0 +1,47 @@
+# API calls for User object
+module Discordrb::API::User
+  # Get user data
+  # https://discord.com/developers/docs/resources/user#get-user
+  def self?.resolve: (untyped token, untyped user_id) -> untyped
+
+  # Get profile data
+  # https://discord.com/developers/docs/resources/user#get-current-user
+  def self?.profile: (untyped token) -> untyped
+
+  # Change the current bot's nickname on a server
+  # https://discord.com/developers/docs/resources/user#modify-current-user
+  def self?.change_own_nickname: (untyped token, untyped server_id, untyped nick, ?untyped? reason) -> untyped
+
+  # Update user data
+  # https://discord.com/developers/docs/resources/user#modify-current-user
+  def self?.update_profile: (untyped token, untyped email, untyped password, untyped new_username, untyped avatar, ?untyped? new_password) -> untyped
+
+  # Get the servers a user is connected to
+  # https://discord.com/developers/docs/resources/user#get-current-user-guilds
+  def self?.servers: (untyped token) -> untyped
+
+  # Leave a server
+  # https://discord.com/developers/docs/resources/user#leave-guild
+  def self?.leave_server: (untyped token, untyped server_id) -> untyped
+
+  # Get the DMs for the current user
+  # https://discord.com/developers/docs/resources/user#get-user-dms
+  def self?.user_dms: (untyped token) -> untyped
+
+  # Create a DM to another user
+  # https://discord.com/developers/docs/resources/user#create-dm
+  def self?.create_pm: (untyped token, untyped recipient_id) -> untyped
+
+  # Get information about a user's connections
+  # https://discord.com/developers/docs/resources/user#get-users-connections
+  def self?.connections: (untyped token) -> untyped
+
+  # Change user status setting
+  def self?.change_status_setting: (untyped token, untyped status) -> untyped
+
+  # Returns one of the "default" discord avatars from the CDN given a discriminator
+  def self?.default_avatar: (?::Integer discrim) -> ::String
+
+  # Make an avatar URL from the user and avatar IDs
+  def self?.avatar_url: (untyped user_id, untyped avatar_id, ?untyped? format) -> ::String
+end

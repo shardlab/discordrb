@@ -1,0 +1,174 @@
+class UDPSocket
+  def recv: (::Integer) -> untyped
+end
+
+LIBSODIUM_AVAILABLE: bool
+
+module Discordrb::Voice
+  # Signifies to Discord that encryption should be used
+  # @deprecated Discord now supports multiple encryption options.
+  # TODO: Resolve replacement for this constant.
+  ENCRYPTED_MODE: ::String
+
+  # Signifies to Discord that no encryption should be used
+  # @deprecated Discord no longer supports unencrypted voice communication.
+  PLAIN_MODE: ::String
+
+  # Encryption modes supported by Discord
+  ENCRYPTION_MODES: ::Array[::String]
+
+  # Represents a UDP connection to a voice server. This connection is used to send the actual audio data.
+  class VoiceUDP
+    @lite_nonce: ::Integer
+    @ssrc: ::Integer
+    @port: ::Integer
+    @ip: ::String
+    @socket: UDPSocket
+    # @return [true, false] whether or not UDP communications are encrypted.
+    # @deprecated Discord no longer supports unencrypted voice communication.
+    attr_accessor encrypted: bool
+
+    alias encrypted? encrypted
+
+    # Sets the secret key used for encryption
+    attr_writer secret_key: ::String
+
+    # The UDP encryption mode
+    attr_reader mode: untyped
+
+    # @!visibility private
+    attr_writer mode: untyped
+
+    # Creates a new UDP connection. Only creates a socket as the discovery reply may come before the data is
+    # initialized.
+    def initialize: () -> void
+
+    # Initializes the UDP socket with data obtained from opcode 2.
+    # @param ip [String] The IP address to connect to.
+    # @param port [Integer] The port to connect to.
+    # @param ssrc [Integer] The Super Secret Relay Code (SSRC). Discord uses this to identify different voice users
+    #   on the same endpoint.
+    def connect: (untyped ip, untyped port, untyped ssrc) -> untyped
+
+    # Waits for a UDP discovery reply, and returns the sent data.
+    # @return [Array(String, Integer)] the IP and port received from the discovery reply.
+    def receive_discovery_reply: () -> ::Array[untyped]
+
+    # Makes an audio packet from a buffer and sends it to Discord.
+    # @param buf [String] The audio data to send, must be exactly one Opus frame
+    # @param sequence [Integer] The packet sequence number, incremented by one for subsequent packets
+    # @param time [Integer] When this packet should be played back, in no particular unit (essentially just the
+    #   sequence number multiplied by 960)
+    def send_audio: (untyped buf, untyped sequence, untyped time) -> untyped
+
+    # Sends the UDP discovery packet with the internally stored SSRC. Discord will send a reply afterwards which can
+    # be received using {#receive_discovery_reply}
+    def send_discovery: () -> untyped
+
+    private
+
+    # Encrypts audio data using libsodium
+    # @param buf [String] The encoded audio data to be encrypted
+    # @param nonce [String] The nonce to be used to encrypt the data
+    # @return [String] the audio data, encrypted
+    def encrypt_audio: (untyped buf, untyped nonce) -> untyped
+
+    def send_packet: (untyped packet) -> untyped
+
+    # @param header [String] The header of the packet, to be used as the nonce
+    # @return [String]
+    # @note
+    #   The nonce generated depends on the encryption mode.
+    #   In xsalsa20_poly1305 the nonce is the header plus twelve null bytes for padding.
+    #   In xsalsa20_poly1305_suffix, the nonce is 24 random bytes
+    #   In xsalsa20_poly1305_lite, the nonce is an incremental 4 byte int.
+    def generate_nonce: (untyped header) -> untyped
+  end
+
+  # Represents a websocket client connection to the voice server. The websocket connection (sometimes called vWS) is
+  # used to manage general data about the connection, such as sending the speaking packet, which determines the green
+  # circle around users on Discord, and obtaining UDP connection info.
+  class VoiceWS
+    @ready: bool
+    @client: Discordrb::WebSocket
+    @heartbeat_running: bool
+    @thread: ::Thread
+    @heartbeat_interval: ::Integer
+    @ws_data: untyped
+    @udp_mode: ::String?
+    @port: ::Integer
+    @ssrc: untyped
+    @endpoint: ::String
+    @session: ::String
+    @token: ::String
+    @bot: Discordrb::Bot
+    @channel: Discordrb::Channel
+    # The version of the voice gateway that's supposed to be used.
+    VOICE_GATEWAY_VERSION: ::Integer
+
+    # @return [VoiceUDP] the UDP voice connection over which the actual audio data is sent.
+    attr_reader udp: untyped
+
+    LIBSODIUM_AVAILABLE: bool
+
+    # Makes a new voice websocket client, but doesn't connect it (see {#connect} for that)
+    # @param channel [Channel] The voice channel to connect to
+    # @param bot [Bot] The regular bot to which this vWS is bound
+    # @param token [String] The authentication token which is also used for REST requests
+    # @param session [String] The voice session ID Discord sends over the regular websocket
+    # @param endpoint [String] The endpoint URL to connect to
+    def initialize: (untyped channel, untyped `bot`, untyped token, untyped session, untyped endpoint) -> void
+
+    # Send a connection init packet (op 0)
+    # @param server_id [Integer] The ID of the server to connect to
+    # @param bot_user_id [Integer] The ID of the bot that is connecting
+    # @param session_id [String] The voice session ID
+    # @param token [String] The Discord authentication token
+    def send_init: (untyped server_id, untyped bot_user_id, untyped session_id, untyped token) -> untyped
+
+    # Sends the UDP connection packet (op 1)
+    # @param ip [String] The IP to bind UDP to
+    # @param port [Integer] The port to bind UDP to
+    # @param mode [Object] Which mode to use for the voice connection
+    def send_udp_connection: (untyped ip, untyped port, untyped mode) -> untyped
+
+    # Send a heartbeat (op 3), has to be done every @heartbeat_interval seconds or the connection will terminate
+    def send_heartbeat: () -> untyped
+
+    # Send a speaking packet (op 5). This determines the green circle around the avatar in the voice channel
+    # @param value [true, false, Integer] Whether or not the bot should be speaking, can also be a bitmask denoting audio type.
+    def send_speaking: (untyped value) -> untyped
+
+    # Event handlers; public for websocket-simple to work correctly
+    # @!visibility private
+    def websocket_open: () -> untyped
+
+    # @!visibility private
+    def websocket_message: (untyped msg) -> untyped
+
+    # Communication goes like this:
+    # me                    discord
+    #   |                      |
+    # websocket connect ->     |
+    #   |                      |
+    #   |     <- websocket opcode 2
+    #   |                      |
+    # UDP discovery ->         |
+    #   |                      |
+    #   |       <- UDP reply packet
+    #   |                      |
+    # websocket opcode 1 ->    |
+    #   |                      |
+    # ...
+    def connect: () -> untyped
+
+    # Disconnects the websocket and kills the thread
+    def destroy: () -> untyped
+
+    private
+
+    def heartbeat_loop: () -> untyped
+
+    def init_ws: () -> untyped
+  end
+end

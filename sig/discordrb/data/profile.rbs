@@ -1,0 +1,53 @@
+module Discordrb
+  # This class is a special variant of User that represents the bot's user profile (things like own username and the avatar).
+  # It can be accessed using {Bot#profile}.
+  class Profile < User
+    # Whether or not the user is the bot. The Profile can only ever be the bot user, so this always returns true.
+    # @return [true]
+    def current_bot?: () -> true
+
+    # Sets the bot's username.
+    # @param username [String] The new username.
+    def username=: (untyped username) -> untyped
+
+    alias name= username=
+
+    # Changes the bot's avatar.
+    # @param avatar [String, #read] A JPG file to be used as the avatar, either
+    #  something readable (e.g. File Object) or as a data URL.
+    def avatar=: (untyped avatar) -> untyped
+
+    # Updates the cached profile data with the new one.
+    # @note For internal use only.
+    # @!visibility private
+    def update_data: (untyped new_data) -> untyped
+
+    # Sets the user status setting to Online.
+    # @note Only usable on User accounts.
+    def online: () -> untyped
+
+    # Sets the user status setting to Idle.
+    # @note Only usable on User accounts.
+    def idle: () -> untyped
+
+    # Sets the user status setting to Do Not Disturb.
+    # @note Only usable on User accounts.
+    def dnd: () -> untyped
+
+    alias busy dnd
+
+    # Sets the user status setting to Invisible.
+    # @note Only usable on User accounts.
+    def invisible: () -> untyped
+
+    # The inspect method is overwritten to give more useful output
+    def inspect: () -> ::String
+
+    private
+
+    # Internal handler for updating the user's status setting
+    def update_profile_status_setting: (untyped status) -> untyped
+
+    def update_profile_data: (untyped new_data) -> untyped
+  end
+end

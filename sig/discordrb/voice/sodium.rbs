@@ -1,0 +1,51 @@
+module Discordrb::Voice
+  # @!visibility private
+  module Sodium
+
+  end
+
+  # Utility class for interacting with required `xsalsa20poly1305` functions for voice transmission
+  # @!visibility private
+  class SecretBox
+    # Exception raised when a key or nonce with invalid length is used
+    class LengthError < RuntimeError
+    end
+
+    # Exception raised when encryption or decryption fails
+    class CryptoError < RuntimeError
+    end
+
+    # Required key length
+    KEY_LENGTH: untyped
+
+    # Required nonce length
+    NONCE_BYTES: untyped
+
+    # Zero byte padding for encryption
+    ZERO_BYTES: untyped
+
+    # Zero byte padding for decryption
+    BOX_ZERO_BYTES: untyped
+
+    # @param key [String] Crypto key of length {KEY_LENGTH}
+    def initialize: (untyped key) -> void
+
+    # Encrypts a message using this box's key
+    # @param nonce [String] encryption nonce for this message
+    # @param message [String] message to be encrypted
+    def box: (untyped nonce, untyped message) -> untyped
+
+    # Decrypts the given ciphertext using this box's key
+    # @param nonce [String] encryption nonce for this ciphertext
+    # @param ciphertext [String] ciphertext to decrypt
+    def open: (untyped nonce, untyped ciphertext) -> untyped
+
+    private
+
+    def zero_string: (untyped size) -> untyped
+
+    def prepend_zeroes: (untyped size, untyped string) -> untyped
+
+    def remove_zeroes: (untyped size, untyped string) -> untyped
+  end
+end

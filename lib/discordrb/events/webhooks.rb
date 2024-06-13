@@ -58,7 +58,7 @@ module Discordrb::Events
                  e
                end
         end
-      ].reduce(true, &:&)
+      ].reduce(true) {|res, elem| res & elem}
     end
   end
 end

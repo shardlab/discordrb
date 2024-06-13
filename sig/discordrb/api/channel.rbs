@@ -1,0 +1,177 @@
+# API calls for Channel
+module Discordrb::API::Channel
+  # Get a channel's data
+  # https://discord.com/developers/docs/resources/channel#get-channel
+  def self?.resolve: (untyped token, untyped channel_id) -> untyped
+
+  # Update a channel's data
+  # https://discord.com/developers/docs/resources/channel#modify-channel
+  def self?.update: (untyped token, untyped channel_id, untyped name, untyped topic, untyped position, untyped bitrate, untyped user_limit, untyped nsfw, ?untyped? permission_overwrites, ?untyped? parent_id, ?untyped? rate_limit_per_user, ?untyped? reason) -> untyped
+
+  # Delete a channel
+  # https://discord.com/developers/docs/resources/channel#deleteclose-channel
+  def self?.delete: (untyped token, untyped channel_id, ?untyped? reason) -> untyped
+
+  # Get a list of messages from a channel's history
+  # https://discord.com/developers/docs/resources/channel#get-channel-messages
+  def self?.messages: (untyped token, untyped channel_id, untyped amount, ?untyped? before, ?untyped? after, ?untyped? around) -> untyped
+
+  # Get a single message from a channel's history by id
+  # https://discord.com/developers/docs/resources/channel#get-channel-message
+  def self?.message: (untyped token, untyped channel_id, untyped message_id) -> untyped
+
+  # Send a message to a channel
+  # https://discord.com/developers/docs/resources/channel#create-message
+  # @param attachments [Array<File>, nil] Attachments to use with `attachment://` in embeds. See
+  #   https://discord.com/developers/docs/resources/channel#create-message-using-attachments-within-embeds
+  def self?.create_message: (untyped token, untyped channel_id, untyped message, ?bool tts, ?untyped? embed, ?untyped? nonce, ?untyped? attachments, ?untyped? allowed_mentions, ?untyped? message_reference, ?untyped? components) -> untyped
+
+  # Send a file as a message to a channel
+  # https://discord.com/developers/docs/resources/channel#upload-file
+  def self?.upload_file: (untyped token, untyped channel_id, untyped file, ?caption: untyped?, ?tts: bool) -> untyped
+
+  # Edit a message
+  # https://discord.com/developers/docs/resources/channel#edit-message
+  def self?.edit_message: (untyped token, untyped channel_id, untyped message_id, untyped message, ?untyped mentions, ?untyped? embed, ?untyped? components) -> untyped
+
+  # Delete a message
+  # https://discord.com/developers/docs/resources/channel#delete-message
+  def self?.delete_message: (untyped token, untyped channel_id, untyped message_id, ?untyped? reason) -> untyped
+
+  # Delete messages in bulk
+  # https://discord.com/developers/docs/resources/channel#bulk-delete-messages
+  def self?.bulk_delete_messages: (untyped token, untyped channel_id, ?untyped messages, ?untyped? reason) -> untyped
+
+  # Create a reaction on a message using this client
+  # https://discord.com/developers/docs/resources/channel#create-reaction
+  def self?.create_reaction: (untyped token, untyped channel_id, untyped message_id, untyped emoji) -> untyped
+
+  # Delete this client's own reaction on a message
+  # https://discord.com/developers/docs/resources/channel#delete-own-reaction
+  def self?.delete_own_reaction: (untyped token, untyped channel_id, untyped message_id, untyped emoji) -> untyped
+
+  # Delete another client's reaction on a message
+  # https://discord.com/developers/docs/resources/channel#delete-user-reaction
+  def self?.delete_user_reaction: (untyped token, untyped channel_id, untyped message_id, untyped emoji, untyped user_id) -> untyped
+
+  # Get a list of clients who reacted with a specific reaction on a message
+  # https://discord.com/developers/docs/resources/channel#get-reactions
+  def self?.get_reactions: (untyped token, untyped channel_id, untyped message_id, untyped emoji, untyped before_id, untyped after_id, ?::Integer limit) -> untyped
+
+  # Deletes all reactions on a message from all clients
+  # https://discord.com/developers/docs/resources/channel#delete-all-reactions
+  def self?.delete_all_reactions: (untyped token, untyped channel_id, untyped message_id) -> untyped
+
+  # Deletes all the reactions for a given emoji on a message
+  # https://discord.com/developers/docs/resources/channel#delete-all-reactions-for-emoji
+  def self?.delete_all_emoji_reactions: (untyped token, untyped channel_id, untyped message_id, untyped emoji) -> untyped
+
+  # Update a channels permission for a role or member
+  # https://discord.com/developers/docs/resources/channel#edit-channel-permissions
+  def self?.update_permission: (untyped token, untyped channel_id, untyped overwrite_id, untyped allow, untyped deny, untyped `type`, ?untyped? reason) -> untyped
+
+  # Get a channel's invite list
+  # https://discord.com/developers/docs/resources/channel#get-channel-invites
+  def self?.invites: (untyped token, untyped channel_id) -> untyped
+
+  # Create an instant invite from a server or a channel id
+  # https://discord.com/developers/docs/resources/channel#create-channel-invite
+  def self?.create_invite: (untyped token, untyped channel_id, ?::Integer max_age, ?::Integer max_uses, ?bool temporary, ?bool unique, ?untyped? reason) -> untyped
+
+  # Delete channel permission
+  # https://discord.com/developers/docs/resources/channel#delete-channel-permission
+  def self?.delete_permission: (untyped token, untyped channel_id, untyped overwrite_id, ?untyped? reason) -> untyped
+
+  # Start typing (needs to be resent every 5 seconds to keep up the typing)
+  # https://discord.com/developers/docs/resources/channel#trigger-typing-indicator
+  def self?.start_typing: (untyped token, untyped channel_id) -> untyped
+
+  # Get a list of pinned messages in a channel
+  # https://discord.com/developers/docs/resources/channel#get-pinned-messages
+  def self?.pinned_messages: (untyped token, untyped channel_id) -> untyped
+
+  # Pin a message
+  # https://discord.com/developers/docs/resources/channel#add-pinned-channel-message
+  def self?.pin_message: (untyped token, untyped channel_id, untyped message_id, ?untyped? reason) -> untyped
+
+  # Unpin a message
+  # https://discord.com/developers/docs/resources/channel#delete-pinned-channel-message
+  def self?.unpin_message: (untyped token, untyped channel_id, untyped message_id, ?untyped? reason) -> untyped
+
+  # Create an empty group channel.
+  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
+  # https://discord.com/developers/docs/resources/user#create-group-dm
+  def self?.create_empty_group: (untyped token, untyped bot_user_id) -> untyped
+
+  # Create a group channel.
+  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
+  # https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
+  def self?.create_group: (untyped token, untyped pm_channel_id, untyped user_id) -> untyped
+
+  # Add a user to a group channel.
+  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
+  # https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
+  def self?.add_group_user: (untyped token, untyped group_channel_id, untyped user_id) -> untyped
+
+  # Remove a user from a group channel.
+  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
+  # https://discord.com/developers/docs/resources/channel#group-dm-remove-recipient
+  def self?.remove_group_user: (untyped token, untyped group_channel_id, untyped user_id) -> untyped
+
+  # Leave a group channel.
+  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
+  # https://discord.com/developers/docs/resources/channel#deleteclose-channel
+  def self?.leave_group: (untyped token, untyped group_channel_id) -> untyped
+
+  # Create a webhook
+  # https://discord.com/developers/docs/resources/webhook#create-webhook
+  def self?.create_webhook: (untyped token, untyped channel_id, untyped name, ?untyped? avatar, ?untyped? reason) -> untyped
+
+  # Get channel webhooks
+  # https://discord.com/developers/docs/resources/webhook#get-channel-webhooks
+  def self?.webhooks: (untyped token, untyped channel_id) -> untyped
+
+  # Start a thread based off a channel message.
+  # https://discord.com/developers/docs/resources/channel#start-thread-with-message
+  def self?.start_thread_with_message: (untyped token, untyped channel_id, untyped message_id, untyped name, untyped auto_archive_duration) -> untyped
+
+  # Start a thread without an associated message.
+  # https://discord.com/developers/docs/resources/channel#start-thread-without-message
+  def self?.start_thread_without_message: (untyped token, untyped channel_id, untyped name, untyped auto_archive_duration, ?::Integer `type`) -> untyped
+
+  # Add the current user to a thread.
+  # https://discord.com/developers/docs/resources/channel#join-thread
+  def self?.join_thread: (untyped token, untyped channel_id) -> untyped
+
+  # Add a user to a thread.
+  # https://discord.com/developers/docs/resources/channel#add-thread-member
+  def self?.add_thread_member: (untyped token, untyped channel_id, untyped user_id) -> untyped
+
+  # Remove the current user from a thread.
+  # https://discord.com/developers/docs/resources/channel#leave-thread
+  def self?.leave_thread: (untyped token, untyped channel_id) -> untyped
+
+  # Remove a user from a thread.
+  # https://discord.com/developers/docs/resources/channel#remove-thread-member
+  def self?.remove_thread_member: (untyped token, untyped channel_id, untyped user_id) -> untyped
+
+  # Get the members of a thread.
+  # https://discord.com/developers/docs/resources/channel#list-thread-members
+  def self?.list_thread_members: (untyped token, untyped channel_id, untyped before, untyped limit) -> untyped
+
+  # List active threads
+  # https://discord.com/developers/docs/resources/channel#list-active-threads
+  def self?.list_active_threads: (untyped token, untyped channel_id) -> untyped
+
+  # List public archived threads.
+  # https://discord.com/developers/docs/resources/channel#list-public-archived-threads
+  def self?.list_public_archived_threads: (untyped token, untyped channel_id, ?untyped? before, ?untyped? limit) -> untyped
+
+  # List private archived threads.
+  # https://discord.com/developers/docs/resources/channel#list-private-archived-threads
+  def self?.list_private_archived_threads: (untyped token, untyped channel_id, ?untyped? before, ?untyped? limit) -> untyped
+
+  # List joined private archived threads.
+  # https://discord.com/developers/docs/resources/channel#list-joined-private-archived-threads
+  def self?.list_joined_private_archived_threads: (untyped token, untyped channel_id, ?untyped? before, ?untyped? limit) -> untyped
+end

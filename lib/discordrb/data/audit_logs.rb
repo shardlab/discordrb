@@ -157,7 +157,7 @@ module Discordrb
       def channel
         return nil unless @channel_id
 
-        @channel ||= @bot.channel(@channel_id, @server, bot, self)
+        @channel ||= @bot.channel(@channel_id, @server)
       end
 
       # @!visibility private
