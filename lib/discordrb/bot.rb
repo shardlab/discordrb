@@ -2,7 +2,6 @@
 
 require 'rest-client'
 require 'zlib'
-require 'set'
 
 require 'discordrb/events/message'
 require 'discordrb/events/typing'
@@ -1700,7 +1699,7 @@ module Discordrb
 
     def handle_awaits(event)
       @awaits ||= {}
-      @awaits.each do |_, await|
+      @awaits.each_value do |await|
         key, should_delete = await.match(event)
         next unless key
 
