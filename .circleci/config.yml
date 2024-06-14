@@ -6,7 +6,7 @@ commands:
     steps:
       - run:
           name: Install OS packages
-          command: apk add git build-base ruby-dev ruby-etc ruby-json libsodium
+          command: apk add git build-base ruby-dev ruby-etc ruby-json libsodium-dev
       - checkout
       - run:
           name: "Ruby version"
