@@ -112,3 +112,7 @@ Style/RedundantParentheses:
 # This will probably be a breaking change, but should happen
 Style/ReturnNilInPredicateMethodDefinition:
   Enabled: false
+
+# FIXME: Disabled due to breaking tests, should probably refactor the code instead
+Style/SafeNavigation:
+  Enabled: false
