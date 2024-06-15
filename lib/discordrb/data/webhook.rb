@@ -86,7 +86,7 @@ module Discordrb
       data[:avatar] = avatarise(data[:avatar]) if data.key?(:avatar)
       data[:channel_id] = data[:channel]&.resolve_id
       data.delete(:channel)
-      update_webhook(**data)
+      update_webhook(data)
     end
 
     # Deletes the webhook.

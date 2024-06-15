@@ -341,7 +341,7 @@ module Discordrb
     alias_method :overwrites, :permission_overwrites
 
     # Bulk sets this channels permission overwrites
-    # @param overwrites [Array<Overwrite>]
+    # @param overwrites [Array<Overwrite>, Hash<Integer => Overwrite>]
     def permission_overwrites=(overwrites)
       update_channel_data(permission_overwrites: overwrites)
     end
@@ -965,7 +965,12 @@ module Discordrb
     def update_channel_data(new_data)
       new_nsfw = new_data[:nsfw].is_a?(TrueClass) || new_data[:nsfw].is_a?(FalseClass) ? new_data[:nsfw] : @nsfw
       # send permission_overwrite only when explicitly set
-      overwrites = new_data[:permission_overwrites] ? new_data[:permission_overwrites].map { |_, v| v.to_hash } : nil
+      overwrites = if new_data[:permission_overwrites].is_a?(Hash)
+                     new_data[:permission_overwrites]&.map { |_, v| v&.to_hash }
+                   else
+                     new_data[:permission_overwrites]&.map(&:to_hash)
+                   end
+
       response = JSON.parse(API::Channel.update(@bot.token, @id,
                                                 new_data[:name] || @name,
                                                 new_data[:topic] || @topic,

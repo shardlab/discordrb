@@ -1,0 +1,39 @@
+name: "RuboCop"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  rubocop:
+    name: RuboCop
+    runs-on: ubuntu-latest
+    env:
+      api-dir: ./
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Ruby 3.1
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+        bundler-cache: true
+
+    - name: Run bundle install
+      working-directory: ${{env.api-dir}}
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+
+    - name: RuboCop checks
+      working-directory: ${{env.api-dir}}
+      run: bundle exec rubocop

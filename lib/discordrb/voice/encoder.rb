@@ -63,7 +63,7 @@ module Discordrb::Voice
         sample *= mult
 
         # clamp to s16 range
-        [32_767, [-32_768, sample].max].min
+        sample.clamp(-32_768, 32_767)
       end
 
       # After modification, make it s16le again

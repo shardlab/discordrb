@@ -19,7 +19,7 @@ describe Discordrb::Channel do
   shared_examples 'a Channel property' do |property_name|
     it 'should call #update_channel_data with data' do
       expect(channel).to receive(:update_channel_data).with(property_name => property_value)
-      channel.__send__("#{property_name}=", property_value)
+      channel.__send__(:"#{property_name}=", property_value)
     end
   end
 
@@ -103,7 +103,7 @@ describe Discordrb::Channel do
         allow(JSON).to receive(:parse)
         new_data = double('new data')
         allow(new_data).to receive(:[])
-        allow(new_data).to receive(:[]).with(:permission_overwrites).and_return(false)
+        allow(new_data).to receive(:[]).with(:permission_overwrites).and_return(nil)
         expect(Discordrb::API::Channel).to receive(:update).with(any_args, nil, anything)
         channel.__send__(:update_channel_data, new_data)
       end

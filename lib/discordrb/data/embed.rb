@@ -68,7 +68,7 @@ module Discordrb
       @provider = data['provider'].nil? ? nil : EmbedProvider.new(data['provider'], self)
       @thumbnail = data['thumbnail'].nil? ? nil : EmbedThumbnail.new(data['thumbnail'], self)
       @author = data['author'].nil? ? nil : EmbedAuthor.new(data['author'], self)
-      @fields = data['fields'].nil? ? nil : data['fields'].map { |field| EmbedField.new(field, self) }
+      @fields = data['fields']&.map { |field| EmbedField.new(field, self) }
     end
   end
 

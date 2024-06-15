@@ -8,7 +8,7 @@ inherit_mode:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.1
 
 # Disable line length checks
 Layout/LineLength:
@@ -66,3 +66,17 @@ Style/SingleLineBlockParams:
   Methods:
     - reduce: [m, e]
     - inject: [m, e]
+
+# Rule to keep development dependencies inside gemspec file
+Gemspec/DevelopmentDependencies:
+  EnforcedStyle: gemspec
+
+# Rule disabled to avoid breaking methods or behaviors unnecessarily (Reactivate if you find it relevant)
+Style/ReturnNilInPredicateMethodDefinition:
+  Enabled: false
+Style/HashSyntax:
+  Enabled: false
+Naming/BlockForwarding:
+  Enabled: false
+Style/ArgumentsForwarding:
+  Enabled: false
