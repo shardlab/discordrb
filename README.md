@@ -2,8 +2,10 @@
 
 [![Gem](https://img.shields.io/gem/v/discordrb.svg)](https://rubygems.org/gems/discordrb)
 [![Gem](https://img.shields.io/gem/dt/discordrb.svg)](https://rubygems.org/gems/discordrb)
-[![CircleCI](https://circleci.com/gh/shardlab/discordrb.svg?style=svg)](https://circleci.com/gh/shardlab/discordrb)
-[![Inline docs](https://inch-ci.org/github/shardlab/discordrb.svg?branch=main)](https://drb.shardlab.dev/v3.4.0/)
+[![Gem](https://img.shields.io/badge/docs-v3.5.0-979797.svg)](https://drb.shardlab.dev/v3.5.0/)
+[![Github Actions Rspec](https://github.com/shardlab/discordrb/actions/workflows/rspec.yml/badge.svg?branch=main&event=push)](https://github.com/shardlab/discordrb/actions/workflows/rspec.yml)
+[![Github Actions Rubocop](https://github.com/shardlab/discordrb/actions/workflows/rubocop.yml/badge.svg?branch=main&event=push)](https://github.com/shardlab/discordrb/actions/workflows/rubocop.yml)
+[![Inline docs](https://img.shields.io/badge/docs-main-979797.svg)](https://drb.shardlab.dev/main/)
 [![Join Discord](https://img.shields.io/badge/discord-join-7289DA.svg)](https://discord.gg/cyK3Hjm)
 
 An implementation of the [Discord](https://discord.com/) API using Ruby.
@@ -19,7 +21,7 @@ An implementation of the [Discord](https://discord.com/) API using Ruby.
 - [Development](https://github.com/shardlab/discordrb#development), [Contributing](https://github.com/shardlab/discordrb#contributing)
 - [License](https://github.com/shardlab/discordrb#license)
 
-See also: [Documentation](https://drb.shardlab.dev/v3.4.0/), [Tutorials](https://github.com/shardlab/discordrb/wiki)
+See also: [Documentation](https://drb.shardlab.dev/v3.5.0/), [Tutorials](https://github.com/shardlab/discordrb/wiki)
 
 ## Introduction
 
@@ -66,6 +68,13 @@ gem 'discordrb'
 ```
 
 And then install via `bundle install`.
+
+_If you want to run the latest code instead, use this gem line instead:_
+```ruby
+gem 'discordrb', github: 'shardlab/discordrb', branch: 'main'
+```
+
+⚠️ **Note that main may contain breaking changes or other unstable code !**
 
 Run the [ping example](https://github.com/shardlab/discordrb/blob/main/examples/ping.rb) to verify that the installation works (make sure to replace the token and client ID in there with your bots'!):
 
@@ -131,7 +140,7 @@ If you've made an open source project on GitHub that uses discordrb, consider ad
 
 Also included is a webhooks client, which can be used as a separate gem `discordrb-webhooks`. This special client can be used to form requests to Discord webhook URLs in a high-level manner.
 
-- [`discordrb-webhooks` documentation](https://drb.shardlab.dev/v3.4.0/Discordrb/Webhooks.html)
+- [`discordrb-webhooks` documentation](https://drb.shardlab.dev/v3.5.0/Discordrb/Webhooks.html)
 - [More information about webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)
 - [Embed visualizer tool](https://leovoel.github.io/embed-visualizer/) - Includes a discordrb code generator for forming embeds
 

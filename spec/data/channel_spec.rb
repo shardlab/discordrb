@@ -103,7 +103,7 @@ describe Discordrb::Channel do
         allow(JSON).to receive(:parse)
         new_data = double('new data')
         allow(new_data).to receive(:[])
-        allow(new_data).to receive(:[]).with(:permission_overwrites).and_return(false)
+        allow(new_data).to receive(:[]).with(:permission_overwrites).and_return(nil)
         expect(Discordrb::API::Channel).to receive(:update).with(any_args, nil, anything)
         channel.__send__(:update_channel_data, new_data)
       end

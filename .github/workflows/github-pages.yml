@@ -1,0 +1,65 @@
+name: "Github Pages"
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+
+jobs:
+  pages:
+    name: Github Pages
+    runs-on: ubuntu-latest
+    env:
+      api-dir: ./
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository for Yard
+        uses: actions/checkout@v3
+        with:
+          path: discordrb_docs
+
+      - name: Install OS package
+        run: |
+          sudo apt update
+          sudo apt install -y git openssh-client
+
+      - name: Setup Ruby 2.7
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true
+
+      - name: Checkout repository for Github Pages
+        uses: actions/checkout@v3
+        with:
+          path: discordrb_gh
+          ref: gh-pages
+
+      - name: Run bundle install
+        working-directory: ${{env.api-dir}}
+        run: |
+          gem install bundler
+          BUNDLE_GEMFILE=discordrb_docs/Gemfile bundle install --jobs 4 --retry 3
+
+      - name: Generate Yard docs
+        working-directory: ${{env.api-dir}}
+        run: |
+          cd discordrb_docs
+          bundle exec yard --output-dir /tmp/docs
+
+      - name: Commit & Push docs
+        run: |
+          cd discordrb_gh
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          mkdir -p $GITHUB_REF_NAME
+          rm -rf $GITHUB_REF_NAME/*
+          cp -r /tmp/docs/. $GITHUB_REF_NAME
+          git add $GITHUB_REF_NAME
+          git commit --allow-empty -m "[skip ci] Deploy docs"
+          git push
