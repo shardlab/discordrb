@@ -5,7 +5,7 @@ module Discordrb::API::User
   module_function
 
   # Get user data
-  # https://discord.com/developers/docs/resources/user#get-user
+  # @see https://discord.com/developers/docs/resources/user#get-user
   def resolve(token, user_id)
     Discordrb::API.request(
       :users_uid,
@@ -17,7 +17,7 @@ module Discordrb::API::User
   end
 
   # Get profile data
-  # https://discord.com/developers/docs/resources/user#get-current-user
+  # @see https://discord.com/developers/docs/resources/user#get-current-user
   def profile(token)
     Discordrb::API.request(
       :users_me,
@@ -29,7 +29,7 @@ module Discordrb::API::User
   end
 
   # Change the current bot's nickname on a server
-  # https://discord.com/developers/docs/resources/user#modify-current-user
+  # @see https://discord.com/developers/docs/resources/user#modify-current-user
   def change_own_nickname(token, server_id, nick, reason = nil)
     Discordrb::API.request(
       :guilds_sid_members_me_nick,
@@ -44,7 +44,7 @@ module Discordrb::API::User
   end
 
   # Update user data
-  # https://discord.com/developers/docs/resources/user#modify-current-user
+  # @see https://discord.com/developers/docs/resources/user#modify-current-user
   def update_profile(token, email, password, new_username, avatar, new_password = nil)
     Discordrb::API.request(
       :users_me,
@@ -58,7 +58,7 @@ module Discordrb::API::User
   end
 
   # Get the servers a user is connected to
-  # https://discord.com/developers/docs/resources/user#get-current-user-guilds
+  # @see https://discord.com/developers/docs/resources/user#get-current-user-guilds
   def servers(token)
     Discordrb::API.request(
       :users_me_guilds,
@@ -70,7 +70,7 @@ module Discordrb::API::User
   end
 
   # Leave a server
-  # https://discord.com/developers/docs/resources/user#leave-guild
+  # @see https://discord.com/developers/docs/resources/user#leave-guild
   def leave_server(token, server_id)
     Discordrb::API.request(
       :users_me_guilds_sid,
@@ -82,7 +82,7 @@ module Discordrb::API::User
   end
 
   # Get the DMs for the current user
-  # https://discord.com/developers/docs/resources/user#get-user-dms
+  # @note This method is not blocked for bots, but is undocumented by Discord and should not be relied upon.
   def user_dms(token)
     Discordrb::API.request(
       :users_me_channels,
@@ -94,7 +94,7 @@ module Discordrb::API::User
   end
 
   # Create a DM to another user
-  # https://discord.com/developers/docs/resources/user#create-dm
+  # @see https://discord.com/developers/docs/resources/user#create-dm
   def create_pm(token, recipient_id)
     Discordrb::API.request(
       :users_me_channels,
@@ -108,7 +108,7 @@ module Discordrb::API::User
   end
 
   # Get information about a user's connections
-  # https://discord.com/developers/docs/resources/user#get-users-connections
+  # @see https://discord.com/developers/docs/resources/user#get-user-connections
   def connections(token)
     Discordrb::API.request(
       :users_me_connections,
@@ -120,6 +120,7 @@ module Discordrb::API::User
   end
 
   # Change user status setting
+  # @deprecated This method is not available for Bot accounts.
   def change_status_setting(token, status)
     Discordrb::API.request(
       :users_me_settings,

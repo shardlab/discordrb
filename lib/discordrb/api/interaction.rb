@@ -5,7 +5,7 @@ module Discordrb::API::Interaction
   module_function
 
   # Respond to an interaction.
-  # https://discord.com/developers/docs/interactions/slash-commands#create-interaction-response
+  # @see https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response
   def create_interaction_response(interaction_token, interaction_id, type, content = nil, tts = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil)
     data = { tts: tts, content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, components: components }.compact
 
@@ -35,19 +35,19 @@ module Discordrb::API::Interaction
   end
 
   # Get the original response to an interaction.
-  # https://discord.com/developers/docs/interactions/slash-commands#get-original-interaction-response
+  # @see https://discord.com/developers/docs/interactions/receiving-and-responding#get-original-interaction-response
   def get_original_interaction_response(interaction_token, application_id)
     Discordrb::API::Webhook.token_get_message(interaction_token, application_id, '@original')
   end
 
   # Edit the original response to an interaction.
-  # https://discord.com/developers/docs/interactions/slash-commands#edit-original-interaction-response
+  # @see https://discord.com/developers/docs/interactions/receiving-and-responding#edit-original-interaction-response
   def edit_original_interaction_response(interaction_token, application_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil)
     Discordrb::API::Webhook.token_edit_message(interaction_token, application_id, '@original', content, embeds, allowed_mentions, components)
   end
 
   # Delete the original response to an interaction.
-  # https://discord.com/developers/docs/interactions/slash-commands#delete-original-interaction-response
+  # @see https://discord.com/developers/docs/interactions/receiving-and-responding#delete-original-interaction-response
   def delete_original_interaction_response(interaction_token, application_id)
     Discordrb::API::Webhook.token_delete_message(interaction_token, application_id, '@original')
   end
