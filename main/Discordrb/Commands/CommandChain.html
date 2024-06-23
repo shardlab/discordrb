@@ -6,7 +6,7 @@
 <title>
   Class: Discordrb::Commands::CommandChain
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
@@ -623,7 +623,7 @@ its chain arguments.</p>
   <span class='id identifier rubyid_escaped'>escaped</span> <span class='op'>=</span> <span class='kw'>false</span>
   <span class='id identifier rubyid_hacky_delim'>hacky_delim</span><span class='comma'>,</span> <span class='id identifier rubyid_hacky_space'>hacky_space</span><span class='comma'>,</span> <span class='id identifier rubyid_hacky_prev'>hacky_prev</span><span class='comma'>,</span> <span class='id identifier rubyid_hacky_newline'>hacky_newline</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='int'>0xe001</span><span class='comma'>,</span> <span class='int'>0xe002</span><span class='comma'>,</span> <span class='int'>0xe003</span><span class='comma'>,</span> <span class='int'>0xe004</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_pack'>pack</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>U*</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_chars'>chars</span>
 
-  <span class='ivar'>@chain</span><span class='period'>.</span><span class='id identifier rubyid_each_char'>each_char</span><span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_char'>char</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='op'>|</span>
+  <span class='ivar'>@chain</span><span class='period'>.</span><span class='id identifier rubyid_each_char'>each_char</span><span class='period'>.</span><span class='id identifier rubyid_with_index'>with_index</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_char'>char</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='op'>|</span>
     <span class='comment'># Escape character
 </span>    <span class='kw'>if</span> <span class='id identifier rubyid_char'>char</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>\\</span><span class='tstring_end'>&#39;</span></span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_escaped'>escaped</span>
       <span class='id identifier rubyid_escaped'>escaped</span> <span class='op'>=</span> <span class='kw'>true</span>
@@ -745,9 +745,9 @@ its chain arguments.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Jan  8 19:49:22 2024 by
+  Generated on Sun Jun 23 00:26:37 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-2.7.8).
+  0.9.36 (ruby-3.3.3).
 </div>
 
     </div>

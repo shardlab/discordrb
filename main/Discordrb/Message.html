@@ -6,7 +6,7 @@
 <title>
   Class: Discordrb::Message
   
-    &mdash; Documentation by YARD 0.9.34
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
@@ -3352,7 +3352,7 @@ You can only edit your own messages.</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit'>edit</span><span class='lparen'>(</span><span class='id identifier rubyid_new_content'>new_content</span><span class='comma'>,</span> <span class='id identifier rubyid_new_embeds'>new_embeds</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_new_components'>new_components</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new_embeds'>new_embeds</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_new_embeds'>new_embeds</span><span class='period'>.</span><span class='id identifier rubyid_instance_of?'>instance_of?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_new_embeds'>new_embeds</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_hash</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_new_embeds'>new_embeds</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_hash'>to_hash</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
-  <span class='id identifier rubyid_new_components'>new_components</span> <span class='op'>=</span> <span class='id identifier rubyid_new_components'>new_components</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_a'>to_a</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_new_components'>new_components</span> <span class='op'>=</span> <span class='id identifier rubyid_new_components'>new_components</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
 
   <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_edit_message'><span class='object_link'><a href="API/Channel.html#edit_message-class_method" title="Discordrb::API::Channel.edit_message (method)">edit_message</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_new_content'>new_content</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_new_embeds'>new_embeds</span><span class='comma'>,</span> <span class='id identifier rubyid_new_components'>new_components</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="" title="Discordrb::Message (class)">Message</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='ivar'>@bot</span><span class='rparen'>)</span>
@@ -4670,9 +4670,9 @@ You can only edit your own messages.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Jan  8 19:49:20 2024 by
+  Generated on Sun Jun 23 00:26:35 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.34 (ruby-2.7.8).
+  0.9.36 (ruby-3.3.3).
 </div>
 
     </div>
