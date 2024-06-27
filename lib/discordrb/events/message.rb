@@ -264,10 +264,92 @@ module Discordrb::Events
   end
 
   # @see Discordrb::EventContainer#mention
-  class MentionEvent < MessageEvent; end
+  class MentionEvent < MessageEvent
+    attr_accessor :role_mention
+
+    def initialize(message, bot)
+      @bot = bot
+      @message = message
+      @channel = message.channel
+      @saved_message = ''
+      @file = nil
+      @filename = nil
+      @file_spoiler = nil
+      @role_mention = false
+    end
+  end
 
   # Event handler for {MentionEvent}
-  class MentionEventHandler < MessageEventHandler; end
+  class MentionEventHandler < MessageEventHandler
+    def matches?(event)
+      # Check for the proper event type
+      return false unless event.is_a? MentionEvent
+      # Ensure this is not a role mention, or if it is, then allow_role_mention == true
+      return false unless (not event.role_mention) || (@attributes[:allow_role_mention] && event.role_mention)
+
+      [
+        matches_all(@attributes[:starting_with] || @attributes[:start_with], event.content) do |a, e|
+          case a
+          when String
+            e.start_with? a
+          when Regexp
+            (e =~ a)&.zero?
+          end
+        end,
+        matches_all(@attributes[:ending_with] || @attributes[:end_with], event.content) do |a, e|
+          case a
+          when String
+            e.end_with? a
+          when Regexp
+            !(e =~ Regexp.new("#{a}$")).nil?
+          end
+        end,
+        matches_all(@attributes[:containing] || @attributes[:contains], event.content) do |a, e|
+          case a
+          when String
+            e.include? a
+          when Regexp
+            (e =~ a)
+          end
+        end,
+        matches_all(@attributes[:in], event.channel) do |a, e|
+          case a
+          when String
+            # Make sure to remove the "#" from channel names in case it was specified
+            a.delete('#') == e.name
+          when Integer
+            a == e.id
+          else
+            a == e
+          end
+        end,
+        matches_all(@attributes[:from], event.author) do |a, e|
+          case a
+          when String
+            a == e.name
+          when Integer
+            a == e.id
+          when :bot
+            e.current_bot?
+          else
+            a == e
+          end
+        end,
+        matches_all(@attributes[:with_text] || @attributes[:content] || @attributes[:exact_text], event.content) do |a, e|
+          case a
+          when String
+            e == a
+          when Regexp
+            match = a.match(e)
+            match ? (e == match[0]) : false
+          end
+        end,
+        matches_all(@attributes[:after], event.timestamp) { |a, e| a > e },
+        matches_all(@attributes[:before], event.timestamp) { |a, e| a < e },
+        matches_all(@attributes[:private], event.channel.private?) { |a, e| !e == !a }
+      ].reduce(true, &:&)
+    end
+  end
 
   # @see Discordrb::EventContainer#pm
   class PrivateMessageEvent < MessageEvent; end
