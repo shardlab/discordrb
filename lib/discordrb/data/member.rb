@@ -64,7 +64,7 @@ module Discordrb
       @bot = bot
 
       @user = bot.ensure_user(data['user'])
-      super @user # Initialize the delegate class
+      super(@user) # Initialize the delegate class
 
       @server = server
       @server_id = server&.id || data['guild_id'].to_i
