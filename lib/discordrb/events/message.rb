@@ -285,7 +285,7 @@ module Discordrb::Events
       # Check for the proper event type
       return false unless event.is_a? MentionEvent
       # Ensure this is not a role mention, or if it is, then allow_role_mention == true
-      return false unless (not event.role_mention) || (@attributes[:allow_role_mention] && event.role_mention)
+      return false unless (!event.role_mention) || (@attributes[:allow_role_mention] && event.role_mention)
 
       [
         matches_all(@attributes[:starting_with] || @attributes[:start_with], event.content) do |a, e|
