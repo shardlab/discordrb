@@ -496,7 +496,7 @@ module Discordrb
     # @raise [ArgumentError] if type is not 0 (text), 2 (voice), 4 (category), 5 (news), or 6 (store)
     def create_channel(name, type = 0, topic: nil, bitrate: nil, user_limit: nil, permission_overwrites: nil, parent: nil, nsfw: false, rate_limit_per_user: nil, position: nil, reason: nil)
       type = Channel::TYPES[type] if type.is_a?(Symbol)
-      raise ArgumentError, 'Channel type must be either 0 (text), 2 (voice), 4 (category), news (5), or store (6)!' unless [0, 2, 4, 5, 6].include?(type)
+      raise ArgumentError, 'Channel type must be either 0 (text), 2 (voice), 4 (category), news (5), store (6), or forum (15)!' unless [0, 2, 4, 5, 6, 15].include?(type)
 
       permission_overwrites.map! { |e| e.is_a?(Overwrite) ? e.to_hash : e } if permission_overwrites.is_a?(Array)
       parent_id = parent.respond_to?(:resolve_id) ? parent.resolve_id : nil
