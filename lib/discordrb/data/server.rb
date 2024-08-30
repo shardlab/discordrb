@@ -36,6 +36,9 @@ module Discordrb
     attr_reader :emoji
     alias_method :emojis, :emoji
 
+    # @return [Array<Stickers>] An array of all the stickers available on this server.
+    attr_reader :stickers
+
     # @return [true, false] whether or not this server is large (members > 100). If it is,
     # it means the members list may be inaccurate for a couple seconds after starting up the bot.
     attr_reader :large
@@ -69,6 +72,7 @@ module Discordrb
       @members = {}
       @voice_states = {}
       @emoji = {}
+      @stickers = data['stickers']
 
       process_channels(data['channels'])
       update_data(data)

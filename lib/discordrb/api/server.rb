@@ -558,18 +558,6 @@ module Discordrb::API::Server
     )
   end
 
-  # Gets a list of all the stickers in a server.
-  # https://discord.com/developers/docs/resources/sticker#list-guild-stickers
-  def server_stickers(token, server_id)
-    Discordrb::API.request(
-      :guilds_sid_stickers,
-      server_id,
-      :get,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers",
-      Authorization: token
-    )
-  end
-
   # Available voice regions for this server
   # https://discord.com/developers/docs/resources/guild#get-guild-voice-regions
   def regions(token, server_id)
