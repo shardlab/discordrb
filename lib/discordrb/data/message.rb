@@ -38,6 +38,10 @@ module Discordrb
     # @return [Array<Embed>] the embed objects contained in this message.
     attr_reader :embeds
 
+    # @return [Array<Stickers>] the stickers in this message if it contains any.
+    attr_reader :stickers
+    alias_method :stickers?, :stickers
+
     # @return [Array<Reaction>] the reaction objects contained in this message.
     attr_reader :reactions
 
@@ -83,6 +87,7 @@ module Discordrb
       @tts = data['tts']
       @nonce = data['nonce']
       @mention_everyone = data['mention_everyone']
+      @stickers = data['sticker_items']
 
       @referenced_message = Message.new(data['referenced_message'], bot) if data['referenced_message']
       @message_reference = data['message_reference']
