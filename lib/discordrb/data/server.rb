@@ -587,7 +587,7 @@ module Discordrb
     # @param reason [String] The reason for the editing of this emoji.
     # @return [Emoji] The edited emoji.
     def edit_sticker(sticker, name: nil, description: nil, reason: nil)
-      data = JSON.parse(API::Server.edit_sticker(@bot.token, @id, sticker, name, description, tags, reason))
+      JSON.parse(API::Server.edit_sticker(@bot.token, @id, sticker, name, description, tags, reason))
     end
 
     # Delete a custom sticker on this server.
