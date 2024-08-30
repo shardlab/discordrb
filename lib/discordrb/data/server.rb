@@ -550,14 +550,6 @@ module Discordrb
       @emoji[new_emoji.id] = new_emoji
     end
 
-    # Adds a new custom sticker on this server.
-    # @param name [String] The name of the sticker to create.
-    # @param file [String] the sticker file to upload, must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KB.
-    # @param reason [String] The reason the for the creation of this sticker.
-    def add_sticker(name, file, description, tags, reason: nil)
-      JSON.parse(API::Server.add_sticker(@bot.token, @id, file, name, description, tags, reason))
-    end
-
     # Delete a custom emoji on this server
     # @param emoji [Emoji, String, Integer] The emoji or emoji ID to be deleted.
     # @param reason [String] The reason the for the deletion of this emoji.
@@ -576,6 +568,16 @@ module Discordrb
       data = JSON.parse(API::Server.edit_emoji(@bot.token, @id, emoji.resolve_id, name || emoji.name, (roles || emoji.roles).map(&:resolve_id), reason))
       new_emoji = Emoji.new(data, @bot, self)
       @emoji[new_emoji.id] = new_emoji
+    end
+
+    # Adds a new custom sticker on this server.
+    # @param name [String] The name of the sticker to create.
+    # @param file [String] the sticker file to upload, must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KB.
+    # @param description [String] description of the sticker.
+    # @param tags [string] autocomplete/suggestion tags for the sticker.
+    # @param reason [String] The reason the for the creation of this sticker.
+    def add_sticker(name, file, description, tags, reason: nil)
+      API::Server.add_sticker(@bot.token, @id, file, name, description, tags, reason)
     end
 
     # The amount of emoji the server can have, based on its current Nitro Boost Level.
