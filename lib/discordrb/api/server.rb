@@ -522,15 +522,11 @@ module Discordrb::API::Server
   # Adds a custom sticker.
   # https://discord.com/developers/docs/resources/sticker#create-guild-sticker
   def add_sticker(token, server_id, file, name, description, tags, reason = nil)
-    Discordrb::API.request(
-      :guilds_sid_stickers,
-      server_id,
-      :post,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers",
-      { file: file, name: name, description: description, tags: tags }.to_json,
-      Authorization: token,
-      content_type: :json,
-      'X-Audit-Log-Reason': reason
+    RestClient::Request.execute(
+      method: :post,
+      url: "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers",
+      payload: { name: name, tags: tags, description: description, file: file },
+      headers: { Authorization: token, 'X-Audit-Log-Reason': reason }
     )
   end
 
