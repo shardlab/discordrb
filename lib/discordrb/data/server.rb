@@ -580,6 +580,23 @@ module Discordrb
       API::Server.add_sticker(@bot.token, @id, file, name, description, tags, reason)
     end
 
+    # Changes the name and/or role whitelist of an emoji on this server.
+    # @param emoji [Emoji, String, Integer] The emoji or emoji ID to edit.
+    # @param name [String] The new name for the emoji.
+    # @param roles [Array<Role, String, Integer>] A new array of roles, or role IDs, to whitelist.
+    # @param reason [String] The reason for the editing of this emoji.
+    # @return [Emoji] The edited emoji.
+    def edit_sticker(sticker, name: nil, description: nil, reason: nil)
+      data = JSON.parse(API::Server.edit_sticker(@bot.token, @id, sticker, name, description, tags, reason))
+    end
+
+    # Delete a custom sticker on this server.
+    # @param sticker [Integer] The ID of the sticker to be deleted.
+    # @param reason [String] The reason the for the deletion of this sticker.
+    def delete_sticker(sticker, reason: nil)
+      API::Server.delete_sticker(@bot.token, @id, sticker, reason)
+    end
+
     # The amount of emoji the server can have, based on its current Nitro Boost Level.
     # @return [Integer] the max amount of emoji
     def max_emoji
