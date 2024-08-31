@@ -581,6 +581,8 @@ module Discordrb
     # @param tags [string] autocomplete/suggestion tags for the sticker.
     # @param reason [String] The reason the for the creation of this sticker.
     def add_sticker(name, file, description, tags, reason: nil)
+      raise(ArgumentError, 'The sticker file must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KB!') unless file.is_a?(File)
+
       API::Server.add_sticker(@bot.token, @id, file, name, description, tags, reason)
     end
 
