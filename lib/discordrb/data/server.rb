@@ -833,6 +833,14 @@ module Discordrb
     alias_method :has_emoji?, :any_emoji?
     alias_method :emoji?, :any_emoji?
 
+    # @return [true, false] whether this server has any stickers or not.
+    def any_sticker?
+      @stickers.any?
+    end
+
+    alias_method :has_sticker?, :any_sticker?
+    alias_method :sticker?, :any_sticker?
+
     # Requests a list of Webhooks on the server.
     # @return [Array<Webhook>] webhooks on the server.
     def webhooks
