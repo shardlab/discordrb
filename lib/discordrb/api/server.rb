@@ -519,7 +519,7 @@ module Discordrb::API::Server
     )
   end
 
-  # Adds a custom sticker.
+  # Adds a custom sticker to a guild.
   # https://discord.com/developers/docs/resources/sticker#create-guild-sticker
   def add_sticker(token, server_id, file, name, description, tags, reason = nil)
     RestClient::Request.execute(
@@ -545,7 +545,7 @@ module Discordrb::API::Server
     )
   end
 
-  # Deletes a custom sticker.
+  # Deletes a custom sticker from a guild.
   # https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
   def delete_sticker(token, server_id, sticker_id, reason = nil)
     Discordrb::API.request(
