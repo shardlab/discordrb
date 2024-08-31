@@ -40,7 +40,6 @@ module Discordrb
 
     # @return [Array<Stickers>] the stickers in this message if it contains any.
     attr_reader :stickers
-    alias_method :stickers?, :stickers
 
     # @return [Array<Reaction>] the reaction objects contained in this message.
     attr_reader :reactions
