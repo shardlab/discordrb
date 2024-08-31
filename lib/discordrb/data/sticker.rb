@@ -59,7 +59,7 @@ module Discordrb
       @format = FORMAT[data['format_type']]
       @description = data['description']
       @pack_id = data['pack_id']&.to_i
-      @sort_order = data['sort_value']
+      @sort_order = data['sort_value']&.to_i
       @usable = data['available']
       @server = data['guild_id']&.to_i
       @member = data['user']

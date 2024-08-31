@@ -583,7 +583,9 @@ module Discordrb
     def add_sticker(name, file, description, tags, reason: nil)
       raise(ArgumentError, 'The sticker file must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KB!') unless file.is_a?(File)
 
-      API::Server.add_sticker(@bot.token, @id, file, name, description, tags, reason)
+      data = API::Server.add_sticker(@bot.token, @id, file, name, description, tags, reason)
+      new_sticker = Sticker.new(data, @bot, self)
+      @sticker[new_sticker.id] = new_sticker
     end
 
     # Changes the name, tags, or description of a sticker on this server.
@@ -593,7 +595,9 @@ module Discordrb
     # @pararm tags [string] The new tags for this sticker.
     # @param reason [String] The reason for the editing of this sticker.
     def edit_sticker(sticker, name: nil, description: nil, tags: nil, reason: nil)
-      JSON.parse(API::Server.edit_sticker(@bot.token, @id, sticker, name, description, tags, reason))
+      data = JSON.parse(API::Server.edit_sticker(@bot.token, @id, sticker, name, description, tags, reason))
+      new_sticker = Sticker.new(data, @bot, self)
+      @sticker[new_sticker.id] = new_sticker
     end
 
     # Delete a custom sticker on this server.
@@ -900,6 +904,7 @@ module Discordrb
       process_channels(new_data['channels']) if new_data['channels']
       process_roles(new_data['roles']) if new_data['roles']
       process_emoji(new_data['emojis']) if new_data['emojis']
+      process_sticker(new_data['stickers']) if new_data['stickers']
       process_members(new_data['members']) if new_data['members']
       process_presences(new_data['presences']) if new_data['presences']
       process_voice_states(new_data['voice_states']) if new_data['voice_states']
@@ -927,6 +932,14 @@ module Discordrb
     def update_emoji_data(new_data)
       @emoji = {}
       process_emoji(new_data['emojis'])
+    end
+
+    # Updates the cached sticker data with new data
+    # @note For internal use only
+    # @!visibility private
+    def update_sticker_data(new_data)
+      @sticker = {}
+      process_sticker(new_data['stickers'])
     end
 
     # The inspect method is overwritten to give more useful output
@@ -971,6 +984,15 @@ module Discordrb
       emoji.each do |element|
         new_emoji = Emoji.new(element, @bot, self)
         @emoji[new_emoji.id] = new_emoji
+      end
+    end
+
+    def process_sticker(sticker)
+      return if sticker.empty?
+
+      sticker.each do |element|
+        new_sticker = Sticker.new(element, @bot, self)
+        @sticker[new_sticker.id] = new_sticker
       end
     end
 
