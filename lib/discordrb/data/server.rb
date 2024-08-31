@@ -603,7 +603,7 @@ module Discordrb
       API::Server.delete_sticker(@bot.token, @id, sticker, reason)
     end
 
-    # The amount of emojis the server can have, based on its current Nitro Boost Level.
+    # The amount of emoji the server can have, based on its current Nitro Boost Level.
     # @return [Integer] the max amount of emoji
     def max_emoji
       case @boost_level
