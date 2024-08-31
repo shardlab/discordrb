@@ -73,6 +73,7 @@ module Discordrb
       @voice_states = {}
       @emoji = {}
       @stickers = data['stickers']
+      @sticker = {}
 
       process_channels(data['channels'])
       update_data(data)
@@ -584,7 +585,7 @@ module Discordrb
       raise(ArgumentError, 'The sticker file must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KB!') unless file.is_a?(File)
 
       data = API::Server.add_sticker(@bot.token, @id, file, name, description, tags, reason)
-      new_sticker = Sticker.new(data, @bot, self)
+      new_sticker = Sticker.new(JSON.parse(data), @bot, self)
       @sticker[new_sticker.id] = new_sticker
     end
 

@@ -37,7 +37,7 @@ module Discordrb
     alias_method :usable?, :usable
 
     # @return [Integer] the ID of the server this sticker originates from
-    attr_reader :server
+    attr_reader :server_id
 
     # @return [Integer] The ID of the user that uploaded this sticker
     attr_reader :member
@@ -49,7 +49,7 @@ module Discordrb
     attr_reader :pack_id
 
     # @!visibility private
-    def initialize(data, bot)
+    def initialize(data, bot, server = nil)
       @bot = bot
       @name = data['name']
       @id = data['id']&.to_i
@@ -60,7 +60,7 @@ module Discordrb
       @pack_id = data['pack_id']&.to_i
       @sort_order = data['sort_value']&.to_i
       @usable = data['available']
-      @server = data['guild_id']&.to_i
+      @server_id = data['guild_id']&.to_i
       @member = data['user']
     end
 
