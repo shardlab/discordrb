@@ -620,7 +620,7 @@ module Discordrb
 
     # The amount of stickers the server can have, based on its current Nitro Boost Level.
     # @return [Integer] the max amount of stickers
-    def max_stickers
+    def max_sticker
       case @boost_level
       when 1
         15
