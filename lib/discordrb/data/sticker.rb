@@ -12,6 +12,11 @@ module Discordrb
       4 => :gif
     }.freeze
 
+    TYPE = {
+      1 => :standard,
+      2 => :server
+    }.freeze
+
     # @return [String] the sticker's name
     attr_reader :name
 
@@ -40,7 +45,7 @@ module Discordrb
     # @return [Integer] The sort order of this sticker if it's part of a pack
     attr_reader :sort_order
 
-    # @return [pack_id] the ID of the pack if this sticker belongs to one
+    # @return [Integer] the ID of the pack if this sticker belongs to one
     attr_reader :pack_id
 
     # @!visibility private
@@ -50,7 +55,7 @@ module Discordrb
       @name = data['name']
       @id = data['id']&.to_i
       @tags = data['tags']
-      @type = data['type']&.to_i
+      @type = TYPE[data['type']]
       @format = FORMAT[data['format_type']]
       @description = data['description']
       @pack_id = data['pack_id']&.to_i
