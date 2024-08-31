@@ -51,7 +51,6 @@ module Discordrb
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-
       @name = data['name']
       @id = data['id']&.to_i
       @tags = data['tags']
