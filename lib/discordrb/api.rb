@@ -213,6 +213,11 @@ module Discordrb::API
     "#{cdn_url}/emojis/#{emoji_id}.#{format}"
   end
 
+  # Make a sticker file URL from sticker ID
+  def sticker_file_url(sticker_id, format = 'png')
+    "#{cdn_url}/stickers/#{sticker_id}.#{format}"
+  end
+
   # Make an asset URL from application and asset IDs
   def asset_url(application_id, asset_id, format = 'webp')
     "#{cdn_url}/app-assets/#{application_id}/#{asset_id}.#{format}"
