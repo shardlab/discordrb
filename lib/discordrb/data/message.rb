@@ -135,6 +135,8 @@ module Discordrb
 
       @reactions = []
 
+      @sticker = []
+
       data['reactions']&.each do |element|
         @reactions << Reaction.new(element)
       end
@@ -277,6 +279,12 @@ module Discordrb
     # @return [true, false] whether or not any emoji were used
     def emoji?
       emoji&.empty?
+    end
+
+    # Check if a sticker was used in this message.
+    # @return [true, false] whether or not a sticker was used
+    def sticker?
+      !(sticker || '').empty?
     end
 
     # Check if any reactions were used in this message.
