@@ -224,7 +224,7 @@ module Discordrb
     # @return [StickerObject] the sticker object identified by ID.
     def find_sticker(id)
       data = API::Sticker.resolve_sticker(@token, id)
-      Sticker.new(JSON.parse(data), @bot, self)
+      new_sticker = Sticker.new(JSON.parse(data), @bot, self)
     end
 
     # The bot's user profile. This special user object can be used
