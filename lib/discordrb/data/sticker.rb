@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Discordrb
-  # Server sticker
+  # stickers
   class Sticker
     include IDObject
 
@@ -17,39 +17,39 @@ module Discordrb
       2 => :server
     }.freeze
 
-    # @return [String] the sticker's name
+    # @return [String] The sticker's name.
     attr_reader :name
 
-    # @return [String] the sticker's description
+    # @return [String] The sticker's description.
     attr_reader :description
 
-    # @return [String] the sticker's tags
+    # @return [String] The sticker's tags.
     attr_reader :tags
 
-    # @return [String] the sticker's type: https://discord.com/developers/docs/resources/sticker#sticker-object-sticker-types
+    # @return [String] The sticker's type: https://discord.com/developers/docs/resources/sticker#sticker-object-sticker-types
     attr_reader :type
 
-    # @return [String] the file type of this sticker
+    # @return [String] The file type of this sticker.
     attr_reader :format
 
-    # @return [Boolean] if this sticker can be used
+    # @return [Boolean] If this sticker can be used.
     attr_reader :usable
     alias_method :usable?, :usable
 
-    # @return [Integer] the ID of the server this sticker originates from
+    # @return [Integer] The ID of the server this sticker originates from.
     attr_reader :server_id
 
-    # @return [Integer] The ID of the user that uploaded this sticker
+    # @return [Integer] The ID of the user that uploaded this sticker.
     attr_reader :member
 
-    # @return [Integer] The sort order of this sticker if it's part of a pack
+    # @return [Integer] The sort order of this sticker if it's part of a pack.
     attr_reader :sort_order
 
-    # @return [Integer] the ID of the pack if this sticker belongs to one
+    # @return [Integer] The ID of the pack if this sticker belongs to one.
     attr_reader :pack_id
 
     # @!visibility private
-    def initialize(data, bot, server = nil)
+    def initialize(data, bot, _server = nil)
       @bot = bot
       @name = data['name']
       @id = data['id']&.to_i

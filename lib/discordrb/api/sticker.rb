@@ -12,7 +12,7 @@ module Discordrb::API::Sticker
       :sticker_id,
       :get,
       "#{Discordrb::API.api_base}/guilds/stickers/#{sticker_id}",
-      Authorization: token,
+      Authorization: token
     )
   end
 
@@ -22,7 +22,7 @@ module Discordrb::API::Sticker
     Discordrb::API.request(
       :get,
       "#{Discordrb::API.api_base}/sticker-packs",
-      Authorization: token,
+      Authorization: token
     )
   end
 
@@ -32,7 +32,7 @@ module Discordrb::API::Sticker
     Discordrb::API.request(
       :get,
       "#{Discordrb::API.api_base}/sticker-packs/#{pack_id}",
-      Authorization: token,
+      Authorization: token
     )
   end
 
