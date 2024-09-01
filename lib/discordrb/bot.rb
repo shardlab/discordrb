@@ -218,6 +218,14 @@ module Discordrb
       emoji.find { |element| element.name == name }
     end
 
+    # Find a sticker by its ID.
+    # @param name [Integer] The sticker ID that should be resolved.
+    # @return [StickerObject] the sticker object identified by ID.
+    def find_sticker(id)
+      data = API::Sticker.resolve(@token, id)
+      (JSON.parse(data))
+    end
+
     # The bot's user profile. This special user object can be used
     # to edit user data like the current username (see {Profile#username=}).
     # @return [Profile] The bot's profile that can be used to edit data.
