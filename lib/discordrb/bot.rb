@@ -27,6 +27,7 @@ require 'discordrb/api/server'
 require 'discordrb/api/invite'
 require 'discordrb/api/interaction'
 require 'discordrb/api/application'
+require 'discordrb/api/sticker'
 
 require 'discordrb/errors'
 require 'discordrb/data'
@@ -223,7 +224,7 @@ module Discordrb
     # @return [StickerObject] the sticker object identified by ID.
     def find_sticker(id)
       data = API::Sticker.resolve(@token, id)
-      (JSON.parse(data))
+      Sticker.new(JSON.parse(data), @bot, self)
     end
 
     # The bot's user profile. This special user object can be used
