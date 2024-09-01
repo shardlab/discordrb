@@ -223,7 +223,7 @@ module Discordrb
     # @param name [Integer] The sticker ID that should be resolved.
     # @return [StickerObject] the sticker object identified by ID.
     def find_sticker(id)
-      data = API::Sticker.resolve(@token, id)
+      data = API::Sticker.resolve_sticker(@token, id)
       Sticker.new(JSON.parse(data), @bot, self)
     end
 

@@ -6,7 +6,7 @@ module Discordrb::API::Sticker
 
   # Return a single sticker object given the ID.
   # https://discord.com/developers/docs/resources/sticker#get-sticker
-  def resolve(token, sticker_id)
+  def resolve_sticker(token, sticker_id)
     Discordrb::API.request(
       :stickers_sid,
       :sticker_id,
