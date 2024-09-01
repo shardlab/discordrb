@@ -519,47 +519,6 @@ module Discordrb::API::Server
     )
   end
 
-  # Adds a custom sticker to a guild.
-  # https://discord.com/developers/docs/resources/sticker#create-guild-sticker
-  def add_sticker(token, server_id, file, name, description, tags, reason = nil)
-    Discordrb::API.request(
-      :guilds_sid_stickers,
-      :server_id,
-      :post,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers",
-      { name: name, description: description, tags: tags, file: file },
-      { multipart: true, Authorization: token, 'X-Audit-Log-Reason': reason }
-    )
-  end
-
-  # Changes a sticker's name, description, or tags.
-  # https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
-  def edit_sticker(token, server_id, sticker_id, name, description, tags, reason = nil)
-    Discordrb::API.request(
-      :guilds_sid_stickers_eid,
-      server_id,
-      :patch,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers/#{sticker_id}",
-      { name: name, description: description, tags: tags }.to_json,
-      Authorization: token,
-      content_type: :json,
-      'X-Audit-Log-Reason': reason
-    )
-  end
-
-  # Deletes a custom sticker from a guild.
-  # https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
-  def delete_sticker(token, server_id, sticker_id, reason = nil)
-    Discordrb::API.request(
-      :guilds_sid_stickers_eid,
-      server_id,
-      :delete,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers/#{sticker_id}",
-      Authorization: token,
-      'X-Audit-Log-Reason': reason
-    )
-  end
-
   # Available voice regions for this server
   # https://discord.com/developers/docs/resources/guild#get-guild-voice-regions
   def regions(token, server_id)

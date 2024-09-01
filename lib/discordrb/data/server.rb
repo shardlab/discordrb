@@ -584,7 +584,7 @@ module Discordrb
     def add_sticker(name, file, description, tags, reason: nil)
       raise(ArgumentError, 'The sticker file must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KB!') unless file.is_a?(File)
 
-      data = API::Server.add_sticker(@bot.token, @id, file, name, description, tags, reason)
+      data = API::Sticker.add_sticker(@bot.token, @id, file, name, description, tags, reason)
       new_sticker = Sticker.new(JSON.parse(data), @bot, self)
       @sticker[new_sticker.id] = new_sticker
     end
@@ -596,7 +596,7 @@ module Discordrb
     # @pararm tags [string] The new tags for this sticker.
     # @param reason [String] The reason for the editing of this sticker.
     def edit_sticker(sticker, name: nil, description: nil, tags: nil, reason: nil)
-      data = JSON.parse(API::Server.edit_sticker(@bot.token, @id, sticker, name, description, tags, reason))
+      data = JSON.parse(API::Sticker.edit_sticker(@bot.token, @id, sticker, name, description, tags, reason))
       new_sticker = Sticker.new(data, @bot, self)
       @sticker[new_sticker.id] = new_sticker
     end
@@ -605,7 +605,7 @@ module Discordrb
     # @param sticker [Integer] The ID of the sticker to be deleted.
     # @param reason [String] The reason the for the deletion of this sticker.
     def delete_sticker(sticker, reason: nil)
-      API::Server.delete_sticker(@bot.token, @id, sticker, reason)
+      API::Sticker.delete_sticker(@bot.token, @id, sticker, reason)
     end
 
     # The amount of emoji the server can have, based on its current Nitro Boost Level.
