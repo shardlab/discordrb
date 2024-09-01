@@ -283,7 +283,7 @@ module Discordrb
 
     # Check if a sticker was used in this message.
     # @return [true, false] whether or not a sticker was used
-    def any_sticker?
+    def has_sticker?
       !(sticker || '').empty?
     end
 
