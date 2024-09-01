@@ -41,27 +41,30 @@ module Discordrb
       75 => :message_unpin,
       80 => :integration_create,
       81 => :integration_update,
-      82 => :integration_delete
+      82 => :integration_delete,
+      90 => :sticker_create,
+      91 => :sticker_update,
+      92 => :sticker_delete
     }.freeze
 
     # @!visibility private
     CREATE_ACTIONS = %i[
       channel_create channel_overwrite_create member_ban_add role_create
-      invite_create webhook_create emoji_create integration_create
+      invite_create webhook_create emoji_create integration_create sticker_create
     ].freeze
 
     # @!visibility private
     DELETE_ACTIONS = %i[
       channel_delete channel_overwrite_delete member_kick member_prune
       member_ban_remove role_delete invite_delete webhook_delete
-      emoji_delete message_delete message_bulk_delete integration_delete
+      emoji_delete message_delete message_bulk_delete integration_delete sticker_delete
     ].freeze
 
     # @!visibility private
     UPDATE_ACTIONS = %i[
       server_update channel_update channel_overwrite_update member_update
       member_role_update role_update invite_update webhook_update
-      emoji_update integration_update
+      emoji_update integration_update sticker_update
     ].freeze
 
     # @return [Hash<String => User>] the users included in the audit logs.
@@ -171,6 +174,7 @@ module Discordrb
         when :invite then @bot.invite(@data['changes'].find { |change| change['key'] == 'code' }.values.delete_if { |v| v == 'code' }.first)
         when :webhook then @server.webhooks.find { |webhook| webhook.id == id } || @logs.webhook(id)
         when :emoji then @server.emoji[id]
+        when :sticker then @server.sticker[id]
         when :integration then @server.integrations.find { |integration| integration.id == id }
         end
       end
