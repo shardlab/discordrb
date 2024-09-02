@@ -220,7 +220,7 @@ module Discordrb
     end
 
     # Find a sticker by its ID.
-    # @param ID [Integer] The sticker ID that should be resolved.
+    # @param id [Integer] The sticker ID that should be resolved.
     # @return [StickerObject] the sticker object identified by ID.
     def find_sticker(id)
       data = API::Sticker.resolve_sticker(@token, id)
@@ -230,7 +230,7 @@ module Discordrb
     alias_method :resolve_sticker, :find_sticker
 
     # Get a list of sticker packs
-    # @param name [Integer] The sticker ID that should be resolved.
+    # @param id [Integer] The sticker ID that should be resolved.
     # @return [StickerPackObject] the sticker object identified by ID.
     def find_sticker_pack(id)
       data = API::Sticker.resolve_pack(@token, id)
