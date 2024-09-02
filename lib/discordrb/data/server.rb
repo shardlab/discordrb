@@ -578,7 +578,7 @@ module Discordrb
 
     # Adds a new custom sticker on this server.
     # @param name [String] The name of the sticker to create.
-    # @param file [String] the sticker file to upload, must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KB.
+    # @param file [File] the sticker file to upload, must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KB.
     # @param description [String] description of the sticker.
     # @param tags [string] autocomplete/suggestion tags for the sticker.
     # @param reason [String] The reason the for the creation of this sticker.
