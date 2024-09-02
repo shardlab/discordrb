@@ -578,7 +578,7 @@ module Discordrb
 
     # Adds a new custom sticker on this server.
     # @param name [String] The name of the sticker to create.
-    # @param file [String, #read] the sticker file to upload, must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KB.
+    # @param file [String] the sticker file to upload, must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KB.
     # @param description [String] description of the sticker.
     # @param tags [string] autocomplete/suggestion tags for the sticker.
     # @param reason [String] The reason the for the creation of this sticker.
@@ -594,7 +594,7 @@ module Discordrb
     # @param sticker [Integer] The ID of the sticker to be edited.
     # @param name [String] The new name for the sticker.
     # @param description [String] The new description of the sticker.
-    # @pararm tags [string] The new tags for this sticker.
+    # @param tags [string] The new tags for this sticker.
     # @param reason [String] The reason for the editing of this sticker.
     def edit_sticker(sticker, name: nil, description: nil, tags: nil, reason: nil)
       data = JSON.parse(API::Sticker.edit_sticker(@bot.token, @id, sticker, name, description, tags, reason))
