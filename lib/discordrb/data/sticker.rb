@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Discordrb
-  # stickers
+  # Stickers: https://discord.com/developers/docs/resources/sticker
   class Sticker
     include IDObject
 
