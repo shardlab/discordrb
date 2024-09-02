@@ -11,7 +11,7 @@ module Discordrb::API::Sticker
       :stickers_sid,
       :sticker_id,
       :get,
-      "#{Discordrb::API.api_base}/guilds/stickers/#{sticker_id}",
+      "#{Discordrb::API.api_base}/stickers/#{sticker_id}",
       Authorization: token
     )
   end
