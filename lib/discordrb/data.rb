@@ -42,4 +42,3 @@ require 'discordrb/data/interaction'
 require 'discordrb/data/component'
 require 'discordrb/data/sticker'
 require 'discordrb/data/pack'
-
