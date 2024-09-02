@@ -227,6 +227,8 @@ module Discordrb
       Sticker.new(JSON.parse(data), @bot, self)
     end
 
+    alias_method :resolve_sticker, :find_sticker
+
     # Get a list of sticker packs
     # @param name [Integer] The sticker ID that should be resolved.
     # @return [StickerPackObject] the sticker object identified by ID.
@@ -235,13 +237,7 @@ module Discordrb
       Pack.new(JSON.parse(data), @bot, self)
     end
 
-    # Get a list of sticker packs
-    # @param name [Integer] The sticker ID that should be resolved.
-    # @return [StickerPackObject] the sticker object identified by ID.
-    def available_sticker_packs
-      data = API::Sticker.available_packs(@token)
-      Pack.new(JSON.parse(data), @bot, self)
-    end
+    alias_method :resolve_sticker_pack, :find_sticker_pack
 
     # The bot's user profile. This special user object can be used
     # to edit user data like the current username (see {Profile#username=}).

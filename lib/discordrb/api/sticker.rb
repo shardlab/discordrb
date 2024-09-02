@@ -16,20 +16,12 @@ module Discordrb::API::Sticker
     )
   end
 
-  # Get a list of avalible sticker packs.
-  # https://discord.com/developers/docs/resources/sticker#list-sticker-packs
-  def available_packs(token)
-    Discordrb::API.request(
-      :get,
-      "#{Discordrb::API.api_base}/sticker-packs",
-      Authorization: token
-    )
-  end
-
   # Get a sticker pack object given its ID.
   # https://discord.com/developers/docs/resources/sticker#get-sticker-pack
   def resolve_pack(token, pack_id)
     Discordrb::API.request(
+      :stickers_sid,
+      :sticker_id,
       :get,
       "#{Discordrb::API.api_base}/sticker-packs/#{pack_id}",
       Authorization: token

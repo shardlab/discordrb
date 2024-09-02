@@ -38,6 +38,7 @@ module Discordrb
 
     # @return [Array<Stickers>] An array of all the stickers available on this server.
     attr_reader :stickers
+    alias_method :sticker, :stickers
 
     # @return [true, false] whether or not this server is large (members > 100). If it is,
     # it means the members list may be inaccurate for a couple seconds after starting up the bot.
