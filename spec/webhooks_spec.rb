@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'base64'
 require 'securerandom'
 require 'discordrb/webhooks'
 
@@ -15,6 +16,62 @@ describe Discordrb::Webhooks do
 
       expect(builder.embeds.length).to eq 1
       expect(builder.embeds.first).to eq embed
+    end
+
+    describe '#to_payload_hash' do
+      let(:file) { double(File) }
+      let(:attachments) { [double(File), double(File)] }
+
+      it 'should return json hash when a file is not present' do
+        builder = Discordrb::Webhooks::Builder.new
+
+        builder.add_embed do |e|
+          e.title = 'hello world'
+        end
+
+        payload = builder.to_payload_hash
+
+        expect(payload).to include(:embeds)
+        expect(payload).to_not include(:file)
+      end
+
+      it 'should return multipart hash when a file is present' do
+        expect(Discordrb::LOGGER).to receive(:warn).exactly(1).times
+
+        builder = Discordrb::Webhooks::Builder.new
+
+        builder.file = file
+
+        payload = builder.to_payload_hash
+
+        expect(payload).to include(:file)
+        expect(payload).to_not include(:embeds)
+      end
+
+      it 'should return multipart hash when attachments are present' do
+        builder = Discordrb::Webhooks::Builder.new
+
+        builder.attachments = attachments
+
+        payload = builder.to_payload_hash
+
+        expect(payload).to include(:attachments)
+        expect(payload).to_not include(:embeds)
+      end
+
+      it 'support deprecated file behavior and omits attachments if both specified' do
+        expect(Discordrb::LOGGER).to receive(:warn).exactly(1).times
+        builder = Discordrb::Webhooks::Builder.new
+
+        builder.file = file
+        builder.attachments = attachments
+
+        payload = builder.to_payload_hash
+
+        expect(payload).to include(:file)
+        expect(payload).to_not include(:attachments)
+        expect(payload).to_not include(:embeds)
+      end
     end
   end
 
