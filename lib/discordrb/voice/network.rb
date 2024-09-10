@@ -167,7 +167,7 @@ module Discordrb::Voice
   # circle around users on Discord, and obtaining UDP connection info.
   class VoiceWS
     # The version of the voice gateway that's supposed to be used.
-    VOICE_GATEWAY_VERSION = 4
+    VOICE_GATEWAY_VERSION = 8
 
     # @return [VoiceUDP] the UDP voice connection over which the actual audio data is sent.
     attr_reader :udp
