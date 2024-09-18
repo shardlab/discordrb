@@ -16,8 +16,11 @@ module Discordrb
       # @param name [String] 	1-32 character name
       # @param description [String] 1-100 character description
       # @param options [Array<Hash>] the parameters for the command
-      # @param default_member_permissions [Integer] The bitwise permissions that this command will be enabled for by default
+      # @param default_member_permissions [Integer] the bitwise permissions that this command will be enabled for by default
       # @param type [1, 2, 3] the type of command, defaults `1` if not set.
+      # @param contexts [0, 1, 2] the contexts in which this command can be used
+      # @param integration_types [0, 1] Supported installation contexts
+      # @param nsfw [Boolean] Whether this command should be age-restricted
       # @return [Hash<Symbol, Object>]
       def create_global_application_command(application_id, name:, description:, options: :undef,
                                             default_member_permissions: :undef, type: :undef, contexts: :undef, integration_types: :undef, nsfw: :undef, **rest)
@@ -51,7 +54,10 @@ module Discordrb
       # @param name [String] 	1-32 character name
       # @param description [String] 1-100 character description
       # @param options [Array<Hash>] the parameters for the command
-      # @param default_member_permissions [Integer] The bitwise permissions that this command will be enabled for by default
+      # @param default_member_permissions [Integer] the bitwise permissions that this command will be enabled for by default
+      # @param contexts [0, 1, 2] the contexts in which this command can be used
+      # @param integration_types [0, 1] Supported installation contexts
+      # @param nsfw [Boolean] Whether this command should be age-restricted
       # @return [Hash<Symbol, Object>]
       def edit_global_application_command(application_id, command_id, name: :undef, description: :undef,
                                           options: :undef, default_member_permissions: :undef, contexts: :undef, integration_types: :undef, nsfw: :undef, **rest)
@@ -102,8 +108,9 @@ module Discordrb
       # @param name [String]	1-32 character name
       # @param description [String] 1-100 character description
       # @param options [Array<Hash>, nil] the parameters for the command
-      # @param default_member_permissions [Integer] The bitwise permissions that this command will be enabled for by default
+      # @param default_member_permissions [Integer] the bitwise permissions that this command will be enabled for by default
       # @param type [1, 2, 3] the type of command, defaults 1 if not set
+      # @param nsfw [Boolean] Whether this command should be age-restricted
       # @return [Hash]
       def create_guild_application_command(application_id, guild_id, name:, description:, options: :undef,
                                            default_member_permissions: :undef, type: :undef, nsfw: :undef, **rest)
@@ -137,7 +144,8 @@ module Discordrb
       # @param name [String] 	1-32 character name
       # @param description [String] 1-100 character description
       # @param options [Array<Hash>] the parameters for the command
-      # @param default_member_permissions [Integer] The bitwise permissions that this command will be enabled for by default
+      # @param default_member_permissions [Integer] the bitwise permissions that this command will be enabled for by default
+      # @param nsfw [Boolean] Whether this command should be age-restricted
       # @return [Hash<Symbol, Object>]
       def edit_guild_application_command(application_id, guild_id, command_id, name: :undef, description: :undef,
                                          options: :undef, default_member_permissions: :undef, nsfw: :undef, **rest)
