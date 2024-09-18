@@ -433,34 +433,6 @@ module Discordrb
                 reason: reason
       end
 
-      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-current-user-voice-state
-      # @return [nil]
-      def modify_current_user_voice_state(guild_id, channel_id: :undef, suppress: :undef,
-                                          request_to_speak_timestamp: :undef, **rest)
-        data = {
-          channel_id: channel_id,
-          suppress: suppress,
-          request_to_speak_timestamp: request_to_speak_timestamp,
-          **rest
-        }
-
-        request Route[:PATCH, "/guilds/#{guild_id}/voice-states/@me", guild_id],
-                body: filter_undef(data)
-      end
-
-      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-user-voice-state
-      # @return [nil]
-      def modify_user_voice_state(guild_id, user_id, channel_id: :undef, suppress: :undef, **rest)
-        data = {
-          channel_id: channel_id,
-          suppress: suppress,
-          **rest
-        }
-
-        request Route[:PATCH, "/guilds/#{guild_id}/voice-states/#{user_id}", guild_id],
-                body: filter_undef(data)
-      end
-
       # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-onboarding
       # @return [Hash<Symbol, Object>]
       def get_guild_onboarding(guild_id, **params)
