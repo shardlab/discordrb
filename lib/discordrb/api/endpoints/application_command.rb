@@ -20,13 +20,14 @@ module Discordrb
       # @param type [1, 2, 3] the type of command, defaults `1` if not set.
       # @return [Hash<Symbol, Object>]
       def create_global_application_command(application_id, name:, description:, options: :undef,
-                                            default_permission: :undef, type: :undef, **rest)
+                                            default_member_permissions: :undef, type: :undef, contexts: :undef, **rest)
         data = {
           name: name,
           description: description,
           options: options,
-          default_permission: default_permission,
+          default_member_permissions: default_member_permissions,
           type: type,
+          contexts: contexts,
           **rest
         }
 
@@ -51,12 +52,13 @@ module Discordrb
       # @param default_permission [true, false, nil] whether the command is enabled by default when the app is added to a guild
       # @return [Hash<Symbol, Object>]
       def edit_global_application_command(application_id, command_id, name: :undef, description: :undef,
-                                          options: :undef, default_permission: :undef, **rest)
+                                          options: :undef, default_member_permissions: :undef, contexts: :undef, **rest)
         data = {
           name: name,
           description: description,
           options: options,
-          default_permission: default_permission,
+          default_member_permissions: default_member_permissions,
+          contexts: contexts,
           **rest
         }
 
@@ -100,13 +102,14 @@ module Discordrb
       # @param type [1, 2, 3] the type of command, defaults 1 if not set
       # @return [Hash]
       def create_guild_application_command(application_id, guild_id, name:, description:, options: :undef,
-                                           default_permission: :undef, type: :undef, **rest)
+                                           default_member_permissions: :undef, type: :undef, contexts: :undef, **rest)
         data = {
           name: name,
           description: description,
           options: options,
-          default_permission: default_permission,
+          default_member_permissions: default_member_permissions,
           type: type,
+          contexts: contexts,
           **rest
         }
 
@@ -133,12 +136,13 @@ module Discordrb
       # @param default_permission [true, false, nil] whether the command is enabled by default when the app is added to a guild
       # @return [Hash<Symbol, Object>]
       def edit_guild_application_command(application_id, guild_id, command_id, name: :undef, description: :undef,
-                                          options: :undef, default_permission: :undef, **rest)
+                                         options: :undef, default_member_permissions: :undef, contexts: :undef, **rest)
         data = {
           name: name,
           description: description,
           options: options,
-          default_permission: default_permission,
+          default_member_permissions: default_member_permissions,
+          contexts: contexts,
           **rest
         }
 
@@ -193,15 +197,6 @@ module Discordrb
       def edit_application_command_permissions(application_id, guild_id, command_id, permissions: [], **rest)
         request Route[:PUT, "/applications/#{application_id}/guilds/#{guild_id}/commands/#{command_id}/permissions"],
                 body: filter_undef({ permissions: permissions, **rest })
-      end
-
-      # @!discord_api https://discord.com/developers/docs/interactions/application-commands#batch-edit-application-command-permissions
-      # @param application_id [Integer, String]
-      # @param guild_id [Integer, String]
-      # @param permissions [Array<Hash>]
-      def batch_edit_application_command_permissions(application_id, guild_id, permissions)
-        request Route[:PUT, "/applications/#{application_id}/guilds/#{guild_id}/commands/permissions"],
-                body: permissions
       end
     end
   end
