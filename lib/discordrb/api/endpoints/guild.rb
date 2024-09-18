@@ -56,7 +56,7 @@ module Discordrb
           name: name,
           region: region,
           verification_level: verification_level,
-          default_message_notifications:default_message_notifications,
+          default_message_notifications: default_message_notifications,
           explicit_content_filter: explicit_content_filter,
           afk_channel_id: afk_channel_id,
           afk_timeout: afk_timeout,
@@ -315,6 +315,14 @@ module Discordrb
                 reason: reason
       end
 
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-mfa-level
+      # @return [Intger]
+      def modify_guild_mfa_level(guild_id, level:, reason: :undef, **rest)
+        request Route[:POST, "/guilds/#{guild_id}/mfa", guild_id],
+                body: filter_undef({ level: level, **rest }),
+                reason: reason
+      end
+
       # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-prune-count
       # @return [Hash<Symbol, Object>]
       def get_guild_prune_count(guild_id, days: :undef, include_roles: :undef, **params)
@@ -451,6 +459,30 @@ module Discordrb
 
         request Route[:PATCH, "/guilds/#{guild_id}/voice-states/#{user_id}", guild_id],
                 body: filter_undef(data)
+      end
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-onboarding
+      # @return [Hash<Symbol, Object>]
+      def get_guild_onboarding(guild_id, **params)
+        request Route[:GET, "/guilds/#{guild_id}/onboarding", guild_id],
+                params: params
+      end
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-onboarding
+      # @return [Hash<Symbol, Object>]
+      def modify_guild_onboarding(guild_id, prompts: :undef, default_channel_ids: :undef, enabled: :undef,
+                                  mode: :undef, reason: :undef, **rest)
+        data = {
+          prompts: prompts,
+          default_channel_ids: default_channel_ids,
+          enabled: enabled,
+          mode: mode,
+          **rest
+        }
+
+        request Route[:PUT, "/guilds/#{guild_id}/onboarding", guild_id],
+                body: filter_undef(data),
+                reason: reason
       end
     end
   end
