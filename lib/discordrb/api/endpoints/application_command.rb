@@ -16,11 +16,11 @@ module Discordrb
       # @param name [String] 	1-32 character name
       # @param description [String] 1-100 character description
       # @param options [Array<Hash>] the parameters for the command
-      # @param default_permission [true, false, nil] whether the command is enabled by default when the app is added to a guild
+      # @param default_member_permissions [Integer] The bitwise permissions that this command will be enabled for by default
       # @param type [1, 2, 3] the type of command, defaults `1` if not set.
       # @return [Hash<Symbol, Object>]
       def create_global_application_command(application_id, name:, description:, options: :undef,
-                                            default_member_permissions: :undef, type: :undef, contexts: :undef, **rest)
+                                            default_member_permissions: :undef, type: :undef, contexts: :undef, integration_types: :undef, nsfw: :undef, **rest)
         data = {
           name: name,
           description: description,
@@ -28,6 +28,8 @@ module Discordrb
           default_member_permissions: default_member_permissions,
           type: type,
           contexts: contexts,
+          integration_types: integration_types,
+          nsfw: nsfw,
           **rest
         }
 
@@ -49,16 +51,18 @@ module Discordrb
       # @param name [String] 	1-32 character name
       # @param description [String] 1-100 character description
       # @param options [Array<Hash>] the parameters for the command
-      # @param default_permission [true, false, nil] whether the command is enabled by default when the app is added to a guild
+      # @param default_member_permissions [Integer] The bitwise permissions that this command will be enabled for by default
       # @return [Hash<Symbol, Object>]
       def edit_global_application_command(application_id, command_id, name: :undef, description: :undef,
-                                          options: :undef, default_member_permissions: :undef, contexts: :undef, **rest)
+                                          options: :undef, default_member_permissions: :undef, contexts: :undef, integration_types: :undef, nsfw: :undef, **rest)
         data = {
           name: name,
           description: description,
           options: options,
           default_member_permissions: default_member_permissions,
           contexts: contexts,
+          integration_types: integration_types,
+          nsfw: nsfw,
           **rest
         }
 
@@ -98,18 +102,18 @@ module Discordrb
       # @param name [String]	1-32 character name
       # @param description [String] 1-100 character description
       # @param options [Array<Hash>, nil] the parameters for the command
-      # @param default_permission [true, false, nil] whether the command is enabled by default when the app is added to a guild
+      # @param default_member_permissions [Integer] The bitwise permissions that this command will be enabled for by default
       # @param type [1, 2, 3] the type of command, defaults 1 if not set
       # @return [Hash]
       def create_guild_application_command(application_id, guild_id, name:, description:, options: :undef,
-                                           default_member_permissions: :undef, type: :undef, contexts: :undef, **rest)
+                                           default_member_permissions: :undef, type: :undef, nsfw: :undef, **rest)
         data = {
           name: name,
           description: description,
           options: options,
           default_member_permissions: default_member_permissions,
           type: type,
-          contexts: contexts,
+          nsfw: nsfw,
           **rest
         }
 
@@ -133,16 +137,16 @@ module Discordrb
       # @param name [String] 	1-32 character name
       # @param description [String] 1-100 character description
       # @param options [Array<Hash>] the parameters for the command
-      # @param default_permission [true, false, nil] whether the command is enabled by default when the app is added to a guild
+      # @param default_member_permissions [Integer] The bitwise permissions that this command will be enabled for by default
       # @return [Hash<Symbol, Object>]
       def edit_guild_application_command(application_id, guild_id, command_id, name: :undef, description: :undef,
-                                         options: :undef, default_member_permissions: :undef, contexts: :undef, **rest)
+                                         options: :undef, default_member_permissions: :undef, nsfw: :undef, **rest)
         data = {
           name: name,
           description: description,
           options: options,
           default_member_permissions: default_member_permissions,
-          contexts: contexts,
+          nsfw: nsfw,
           **rest
         }
 
