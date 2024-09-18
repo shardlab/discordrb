@@ -253,6 +253,13 @@ module Discordrb
                 params: params
       end
 
+      # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-role
+      # @return [Array<Hash<Symbol, Object>>]
+      def get_guild_role(guild_id, role_id, **params)
+        request Route[:GET, "/guilds/#{guild_id}/roles/#{role_id}", guild_id],
+                params: params
+      end
+
       # @!discord_api https://discord.com/developers/docs/resources/guild#create-guild-role
       # @return [Hash<Symbol, Object>]
       def create_guild_role(guild_id, name: :undef, permissions: :undef, color: :undef, hoist: :undef, icon: :undef,
