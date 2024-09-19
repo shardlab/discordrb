@@ -53,6 +53,29 @@ module Discordrb
       def get_current_user_connections(**params)
         request Route[:GET, '/users/@me/connections'], params: params
       end
+
+      # @!discord_api https://discord.com/developers/docs/resources/user#get-current-user-application-role-connection
+      # @return [Hash<Symbol, Object>]
+      def get_current_user_application_role_connections(application_id, **params)
+        request Route[:GET, "/users/@me/applications/#{application_id}/role-connection"],
+                params: params
+      end
+
+      # @!discord_api https://discord.com/developers/docs/resources/user#update-current-user-application-role-connection
+      # @return [Hash<Symbol, Object>]
+      def get_current_user_application_role_connections(application_id, platform_name: :undef, platform_username: :undef,
+                                                        metadata: :undef, **params)
+
+        data = {
+          platform_name: platform_name,
+          platform_username: platform_username,
+          metadata: metadata,
+          **params
+        }
+
+        request Route[:PUT, "/users/@me/applications/#{application_id}/role-connection"],
+                body: filter_undef(data)
+      end
     end
   end
 end
