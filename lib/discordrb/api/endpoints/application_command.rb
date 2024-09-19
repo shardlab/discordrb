@@ -21,9 +21,13 @@ module Discordrb
       # @param contexts [0, 1, 2] the contexts in which this command can be used
       # @param integration_types [0, 1] Supported installation contexts
       # @param nsfw [Boolean] Whether this command should be age-restricted
+      # @param name_localizations [Hash] Localized name of the application command
+      # @param description_localizations [Hash] Localized description of the application command
       # @return [Hash<Symbol, Object>]
       def create_global_application_command(application_id, name:, description:, options: :undef,
-                                            default_member_permissions: :undef, type: :undef, contexts: :undef, integration_types: :undef, nsfw: :undef, **rest)
+                                            default_member_permissions: :undef, type: :undef, contexts: :undef,
+                                            integration_types: :undef, nsfw: :undef, name_localizations: :undef,
+                                            description_localizations: :undef, **rest)
         data = {
           name: name,
           description: description,
@@ -33,6 +37,8 @@ module Discordrb
           contexts: contexts,
           integration_types: integration_types,
           nsfw: nsfw,
+          name_localizations: name_localizations,
+          description_localizations: description_localizations,
           **rest
         }
 
@@ -58,9 +64,13 @@ module Discordrb
       # @param contexts [0, 1, 2] the contexts in which this command can be used
       # @param integration_types [0, 1] Supported installation contexts
       # @param nsfw [Boolean] Whether this command should be age-restricted
+      # @param name_localizations [Hash] Localized name of the application command
+      # @param description_localizations [Hash] Localized description of the application command
       # @return [Hash<Symbol, Object>]
       def edit_global_application_command(application_id, command_id, name: :undef, description: :undef,
-                                          options: :undef, default_member_permissions: :undef, contexts: :undef, integration_types: :undef, nsfw: :undef, **rest)
+                                          options: :undef, default_member_permissions: :undef, contexts: :undef,
+                                          integration_types: :undef, nsfw: :undef, name_localizations: :undef,
+                                          description_localizations: :undef, **rest)
         data = {
           name: name,
           description: description,
@@ -69,6 +79,8 @@ module Discordrb
           contexts: contexts,
           integration_types: integration_types,
           nsfw: nsfw,
+          name_localizations: name_localizations,
+          description_localizations: description_localizations,
           **rest
         }
 
@@ -111,9 +123,12 @@ module Discordrb
       # @param default_member_permissions [Integer] the bitwise permissions that this command will be enabled for by default
       # @param type [1, 2, 3] the type of command, defaults 1 if not set
       # @param nsfw [Boolean] Whether this command should be age-restricted
+      # @param name_localizations [Hash] Localized name of the application command
+      # @param description_localizations [Hash] Localized description of the application command
       # @return [Hash]
       def create_guild_application_command(application_id, guild_id, name:, description:, options: :undef,
-                                           default_member_permissions: :undef, type: :undef, nsfw: :undef, **rest)
+                                           default_member_permissions: :undef, type: :undef, nsfw: :undef,
+                                           name_localizations: :undef, description_localizations: :undef, **rest)
         data = {
           name: name,
           description: description,
@@ -121,6 +136,8 @@ module Discordrb
           default_member_permissions: default_member_permissions,
           type: type,
           nsfw: nsfw,
+          name_localizations: name_localizations,
+          description_localizations: description_localizations,
           **rest
         }
 
@@ -146,15 +163,20 @@ module Discordrb
       # @param options [Array<Hash>] the parameters for the command
       # @param default_member_permissions [Integer] the bitwise permissions that this command will be enabled for by default
       # @param nsfw [Boolean] Whether this command should be age-restricted
+      # @param name_localizations [Hash] Localized name of the application command
+      # @param description_localizations [Hash] Localized description of the application command
       # @return [Hash<Symbol, Object>]
       def edit_guild_application_command(application_id, guild_id, command_id, name: :undef, description: :undef,
-                                         options: :undef, default_member_permissions: :undef, nsfw: :undef, **rest)
+                                         options: :undef, default_member_permissions: :undef, nsfw: :undef,
+                                         name_localizations: :undef, description_localizations: :undef, **rest)
         data = {
           name: name,
           description: description,
           options: options,
           default_member_permissions: default_member_permissions,
           nsfw: nsfw,
+          name_localizations: name_localizations,
+          description_localizations: description_localizations,
           **rest
         }
 

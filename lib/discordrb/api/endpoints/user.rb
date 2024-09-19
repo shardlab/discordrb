@@ -63,9 +63,8 @@ module Discordrb
 
       # @!discord_api https://discord.com/developers/docs/resources/user#update-current-user-application-role-connection
       # @return [Hash<Symbol, Object>]
-      def get_current_user_application_role_connections(application_id, platform_name: :undef, platform_username: :undef,
-                                                        metadata: :undef, **params)
-
+      def update_current_user_application_role_connections(application_id, platform_name: :undef, platform_username: :undef,
+                                                           metadata: :undef, **params)
         data = {
           platform_name: platform_name,
           platform_username: platform_username,
