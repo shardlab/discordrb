@@ -21,8 +21,8 @@ module Discordrb
       # @!discord_api https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event
       # @return [Hash<Symbol, Object>]
       def create_guild_scheduled_event(guild_id, channel_id: :undef, entity_metadata: :undef, name:, privacy_level: :undef,
-                                       scheduled_start_time: :undef, scheduled_end_time: :undef, description: :undef, entity_type: :undef,
-                                       image: :undef, recurrence_rule: :undef, reason: :undef, **rest)
+                                       scheduled_start_time: :undef, scheduled_end_time: :undef, description: :undef,
+                                       entity_type: :undef, image: :undef, recurrence_rule: :undef, reason: :undef, **rest)
         data = {
           channel_id: channel_id,
           entity_metadata: entity_metadata,

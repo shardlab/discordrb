@@ -66,7 +66,8 @@ module Discordrb
       # @return [Hash<Symbol, Object>]
       def create_message(channel_id,
                          content: :undef, tts: :undef, files: :undef, embeds: :undef, allowed_mentions: :undef,
-                         message_reference: :undef, components: :undef, sticker_ids: :undef, **rest)
+                         message_reference: :undef, components: :undef, sticker_ids: :undef, flags: :undef,
+                         enforce_nonce: :undef, poll: :undef, **rest)
         body = filter_undef({
                               content: content,
                               tts: tts,
@@ -75,6 +76,9 @@ module Discordrb
                               message_reference: message_reference,
                               components: components,
                               sticker_ids: sticker_ids,
+                              flags: flags,
+                              enforce_nonce: enforce_nonce,
+                              poll: poll,
                               **rest
                             })
 
