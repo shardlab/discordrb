@@ -67,7 +67,7 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
-      # @return nil
+      # @return [nil]
       def delete_guild_sticker(guild_id, sticker_id, reason: :undef)
         request Route[:PATCH, "/guilds/#{guild_id}/stickers/#{sticker_id}", guild_id],
                 reason: reason
