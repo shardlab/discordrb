@@ -58,6 +58,44 @@ module Discordrb
       def delete_original_interaction_response(id, token)
         delete_webhook_message(id, token, '@original')
       end
+
+      # @!discord_api https://discord.com/developers/docs/interactions/receiving-and-responding#create-followup-message
+      # @param id [Integer, String]
+      # @param token [String]
+      def create_followup_message(id, token, content: :undef, tts: :undef, embeds: :undef, allowed_mentions: :undef,
+                                  components: :undef, file: :undef, flags: :undef, applied_tags: :undef, poll: :undef, **rest)
+        body = {
+          wait: true, content: content, tts: :undef, embeds: embeds, allowed_mentions: allowed_mentions, file: :undef,
+          flags: flags, components: components, applied_tags: applied_tags, poll: poll, **rest
+        }
+
+        execute_webhook(id, token, **body)
+      end
+
+      # @!discord_api https://discord.com/developers/docs/interactions/receiving-and-responding#get-followup-message
+      # @param id [Integer, String]
+      # @param token [String]
+      # @param message_id [Integer, String]
+      def get_followup_message(id, token, message_id)
+        get_webhook_message(id, token, message_id)
+      end
+
+      # @!discord_api https://discord.com/developers/docs/interactions/receiving-and-responding#edit-followup-message
+      # @param id [Integer, String]
+      # @param token [String]
+      # @param message_id [Integer, String]
+      def edit_followup_message(id, token, message_id)
+        edit_webhook_message(id, token, message_id, **body)
+      end
+
+      # @!discord_api https://discord.com/developers/docs/interactions/receiving-and-responding#delete-followup-message
+      # @param id [Integer, String]
+      # @param token [String]
+      # @param message_id [Integer, String]
+      # @return [nil]
+      def delete_followup_message(id, token, message_id)
+        delete_webhook_message(id, token, message_id)
+      end
     end
   end
 end

@@ -71,8 +71,8 @@ module Discordrb
       # @!discord_api https://discord.com/developers/docs/resources/webhook#execute-webhook
       # @return [nil, Hash<Symbol, Object>]
       def execute_webhook(webhook_id, webhook_token, wait: :undef, thread_id: :undef, content: :undef, username: :undef,
-                          avatar_url: :undef, tts: :undef, file: :undef, embeds: :undef, allowed_mentions: :undef,
-                          components: :undef, params: {}, **rest)
+                          avatar_url: :undef, tts: :undef, file: :undef, flags: :undef, embeds: :undef, allowed_mentions: :undef,
+                          components: :undef, applied_tags: :undef, poll: :undef, params: {}, **rest)
         data = {
           content: content,
           username: username,

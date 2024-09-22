@@ -13,9 +13,9 @@ module Discordrb
 
       # @!discord_api https://discord.com/developers/docs/resources/poll#end-poll
       # @return [Array<Hash<Symbol, Object>>]
-      def end_poll(channel_id, message_id, **params)
+      def end_poll(channel_id, message_id, **rest)
         request Route[:POST, "/channels/#{channel_id}/polls/#{message_id}/expire", message_id],
-                params: params
+                body: rest
       end
     end
   end

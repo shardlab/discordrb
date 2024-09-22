@@ -4,12 +4,17 @@ require 'faraday'
 require 'faraday_middleware'
 require 'discordrb/api/endpoints/application_command'
 require 'discordrb/api/endpoints/audit_log'
+require 'discordrb/api/endpoints/auto_moderation'
 require 'discordrb/api/endpoints/channel'
 require 'discordrb/api/endpoints/emoji'
+require 'discordrb/api/endpoints/entitlement'
+require 'discordrb/api/endpoints/guild_scheduled_event'
 require 'discordrb/api/endpoints/guild'
 require 'discordrb/api/endpoints/guild_template'
 require 'discordrb/api/endpoints/interaction'
 require 'discordrb/api/endpoints/invite'
+require 'discordrb/api/endpoints/poll'
+require 'discordrb/api/endpoints/sku'
 require 'discordrb/api/endpoints/stage_instance'
 require 'discordrb/api/endpoints/sticker'
 require 'discordrb/api/endpoints/user'
@@ -100,12 +105,17 @@ module Discordrb
     class Client
       include ApplicationCommandEndpoints
       include AuditLogEndpoints
+      include AutoModerationEndpoints
       include ChannelEndpoints
       include EmojiEndpoints
+      include EntitlementEndpoints
+      include GuildScheduledEventEndpoints
       include GuildEndpoints
       include GuildTemplateEndpoints
       include InteractionEndpoints
       include InviteEndpoints
+      include PollEndpoints
+      include SkuEndpoints
       include StageInstanceEndpoints
       include StickerEndpoints
       include UserEndpoints
