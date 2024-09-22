@@ -172,13 +172,14 @@ module Discordrb
       # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-member
       # @return [Hash<Symbol, Object>]
       def modify_guild_member(guild_id, user_id, nick: :undef, roles: :undef, mute: :undef, deaf: :undef,
-                              channel_id: :undef, reason: :undef, **rest)
+                              channel_id: :undef, communication_disabled_until: :undef, reason: :undef, **rest)
         data = {
           nick: nick,
           roles: roles,
           mute: mute,
           deaf: deaf,
           channel_id: channel_id,
+          communication_disabled_until: communication_disabled_until,
           **rest
         }
 
@@ -219,9 +220,9 @@ module Discordrb
 
       # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-bans
       # @return [Array<Hash<Symbol, Object>>]
-      def get_guild_bans(guild_id, **params)
+      def get_guild_bans(guild_id, limit: :undef, before: :undef, after: :undef, **params)
         request Route[:GET, "/guilds/#{guild_id}/bans", guild_id],
-                params: params
+                params: filter_undef({ limit: limit, before: before, after: after, **params })
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/guild#get-guild-ban

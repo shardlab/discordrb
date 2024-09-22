@@ -129,6 +129,20 @@ module Discordrb
 
     alias_method :color=, :colour=
 
+    # Upload a role icon for servers with the ROLE_ICONS feature.
+    # @param file [File, #Read] A base64 encoded string with the image data, or an object that responds to `#read`, such as `File`.
+    def icon=(file)
+      path_method = %i[original_filename path local_path].find { |meth| icon.respond_to?(meth) }
+
+      raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
+      raise ArgumentError, 'File must respond to read' unless icon.respond_to? :read
+
+      mime_type = MIME::Types.type_for(icon.__send__(path_method)).first&.to_s || 'image/jpeg'
+      image_string = "data:#{mime_type};base64,#{Base64.encode64(icon.read).strip}"
+
+      update_role_data(icon: image_string)
+    end
+
     # Changes this role's permissions to a fixed bitfield. This allows setting multiple permissions at once with just
     # one API call.
     #

@@ -10,7 +10,7 @@ module Discordrb
   Thread.current[:discordrb_name] = 'main'
 
   # The default debug logger used by discordrb.
-  LOGGER = Logger.new(ENV['DISCORDRB_FANCY_LOG'])
+  LOGGER = Logger.new(ENV.fetch('DISCORDRB_FANCY_LOG', false))
 
   # The Unix timestamp Discord IDs are based on
   DISCORD_EPOCH = 1_420_070_400_000
@@ -117,30 +117,6 @@ module Discordrb
       "<t:#{time.to_i}:#{TIMESTAMP_STYLES[style] || style}>"
     end
   end
-
-  # TODO: This might belong somewhere else.
-  # Returns one of the "default" discord avatars from the CDN given a discriminator
-  def self.default_avatar(discrim = 0)
-    index = discrim.to_i % 5
-    "#{Discordrb::API.cdn_url}/embed/avatars/#{index}.png"
-  end
-
-  # TODO: This might belong somewhere else.
-  # Make an avatar URL from the user and avatar IDs
-  def self.avatar_url(user_id, avatar_id, format = nil)
-    format ||= if avatar_id.start_with?('a_')
-                 'gif'
-               else
-                 'webp'
-               end
-    "#{Discordrb::API.cdn_url}/avatars/#{user_id}/#{avatar_id}.#{format}"
-  end
-
-  # Make a banner URL from server and banner IDs
-  def self.banner_url(server_id, banner_id, format = 'webp')
-    "#{cdn_url}/banners/#{server_id}/#{banner_id}.#{format}"
-  end
-end
 
 # In discordrb, Integer and {String} are monkey-patched to allow for easy resolution of IDs
 class Integer

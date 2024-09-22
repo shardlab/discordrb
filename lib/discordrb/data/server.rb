@@ -523,9 +523,10 @@ module Discordrb
     # @param hoist [true, false]
     # @param mentionable [true, false]
     # @param permissions [Integer, Array<Symbol>, Permissions, #bits] The permissions to write to the new role.
+    # @param icon [File, #Read] A base64 encoded string with the image data, or an object that responds to `#read`, such as `File`.
     # @param reason [String] The reason the for the creation of this role.
     # @return [Role] the created role.
-    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, reason: nil)
+    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, icon: :undef, reason: nil)
       colour = colour.respond_to?(:combined) ? colour.combined : colour
 
       permissions = if permissions.is_a?(Array)
@@ -536,8 +537,20 @@ module Discordrb
                       permissions
                     end
 
+      if icon != :undef && icon
+        path_method = %i[original_filename path local_path].find { |meth| icon.respond_to?(meth) }
+
+        raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
+        raise ArgumentError, 'File must respond to read' unless icon.respond_to? :read
+
+        mime_type = MIME::Types.type_for(icon.__send__(path_method)).first&.to_s || 'image/jpeg'
+        image_string = "data:#{mime_type};base64,#{Base64.encode64(icon.read).strip}"
+      elsif icon.nil?
+        image_string = :undef
+      end
+
       params = {
-        name: name, color: colour, hoist: hoist, mentionable: mentionable, permissions: permissions
+        name: name, color: colour, hoist: hoist, mentionable: mentionable, permissions: permissions, icon: image_string
       }.compact
 
       resp = @bot.client.create_guild_role(@id, **params, reason: reason)
