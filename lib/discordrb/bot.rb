@@ -22,7 +22,6 @@ require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
 
-
 require 'discordrb/errors'
 require 'discordrb/data'
 require 'discordrb/await'

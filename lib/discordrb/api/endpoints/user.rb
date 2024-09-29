@@ -19,8 +19,8 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/user#modify-current-user
-      # @param username [String]
-      # @param avatar [String, nil]
+      # @param username [String] New name of the current user. May randomize the discriminator.
+      # @param avatar [String, read] A base64 encoded string with the image data.
       # @return [Hash<Symbol, Object>]
       def modify_current_user(username: :undef, avatar: :undef, **rest)
         request Route[:PATCH, '/users/@me'],
@@ -42,7 +42,7 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/user#create-dm
-      # @param recipient_id [Integer, String]
+      # @param recipient_id [Integer, String] The user to open a DM with.
       # @return [Hash<Symbol, Object>]
       def create_dm(recipient_id, **rest)
         request Route[:POST, '/users/@me/channels'], body: { recipient_id: recipient_id, **rest }
@@ -62,6 +62,10 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/user#update-current-user-application-role-connection
+      # @param application_id [Integer, String] An ID that uniquely identifies an application.
+      # @param platform_name [String] Max 50 character name of a connected platform.
+      # @param platform_username [String] Max 100 character username of a connected platform.
+      # @param metadata [Hash<Symbol, Object>] Max 100 character Role connection metadata keys for a connected platform.
       # @return [Hash<Symbol, Object>]
       def update_current_user_application_role_connections(application_id, platform_name: :undef, platform_username: :undef,
                                                            metadata: :undef, **params)

@@ -13,6 +13,7 @@ require 'discordrb/api/endpoints/guild'
 require 'discordrb/api/endpoints/guild_template'
 require 'discordrb/api/endpoints/interaction'
 require 'discordrb/api/endpoints/invite'
+require 'discordrb/api/endpoints/message'
 require 'discordrb/api/endpoints/poll'
 require 'discordrb/api/endpoints/sku'
 require 'discordrb/api/endpoints/stage_instance'
@@ -114,6 +115,7 @@ module Discordrb
       include GuildTemplateEndpoints
       include InteractionEndpoints
       include InviteEndpoints
+      include MessageEndpoints
       include PollEndpoints
       include SkuEndpoints
       include StageInstanceEndpoints
@@ -143,6 +145,11 @@ module Discordrb
 
       def get_gateway_bot(**params)
         request Route[:GET, '/gateway/bot'],
+                params: filter_undef(params)
+      end
+
+      def get_gateway(**params)
+        request Route[:GET, '/gateway'],
                 params: filter_undef(params)
       end
 

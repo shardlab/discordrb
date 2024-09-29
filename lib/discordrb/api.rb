@@ -7,71 +7,15 @@ require 'discordrb/errors'
 
 # List of methods representing endpoints in Discord's API
 module Discordrb::API
-  # The base URL of the Discord REST API.
-  APIBASE = 'https://discord.com/api/v9'
 
   # The URL of Discord's CDN
   CDN_URL = 'https://cdn.discordapp.com'
 
   module_function
 
-  # @return [String] the currently used API base URL.
-  def api_base
-    @api_base || APIBASE
-  end
-
   # @return [String] the currently used CDN url
   def cdn_url
     @cdn_url || CDN_URL
-  end
-
-  # Changes the rate limit tracing behaviour. If rate limit tracing is on, a full backtrace will be logged on every RL
-  # hit.
-  # @param value [true, false] whether or not to enable rate limit tracing
-  def trace=(value)
-    @trace = value
-  end
-
-  # Resets all rate limit mutexes
-  def reset_mutexes
-    @mutexes = {}
-    @global_mutex = Mutex.new
-  end
-
-  # Wait a specified amount of time synchronised with the specified mutex.
-  def sync_wait(time, mutex)
-    mutex.synchronize { sleep time }
-  end
-
-  # Wait for a specified mutex to unlock and do nothing with it afterwards.
-  def mutex_wait(mutex)
-    mutex.lock
-    mutex.unlock
-  end
-
-  # Handles pre-emptive rate limiting by waiting the given mutex by the difference of the Date header to the
-  # X-Ratelimit-Reset header, thus making sure we don't get 429'd in any subsequent requests.
-  def handle_preemptive_rl(headers, mutex, key)
-    Discordrb::LOGGER.ratelimit "RL bucket depletion detected! Date: #{headers[:date]} Reset: #{headers[:x_ratelimit_reset]}"
-    delta = headers[:x_ratelimit_reset_after].to_f
-    Discordrb::LOGGER.warn("Locking RL mutex (key: #{key}) for #{delta} seconds pre-emptively")
-    sync_wait(delta, mutex)
-  end
-
-  # Perform rate limit tracing. All this method does is log the current backtrace to the console with the `:ratelimit`
-  # level.
-  # @param reason [String] the reason to include with the backtrace.
-  def trace(reason)
-    unless @trace
-      Discordrb::LOGGER.debug("trace was called with reason #{reason}, but tracing is not enabled")
-      return
-    end
-
-    Discordrb::LOGGER.ratelimit("Trace (#{reason}):")
-
-    caller.each do |str|
-      Discordrb::LOGGER.ratelimit(" #{str}")
-    end
   end
 
   # Make an icon URL from server and icon IDs
@@ -171,17 +115,3 @@ module Discordrb::API
       Authorization: token
     )
   end
-
-  # Get the gateway to be used, with additional information for sharding and
-  # session start limits
-  def gateway_bot(token)
-    request(
-      :gateway_bot,
-      nil,
-      :get,
-      "#{api_base}/gateway/bot",
-      Authorization: token
-    )
-  end
-
-Discordrb::API.reset_mutexes

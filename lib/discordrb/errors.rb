@@ -7,7 +7,7 @@ module Discordrb
     class InvalidAuthenticationError < RuntimeError
       # Default message for this exception
       def message
-        'User login failed due to an invalid email or password!'
+        'The Authorization header was missing or invalid. Ensure your token is correct.'
       end
     end
 

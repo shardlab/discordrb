@@ -5,6 +5,7 @@ module Discordrb
     # @!discord_api https://discord.com/developers/docs/resources/auto-moderation
     module AutoModerationEndpoints
       # @!discord_api https://discord.com/developers/docs/resources/auto-moderation#list-auto-moderation-rules-for-guild
+      # @param guild_id [Integer, String] An ID that uniquely identifies a guild.
       # @return [Array<Hash<Symbol, Object>>]
       def list_auto_moderation_rules_for_guild(guild_id, **params)
         request Route[:GET, "/guilds/#{guild_id}/auto-moderation/rules", guild_id],
@@ -12,6 +13,8 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule
+      # @param guild_id [Integer, String] An ID that uniquely identifies a guild.
+      # @param auto_moderation_rule_id [Integer, String] An ID that uniquely identifies an auto-moderation rule.
       # @return [Hash<Symbol, Object>]
       def get_auto_moderation_rule(guild_id, auto_moderation_rule_id, **params)
         request Route[:GET, "/guilds/#{guild_id}/auto-moderation/rules/#{auto_moderation_rule_id}", guild_id],
@@ -19,6 +22,16 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule
+      # @param guild_id [Integer, String] An ID that uniquely identifies a guild.
+      # @param name [String] Name of the rule.
+      # @param event_type [1, 2] The context this rule applies to.
+      # @param trigger_type [Integer] The type of action that can trigger this rule.
+      # @param trigger_metadata [Hash<Symbol, Object>] Extra data used to determine when a rule should should be triggered.
+      # @param actions [Array<Symbol, Object>] The action to perform when the rule is triggered.
+      # @param enabled [Boolean] Whether this rule is enabled or not.
+      # @param exempt_roles [Array<Integer>] ID of roles that should not be affected by this rule.
+      # @param exempt_channels [Array<Integer>] ID of channels that should not be affected by this rule.
+      # @param reason [String] The reason for creating this rule.
       # @return [Hash<Symbol, Object>]
       def create_auto_moderation_rule(guild_id, name:, event_type:, trigger_type:, trigger_metadata: :undef, actions:, enabled: :undef,
                                       exempt_roles: :undef, exempt_channels: :undef, reason: :undef, **rest)
@@ -40,6 +53,16 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule
+      # @param guild_id [Integer, String] An ID that uniquely identifies a guild.
+      # @param auto_moderation_rule_id [Integer, String] An ID that uniquely identifies an auto-moderation rule.
+      # @param name [String] Name of the rule.
+      # @param event_type [1, 2] The context this rule applies to.
+      # @param trigger_metadata [Hash<Symbol, Object>] Extra data used to determine when a rule should should be triggered.
+      # @param actions [Array<Symbol, Object>] The action to perform when the rule is triggered.
+      # @param enabled [Boolean] Whether this rule is enabled or not.
+      # @param exempt_roles [Array<Integer>] ID of roles that should not be affected by this rule.
+      # @param exempt_channels [Array<Integer>] ID of channels that should not be affected by this rule.
+      # @param reason [String] The reason for editing this rule.
       # @return [Hash<Symbol, Object>]
       def modify_auto_moderation_rule(guild_id, auto_moderation_rule_id, name: :undef, event_type: :undef, trigger_metadata: :undef, actions: :undef,
                                       enabled: :undef, exempt_roles: :undef, exempt_channels: :undef, reason: :undef, **rest)
@@ -60,6 +83,9 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/auto-moderation#delete-auto-moderation-rule
+      # @param guild_id [Integer, String] An ID that uniquely identifies a guild.
+      # @param auto_moderation_rule_id [Integer, String] An ID that uniquely identifies an auto-moderation rule.
+      # @param reason [String] The reason for deleting this rule.
       # @return [nil]
       def delete_auto_moderation_rule(guild_id, auto_moderation_rule_id, reason: :undef)
         request Route[:DELETE, "/guilds/#{guild_id}/auto-moderation/rules/#{auto_moderation_rule_id}"],
