@@ -11,7 +11,7 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/user#get-user
-      # @param user_id [Integer, String]
+      # @param user_id [Integer, String] An ID that uniquely identifies a user.
       # @return [Hash<Symbol, Object>]
       def get_user(user_id, **params)
         request Route[:GET, "/users/#{user_id}"],
@@ -35,7 +35,7 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/user#leave-guild
-      # @param guild_id [Integer, String]
+      # @param guild_id [Integer, String] An ID that uniquely identifies a guild.
       # @return [Hash<Symbol, Object>]
       def leave_guild(guild_id)
         request Route[:DELETE, "/users/@me/guilds/#{guild_id}"]
