@@ -16,7 +16,7 @@ module Discordrb
       # @param name [String] 	1-32 character name.
       # @param description [String] 1-100 character description.
       # @param options [Array<Hash>] The parameters for the command.
-      # @param default_member_permissions [Integer] The bitwise permissions that this command will be enabled for by default.
+      # @param default_member_permissions [Integer] The bitwise permission level needed to use this command.
       # @param type [1, 2, 3] The type of command, defaults `1` if not set.
       # @param contexts [0, 1, 2] The contexts in which this command can be used.
       # @param integration_types [0, 1] Supported installation contexts.

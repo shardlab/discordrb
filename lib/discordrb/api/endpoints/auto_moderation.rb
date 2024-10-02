@@ -33,8 +33,9 @@ module Discordrb
       # @param exempt_channels [Array<Integer>] ID of channels that should not be affected by this rule.
       # @param reason [String] The reason for creating this rule.
       # @return [Hash<Symbol, Object>]
-      def create_auto_moderation_rule(guild_id, name:, event_type:, trigger_type:, trigger_metadata: :undef, actions:, enabled: :undef,
-                                      exempt_roles: :undef, exempt_channels: :undef, reason: :undef, **rest)
+      def create_auto_moderation_rule(guild_id, name:, event_type:, trigger_type:, trigger_metadata: :undef, actions:,
+                                      enabled: :undef, exempt_roles: :undef, exempt_channels: :undef, reason: :undef,
+                                      **rest)
         data = {
           name: name,
           event_type: event_type,
@@ -64,8 +65,9 @@ module Discordrb
       # @param exempt_channels [Array<Integer>] ID of channels that should not be affected by this rule.
       # @param reason [String] The reason for editing this rule.
       # @return [Hash<Symbol, Object>]
-      def modify_auto_moderation_rule(guild_id, auto_moderation_rule_id, name: :undef, event_type: :undef, trigger_metadata: :undef, actions: :undef,
-                                      enabled: :undef, exempt_roles: :undef, exempt_channels: :undef, reason: :undef, **rest)
+      def modify_auto_moderation_rule(guild_id, auto_moderation_rule_id, name: :undef, event_type: :undef, trigger_metadata: :undef,
+                                      actions: :undef, enabled: :undef, exempt_roles: :undef, exempt_channels: :undef, reason: :undef,
+                                      **rest)
         data = {
           name: name,
           event_type: event_type,

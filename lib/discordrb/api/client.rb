@@ -3,6 +3,7 @@
 require 'faraday'
 require 'faraday_middleware'
 require 'discordrb/api/endpoints/application_command'
+require 'discordrb/api/endpoints/application'
 require 'discordrb/api/endpoints/audit_log'
 require 'discordrb/api/endpoints/auto_moderation'
 require 'discordrb/api/endpoints/channel'
@@ -105,6 +106,7 @@ module Discordrb
     # Client for making HTTP requests to the Discord API.
     class Client
       include ApplicationCommandEndpoints
+      include ApplicationEndpoints
       include AuditLogEndpoints
       include AutoModerationEndpoints
       include ChannelEndpoints

@@ -155,8 +155,9 @@ module Discordrb
       # @param components [Array<Symbol, Object>>] Message components to add.
       # @return [Hash<Symbol, Object>]
       def edit_message(channel_id,
-                       message_id, content: :undef, embeds: :undef, flags: :undef, file: :undef,
-                       allowed_mentions: :undef, attachments: :undef, components: :undef, **rest)
+                       message_id, content: :undef, embeds: :undef, flags: :undef,
+                       file: :undef, allowed_mentions: :undef, components: :undef,
+                       **rest)
         body = filter_undef({
                               content: content,
                               tts: tts,

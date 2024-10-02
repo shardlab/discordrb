@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require 'json'
-require 'time'
-
-require 'discordrb/errors'
-
 # List of methods representing endpoints in Discord's API
 module Discordrb::API
 
@@ -115,3 +110,4 @@ module Discordrb::API
       Authorization: token
     )
   end
+end  
