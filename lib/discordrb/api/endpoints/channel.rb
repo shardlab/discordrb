@@ -321,13 +321,6 @@ module Discordrb
                 params: filter_undef({ with_member: with_member, before: before, limit: limit, **params })
       end
 
-      # @!discord_api https://discord.com/developers/docs/resources/channel#list-thread-members
-      # @param channel_id [Integer, String] An ID that uniquely identifies a channel.
-      # @return [Array<Hash<Symbol, Object>>]
-      def list_active_threads(channel_id, **params)
-        request Route[:GET, "/channels/#{channel_id}/threads/active", channel_id]
-      end
-
       # @!discord_api https://discord.com/developers/docs/resources/channel#list-public-archived-threads
       # @param channel_id [Integer, String] An ID that uniquely identifies a channel.
       # @param before [Time] Threads archived before this timestamp.
