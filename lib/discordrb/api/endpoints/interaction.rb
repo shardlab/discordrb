@@ -42,12 +42,13 @@ module Discordrb
       # @param allowed_mentions [Hash]
       # @param flags [Integer]
       # @param components [Array<Hash>]
+      # @parm poll [Hash<Object>]
       # @return [Hash]
       def edit_original_interaction_response(id, token, content: :undef, embeds: :undef, allowed_mentions: :undef,
-                                             flags: :undef, components: :undef, **rest)
+                                             flags: :undef, components: :undef, poll: :undef, **rest)
         body = {
           type: type, content: content, embeds: embeds, allowed_mentions: allowed_mentions,
-          flags: flags, components: components, **rest
+          flags: flags, components: components, poll: poll, **rest
         }
 
         edit_webhook_message(id, token, '@original', **body)
@@ -85,7 +86,7 @@ module Discordrb
       # @param id [Integer, String]
       # @param token [String]
       # @param message_id [Integer, String]
-      def edit_followup_message(id, token, message_id)
+      def edit_followup_message(id, token, message_id, **rest)
         edit_webhook_message(id, token, message_id, **body)
       end
 
