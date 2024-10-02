@@ -13,7 +13,7 @@ module Discordrb
 
       # @!discord_api https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
       # @param application_id [Integer, String] An ID that uniquely identifies an application.
-      # @param name [String] 	1-32 character name.
+      # @param name [String] 1-32 character name.
       # @param description [String] 1-100 character description.
       # @param options [Array<Hash>] The parameters for the command.
       # @param default_member_permissions [Integer] The bitwise permissions needed to use this command.
@@ -57,7 +57,7 @@ module Discordrb
       # @!discord_api https://discord.com/developers/docs/interactions/application-commands#edit-global-application-command
       # @param application_id [Integer, String] An ID that uniquely identifies an application.
       # @param command_id [Integer, String] An ID that uniquely identifies an application command.
-      # @param name [String] 	1-32 character name.
+      # @param name [String] 1-32 character name.
       # @param description [String] 1-100 character description.
       # @param options [Array<Hash>] The parameters for the command.
       # @param default_member_permissions [Integer] The bitwise permissions needed to use this command.
@@ -117,7 +117,7 @@ module Discordrb
       # @!discord_api https://discord.com/developers/docs/interactions/application-commands#create-guild-application-command
       # @param application_id [Integer, String] An ID that uniquely identifies an application.
       # @param guild_id [Integer, String] An ID that uniquely identifies a guild.
-      # @param name [String]	1-32 character name.
+      # @param name [String] 1-32 character name.
       # @param description [String] 1-100 character description.
       # @param options [Array<Hash>, nil] The parameters for the command.
       # @param default_member_permissions [Integer] The bitwise permissions needed to use this command.
@@ -158,7 +158,7 @@ module Discordrb
       # @param application_id [Integer, String] An ID that uniquely identifies an application.
       # @param guild_id [Integer, String] An ID that uniquely identifies a guild.
       # @param command_id [Integer, String] An ID that uniquely identifies an application command.
-      # @param name [String] 	1-32 character name.
+      # @param name [String] 1-32 character name.
       # @param description [String] 1-100 character description.
       # @param options [Array<Hash>] The parameters for the command.
       # @param default_member_permissions [Integer] The bitwise permissions needed to use this command.
