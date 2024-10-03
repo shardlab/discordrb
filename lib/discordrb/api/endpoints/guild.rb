@@ -644,7 +644,7 @@ module Discordrb
 
       # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-onboarding
       # @param guild_id [Integer, String] An ID that uniquely identifies a guild.
-      # prompts [Hash<Symbol, Object>] Array of onboarding prompt objects.
+      # prompts [Hash] Array of onboarding prompt objects.
       # default_channel_ids [Array<Integer, String>] Array of channel ID's members get added to by default.
       # enabled [Boolean] Whether onboarding is enabled or not.
       # reason [String] Reason for modifiying this server's onboarding.

@@ -32,7 +32,7 @@ module Discordrb
       # @param description [String] Description of the scheduled event.
       # @param entity_type [Integer] The location of the event; E.g. voice, stage-instance, etc.
       # @param image [String, #read] A base64 encoded string with the image data.
-      # @param recurrence_rule [Hash<Symbol, Object>] A recurrence rule object. See the offical API docs for more info.
+      # @param recurrence_rule [Hash] A recurrence rule object. See the offical API docs for more info.
       # @param reason [String] The reason for creating this scheduled event.
       # @return [Hash<Symbol, Object>]
       def create_guild_scheduled_event(guild_id, channel_id: :undef, entity_metadata: :undef, name:, privacy_level: :undef,
@@ -69,7 +69,7 @@ module Discordrb
       # @param description [String] Description of the scheduled event.
       # @param entity_type [Integer] The location of the event; E.g. voice, stage-instance, etc.
       # @param image [String, #read] A base64 encoded string with the image data.
-      # @param recurrence_rule [Hash<Symbol, Object>] A recurrence rule object. See the offical API docs for more info.
+      # @param recurrence_rule [Hash] A recurrence rule object. See the offical API docs for more info.
       # @param reason [String] The reason for updating this scheduled event.
       # @return [Hash<Symbol, Object>]
       def modify_guild_scheduled_event(guild_id, guild_scheduled_event_id:, channel_id: :undef, entity_metadata: :undef,

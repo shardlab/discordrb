@@ -31,14 +31,14 @@ module Discordrb
       # @param nonce [Integer] Unique number Used to verifiy if a message was sent.
       # @param tts [Boolean] Whether this is a TTS message. 
       # @param files [File] File contents being sent.
-      # @param embeds [Array<Hash<Symbol, Object>>] Up to 10 embed objects to include.
-      # @param allowed_mentions [Hash<Symbol, Object>] An allowed mentions object. 
-      # @param message_reference [Hash<Symbol, Object>] Whether this message should be a reply or forward.
-      # @param components [Array<Symbol, Object>>] Message components to include.
+      # @param embeds [Array<Hash>] Up to 10 embed objects to include.
+      # @param allowed_mentions [Hash] An allowed mentions object. 
+      # @param message_reference [Hash] Whether this message should be a reply or forward.
+      # @param components [Array<Hash>] Message components to include.
       # @param sticker_ids [Array] ID of up to 3 stickers.
       # @param flags [Integer] Bitfield value of message flags.
       # @param enforce_nonce [Boolean] Whether the nonce should be enforced.
-      # @param poll [Hash<Symbol, Object>] A poll request object.
+      # @param poll [Hash] A poll request object.
       # @return [Hash<Symbol, Object>]
       def create_message(channel_id,
                          content: :undef, tts: :undef, files: :undef, embeds: :undef, allowed_mentions: :undef,
@@ -148,11 +148,11 @@ module Discordrb
       # @param channel_id [Integer, String] An ID that uniquely identifies a channel.
       # @param message_id [Integer, String] An ID that uniquely identifies a message.
       # @param content [String] Message content up to 2,000 characters.
-      # @param embeds [Array<Hash<Symbol, Object>>] Up to 10 embed objects to add.
+      # @param embeds [Array<Hash>] Up to 10 embed objects to add.
       # @param flags [Integer] Bitfield value of message flags.
       # @param files [File] File contents being added.
-      # @param allowed_mentions [Hash<Symbol, Object>] An allowed mentions object. 
-      # @param components [Array<Symbol, Object>>] Message components to add.
+      # @param allowed_mentions [Hash] An allowed mentions object. 
+      # @param components [Array<Hash>] Message components to add.
       # @return [Hash<Symbol, Object>]
       def edit_message(channel_id,
                        message_id, content: :undef, embeds: :undef, flags: :undef,
