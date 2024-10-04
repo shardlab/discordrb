@@ -249,16 +249,16 @@ module Discordrb
       # @param reason [String] The reason for starting this thread in forum or media channel.
       # @return [Hash<Symbol, Object>]
       def start_thread_in_forum_or_media_channel(channel_id,
-                                       name:, auto_archive_duration: :undef, message:, applied_tags: :undef,
-                                       file: :undef, rate_limit_per_user: :undef, reason: :undef, **rest)
+                                                 name:, auto_archive_duration: :undef, message:, applied_tags: :undef,
+                                                 file: :undef, rate_limit_per_user: :undef, reason: :undef, **rest)
         body = filter_undef({
-          name: name,
-          auto_archive_duration: auto_archive_duration,
-          message: message,
-          applied_tags: applied_tags,
-          rate_limit_per_user: rate_limit_per_user,
-          **rest
-        })
+                              name: name,
+                              auto_archive_duration: auto_archive_duration,
+                              message: message,
+                              applied_tags: applied_tags,
+                              rate_limit_per_user: rate_limit_per_user,
+                              **rest
+                            })
 
         if files
           files = files.zip(0...files.count).map { |file, index| ["file[#{index}]", file] }.to_h

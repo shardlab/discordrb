@@ -7,9 +7,9 @@ module Discordrb
       # @!discord_api https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound
       # @param channel_id [String, Integer] An ID that uniquely identifies a channel.
       # @param sound_id [String, Integer] ID of the sound to play.
-      # @param source_guild_id [String, Integer] ID of the guild the sound is from if it's an external sound.
+      # @param source_guild_id [String, Integer] ID of the guild the sound is from.
       # @return [nil]
-      def send_soundboard_sound(channel_id, sound_id:, source_guild_id: :undef, **rest)
+      def send_soundboard_sound(channel_id, sound_id, source_guild_id: :undef, **rest)
         request Route[:POST, "/channels/#{channel_id}/send-soundboard-sound", channel_id],
                 body: filter_undef({ sound_id: sound_id, source_guild_id: source_guild_id, **rest })
       end
@@ -40,7 +40,6 @@ module Discordrb
 
       # @!discord_api https://discord.com/developers/docs/resources/soundboard#create-guild-soundboard-sound
       # @param guild_id [String, Integer] An ID that uniquely identifies a channel.
-      # @param sound_id [String, Integer] An ID that uniquely identifies a soundboard sound.
       # @param name [String] 2-32 character name of the soundboard sound.
       # @param sound [String, #read] A base64 encoded string with the sound data.
       # @param volume [Integer] 0-1 volume of the sound.
@@ -48,9 +47,9 @@ module Discordrb
       # @param emoji_name [String] Unicode character of the standard emoji for this sound.
       # @param reason [String] The reason for creating this soundboard sound.
       # @return [Hash<Symbol, Object>]
-      def create_guild_soundboard_sound(guild_id, sound_id, name:, sound:, volume: :undef,
-                                         emoji_id: :undef, emoji_name: :undef, reason: :undef,
-                                         **rest)
+      def create_guild_soundboard_sound(guild_id, name:, sound:, volume: :undef,
+                                        emoji_id: :undef, emoji_name: :undef, reason: :undef,
+                                        **rest)
         data = {
           name: name,
           sound: sound,

@@ -105,7 +105,7 @@ module Discordrb
       # @param poll [Hash<Object>] A poll request object.
       # @return [Hash]
       def edit_followup_message(id, token, message_id, content: :undef, embeds: :undef, allowed_mentions: :undef,
-                                  components: :undef, poll: :undef, **rest)
+                                components: :undef, poll: :undef, **rest)
         body = {
           content: content, embeds: embeds, allowed_mentions: allowed_mentions,
           components: components, poll: poll, **rest

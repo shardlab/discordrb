@@ -132,7 +132,7 @@ module Discordrb
       # @param content [String] Message content up to 2,000 characters.
       # @param embeds [Array<Hash>] Up to 10 embed objects to include.
       # @param file [File] File contents being sent.
-      # @param allowed_mentions [Hash] An allowed mentions object. 
+      # @param allowed_mentions [Hash] An allowed mentions object.
       # @param attachments [File] Attatched files.
       # @param components [Array<Hash>] An array of message components to include.
       # @return [Hash<Symbol, Object>]

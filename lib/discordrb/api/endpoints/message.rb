@@ -29,10 +29,10 @@ module Discordrb
       # @param channel_id [Integer, String] An ID that uniquely identifies a channel.
       # @param content [String] Message content up to 2,000 characters.
       # @param nonce [Integer] Unique number Used to verifiy if a message was sent.
-      # @param tts [Boolean] Whether this is a TTS message. 
+      # @param tts [Boolean] Whether this is a TTS message.
       # @param files [File] File contents being sent.
       # @param embeds [Array<Hash>] Up to 10 embed objects to include.
-      # @param allowed_mentions [Hash] An allowed mentions object. 
+      # @param allowed_mentions [Hash] An allowed mentions object.
       # @param message_reference [Hash] Whether this message should be a reply or forward.
       # @param components [Array<Hash>] Message components to include.
       # @param sticker_ids [Array] ID of up to 3 stickers.
@@ -151,7 +151,7 @@ module Discordrb
       # @param embeds [Array<Hash>] Up to 10 embed objects to add.
       # @param flags [Integer] Bitfield value of message flags.
       # @param files [File] File contents being added.
-      # @param allowed_mentions [Hash] An allowed mentions object. 
+      # @param allowed_mentions [Hash] An allowed mentions object.
       # @param components [Array<Hash>] Message components to add.
       # @return [Hash<Symbol, Object>]
       def edit_message(channel_id,
