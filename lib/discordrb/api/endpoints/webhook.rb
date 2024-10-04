@@ -5,6 +5,10 @@ module Discordrb
     # @!discord_api https://discord.com/developers/docs/resources/webhook
     module WebhookEndpoints
       # @!discord_api https://discord.com/developers/docs/resources/webhook#create-webhook
+      # @param channel_id [String, Integer] An ID that uniquely identifies a channel.
+      # @param name [String] 1-80 character name of the webhook to create.
+      # @param avatar [String, #read] A base64 encoded string with the image data.
+      # @param reason [String] The reason for creating this webhook.
       # @return [Hash<Symbol, Object>]
       def create_webhook(channel_id, name: :undef, avatar: :undef, reason: :undef, **rest)
         request Route[:POST, "/channels/#{channel_id}/webhooks", channel_id],
@@ -13,6 +17,7 @@ module Discordrb
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/webhook#get-channel-webhooks
+      # @param channel_id [String, Integer] An ID that uniquely identifies a channel.
       # @return [Array<Hash<Symbol, Object>>]
       def get_channel_webhooks(channel_id, **params)
         request Route[:GET, "/channels/#{channel_id}/webhooks", channel_id],
