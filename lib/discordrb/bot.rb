@@ -457,17 +457,6 @@ module Discordrb
       server
     end
 
-    # Creates a new application to do OAuth authorization with. This allows you to use OAuth to authorize users using
-    # Discord. For information how to use this, see the docs: https://discord.com/developers/docs/topics/oauth2
-    # @deprecated TODO: Remove
-    # @param name [String] What your application should be called.
-    # @param redirect_uris [Array<String>] URIs that Discord should redirect your users to after authorizing.
-    # @return [Array(String, String)] your applications' client ID and client secret to be used in OAuth authorization.
-    def create_oauth_application(name, redirect_uris)
-      response = JSON.parse(API.create_oauth_application(@token, name, redirect_uris))
-      [response[:id], response[:secret]]
-    end
-
     # Gets the users, channels, roles and emoji from a string.
     # @param mentions [String] The mentions, which should look like `<@12314873129>`, `<#123456789>`, `<@&123456789>` or `<:name:126328:>`.
     # @param server [Server, nil] The server of the associated mentions. (recommended for role parsing, to speed things up)
@@ -826,13 +815,13 @@ module Discordrb
       LOGGER.warn('Servers may be unavailable due to an outage, or your bot is on very large servers that are taking a while to load.')
     end
 
-    ### ##    ## ######## ######## ########  ##    ##    ###    ##        ######
+   #### ##    ## ######## ######## ########  ##    ##    ###    ##        ######
     ##  ###   ##    ##    ##       ##     ## ###   ##   ## ##   ##       ##    ##
     ##  ####  ##    ##    ##       ##     ## ####  ##  ##   ##  ##       ##
     ##  ## ## ##    ##    ######   ########  ## ## ## ##     ## ##        ######
     ##  ##  ####    ##    ##       ##   ##   ##  #### ######### ##             ##
     ##  ##   ###    ##    ##       ##    ##  ##   ### ##     ## ##       ##    ##
-    ### ##    ##    ##    ######## ##     ## ##    ## ##     ## ########  ######
+   #### ##    ##    ##    ######## ##     ## ##    ## ##     ## ########  ######
 
     # Internal handler for PRESENCE_UPDATE
     def update_presence(data)
