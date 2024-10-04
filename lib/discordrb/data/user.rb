@@ -3,9 +3,32 @@
 module Discordrb
   # Mixin for the attributes users should have
   module UserAttributes
+    # rubocop:disable Naming/VariableNumber
+    FLAGS = {
+      staff: 1 << 0,
+      partner: 1 << 1,
+      hypesquad: 1 << 2,
+      bug_hunter_level_1: 1 << 3,
+      hypesquad_online_house_1: 1 << 6,
+      hypesquad_online_house_2: 1 << 7,
+      hypesquad_online_house_3: 1 << 8,
+      premium_early_supporter: 1 << 9,
+      team_pseudo_user: 1 << 10,
+      bug_hunter_level_2: 1 << 14,
+      verified_bot: 1 << 16,
+      verified_developer: 1 << 17,
+      certified_moderator: 1 << 18,
+      bot_http_interactions: 1 << 19,
+      active_developer: 1 << 22
+    }.freeze
+    # rubocop:enable Naming/VariableNumber
+
     # @return [String] this user's username
     attr_reader :username
     alias_method :name, :username
+
+    # @return [String, nil] this user's global name
+    attr_reader :global_name
 
     # @return [String] this user's discriminator which is used internally to identify users with identical usernames.
     attr_reader :discriminator
@@ -17,9 +40,20 @@ module Discordrb
     attr_reader :bot_account
     alias_method :bot_account?, :bot_account
 
+    # @return [true, false] whether this is fake user for a webhook message
+    attr_reader :webhook_account
+    alias_method :webhook_account?, :webhook_account
+    alias_method :webhook?, :webhook_account
+
     # @return [String] the ID of this user's current avatar, can be used to generate an avatar URL.
     # @see #avatar_url
     attr_accessor :avatar_id
+
+    # Utility function to get Discord's display name of a user not in server
+    # @return [String] the name the user displays as (global_name if they have one, username otherwise)
+    def display_name
+      global_name || username
+    end
 
     # Utility function to mention users in messages
     # @return [String] the mention code in the form of <@id>
@@ -29,18 +63,36 @@ module Discordrb
 
     # Utility function to get Discord's distinct representation of a user, i.e. username + discriminator
     # @return [String] distinct representation of user
+    # TODO: Maybe change this method again after discriminator removal ?
     def distinct
-      "#{@username}##{@discriminator}"
+      if @discriminator && @discriminator != '0'
+        "#{@username}##{@discriminator}"
+      else
+        @username.to_s
+      end
     end
 
     # Utility function to get a user's avatar URL.
     # @param format [String, nil] If `nil`, the URL will default to `webp` for static avatars, and will detect if the user has a `gif` avatar. You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this. Will always be PNG for default avatars.
     # @return [String] the URL to the avatar image.
-    # TODO: avatar urls
+    # TODO: Maybe change this method again after discriminator removal ?
     def avatar_url(format = nil)
-      return Discordrb.default_avatar(@discriminator) unless @avatar_id
+      unless @avatar_id
+        return API::CDN.default_avatar(@discriminator, legacy: true) if @discriminator && @discriminator != '0'
 
-      Discordrb.avatar_url(@id, @avatar_id, format)
+        return API::CDN.default_avatar(@id)
+      end
+
+      API::CDN.avatar_url(@id, @avatar_id, format)
+    end
+
+    # @return [Integer] the public flags on a user's account
+    attr_reader :public_flags
+
+    FLAGS.each do |name, value|
+      define_method("#{name}?") do
+        (@public_flags & value).positive?
+      end
     end
   end
 
@@ -49,7 +101,7 @@ module Discordrb
     include IDObject
     include UserAttributes
 
-    # @return [Symbol] the current online status of the user (`:online`, `:offline` or `:idle`)
+    # @return [Symbol] the current online status of the user (`:online`, `:offline`, `:dnd`, or `:idle`)
     attr_reader :status
 
     # @return [ActivitySet] the activities of the user
@@ -63,18 +115,23 @@ module Discordrb
     def initialize(data, bot)
       @bot = bot
 
-      @username = data[:username]
-      @id = data[:id].to_i
-      @discriminator = data[:discriminator]
-      @avatar_id = data[:avatar]
+      @username = data['username']
+      @global_name = data['global_name']
+      @id = data['id'].to_i
+      @discriminator = data['discriminator']
+      @avatar_id = data['avatar']
       @roles = {}
       @activities = Discordrb::ActivitySet.new
+      @public_flags = data['public_flags'] || 0
 
       @bot_account = false
-      @bot_account = true if data[:bot]
+      @bot_account = true if data['bot']
+
+      @webhook_account = false
+      @webhook_account = true if data['_webhook']
 
       @status = :offline
-      @client_status = process_client_status(data[:client_status])
+      @client_status = process_client_status(data['client_status'])
     end
 
     # Get a user's PM channel or send them a PM
@@ -110,21 +167,28 @@ module Discordrb
       pm.send_file(file, caption: caption, filename: filename, spoiler: spoiler)
     end
 
-    # Set the user's name
+    # Set the user's username
     # @note for internal use only
     # @!visibility private
     def update_username(username)
       @username = username
     end
 
+    # Set the user's global_name
+    # @note For internal use only.
+    # @!visibility private
+    def update_global_name(global_name)
+      @global_name = global_name
+    end
+
     # Set the user's presence data
     # @note for internal use only
     # @!visibility private
     def update_presence(data)
-      @status = data[:status].to_sym
-      @client_status = process_client_status(data[:client_status])
+      @status = data['status'].to_sym
+      @client_status = process_client_status(data['client_status'])
 
-      @activities = Discordrb::ActivitySet.new(data[:activities].map { |act| Activity.new(act, @bot) })
+      @activities = Discordrb::ActivitySet.new(data['activities'].map { |act| Activity.new(act, @bot) })
     end
 
     # Add an await for a message from this user. Specifically, this adds a global await for a MessageEvent with this
@@ -155,14 +219,9 @@ module Discordrb
       @bot.profile.id == @id
     end
 
-    # @return [true, false] whether this user is a fake user for a webhook message
-    def webhook?
-      @discriminator == Message::ZERO_DISCRIM
-    end
-
     # @!visibility private
     def process_client_status(client_status)
-      (client_status || {}).map { |k, v| [k.to_sym, v.to_sym] }.to_h
+      (client_status || {}).to_h { |k, v| [k.to_sym, v.to_sym] }
     end
 
     # @!method offline?
