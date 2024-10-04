@@ -17,6 +17,7 @@ require 'discordrb/api/endpoints/invite'
 require 'discordrb/api/endpoints/message'
 require 'discordrb/api/endpoints/poll'
 require 'discordrb/api/endpoints/sku'
+require 'discordrb/api/endpoints/soundboard'
 require 'discordrb/api/endpoints/stage_instance'
 require 'discordrb/api/endpoints/sticker'
 require 'discordrb/api/endpoints/user'
@@ -120,6 +121,7 @@ module Discordrb
       include MessageEndpoints
       include PollEndpoints
       include SkuEndpoints
+      include SoundboardEndpoints
       include StageInstanceEndpoints
       include StickerEndpoints
       include UserEndpoints
