@@ -746,15 +746,18 @@ module Discordrb
     #       end
     #     end
     #   end
-    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input)
+    def register_application_command(name, description, server_id: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil, name_localizations: nil, description_localizations: nil)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
-      yield(builder) if block_given?
+      permission_builder = Interactions::PermissionBuilder.new
+      yield(builder, permission_builder) if block_given?
 
       params = {
         name: name, description: description, options: builder.to_a,
-        default_permission: default_permission, type: type
+        default_member_permissions: default_member_permissions, type: type,
+        contexts: contexts, integration_types: integration_types,
+        name_localizations: name_localizations, description_localizations: description_localizations
       }.compact
 
       resp = if server_id
@@ -765,14 +768,17 @@ module Discordrb
       ApplicationCommand.new(resp, self, server_id)
     end
 
-    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input)
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil, name_localizations: nil, description_localizations: nil)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
-      yield(builder) if block_given?
+      permission_builder = Interactions::PermissionBuilder.new
+      yield(builder, permission_builder) if block_given?
 
       params = {
-        name: name, description: description, default_permission: default_permission, type: type
+        name: name, description: description, default_member_permissions: default_member_permissions, type: type,
+        contexts: contexts, integration_types: integration_types, name_localizations: name_localizations,
+        description_localizations: description_localizations
       }.compact
 
       resp = if server_id
