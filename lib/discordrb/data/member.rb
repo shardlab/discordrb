@@ -264,9 +264,9 @@ module Discordrb
 
     alias_method :set_nickname, :set_nick
 
-    # @return [String] the name the user displays as (nickname if they have one, username otherwise)
+    # @return [String] the name the user displays as (nickname if they have one, global_name if they have one, username otherwise)
     def display_name
-      nickname || username
+      nickname || global_name || username
     end
 
     # Update this member's roles

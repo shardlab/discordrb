@@ -53,15 +53,13 @@ module Discordrb
 
       # Make one of the "default" discord avatars given a discriminator or user ID.
       # @return [String]
-      def default_avatar(discrim = 0, user_id: nil)
-        index = if discrim != 0
-                  discrim.to_i % 5
-                elsif user_id
-                  (user_id >> 22) % 5
+      def default_avatar(discrim_id = 0, legacy: false)
+        index = if legacy
+                  discrim_id.to_i % 5
                 else
-                  0
+                  (discrim_id.to_i >> 22) % 5
                 end
-        "#{cdn_url}/embed/avatars/#{index}.png"
+        "#{Discordrb::API.cdn_url}/embed/avatars/#{index}.png"
       end
 
       # Make a user avatar URL from the user ID and avatar ID.
