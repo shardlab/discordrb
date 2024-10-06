@@ -28,8 +28,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'base64', '~> 0.2.0'
-  spec.add_dependency 'faraday', '~> 1.8'
-  spec.add_dependency 'faraday_middleware', '~> 1.1.0'
+  spec.add_dependency 'faraday', '~> 2.0.1'
+  spec.add_dependency 'faraday-multipart', '~> 1.0.4'
   spec.add_dependency 'ffi', '>= 1.9.24'
   spec.add_dependency 'opus-ruby'
   spec.add_dependency 'websocket-client-simple', '>= 0.3.0'

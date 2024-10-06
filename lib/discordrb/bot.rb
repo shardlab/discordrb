@@ -803,7 +803,7 @@ module Discordrb
     private
 
     def file_to_file_part(file, content_type = 'binary/octet-stream', filename = nil)
-      Faraday::FilePart.new(file, content_type, filename)
+      Faraday::Multipart::FilePart.new(file, content_type, filename)
     end
 
     # Throws a useful exception if there's currently no gateway connection.

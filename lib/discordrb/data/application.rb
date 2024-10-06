@@ -40,7 +40,7 @@ module Discordrb
     def icon_url
       return nil if @icon_id.nil?
 
-      API.app_icon_url(@id, @icon_id)
+      API::CDN.app_icon_url(@id, @icon_id)
     end
 
     # The inspect method is overwritten to give more useful output

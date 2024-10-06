@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'faraday'
-require 'faraday_middleware'
+require 'faraday-multipart'
 require 'discordrb/api/endpoints/application_command'
 require 'discordrb/api/endpoints/application'
 require 'discordrb/api/endpoints/audit_log'

@@ -168,7 +168,7 @@ module Discordrb
     # @raise [ArgumentError] if the target channel isn't a category
     def category=(channel)
       channel = @bot.channel(channel)
-      raise ArgumentError, 'Cannot set parent category to a channel that isn\'t a category' unless channel.category?
+      raise ArgumentError, "Cannot set parent category to a channel that isn't a category" unless channel.category?
 
       update_channel_data(parent_id: channel.id)
     end
@@ -238,7 +238,7 @@ module Discordrb
         move_argument << hash
       end
 
-      client.modify_guild_channel_positions(@server_id, move_argument, reason: reason || :undef)
+      @bot.client.modify_guild_channel_positions(@server_id, move_argument, reason: reason || :undef)
     end
 
     # Sets whether this channel is NSFW
