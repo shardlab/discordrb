@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'faraday'
-require 'faraday-multipart'
+require 'faraday/multipart'
 require 'json'
 
 require 'discordrb/webhooks/builder'
