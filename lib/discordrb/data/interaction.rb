@@ -230,15 +230,13 @@ module Discordrb
       resp = @bot.client.execute_webhook(@application_id, @token, wait: true, **data)
       Interactions::Message.new(resp, @bot, @interaction)
     end
-    # rubocop:enable Lint/UnusedMethodArgument
-    # rubocop:enable Lint/UselessAssignment
 
     # @param message [String, Integer, Object] The message created by this interaction to be edited.
     # @param content [String] The message content.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_message(_message, content: nil, embeds: nil, allowed_mentions: nil, components: nil)
+    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
@@ -250,6 +248,9 @@ module Discordrb
       resp = @bot.client.execute_webhook(@application_id, @token, **data)
       Interactions::Message.new(resp, @bot, @interaction)
     end
+
+    # rubocop:enable Lint/UnusedMethodArgument
+    # rubocop:enable Lint/UselessAssignment
 
     # @param message [Integer, String, InteractionMessage, Message] The message created by this interaction to be deleted.
     def delete_message(message)

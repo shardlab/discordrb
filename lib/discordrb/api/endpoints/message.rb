@@ -29,7 +29,7 @@ module Discordrb
       # @!discord_api https://discord.com/developers/docs/resources/message#create-message
       # @param channel_id [Integer, String] An ID that uniquely identifies a channel.
       # @param content [String] Message content up to 2,000 characters.
-      # @param enforce_nonce [Integer] Unique number Used to verifiy if a message was sent.
+      # @param nonce [Integer, String] Unique number Used to verifiy if a message was sent.
       # @param tts [Boolean] Whether this is a TTS message.
       # @param files [File] File contents being sent.
       # @param embeds [Array<Hash>] Up to 10 embed objects to include.
@@ -42,11 +42,12 @@ module Discordrb
       # @param poll [Hash] A poll request object.
       # @return [Hash<Symbol, Object>]
       def create_message(channel_id,
-                         content: :undef, tts: :undef, files: :undef, embeds: :undef, allowed_mentions: :undef,
+                         content: :undef, nonce: :undef, tts: :undef, files: :undef, embeds: :undef, allowed_mentions: :undef,
                          message_reference: :undef, components: :undef, sticker_ids: :undef, flags: :undef,
                          enforce_nonce: :undef, poll: :undef, **rest)
         body = filter_undef({
                               content: content,
+                              nonce: nonce,
                               tts: tts,
                               embeds: embeds,
                               allowed_mentions: allowed_mentions,
