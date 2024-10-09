@@ -135,6 +135,7 @@ module Discordrb
     # @return [Message, nil] If `wait` is `true`, a {Message} will be returned. Otherwise this method will return `nil`.
     # @note This is only available to webhooks with publically exposed tokens. This excludes channel follow webhooks and webhooks retrieved
     #   via the audit log.
+    # rubocop:disable Lint/UnusedMethodArgument
     def execute(content: nil, username: nil, avatar_url: nil, tts: nil, file: nil, embeds: nil, allowed_mentions: nil, wait: true, builder: nil, components: nil)
       raise Discordrb::Errors::UnauthorizedWebhook unless @token
 
@@ -152,6 +153,7 @@ module Discordrb
 
       Message.new(resp, @bot) if wait
     end
+    # rubocop:enable Lint/UnusedMethodArgument
 
     # Delete a message created by this webhook.
     # @param message [Message, String, Integer] The ID of the message to delete.

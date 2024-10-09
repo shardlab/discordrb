@@ -102,9 +102,12 @@ module Discordrb
           username: username,
           avatar_url: avatar_url,
           tts: tts,
+          flags: flags,
           embeds: embeds,
           allowed_mentions: allowed_mentions,
           components: components,
+          applied_tags: applied_tags,
+          poll: poll,
           **rest
         }
 

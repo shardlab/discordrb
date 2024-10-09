@@ -31,7 +31,7 @@ module Discordrb
         data = {
           sku_id: sku_id,
           owner_id: owner_id,
-          owner_type: owner_type, 
+          owner_type: owner_type,
           **rest
         }
 
@@ -44,7 +44,7 @@ module Discordrb
       # @param entitlement_id [Integer, String] An ID that uniquely identifies an entitlement.
       # @return [nil]
       def delete_test_entitlement(application_id, entitlement_id)
-        request Route[:DELETE, "/applications/#{application_id}/entitlements/#{entitlement_id}"],
+        request Route[:DELETE, "/applications/#{application_id}/entitlements/#{entitlement_id}"]
       end
     end
   end

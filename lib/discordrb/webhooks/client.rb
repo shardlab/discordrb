@@ -42,7 +42,8 @@ module Discordrb::Webhooks
     #       embed.image = Discordrb::Webhooks::EmbedImage.new(url: 'https://i.imgur.com/PcMltU7.jpg')
     #     end
     #   end
-    # @return [RestClient::Response] the response returned by Discord.
+    # @return [Faraday::Response] the response returned by Discord.
+    # rubocop:disable Lint/UselessAssignment
     def execute(builder = nil, wait = false, components = nil)
       raise TypeError, 'builder needs to be nil or like a Discordrb::Webhooks::Builder!' unless
         (builder.respond_to?(:file) && builder.respond_to?(:to_multipart_hash)) || builder.respond_to?(:to_json_hash) || builder.nil?
@@ -56,19 +57,20 @@ module Discordrb::Webhooks
 
       @faraday.post(wait ? '?wait=true' : '', builder.to_h)
     end
+    # rubocop:enable Lint/UselessAssignment
 
     # Modify this webhook's properties.
     # @param name [String, nil] The default name.
     # @param avatar [String, #read, nil] The new avatar, in base64-encoded JPG format.
     # @param channel_id [String, Integer, nil] The channel to move the webhook to.
-    # @return [RestClient::Response] the response returned by Discord.
+    # @return [Faraday::Response] the response returned by Discord.
     def modify(name: nil, avatar: nil, channel_id: nil)
       @faraday.patch({ name: name, avatar: avatarise(avatar), channel_id: channel_id }.compact)
     end
 
     # Delete this webhook.
     # @param reason [String, nil] The reason this webhook was deleted.
-    # @return [RestClient::Response] the response returned by Discord.
+    # @return [Faraday::Response] the response returned by Discord.
     # @note This is permanent and cannot be undone.
     def delete(reason: nil)
       @faraday.delete(nil, { 'X-Audit-Log-Reason': reason })
@@ -101,7 +103,7 @@ module Discordrb::Webhooks
 
     # Delete a message created by this webhook.
     # @param message_id [String, Integer] The ID of the message to delete.
-    # @return [RestClient::Response] the response returned by Discord.
+    # @return [Faraday::Response] the response returned by Discord.
     def delete_message(message_id)
       @faraday.delete("messages/#{message_id}")
     end

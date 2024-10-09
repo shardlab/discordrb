@@ -79,7 +79,7 @@ module Discordrb
       def create_followup_message(id, token, content: :undef, tts: :undef, embeds: :undef, allowed_mentions: :undef,
                                   components: :undef, flags: :undef, applied_tags: :undef, poll: :undef, **rest)
         body = {
-          wait: true, content: content, tts: :undef, embeds: embeds, allowed_mentions: allowed_mentions,
+          wait: true, content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
           flags: flags, components: components, applied_tags: applied_tags, poll: poll, **rest
         }
 

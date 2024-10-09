@@ -25,6 +25,7 @@ module Discordrb
                 params: params
       end
 
+      # rubocop:disable Style/MapToHash
       # @!discord_api https://discord.com/developers/docs/resources/message#create-message
       # @param channel_id [Integer, String] An ID that uniquely identifies a channel.
       # @param content [String] Message content up to 2,000 characters.
@@ -66,6 +67,7 @@ module Discordrb
         request Route[:POST, "/channels/#{channel_id}/messages", channel_id],
                 body: body
       end
+      # rubocop:enable Style/MapToHash
 
       # @!discord_api https://discord.com/developers/docs/resources/message#crosspost-message
       # @param channel_id [Integer, String] An ID that uniquely identifies a channel.

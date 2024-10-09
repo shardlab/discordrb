@@ -79,6 +79,8 @@ module Discordrb
       @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
     end
 
+    # rubocop:disable Lint/UnusedMethodArgument
+    # rubocop:disable Lint/UselessAssignment
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
     # The response may be modified with {Interaction#edit_response} or deleted with {Interaction#delete_response}.
     # Further messages can be sent with {Interaction#send_message}.
@@ -228,6 +230,8 @@ module Discordrb
       resp = @bot.client.execute_webhook(@application_id, @token, wait: true, **data)
       Interactions::Message.new(resp, @bot, @interaction)
     end
+    # rubocop:enable Lint/UnusedMethodArgument
+    # rubocop:enable Lint/UselessAssignment
 
     # @param message [String, Integer, InteractionMessage, Message] The message created by this interaction to be edited.
     # @param content [String] The message content.

@@ -26,11 +26,11 @@ module Discordrb
       # @param name [String] Name of the rule.
       # @param event_type [1, 2] The context this rule applies to.
       # @param trigger_type [Integer] The type of action that can trigger this rule.
-      # @param trigger_metadata [Hash<Symbol, Object>] Extra data used to determine when a rule should should be triggered.
-      # @param actions [Array<Symbol, Object>] The action to perform when the rule is triggered.
+      # @param trigger_metadata [Hash] Extra data used to determine when a rule should should be triggered.
+      # @param actions [Array<Hash>] The action to perform when the rule is triggered.
       # @param enabled [Boolean] Whether this rule is enabled or not.
-      # @param exempt_roles [Array<Integer>] ID of roles that should not be affected by this rule.
-      # @param exempt_channels [Array<Integer>] ID of channels that should not be affected by this rule.
+      # @param exempt_roles [Array<Integer, String>] ID of roles that should not be affected by this rule.
+      # @param exempt_channels [Array<Integer, String>] ID of channels that should not be affected by this rule.
       # @param reason [String] The reason for creating this rule.
       # @return [Hash<Symbol, Object>]
       def create_auto_moderation_rule(guild_id, name:, event_type:, trigger_type:, actions:, trigger_metadata: :undef,
@@ -58,11 +58,11 @@ module Discordrb
       # @param auto_moderation_rule_id [Integer, String] An ID that uniquely identifies an auto-moderation rule.
       # @param name [String] Name of the rule.
       # @param event_type [1, 2] The context this rule applies to.
-      # @param trigger_metadata [Hash<Symbol, Object>] Extra data used to determine when a rule should should be triggered.
-      # @param actions [Array<Symbol, Object>] The action to perform when the rule is triggered.
+      # @param trigger_metadata [Hash] Extra data used to determine when a rule should should be triggered.
+      # @param actions [Array<Hash>] The action to perform when the rule is triggered.
       # @param enabled [Boolean] Whether this rule is enabled or not.
-      # @param exempt_roles [Array<Integer>] ID of roles that should not be affected by this rule.
-      # @param exempt_channels [Array<Integer>] ID of channels that should not be affected by this rule.
+      # @param exempt_roles [Array<Integer, String>] ID of roles that should not be affected by this rule.
+      # @param exempt_channels [Array<Integer, String>] ID of channels that should not be affected by this rule.
       # @param reason [String] The reason for editing this rule.
       # @return [Hash<Symbol, Object>]
       def modify_auto_moderation_rule(guild_id, auto_moderation_rule_id, name: :undef, event_type: :undef, trigger_metadata: :undef,

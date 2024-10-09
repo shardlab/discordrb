@@ -23,18 +23,18 @@ module Discordrb
       # @param rate_limit_per_user [Integer] The wait between sending messages (0-21600).
       # @param bitrate [Intger] the bitrate of the voice or stage channel.
       # @param user_limit [Intger] The max amount of users that can be in this voice or stage channel.
-      # @param permission_overwrites [Array<Symbol, Object>] Array of permission overwrite objects for the channel or category.
+      # @param permission_overwrites [Array<Hash>] Array of permission overwrite objects for the channel or category.
       # @param parent_id [Integer, String] ID of the new parent category for this channel.
       # @param rtc_region [String] Channel voice region. Defaults to auto when null.
       # @param video_quality_mode [Integer] Camera quality mode in voice channels.
       # @param default_auto_archive_duration [Integer] Default client duration to auto-archive new threads.
       # @param flags [Integer] Bitfield value of channel flags to set.
-      # @param available_tags [Array<Hash<Symbol, Object>>] Avalibile tags for posts in GUILD_FORUM channels.
-      # @param default_reaction_emoji [Hash<Symbol, Object>] Emoji to show for reactions on posts in GUILD_FORUM channels.
+      # @param available_tags [Array<Hash>] Avalibile tags for posts in GUILD_FORUM channels.
+      # @param default_reaction_emoji [Hash] Emoji to show for reactions on posts in GUILD_FORUM channels.
       # @param default_thread_rate_limit_per_user [Integer] Inital rate-limit-per-user for new threads.
       # @param default_sort_order [Integer] Default sort order for GUILD_FORUM channels.
       # @param default_forum_layout [Integer] Default forum layout for GUILD_FORUM channels.
-      # @param reason [String] The reason for making this channel.
+      # @param reason [String] The reason for modifiying this channel.
       # @return [Hash<Symbol, Object>]
       def modify_channel(channel_id,
                          name: :undef, icon: :undef, type: :undef, position: :undef, topic: :undef,
@@ -238,11 +238,12 @@ module Discordrb
                 reason: reason
       end
 
+      # rubocop:disable Style/MapToHash
       # @!discord_api https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
       # @param channel_id [Integer, String] An ID that uniquely identifies a channel.
       # @param name [String] 1-100 character name.
       # @param auto_archive_duration [Integer] The thread won't show in the channel list once this duration is reached.
-      # @param message [Hash<Symbol, Object>] The first message in a forum or media channel.
+      # @param message [Hash] The first message in a forum or media channel.
       # @param files [File] File contents being sent.
       # @param applied_tags [Array] ID's of tags to apply.
       # @param rate_limit_per_user [Integer] Slowmode, or amount of seconds a user has to wait between messages.
@@ -250,7 +251,7 @@ module Discordrb
       # @return [Hash<Symbol, Object>]
       def start_thread_in_forum_or_media_channel(channel_id,
                                                  name:, message:, auto_archive_duration: :undef, applied_tags: :undef,
-                                                 file: :undef, rate_limit_per_user: :undef, reason: :undef, **rest)
+                                                 files: :undef, rate_limit_per_user: :undef, reason: :undef, **rest)
         body = filter_undef({
                               name: name,
                               auto_archive_duration: auto_archive_duration,
@@ -269,6 +270,7 @@ module Discordrb
                 body: body,
                 reason: reason
       end
+      # rubocop:enable Style/MapToHash
 
       # @!discord_api https://discord.com/developers/docs/resources/channel#join-thread
       # @param channel_id [Integer, String] An ID that uniquely identifies a channel.
@@ -306,8 +308,9 @@ module Discordrb
       # @param user_id [Integer, String] An ID that uniquely identifies a user.
       # @param with_member [Boolean] Whether to return guild member object.
       # @return [nil]
-      def get_thread_member(channel_id, user_id, with_member: :undef)
-        request Route[:DELETE, "/channels/#{channel_id}/thread-members/#{user_id}", channel_id]
+      def get_thread_member(channel_id, user_id, with_member: :undef, **params)
+        request Route[:GET, "/channels/#{channel_id}/thread-members/#{user_id}", channel_id],
+                params: filter_undef({ with_member: with_member, **params })
       end
 
       # @!discord_api https://discord.com/developers/docs/resources/channel#remove-thread-member

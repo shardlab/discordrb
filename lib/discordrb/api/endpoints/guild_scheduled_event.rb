@@ -35,7 +35,7 @@ module Discordrb
       # @param recurrence_rule [Hash] A recurrence rule object. See the offical API docs for more info.
       # @param reason [String] The reason for creating this scheduled event.
       # @return [Hash<Symbol, Object>]
-      def create_guild_scheduled_event(guild_id, channel_id: :undef, entity_metadata: :undef, name:, privacy_level: :undef,
+      def create_guild_scheduled_event(guild_id, name:, channel_id: :undef, entity_metadata: :undef, privacy_level: :undef,
                                        scheduled_start_time: :undef, scheduled_end_time: :undef, description: :undef,
                                        entity_type: :undef, image: :undef, recurrence_rule: :undef, reason: :undef, **rest)
         data = {
@@ -101,7 +101,7 @@ module Discordrb
       # @param guild_scheduled_event_id [Integer, String] An ID that uniquely identifies a scheduled event.
       # @return [nil]
       def delete_guild_scheduled_event(guild_id, guild_scheduled_event_id)
-        request Route[:DELETE, "/guilds/#{guild_id}/scheduled-events/#{guild_scheduled_event_id}"],
+        request Route[:DELETE, "/guilds/#{guild_id}/scheduled-events/#{guild_scheduled_event_id}"]
       end
     end
   end

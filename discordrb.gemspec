@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.authors       = %w[meew0 swarley]
   spec.email         = ['']
 
-  spec.summary       = 'Discord API for Ruby'
+  spec.summary       = 'Discord API for Ruby.'
   spec.description   = 'A Ruby implementation of the Discord (https://discord.com) API.'
   spec.homepage      = 'https://github.com/shardlab/discordrb'
   spec.license       = 'MIT'
