@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'zlib'
-require 'set'
 
 require 'discordrb/api/client'
 require 'discordrb/events/message'
@@ -181,6 +180,14 @@ module Discordrb
       @servers
     end
 
+    # The list of members in threads the bot can see.
+    # @return [Hash<Integer => Hash<Integer => Hash<String => Object>>]
+    def thread_members
+      gateway_check
+      unavailable_servers_check
+      @thread_members
+    end
+
     # @overload emoji(id)
     #   Return an emoji by its ID
     #   @param id [String, Integer] The emoji's ID.
@@ -291,12 +298,18 @@ module Discordrb
     # @param server [Server, nil] The server the bot should be invited to, or nil if a general invite should be created.
     # @param permission_bits [String, Integer] Permission bits that should be appended to invite url.
     # @return [String] the OAuth invite URL.
-    def invite_url(server: nil, permission_bits: nil)
+    def invite_url(server: nil, permission_bits: nil, redirect_uri: nil, scopes: ['bot'])
       @client_id ||= bot_application.id
 
-      server_id_str = server ? "&guild_id=#{server.id}" : ''
-      permission_bits_str = permission_bits ? "&permissions=#{permission_bits}" : ''
-      "https://discord.com/oauth2/authorize?&client_id=#{@client_id}#{server_id_str}#{permission_bits_str}&scope=bot"
+      query = URI.encode_www_form({
+        client_id: @client_id,
+        guild_id: server&.id,
+        permissions: permission_bits,
+        redirect_uri: redirect_uri,
+        scope: scopes.join(' ')
+      }.compact)
+
+      "https://discord.com/oauth2/authorize?#{query}"
     end
 
     # @return [Hash<Integer => VoiceBot>] the voice connections this bot currently has, by the server ID to which they are connected.
@@ -595,6 +608,36 @@ module Discordrb
       update_status(:invisible, @activity, nil)
     end
 
+    # Join a thread
+    # @param channel [Channel, Integer, String]
+    def join_thread(channel)
+      @client.join_thread(channel.resolve_id)
+      nil
+    end
+
+    # Leave a thread
+    # @param channel [Channel, Integer, String]
+    def leave_thread(channel)
+      @client.leave_thread(channel.resolve_id)
+      nil
+    end
+
+    # Add a member to a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def add_thread_member(channel, member)
+      @client.add_thread_member(channel.resolve_id, member.resolve_id)
+      nil
+    end
+
+    # Remove a member from a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def remove_thread_member(channel, member)
+      @client.remove_thread_member(channel.resolve_id, member.resolve_id)
+      nil
+    end
+
     # Sets debug mode. If debug mode is on, many things will be outputted to STDOUT.
     def debug=(new_debug)
       LOGGER.debug = new_debug
@@ -733,7 +776,22 @@ module Discordrb
       ApplicationCommand.new(resp, self, server_id)
     end
 
+    # Get all application commands.
+    # @param server_id [String, Integer, nil] The ID of the server to get the commands from. Global if `nil`.
+    # @return [Array<ApplicationCommand>]
+    def get_application_commands(server_id: nil)
+      resp = if server_id
+               @client.get_guild_application_commands(profile.id, server_id)
+             else
+               @client.get_global_application_commands(profile.id)
+             end
+      resp.map do |command_data|
+        ApplicationCommand.new(command_data, self, server_id)
+      end
+    end
+
     # @yieldparam [OptionBuilder]
+    # @yieldparam [PermissionBuilder]
     # @example
     #   bot.register_application_command(:reddit, 'Reddit Commands') do |cmd|
     #     cmd.subcommand_group(:subreddit, 'Subreddit Commands') do |group|
@@ -765,9 +823,19 @@ module Discordrb
              else
                @client.create_global_application_command(profile.id, **params)
              end
-      ApplicationCommand.new(resp, self, server_id)
+      cmd = ApplicationCommand.new(resp, self, server_id)
+
+      if permission_builder.to_a.any?
+        raise ArgumentError, 'Permissions can only be set for guild commands' unless server_id
+
+        edit_application_command_permissions(cmd.id, server_id, permission_builder.to_a)
+      end
+
+      cmd
     end
 
+    # @yieldparam [OptionBuilder]
+    # @yieldparam [PermissionBuilder]
     def edit_application_command(command_id, server_id: nil, name: nil, description: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil, name_localizations: nil, description_localizations: nil)
       type = ApplicationCommand::TYPES[type] || type
 
@@ -786,7 +854,15 @@ module Discordrb
              else
                @client.edit_global_application_command(profile.id, command_id, **params)
              end
-      ApplicationCommand.new(resp, self, server_id)
+      cmd = ApplicationCommand.new(resp, self, server_id)
+
+      if permission_builder.to_a.any?
+        raise ArgumentError, 'Permissions can only be set for guild commands' unless server_id
+
+        edit_application_command_permissions(cmd.id, server_id, permission_builder.to_a)
+      end
+
+      cmd
     end
 
     # Remove an application command from the commands registered with discord.
@@ -798,6 +874,17 @@ module Discordrb
       else
         @client.delete_global_application_command(profile.id, command_id)
       end
+    end
+
+    # @param command_id [Integer, String]
+    # @param server_id [Integer, String]
+    # @param permissions [Array<Hash>] An array of objects formatted as `{ id: ENTITY_ID, type: 1 or 2, permission: true or false }`
+    def edit_application_command_permissions(command_id, server_id, permissions = [])
+      builder = Interactions::PermissionBuilder.new
+      yield builder if block_given?
+
+      permissions += builder.to_a
+      @client.edit_application_command_permissions(profile.id, server_id, command_id, permissions)
     end
 
     private
@@ -821,13 +908,13 @@ module Discordrb
       LOGGER.warn('Servers may be unavailable due to an outage, or your bot is on very large servers that are taking a while to load.')
     end
 
-   #### ##    ## ######## ######## ########  ##    ##    ###    ##        ######
+    #### ##    ## ######## ######## ########  ##    ##    ###    ##        ######
     ##  ###   ##    ##    ##       ##     ## ###   ##   ## ##   ##       ##    ##
     ##  ####  ##    ##    ##       ##     ## ####  ##  ##   ##  ##       ##
     ##  ## ## ##    ##    ######   ########  ## ## ## ##     ## ##        ######
     ##  ##  ####    ##    ##       ##   ##   ##  #### ######### ##             ##
     ##  ##   ###    ##    ##       ##    ##  ##   ### ##     ## ##       ##    ##
-   #### ##    ##    ##    ######## ##     ## ##    ## ##     ## ########  ######
+    #### ##    ##    ##    ######## ##     ## ##    ## ##     ## ########  ######
 
     # Internal handler for PRESENCE_UPDATE
     def update_presence(data)
@@ -937,6 +1024,8 @@ module Discordrb
       elsif channel.group?
         @channels[channel.id] = channel
       end
+
+      @thread_members.delete(channel.id) if channel.thread?
     end
 
     # Internal handler for CHANNEL_UPDATE
@@ -1003,6 +1092,7 @@ module Discordrb
       member.update_nick(data[:nick])
       member.update_global_name(data['user']['global_name']) if data['user']['global_name']
       member.update_boosting_since(data[:premium_since])
+      member.update_communication_disabled_until(data['communication_disabled_until'])
     end
 
     # Internal handler for GUILD_MEMBER_DELETE
@@ -1480,9 +1570,47 @@ module Discordrb
 
             raise_event(event)
           end
+        when Interaction::TYPES[:modal_submit]
+
+          event = ModalSubmitEvent.new(data, self)
+          raise_event(event)
         end
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)
+        raise_event(event)
+
+      when :THREAD_CREATE
+        create_channel(data)
+
+        event = ThreadCreateEvent.new(data, self)
+        raise_event(event)
+      when :THREAD_UPDATE
+        update_channel(data)
+
+        event = ThreadUpdateEvent.new(data, self)
+        raise_event(event)
+      when :THREAD_DELETE
+        delete_channel(data)
+        @thread_members.delete(data['id']&.resolve_id)
+
+        # raise ThreadDeleteEvent
+      when :THREAD_LIST_SYNC
+        data['members'].map { |member| ensure_thread_member(member) }
+        data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
+
+        # raise ThreadListSyncEvent?
+      when :THREAD_MEMBER_UPDATE
+        ensure_thread_member(data)
+      when :THREAD_MEMBERS_UPDATE
+        data['added_members']&.each do |added_member|
+          ensure_thread_member(added_member) if added_member['user_id']
+        end
+
+        data['removed_member_ids'].each do |member_id|
+          @thread_members[data['id']&.resolve_id]&.delete(member_id&.resolve_id)
+        end
+
+        event = ThreadMembersUpdateEvent.new(data, self)
         raise_event(event)
       else
         # another event that we don't support yet
@@ -1545,7 +1673,7 @@ module Discordrb
 
     def handle_awaits(event)
       @awaits ||= {}
-      @awaits.each do |_, await|
+      @awaits.each_value do |await|
         key, should_delete = await.match(event)
         next unless key
 

@@ -61,6 +61,9 @@ module Discordrb
     attr_reader :pinned
     alias_method :pinned?, :pinned
 
+    # @return [Integer] what the type of the message is
+    attr_reader :type
+
     # @return [Server, nil] the server in which this message was sent.
     attr_reader :server
 
@@ -76,6 +79,7 @@ module Discordrb
       @content = data[:content]
       @channel = bot.channel(data[:channel_id].to_i)
       @pinned = data[:pinned]
+      @type = data[:type]
       @tts = data[:tts]
       @nonce = data[:nonce]
       @mention_everyone = data[:mention_everyone]
@@ -157,6 +161,8 @@ module Discordrb
 
     # Replies to this message with the specified content.
     # @deprecated Please use {#respond}.
+    # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
+    # @return (see #respond)
     # @see Channel#send_message
     def reply(content)
       @channel.send_message(content)
@@ -170,7 +176,7 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param mention_user [true, false] Whether the user that is being replied to should be pinged by the reply.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @return [Message] the message that was sent.
+    # @return (see #respond)
     def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil)
       allowed_mentions = { parse: [] } if allowed_mentions == false
       allowed_mentions = allowed_mentions.to_hash.transform_keys(&:to_sym)
@@ -190,7 +196,7 @@ module Discordrb
     # @param new_embed [Hash, Discordrb::Webhooks::Embed, nil] The new embed the message should have. If `nil` the message will be changed to have no embed.
     # @return [Message] the resulting message.
     def edit(new_content, new_embed = nil, components = nil)
-      data = { content: new_content, embeds: new_embed ? [new_embed] : nil, components: components }
+      data = { content: new_content, embeds: new_embed ? [new_embed] : nil, components: components&.to_a }
       resp = @bot.client.edit_message(@channel.id, @id, **data)
       Message.new(resp, @bot)
     end
@@ -365,6 +371,12 @@ module Discordrb
       !@referenced_message.nil?
     end
 
+    # Whether or not this message was of type "CHAT_INPUT_COMMAND"
+    # @return [true, false]
+    def chat_input_command?
+      @type == 20
+    end
+
     # @return [Message, nil] the Message this Message was sent in reply to.
     def referenced_message
       return @referenced_message if @referenced_message
@@ -387,5 +399,13 @@ module Discordrb
 
       results.flatten.compact
     end
+
+    # to_message -> self or message
+    # @return [Discordrb::Message]
+    def to_message
+      self
+    end
+    
+    alias_method :message, :to_message
   end
 end

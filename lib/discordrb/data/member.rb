@@ -18,6 +18,10 @@ module Discordrb
 
     # @return [Server] the server this member is on.
     attr_reader :server
+
+    # @return [Time] When the user's timeout will expire.
+    attr_reader :communication_disabled_until
+    alias_method :timeout, :communication_disabled_until
   end
 
   # A member is a user on a server. It differs from regular users in that it has roles, voice statuses and things like
@@ -60,7 +64,7 @@ module Discordrb
       @bot = bot
 
       @user = bot.ensure_user(data[:user])
-      super @user # Initialize the delegate class
+      super(@user) # Initialize the delegate class
 
       @server = server
       @server_id = server&.id || data[:guild_id].to_i
@@ -70,6 +74,9 @@ module Discordrb
       @nick = data[:nick]
       @joined_at = data[:joined_at] ? Time.parse(data[:joined_at]) : nil
       @boosting_since = data[:premium_since] ? Time.parse(data[:premium_since]) : nil
+      timeout_until = data['communication_disabled_until']
+      @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
+      @permissions = Permissions.new(data['permissions']) if data['permissions']
     end
 
     # @return [Server] the server this member is on.
@@ -116,6 +123,24 @@ module Discordrb
       set_roles(role)
     end
 
+    # Check if the current user has communication disabled.
+    # @return [true, false]
+    def communication_disabled?
+      !@communication_disabled_until.nil? && @communication_disabled_until > Time.now
+    end
+
+    alias_method :timeout?, :communication_disabled?
+
+    # Set a user's timeout duration, or remove it by setting the timeout to `nil`.
+    # @param timeout_until [Time, nil] When the timeout will end.
+    def communication_disabled_until=(timeout_until)
+      raise ArgumentError, 'A time out cannot exceed 28 days' if timeout_until && timeout_until > (Time.now + 2_419_200)
+
+      @bot.client.modify_guild_member(@server_id, @user.id, communication_disabled_until: timeout_until.iso8601)
+    end
+
+    alias_method :timeout=, :communication_disabled_until=
+
     # Bulk sets a member's roles.
     # @param role [Role, Array<Role>] The role(s) to set.
     # @param reason [String] The reason the user's roles are being changed.
@@ -135,7 +160,7 @@ module Discordrb
     def modify_roles(add, remove, reason = nil)
       add_role_ids = role_id_array(add)
       remove_role_ids = role_id_array(remove)
-      old_role_ids = @role_ids
+      old_role_ids = resolve_role_ids
       new_role_ids = (old_role_ids - remove_role_ids + add_role_ids).uniq
 
       @bot.client.modify_guild_member(@server_id, @user.id, roles: new_role_ids, reason: reason)
@@ -150,7 +175,7 @@ module Discordrb
       if role_ids.count == 1
         @bot.client.add_guild_member_role(@server_id, @user.id, roles: role_ids[0], reason: reason)
       else
-        old_role_ids = @role_ids
+        old_role_ids = resolve_role_ids
         new_role_ids = (old_role_ids + role_ids).uniq
         @bot.client.modify_guild_member(@server_id, @user.id, roles: new_role_ids, reason: reason)
       end
@@ -296,6 +321,12 @@ module Discordrb
       @boosting_since = time
     end
 
+    # @!visibility private
+    def update_communication_disabled_until(time)
+      time = time ? Time.parse(time) : nil
+      @communication_disabled_until = time
+    end
+
     # Update this member
     # @note For internal use only.
     # @!visibility private
@@ -306,6 +337,8 @@ module Discordrb
       @deaf = data[:deaf] if data.key?('deaf')
 
       @joined_at = Time.parse(data[:joined_at]) if data[:joined_at]
+      timeout_until = data['communication_disabled_until']
+      @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
     end
 
     include PermissionCalculator
@@ -330,6 +363,11 @@ module Discordrb
     def voice_state_attribute(name)
       voice_state = server.voice_states[@user.id]
       voice_state&.send name
+    end
+
+    # Utility method to resolve role ID's
+    def resolve_role_ids
+      @roles ? @roles.collect(&:id) : @role_ids
     end
   end
 end

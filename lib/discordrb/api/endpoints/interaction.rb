@@ -17,10 +17,11 @@ module Discordrb
       # @param poll [Hash] A poll request object.
       # @return [Hash]
       def create_interaction_response(id, token, type:, content: :undef, tts: :undef, embeds: :undef,
-                                      allowed_mentions: :undef, flags: :undef, components: :undef, poll: :undef, **rest)
+                                      custom_id: :undef, title: :undef, allowed_mentions: :undef, flags: :undef,
+                                      components: :undef, poll: :undef, **rest)
         body = {
           type: type, content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
-          flags: flags, components: components, poll: poll, **rest
+          custom_id: custom_id, title: title, flags: flags, components: components, poll: poll, **rest
         }
 
         request Route[:POST, "/interactions/#{id}/#{token}/callback"],

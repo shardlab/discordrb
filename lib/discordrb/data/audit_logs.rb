@@ -41,13 +41,47 @@ module Discordrb
       75 => :message_unpin,
       80 => :integration_create,
       81 => :integration_update,
-      82 => :integration_delete
+      82 => :integration_delete,
+      83 => :stage_instance_create,
+      84 => :stage_instance_update,
+      85 => :stage_instance_delete,
+      90 => :sticker_create,
+      91 => :sticker_update,
+      92 => :sticker_delete,
+      100 => :guild_scheduled_event_create,
+      101 => :guild_scheduled_event_update,
+      102 => :guild_scheduled_event_delete,
+      110 => :thread_create,
+      111 => :thread_update,
+      112 => :thread_delete,
+      121 => :application_command_permission_update,
+      130 => :soundboard_sound_create,
+      131 => :soundboard_sound_update,
+      132 => :soundboard_sound_delete,
+      140 => :auto_moderation_rule_create,
+      141 => :auto_moderation_rule_update,
+      142 => :auto_moderation_rule_delete,
+      143 => :auto_moderation_block_message,
+      144 => :auto_moderation_flag_to_channel,
+      145 => :auto_moderation_user_communication_disabled,
+      150 => :creator_monetization_request_created,
+      151 => :creator_monetization_terms_accepted,
+      163 => :onboarding_prompt_create,
+      164 => :onboarding_prompt_update,
+      165 => :onboarding_prompt_delete,
+      166 => :onboarding_create,
+      167 => :onboarding_update,
+      190 => :home_settings_create,
+      191 => :home_settings_update
     }.freeze
 
     # @!visibility private
     CREATE_ACTIONS = %i[
       channel_create channel_overwrite_create member_ban_add role_create
-      invite_create webhook_create emoji_create integration_create
+      invite_create webhook_create emoji_create integration_create stage_instance_create
+      sticker_create guild_scheduled_event_create thread_create soundboard_sound_create
+      auto_moderation_rule_create creator_monetization_request_created onboarding_prompt_create
+      onboarding_create home_settings_create
     ].freeze
 
     # @!visibility private
@@ -55,13 +89,18 @@ module Discordrb
       channel_delete channel_overwrite_delete member_kick member_prune
       member_ban_remove role_delete invite_delete webhook_delete
       emoji_delete message_delete message_bulk_delete integration_delete
+      stage_instance_delete sticker_delete guild_scheduled_event_delete
+      thread_delete soundboard_sound_delete auto_moderation_rule_delete onboarding_prompt_delete
     ].freeze
 
     # @!visibility private
     UPDATE_ACTIONS = %i[
       server_update channel_update channel_overwrite_update member_update
       member_role_update role_update invite_update webhook_update
-      emoji_update integration_update
+      emoji_update integration_update stage_instance_update sticker_update
+      guild_scheduled_event_update thread_update application_command_permission_update
+      soundboard_sound_update auto_moderation_rule_update onboarding_prompt_update
+      onboarding_update home_settings_update
     ].freeze
 
     # @return [Hash<String => User>] the users included in the audit logs.
@@ -177,7 +216,7 @@ module Discordrb
 
       # The inspect method is overwritten to give more useful output
       def inspect
-        "<AuditLogs::Entry id=#{@id} action=#{@action} reason=#{@reason} action_type=#{@action_type} target_type=#{@target_type} count=#{@count} days=#{@days} members_removed=#{@members_removed}>"
+        "<AuditLogs::Entry id=#{@id} key=#{@key} action=#{@action} reason=#{@reason} action_type=#{@action_type} target_type=#{@target_type} count=#{@count} days=#{@days} members_removed=#{@members_removed}>"
       end
 
       # Process action changes
@@ -219,8 +258,8 @@ module Discordrb
         @old = Permissions.new(@old) if @old && @key == 'permissions'
         @new = Permissions.new(@new) if @new && @key == 'permissions'
 
-        @old = @old.map { |o| Overwrite.new(o[:id], type: o[:type].to_sym, allow: o[:allow], deny: o[:deny]) } if @old && @key == 'permission_overwrites'
-        @new = @new.map { |o| Overwrite.new(o[:id], type: o[:type].to_sym, allow: o[:allow], deny: o[:deny]) } if @new && @key == 'permission_overwrites'
+        @old = @old.map { |o| Overwrite.new(o[:id], type: o[:type], allow: o[:allow], deny: o[:deny]) } if @old && @key == 'permission_overwrites'
+        @new = @new.map { |o| Overwrite.new(o[:id], type: o[:type], allow: o[:allow], deny: o[:deny]) } if @new && @key == 'permission_overwrites'
       end
 
       # @return [Channel, nil] the channel that was previously used in the server widget. Only present if the key for this change is `widget_channel_id`.
@@ -325,7 +364,17 @@ module Discordrb
       when 50..59 then :webhook
       when 60..69 then :emoji
       when 70..79 then :message
-      when 80..89 then :integration
+      when 80..82 then :integration
+      when 83..85 then :stage_instance
+      when 90..99 then :sticker
+      when 100..102 then :scheduled_event
+      when 110..112 then :thread
+      when 120..121 then :application_command
+      when 130..132 then :soundboard
+      when 140..145 then :auto_moderation
+      when 150..151 then :creator_monetization
+      when 163..167 then :onboarding
+      when 190..191 then :home_settings
       else :unknown
       end
     end

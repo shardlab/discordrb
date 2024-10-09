@@ -32,6 +32,42 @@ module Discordrb
     # @return [Integer] the position of this role in the hierarchy
     attr_reader :position
 
+    # @return [String, nil] The icon hash for this role.
+    attr_reader :icon
+
+    # @return [Tags, nil] The role tags
+    attr_reader :tags
+
+    # Wrapper for the role tags
+    class Tags
+      # @return [Integer, nil] The ID of the bot this role belongs to
+      attr_reader :bot_id
+
+      # @return [Integer, nil] The ID of the integration this role belongs to
+      attr_reader :integration_id
+
+      # @return [true, false] Whether this is the guild's Booster role
+      attr_reader :premium_subscriber
+
+      # @return [Integer, nil] The id of this role's subscription sku and listing
+      attr_reader :subscription_listing_id
+
+      # @return [true, false] Whether this role is available for purchase
+      attr_reader :available_for_purchase
+
+      # @return [true, false] Whether this role is a guild's linked role
+      attr_reader :guild_connections
+
+      def initialize(data)
+        @bot_id = data[:bot_id]&.resolve_id
+        @integration_id = data[:integration_id]&.resolve_id
+        @premium_subscriber = data.key?(:premium_subscriber)
+        @subscription_listing_id = data[:subscription_listing_id]&.resolve_id
+        @available_for_purchase = data.key?(:available_for_purchase)
+        @guild_connections = data.key?(:guild_connections)
+      end
+    end
+
     # This class is used internally as a wrapper to a Role object that allows easy writing of permission data.
     class RoleWriter
       # @!visibility private
@@ -67,6 +103,8 @@ module Discordrb
       @managed = data[:managed]
 
       @colour = ColourRGB.new(data[:color])
+      @icon = data[:icon]
+      @tags = Tags.new(data[:tags]) if data[:tags]
     end
 
     # @return [String] a string that will mention this role, if it is mentionable.
@@ -92,6 +130,7 @@ module Discordrb
       @colour = other.colour
       @position = other.position
       @managed = other.managed
+      @icon = other.icon
     end
 
     # Updates the data cache from a hash containing data
@@ -132,15 +171,26 @@ module Discordrb
     # Upload a role icon for servers with the ROLE_ICONS feature.
     # @param file [File, #Read] A base64 encoded string with the image data, or an object that responds to `#read`, such as `File`.
     def icon=(file)
-      path_method = %i[original_filename path local_path].find { |meth| icon.respond_to?(meth) }
+      if icon
+        path_method = %i[original_filename path local_path].find { |meth| icon.respond_to?(meth) }
+        raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
+        raise ArgumentError, 'File must respond to read' unless icon.respond_to? :read
 
-      raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
-      raise ArgumentError, 'File must respond to read' unless icon.respond_to? :read
-
-      mime_type = MIME::Types.type_for(icon.__send__(path_method)).first&.to_s || 'image/jpeg'
-      image_string = "data:#{mime_type};base64,#{Base64.encode64(icon.read).strip}"
+        mime_type = MIME::Types.type_for(icon.__send__(path_method)).first&.to_s || 'image/jpeg'
+        image_string = "data:#{mime_type};base64,#{Base64.encode64(icon.read).strip}"
+      elsif icon.nil?
+        image_string = nil
+      end
 
       update_role_data(icon: image_string)
+    end
+
+    # @param format ['webp', 'png', 'jpeg']
+    # @return [String] URL to the icon on Discord's CDN.
+    def icon_url(format = 'webp')
+      return nil unless @icon
+
+      Discordrb::CDN.role_icon_url(@id, @icon, format)
     end
 
     # Changes this role's permissions to a fixed bitfield. This allows setting multiple permissions at once with just

@@ -402,7 +402,7 @@ module Discordrb
     # @!visibility private
     def delete_role(role_id)
       @roles.reject! { |r| r.id == role_id }
-      @members.each do |_, member|
+      @members.each_value do |member|
         new_roles = member.roles.reject { |r| r.id == role_id }
         member.update_roles(new_roles)
       end
@@ -545,8 +545,6 @@ module Discordrb
 
         mime_type = MIME::Types.type_for(icon.__send__(path_method)).first&.to_s || 'image/jpeg'
         image_string = "data:#{mime_type};base64,#{Base64.encode64(icon.read).strip}"
-      elsif icon.nil?
-        image_string = :undef
       end
 
       params = {
@@ -605,7 +603,7 @@ module Discordrb
     # The amount of emoji the server can have, based on its current Nitro Boost Level.
     # @return [Integer] the max amount of emoji
     def max_emoji
-      case @level
+      case @boost_level
       when 1
         100
       when 2
@@ -649,9 +647,9 @@ module Discordrb
 
     # Forcibly moves a user into a different voice channel. Only works if the bot has the permission needed.
     # @param user [User, String, Integer] The user to move.
-    # @param channel [Channel, String, Integer] The voice channel to move into.
+    # @param channel [Channel, String, Integer, nil] The voice channel to move into. (If nil, the user is disconnected from the voice channel)
     def move(user, channel)
-      @bot.client.modify_guild_member(@id, user.resolve_id, channel_id: channel.resolve_id)
+      @bot.client.modify_guild_member(@id, user.resolve_id, channel_id: channel&.resolve_id)
     end
 
     # Deletes this server. Be aware that this is permanent and impossible to undo, so be careful!
@@ -858,11 +856,11 @@ module Discordrb
       @afk_timeout = new_data[:afk_timeout] || @afk_timeout
 
       afk_channel_id = new_data[:afk_channel_id] || @afk_channel
-      @afk_channel_id = afk_channel_id.nil? ? nil : afk_channel_id.resolve_id
+      @afk_channel_id = afk_channel_id&.resolve_id
       widget_channel_id = new_data[:widget_channel_id] || @widget_channel
-      @widget_channel_id = widget_channel_id.nil? ? nil : widget_channel_id.resolve_id
+      @widget_channel_id = widget_channel_id&.resolve_id
       system_channel_id = new_data[:system_channel_id] || @system_channel
-      @system_channel_id = system_channel_id.nil? ? nil : system_channel_id.resolve_id
+      @system_channel_id = system_channel_id&.resolve_id
 
       @widget_enabled = new_data[:widget_enabled]
       @splash = new_data[:splash_id] || @splash_id

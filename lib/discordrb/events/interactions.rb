@@ -55,6 +55,11 @@ module Discordrb::Events
       )
     end
 
+    # (see Interaction#show_modal)
+    def show_modal(title:, custom_id:, components: nil, &block)
+      @interaction.show_modal(title: title, custom_id: custom_id, components: components, &block)
+    end
+
     # (see Interaction#edit_response)
     def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil, &block)
       @interaction.edit_response(content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, &block)
@@ -83,6 +88,11 @@ module Discordrb::Events
     # (see Interaction#defer_update)
     def defer_update
       @interaction.defer_update
+    end
+
+    # (see Interaction#get_component)
+    def get_component(custom_id)
+      @interaction.get_component(custom_id)
     end
   end
 
@@ -120,7 +130,7 @@ module Discordrb::Events
   # Event for ApplicationCommand interactions.
   class ApplicationCommandEvent < InteractionCreateEvent
     # Struct to allow accessing data via [] or methods.
-    Resolved = Struct.new('Resolved', :channels, :members, :messages, :roles, :users) # rubocop:disable Lint/StructNewOverride
+    Resolved = Struct.new('Resolved', :channels, :members, :messages, :roles, :users, :attachments) # rubocop:disable Lint/StructNewOverride
 
     # @return [String] The name of the command.
     attr_reader :command_name
@@ -152,7 +162,7 @@ module Discordrb::Events
       @command_name = command_data[:name].to_sym
 
       @target_id = command_data[:target_id]&.to_i
-      @resolved = Resolved.new({}, {}, {}, {}, {})
+      @resolved = Resolved.new({}, {}, {}, {}, {}, {})
       process_resolved(command_data[:resolved]) if command_data[:resolved]
 
       options = command_data[:options] || []
@@ -209,10 +219,14 @@ module Discordrb::Events
       resolved_data[:messages]&.each do |id, data|
         @resolved[:messages][id.to_i] = Discordrb::Message.new(data, @bot)
       end
+
+      resolved_data[:attachments]&.each do |id, data|
+        @resolved[:attachments][id.to_i] = Discordrb::Attachment.new(data, nil, @bot)
+      end
     end
 
     def transform_options_hash(hash)
-      hash.map { |opt| [opt[:name], opt[:options] || opt[:value]] }.to_h
+      hash.to_h { |opt| [opt['name'], opt['options'] || opt['value']] }
     end
   end
 
@@ -314,15 +328,14 @@ module Discordrb::Events
     # @return [String] User provided data for this button.
     attr_reader :custom_id
 
-    # @return [Interactions::Message] The message the button originates from.
+    # @return [Interactions::Message, nil] The message the button originates from.
     attr_reader :message
 
     # @!visibility private
     def initialize(data, bot)
       super
 
-      data[:message][:author] = data[:member]
-      @message = Discordrb::Interactions::Message.new(data[:message], bot, @interaction)
+      @message = Discordrb::Interactions::Message.new(data[:message], bot, @interaction) if data['message']
       @custom_id = data[:data][:custom_id]
     end
   end
@@ -356,8 +369,20 @@ module Discordrb::Events
   end
 
   # An event for when a user interacts with a button component.
-
   class ButtonEvent < ComponentEvent
+  end
+
+  # An event for when a user submits a modal.
+  class ModalSubmitEvent < ComponentEvent
+    # @return [Array<TextInputComponent>]
+    attr_reader :components
+
+    # Get the value of an input passed to the modal.
+    # @param custom_id [String] The custom ID of the component to look for.
+    # @return [String, nil]
+    def value(custom_id)
+      get_component(custom_id)&.value
+    end
   end
 
   # Event handler for a Button interaction event.
@@ -379,5 +404,9 @@ module Discordrb::Events
 
   # Event handler for a select menu component.
   class SelectMenuEventHandler < ComponentEventHandler
+  end
+
+  # Event handler for a modal submission.
+  class ModalSubmitEventHandler < ComponentEventHandler
   end
 end

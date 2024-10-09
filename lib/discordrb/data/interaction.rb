@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'discordrb/webhooks'
+
 module Discordrb
   # Base class for interaction objects.
   class Interaction
@@ -8,7 +10,8 @@ module Discordrb
     TYPES = {
       ping: 1,
       command: 2,
-      component: 3
+      component: 3,
+      modal_submit: 5
     }.freeze
 
     # Interaction response types.
@@ -18,10 +21,11 @@ module Discordrb
       channel_message: 4,
       deferred_message: 5,
       deferred_update: 6,
-      update_message: 7
+      update_message: 7,
+      modal: 9
     }.freeze
 
-    # @return [User] The user that initiated the interaction.
+    # @return [User, Member] The user that initiated the interaction.
     attr_reader :user
 
     # @return [Integer, nil] The ID of the server this interaction originates from.
@@ -50,6 +54,9 @@ module Discordrb
     # @return [Hash] The interaction data.
     attr_reader :data
 
+    # @return [Array<ActionRow>]
+    attr_reader :components
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -63,12 +70,13 @@ module Discordrb
       @channel_id = data[:channel_id]&.to_i
       @user = if data[:member]
                 data[:member][:guild_id] = @server_id
-                Discordrb::Member.new(data[:member], nil, bot)
+                Discordrb::Member.new(data[:member], bot.servers[@server_id], bot)
               else
                 bot.ensure_user(data[:user])
               end
       @token = data[:token]
       @version = data[:version]
+      @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
@@ -90,11 +98,12 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      # Set builder defaults from parameters
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
-      data = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, components: components.to_a }
-      data = builder.to_json_hash.merge(data.compact)
+      data = builder.to_json_hash
 
       @bot.client.create_interaction_response(@id, @token, type: CALLBACK_TYPES[:channel_message], **data)
 
@@ -121,6 +130,23 @@ module Discordrb
       @bot.client.create_interaction_response(@id, @token, type: CALLBACK_TYPES[:deferred_update])
     end
 
+    # Create a modal as a response.
+    # @param title [String] The title of the modal being shown.
+    # @param custom_id [String] The custom_id used to identify the modal and store data.
+    # @param components [Array<Component, Hash>, nil] An array of components. These can be defined through the block as well.
+    # @yieldparam [Discordrb::Webhooks::Modal] A builder for the modal's components.
+    def show_modal(title:, custom_id:, components: nil)
+      if block_given?
+        modal_builder = Discordrb::Webhooks::Modal.new
+        yield modal_builder
+
+        components = modal_builder.to_a
+      end
+
+      @bot.client.create_interaction_response(@id, @token, type: CALLBACK_TYPES[:modal], custom_id: custom_id, title: title, components: components.to_a)
+      nil
+    end
+
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
     # The response may be modified with {Interaction#edit_response} or deleted with {Interaction#delete_response}.
     # Further messages can be sent with {Interaction#send_message}.
@@ -140,11 +166,11 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
-      data = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, flags: flags, components: components&.to_a }
-      data = builder.to_json_hash.merge(data.compact)
+      data = builder.to_json_hash
 
       @bot.client.create_interaction_response(@application_id, @token, type: CALLBACK_TYPES[:update_message], **data)
 
@@ -158,17 +184,18 @@ module Discordrb
     # @param content [String] The content of the message.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param components [Array<#to_h>] An array of message components.
     # @return [InteractionMessage] The updated response message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield(builder, view) if block_given?
 
       components ||= view
-      data = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components&.to_a }
-      data = builder.to_json_hash.merge(data.compact)
+      data = builder.to_json_hash
       resp = @bot.client.edit_original_interaction_response(@application_id, @token, **data)
 
       Interactions::Message.new(resp, @bot, @interaction)
@@ -192,10 +219,11 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
+      prepare_builder(builder, content, embeds, allowed_mentions)
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, tts: tts, components: components.to_a, flags: flags }.compact)
+      data = builder.to_json_hash
 
       resp = @bot.client.execute_webhook(@application_id, @token, wait: true, **data)
       Interactions::Message.new(resp, @bot, @interaction)
@@ -247,6 +275,32 @@ module Discordrb
         end
       end
     end
+
+    # @return [Array<TextInput>]
+    def text_inputs
+      @components&.select { |component| component.is_a? TextInput } | []
+    end
+
+    # @return [TextInput, Button, SelectMenu]
+    def get_component(custom_id)
+      top_level = @components.flat_map(&:components) || []
+      message_level = @message&.components&.flat_map { |r| r.components } || []
+      components = top_level.concat(message_level)
+      components.find { |component| component.custom_id == custom_id }
+    end
+
+    private
+
+    # Set builder defaults from parameters
+    # @param builder [Discordrb::Webhooks::Builder]
+    # @param content [String, nil]
+    # @param embeds [Array<Hash, Discordrb::Webhooks::Embed>, nil]
+    # @param allowed_mentions [AllowedMentions, Hash, nil]
+    def prepare_builder(builder, content, embeds, allowed_mentions)
+      builder.content = content
+      builder.allowed_mentions = allowed_mentions
+      embeds&.each { |embed| builder << embed }
+    end
   end
 
   # An ApplicationCommand for slash commands.
@@ -283,6 +337,9 @@ module Discordrb
     # @return [Hash]
     attr_reader :options
 
+    # @return [Integer]
+    attr_reader :id
+
     # @!visibility private
     def initialize(data, bot, server_id = nil)
       @bot = bot
@@ -298,6 +355,22 @@ module Discordrb
       @options = data[:options]
     end
 
+    # @param subcommand [String, nil] The subcommand to mention.
+    # @param subcommand_group [String, nil] The subcommand group to mention.
+    # @return [String] the layout to mention it in a message
+    def mention(subcommand_group: nil, subcommand: nil)
+      if subcommand_group && subcommand
+        "</#{name} #{subcommand_group} #{subcommand}:#{id}>"
+      elsif subcommand_group
+        "</#{name} #{subcommand_group}:#{id}>"
+      elsif subcommand
+        "</#{name} #{subcommand}:#{id}>"
+      else
+        "</#{name}:#{id}>"
+      end
+    end
+    alias_method :to_s, :mention
+
     # @param name [String] The name to use for this command.
     # @param description [String] The description of this command.
     # @param default_permission [true, false] Whether this command is available with default permissions.
@@ -305,7 +378,7 @@ module Discordrb
     # @return (see Bot#edit_application_command)
     def edit(name: nil, description: nil, default_member_permissions: nil, name_localizations: nil, description_localizations: nil, &block)
       @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_member_permissions: default_member_permissions,
-      name_localizations: name_localizations, description_localizations: description_localizations, &block)
+                                         name_localizations: name_localizations, description_localizations: description_localizations, &block)
     end
 
     # Delete this application command.
@@ -329,7 +402,23 @@ module Discordrb
         user: 6,
         channel: 7,
         role: 8,
-        mentionable: 9
+        mentionable: 9,
+        number: 10,
+        attachment: 11
+      }.freeze
+
+      CHANNEL_TYPES = {
+        text: 0,
+        dm: 1,
+        voice: 2,
+        group_dm: 3,
+        category: 4,
+        news: 5,
+        store: 6,
+        news_thread: 10,
+        public_thread: 11,
+        private_thread: 12,
+        stage: 13
       }.freeze
 
       # @return [Array<Hash>]
@@ -342,6 +431,8 @@ module Discordrb
 
       # @param name [String, Symbol] The name of the subcommand.
       # @param description [String] A description of the subcommand.
+      # @param name_localizations [Hash, nil] The localized names of the subcommand.
+      # @param description_localizations [Hash, nil] The localized descriptions of the subcommand.
       # @yieldparam [OptionBuilder]
       # @return (see #option)
       # @example
@@ -354,12 +445,13 @@ module Discordrb
         builder = OptionBuilder.new
         yield builder if block_given?
 
-        option(TYPES[:subcommand], name, description, options: builder.to_a, name_localizations: name_localizations,
-               description_localizations: description_localizations)
+        option(TYPES[:subcommand], name, description, options: builder.to_a, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the subcommand group.
       # @param description [String] A description of the subcommand group.
+      # @param name_localizations [Hash, nil] The localized names of the subcommand group.
+      # @param description_localizations [Hash, nil] The localized descriptions of the subcommand group.
       # @yieldparam [OptionBuilder]
       # @return (see #option)
       # @example
@@ -374,73 +466,102 @@ module Discordrb
         builder = OptionBuilder.new
         yield builder
 
-        option(TYPES[:subcommand_group], name, description, options: builder.to_a, name_localizations: name_localizations,
-               description_localizations: description_localizations)
+        option(TYPES[:subcommand_group], name, description, options: builder.to_a, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
       def string(name, description, required: nil, choices: nil, name_localizations: nil, description_localizations: nil)
-        option(TYPES[:string], name, description, required: required, choices: choices, name_localizations: name_localizations,
-               description_localizations: description_localizations)
+        option(TYPES[:string], name, description, required: required, choices: choices, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
       def integer(name, description, required: nil, choices: nil, name_localizations: nil, description_localizations: nil)
-        option(TYPES[:integer], name, description, required: required, choices: choices, name_localizations: name_localizations,
-               description_localizations: description_localizations)
+        option(TYPES[:integer], name, description, required: required, choices: choices, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
       def boolean(name, description, required: nil, name_localizations: nil, description_localizations: nil)
-        option(TYPES[:boolean], name, description, required: required, name_localizations: name_localizations,
-               description_localizations: description_localizations)
+        option(TYPES[:boolean], name, description, required: required, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
       def user(name, description, required: nil, name_localizations: nil, description_localizations: nil)
-        option(TYPES[:user], name, description, required: required, name_localizations: name_localizations,
-               description_localizations: description_localizations)
+        option(TYPES[:user], name, description, required: required, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param types [Array<Symbol, Integer>] See {CHANNEL_TYPES}
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
-      def channel(name, description, required: nil, name_localizations: nil, description_localizations: nil)
-        option(TYPES[:channel], name, description, required: required, name_localizations: name_localizations,
-               description_localizations: description_localizations)
+      def channel(name, description, required: nil, types: nil, name_localizations: nil, description_localizations: nil)
+        types = types&.collect { |type| type.is_a?(Numeric) ? type : CHANNEL_TYPES[type] }
+        option(TYPES[:channel], name, description, required: required, channel_types: types, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
       def role(name, description, required: nil, name_localizations: nil, description_localizations: nil)
-        option(TYPES[:role], name, description, required: required, name_localizations: name_localizations,
-               description_localizations: description_localizations)
+        option(TYPES[:role], name, description, required: required, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
       def mentionable(name, description, required: nil, name_localizations: nil, description_localizations: nil)
-        option(TYPES[:mentionable], name, description, required: required, name_localizations: name_localizations,
-               description_localizations: description_localizations)
+        option(TYPES[:mentionable], name, description, required: required, name_localizations: name_localizations, description_localizations: description_localizations)
+      end
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
+      # @return (see #option)
+      def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil, name_localizations: nil, description_localizations: nil)
+        option(TYPES[:number], name, description,
+               required: required, min_value: min_value, max_value: max_value, choices: choices, name_localizations: name_localizations, description_localizations: description_localizations)
+      end
+
+      # @param name [String, Symbol] The name of the argument.
+      # @param description [String] A description of the argument.
+      # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
+      # @return (see #option)
+      def attachment(name, description, required: nil, name_localizations: nil, description_localizations: nil)
+        option(TYPES[:attachment], name, description, required: required, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @!visibility private
@@ -448,13 +569,19 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_value [Integer, Float] A minimum value for integer and number options.
+      # @param max_value [Integer, Float] A maximum value for integer and number options.
+      # @param channel_types [Array<Integer>] Channel types that can be provides for channel options.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return Hash
       def option(type, name, description, required: nil, choices: nil, options: nil, min_value: nil, max_value: nil,
                  channel_types: nil, name_localizations: nil, description_localizations: nil)
-        opt = { type: type, name: name, description: description, name_localizations: name_localizations, description_localizations: description_localizations }
+        opt = { type: type, name: name, description: description, name_localizations: name_localizations, description_localizations: description_localizations }.compact
         choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
 
-        opt.merge!({ required: required, choices: choices, options: options }.compact)
+        opt.merge!({ required: required, choices: choices, options: options, min_value: min_value,
+                     max_value: max_value, channel_types: channel_types }.compact)
 
         @options << opt
         opt
@@ -463,6 +590,90 @@ module Discordrb
       # @return [Array<Hash>]
       def to_a
         @options
+      end
+    end
+
+    # Builder for creating server application command permissions.
+    # @deprecated This system is being replaced in the near future.
+    class PermissionBuilder
+      # Role permission type
+      ROLE = 1
+      # User permission type
+      USER = 2
+      # @!visibility hidden
+      def initialize
+        @permissions = []
+      end
+
+      # Allow a role to use this command.
+      # @param role_id [Integer]
+      # @return [PermissionBuilder]
+      def allow_role(role_id)
+        create_entry(role_id, ROLE, true)
+      end
+
+      # Deny a role usage of this command.
+      # @param role_id [Integer]
+      # @return [PermissionBuilder]
+      def deny_role(role_id)
+        create_entry(role_id, ROLE, false)
+      end
+
+      # Allow a user to use this command.
+      # @param user_id [Integer]
+      # @return [PermissionBuilder]
+      def allow_user(user_id)
+        create_entry(user_id, USER, true)
+      end
+
+      # Deny a user usage of this command.
+      # @param user_id [Integer]
+      # @return [PermissionBuilder]
+      def deny_user(user_id)
+        create_entry(user_id, USER, false)
+      end
+
+      # Allow an entity to use this command.
+      # @param object [Role, User, Member]
+      # @return [PermissionBuilder]
+      # @raise [ArgumentError]
+      def allow(object)
+        case object
+        when Discordrb::User, Discordrb::Member
+          create_entry(object.id, USER, true)
+        when Discordrb::Role
+          create_entry(object.id, ROLE, true)
+        else
+          raise ArgumentError, "Unable to create permission for unknown type: #{object.class}"
+        end
+      end
+
+      # Deny an entity usage of this command.
+      # @param object [Role, User, Member]
+      # @return [PermissionBuilder]
+      # @raise [ArgumentError]
+      def deny(object)
+        case object
+        when Discordrb::User, Discordrb::Member
+          create_entry(object.id, USER, false)
+        when Discordrb::Role
+          create_entry(object.id, ROLE, false)
+        else
+          raise ArgumentError, "Unable to create permission for unknown type: #{object.class}"
+        end
+      end
+
+      # @!visibility private
+      # @return [Array<Hash>]
+      def to_a
+        @permissions
+      end
+
+      private
+
+      def create_entry(id, type, permission)
+        @permissions << { id: id, type: type, permission: permission }
+        self
       end
     end
 
@@ -515,8 +726,12 @@ module Discordrb
       # @return [Hash, nil]
       attr_reader :message_reference
 
+      # @return [Array<Component>]
+      attr_reader :components
+
       # @!visibility private
       def initialize(data, bot, interaction)
+        @data = data
         @bot = bot
         @interaction = interaction
         @content = data[:content]
@@ -552,6 +767,7 @@ module Discordrb
         @mention_everyone = data[:mention_everyone]
         @flags = data[:flags]
         @pinned = data[:pinned]
+        @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
       end
 
       # @return [Member, nil] This will return nil if the bot does not have access to the
@@ -592,6 +808,13 @@ module Discordrb
       def edit(content: nil, embeds: nil, allowed_mentions: nil, components: nil, &block)
         @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, &block)
       end
+
+      # @return [Discordrb::Message]
+      def to_message
+        Discordrb::Message.new(@data, @bot)
+      end
+
+      alias_method :message, :to_message
 
       # @!visibility private
       def inspect
