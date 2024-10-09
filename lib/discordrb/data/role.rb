@@ -170,15 +170,15 @@ module Discordrb
 
     # Upload a role icon for servers with the ROLE_ICONS feature.
     # @param file [String, #read] A base64 encoded string with the image data, or an object that responds to `#read`, such as `File`.
-    def icon=(icon)
-      if icon
-        path_method = %i[original_filename path local_path].find { |meth| icon.respond_to?(meth) }
+    def icon=(file)
+      if file
+        path_method = %i[original_filename path local_path].find { |meth| file.respond_to?(meth) }
         raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
-        raise ArgumentError, 'File must respond to read' unless icon.respond_to? :read
+        raise ArgumentError, 'File must respond to read' unless file.respond_to? :read
 
-        mime_type = MIME::Types.type_for(icon.__send__(path_method)).first&.to_s || 'image/jpeg'
-        image_string = "data:#{mime_type};base64,#{Base64.encode64(icon.read).strip}"
-      elsif icon.nil?
+        mime_type = MIME::Types.type_for(file.__send__(path_method)).first&.to_s || 'image/jpeg'
+        image_string = "data:#{mime_type};base64,#{Base64.encode64(file.read).strip}"
+      elsif file.nil?
         image_string = nil
       end
 
