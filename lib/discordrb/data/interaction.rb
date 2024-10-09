@@ -233,7 +233,7 @@ module Discordrb
     # rubocop:enable Lint/UnusedMethodArgument
     # rubocop:enable Lint/UselessAssignment
 
-    # @param message [String, Integer, InteractionMessage, Message] The message created by this interaction to be edited.
+    # @param message [String, Integer, Object] The message created by this interaction to be edited.
     # @param content [String] The message content.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
@@ -377,7 +377,7 @@ module Discordrb
 
     # @param name [String] The name to use for this command.
     # @param description [String] The description of this command.
-    # @param default_permission [true, false] Whether this command is available with default permissions.
+    # @param default_member_permissions [Integer] Who can use this command?
     # @yieldparam (see Bot#edit_application_command)
     # @return (see Bot#edit_application_command)
     def edit(name: nil, description: nil, default_member_permissions: nil, name_localizations: nil, description_localizations: nil, &block)

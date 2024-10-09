@@ -12,12 +12,13 @@ module Discordrb
       # @param after [Integer, String] Entries with an ID greater than a specific audit log entry ID.
       # @param limit [Integer] Maximum number of entries to return; default is 50.
       # @return [Array<Hash<Symbol, Object>>]
-      def get_guild_audit_log(guild_id, user_id: :undef, action_type: :undef, before: :undef, limit: :undef, **params)
+      def get_guild_audit_log(guild_id, user_id: :undef, action_type: :undef, before: :undef, limit: :undef, after: :undef, **params)
         query = {
           user_id: user_id,
           action_type: action_type,
           before: before,
           limit: limit,
+          after: after,
           **params
         }
 

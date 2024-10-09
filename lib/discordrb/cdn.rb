@@ -2,7 +2,6 @@
 
 module Discordrb
   module API
-    # @!discord_api https://discord.com/developers/docs/reference#image-formatting
     module CDN
       # The URL of Discord's CDN.
       CDN_URL = 'https://cdn.discordapp.com'

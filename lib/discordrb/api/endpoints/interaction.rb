@@ -44,7 +44,7 @@ module Discordrb
       # @param allowed_mentions [Hash] Allowed mentions object.
       # @param flags [Integer] Bitfield value of message flags.
       # @param components [Array<Hash>] Array of component objects.
-      # @parm poll [Hash<Object>] A poll request object.
+      # @param poll [Hash<Object>] A poll request object.
       # @return [Hash]
       def edit_original_interaction_response(id, token, content: :undef, embeds: :undef, allowed_mentions: :undef,
                                              flags: :undef, components: :undef, poll: :undef, **rest)

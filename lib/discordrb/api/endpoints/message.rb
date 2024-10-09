@@ -29,7 +29,7 @@ module Discordrb
       # @!discord_api https://discord.com/developers/docs/resources/message#create-message
       # @param channel_id [Integer, String] An ID that uniquely identifies a channel.
       # @param content [String] Message content up to 2,000 characters.
-      # @param nonce [Integer] Unique number Used to verifiy if a message was sent.
+      # @param enforce_nonce [Integer] Unique number Used to verifiy if a message was sent.
       # @param tts [Boolean] Whether this is a TTS message.
       # @param files [File] File contents being sent.
       # @param embeds [Array<Hash>] Up to 10 embed objects to include.
@@ -158,7 +158,7 @@ module Discordrb
       # @return [Hash<Symbol, Object>]
       def edit_message(channel_id,
                        message_id, content: :undef, embeds: :undef, flags: :undef,
-                       file: :undef, allowed_mentions: :undef, components: :undef,
+                       files: :undef, allowed_mentions: :undef, components: :undef,
                        **rest)
         body = filter_undef({
                               content: content,
@@ -171,7 +171,7 @@ module Discordrb
                               **rest
                             })
 
-        body = { file: file, payload_json: JSON.dump(body) } if file
+        body = { files: files, payload_json: JSON.dump(body) } if files
 
         request Route[:PATCH, "/channels/#{channel_id}/messages/#{message_id}", channel_id],
                 body: body
@@ -189,7 +189,7 @@ module Discordrb
 
       # @!discord_api https://discord.com/developers/docs/resources/message#bulk-delete-messages
       # @param channel_id [Integer, String] An ID that uniquely identifies a channel.
-      # @param message_id [Array] An array containing 2-100 message ID's to delete.
+      # @param messages [Array] An array containing 2-100 message ID's to delete.
       # @param reason [String] The reason for deleting these messages.
       # @return [nil]
       def bulk_delete_messages(channel_id, messages, reason: :undef)
