@@ -102,8 +102,8 @@ module Discordrb::Voice
         '-ar', '48000',
         '-ac', '2',
         'pipe:1',
-        filter_volume_argument,
-      ].concat(options.split).reject {|segment| segment.nil? || segment == '' }
+        filter_volume_argument
+      ].concat(options.split).reject { |segment| segment.nil? || segment == '' }
     end
 
     def filter_volume_argument

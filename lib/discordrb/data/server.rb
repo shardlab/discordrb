@@ -615,9 +615,13 @@ module Discordrb
       end
     end
 
+    # Retrieve banned users from this server.
+    # @param limit [Integer] Number of users to return (up to maximum 1000, default 1000).
+    # @param before_id [Integer] Consider only users before given user id.
+    # @param after_id [Integer] Consider only users after given user id.
     # @return [Array<ServerBan>] a list of banned users on this server and the reason they were banned.
-    def bans
-      response = @bot.client.get_guild_bans(@id)
+    def bans(limit: :undef, before_id: :undef, after_id: :undef)
+      response = @bot.client.get_guild_bans(@id, limit: limit, before: before_id, after: after_id)
       response.map do |e|
         ServerBan.new(self, User.new(e[:user], @bot), e[:reason])
       end

@@ -565,16 +565,18 @@ module Discordrb
       register_event(ButtonEvent, attributes, block)
     end
 
-    # This **event** is raised whenever an select menu interaction is created.
+    # This **event** is raised whenever an select string interaction is created.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Regexp] :custom_id A custom_id to match against.
     # @option attributes [String, Integer, Message] :message The message to filter for.
     # @yield The block is executed when the event is raised.
-    # @yieldparam event [SelectMenuEvent] The event that was raised.
-    # @return [SelectMenuEventHandler] The event handler that was registered.
-    def select_menu(attributes = {}, &block)
-      register_event(SelectMenuEvent, attributes, block)
+    # @yieldparam event [StringSelectEvent] The event that was raised.
+    # @return [StringSelectEventHandler] The event handler that was registered.
+    def string_select(attributes = {}, &block)
+      register_event(StringSelectEvent, attributes, block)
     end
+
+    alias_method :select_menu, :string_select
 
     # This **event** is raised whenever a modal is submitted.
     # @param attributes [Hash] The event's attributes.
@@ -587,6 +589,50 @@ module Discordrb
     # @return [ModalSubmitEventHandler] The event handler that was registered.
     def modal_submit(attributes = {}, &block)
       register_event(ModalSubmitEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an select user interaction is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :custom_id A custom_id to match against.
+    # @option attributes [String, Integer, Message] :message The message to filter for.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [UserSelectEvent] The event that was raised.
+    # @return [UserSelectEventHandler] The event handler that was registered.
+    def user_select(attributes = {}, &block)
+      register_event(UserSelectEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an select role interaction is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :custom_id A custom_id to match against.
+    # @option attributes [String, Integer, Message] :message The message to filter for.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [RoleSelectEvent] The event that was raised.
+    # @return [RoleSelectEventHandler] The event handler that was registered.
+    def role_select(attributes = {}, &block)
+      register_event(RoleSelectEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an select mentionable interaction is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :custom_id A custom_id to match against.
+    # @option attributes [String, Integer, Message] :message The message to filter for.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [MentionableSelectEvent] The event that was raised.
+    # @return [MentionableSelectEventHandler] The event handler that was registered.
+    def mentionable_select(attributes = {}, &block)
+      register_event(MentionableSelectEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an select channel interaction is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :custom_id A custom_id to match against.
+    # @option attributes [String, Integer, Message] :message The message to filter for.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ChannelSelectEvent] The event that was raised.
+    # @return [ChannelSelectEventHandler] The event handler that was registered.
+    def channel_select(attributes = {}, &block)
+      register_event(ChannelSelectEvent, attributes, block)
     end
 
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.

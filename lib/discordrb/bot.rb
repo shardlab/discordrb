@@ -387,23 +387,24 @@ module Discordrb
     # @param channel [Channel, String, Integer] The channel, or its ID, to send something to.
     # @param content [String] The text that should be sent as a message. It is limited to 2000 characters (Discord imposed).
     # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
-    # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
+    # @param embeds [Hash, Discordrb::Webhooks::Embed, Array<Hash>, Array<Discordrb::Webhooks::Embed> nil] The rich embed(s) to append to this message.
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @return [Message] The message that was sent.
-    def send_message(channel, content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+    def send_message(channel, content, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
       channel = channel.resolve_id
       debug("Sending message to #{channel} with content '#{content}'")
       allowed_mentions = { parse: [] } if allowed_mentions == false
       message_reference = { message_id: message_reference.id } if message_reference.respond_to?(:id)
+      embeds = (embeds.instance_of?(Array) ? embeds.map(&:to_hash) : [embeds&.to_hash]).compact
 
       attachments = attachments&.map do |attachment|
         attachment.is_a?(UploadIO) ? attachment : file_to_file_part(attachment)
       end
 
       resp = @client.create_message(channel, **{
-        content: content, tts: tts, files: attachments, embed: embed&.to_hash,
+        content: content, tts: tts, files: attachments, embeds: embeds,
         allowed_mentions: allowed_mentions&.to_hash, message_reference: message_reference, components: components
       }.compact)
       Message.new(resp, self)
@@ -415,16 +416,16 @@ module Discordrb
     # @param content [String] The text that should be sent as a message. It is limited to 2000 characters (Discord imposed).
     # @param timeout [Float] The amount of time in seconds after which the message sent will be deleted.
     # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
-    # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
+    # @param embeds [Hash, Discordrb::Webhooks::Embed, Array<Hash>, Array<Discordrb::Webhooks::Embed> nil] The rich embed(s) to append to this message.
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    def send_temporary_message(channel, content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+    def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
       Thread.new do
         Thread.current[:discordrb_name] = "#{@current_thread}-temp-msg"
 
-        message = send_message(channel, content, tts, embed, attachments, allowed_mentions, message_reference, components)
+        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components)
         sleep(timeout)
         message.delete
       end
@@ -946,7 +947,7 @@ module Discordrb
         member.update_username(username)
       end
 
-      global_name = data['user']['global_name']
+      global_name = data[:user][:global_name]
       if global_name && !member_is_new # Don't set the global_name for newly-cached members
         debug "Implicitly updating presence-obtained information global_name for member #{user_id}"
         member.update_global_name(global_name)
@@ -1090,7 +1091,7 @@ module Discordrb
       member = server.member(data[:user][:id].to_i)
       member.update_roles(data[:roles])
       member.update_nick(data[:nick])
-      member.update_global_name(data['user']['global_name']) if data['user']['global_name']
+      member.update_global_name(data[:user][:global_name]) if data[:user][:global_name]
       member.update_boosting_since(data[:premium_since])
       member.update_communication_disabled_until(data['communication_disabled_until'])
     end
@@ -1565,8 +1566,24 @@ module Discordrb
             event = ButtonEvent.new(data, self)
 
             raise_event(event)
-          when Webhooks::View::COMPONENT_TYPES[:select_menu]
-            event = SelectMenuEvent.new(data, self)
+          when Webhooks::View::COMPONENT_TYPES[:string_select]
+            event = StringSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:user_select]
+            event = UserSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:role_select]
+            event = RoleSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:mentionable_select]
+            event = MentionableSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:channel_select]
+            event = ChannelSelectEvent.new(data, self)
 
             raise_event(event)
           end

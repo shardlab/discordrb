@@ -40,7 +40,7 @@ module Discordrb
     attr_reader :bot_account
     alias_method :bot_account?, :bot_account
 
-    # @return [true, false] whether this is fake user for a webhook message
+    # @return [true, false] whether this is a fake user for a webhook message
     attr_reader :webhook_account
     alias_method :webhook_account?, :webhook_account
     alias_method :webhook?, :webhook_account

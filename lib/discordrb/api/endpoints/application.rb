@@ -56,7 +56,7 @@ module Discordrb
       # @param application_id [Integer, String] An ID that uniquely identifies an application.
       # @param application_role_connection_metadata [Hash<Symbol, Object>] An application role connection metadata object.
       # @return [Hash<Symbol, Object>]
-      def update_application_role_connection_metadata_records(application_id, application_role_connection_metadata, **rest)
+      def update_application_role_connection_metadata_records(application_id, _application_role_connection_metadata, **rest)
         request Route[:PUT, "/applications/#{application_id}/role-connections/metadata"],
                 body: filter_undef({ application_role_connection_metadata: role_connection_metadata, **rest })
       end

@@ -10,7 +10,7 @@ module Discordrb
       # @param with_expiration [Boolean] Whether this invite should contain its expiration date.
       # @param guild_scheduled_event_id [Boolean] The ID of the scheduled event to include with this invite.
       # @return [Hash<Symbol, Object>]
-      def get_invite(invite_code, with_counts: :undef, with_expiration: :undef, guild_scheduled_event_id: :undef, **params)
+      def get_invite(invite_code, with_counts: :undef, with_expiration: :undef, guild_scheduled_event_id: :undef, **_params)
         data = {
           with_counts: with_counts,
           with_expiration: with_expiration,

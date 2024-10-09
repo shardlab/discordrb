@@ -69,8 +69,8 @@ module Discordrb::Voice
     # @return [Array(String, Integer)] the IP and port received from the discovery reply.
     def receive_discovery_reply
       # Wait for a UDP message
-      message = @socket.recv(70)
-      ip = message[4..-3].delete("\0")
+      message = @socket.recv(74)
+      ip = message[8..-3].delete("\0")
       port = message[-2..].unpack1('n')
       [ip, port]
     end
@@ -98,10 +98,21 @@ module Discordrb::Voice
     # Sends the UDP discovery packet with the internally stored SSRC. Discord will send a reply afterwards which can
     # be received using {#receive_discovery_reply}
     def send_discovery
-      discovery_packet = [@ssrc].pack('N')
+      # Create empty packet
+      discovery_packet = ''
 
-      # Add 66 zeroes so the packet is 70 bytes long
+      # Add Type request (0x1 = request, 0x2 = response)
+      discovery_packet += [0x1].pack('n')
+
+      # Add Length (excluding Type and itself = 70)
+      discovery_packet += [70].pack('n')
+
+      # Add SSRC
+      discovery_packet += [@ssrc].pack('N')
+
+      # Add 66 zeroes so the packet is 74 bytes long
       discovery_packet += "\0" * 66
+
       send_packet(discovery_packet)
     end
 

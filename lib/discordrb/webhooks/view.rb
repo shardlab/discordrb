@@ -16,7 +16,12 @@ class Discordrb::Webhooks::View
   COMPONENT_TYPES = {
     action_row: 1,
     button: 2,
-    select_menu: 3
+    select_menu: 3,
+    # text_input: 4, # (defined in modal.rb)
+    user_select: 5,
+    role_select: 6,
+    mentionable_select: 7,
+    channel_select: 8
   }.freeze
 
   # This builder is used when constructing an ActionRow. All current components must be within an action row, but this can
@@ -52,19 +57,65 @@ class Discordrb::Webhooks::View
 
     # Add a select menu to this action row.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
-    #   There is a limit of 100 characters to each custom_id.
+    # There is a limit of 100 characters to each custom_id.
     # @param options [Array<Hash>] Options that can be selected in this menu. Can also be provided via the yielded builder.
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param disabled [true, false, nil] Grey out the component to make it unusable.
     # @yieldparam builder [SelectMenuBuilder]
-    def select_menu(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil, disabled: nil, select_type: :string_select)
+    def string_select(custom_id:, options: [], placeholder: nil, min_values: nil, max_values: nil, disabled: nil, select_type: :string_select)
       builder = SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values, disabled, select_type: :string_select)
 
       yield builder if block_given?
 
       @components << builder.to_h
+    end
+
+    alias_method :select_menu, :string_select
+
+    # Add a select user to this action row.
+    # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
+    # There is a limit of 100 characters to each custom_id.
+    # @param placeholder [String, nil] Default text to show when no entries are selected.
+    # @param min_values [Integer, nil] The minimum amount of values a user must select.
+    # @param max_values [Integer, nil] The maximum amount of values a user can select.
+    # @param disabled [true, false, nil] Grey out the component to make it unusable.
+    def user_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :user_select).to_h
+    end
+
+    # Add a select role to this action row.
+    # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
+    # There is a limit of 100 characters to each custom_id.
+    # @param placeholder [String, nil] Default text to show when no entries are selected.
+    # @param min_values [Integer, nil] The minimum amount of values a user must select.
+    # @param max_values [Integer, nil] The maximum amount of values a user can select.
+    # @param disabled [true, false, nil] Grey out the component to make it unusable.
+    def role_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :role_select).to_h
+    end
+
+    # Add a select mentionable to this action row.
+    # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
+    # There is a limit of 100 characters to each custom_id.
+    # @param placeholder [String, nil] Default text to show when no entries are selected.
+    # @param min_values [Integer, nil] The minimum amount of values a user must select.
+    # @param max_values [Integer, nil] The maximum amount of values a user can select.
+    # @param disabled [true, false, nil] Grey out the component to make it unusable.
+    def mentionable_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :mentionable_select).to_h
+    end
+
+    # Add a select channel to this action row.
+    # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
+    # There is a limit of 100 characters to each custom_id.
+    # @param placeholder [String, nil] Default text to show when no entries are selected.
+    # @param min_values [Integer, nil] The minimum amount of values a user must select.
+    # @param max_values [Integer, nil] The maximum amount of values a user can select.
+    # @param disabled [true, false, nil] Grey out the component to make it unusable.
+    def channel_select(custom_id:, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :channel_select).to_h
     end
 
     # @!visibility private
@@ -76,13 +127,14 @@ class Discordrb::Webhooks::View
   # A builder to assist in adding options to select menus.
   class SelectMenuBuilder
     # @!visibility hidden
-    def initialize(custom_id, options = [], placeholder = nil, min_values = nil, max_values = nil, disabled = nil)
+    def initialize(custom_id, options = [], placeholder = nil, min_values = nil, max_values = nil, disabled = nil, select_type: :string_select)
       @custom_id = custom_id
       @options = options
       @placeholder = placeholder
       @min_values = min_values
       @max_values = max_values
       @disabled = disabled
+      @select_type = select_type
     end
 
     # Add an option to this select menu.
@@ -106,7 +158,7 @@ class Discordrb::Webhooks::View
     # @!visibility private
     def to_h
       {
-        type: COMPONENT_TYPES[:select_menu],
+        type: COMPONENT_TYPES[@select_type],
         options: @options,
         placeholder: @placeholder,
         min_values: @min_values,

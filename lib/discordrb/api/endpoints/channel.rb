@@ -249,7 +249,7 @@ module Discordrb
       # @param reason [String] The reason for starting this thread in forum or media channel.
       # @return [Hash<Symbol, Object>]
       def start_thread_in_forum_or_media_channel(channel_id,
-                                                 name:, auto_archive_duration: :undef, message:, applied_tags: :undef,
+                                                 name:, message:, auto_archive_duration: :undef, applied_tags: :undef,
                                                  file: :undef, rate_limit_per_user: :undef, reason: :undef, **rest)
         body = filter_undef({
                               name: name,

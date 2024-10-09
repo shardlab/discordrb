@@ -93,7 +93,7 @@ module Discordrb
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
     def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
-      flags |= 1 << 6 if ephemeral
+      flags | (1 << 6) if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -143,7 +143,7 @@ module Discordrb
         components = modal_builder.to_a
       end
 
-      @bot.client.create_interaction_response(@id, @token, type: CALLBACK_TYPES[:modal], custom_id: custom_id, title: title, components: components.to_a)
+      @bot.client.create_interaction_response(@id, @token, type: CALLBACK_TYPES[:modal], custom_id: custom_id, title: title, components: components.to_a) unless type == Interaction::TYPES[:modal_submit]
       nil
     end
 
@@ -161,7 +161,7 @@ module Discordrb
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
     def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
-      flags |= 1 << 6 if ephemeral
+      flags | (1 << 6) if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -214,7 +214,7 @@ module Discordrb
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil)
-      flags |= 64 if ephemeral
+      flags | 64 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -234,7 +234,7 @@ module Discordrb
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil)
+    def edit_message(_message, content: nil, embeds: nil, allowed_mentions: nil, components: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
@@ -284,7 +284,7 @@ module Discordrb
     # @return [TextInput, Button, SelectMenu]
     def get_component(custom_id)
       top_level = @components.flat_map(&:components) || []
-      message_level = @message&.components&.flat_map { |r| r.components } || []
+      message_level = (@message.instance_of?(Hash) ? Message.new(@message, @bot) : @message)&.components&.flat_map(&:components) || []
       components = top_level.concat(message_level)
       components.find { |component| component.custom_id == custom_id }
     end
