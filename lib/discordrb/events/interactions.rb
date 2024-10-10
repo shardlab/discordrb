@@ -210,9 +210,9 @@ module Discordrb::Events
         @resolved[:channels][id.to_i] = Discordrb::Channel.new(data, @bot)
       end
 
-      resolved_data[:members]&.each do |id, data|
-        data[:user] = resolved_data[:users][id]
-        data[:guild_id] = @interaction.server_id
+      resolved_data['members']&.each do |id, data|
+        data['user'] = resolved_data[:users][id]
+        data['guild_id'] = @interaction.server_id
         @resolved[:members][id.to_i] = Discordrb::Member.new(data, nil, @bot)
       end
 
