@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'delegate'
+
 module Discordrb
   # Mixin for the attributes members and private members should have
   module MemberAttributes

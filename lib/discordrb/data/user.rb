@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'delegate'
+
 module Discordrb
   # Mixin for the attributes users should have
   module UserAttributes
