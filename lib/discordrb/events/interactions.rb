@@ -197,7 +197,7 @@ module Discordrb::Events
     private
 
     def process_resolved(resolved_data)
-      resolved_data[:users]&.each do |id, data|
+      resolved_data['users']&.each do |id, data|
         @resolved[:users][id.to_i] = @bot.ensure_user(data)
       end
 
