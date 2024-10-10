@@ -146,7 +146,7 @@ module Discordrb
 
       yield(builder, view) if block_given?
 
-      data = builder.to_json_hash.merge(params.compact)
+      data = builder.to_h.merge(params.compact)
       data[:components] ||= view
 
       resp = @bot.client.execute_webhook(@id, @token, **data.compact)
@@ -184,7 +184,7 @@ module Discordrb
 
       yield(builder, view) if block_given?
 
-      data = builder.to_json_hash.merge(params.compact)
+      data = builder.to_h.merge(params.compact)
       data[:components] = components || view
 
       resp = @bot.client.edit_webhook_message(@token, @id, message.resolve_id, **data)

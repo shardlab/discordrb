@@ -46,7 +46,7 @@ module Discordrb::Webhooks
     # rubocop:disable Lint/UselessAssignment
     def execute(builder = nil, wait = false, components = nil)
       raise TypeError, 'builder needs to be nil or like a Discordrb::Webhooks::Builder!' unless
-        (builder.respond_to?(:file) && builder.respond_to?(:to_multipart_hash)) || builder.respond_to?(:to_json_hash) || builder.nil?
+        (builder.respond_to?(:file) && builder.respond_to?(:to_multipart_hash)) || builder.respond_to?(:to_h) || builder.nil?
 
       builder ||= Builder.new
       view = View.new
@@ -97,7 +97,7 @@ module Discordrb::Webhooks
 
       yield builder if block_given?
 
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
+      data = builder.to_h.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
       @faraday.patch("messages/#{message_id}", data.compact)
     end
 

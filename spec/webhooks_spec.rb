@@ -107,7 +107,7 @@ describe Discordrb::Webhooks do
 
     describe '#execute' do
       let(:json_hash) { instance_double(Hash) }
-      let(:default_builder) { instance_double(Discordrb::Webhooks::Builder, to_json_hash: json_hash) }
+      let(:default_builder) { instance_double(Discordrb::Webhooks::Builder, to_h: json_hash) }
 
       before do
         allow(subject).to receive(:post_json).with(any_args)
@@ -178,7 +178,7 @@ describe Discordrb::Webhooks do
     describe '#edit_message' do
       let(:message_id) { SecureRandom.bytes(8) }
       let(:json_hash) { {} }
-      let(:default_builder) { instance_double(Discordrb::Webhooks::Builder, to_json_hash: json_hash) }
+      let(:default_builder) { instance_double(Discordrb::Webhooks::Builder, to_h: json_hash) }
 
       before do
         allow(RestClient).to receive(:patch).with(any_args)
@@ -229,7 +229,7 @@ describe Discordrb::Webhooks do
       it 'makes a POST request with JSON data' do
         subject.__send__(:post_json, builder, [], false)
 
-        expect(RestClient).to have_received(:post).with(provided_url, builder.to_json_hash.merge({ components: [] }).to_json, content_type: :json)
+        expect(RestClient).to have_received(:post).with(provided_url, builder.to_h.merge({ components: [] }).to_json, content_type: :json)
       end
 
       it 'waits when wait=true' do

@@ -105,7 +105,7 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_h
 
       @bot.client.create_interaction_response(@id, @token, type: CALLBACK_TYPES[:channel_message], **data)
 
@@ -172,7 +172,7 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_h
 
       @bot.client.create_interaction_response(@application_id, @token, type: CALLBACK_TYPES[:update_message], **data)
 
@@ -197,7 +197,7 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_h
       resp = @bot.client.edit_original_interaction_response(@application_id, @token, **data)
 
       Interactions::Message.new(resp, @bot, @interaction)
@@ -225,7 +225,7 @@ module Discordrb
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_h
 
       resp = @bot.client.execute_webhook(@application_id, @token, wait: true, **data)
       Interactions::Message.new(resp, @bot, @interaction)
@@ -243,7 +243,7 @@ module Discordrb
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components.to_a }.compact)
+      data = builder.to_h.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components.to_a }.compact)
 
       resp = @bot.client.execute_webhook(@application_id, @token, **data)
       Interactions::Message.new(resp, @bot, @interaction)
