@@ -49,7 +49,7 @@ module Discordrb
       def edit_original_interaction_response(id, token, content: :undef, embeds: :undef, allowed_mentions: :undef,
                                              flags: :undef, components: :undef, poll: :undef, **rest)
         body = {
-          type: type, content: content, embeds: embeds, allowed_mentions: allowed_mentions,
+          content: content, embeds: embeds, allowed_mentions: allowed_mentions,
           flags: flags, components: components, poll: poll, **rest
         }
 
