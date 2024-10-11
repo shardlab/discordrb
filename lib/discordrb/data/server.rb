@@ -591,7 +591,7 @@ module Discordrb
     # @return [Array<Member>] An array of member objects that match the given parameters.
     def search_members(name, limit: nil)
       response = JSON.parse(API::Server.search_guild_members(@bot.token, @id, name, limit))
-      return nil if response.nil?
+      return nil if response.empty?
 
       response.map { |mem| Member.new(mem, self, @bot) }
     end
