@@ -587,9 +587,9 @@ module Discordrb
 
     # Searches a server for members that matches a username or a nickname.
     # @param name [String] The username or nickname to search for.
-    # @param limit [Integer] The maximum number of members between 1-1000 to return.
+    # @param limit [Integer] The maximum number of members between 1-1000 to return. Returns 1 member by default.
     # @return [Array<Member>] An array of member objects that match the given parameters.
-    def search_members(name, limit: nil)
+    def search_members(name:, limit: nil)
       response = JSON.parse(API::Server.search_guild_members(@bot.token, @id, name, limit))
       return nil if response.empty?
 
