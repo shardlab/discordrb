@@ -732,7 +732,7 @@ module Discordrb
     # @param user [User, String, Integer] The user, or its ID, to check.
     # @return [true, false] whether or not the user is ignored.
     def ignored?(user)
-      @ignored_ids.include?(user.resolve_id)
+      @ignored_ids.include?(user&.to_i.resolve_id)
     end
 
     # @see Logger#debug
