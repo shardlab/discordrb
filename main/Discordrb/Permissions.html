@@ -656,14 +656,18 @@ of instancing a new Permissions object.</p>
 138
 139
 140
-141</pre>
+141
+142
+143</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 138</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
-  <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span>
-  <span class='id identifier rubyid_bits'>bits</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_bits'>bits</span>
+  <span class='comment'># rubocop:disable Lint/Void
+</span>  <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span>
+  <span class='comment'># rubocop:enable Lint/Void
+</span>  <span class='id identifier rubyid_bits'>bits</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_bits'>bits</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -790,7 +794,7 @@ of instancing a new Permissions object.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Oct 13 20:45:58 2024 by
+  Generated on Sun Oct 13 23:27:43 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.5).
 </div>

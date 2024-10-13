@@ -786,14 +786,18 @@ permissions a member needs to perform certain actions in context.</p>
 70
 71
 72
-73</pre>
+73
+74
+75</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/data/overwrite.rb', line 67</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
-  <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Discordrb::Overwrite (class)">Overwrite</a></span></span>
-  <span class='id identifier rubyid_id'>id</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>&amp;&amp;</span>
+  <span class='comment'># rubocop:disable Lint/Void
+</span>  <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Discordrb::Overwrite (class)">Overwrite</a></span></span>
+  <span class='comment'># rubocop:enable Lint/Void
+</span>  <span class='id identifier rubyid_id'>id</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>&amp;&amp;</span>
     <span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>&amp;&amp;</span>
     <span class='id identifier rubyid_allow'>allow</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_allow'>allow</span> <span class='op'>&amp;&amp;</span>
     <span class='id identifier rubyid_deny'>deny</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_deny'>deny</span>
@@ -808,7 +812,7 @@ permissions a member needs to perform certain actions in context.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Oct 13 20:46:00 2024 by
+  Generated on Sun Oct 13 23:27:45 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.5).
 </div>
