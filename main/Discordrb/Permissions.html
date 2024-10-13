@@ -6,7 +6,7 @@
 <title>
   Class: Discordrb::Permissions
   
-    &mdash; Documentation by YARD 0.9.36
+    &mdash; Documentation by YARD 0.9.37
   
 </title>
 
@@ -376,11 +376,11 @@
 <div class="tags">
   
   <div class="examples">
-    <p class="tag_title">Examples:</p>
+    <h4 class="tag_title">Examples:</h4>
     
       
-        <p class="example_title"><div class='inline'><p>Create a permissions object that could allow/deny read messages, connect, and speak by setting flags</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Create a permissions object that could allow/deny read messages, connect, and speak by setting flags</p>
+</div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_permission'>permission</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 <span class='id identifier rubyid_permission'>permission</span><span class='period'>.</span><span class='id identifier rubyid_can_read_messages'>can_read_messages</span> <span class='op'>=</span> <span class='kw'>true</span>
@@ -388,8 +388,8 @@
 <span class='id identifier rubyid_permission'>permission</span><span class='period'>.</span><span class='id identifier rubyid_can_speak'>can_speak</span> <span class='op'>=</span> <span class='kw'>true</span></code></pre>
     
       
-        <p class="example_title"><div class='inline'><p>Create a permissions object that could allow/deny read messages, connect, and speak by an array of symbols</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Create a permissions object that could allow/deny read messages, connect, and speak by an array of symbols</p>
+</div></h5>
       
       <pre class="example code"><code><span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='lbracket'>[</span><span class='symbol'>:read_messages</span><span class='comma'>,</span> <span class='symbol'>:connect</span><span class='comma'>,</span> <span class='symbol'>:speak</span><span class='rbracket'>]</span></code></pre>
     
@@ -546,11 +546,11 @@ of instancing a new Permissions object.</p>
 <div class="tags">
   
   <div class="examples">
-    <p class="tag_title">Examples:</p>
+    <h4 class="tag_title">Examples:</h4>
     
       
-        <p class="example_title"><div class='inline'><p>Get the bits for permissions that could allow/deny read messages, connect, and speak</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Get the bits for permissions that could allow/deny read messages, connect, and speak</p>
+</div></h5>
       
       <pre class="example code"><code><span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_bits'>bits</span> <span class='lbracket'>[</span><span class='symbol'>:read_messages</span><span class='comma'>,</span> <span class='symbol'>:connect</span><span class='comma'>,</span> <span class='symbol'>:speak</span><span class='rbracket'>]</span> <span class='comment'>#=&gt; 3146752</span></code></pre>
     
@@ -689,11 +689,11 @@ of instancing a new Permissions object.</p>
 <div class="tags">
   
   <div class="examples">
-    <p class="tag_title">Examples:</p>
+    <h4 class="tag_title">Examples:</h4>
     
       
-        <p class="example_title"><div class='inline'><p>Get the permissions for the bits &quot;9&quot;</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Get the permissions for the bits &quot;9&quot;</p>
+</div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_permissions'>permissions</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="#initialize-instance_method" title="Discordrb::Permissions#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='int'>9</span><span class='rparen'>)</span>
 <span class='id identifier rubyid_permissions'>permissions</span><span class='period'>.</span><span class='id identifier rubyid_defined_permissions'>defined_permissions</span> <span class='comment'>#=&gt; [:create_instant_invite, :administrator]</span></code></pre>
@@ -790,9 +790,9 @@ of instancing a new Permissions object.</p>
 </div>
 
       <div id="footer">
-  Generated on Thu Aug 29 16:25:27 2024 by
+  Generated on Sun Oct 13 20:45:58 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.36 (ruby-3.3.4).
+  0.9.37 (ruby-3.3.5).
 </div>
 
     </div>

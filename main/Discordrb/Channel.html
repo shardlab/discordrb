@@ -6,7 +6,7 @@
 <title>
   Class: Discordrb::Channel
   
-    &mdash; Documentation by YARD 0.9.36
+    &mdash; Documentation by YARD 0.9.37
   
 </title>
 
@@ -4357,11 +4357,11 @@ permission sets, or change an existing one.</p>
 <div class="tags">
   
   <div class="examples">
-    <p class="tag_title">Examples:</p>
+    <h4 class="tag_title">Examples:</h4>
     
       
-        <p class="example_title"><div class='inline'><p>Define a permission overwrite for a user that can then mention everyone and use TTS, but not create any invites</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Define a permission overwrite for a user that can then mention everyone and use TTS, but not create any invites</p>
+</div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_allow'>allow</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Permissions.html" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Permissions.html#initialize-instance_method" title="Discordrb::Permissions#initialize (method)">new</a></span></span>
 <span class='id identifier rubyid_allow'>allow</span><span class='period'>.</span><span class='id identifier rubyid_can_mention_everyone'>can_mention_everyone</span> <span class='op'>=</span> <span class='kw'>true</span>
@@ -4876,17 +4876,17 @@ deleted. If this is false only a warning message will be output to the console.<
 <div class="tags">
   
   <div class="examples">
-    <p class="tag_title">Examples:</p>
+    <h4 class="tag_title">Examples:</h4>
     
       
-        <p class="example_title"><div class='inline'><p>Count the number of messages in the last 50 messages that contain the letter &#39;e&#39;.</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Count the number of messages in the last 50 messages that contain the letter &#39;e&#39;.</p>
+</div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_message_count'>message_count</span> <span class='op'>=</span> <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_history'>history</span><span class='lparen'>(</span><span class='int'>50</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='lbrace'>{</span><span class='op'>|</span><span class='id identifier rubyid_message'>message</span><span class='op'>|</span> <span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_content'>content</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>e</span><span class='tstring_end'>&quot;</span></span><span class='rbrace'>}</span></code></pre>
     
       
-        <p class="example_title"><div class='inline'><p>Get the last 10 messages before the provided message.</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Get the last 10 messages before the provided message.</p>
+</div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_last_ten_messages'>last_ten_messages</span> <span class='op'>=</span> <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_history'>history</span><span class='lparen'>(</span><span class='int'>10</span><span class='comma'>,</span> <span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span></code></pre>
     
@@ -6251,11 +6251,11 @@ to an Overwrite object</p>
 <div class="tags">
   
   <div class="examples">
-    <p class="tag_title">Examples:</p>
+    <h4 class="tag_title">Examples:</h4>
     
       
-        <p class="example_title"><div class='inline'><p>Pruning messages from a specific user ID</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Pruning messages from a specific user ID</p>
+</div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_prune'>prune</span><span class='lparen'>(</span><span class='int'>100</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_m'>m</span><span class='period'>.</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>==</span> <span class='int'>83283213010599936</span> <span class='rbrace'>}</span></code></pre>
     
@@ -6762,11 +6762,11 @@ deleted. If this is false only a warning message will be output to the console.<
 <div class="tags">
   
   <div class="examples">
-    <p class="tag_title">Examples:</p>
+    <h4 class="tag_title">Examples:</h4>
     
       
-        <p class="example_title"><div class='inline'><p>Send a message with an embed</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Send a message with an embed</p>
+</div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_send_embed'>send_embed</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_embed'>embed</span><span class='op'>|</span>
   <span class='id identifier rubyid_embed'>embed</span><span class='period'>.</span><span class='id identifier rubyid_title'>title</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>The Ruby logo</span><span class='tstring_end'>&#39;</span></span>
@@ -7002,11 +7002,11 @@ deleted. If this is false only a warning message will be output to the console.<
 <div class="tags">
   
   <div class="examples">
-    <p class="tag_title">Examples:</p>
+    <h4 class="tag_title">Examples:</h4>
     
       
-        <p class="example_title"><div class='inline'><p>Send a file from disk</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Send a file from disk</p>
+</div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_send_file'>send_file</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rubytaco.png</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>r</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span></code></pre>
     
@@ -8093,11 +8093,11 @@ for this will eventually be coming)</p>
 <div class="tags">
   
   <div class="examples">
-    <p class="tag_title">Examples:</p>
+    <h4 class="tag_title">Examples:</h4>
     
       
-        <p class="example_title"><div class='inline'><p>Send a typing indicator for the bot in a given channel.</p>
-</div></p>
+        <h5 class="example_title"><div class='inline'><p>Send a typing indicator for the bot in a given channel.</p>
+</div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_start_typing'>start_typing</span><span class='lparen'>(</span><span class='rparen'>)</span></code></pre>
     
@@ -8723,9 +8723,9 @@ in that channel. For a text channel, it will return all online members that have
 </div>
 
       <div id="footer">
-  Generated on Thu Aug 29 16:25:27 2024 by
+  Generated on Sun Oct 13 20:45:58 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.36 (ruby-3.3.4).
+  0.9.37 (ruby-3.3.5).
 </div>
 
     </div>
