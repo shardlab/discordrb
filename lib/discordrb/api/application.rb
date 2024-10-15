@@ -6,12 +6,12 @@ module Discordrb::API::Application
 
   # Get a list of global application commands.
   # https://discord.com/developers/docs/interactions/slash-commands#get-global-application-commands
-  def get_global_commands(token, application_id)
+  def get_global_commands(token, application_id, with_localizations: nil)
     Discordrb::API.request(
       :applications_aid_commands,
       nil,
       :get,
-      "#{Discordrb::API.api_base}/applications/#{application_id}/commands",
+      "#{Discordrb::API.api_base}/applications/#{application_id}/commands#{"?with_localizations=#{!!with_localizations}" unless with_localizations.nil?}",
       Authorization: token
     )
   end
@@ -84,12 +84,12 @@ module Discordrb::API::Application
 
   # Get a guild's commands for an application.
   # https://discord.com/developers/docs/interactions/slash-commands#get-guild-application-commands
-  def get_guild_commands(token, application_id, guild_id)
+  def get_guild_commands(token, application_id, guild_id, with_localizations: nil)
     Discordrb::API.request(
       :applications_aid_guilds_gid_commands,
       guild_id,
       :get,
-      "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands",
+      "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands#{"?with_localizations=#{!!with_localizations}" unless with_localizations.nil?}",
       Authorization: token
     )
   end
