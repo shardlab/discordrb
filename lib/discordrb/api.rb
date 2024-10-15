@@ -74,6 +74,24 @@ module Discordrb::API
     mutex.unlock
   end
 
+  # Add query parameters to a URI string.
+  # @param uri_string [String] base URI
+  # @param query [Hash, nil] Hash of query parameters
+  # @return [String] `uri_string` with the query appended, if `query` contained non-nil items, otherwise `uri_string`
+  def uri_with_query(uri_string, query)
+    URI.parse(uri_string).tap do |uri|
+      URI.encode_www_form((query || {}).compact).tap do |query_string|
+        unless query_string.empty?
+          if uri.query && !uri.query.empty?
+            uri.query += "&#{query_string}"
+          else
+            uri.query = query_string
+          end
+        end
+      end
+    end.to_s
+  end
+
   # Performs a RestClient request.
   # @param type [Symbol] The type of HTTP request to use.
   # @param attributes [Array] The attributes for the request.
