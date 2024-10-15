@@ -785,12 +785,13 @@ module Discordrb
 
     # Get all application commands.
     # @param server_id [String, Integer, nil] The ID of the server to get the commands from. Global if `nil`.
+    # @param with_localizations [true, false, nil] Whether the full localizations of commands should be included in the result. `nil` requests the Discord API default.
     # @return [Array<ApplicationCommand>]
-    def get_application_commands(server_id: nil)
+    def get_application_commands(server_id: nil, with_localizations: nil)
       resp = if server_id
-               API::Application.get_guild_commands(@token, profile.id, server_id)
+               API::Application.get_guild_commands(@token, profile.id, server_id, with_localizations: with_localizations)
              else
-               API::Application.get_global_commands(@token, profile.id)
+               API::Application.get_global_commands(@token, profile.id, with_localizations: with_localizations)
              end
 
       JSON.parse(resp).map do |command_data|
