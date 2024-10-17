@@ -39,7 +39,7 @@ module Discordrb
       guild_install: 0,
       user_install: 1
     }.freeze
-  
+
     # @return [User, Member] The user that initiated the interaction.
     attr_reader :user
 
