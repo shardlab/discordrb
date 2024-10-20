@@ -610,10 +610,17 @@ module Discordrb
 
     # Bans a user from this server.
     # @param user [User, String, Integer] The user to ban.
+    # @param message_days [Integer] How many days worth of messages sent by the user should be deleted. This will be deprecated in 4.0.
     # @param message_seconds [Integer] How many seconds of messages sent by the user should be deleted.
     # @param reason [String] The reason the user is being banned.
-    def ban(user, message_seconds = 0, reason: nil)
-      API::Server.ban_user(@bot.token, @id, user.resolve_id, message_seconds, reason)
+    def ban(user, message_days = 0, message_seconds: nil, reason: nil)
+      delete_messages = if message_days != 0 && message_days
+                          message_days * 86_400
+                        else
+                          message_seconds || 0
+                        end
+
+      API::Server.ban_user(@bot.token, @id, user.resolve_id, delete_messages, reason)
     end
 
     # Unbans a previously banned user from this server.
