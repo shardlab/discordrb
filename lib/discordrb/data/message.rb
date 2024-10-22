@@ -225,7 +225,7 @@ module Discordrb
     end
 
     # Crossposts a message in a news channel.
-    def crosspot
+    def crosspost
       response = API::Channel.crosspost_message(@bot.token, @channel.id, @id)
       Message.new(JSON.parse(response), @bot)
     end
