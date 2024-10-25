@@ -906,14 +906,14 @@ module Discordrb
     # @return [Array<Emoji>] Returns an array of emoji objects.
     def application_emojis
       response = JSON.parse(API::Application.list_application_emojis(@token, profile.id))
-      response['items'].map { |emoji| Emoji.new(emoji, bot, nil) }
+      response['items'].map { |emoji| Emoji.new(emoji, @bot, nil) }
     end
 
     # Fetches a single application emoji from ID.
     # @return [Emoji] Returns an emoji object.
     def get_application_emoji(emoji_id)
       response = JSON.parse(API::Application.get_application_emoji(@token, profile.id, emoji_id))
-      Emoji.new(response, bot, nil)
+      Emoji.new(response, @bot, nil)
     end
 
     # Adds a new custom emoji that can be used by this application.
@@ -928,7 +928,7 @@ module Discordrb
       end
 
       response = JSON.parse(API::Application.create_application_emoji(@token, profile.id, name, image_string))
-      Emoji.new(response, bot, nil)
+      Emoji.new(response, @bot, nil)
     end
 
     # Edits an existing application emoji.
@@ -936,7 +936,7 @@ module Discordrb
     # @return [Emoji] Returns the updated emoji object on success.
     def edit_application_emoji(emoji_id, name)
       response = JSON.parse(API::Application.edit_application_emoji(@token, profile.id, emoji_id, name))
-      Emoji.new(response, bot, nil)
+      Emoji.new(response, @bot, nil)
     end
 
     # Deletes an existing application emoji.
