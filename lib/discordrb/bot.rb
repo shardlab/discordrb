@@ -902,6 +902,49 @@ module Discordrb
       API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
     end
 
+    # Fetches all the application emojis that the bot can use.
+    # @return [Array<Emoji>] Returns an array of emoji objects.
+    def application_emojis
+      response = JSON.parse(API::Application.list_application_emojis(@token, profile.id))
+      response['items'].map { |emoji| Emoji.new(emoji, bot, nil) }
+    end
+
+    # Fetches a single application emoji from ID.
+    # @return [Emoji] Returns an emoji object.
+    def get_application_emoji(emoji_id)
+      response = JSON.parse(API::Application.get_application_emoji(@token, profile.id, emoji_id))
+      Emoji.new(response, bot, nil)
+    end
+
+    # Adds a new custom emoji that can be used by this application.
+    # @param name [String] The name of emoji to create.
+    # @param image [String, #read] A base64 encoded string with the image data, or an object that responds to `#read`, such as `File`.
+    # @return [Emoji] The emoji that has been created.
+    def create_application_emoji(name, image)
+      image_string = image
+      if image.respond_to? :read
+        image_string = 'data:image/jpg;base64,'
+        image_string += Base64.strict_encode64(image.read)
+      end
+
+      response = JSON.parse(API::Application.create_application_emoji(@token, profile.id, name, image_string))
+      Emoji.new(response, bot, nil)
+    end
+
+    # Edits an existing application emoji.
+    # @param name [String] The new name of the emoji.
+    # @return [Emoji] Returns the updated emoji object on success.
+    def edit_application_emoji(emoji_id, name)
+      response = JSON.parse(API::Application.edit_application_emoji(@token, profile.id, emoji_id, name))
+      Emoji.new(response, bot, nil)
+    end
+
+    # Deletes an existing application emoji.
+    # @param emoji_id [String] Snowflake ID of the emoji to delete.
+    def delete_application_emoji(emoji_id)
+      API::Application.delete_application_emoji(@token, profile.id, emoji_id)
+    end
+
     private
 
     # Throws a useful exception if there's currently no gateway connection.
