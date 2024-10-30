@@ -918,14 +918,16 @@ module Discordrb
 
     # Adds a new custom emoji that can be used by this application.
     # @param name [String] The name of emoji to create.
-    # @param image [String, #read] A base64 encoded string with the image data, or an object that responds to `#read`, such as `File`.
+    # @param image [String, #read] An object that responds to `#read`, such as `File`.
     # @return [Emoji] The emoji that has been created.
     def create_application_emoji(name, image)
-      image_string = image
-      if image.respond_to? :read
-        image_string = 'data:image/jpg;base64,'
-        image_string += Base64.strict_encode64(image.read)
-      end
+      path_method = %i[original_filename path local_path].find { |meth| image.respond_to?(meth) }
+
+      raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
+      raise ArgumentError, 'File must respond to read' unless image.respond_to? :read
+
+      mime_type = MIME::Types.type_for(image.__send__(path_method)).first&.to_s || 'image/jpeg'
+      image_string = "data:#{mime_type};base64,#{Base64.encode64(image.read).strip}"
 
       response = JSON.parse(API::Application.create_application_emoji(@token, profile.id, name, image_string))
       Emoji.new(response, @bot, nil)
