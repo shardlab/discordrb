@@ -200,7 +200,7 @@ module Discordrb::API::Server
     )
   end
 
-  # Ban a user from a server and delete their messages from seconds.
+  # Ban a user from a server and delete their messages up to a given amount of time.
   # https://discord.com/developers/docs/resources/guild#create-guild-ban
   def ban_user(token, server_id, user_id, message_seconds, reason = nil)
     Discordrb::API.request(
