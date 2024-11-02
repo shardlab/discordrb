@@ -247,7 +247,7 @@ module Discordrb
     end
 
     # Bans this member from the server.
-    # @param message_days [Integer] How many days worth of messages sent by the member should be deleted. This will be deprecated in 4.0.
+    # @param message_days [Integer] How many days worth of messages sent by the member should be deleted. This parameter is deprecated and will be removed in 4.0.
     # @param message_seconds [Integer] How many seconds worth of messages sent by the member should be deleted.
     # @param reason [String] The reason this member is being banned.
     def ban(message_days = 0, message_seconds: nil, reason: nil)
