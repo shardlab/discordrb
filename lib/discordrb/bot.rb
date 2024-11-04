@@ -1712,6 +1712,8 @@ module Discordrb
     end
 
     def calculate_intents(intents)
+      intents = [intents] unless intents.is_a? Array
+
       intents.reduce(0) do |sum, intent|
         case intent
         when Symbol
