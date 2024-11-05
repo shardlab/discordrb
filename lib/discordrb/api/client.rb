@@ -129,7 +129,7 @@ module Discordrb
       include WebhookEndpoints
 
       # The user agent used when making requests.
-      USER_AGENT = "DiscordBot (https://github.com/shardlab/discordrb, #{Discordrb::VERSION})".freeze
+      USER_AGENT = "DiscordBot (https://github.com/shardlab/discordrb, #{Discordrb::VERSION})"
 
       def initialize(token, version: 9)
         @conn = Faraday.new("https://discord.com/api/v#{version}") do |builder|
