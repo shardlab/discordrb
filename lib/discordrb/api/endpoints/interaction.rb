@@ -46,10 +46,10 @@ module Discordrb
       # @param components [Array<Hash>] Array of component objects.
       # @param poll [Hash<Object>] A poll request object.
       # @return [Hash]
-      def edit_original_interaction_response(id, token, content: :undef, embeds: :undef, allowed_mentions: :undef,
+      def edit_original_interaction_response(id, token, type: :undef, content: :undef, embeds: :undef, allowed_mentions: :undef,
                                              flags: :undef, components: :undef, poll: :undef, **rest)
         body = {
-          content: content, embeds: embeds, allowed_mentions: allowed_mentions,
+          type: type, content: content, embeds: embeds, allowed_mentions: allowed_mentions,
           flags: flags, components: components, poll: poll, **rest
         }
 
