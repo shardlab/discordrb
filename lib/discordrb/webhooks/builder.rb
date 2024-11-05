@@ -41,7 +41,7 @@ module Discordrb::Webhooks
     def file=(file)
       raise ArgumentError, 'Embeds and files are mutually exclusive!' unless @embeds.empty?
 
-      @file = Faraday::Multipart::FilePart(file, 'binary/octet-stream')
+      @file = Faraday::Multipart::FilePart.new(file, 'binary/octet-stream')
     end
 
     # Adds an embed to this message.

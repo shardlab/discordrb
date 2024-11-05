@@ -20,7 +20,6 @@ require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 
-
 require 'discordrb/errors'
 require 'discordrb/data'
 require 'discordrb/await'
