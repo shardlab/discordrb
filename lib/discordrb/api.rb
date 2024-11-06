@@ -8,7 +8,7 @@ require 'discordrb/errors'
 # List of methods representing endpoints in Discord's API
 module Discordrb::API
   # The base URL of the Discord REST API.
-  APIBASE = 'https://discord.com/api/v8'
+  APIBASE = 'https://discord.com/api/v9'
 
   # The URL of Discord's CDN
   CDN_URL = 'https://cdn.discordapp.com'
@@ -222,30 +222,6 @@ module Discordrb::API
     "#{cdn_url}/app-assets/#{application_id}/achievements/#{achievement_id}/icons/#{icon_hash}.#{format}"
   end
 
-  # Login to the server
-  def login(email, password)
-    request(
-      :auth_login,
-      nil,
-      :post,
-      "#{api_base}/auth/login",
-      email: email,
-      password: password
-    )
-  end
-
-  # Logout from the server
-  def logout(token)
-    request(
-      :auth_logout,
-      nil,
-      :post,
-      "#{api_base}/auth/logout",
-      nil,
-      Authorization: token
-    )
-  end
-
   # Create an OAuth application
   def create_oauth_application(token, name, redirect_uris)
     request(
@@ -283,20 +259,6 @@ module Discordrb::API
     )
   end
 
-  # Acknowledge that a message has been received
-  # The last acknowledged message will be sent in the ready packet,
-  # so this is an easy way to catch up on messages
-  def acknowledge_message(token, channel_id, message_id)
-    request(
-      :channels_cid_messages_mid_ack,
-      nil, # This endpoint is unavailable for bot accounts and thus isn't subject to its rate limit requirements.
-      :post,
-      "#{api_base}/channels/#{channel_id}/messages/#{message_id}/ack",
-      nil,
-      Authorization: token
-    )
-  end
-
   # Get the gateway to be used
   def gateway(token)
     request(
@@ -317,19 +279,6 @@ module Discordrb::API
       :get,
       "#{api_base}/gateway/bot",
       Authorization: token
-    )
-  end
-
-  # Validate a token (this request will fail if the token is invalid)
-  def validate_token(token)
-    request(
-      :auth_login,
-      nil,
-      :post,
-      "#{api_base}/auth/login",
-      {}.to_json,
-      Authorization: token,
-      content_type: :json
     )
   end
 
