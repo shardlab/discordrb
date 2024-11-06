@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'concurrent-ruby'
-
 module Discordrb::API::Application
   # Cache configuration
   CACHE_TTL = 300 # 5 minutes cache duration
@@ -9,17 +7,24 @@ module Discordrb::API::Application
   RATE_LIMIT_INTERVAL = 1 # Time interval in seconds
 
   # Initialize cache and rate limiter
-  @cache = Concurrent::Map.new
-  @rate_limiter = Concurrent::RateMonitor.new(RATE_LIMIT_REQUESTS, RATE_LIMIT_INTERVAL)
+  @cache = {}
+  @rate_limit_timestamps = []
 
   module_function
 
   def with_rate_limit
-    @rate_limiter.wait
-    yield
-  rescue Concurrent::RateLimitExceeded
-    sleep(1) # Wait if rate limit is exceeded
-    retry
+    current_time = Time.now.to_f
+
+    # Clean up old timestamps
+    @rate_limit_timestamps.reject! { |timestamp| timestamp < current_time - RATE_LIMIT_INTERVAL }
+
+    if @rate_limit_timestamps.size < RATE_LIMIT_REQUESTS
+      @rate_limit_timestamps << current_time
+      yield
+    else
+      sleep(1) # Wait if rate limit is exceeded
+      retry
+    end
   end
 
   def cache_key(*args)
@@ -28,9 +33,9 @@ module Discordrb::API::Application
 
   def cached_request(cache_key, ttl = CACHE_TTL)
     cached = @cache[cache_key]
-    return cached if cached && cached[:expires_at] > Time.now.to_i
-
-    response = with_rate_limit { yield }
+    if cached && cached[:expires_at] > Time.now.to_i
+      return cached[:data]
+    end response = with_rate_limit { yield }
     @cache[cache_key] = {
       data: response,
       expires_at: Time.now.to_i + ttl
@@ -84,8 +89,6 @@ module Discordrb::API::Application
     end
   end
 
-  # Add similar modifications to other methods...
-  # Example for edit_global_command:
   def edit_global_command(token, application_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil)
     with_rate_limit do
       response = Discordrb::API.request(

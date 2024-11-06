@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'concurrent-ruby'
-
 module Discordrb::API::User
   # Cache and rate limit configurations
   CACHE_TTL = {
@@ -9,7 +7,7 @@ module Discordrb::API::User
     profile: 300,     # 5 minutes for profile data
     servers: 60,      # 1 minute for server list
     connections: 300, # 5 minutes for connections
-    dms: 60          # 1 minute for DM list
+    dms: 60           # 1 minute for DM list
   }.freeze
 
   RATE_LIMIT = {
@@ -18,17 +16,24 @@ module Discordrb::API::User
   }.freeze
 
   # Initialize cache and rate limiter
-  @cache = Concurrent::Map.new
-  @rate_limiter = Concurrent::RateMonitor.new(RATE_LIMIT[:requests], RATE_LIMIT[:interval])
+  @cache = {}
+  @rate_limit_timestamps = []
 
   module_function
 
   def with_rate_limit
-    @rate_limiter.wait
-    yield
-  rescue Concurrent::RateLimitExceeded
-    sleep(1)
-    retry
+    current_time = Time.now.to_f
+
+    # Clean up old timestamps
+    @rate_limit_timestamps.reject! { |timestamp| timestamp < current_time - RATE_LIMIT[:interval] }
+
+    if @rate_limit_timestamps.size < RATE_LIMIT[:requests]
+      @rate_limit_timestamps << current_time
+      yield
+    else
+      sleep(1)
+      retry
+    end
   end
 
   def cached_request(cache_key, ttl)
@@ -44,7 +49,7 @@ module Discordrb::API::User
   end
 
   def clear_user_cache(user_id)
-    @cache.each_key do |key|
+    @cache.keys.each do |key|
       @cache.delete(key) if key.to_s.include?(user_id.to_s)
     end
   end
