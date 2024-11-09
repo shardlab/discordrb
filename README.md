@@ -19,7 +19,7 @@ An implementation of the [Discord](https://discord.com/) API using Ruby.
 - [Development](https://github.com/shardlab/discordrb#development), [Contributing](https://github.com/shardlab/discordrb#contributing)
 - [License](https://github.com/shardlab/discordrb#license)
 
-See also: [Documentation](https://drb.shardlab.dev/v3.4.0/), [Tutorials](https://github.com/shardlab/discordrb/wiki)
+See also: [Documentation](https://drb.shardlab.dev/v3.5.0/), [Tutorials](https://github.com/shardlab/discordrb/wiki)
 
 ## Introduction
 
