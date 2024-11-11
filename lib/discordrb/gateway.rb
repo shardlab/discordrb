@@ -51,10 +51,6 @@ module Discordrb
     # to behave correctly)
     VOICE_STATE = 4
 
-    # **Sent**: This opcode is used to ping a voice server, whatever that means. The functionality of this opcode isn't
-    # known well but non-user clients should never send it.
-    VOICE_PING = 5
-
     # **Sent**: This is the other of two possible ways to initiate a gateway session (other than {IDENTIFY}). Rather
     # than starting an entirely new session, it resumes an existing session by replaying all events from a given
     # sequence number. It should be used to recover from a connection error or anything like that when the session is

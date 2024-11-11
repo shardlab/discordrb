@@ -82,8 +82,6 @@ module Discordrb
     #   you're trying to log in as a bot.
     # @param client_id [Integer] If you're logging in as a bot, the bot's client ID. This is optional, and may be fetched
     #   from the API by calling {Bot#bot_application} (see {Application}).
-    # @param type [Symbol] This parameter lets you manually overwrite the account type. This needs to be set when
-    #   logging in as a user, otherwise discordrb will treat you as a bot account. Valid values are `:user` and `:bot`.
     # @param name [String] Your bot's name. This will be sent to Discord with any API requests, who will use this to
     #   trace the source of excessive API requests; it's recommended to set this to something if you make bots that many
     #   people will host on their servers separately.
@@ -110,7 +108,7 @@ module Discordrb
     def initialize(
       log_mode: :normal,
       token: nil, client_id: nil,
-      type: nil, name: '', fancy_log: false, suppress_ready: false, parse_self: false,
+      name: '', fancy_log: false, suppress_ready: false, parse_self: false,
       shard_id: nil, num_shards: nil, redact_token: true, ignore_bots: false,
       compress_mode: :large, intents: :all
     )
@@ -121,7 +119,6 @@ module Discordrb
 
       @client_id = client_id
 
-      @type = type || :bot
       @name = name
 
       @shard_key = num_shards ? [shard_id, num_shards] : nil
@@ -144,7 +141,7 @@ module Discordrb
                    calculate_intents(intents)
                  end
 
-      @token = process_token(@type, token)
+      @token = "Bot #{token.delete_prefix('Bot ')}"
       @gateway = Gateway.new(self, @token, @shard_key, @compress_mode, @intents)
 
       init_cache
@@ -1105,14 +1102,6 @@ module Discordrb
     ##       ##     ## ##    ##   ##  ##  ####
     ##       ##     ## ##    ##   ##  ##   ###
     ########  #######   ######   #### ##    ##
-
-    def process_token(type, token)
-      # Remove the "Bot " prefix if it exists
-      token = token[4..] if token.start_with? 'Bot '
-
-      token = "Bot #{token}" unless type == :user
-      token
-    end
 
     def handle_dispatch(type, data)
       # Check whether there are still unavailable servers and there have been more than 10 seconds since READY
