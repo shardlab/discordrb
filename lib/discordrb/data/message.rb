@@ -73,6 +73,9 @@ module Discordrb
     # @return [Array<Component>]
     attr_reader :components
 
+    # @return [Integer] flags set on the message
+    attr_reader :flags
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -157,6 +160,7 @@ module Discordrb
 
       @components = []
       @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+      @flags = data['flags'] || 0
     end
 
     # Replies to this message with the specified content.
@@ -290,6 +294,15 @@ module Discordrb
     # @return [Array<Reaction>] the reactions
     def my_reactions
       @reactions.select(&:me)
+    end
+
+    # Removes embeds from the message
+    # @return [Message] the resulting message.
+    def suppress_embeds
+      Message.new(
+        JSON.parse(API::Channel.suppress_embeds(@bot.token, @channel.id, @id)),
+        @bot
+      )
     end
 
     # Reacts to a message.
