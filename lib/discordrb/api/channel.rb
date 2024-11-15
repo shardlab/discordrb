@@ -142,6 +142,18 @@ module Discordrb::API::Channel
     )
   end
 
+  # Crosspost a message
+  # https://discord.com/developers/docs/resources/message#crosspost-message
+  def crosspost_message(token, channel_id, message_id)
+    Discordrb::API.request(
+      :channels_cid_messages_mid,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/crosspost",
+      Authorization: token
+    )
+  end
+
   # Delete messages in bulk
   # https://discord.com/developers/docs/resources/channel#bulk-delete-messages
   def bulk_delete_messages(token, channel_id, messages = [], reason = nil)

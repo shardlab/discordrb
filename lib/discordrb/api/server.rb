@@ -138,6 +138,19 @@ module Discordrb::API::Server
     )
   end
 
+  # Search for a guild member
+  # https://discord.com/developers/docs/resources/guild#search-guild-members
+  def search_guild_members(token, server_id, query, limit)
+    query_string = URI.encode_www_form({ query: query, limit: limit }.compact)
+    Discordrb::API.request(
+      :guilds_sid_members,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/members/search?#{query_string}",
+      Authorization: token
+    )
+  end
+
   # Update a user properties
   # https://discord.com/developers/docs/resources/guild#modify-guild-member
   def update_member(token, server_id, user_id, nick: :undef, roles: :undef, mute: :undef, deaf: :undef, channel_id: :undef,

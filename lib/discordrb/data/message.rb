@@ -224,6 +224,12 @@ module Discordrb
       nil
     end
 
+    # Crossposts a message in a news channel.
+    def crosspost
+      response = API::Channel.crosspost_message(@bot.token, @channel.id, @id)
+      Message.new(JSON.parse(response), @bot)
+    end
+
     # Add an {Await} for a message with the same user and channel.
     # @see Bot#add_await
     # @deprecated Will be changed to blocking behavior in v4.0. Use {#await!} instead.
