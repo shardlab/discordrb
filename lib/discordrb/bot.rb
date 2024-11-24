@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'zlib'
-require 'set'
 
 require 'discordrb/api/client'
 require 'discordrb/events/message'
@@ -20,7 +19,6 @@ require 'discordrb/events/reactions'
 require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
-
 
 require 'discordrb/errors'
 require 'discordrb/data'
@@ -808,7 +806,7 @@ module Discordrb
     private
 
     def file_to_file_part(file, content_type = 'binary/octet-stream', filename = nil)
-      Faraday::FilePart.new(file, content_type, filename)
+      Faraday::Multipart::FilePart.new(file, content_type, filename)
     end
 
     # Throws a useful exception if there's currently no gateway connection.
