@@ -314,7 +314,7 @@ module Discordrb
 
       get_reactions = proc do |fetch_limit, after_id = nil|
         resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit)
-        return JSON.parse(resp).map { |d| User.new(d, @bot) }
+        JSON.parse(resp).map { |d| User.new(d, @bot) }
       end
 
       # Can be done without pagination
