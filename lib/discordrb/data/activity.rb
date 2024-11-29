@@ -121,7 +121,7 @@ module Discordrb
 
     # @!visibility private
     def flag_set?(sym)
-      !(@flags & FLAGS[sym]).zero?
+      !@flags.nobits?(FLAGS[sym])
     end
 
     # Timestamps for the start and end of instanced activities
