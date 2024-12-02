@@ -31,6 +31,8 @@ describe APIMock do
     expect(Discordrb::API.last_body).to be_nil
   end
 
+  # TODO: Rework tests to not rely on multiple expectations
+  # rubocop:disable RSpec/MultipleExpectations
   it 'parses headers if there is no body' do
     Discordrb::API.raw_request(:post, ['https://example.com/test', nil, { a: 1, b: 2 }])
 
@@ -45,4 +47,5 @@ describe APIMock do
     expect(Discordrb::API.last_headers[:a]).to eq 1
     expect(Discordrb::API.last_headers[:b]).to eq 2
   end
+  # rubocop:enable RSpec/MultipleExpectations
 end

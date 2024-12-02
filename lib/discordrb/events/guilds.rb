@@ -41,6 +41,8 @@ module Discordrb::Events
         end
       ].reduce(true, &:&)
     end
+
+    alias_method :matching?, :matches?
   end
 
   # Server is created
@@ -159,6 +161,8 @@ module Discordrb::Events
         matches_all(@attributes[:name], event.emoji.name) { |a, e| a == e }
       ].reduce(true, &:&)
     end
+
+    alias_method :matching?, :matches?
   end
 
   # Event handler for {ServerEmojiCreateEvent}
@@ -189,5 +193,7 @@ module Discordrb::Events
         matches_all(@attributes[:name], event.emoji.name) { |a, e| a == e }
       ].reduce(true, &:&)
     end
+
+    alias_method :matching?, :matches?
   end
 end

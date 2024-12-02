@@ -3,7 +3,9 @@
 require 'discordrb'
 
 describe Discordrb::Paginator do
-  context 'direction down' do
+  # TODO: Rework tests to not rely on multiple expectations
+  # rubocop:disable RSpec/MultipleExpectations
+  context 'when direction is down' do
     it 'requests all pages until empty' do
       data = [
         [1, 2, 3],
@@ -13,7 +15,7 @@ describe Discordrb::Paginator do
       ]
 
       index = 0
-      paginator = Discordrb::Paginator.new(nil, :down) do |last_page|
+      paginator = described_class.new(nil, :down) do |last_page|
         expect(last_page).to eq data[index - 1] if last_page
         next_page = data[index]
         index += 1
@@ -24,7 +26,7 @@ describe Discordrb::Paginator do
     end
   end
 
-  context 'direction up' do
+  context 'when direction is up' do
     it 'requests all pages until empty' do
       data = [
         [6, 7],
@@ -34,7 +36,7 @@ describe Discordrb::Paginator do
       ]
 
       index = 0
-      paginator = Discordrb::Paginator.new(nil, :up) do |last_page|
+      paginator = described_class.new(nil, :up) do |last_page|
         expect(last_page).to eq data[index - 1] if last_page
         next_page = data[index]
         index += 1
@@ -44,6 +46,7 @@ describe Discordrb::Paginator do
       expect(paginator.to_a).to eq [7, 6, 5, 4]
     end
   end
+  # rubocop:enable RSpec/MultipleExpectations
 
   it 'only returns up to limit items' do
     data = [
@@ -53,7 +56,7 @@ describe Discordrb::Paginator do
     ]
 
     index = 0
-    paginator = Discordrb::Paginator.new(2, :down) do |_last_page|
+    paginator = described_class.new(2, :down) do |_last_page|
       next_page = data[index]
       index += 1
       next_page
