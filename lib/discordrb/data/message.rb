@@ -70,8 +70,11 @@ module Discordrb
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
 
-    # @return [Array<Component>]
+    # @return [Array<Component>] An array of interaction components if it has any.
     attr_reader :components
+
+    # @return [Integer] Flags set for this message.
+    attr_reader :flags
 
     # @!visibility private
     def initialize(data, bot)
@@ -157,6 +160,8 @@ module Discordrb
 
       @components = []
       @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+
+      @flags = data['flags'] || 0
     end
 
     # Replies to this message with the specified content.
@@ -227,6 +232,13 @@ module Discordrb
     # Crossposts a message in a news channel.
     def crosspost
       response = API::Channel.crosspost_message(@bot.token, @channel.id, @id)
+      Message.new(JSON.parse(response), @bot)
+    end
+
+    # Suppresses the embeds on a message.
+    def suppress_embeds
+      flags = @flags | 1 << 2
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, @content, [], :undef, :undef, flags)
       Message.new(JSON.parse(response), @bot)
     end
 
