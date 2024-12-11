@@ -190,8 +190,8 @@ module Discordrb
     end
 
     # (see Channel#send_message)
-    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil)
+      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
     # Edits this message to have the specified content instead.
@@ -199,12 +199,13 @@ module Discordrb
     # @param new_content [String] the new content the message should have.
     # @param new_embeds [Hash, Discordrb::Webhooks::Embed, Array<Hash>, Array<Discordrb::Webhooks::Embed>, nil] The new embeds the message should have. If `nil` the message will be changed to have no embeds.
     # @param new_components [View, Array<Hash>] The new components the message should have. If `nil` the message will be changed to have no components.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) can be edited.
     # @return [Message] the resulting message.
-    def edit(new_content, new_embeds = nil, new_components = nil)
+    def edit(new_content, new_embeds = nil, new_components = nil, flags = nil)
       new_embeds = (new_embeds.instance_of?(Array) ? new_embeds.map(&:to_hash) : [new_embeds&.to_hash]).compact
       new_components = new_components.to_a
 
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embeds, new_components)
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embeds, new_components, flags)
       Message.new(JSON.parse(response), @bot)
     end
 
@@ -299,10 +300,9 @@ module Discordrb
     # Removes embeds from the message
     # @return [Message] the resulting message.
     def suppress_embeds
-      Message.new(
-        JSON.parse(API::Channel.suppress_embeds(@bot.token, @channel.id, @id)),
-        @bot
-      )
+      flags = @flags | 1 << 2
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, @content, [], :undef, :undef, flags)
+      Message.new(JSON.parse(response), @bot)
     end
 
     # Reacts to a message.
