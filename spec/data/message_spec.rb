@@ -252,11 +252,12 @@ describe Discordrb::Message do
     let(:allowed_mentions) { instance_double('Hash', 'allowed_mentions') }
     let(:message_reference) { instance_double('Discordrb::Message') }
     let(:components) { instance_double('Discordrb::Webhooks::View') }
+    let(:flags) { instance_double('Integer') }
 
     it 'forwards arguments to Channel#send_message' do
-      expect(channel).to receive(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+      expect(channel).to receive(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
 
-      message.respond(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+      message.respond(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
   end
 
@@ -270,8 +271,8 @@ describe Discordrb::Message do
     end
 
     it 'removes all the embeds' do
-      expect(Discordrb::API::Channel).to receive(:suppress_embeds)
-        .with(token, channel_id, message.id).and_return(message_without_embeds.to_json)
+      expect(Discordrb::API::Channel).to receive(:edit_message)
+        .and_return(message_without_embeds.to_json)
 
       new_message = message.suppress_embeds
 

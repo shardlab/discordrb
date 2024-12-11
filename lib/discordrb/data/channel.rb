@@ -430,7 +430,7 @@ module Discordrb
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @return [Message] the message that was sent.
-    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil)
+    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
@@ -446,7 +446,7 @@ module Discordrb
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
-    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil)
+    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
@@ -467,7 +467,7 @@ module Discordrb
     # @yield [embed] Yields the embed to allow for easy building inside a block.
     # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
     # @return [Message] The resulting message.
-    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil)
+    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       embed ||= Discordrb::Webhooks::Embed.new
       view = Discordrb::Webhooks::View.new
 

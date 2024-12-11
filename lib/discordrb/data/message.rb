@@ -180,17 +180,18 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param mention_user [true, false] Whether the user that is being replied to should be pinged by the reply.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @return (see #respond)
-    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil)
+    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil, flags: 0)
       allowed_mentions = { parse: [] } if allowed_mentions == false
       allowed_mentions = allowed_mentions.to_hash.transform_keys(&:to_sym)
       allowed_mentions[:replied_user] = mention_user
 
-      respond(content, tts, embed, attachments, allowed_mentions, self, components)
+      respond(content, tts, embed, attachments, allowed_mentions, self, components, flags)
     end
 
     # (see Channel#send_message)
-    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil)
+    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
@@ -201,7 +202,7 @@ module Discordrb
     # @param new_components [View, Array<Hash>] The new components the message should have. If `nil` the message will be changed to have no components.
     # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) can be edited.
     # @return [Message] the resulting message.
-    def edit(new_content, new_embeds = nil, new_components = nil, flags = nil)
+    def edit(new_content, new_embeds = nil, new_components = nil, flags = 0)
       new_embeds = (new_embeds.instance_of?(Array) ? new_embeds.map(&:to_hash) : [new_embeds&.to_hash]).compact
       new_components = new_components.to_a
 
