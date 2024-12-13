@@ -75,8 +75,8 @@ module Discordrb::API::Channel
   # https://discord.com/developers/docs/resources/channel#create-message
   # @param attachments [Array<File>, nil] Attachments to use with `attachment://` in embeds. See
   #   https://discord.com/developers/docs/resources/channel#create-message-using-attachments-within-embeds
-  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a }
+  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, poll = nil)
+    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, poll: poll }
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h
              { **files, payload_json: body.to_json }
@@ -605,6 +605,31 @@ module Discordrb::API::Channel
       channel_id,
       :get,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/users/@me/threads/archived/private?#{query}",
+      Authorization: token
+    )
+  end
+
+  # Immediately ends a poll the bot has made.
+  # https://discord.com/developers/docs/resources/poll#end-poll
+  def end_poll(token, channel_id, message_id)
+    Discordrb::API.request(
+      :channels_cid_messages_mid_expire,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/polls/#{message_id}/expire",
+      Authorization: token
+    )
+  end
+
+  # Gets the members that have voted for a specific poll answer.
+  # https://discord.com/developers/docs/resources/poll#end-poll
+  def get_answer_voters(token, channel_id, message_id, answer_id, after, limit)
+    query = URI.encode_www_form({ after: after, limit: limit }.compact)
+    Discordrb::API.request(
+      :channels_cid_messages_mid_answers_aid,
+      channel_id,
+      :get,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/polls/#{message_id}/answers/#{answer_id}?#{query}",
       Authorization: token
     )
   end

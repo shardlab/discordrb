@@ -70,8 +70,11 @@ module Discordrb
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
 
-    # @return [Array<Component>]
+    # @return [Array<Component>] An array of components sent with this message, or an empty array if there are none.
     attr_reader :components
+
+    # @return [Poll, nil] The poll object associated with this message, or `nil` if it doesn't have one.
+    attr_reader :poll
 
     # @!visibility private
     def initialize(data, bot)
@@ -157,6 +160,8 @@ module Discordrb
 
       @components = []
       @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+
+      @poll = data['poll'] ? Poll.new(data['poll'], self, @bot) : nil
     end
 
     # Replies to this message with the specified content.
@@ -176,18 +181,19 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param mention_user [true, false] Whether the user that is being replied to should be pinged by the reply.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param poll [Hash] A poll request object to include with this message.
     # @return (see #respond)
-    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil)
+    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil, poll: nil)
       allowed_mentions = { parse: [] } if allowed_mentions == false
       allowed_mentions = allowed_mentions.to_hash.transform_keys(&:to_sym)
       allowed_mentions[:replied_user] = mention_user
 
-      respond(content, tts, embed, attachments, allowed_mentions, self, components)
+      respond(content, tts, embed, attachments, allowed_mentions, self, components, poll)
     end
 
     # (see Channel#send_message)
-    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, poll = nil)
+      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components, poll)
     end
 
     # Edits this message to have the specified content instead.
@@ -291,6 +297,14 @@ module Discordrb
     def my_reactions
       @reactions.select(&:me)
     end
+
+    # Check if a poll was sent in this message.
+    # @return [Boolean] whether or not this message has a poll.
+    def poll?
+      !@poll.nil?
+    end
+
+    alias_method :has_poll?, :poll?
 
     # Reacts to a message.
     # @param reaction [String, #to_reaction] the unicode emoji or {Emoji}
