@@ -428,9 +428,10 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param poll [Hash] A poll request object to include. If you just need to send a poll refer to Channel#send_poll.
     # @return [Message] the message that was sent.
-    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference, components)
+    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, poll = nil)
+      @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference, components, poll)
     end
 
     alias_method :send, :send_message
@@ -444,8 +445,9 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference, components)
+    # @param poll [Hash] A poll request object to include. If you just need to send a poll refer to Channel#send_poll.
+    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, poll = nil)
+      @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference, components, poll)
     end
 
     # Convenience method to send a message with an embed.
@@ -461,16 +463,44 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param poll [Hash] A poll request object to include. If you just need to send a poll refer to Channel#send_poll.
     # @yield [embed] Yields the embed to allow for easy building inside a block.
     # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
     # @return [Message] The resulting message.
-    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil)
+    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, poll = nil)
       embed ||= Discordrb::Webhooks::Embed.new
       view = Discordrb::Webhooks::View.new
 
       yield(embed, view) if block_given?
 
-      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a)
+      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a, poll)
+    end
+
+    # Convenience method to send a message with a poll.
+    # @example Send a message with a poll
+    #   channel.send_poll do |poll|
+    #     poll.question = 'Cops?'
+    #     poll.duration = 56
+    #     poll.add_answer(name: 'Hell Yea', emoji: nil)
+    #     poll.add_answer(name: 'Hell Na', emoji: nil)
+    #   end
+    # @param message [String] The message that should be sent along with the embed. If this is the empty string, only the embed will be shown.
+    # @param embed [Discordrb::Webhooks::Embed, nil] The embed to start the building process with, or nil if one should be created anew.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
+    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param poll [Hash] A poll request object to include with this message.
+    # @yieldparam poll [Discordrb::Poll::Builder] The poll from the parameters, or a new one.
+    # @return [Message] The resulting message.
+    def send_poll(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, poll = nil)
+      view = Discordrb::Webhooks::View.new
+      builder ||= Discordrb::Poll::Builder.new
+
+      yield(builder, view) if block_given?
+
+      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a, poll || builder.to_hash)
     end
 
     # Sends multiple messages to a channel

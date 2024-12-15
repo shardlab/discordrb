@@ -18,9 +18,10 @@ module Discordrb::Events
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>, nil] A collection of components to attach to the message.
+    # @param poll [Hash] A poll request object to include with this message.
     # @return [Discordrb::Message] the message that was sent
-    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, poll = nil)
+      channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components, poll)
     end
 
     # The same as {#send_message}, but yields a {Webhooks::Embed} for easy building of embedded content inside a block.
@@ -32,11 +33,12 @@ module Discordrb::Events
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>, nil] A collection of components to attach to the message.
+    # @param poll [Hash] A poll request object to include with this message.
     # @yield [embed] Yields the embed to allow for easy building inside a block.
     # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
     # @return [Message] The resulting message.
-    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, &block)
-      channel.send_embed(message, embed, attachments, tts, allowed_mentions, message_reference, components, &block)
+    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, poll = nil, &block)
+      channel.send_embed(message, embed, attachments, tts, allowed_mentions, message_reference, components, poll, &block)
     end
 
     # Sends a temporary message to the channel this message was sent in, right now.
@@ -47,8 +49,9 @@ module Discordrb::Events
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param components [View, Array<Hash>, nil] A collection of components to attach to the message.
-    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, components = nil)
-      channel.send_temporary_message(content, timeout, tts, embed, attachments, allowed_mentions, components)
+    # @param poll [Hash] A poll request object to include with this message.
+    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, components = nil, poll = nil)
+      channel.send_temporary_message(content, timeout, tts, embed, attachments, allowed_mentions, components, poll)
     end
 
     # Adds a string to be sent after the event has finished execution. Avoids problems with rate limiting because only

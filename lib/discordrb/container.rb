@@ -635,6 +635,32 @@ module Discordrb
       register_event(ChannelSelectEvent, attributes, block)
     end
 
+    # This **event** is raised whenever a user votes for a poll.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, User] :user A user to match against.
+    # @option attributes [String, Integer, Channel] :channel A channel to match against.
+    # @option attributes [String, Integer, Message] :message A message to match against.
+    # @option attributes [String, Integer] :answer_id Custom_id of an answer to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [PollVoteAddEvent] The event that was raised.
+    # @return [PollVoteAddEventHandler] The event handler that was registered.
+    def poll_vote_add(attributes = {}, &block)
+      register_event(PollVoteAddEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a user removes a vote for a poll.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, User] :user_id A user to match against.
+    # @option attributes [String, Integer, Channel] :channel_id A channel to match against.
+    # @option attributes [String, Integer, Message] :message_id A message to match against.
+    # @option attributes [String, Integer] :answer_id Custom_id of an answer to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [PollVoteRemoveEvent] The event that was raised.
+    # @return [PollVoteRemoveEventHandler] The event handler that was registered.
+    def poll_vote_remove(attributes = {}, &block)
+      register_event(PollVoteRemoveEvent, attributes, block)
+    end
+
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Symbol, Regexp] :type Matches the event type of the dispatch.

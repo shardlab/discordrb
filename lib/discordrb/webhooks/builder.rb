@@ -5,7 +5,7 @@ require 'discordrb/webhooks/embeds'
 module Discordrb::Webhooks
   # A class that acts as a builder for a webhook message object.
   class Builder
-    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil)
+    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil, poll: nil)
       @content = content
       @username = username
       @avatar_url = avatar_url
@@ -13,6 +13,7 @@ module Discordrb::Webhooks
       @file = file
       @embeds = embeds
       @allowed_mentions = allowed_mentions
+      @poll = poll
     end
 
     # The content of the message. May be 2000 characters long at most.
@@ -32,6 +33,10 @@ module Discordrb::Webhooks
     # Whether this message should use TTS or not. By default, it doesn't.
     # @return [true, false] the TTS status.
     attr_accessor :tts
+
+    # A poll request object to attatch to this webhook message.
+    # @return [Poll] the poll request object.
+    attr_accessor :poll
 
     # Sets a file to be sent together with the message. Mutually exclusive with embeds; a webhook message can contain
     # either a file to be sent or an embed.
@@ -65,6 +70,24 @@ module Discordrb::Webhooks
       embed
     end
 
+    # Convenience method to add a poll request object using a block-style builder pattern.
+    # @example Add a poll to a message
+    #   builder.add_poll do |poll|
+    #     poll.question = 'Webhooks'
+    #     poll.duration = 56
+    #     poll.allow_multiselect = true
+    #     poll.add_answer(name: 'Hell Yea', emoji: foo)
+    #     poll.add_answer(name: 'Hell Na', emoji: bar)
+    #   end
+    # @param poll [Poll, nil] The poll to start the building process with, or nil if one should be created anew.
+    # @return [Discordrb::Poll::Builder] An instance of the poll builder.
+    def add_poll(poll = nil)
+      poll ||= Discordrb::Poll::Builder.new
+      yield(poll)
+      @poll = poll
+      poll
+    end
+
     # @return [File, nil] the file attached to this message.
     attr_reader :file
 
@@ -83,7 +106,8 @@ module Discordrb::Webhooks
         avatar_url: @avatar_url,
         tts: @tts,
         embeds: @embeds.map(&:to_hash),
-        allowed_mentions: @allowed_mentions&.to_hash
+        allowed_mentions: @allowed_mentions&.to_hash,
+        poll: @poll&.to_hash
       }
     end
 
