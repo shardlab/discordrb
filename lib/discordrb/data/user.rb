@@ -91,7 +91,7 @@ module Discordrb
 
     FLAGS.each do |name, value|
       define_method("#{name}?") do
-        (@public_flags & value).positive?
+        @public_flags.anybits?(value)
       end
     end
   end
