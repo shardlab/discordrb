@@ -302,7 +302,7 @@ module Discordrb
     # @return [Message] the resulting message.
     def suppress_embeds
       flags = @flags | (1 << 2)
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, @content, [], :undef, :undef, flags)
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, :undef, :undef, :undef, :undef, flags)
       Message.new(JSON.parse(response), @bot)
     end
 
