@@ -193,13 +193,13 @@ describe Discordrb::Message do
     let(:mention) { instance_double('TrueClass', 'mention') }
 
     it 'responds with a message_reference' do
-      expect(message).to receive(:respond).with(content, false, nil, nil, hash_including(:replied_user), message, nil)
+      expect(message).to receive(:respond).with(content, false, nil, nil, hash_including(:replied_user), message, nil, 0)
 
       message.reply!(content)
     end
 
     it 'sets replied_user in allowed_mentions' do
-      expect(message).to receive(:respond).with(content, false, nil, nil, { replied_user: mention }, message, nil)
+      expect(message).to receive(:respond).with(content, false, nil, nil, { replied_user: mention }, message, nil, 0)
 
       message.reply!(content, mention_user: mention)
     end
@@ -208,9 +208,9 @@ describe Discordrb::Message do
       let(:mention) { double('mention') }
 
       it 'sets parse to an empty array add merges the mention_user param' do
-        expect(message).to receive(:respond).with(content, false, nil, nil, { parse: [], replied_user: mention }, message, nil)
+        expect(message).to receive(:respond).with(content, false, nil, nil, { parse: [], replied_user: mention }, message, nil, 0)
 
-        message.reply!(content, allowed_mentions: false, mention_user: mention)
+        message.reply!(content, allowed_mentions: false, mention_user: mention, flags: 0)
       end
     end
 
@@ -226,8 +226,8 @@ describe Discordrb::Message do
       end
 
       it 'converts it to a hash to set the replied_user key' do
-        expect(message).to receive(:respond).with(content, false, nil, nil, hash, message, nil)
-        message.reply!(content, allowed_mentions: allowed_mentions, mention_user: mention_user)
+        expect(message).to receive(:respond).with(content, false, nil, nil, hash, message, nil, 0)
+        message.reply!(content, allowed_mentions: allowed_mentions, mention_user: mention_user, flags: 0)
       end
     end
   end
@@ -258,26 +258,6 @@ describe Discordrb::Message do
       expect(channel).to receive(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
 
       message.respond(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
-    end
-  end
-
-  describe '#suppress_embeds' do
-    let(:message) { described_class.new(message_data, bot) }
-    let(:message_without_embeds) do
-      message_data.merge(
-        flags: 1 << 2,
-        embeds: []
-      )
-    end
-
-    it 'removes all the embeds' do
-      expect(Discordrb::API::Channel).to receive(:edit_message)
-        .and_return(message_without_embeds.to_json)
-
-      new_message = message.suppress_embeds
-
-      expect(new_message.embeds).to be_empty
-      expect(new_message.flags).to eq(1 << 2)
     end
   end
 end
