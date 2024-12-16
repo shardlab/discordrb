@@ -246,7 +246,7 @@ module Discordrb::Events
     # @yieldparam [SubcommandBuilder]
     # @return [ApplicationCommandEventHandler]
     def group(name)
-      raise ArgumentError, 'Unable to mix subcommands and groups' if @subcommands.any? { |_, v| v.is_a? Proc }
+      raise ArgumentError, 'Unable to mix subcommands and groups' if @subcommands.any? { |n, v| n == name && v.is_a?(Proc) }
 
       builder = SubcommandBuilder.new(name)
       yield builder
@@ -259,7 +259,7 @@ module Discordrb::Events
     # @yieldparam [SubcommandBuilder]
     # @return [ApplicationCommandEventHandler]
     def subcommand(name, &block)
-      raise ArgumentError, 'Unable to mix subcommands and groups' if @subcommands.any? { |_, v| v.is_a? Hash }
+      raise ArgumentError, 'Unable to mix subcommands and groups' if @subcommands.any? { |n, v| n == name && v.is_a?(Hash) }
 
       @subcommands[name.to_sym] = block
 
