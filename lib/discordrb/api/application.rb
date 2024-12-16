@@ -205,7 +205,7 @@ module Discordrb::API::Application
   def list_application_emojis(token, application_id)
     Discordrb::API.request(
       :applications_aid_emojis,
-      nil,
+      application_id,
       :get,
       "#{Discordrb::API.api_base}/applications/#{application_id}/emojis",
       Authorization: token
@@ -217,7 +217,7 @@ module Discordrb::API::Application
   def get_application_emoji(token, application_id, emoji_id)
     Discordrb::API.request(
       :applications_aid_emojis_eid,
-      nil,
+      application_id,
       :get,
       "#{Discordrb::API.api_base}/applications/#{application_id}/emojis/#{emoji_id}",
       Authorization: token
@@ -229,7 +229,7 @@ module Discordrb::API::Application
   def create_application_emoji(token, application_id, name, image)
     Discordrb::API.request(
       :applications_aid_emojis,
-      nil,
+      application_id,
       :post,
       "#{Discordrb::API.api_base}/applications/#{application_id}/emojis",
       { name: name, image: image }.to_json,
@@ -243,7 +243,7 @@ module Discordrb::API::Application
   def edit_application_emoji(token, application_id, emoji_id, name)
     Discordrb::API.request(
       :applications_aid_emojis_eid,
-      nil,
+      application_id,
       :patch,
       "#{Discordrb::API.api_base}/applications/#{application_id}/emojis/#{emoji_id}",
       { name: name }.to_json,
@@ -257,7 +257,7 @@ module Discordrb::API::Application
   def delete_application_emoji(token, application_id, emoji_id)
     Discordrb::API.request(
       :applications_aid_emojis_eid,
-      nil,
+      application_id,
       :delete,
       "#{Discordrb::API.api_base}/applications/#{application_id}/emojis/#{emoji_id}",
       Authorization: token
