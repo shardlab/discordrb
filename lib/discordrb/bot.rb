@@ -902,6 +902,54 @@ module Discordrb
       API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
     end
 
+    # Fetches all the application emojis that the bot can use.
+    # @return [Array<Emoji>] Returns an array of emoji objects.
+    def application_emojis
+      response = JSON.parse(API::Application.list_application_emojis(@token, profile.id))
+      response['items'].map { |emoji| Emoji.new(emoji, self, nil) }
+    end
+
+    # Fetches a single application emoji from ID.
+    # @param emoji_id [Integer, String] ID of the application emoji to get.
+    # @return [Emoji] Returns an emoji object.
+    def get_application_emoji(emoji_id)
+      response = JSON.parse(API::Application.get_application_emoji(@token, profile.id, emoji_id))
+      Emoji.new(response, self, nil)
+    end
+
+    # Adds a new custom emoji that can be used by this application.
+    # @param name [String] The name of emoji to create.
+    # @param image [File, #read] An object that responds to `#read`, such as `File`.
+    # @return [Emoji] The emoji that has been created.
+    def create_application_emoji(name, image)
+      path_method = %i[original_filename path local_path].find { |meth| image.respond_to?(meth) }
+
+      raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
+      raise ArgumentError, 'File must respond to read' unless image.respond_to? :read
+
+      mime_type = MIME::Types.type_for(image.__send__(path_method)).first&.to_s || 'image/jpeg'
+      image_string = "data:#{mime_type};base64,#{Base64.encode64(image.read).strip}"
+
+      response = JSON.parse(API::Application.create_application_emoji(@token, profile.id, name, image_string))
+      Emoji.new(response, self, nil)
+    end
+
+    # Edits an existing application emoji.
+    # @param emoji_id [Integer, String] ID of the application emoji to edit.
+    # @param name [String] The new name of the emoji.
+    # @return [Emoji] Returns the updated emoji object on success.
+    def edit_application_emoji(emoji_id, name)
+      response = JSON.parse(API::Application.edit_application_emoji(@token, profile.id, emoji_id, name))
+      Emoji.new(response, self, nil)
+    end
+
+    # Deletes an existing application emoji.
+    # @param emoji_id [Integer, String] ID of the application emoji to delete.
+    def delete_application_emoji(emoji_id)
+      API::Application.delete_application_emoji(@token, profile.id, emoji_id)
+      nil
+    end
+
     private
 
     # Throws a useful exception if there's currently no gateway connection.
