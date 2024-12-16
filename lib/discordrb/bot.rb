@@ -910,6 +910,7 @@ module Discordrb
     end
 
     # Fetches a single application emoji from ID.
+    # @param emoji_id [Integer, String] ID of the application emoji to get.
     # @return [Emoji] Returns an emoji object.
     def get_application_emoji(emoji_id)
       response = JSON.parse(API::Application.get_application_emoji(@token, profile.id, emoji_id))
@@ -918,7 +919,7 @@ module Discordrb
 
     # Adds a new custom emoji that can be used by this application.
     # @param name [String] The name of emoji to create.
-    # @param image [String, #read] An object that responds to `#read`, such as `File`.
+    # @param image [File, #read] An object that responds to `#read`, such as `File`.
     # @return [Emoji] The emoji that has been created.
     def create_application_emoji(name, image)
       path_method = %i[original_filename path local_path].find { |meth| image.respond_to?(meth) }
@@ -934,6 +935,7 @@ module Discordrb
     end
 
     # Edits an existing application emoji.
+    # @param emoji_id [Integer, String] ID of the application emoji to edit.
     # @param name [String] The new name of the emoji.
     # @return [Emoji] Returns the updated emoji object on success.
     def edit_application_emoji(emoji_id, name)
@@ -942,9 +944,10 @@ module Discordrb
     end
 
     # Deletes an existing application emoji.
-    # @param emoji_id [String] Snowflake ID of the emoji to delete.
+    # @param emoji_id [Integer, String] ID of the application emoji to delete.
     def delete_application_emoji(emoji_id)
       API::Application.delete_application_emoji(@token, profile.id, emoji_id)
+      nil
     end
 
     private
