@@ -1,36 +1,92 @@
 # frozen_string_literal: true
 
-# API calls for slash commands.
 module Discordrb::API::Application
   module_function
 
-  # Get a list of global application commands.
-  # https://discord.com/developers/docs/interactions/slash-commands#get-global-application-commands
+  # Cache and rate limit settings
+  CACHE_TTL = 300 # seconds
+  RATE_LIMIT = 50 # requests per second
+  
+  # In-memory cache implementation
+  @cache = {}
+  @last_requests = {}
+  @request_counts = {}
+
+  def self.cache_key(method, *args)
+    "#{method}:#{args.join(':')}"
+  end
+
+  def self.cached_request(method, *args)
+    key = cache_key(method, *args)
+    current_time = Time.now.to_f
+
+    # Check cache
+    if @cache[key] && current_time - @cache[key][:timestamp] < CACHE_TTL
+      return @cache[key][:data]
+    end
+
+    # Rate limit handling
+    handle_rate_limit(method)
+
+    # Execute request and cache result
+    result = yield
+    @cache[key] = {
+      data: result,
+      timestamp: current_time
+    }
+    
+    result
+  end
+
+  def self.handle_rate_limit(method)
+    current_time = Time.now.to_f
+    
+    # Reset counter if window has passed
+    if @last_requests[method].nil? || current_time - @last_requests[method] >= 1
+      @request_counts[method] = 0
+      @last_requests[method] = current_time
+    end
+
+    @request_counts[method] ||= 0
+    @request_counts[method] += 1
+
+    # Sleep if rate limit is exceeded
+    if @request_counts[method] > RATE_LIMIT
+      sleep_time = (1 - (current_time - @last_requests[method]))
+      sleep(sleep_time) if sleep_time.positive?
+      @request_counts[method] = 0
+      @last_requests[method] = Time.now.to_f
+    end
+  end
+
+  # Modified API methods using caching
   def get_global_commands(token, application_id)
-    Discordrb::API.request(
-      :applications_aid_commands,
-      nil,
-      :get,
-      "#{Discordrb::API.api_base}/applications/#{application_id}/commands",
-      Authorization: token
-    )
+    cached_request(__method__, application_id) do
+      Discordrb::API.request(
+        :applications_aid_commands,
+        nil,
+        :get,
+        "#{Discordrb::API.api_base}/applications/#{application_id}/commands",
+        Authorization: token
+      )
+    end
   end
 
-  # Get a global application command by ID.
-  # https://discord.com/developers/docs/interactions/slash-commands#get-global-application-command
   def get_global_command(token, application_id, command_id)
-    Discordrb::API.request(
-      :applications_aid_commands_cid,
-      nil,
-      :get,
-      "#{Discordrb::API.api_base}/applications/#{application_id}/commands/#{command_id}",
-      Authorization: token
-    )
+    cached_request(__method__, application_id, command_id) do
+      Discordrb::API.request(
+        :applications_aid_commands_cid,
+        nil,
+        :get,
+        "#{Discordrb::API.api_base}/applications/#{application_id}/commands/#{command_id}",
+        Authorization: token
+      )
+    end
   end
 
-  # Create a global application command.
-  # https://discord.com/developers/docs/interactions/slash-commands#create-global-application-command
+  # Write methods (no caching, only rate limiting)
   def create_global_command(token, application_id, name, description, options = [], default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil)
+    handle_rate_limit(__method__)
     Discordrb::API.request(
       :applications_aid_commands,
       nil,
@@ -42,10 +98,20 @@ module Discordrb::API::Application
     )
   end
 
-  # Edit a global application command.
-  # https://discord.com/developers/docs/interactions/slash-commands#edit-global-application-command
+  # Cache invalidation helper
+  def self.invalidate_cache!
+    @cache.clear
+  end
+
+  # Add cache invalidation for write operations
+  def self.invalidate_command_cache(application_id)
+    @cache.delete_if { |k, _| k.include?(application_id.to_s) }
+  end
+
+  # Modified write methods with cache invalidation
   def edit_global_command(token, application_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil)
-    Discordrb::API.request(
+    handle_rate_limit(__method__)
+    result = Discordrb::API.request(
       :applications_aid_commands_cid,
       nil,
       :patch,
@@ -54,6 +120,8 @@ module Discordrb::API::Application
       Authorization: token,
       content_type: :json
     )
+    self.class.invalidate_command_cache(application_id)
+    result
   end
 
   # Delete a global application command.
