@@ -3,31 +3,24 @@
 require 'discordrb'
 
 describe Discordrb::Message do
-  let(:server) { double('server') }
-  let(:channel) { double('channel', server: server) }
-  let(:token) { double('token') }
-  let(:bot) { double('bot', channel: channel, token: token) }
-  let(:server_id) { instance_double('String', 'server_id') }
-  let(:channel_id) { instance_double('String', 'channel_id') }
-  let(:message_id) { instance_double('String', 'message_id') }
+  let(:server) { instance_double(Discordrb::Server, 'server') }
+  let(:channel) { instance_double(Discordrb::Channel, 'channel', server: server) }
+  let(:token) { instance_double(String, 'token') }
+  let(:bot) { instance_double(Discordrb::Bot, 'bot', channel: channel, token: token) }
+  let(:server_id) { instance_double(String, 'server_id') }
+  let(:channel_id) { instance_double(String, 'channel_id') }
+  let(:message_id) { instance_double(String, 'message_id') }
 
   before do
-    allow(server_id).to receive(:to_i).and_return(server_id)
-    allow(channel_id).to receive(:to_i).and_return(channel_id)
-    allow(message_id).to receive(:to_i).and_return(message_id)
+    allow(message_id).to receive_messages(to_i: message_id, to_s: 'message_id')
+    allow(server_id).to receive_messages(to_i: server_id, to_s: 'server_id')
+    allow(channel_id).to receive_messages(to_i: channel_id, to_s: 'channel_id')
 
-    allow(message_id).to receive(:to_s).and_return('message_id')
-    allow(server_id).to receive(:to_s).and_return('server_id')
-    allow(channel_id).to receive(:to_s).and_return('channel_id')
-
-    allow(server).to receive(:id).and_return(server_id)
-    allow(channel).to receive(:id).and_return(channel_id)
+    allow(server).to receive_messages(id: server_id, member: nil)
+    allow(channel).to receive_messages(id: channel_id, private?: nil, text?: nil)
     allow(bot).to receive(:server).with(server_id).and_return(server)
     allow(bot).to receive(:channel).with(channel_id).and_return(channel)
 
-    allow(server).to receive(:member)
-    allow(channel).to receive(:private?)
-    allow(channel).to receive(:text?)
     allow(bot).to receive(:ensure_user).with message_author
   end
 
@@ -43,8 +36,9 @@ describe Discordrb::Message do
       # Bot will receive #ensure_user because the observed message author
       # is not present in the server cache, which is possible
       # (for example) if the author had left the server.
-      expect(bot).to receive(:ensure_user).with message_author
+      allow(bot).to receive(:ensure_user)
       described_class.new(message_data, bot)
+      expect(bot).to have_received(:ensure_user).with message_author
     end
   end
 
@@ -82,6 +76,7 @@ describe Discordrb::Message do
       message = described_class.new(data, bot)
       message.emoji
       message.emoji
+      expect(bot).to have_received(:parse_mentions).once
     end
   end
 
@@ -111,12 +106,14 @@ describe Discordrb::Message do
 
   describe '#reacted_with' do
     let(:message) { described_class.new(message_data, bot) }
-    let(:emoji) { double('emoji') }
-    let(:reaction) { double('reaction') }
+    let(:emoji) { instance_double(Discordrb::Emoji, 'emoji') }
+    let(:reaction) { instance_double(Discordrb::Reaction, 'reaction') }
 
     fixture :user_data, %i[user]
 
     before do
+      allow(Discordrb::API::Channel).to receive(:get_reactions).and_return([].to_json)
+
       # Return the appropriate number of users based on after_id
       allow(Discordrb::API::Channel).to receive(:get_reactions)
         .with(any_args, nil, anything) # ..., after_id, limit
@@ -128,96 +125,99 @@ describe Discordrb::Message do
     end
 
     it 'calls the API method' do
-      expect(Discordrb::API::Channel).to receive(:get_reactions)
-        .with(any_args, '\u{1F44D}', nil, nil, 27)
-
       message.reacted_with('\u{1F44D}', limit: 27)
+      expect(Discordrb::API::Channel).to have_received(:get_reactions)
+        .with(any_args, '\u{1F44D}', nil, nil, 27)
     end
 
     it 'fetches all users when limit is nil' do
-      expect(Discordrb::Paginator).to receive(:new).with(nil, :down)
+      allow(Discordrb::Paginator).to receive(:new).with(nil, :down)
 
       message.reacted_with('\u{1F44D}', limit: nil)
+      expect(Discordrb::Paginator).to have_received(:new).with(nil, :down)
     end
 
     it 'converts Emoji to strings' do
-      allow(emoji).to receive(:to_reaction).and_return('123')
-
-      expect(Discordrb::API::Channel).to receive(:get_reactions)
-        .with(any_args, '123', nil, nil, anything)
+      string = instance_double(String, 'string')
+      allow(emoji).to receive(:to_reaction).and_return(instance_double(Discordrb::Reaction, 'reaction', to_s: string))
 
       message.reacted_with(emoji)
+      expect(Discordrb::API::Channel).to have_received(:get_reactions)
+        .with(any_args, string, nil, nil, anything)
     end
 
     it 'converts Reaction to strings' do
-      allow(reaction).to receive(:to_s).and_return('123')
-
-      expect(Discordrb::API::Channel).to receive(:get_reactions)
-        .with(any_args, '123', nil, nil, anything)
+      reaction_string = instance_double(String, 'reaction string')
+      allow(reaction).to receive(:to_s).and_return(reaction_string)
 
       message.reacted_with(reaction)
+      expect(Discordrb::API::Channel).to have_received(:get_reactions)
+        .with(any_args, reaction_string, nil, nil, anything)
     end
   end
 
   describe '#all_reaction_users' do
     let(:message) { described_class.new(message_data, bot) }
-    let(:reaction1) { double('reaction') }
-    let(:reaction2) { double('reaction') }
-    let(:user1) { double('user') }
-    let(:user2) { double('user') }
-    let(:user3) { double('user') }
+    let(:reaction_one) { instance_double(Discordrb::Reaction, 'reaction 1') }
+    let(:reaction_two) { instance_double(Discordrb::Reaction, 'reaction 2') }
+    let(:user_one) { instance_double(Discordrb::User, 'user 1') }
+    let(:user_two) { instance_double(Discordrb::User, 'user 2') }
+    let(:user_three) { instance_double(Discordrb::User, 'user 3') }
 
     before do
-      message.instance_variable_set(:@reactions, [reaction1, reaction2])
-      allow(reaction1).to receive(:to_s).and_return('123')
-      allow(reaction2).to receive(:to_s).and_return('456')
+      message.instance_variable_set(:@reactions, [reaction_one, reaction_two])
+      allow(reaction_one).to receive(:to_s).and_return('123')
+      allow(reaction_two).to receive(:to_s).and_return('456')
 
       allow(message).to receive(:reacted_with)
-        .with(reaction1, limit: 100)
-        .and_return([user1, user2])
+        .with(reaction_one, limit: 100)
+        .and_return([user_one, user_two])
 
       allow(message).to receive(:reacted_with)
-        .with(reaction2, limit: 100)
-        .and_return([user1, user3])
+        .with(reaction_two, limit: 100)
+        .and_return([user_one, user_three])
     end
 
     it 'returns a filled hash' do
       reactions_hash = message.all_reaction_users
-      expect(reactions_hash).to eq({ '123' => [user1, user2], '456' => [user1, user3] })
+      expect(reactions_hash).to eq({ '123' => [user_one, user_two], '456' => [user_one, user_three] })
     end
   end
 
   describe '#reply!' do
     let(:message) { described_class.new(message_data, bot) }
-    let(:content) { instance_double('String', 'content') }
-    let(:mention) { instance_double('TrueClass', 'mention') }
+    let(:content) { instance_double(String, 'content') }
+    let(:mention) { instance_double(TrueClass, 'mention') }
 
     it 'responds with a message_reference' do
-      expect(message).to receive(:respond).with(content, false, nil, nil, hash_including(:replied_user), message, nil)
-
+      allow(message).to receive(:respond)
       message.reply!(content)
+
+      expect(message).to have_received(:respond).with(content, false, nil, nil, hash_including(:replied_user), message, nil)
     end
 
     it 'sets replied_user in allowed_mentions' do
-      expect(message).to receive(:respond).with(content, false, nil, nil, { replied_user: mention }, message, nil)
-
+      allow(message).to receive(:respond)
       message.reply!(content, mention_user: mention)
+
+      expect(message).to have_received(:respond).with(content, false, nil, nil, { replied_user: mention }, message, nil)
     end
 
     context 'when allowed_mentions is false' do
-      let(:mention) { double('mention') }
+      let(:mention) { instance_double(TrueClass, 'mention') }
 
       it 'sets parse to an empty array add merges the mention_user param' do
-        expect(message).to receive(:respond).with(content, false, nil, nil, { parse: [], replied_user: mention }, message, nil)
-
+        allow(message).to receive(:respond)
         message.reply!(content, allowed_mentions: false, mention_user: mention)
+
+        expect(message).to have_received(:respond).with(content, false, nil, nil, { parse: [], replied_user: mention }, message, nil)
       end
     end
 
     context 'when allowed_mentions is an AllowedMentions' do
-      let(:hash) { instance_double('Hash', 'hash') }
-      let(:allowed_mentions) { instance_double('Discordrb::AllowedMentions', 'allowed_mentions') }
-      let(:mention_user) { instance_double('TrueClass', 'mention_user') }
+      let(:hash) { instance_double(Hash, 'hash') }
+      let(:allowed_mentions) { instance_double(Discordrb::AllowedMentions, 'allowed_mentions') }
+      let(:mention_user) { instance_double(TrueClass, 'mention_user') }
 
       before do
         allow(allowed_mentions).to receive(:to_hash).and_return(hash)
@@ -226,37 +226,40 @@ describe Discordrb::Message do
       end
 
       it 'converts it to a hash to set the replied_user key' do
-        expect(message).to receive(:respond).with(content, false, nil, nil, hash, message, nil)
+        allow(message).to receive(:respond)
         message.reply!(content, allowed_mentions: allowed_mentions, mention_user: mention_user)
+        expect(message).to have_received(:respond).with(content, false, nil, nil, hash, message, nil)
       end
     end
   end
 
   describe '#reply' do
     let(:message) { described_class.new(message_data, bot) }
-    let(:content) { instance_double('String', 'content') }
+    let(:content) { instance_double(String, 'content') }
 
     it 'sends a message to a channel' do
-      expect(channel).to receive(:send_message).with(content)
-
+      allow(channel).to receive(:send_message)
       message.reply(content)
+
+      expect(channel).to have_received(:send_message).with(content)
     end
   end
 
   describe '#respond' do
     let(:message) { described_class.new(message_data, bot) }
-    let(:content) { instance_double('String', 'content') }
-    let(:tts) { instance_double('TrueClass', 'tts') }
-    let(:embed) { instance_double('Discordrb::Webhooks::Embed', 'embed') }
-    let(:attachments) { instance_double('Array', 'attachments') }
-    let(:allowed_mentions) { instance_double('Hash', 'allowed_mentions') }
-    let(:message_reference) { instance_double('Discordrb::Message') }
-    let(:components) { instance_double('Discordrb::Webhooks::View') }
+    let(:content) { instance_double(String, 'content') }
+    let(:tts) { instance_double(TrueClass, 'tts') }
+    let(:embed) { instance_double(Discordrb::Webhooks::Embed, 'embed') }
+    let(:attachments) { instance_double(Array, 'attachments') }
+    let(:allowed_mentions) { instance_double(Hash, 'allowed_mentions') }
+    let(:message_reference) { instance_double(described_class) }
+    let(:components) { instance_double(Discordrb::Webhooks::View) }
 
     it 'forwards arguments to Channel#send_message' do
-      expect(channel).to receive(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference, components)
-
+      allow(channel).to receive(:send_message)
       message.respond(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+
+      expect(channel).to have_received(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference, components)
     end
   end
 end

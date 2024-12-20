@@ -32,20 +32,29 @@ describe Discordrb::Bot do
     bot.instance_variable_set(:@servers, server_id => server)
   end
 
-  it 'should set up' do
-    expect(bot.server(server_id)).to eq(server)
-    expect(bot.server(server_id).emoji.size).to eq(2)
+  describe '#initialize' do
+    it 'sets up servers' do
+      expect(bot.server(server_id)).to eq(server)
+    end
+
+    it 'sets up emojis' do
+      expect(bot.server(server_id).emoji.size).to eq(2)
+    end
   end
 
-  it 'raises when token string is empty or nil' do
-    expect { described_class.new(token: '') }.to raise_error('Token string is empty or nil')
-    expect { described_class.new(token: nil) }.to raise_error('Token string is empty or nil')
+  shared_examples 'raises when token string is' do |token, value|
+    it "raises when token string is #{token}" do
+      expect { described_class.new(token: value) }.to raise_error('Token string is empty or nil')
+    end
   end
+
+  include_examples 'raises when token string is', 'empty', ''
+  include_examples 'raises when token string is', 'nil', nil
 
   describe '#parse_mentions' do
     it 'parses user mentions' do
-      user_a = double(:user_a)
-      user_b = double(:user_b)
+      user_a = instance_double(Discordrb::User, :user_a)
+      user_b = instance_double(Discordrb::User, :user_b)
       allow(bot).to receive(:user).with('123').and_return(user_a)
       allow(bot).to receive(:user).with('456').and_return(user_b)
       mentions = bot.parse_mentions('<@!123><@!456>', server)
@@ -53,8 +62,8 @@ describe Discordrb::Bot do
     end
 
     it 'parses channel mentions' do
-      channel_a = double(:channel_a)
-      channel_b = double(:channel_b)
+      channel_a = instance_double(Discordrb::Channel, :channel_a)
+      channel_b = instance_double(Discordrb::Channel, :channel_b)
       allow(bot).to receive(:channel).with('123', server).and_return(channel_a)
       allow(bot).to receive(:channel).with('456', server).and_return(channel_b)
       mentions = bot.parse_mentions('<#123><#456>', server)
@@ -62,8 +71,8 @@ describe Discordrb::Bot do
     end
 
     it 'parses role mentions' do
-      role_a = double(:role_a)
-      role_b = double(:role_b)
+      role_a = instance_double(Discordrb::Role, :role_a)
+      role_b = instance_double(Discordrb::Role, :role_b)
       allow(server).to receive(:role).with('123').and_return(role_a)
       allow(server).to receive(:role).with('456').and_return(role_b)
       mentions = bot.parse_mentions('<@&123><@&456>')
@@ -71,8 +80,8 @@ describe Discordrb::Bot do
     end
 
     it 'parses emoji mentions' do
-      emoji_a = double(:emoji_a)
-      emoji_b = double(:emoji_b)
+      emoji_a = instance_double(Discordrb::Emoji, :emoji_a)
+      emoji_b = instance_double(Discordrb::Emoji, :emoji_b)
       allow(bot).to receive(:emoji).with('123').and_return(emoji_a)
       allow(bot).to receive(:emoji).with('456').and_return(emoji_b)
       mentions = bot.parse_mentions('<a:foo:123><a:bar:456>')
@@ -99,8 +108,9 @@ describe Discordrb::Bot do
   describe '#handle_dispatch' do
     it 'handles GUILD_EMOJIS_UPDATE' do
       type = :GUILD_EMOJIS_UPDATE
-      expect(bot).to receive(:raise_event).exactly(4).times
+      allow(bot).to receive(:raise_event)
       bot.send(:handle_dispatch, type, dispatch_event)
+      expect(bot).to have_received(:raise_event).exactly(4).times
     end
 
     context 'when handling a PRESENCE_UPDATE' do
@@ -170,18 +180,20 @@ describe Discordrb::Bot do
         expect(bot).to have_received(:raise_event).with(instance_of(Discordrb::Events::ChannelCreateEvent))
       end
 
-      it 'does not raise a ChannelCreateEvent if the DM channel is cached' do
+      it 'doesn\'t raise a ChannelCreateEvent if the DM channel is cached' do
         allow(channel).to receive(:private?).and_return(true)
         bot.instance_variable_set(:@pm_channels, { user_id => channel })
 
         bot.send(:handle_dispatch, :MESSAGE_CREATE, message_fixture)
 
-        expect(bot).to_not have_received(:raise_event).with(instance_of(Discordrb::Events::ChannelCreateEvent))
+        expect(bot).not_to have_received(:raise_event).with(instance_of(Discordrb::Events::ChannelCreateEvent))
       end
     end
   end
 
   describe '#update_guild_emoji' do
+    # TODO: Rework tests to not rely on multiple expectations
+    # rubocop:disable RSpec/MultipleExpectations
     it 'removes an emoji' do
       bot.send(:update_guild_emoji, dispatch_remove)
 
@@ -217,15 +229,15 @@ describe Discordrb::Bot do
       expect(emoji.server).to eq(server)
       expect(emoji.roles).to eq([])
     end
+    # rubocop:enable RSpec/MultipleExpectations
   end
 
   describe '#send_file' do
-    let(:channel) { double(:channel, resolve_id: double) }
+    let(:channel) { instance_double(Discordrb::Channel, :channel, resolve_id: double) }
 
     it 'defines original_filename when filename is passed' do
-      original_filename = double(:original_filename)
-      file = double(:file, original_filename: original_filename, read: true)
-      new_filename = double('new filename')
+      file = instance_double(File, :file, read: true)
+      new_filename = instance_double(String, 'new filename')
 
       allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
@@ -234,19 +246,18 @@ describe Discordrb::Bot do
       expect(file.original_filename).to eq new_filename
     end
 
-    it 'does not define original_filename when filename is nil' do
-      original_filename = double(:original_filename)
-      file = double(:file, read: true, original_filename: original_filename)
+    it 'doesn\'t define original_filename when filename is nil' do
+      file = instance_double(File, :file, read: true)
 
       allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
 
       bot.send_file(channel, file)
-      expect(file.original_filename).to eq original_filename
+      expect(file).not_to respond_to(:original_filename)
     end
 
-    it 'prepends "SPOILER_" when spoiler is truthy and the filename does not start with "SPOILER_"' do
-      file = double(:file, read: true)
+    it 'prepends "SPOILER_" when spoiler is truthy and the filename doesn\'t start with "SPOILER_"' do
+      file = instance_double(File, :file, read: true)
 
       allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
@@ -255,8 +266,8 @@ describe Discordrb::Bot do
       expect(file.original_filename).to eq 'SPOILER_file.txt'
     end
 
-    it 'does not prepend "SPOILER_" if the filename starts with "SPOILER_"' do
-      file = double(:file, read: true, path: 'SPOILER_file.txt')
+    it 'doesn\'t prepend "SPOILER_" if the filename starts with "SPOILER_"' do
+      file = instance_double(File, :file, read: true, path: 'SPOILER_file.txt')
 
       allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
@@ -266,7 +277,7 @@ describe Discordrb::Bot do
     end
 
     it 'uses the original filename when spoiler is truthy and filename is nil' do
-      file = double(:file, read: true, path: 'file.txt')
+      file = instance_double(File, :file, read: true, path: 'file.txt')
 
       allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
@@ -278,7 +289,7 @@ describe Discordrb::Bot do
 
   describe '#voice_connect' do
     it 'requires encryption' do
-      channel = double(:channel, resolve_id: double)
+      channel = instance_double(Discordrb::Channel, :channel, resolve_id: double)
       expect { bot.voice_connect(channel, false) }.to raise_error ArgumentError
     end
   end
