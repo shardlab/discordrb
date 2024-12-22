@@ -196,7 +196,7 @@ module Discordrb::Events
 
       [
         matches_all(@attributes[:server], event.server) { |a, e| a.resolve_id == e&.id },
-        matches_all(@attributes[:channel], event.channel) { |a, e| a.resolve_id == e.id },
+        matches_all(@attributes[:channel], event.channel) { |a, e| a.resolve_id == e.id }
       ].reduce(true, &:&)
     end
   end
