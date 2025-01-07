@@ -137,7 +137,7 @@ module Discordrb
       @bot.debug("Members for server #{@id} not chunked yet - initiating")
 
       # If the SERVER_MEMBERS intent flag isn't set, the gateway won't respond when we ask for members.
-      raise 'The :server_members intent is required to get server members' if (@bot.gateway.intents & INTENTS[:server_members]).zero?
+      raise 'The :server_members intent is required to get server members' if @bot.gateway.intents.nobits?(INTENTS[:server_members])
 
       @bot.request_chunks(@id)
       sleep 0.05 until @chunked
@@ -583,6 +583,17 @@ module Discordrb
       else
         50
       end
+    end
+
+    # Searches a server for members that matches a username or a nickname.
+    # @param name [String] The username or nickname to search for.
+    # @param limit [Integer] The maximum number of members between 1-1000 to return. Returns 1 member by default.
+    # @return [Array<Member>] An array of member objects that match the given parameters.
+    def search_members(name:, limit: nil)
+      response = JSON.parse(API::Server.search_guild_members(@bot.token, @id, name, limit))
+      return nil if response.empty?
+
+      response.map { |mem| Member.new(mem, self, @bot) }
     end
 
     # Retrieve banned users from this server.
