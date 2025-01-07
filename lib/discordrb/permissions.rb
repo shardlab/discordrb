@@ -80,7 +80,7 @@ module Discordrb
     # Initialize the instance variables based on the bitset.
     def init_vars
       FLAGS.each do |position, flag|
-        flag_set = ((@bits >> position) & 0x1) == 1
+        flag_set = (@bits >> position).allbits?(0x1)
         instance_variable_set "@#{flag}", flag_set
       end
     end
@@ -131,7 +131,7 @@ module Discordrb
     #   permissions.defined_permissions #=> [:create_instant_invite, :administrator]
     # @return [Array<Symbol>] the permissions
     def defined_permissions
-      FLAGS.filter_map { |value, name| (@bits & (1 << value)).positive? ? name : nil }
+      FLAGS.filter_map { |value, name| @bits.anybits?((1 << value)) ? name : nil }
     end
 
     # Comparison based on permission bits
