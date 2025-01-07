@@ -146,7 +146,7 @@ module Discordrb
             get_voters.call(100, last_page&.last&.id)
           end
         end
-  
+
         paginator.to_a
       end
     end
