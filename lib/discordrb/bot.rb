@@ -526,7 +526,7 @@ module Discordrb
             end
           end
         elsif /(?<animated>^a|^${0}):(?<name>\w+):(?<id>\d+)/ =~ mention
-          array_to_return << (emoji(id) || Emoji.new({ 'animated' => !animated.nil?, 'name' => name, 'id' => id }, self, nil))
+          array_to_return << (emoji(id) || Emoji.new({ 'animated' => animated != '', 'name' => name, 'id' => id }, self, nil))
         end
       end
       array_to_return
@@ -907,33 +907,27 @@ module Discordrb
     # Fetches all the application emojis that the bot can use.
     # @return [Array<Emoji>] Returns an array of emoji objects.
     def application_emojis
-      response = JSON.parse(API::Application.list_application_emojis(@token, profile.id))
-      response['items'].map { |emoji| Emoji.new(emoji, self, nil) }
+      response = API::Application.list_application_emojis(@token, profile.id)
+      JSON.parse(response)['items'].map { |emoji| Emoji.new(emoji, self, nil) }
     end
 
     # Fetches a single application emoji from ID.
     # @param emoji_id [Integer, String] ID of the application emoji to get.
     # @return [Emoji] Returns an emoji object.
     def get_application_emoji(emoji_id)
-      response = JSON.parse(API::Application.get_application_emoji(@token, profile.id, emoji_id))
-      Emoji.new(response, self, nil)
+      response = API::Application.get_application_emoji(@token, profile.id, emoji_id)
+      Emoji.new(JSON.parse(response), self, nil)
     end
 
     # Adds a new custom emoji that can be used by this application.
     # @param name [String] The name of emoji to create.
-    # @param image [File, #read] An object that responds to `#read`, such as `File`.
+    # @param image [String, #read] The base64 string with the image data, or an object that responds to #read.
     # @return [Emoji] The emoji that has been created.
     def create_application_emoji(name, image)
-      path_method = %i[original_filename path local_path].find { |meth| image.respond_to?(meth) }
+      image = image.respond_to?(:read) ? encode_file(image) : image
 
-      raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
-      raise ArgumentError, 'File must respond to read' unless image.respond_to? :read
-
-      mime_type = MIME::Types.type_for(image.__send__(path_method)).first&.to_s || 'image/jpeg'
-      image_string = "data:#{mime_type};base64,#{Base64.encode64(image.read).strip}"
-
-      response = JSON.parse(API::Application.create_application_emoji(@token, profile.id, name, image_string))
-      Emoji.new(response, self, nil)
+      response = API::Application.create_application_emoji(@token, profile.id, name, image)
+      Emoji.new(JSON.parse(response), self, nil)
     end
 
     # Edits an existing application emoji.
@@ -941,15 +935,14 @@ module Discordrb
     # @param name [String] The new name of the emoji.
     # @return [Emoji] Returns the updated emoji object on success.
     def edit_application_emoji(emoji_id, name)
-      response = JSON.parse(API::Application.edit_application_emoji(@token, profile.id, emoji_id, name))
-      Emoji.new(response, self, nil)
+      response = API::Application.edit_application_emoji(@token, profile.id, emoji_id, name)
+      Emoji.new(JSON.parse(response), self, nil)
     end
 
     # Deletes an existing application emoji.
     # @param emoji_id [Integer, String] ID of the application emoji to delete.
     def delete_application_emoji(emoji_id)
       API::Application.delete_application_emoji(@token, profile.id, emoji_id)
-      nil
     end
 
     private
@@ -1762,6 +1755,7 @@ module Discordrb
     end
 
     def calculate_intents(intents)
+      intents = [intents] unless intents.is_a? Array
       intents.reduce(0) do |sum, intent|
         case intent
         when Symbol

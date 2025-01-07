@@ -119,6 +119,21 @@ module Discordrb
   end
 end
 
+# A utility method to base64 enocde a file like object using its mime type.
+# @param file [File, #read] A file like object that responds to #read.
+# @return [String, nil] The base64 encoded file, or nil if it couldn't be found.
+def encode_file(file)
+  return unless file != :undef && file
+
+  path_method = %i[original_filename path local_path].find { |meth| file.respond_to?(meth) }
+
+  raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
+  raise ArgumentError, 'File must respond to read' unless file.respond_to?(:read)
+
+  mime_type = MIME::Types.type_for(file.__send__(path_method)).first&.to_s || 'image/jpeg'
+  "data:#{mime_type};base64,#{Base64.encode64(file.read).strip}"
+end
+
 # In discordrb, Integer and {String} are monkey-patched to allow for easy resolution of IDs
 class Integer
   # @return [Integer] The Discord ID represented by this integer, i.e. the integer itself

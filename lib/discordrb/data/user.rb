@@ -49,6 +49,10 @@ module Discordrb
     # @see #avatar_url
     attr_accessor :avatar_id
 
+    # @return [String] the ID of this user's current banner, can be used to generate a banner URL.
+    # @see #banner_url
+    attr_accessor :banner_id
+
     # Utility function to get Discord's display name of a user not in server
     # @return [String] the name the user displays as (global_name if they have one, username otherwise)
     def display_name
@@ -86,6 +90,16 @@ module Discordrb
       API::User.avatar_url(@id, @avatar_id, format)
     end
 
+    # Utility function to get a user's banner URL.
+    # @param format [String, nil] If `nil`, the URL will default to `png` for static banners and will detect if the user has a `gif` banner.
+    # You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this.
+    # @return [String, nil] the URL to the banner image or nil if the user doesn't have one.
+    def banner_url(format = nil)
+      return nil unless @banner_id
+
+      API::User.banner_url(@id, @banner_id, format)
+    end
+
     # @return [Integer] the public flags on a user's account
     attr_reader :public_flags
 
@@ -120,6 +134,7 @@ module Discordrb
       @id = data['id'].to_i
       @discriminator = data['discriminator']
       @avatar_id = data['avatar']
+      @banner_id = data['banner']
       @roles = {}
       @activities = Discordrb::ActivitySet.new
       @public_flags = data['public_flags'] || 0
