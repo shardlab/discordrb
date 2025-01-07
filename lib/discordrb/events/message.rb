@@ -54,6 +54,20 @@ module Discordrb::Events
       channel.send_temporary_message(content, timeout, tts, embed, attachments, allowed_mentions, components, poll)
     end
 
+    # @param message [String] The message that should be sent along with the embed. If this is the empty string, only the embed will be shown.
+    # @param embed [Discordrb::Webhooks::Embed, nil] The embed to start the building process with, or nil if one should be created anew.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
+    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param poll [Hash] A poll request object to include with this message.
+    # @yieldparam poll [Discordrb::Poll::Builder] The poll from the parameters, or a new one.
+    # @return [Message] The resulting message.
+    def send_poll(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, poll = nil, &block)
+      channel.send_poll(message, tts, embed, attachments, allowed_mentions, message_reference, components, poll, &block)
+    end
+
     # Adds a string to be sent after the event has finished execution. Avoids problems with rate limiting because only
     # one message is ever sent. If it is used multiple times, the strings will bunch up into one message (separated by
     # newlines)

@@ -638,6 +638,7 @@ module Discordrb
     # This **event** is raised whenever a user votes for a poll.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, User] :user A user to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
     # @option attributes [String, Integer, Channel] :channel A channel to match against.
     # @option attributes [String, Integer, Message] :message A message to match against.
     # @option attributes [String, Integer] :answer_id Custom_id of an answer to match against.
@@ -651,6 +652,7 @@ module Discordrb
     # This **event** is raised whenever a user removes a vote for a poll.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, User] :user_id A user to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
     # @option attributes [String, Integer, Channel] :channel_id A channel to match against.
     # @option attributes [String, Integer, Message] :message_id A message to match against.
     # @option attributes [String, Integer] :answer_id Custom_id of an answer to match against.

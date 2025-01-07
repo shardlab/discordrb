@@ -70,14 +70,11 @@ module Discordrb
 
     # Returns the answer with the most votes.
     # @return [Answer] The answer object.
-    def highest_count
+    def most_voted
       return nil if @answer_counts.nil?
 
       answer(@answer_counts.invert.max&.last)
     end
-
-    alias_method :most_votes, :highest_count
-    alias_method :most_voted, :highest_count
 
     # Whether this poll is currently tied.
     # @return [Boolean] True if this poll is tied. False otherwise.
@@ -133,12 +130,24 @@ module Discordrb
 
       # Gets an array of user objects that have voted for this poll.
       # @param after [Integer, String] Gets the users after this user ID.
-      # @param limit [Integer] The max number of users between 1-100. Defaults to 25.
-      def voters(after: nil, limit: 25)
-        response = JSON.parse(API::Channel.get_answer_voters(@bot.token, @poll.message.channel.id, @poll.message.id, @id, after, limit))
-        return nil if response['users'].empty?
-
-        response['users'].map { |user| User.new(user, @bot) }
+      # @param limit [Integer] The max number of users between 1-100. Nil will return all users.
+      def voters(after: nil, limit: 100)
+        get_voters = proc do |fetch_limit, after_id = nil|
+          response = JSON.parse(API::Channel.get_answer_voters(@bot.token, @poll.message.channel.id, @poll.message.id, @id, after_id, fetch_limit))
+          response['users'].map { |user| User.new(user, @bot) }
+        end
+  
+        return get_voters.call(limit, after) if limit && limit <= 100
+  
+        paginator = Paginator.new(limit, :down) do |last_page|
+          if last_page && last_page.count < 100
+            []
+          else
+            get_voters.call(100, last_page&.last&.id)
+          end
+        end
+  
+        paginator.to_a
       end
     end
 

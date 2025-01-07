@@ -28,12 +28,12 @@ module Discordrb::Events
     def initialize(data, bot)
       @bot = bot
 
-      @server = @bot.server(data['guild_id']) if data['guild_id']
-      @channel = @bot.channel(data['channel_id'])
+      @server = bot.server(data['guild_id']) if data['guild_id']
+      @channel = bot.channel(data['channel_id'])
       @message = @channel.load_message(data['message_id'])
       @poll = @message.poll
       @answer = @poll.answer(data['answer_id'])
-      @user = data['guild_id'] ? @bot.member(data['guild_id'], data['user_id']) : @bot.user(data['user_id'])
+      @user = data['guild_id'] ? bot.member(data['guild_id'], data['user_id']) : bot.user(data['user_id'])
     end
   end
 
@@ -45,6 +45,7 @@ module Discordrb::Events
 
       [
         matches_all(@attributes[:user], event.user) { |a, e| a.resolve_id == e.id },
+        matches_all(@attributes[:server], event.server) { |a, e| a.resolve_id == e&.id },
         matches_all(@attributes[:channel], event.channel) { |a, e| a.resolve_id == e.id },
         matches_all(@attributes[:message], event.message) { |a, e| a.resolve_id == e.id },
         matches_all(@attributes[:answer_id], event.answer) { |a, e| a.resolve_id == e.id }
