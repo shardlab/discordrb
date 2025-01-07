@@ -136,9 +136,9 @@ module Discordrb
           response = JSON.parse(API::Channel.get_answer_voters(@bot.token, @poll.message.channel.id, @poll.message.id, @id, after_id, fetch_limit))
           response['users'].map { |user| User.new(user, @bot) }
         end
-  
+
         return get_voters.call(limit, after) if limit && limit <= 100
-  
+
         paginator = Paginator.new(limit, :down) do |last_page|
           if last_page && last_page.count < 100
             []
