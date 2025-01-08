@@ -908,26 +908,25 @@ module Discordrb
     # @return [Array<Emoji>] Returns an array of emoji objects.
     def application_emojis
       response = API::Application.list_application_emojis(@token, profile.id)
-      JSON.parse(response)['items'].map { |emoji| Emoji.new(emoji, self, nil) }
+      JSON.parse(response)['items'].map { |emoji| Emoji.new(emoji, self) }
     end
 
-    # Fetches a single application emoji from ID.
-    # @param emoji_id [Integer, String] ID of the application emoji to get.
-    # @return [Emoji] Returns an emoji object.
+    # Fetches a single application emoji from its ID.
+    # @param emoji_id [Integer, String] ID of the application emoji.
+    # @return [Emoji] The application emoji.
     def get_application_emoji(emoji_id)
       response = API::Application.get_application_emoji(@token, profile.id, emoji_id)
-      Emoji.new(JSON.parse(response), self, nil)
+      Emoji.new(JSON.parse(response), self)
     end
 
-    # Adds a new custom emoji that can be used by this application.
+    # Creates a new custom emoji that can be used by this application.
     # @param name [String] The name of emoji to create.
-    # @param image [String, #read] The base64 string with the image data, or an object that responds to #read.
+    # @param image [String, #read] Base64 string with the image data, or an object that responds to #read.
     # @return [Emoji] The emoji that has been created.
     def create_application_emoji(name, image)
       image = image.respond_to?(:read) ? encode_file(image) : image
-
       response = API::Application.create_application_emoji(@token, profile.id, name, image)
-      Emoji.new(JSON.parse(response), self, nil)
+      Emoji.new(JSON.parse(response), self)
     end
 
     # Edits an existing application emoji.
@@ -936,7 +935,7 @@ module Discordrb
     # @return [Emoji] Returns the updated emoji object on success.
     def edit_application_emoji(emoji_id, name)
       response = API::Application.edit_application_emoji(@token, profile.id, emoji_id, name)
-      Emoji.new(JSON.parse(response), self, nil)
+      Emoji.new(JSON.parse(response), self)
     end
 
     # Deletes an existing application emoji.
