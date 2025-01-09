@@ -130,7 +130,7 @@ module Discordrb
 
       # Gets an array of user objects that have voted for this poll.
       # @param after [Integer, String] Gets the users after this user ID.
-      # @param limit [Integer] The max number of users between 1-100. Nil will return all users.
+      # @param limit [Integer, nil] The max number of users between 1-100. Nil will return all users.
       def voters(after: nil, limit: 100)
         get_voters = proc do |fetch_limit, after_id = nil|
           response = JSON.parse(API::Channel.get_answer_voters(@bot.token, @poll.message.channel.id, @poll.message.id, @id, after_id, fetch_limit))
