@@ -70,11 +70,14 @@ module Discordrb
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
 
-    # @return [Array<Component>]
+    # @return [Array<Component>] Interaction components for this message.
     attr_reader :components
 
-    # @return [Integer] flags set on the message
+    # @return [Integer] flags set on the message.
     attr_reader :flags
+
+    # @return [Channel, nil] The thread that was started from this message, or nil.
+    attr_reader :thread
 
     # @!visibility private
     def initialize(data, bot)
@@ -160,7 +163,10 @@ module Discordrb
 
       @components = []
       @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+
       @flags = data['flags'] || 0
+
+      @thread = Channel.new(data['thread'], @bot, @server) if data['thread']
     end
 
     # Replies to this message with the specified content.
