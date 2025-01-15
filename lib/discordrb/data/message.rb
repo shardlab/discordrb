@@ -166,7 +166,7 @@ module Discordrb
 
       @flags = data['flags'] || 0
 
-      @thread = Channel.new(data['thread'], @bot, @server) if data['thread']
+      @thread = data['thread'] ? Channel.new(data['thread'], @bot, @server) : nil
     end
 
     # Replies to this message with the specified content.
