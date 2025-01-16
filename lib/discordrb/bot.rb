@@ -1452,6 +1452,10 @@ module Discordrb
 
         event = ChannelRecipientRemoveEvent.new(data, self)
         raise_event(event)
+      when :CHANNEL_PINS_UPDATE
+        event = ChannelPinsUpdateEvent.new(data, self)
+        raise_event(event)
+
       when :GUILD_MEMBER_ADD
         add_guild_member(data)
 
