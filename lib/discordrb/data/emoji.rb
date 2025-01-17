@@ -11,7 +11,7 @@ module Discordrb
     # @return [Server, nil] the server of this emoji
     attr_reader :server
 
-    # @return [User, nil] The user who uploaded this emoji, or nil if this emoji is parsed
+    # @return [User, nil] the user who uploaded this emoji, or nil if the emoji's server is unknown.
     attr_reader :user
 
     # @return [Array<Role>, nil] roles this emoji is active for, or nil if the emoji's server is unknown
@@ -21,11 +21,11 @@ module Discordrb
     attr_reader :require_colons
     alias_method :require_colons?, :require_colons
 
-    # @return [Boolean, nil] Whether this emoji is managed by an integration, or nil if the emoji's server is unknown
+    # @return [Boolean, nil] whether this emoji is managed by an integration, or nil if the emoji's server is unknown
     attr_reader :managed
     alias_method :managed?, :managed
 
-    # @return [Boolean, nil] If this emoji is currently usable, or nil if the emoji's server is unknown
+    # @return [Boolean, nil] if this emoji is currently usable, or nil if the emoji's server is unknown
     attr_reader :available
     alias_method :available?, :available
     alias_method :usable?, :available
