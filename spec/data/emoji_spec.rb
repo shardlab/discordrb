@@ -4,10 +4,12 @@ require 'discordrb'
 
 describe Discordrb::Emoji do
   let(:bot) { double('bot') }
+  let(:user) { double('user') }
 
   subject(:emoji) do
     server = double('server', role: double)
 
+    expect(bot).to receive(:ensure_user)
     described_class.new(emoji_data, bot, server)
   end
 
