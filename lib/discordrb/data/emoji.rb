@@ -11,7 +11,7 @@ module Discordrb
     # @return [Server, nil] the server of this emoji
     attr_reader :server
 
-    # @return [User, nil] the user who uploaded this emoji, or nil if the emoji's server is unknown.
+    # @return [User, nil] the user who uploaded this emoji, or nil if the emoji's server is unknown
     attr_reader :user
 
     # @return [Array<Role>, nil] roles this emoji is active for, or nil if the emoji's server is unknown
