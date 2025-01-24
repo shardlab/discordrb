@@ -103,9 +103,20 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_payload_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
+      Discordrb::API::Interaction.create_interaction_response(
+        @token,
+        @id,
+        CALLBACK_TYPES[:channel_message],
+        data[:content],
+        tts,
+        data[:embeds],
+        data[:allowed_mentions],
+        flags,
+        components.to_a,
+        data[:attachments]
+      )
 
       return unless wait
 
@@ -147,7 +158,7 @@ module Discordrb
       nil
     end
 
-    # Respond to the creation of this interaction. An interaction must be responded to or deferred,
+    # For components, edit the message the component was attached to.
     # The response may be modified with {Interaction#edit_response} or deleted with {Interaction#delete_response}.
     # Further messages can be sent with {Interaction#send_message}.
     # @param content [String] The content of the message.
@@ -170,9 +181,9 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_payload_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
+      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, data[:attachments])
 
       return unless wait
 
@@ -195,8 +206,8 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = builder.to_json_hash
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
+      data = builder.to_payload_hash
+      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, data[:attachments])
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -223,10 +234,22 @@ module Discordrb
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_payload_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a
+        @token,
+        @application_id,
+        true,
+        data[:content],
+        nil, # username
+        nil, # avatar_url
+        tts,
+        data[:file], # deprecated
+        data[:embeds],
+        data[:allowed_mentions],
+        flags,
+        components.to_a,
+        data[:attachments]
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -244,10 +267,10 @@ module Discordrb
       yield builder, view if block_given?
 
       components ||= view
-      data = builder.to_json_hash
+      data = builder.to_payload_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, data[:attachments]
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
