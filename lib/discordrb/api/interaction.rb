@@ -6,16 +6,25 @@ module Discordrb::API::Interaction
 
   # Respond to an interaction.
   # https://discord.com/developers/docs/interactions/slash-commands#create-interaction-response
-  def create_interaction_response(interaction_token, interaction_id, type, content = nil, tts = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil)
-    data = { tts: tts, content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, components: components }.compact
+  def create_interaction_response(interaction_token, interaction_id, type, content = nil, tts = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil, attachments = nil)
+    body = { tts: tts, content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, components: components }.compact
+
+    body = if attachments
+             files = [*0...attachments.size].zip(attachments).to_h
+             { **files, payload_json: { type: type, data: body }.to_json }
+           else
+             { type: type, data: body }.to_json
+           end
+
+    headers = { content_type: :json } unless attachments
 
     Discordrb::API.request(
       :interactions_iid_token_callback,
       interaction_id,
       :post,
       "#{Discordrb::API.api_base}/interactions/#{interaction_id}/#{interaction_token}/callback",
-      { type: type, data: data }.to_json,
-      content_type: :json
+      body,
+      headers
     )
   end
 
@@ -42,8 +51,8 @@ module Discordrb::API::Interaction
 
   # Edit the original response to an interaction.
   # https://discord.com/developers/docs/interactions/slash-commands#edit-original-interaction-response
-  def edit_original_interaction_response(interaction_token, application_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil)
-    Discordrb::API::Webhook.token_edit_message(interaction_token, application_id, '@original', content, embeds, allowed_mentions, components)
+  def edit_original_interaction_response(interaction_token, application_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil, attachments = nil)
+    Discordrb::API::Webhook.token_edit_message(interaction_token, application_id, '@original', content, embeds, allowed_mentions, components, attachments)
   end
 
   # Delete the original response to an interaction.
