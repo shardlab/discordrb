@@ -498,9 +498,11 @@ module Discordrb
       view = Discordrb::Webhooks::View.new
       poll ||= Discordrb::Poll::Builder.new
 
-      yield(builder, view) if block_given?
+      yield(poll, view) if block_given?
 
-      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a, poll.to_hash)
+      poll = poll&.to_hash if poll.is_a?(Poll::Builder)
+
+      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a, poll)
     end
 
     # Sends multiple messages to a channel

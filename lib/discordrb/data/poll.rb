@@ -210,7 +210,7 @@ module Discordrb
           allow_multiselect: @allow_multiselect,
           duration: @duration,
           layout_type: @layout_type
-        }.to_h
+        }
       end
     end
   end
