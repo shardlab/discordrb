@@ -6,34 +6,50 @@ require 'discordrb/events/generic'
 module Discordrb::Events
   # Raised when a user votes for a poll option.
   class PollVoteAddEvent < Event
-    # @return [User, Member, nil] The user that added or removed a vote.
-    attr_reader :user
-    alias_method :member, :user
+    # @!visibility private
+    attr_reader :server_id
 
-    # @return [Server, nil] The server where this poll originates from.
-    attr_reader :server
-
-    # @return [Channel] The channel where this poll originates from.
-    attr_reader :channel
-
-    # @return [Message] The message where this poll originates from.
-    attr_reader :message
-
-    # @return [Poll::Answer] The answer that got voted for or had their vote removed.
-    attr_reader :answer
-
-    # @return [Poll] The poll that triggered this event.
-    attr_reader :poll
-
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
-      @server = bot.server(data['guild_id']) if data['guild_id']
-      @channel = bot.channel(data['channel_id'])
-      @message = @channel.load_message(data['message_id'])
-      @poll = @message.poll
-      @answer = @poll.answer(data['answer_id'])
-      @user = data['guild_id'] ? bot.member(data['guild_id'], data['user_id']) : bot.user(data['user_id'])
+      @user_id = data['user_id'].to_i
+      @server_id = data['guild_id']&.to_i
+      @answer_id = data['answer_id'].to_i
+      @message_id = data['message_id'].to_i
+      @channel_id = data['channel_id'].to_i
+    end
+
+    # @return [User, Member] the user that reacted to this message, or member if a server exists.
+    def user
+      @user ||= server ? @server.member(@user_id) : @bot.user(@user_id)
+    end
+
+    alias_method :member, :user
+
+    # @return [Poll] The poll that triggered this event.
+    def poll
+      @poll ||= message.poll
+    end
+
+    # @return [Message] The message where this poll originates from.
+    def message
+      @message ||= channel.load_message(@message_id)
+    end
+
+    # @return [Poll::Answer] The answer that got voted for or had their vote removed.
+    def answer
+      @answer ||= poll.answer(@answer_id)
+    end
+
+    # @return [Channel] The channel where this poll originates from.
+    def channel
+      @channel ||= @bot.channel(@channel_id)
+    end
+
+    # @return [Server, nil] The server where this poll originates from.
+    def server
+      @server ||= channel.server
     end
   end
 
