@@ -22,7 +22,7 @@ module Discordrb::Events
 
     # @return [User, Member] the user that reacted to this message, or member if a server exists.
     def user
-      @user ||= server ? @server.member(@user_id) : @bot.user(@user_id)
+      @user ||= server ? server.member(@user_id) : @bot.user(@user_id)
     end
 
     alias_method :member, :user
