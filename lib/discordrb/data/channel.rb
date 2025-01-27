@@ -496,11 +496,11 @@ module Discordrb
     # @return [Message] The resulting message.
     def send_poll(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, poll = nil)
       view = Discordrb::Webhooks::View.new
-      builder ||= Discordrb::Poll::Builder.new
+      poll ||= Discordrb::Poll::Builder.new
 
       yield(builder, view) if block_given?
 
-      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a, poll || builder.to_hash)
+      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a, poll.to_hash)
     end
 
     # Sends multiple messages to a channel
