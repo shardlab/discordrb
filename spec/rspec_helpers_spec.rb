@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Rspec do
+describe RSpec do
   describe '#load_data_file' do
     it 'loads the test data correctly' do
       data = load_data_file(:test)
