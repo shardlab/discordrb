@@ -274,7 +274,7 @@ module Discordrb::Commands
           rescue ArgumentError
             nil
           end
-        elsif types[i] == TrueClass || types[i] == FalseClass
+        elsif [TrueClass, FalseClass].include?(types[i])
           if arg.casecmp('true').zero? || arg.downcase.start_with?('y')
             true
           elsif arg.casecmp('false').zero? || arg.downcase.start_with?('n')
