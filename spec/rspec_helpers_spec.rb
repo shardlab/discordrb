@@ -26,7 +26,7 @@ describe RSpec do
     end
 
     it 'filters data correctly' do
-      expect(data_success_str).to be 'true'
+      expect(data_success_str).to eq 'true'
     end
   end
 end
