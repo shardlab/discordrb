@@ -208,7 +208,7 @@ describe Discordrb::Message do
 
       it 'sets parse to an empty array add merges the mention_user param' do
         allow(message).to receive(:respond)
-        message.reply!(content, allowed_mentions: false, mention_user: mention, 0)
+        message.reply!(content, allowed_mentions: false, mention_user: mention, flags: 0)
 
         expect(message).to have_received(:respond).with(content, false, nil, nil, { parse: [], replied_user: mention }, message, nil, 0)
       end
