@@ -254,9 +254,9 @@ describe Discordrb::Message do
     let(:allowed_mentions) { instance_double(Hash, 'allowed_mentions') }
     let(:message_reference) { instance_double(described_class) }
     let(:components) { instance_double(Discordrb::Webhooks::View) }
-    let(:flags) { instance_double('Integer') }
 
     it 'forwards arguments to Channel#send_message' do
+      flags = instance_double(Integer)
       allow(channel).to receive(:send_message)
       message.respond(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
 
