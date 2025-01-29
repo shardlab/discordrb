@@ -70,8 +70,14 @@ module Discordrb
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
 
-    # @return [Array<Component>]
+    # @return [Array<Component>] Interaction components for this message.
     attr_reader :components
+
+    # @return [Integer] flags set on the message.
+    attr_reader :flags
+
+    # @return [Channel, nil] The thread that was started from this message, or nil.
+    attr_reader :thread
 
     # @!visibility private
     def initialize(data, bot)
@@ -157,6 +163,10 @@ module Discordrb
 
       @components = []
       @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+
+      @flags = data['flags'] || 0
+
+      @thread = data['thread'] ? @bot.ensure_channel(data['thread'], @server) : nil
     end
 
     # Replies to this message with the specified content.
@@ -176,18 +186,19 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param mention_user [true, false] Whether the user that is being replied to should be pinged by the reply.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @return (see #respond)
-    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil)
+    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil, flags: 0)
       allowed_mentions = { parse: [] } if allowed_mentions == false
       allowed_mentions = allowed_mentions.to_hash.transform_keys(&:to_sym)
       allowed_mentions[:replied_user] = mention_user
 
-      respond(content, tts, embed, attachments, allowed_mentions, self, components)
+      respond(content, tts, embed, attachments, allowed_mentions, self, components, flags)
     end
 
     # (see Channel#send_message)
-    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
     # Edits this message to have the specified content instead.
@@ -195,12 +206,13 @@ module Discordrb
     # @param new_content [String] the new content the message should have.
     # @param new_embeds [Hash, Discordrb::Webhooks::Embed, Array<Hash>, Array<Discordrb::Webhooks::Embed>, nil] The new embeds the message should have. If `nil` the message will be changed to have no embeds.
     # @param new_components [View, Array<Hash>] The new components the message should have. If `nil` the message will be changed to have no components.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) can be edited.
     # @return [Message] the resulting message.
-    def edit(new_content, new_embeds = nil, new_components = nil)
+    def edit(new_content, new_embeds = nil, new_components = nil, flags = 0)
       new_embeds = (new_embeds.instance_of?(Array) ? new_embeds.map(&:to_hash) : [new_embeds&.to_hash]).compact
       new_components = new_components.to_a
 
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embeds, new_components)
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embeds, new_components, flags)
       Message.new(JSON.parse(response), @bot)
     end
 
@@ -290,6 +302,14 @@ module Discordrb
     # @return [Array<Reaction>] the reactions
     def my_reactions
       @reactions.select(&:me)
+    end
+
+    # Removes embeds from the message
+    # @return [Message] the resulting message.
+    def suppress_embeds
+      flags = @flags | (1 << 2)
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, :undef, :undef, :undef, :undef, flags)
+      Message.new(JSON.parse(response), @bot)
     end
 
     # Reacts to a message.

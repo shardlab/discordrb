@@ -193,14 +193,14 @@ describe Discordrb::Message do
       allow(message).to receive(:respond)
       message.reply!(content)
 
-      expect(message).to have_received(:respond).with(content, false, nil, nil, hash_including(:replied_user), message, nil)
+      expect(message).to have_received(:respond).with(content, false, nil, nil, hash_including(:replied_user), message, nil, 0)
     end
 
     it 'sets replied_user in allowed_mentions' do
       allow(message).to receive(:respond)
       message.reply!(content, mention_user: mention)
 
-      expect(message).to have_received(:respond).with(content, false, nil, nil, { replied_user: mention }, message, nil)
+      expect(message).to have_received(:respond).with(content, false, nil, nil, { replied_user: mention }, message, nil, 0)
     end
 
     context 'when allowed_mentions is false' do
@@ -208,9 +208,9 @@ describe Discordrb::Message do
 
       it 'sets parse to an empty array add merges the mention_user param' do
         allow(message).to receive(:respond)
-        message.reply!(content, allowed_mentions: false, mention_user: mention)
+        message.reply!(content, allowed_mentions: false, mention_user: mention, 0)
 
-        expect(message).to have_received(:respond).with(content, false, nil, nil, { parse: [], replied_user: mention }, message, nil)
+        expect(message).to have_received(:respond).with(content, false, nil, nil, { parse: [], replied_user: mention }, message, nil, 0)
       end
     end
 
@@ -227,8 +227,8 @@ describe Discordrb::Message do
 
       it 'converts it to a hash to set the replied_user key' do
         allow(message).to receive(:respond)
-        message.reply!(content, allowed_mentions: allowed_mentions, mention_user: mention_user)
-        expect(message).to have_received(:respond).with(content, false, nil, nil, hash, message, nil)
+        message.reply!(content, allowed_mentions: allowed_mentions, mention_user: mention_user, flags: 0)
+        expect(message).to have_received(:respond).with(content, false, nil, nil, hash, message, nil, 0)
       end
     end
   end
@@ -254,12 +254,13 @@ describe Discordrb::Message do
     let(:allowed_mentions) { instance_double(Hash, 'allowed_mentions') }
     let(:message_reference) { instance_double(described_class) }
     let(:components) { instance_double(Discordrb::Webhooks::View) }
+    let(:flags) { instance_double('Integer') }
 
     it 'forwards arguments to Channel#send_message' do
       allow(channel).to receive(:send_message)
-      message.respond(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+      message.respond(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
 
-      expect(channel).to have_received(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+      expect(channel).to have_received(:send_message).with(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
   end
 end
