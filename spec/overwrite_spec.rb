@@ -107,11 +107,14 @@ describe Discordrb::Overwrite do
       expect(copy).to eq original
     end
 
+    # TODO: Rework test to not rely on multiple expectations
+    # rubocop:disable RSpec/MultipleExpectations
     it 'creates new permission objects' do
       copy = described_class.from_other(original)
 
       expect(copy.allow).not_to be original.allow
       expect(copy.deny).not_to be original.deny
     end
+    # rubocop:enable RSpec/MultipleExpectations
   end
 end
