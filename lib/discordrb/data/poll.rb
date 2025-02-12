@@ -61,9 +61,7 @@ module Discordrb
     # Whether or not this poll has ended.
     # @return [Boolean]
     def expired?
-      return false if @expiry.nil?
-
-      Time.now >= @expiry
+      @expiry.nil? ? false : Time.now >= @expiry
     end
 
     alias_method :ended?, :expired?
