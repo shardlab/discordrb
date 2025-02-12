@@ -48,7 +48,7 @@ module Discordrb
     # @return [Message] The new message object.
     def end
       response = JSON.parse(API::Channel.end_poll(@bot.token, @message.channel.id, @message.id))
-      Message.new(response, @bot)
+      @message = Message.new(response, @bot)
     end
 
     # Get a specific answer by its ID.
