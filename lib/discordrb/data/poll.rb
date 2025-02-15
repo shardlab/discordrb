@@ -25,9 +25,11 @@ module Discordrb
     attr_reader :finalized
     alias_method :finalized?, :finalized
 
+    # @!visibility private
     # @return [Hash<Integer => Integer>] The answer counts by ID.
     attr_reader :answer_counts
 
+    # @!visibility private
     # @return [Message] The message this poll originates from.
     attr_reader :message
 
