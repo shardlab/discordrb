@@ -74,7 +74,7 @@ module Discordrb
       return nil if @answer_counts.nil?
 
       answers = @answer_counts.select do |_, count|
-        count == @answer_counts.values.max 
+        count == @answer_counts.values.max
       end
 
       answers.keys.map do |key|
