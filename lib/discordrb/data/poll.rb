@@ -38,16 +38,16 @@ module Discordrb
       @bot = bot
       @message = message
       @question = data['question']['text']
-      @answers = data['answers'].map { |answer| Answer.new(answer, @bot, self) }
+      @answers = data['answers'].map { |answer| Answer.new(answer, self, @bot) }
       @expiry = Time.iso8601(data['expiry']) if data['expiry']
       @allow_multiselect = data['allow_multiselect']
       @layout_type = data['layout_type']
       @finalized = data['results']['is_finalized'] if data['results']
-      @answer_counts = process_votes(data['results']['answer_counts']) if data.dig('results', 'answer_counts')
+      @answer_counts = process_votes(data['results']['answer_counts']) if data['results']
     end
 
     # Ends this poll. Only works if the bot made the poll.
-    # @return [Message] The new message object.
+    # @return [Message] The new resulting message.
     def end
       response = JSON.parse(API::Channel.end_poll(@bot.token, @message.channel.id, @message.id))
       @message = Message.new(response, @bot)
@@ -55,25 +55,31 @@ module Discordrb
 
     # Get a specific answer by its ID.
     # @param id [Integer, String] ID of the answer.
-    # @return [Answer, nil]
+    # @return [Answer, nil] The answer, or nil if it couldn't be found.
     def answer(id)
       @answers.find { |a| a.id == id.resolve_id }
     end
 
     # Whether or not this poll has ended.
-    # @return [Boolean]
+    # @return [Boolean] If this poll has ended.
     def expired?
       @expiry.nil? ? false : Time.now >= @expiry
     end
 
     alias_method :ended?, :expired?
 
-    # Returns the answer with the most votes.
-    # @return [Answer] The answer object.
+    # Returns the answer(s) with the most votes.
+    # @return [Array<Answer>] The most voted answer.
     def most_voted
       return nil if @answer_counts.nil?
 
-      answer(@answer_counts.invert.max&.last)
+      answers = @answer_counts.select do |_, count|
+        count == @answer_counts.values.max 
+      end
+
+      answers.keys.map do |key|
+        answer(key)
+      end
     end
 
     # Whether this poll is currently tied.
@@ -102,30 +108,23 @@ module Discordrb
     class Answer
       include IDObject
 
-      # @return [Poll] Poll this answers originates from.
-      attr_reader :poll
-
       # @return [String] Name of this question.
       attr_reader :name
 
       # @return [Emoji, nil] Emoji associated with this question.
       attr_reader :emoji
 
+      # @return [Integer, nil] The number of votes for this answer, or nil.
+      attr_reader :count
+
       # @!visibility private
-      def initialize(data, bot, poll)
+      def initialize(data, poll, bot)
         @bot = bot
         @poll = poll
-        @name = data['poll_media']['text']
         @id = data['answer_id']
-        @emoji = Emoji.new(data['poll_media']['emoji'], @bot) if data.dig('poll_media', 'emoji')
-      end
-
-      # Returns how many users have voted for this answer.
-      # @return [Integer, nil] Returns the number of votes or nil if they don't exist.
-      def votes
-        return 0 if !@Poll.answer_counts&.key?(@id) && @poll.finalized? || @poll.answer_counts.nil?
-
-        @poll.answer_counts[@id]
+        @name = data['poll_media']['text'] if data['poll_media']['text']
+        @count = (@poll.answer_counts[@id] ||= 0 if @poll.finalized?) if @poll.answer_counts
+        @emoji = Emoji.new(data['poll_media']['emoji'], @bot) if data['poll_media']['emoji']
       end
 
       # Gets an array of user objects that have voted for this poll.
@@ -151,7 +150,7 @@ module Discordrb
       end
     end
 
-    # Allows for easy creation of a poll request object.
+    # Allows for creation of a poll request object.
     class Builder
       # @!attribute question
       # @return [String] Sets the poll question.
