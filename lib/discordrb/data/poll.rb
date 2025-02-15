@@ -123,9 +123,9 @@ module Discordrb
       # Returns how many users have voted for this answer.
       # @return [Integer, nil] Returns the number of votes or nil if they don't exist.
       def votes
-        return 0 if !@Poll.answer_counts&.key?(@id) && @poll.finalized?
+        return 0 if !@Poll.answer_counts&.key?(@id) && @poll.finalized? || @poll.answer_counts.nil?
 
-        @poll.answer_counts&.key(@id)
+        @poll.answer_counts[@id]
       end
 
       # Gets an array of user objects that have voted for this poll.
