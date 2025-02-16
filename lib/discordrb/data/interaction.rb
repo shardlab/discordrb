@@ -167,7 +167,7 @@ module Discordrb
       yield(builder, view) if block_given?
 
       components ||= view
-      data = {content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components&.to_a }
+      data = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components&.to_a }
       data = builder.to_json_hash.merge(data.compact)
       resp = @bot.client.edit_original_interaction_response(@application_id, @token, **data)
 
