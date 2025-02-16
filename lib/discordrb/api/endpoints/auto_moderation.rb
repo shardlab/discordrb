@@ -48,7 +48,7 @@ module Discordrb
           **rest
         }
 
-        request Route[:POST, "/guilds/#{guild_id}/auto-moderation/rules"],
+        request Route[:POST, "/guilds/#{guild_id}/auto-moderation/rules", guild_id],
                 body: filter_undef(data),
                 reason: reason
       end
@@ -79,7 +79,7 @@ module Discordrb
           **rest
         }
 
-        request Route[:PATCH, "/guilds/#{guild_id}/auto-moderation/rules/#{auto_moderation_rule_id}"],
+        request Route[:PATCH, "/guilds/#{guild_id}/auto-moderation/rules/#{auto_moderation_rule_id}", guild_id],
                 body: filter_undef(data),
                 reason: reason
       end
@@ -90,7 +90,7 @@ module Discordrb
       # @param reason [String] The reason for deleting this rule.
       # @return [nil]
       def delete_auto_moderation_rule(guild_id, auto_moderation_rule_id, reason: :undef)
-        request Route[:DELETE, "/guilds/#{guild_id}/auto-moderation/rules/#{auto_moderation_rule_id}"],
+        request Route[:DELETE, "/guilds/#{guild_id}/auto-moderation/rules/#{auto_moderation_rule_id}", guild_id],
                 reason: reason
       end
     end

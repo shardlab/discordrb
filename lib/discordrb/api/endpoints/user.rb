@@ -21,7 +21,7 @@ module Discordrb
       # @!discord_api https://discord.com/developers/docs/resources/user#modify-current-user
       # @param username [String] New name of the current user. May randomize the discriminator.
       # @param avatar [String] A base64 encoded string with the image data.
-      # @param banner [String] A base64 encoded string with the image data. 
+      # @param banner [String] A base64 encoded string with the image data.
       # @return [Hash<Symbol, Object>]
       def modify_current_user(username: :undef, avatar: :undef, banner: banner, **rest)
         request Route[:PATCH, '/users/@me'],

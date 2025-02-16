@@ -99,7 +99,7 @@ module Discordrb
           **rest
         }
 
-        request Route[:POST, "/applications/#{application_id}/emojis"],
+        request Route[:POST, "/applications/#{application_id}/emojis", application_id],
                 body: filter_undef(data)
       end
 
@@ -114,7 +114,7 @@ module Discordrb
           **rest
         }
 
-        request Route[:PATCH, "/applications/#{application_id}/emojis/#{emoji_id}"],
+        request Route[:PATCH, "/applications/#{application_id}/emojis/#{emoji_id}", application_id],
                 body: filter_undef(data)
       end
 
@@ -123,7 +123,7 @@ module Discordrb
       # @param emoji_id [Integer, String] An ID that uniquely identifies an emoji.
       # @return [nil]
       def delete_application_emoji(application_id, emoji_id)
-        request Route[:DELETE, "/applications/#{application_id}/emojis/#{emoji_id}"]
+        request Route[:DELETE, "/applications/#{application_id}/emojis/#{emoji_id}", application_id]
       end
     end
   end

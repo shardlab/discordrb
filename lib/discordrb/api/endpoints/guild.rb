@@ -663,6 +663,23 @@ module Discordrb
                 body: filter_undef(data),
                 reason: reason
       end
+
+      # @!discord_api https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions
+      # @param guild_id [Integer, String] An ID that uniquely identifies a guild.
+      # @param invites_disabled_until [Time, nil] An ISO8601 timestamp indicating when invites will be enabled again.
+      # @param dms_disabled_until [Time, nil] An ISO8601 timestamp indicating when DMs will be enabled again.
+      # @return [Hash<Symbol, Object>]
+      def modify_guild_incident_actions(guild_id, invites_disabled_until: :undef,
+                                        dms_disabled_until: :undef, **rest)
+        data = {
+          invites_disabled_until: invites_disabled_until,
+          dms_disabled_until: dms_disabled_until,
+          **rest
+        }
+
+        request Route[:PUT, "/guilds/#{guild_id}/incident-actions", guild_id],
+                body: filter_undef(data)
+      end
     end
   end
 end
