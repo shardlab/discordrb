@@ -12,10 +12,18 @@ module Discordrb
                 params: params
       end
 
-      # @!discord_api https://discord.com/developers/docs/resources/sticker#list-nitro-sticker-packs
+      # @!discord_api https://discord.com/developers/docs/resources/sticker#list-sticker-packs
       # @return [Array<Hash<Symbol, Object>>]
-      def list_nitro_sticker_packs(**params)
+      def list_sticker_packs(**params)
         request Route[:GET, '/sticker-packs'],
+                params: params
+      end
+
+      # @!discord_api https://discord.com/developers/docs/resources/sticker#get-sticker-pack
+      # @param pack_id [Integer, String] An ID that uniquely identifies a sticker pack.
+      # @return [Hash<Symbol, Object>]
+      def get_sticker_pack(pack_id, **params)
+        request Route[:GET, "/sticker-packs/#{pack_id}"],
                 params: params
       end
 

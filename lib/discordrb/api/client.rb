@@ -20,6 +20,7 @@ require 'discordrb/api/endpoints/sku'
 require 'discordrb/api/endpoints/soundboard'
 require 'discordrb/api/endpoints/stage_instance'
 require 'discordrb/api/endpoints/sticker'
+require 'discordrb/api/endpoints/subscription'
 require 'discordrb/api/endpoints/user'
 require 'discordrb/api/endpoints/voice'
 require 'discordrb/api/endpoints/webhook'
@@ -124,6 +125,7 @@ module Discordrb
       include SoundboardEndpoints
       include StageInstanceEndpoints
       include StickerEndpoints
+      include SubscriptionEndpoints
       include UserEndpoints
       include VoiceEndpoints
       include WebhookEndpoints
