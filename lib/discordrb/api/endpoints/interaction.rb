@@ -46,10 +46,10 @@ module Discordrb
       # @param components [Array<Hash>] Array of component objects.
       # @param poll [Hash<Object>] A poll request object.
       # @return [Hash]
-      def edit_original_interaction_response(id, token, type: :undef, content: :undef, embeds: :undef, allowed_mentions: :undef,
+      def edit_original_interaction_response(id, token, content: :undef, embeds: :undef, allowed_mentions: :undef,
                                              flags: :undef, components: :undef, poll: :undef, **rest)
         body = {
-          type: type, content: content, embeds: embeds, allowed_mentions: allowed_mentions,
+          content: content, embeds: embeds, allowed_mentions: allowed_mentions,
           flags: flags, components: components, poll: poll, **rest
         }
 
@@ -76,10 +76,10 @@ module Discordrb
       # @param applied_tags [Array<Integer, String>] Array of ID tags to apply to a forum.
       # @param poll [Hash<Object>] A poll request object.
       # @return [Hash]
-      def create_followup_message(id, token, content: :undef, tts: :undef, embeds: :undef, allowed_mentions: :undef,
-                                  components: :undef, flags: :undef, applied_tags: :undef, poll: :undef, **rest)
+      def create_followup_message(id, token, wait: false, content: :undef, tts: :undef, embeds: :undef, components: :undef,
+                                  allowed_mentions: :undef, flags: :undef, applied_tags: :undef, poll: :undef, **rest)
         body = {
-          wait: true, content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
+          wait: wait, content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
           flags: flags, components: components, applied_tags: applied_tags, poll: poll, **rest
         }
 
