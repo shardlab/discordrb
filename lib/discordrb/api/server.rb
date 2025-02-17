@@ -579,7 +579,7 @@ module Discordrb::API::Server
       server_id,
       :post,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/bulk-ban",
-      { user_ids: users, delete_message_seconds: message_seconds }.compact.to_json,
+      { user_ids: users, delete_message_seconds: message_seconds }.to_json,
       content_type: :json,
       Authorization: token,
       'X-Audit-Log-Reason': reason
