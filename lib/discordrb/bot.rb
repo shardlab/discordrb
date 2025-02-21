@@ -915,7 +915,7 @@ module Discordrb
     # @param emoji_id [Integer, String] ID of the application emoji.
     # @return [Emoji] The application emoji.
     def get_application_emoji(emoji_id)
-      response = API::Application.get_application_emoji(@token, profile.id, emoji_id)
+      response = API::Application.get_application_emoji(@token, profile.id, emoji_id.resolve_id)
       Emoji.new(JSON.parse(response), self)
     end
 
@@ -930,18 +930,18 @@ module Discordrb
     end
 
     # Edits an existing application emoji.
-    # @param emoji_id [Integer, String] ID of the application emoji to edit.
+    # @param emoji_id [Integer, String, Emoji] ID of the application emoji to edit.
     # @param name [String] The new name of the emoji.
     # @return [Emoji] Returns the updated emoji object on success.
     def edit_application_emoji(emoji_id, name)
-      response = API::Application.edit_application_emoji(@token, profile.id, emoji_id, name)
+      response = API::Application.edit_application_emoji(@token, profile.id, emoji_id.resolve_id, name)
       Emoji.new(JSON.parse(response), self)
     end
 
     # Deletes an existing application emoji.
-    # @param emoji_id [Integer, String] ID of the application emoji to delete.
+    # @param emoji_id [Integer, String, Emoji] ID of the application emoji to delete.
     def delete_application_emoji(emoji_id)
-      API::Application.delete_application_emoji(@token, profile.id, emoji_id)
+      API::Application.delete_application_emoji(@token, profile.id, emoji_id.resolve_id)
     end
 
     private
