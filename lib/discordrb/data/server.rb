@@ -1048,6 +1048,7 @@ module Discordrb
     # @return [Array<Integer>] Array of IDs of users who couldn't be banned.
     attr_reader :failed_users
 
+    # @!visibility private
     def initialize(data, server, reason)
       @server = server
       @reason = reason
