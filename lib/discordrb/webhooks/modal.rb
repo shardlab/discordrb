@@ -9,7 +9,7 @@ class Discordrb::Webhooks::Modal
   }.freeze
 
   # This builder is used when constructing an ActionRow. All current components must be within an action row, but this can
-  # change in the future. A message can have 5 action rows, each action row can hold a weight of 5. Buttons have a weight of 1,
+  # change in the future. A message can have 10 action rows, each action row can hold a weight of 5. Buttons have a weight of 1,
   # and dropdowns have a weight of 5.
   class RowBuilder
     # A mapping of short names to types of input styles. `short` is a single line where `paragraph` is a block.
