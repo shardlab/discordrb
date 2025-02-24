@@ -120,8 +120,8 @@ module Discordrb::API::Webhook
 
   # Edit a webhook message via webhook token
   # https://discord.com/developers/docs/resources/webhook#edit-webhook-message
-  def token_edit_message(webhook_token, webhook_id, message_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil, attachments = nil)
-    body = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components }
+  def token_edit_message(webhook_token, webhook_id, message_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil, attachments = nil, flags = nil)
+    body = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, flags: flags }
 
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h
