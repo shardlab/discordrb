@@ -56,7 +56,7 @@ module Discordrb
     # @return [Hash] The interaction data.
     attr_reader :data
 
-    # @return [Array<ActionRow>]
+    # @return [Array<Component>] The modal components associated with this interaction.
     attr_reader :components
 
     # @!visibility private
@@ -92,11 +92,13 @@ module Discordrb
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @param components [Array<#to_h>] An array of components.
-    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil)
+    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, has_components: false)
       flags |= 1 << 6 if ephemeral
+      flags |= (1 << 15) if has_components
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -161,11 +163,13 @@ module Discordrb
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @param components [Array<#to_h>] An array of components.
-    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
-    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil)
+    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, has_components: false)
       flags |= 1 << 6 if ephemeral
+      flags |= (1 << 15) if has_components
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -188,11 +192,15 @@ module Discordrb
     # @param content [String] The content of the message.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param flags [Integer] Message flags.
     # @param components [Array<#to_h>] An array of components.
-    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @return [InteractionMessage] The updated response message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil)
+    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, components: nil, attachments: nil, has_components: false)
+      flags |= (1 << 15) if has_components
+
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
@@ -201,7 +209,7 @@ module Discordrb
 
       components ||= view
       data = builder.to_json_hash
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments)
+      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags)
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -217,10 +225,12 @@ module Discordrb
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
-    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil, attachments: nil)
+    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil, attachments: nil, has_components: false)
       flags |= 64 if ephemeral
+      flags |= (1 << 15) if has_components
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -242,10 +252,14 @@ module Discordrb
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param flags [Integer] Message flags.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil)
+    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil, flags: 0, has_components: false)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
+
+      flags |= (1 << 15) if has_components
 
       prepare_builder(builder, content, embeds, allowed_mentions)
       yield builder, view if block_given?
@@ -254,7 +268,7 @@ module Discordrb
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -285,28 +299,27 @@ module Discordrb
       @bot.channel(@channel_id)
     end
 
-    # @return [Hash, nil] Returns the button that triggered this interaction if applicable, otherwise nil
+    # @return [Button, nil] Returns the button that triggered this interaction if applicable, otherwise nil.
     def button
-      return unless @type == TYPES[:component]
+      @type == TYPES[:component] ? get_component(@data['custom_id']) : nil
+    end
 
-      @message['components'].each do |row|
-        Components::ActionRow.new(row, @bot).buttons.each do |button|
-          return button if button.custom_id == @data['custom_id']
-        end
+    # @return [Array<TextInput>] The text input components associated with this interaction.
+    def text_inputs
+      @components&.select do |component|
+        component.is_a?(Components::TextInput) || (component.is_a?(Components::Label) && component.text_input?)
       end
     end
 
-    # @return [Array<TextInput>]
-    def text_inputs
-      @components&.select { |component| component.is_a? TextInput } | []
-    end
-
-    # @return [TextInput, Button, SelectMenu]
+    # Get a component by its custom ID.
+    # @param custom_id [String] the custom ID of the component to find.
+    # @return [TextInput, Button, SelectMenu, nil] The component associated with the custom ID, or `nil` if it can't be found.
     def get_component(custom_id)
-      top_level = @components.flat_map(&:components) || []
-      message_level = (@message.instance_of?(Hash) ? Message.new(@message, @bot) : @message)&.components&.flat_map(&:components) || []
-      components = top_level.concat(message_level)
-      components.find { |component| component.custom_id == custom_id }
+      message_level = @message.instance_of?(Hash) ? Message.new(@message, @bot) : @message
+      message_level = flatten_components(message_level&.components || [])
+
+      components = flatten_components(@components).concat(message_level)
+      components.find { |component| component.respond_to?(:custom_id) ? component.custom_id == custom_id : false }
     end
 
     private
@@ -320,6 +333,26 @@ module Discordrb
       builder.content = content
       builder.allowed_mentions = allowed_mentions
       embeds&.each { |embed| builder << embed }
+    end
+
+    # @!visibility private
+    def flatten_components(components)
+      components = components.flat_map do |component|
+        case component
+        when Components::ActionRow
+          component.components
+        when Components::Label
+          component.component
+        when Components::Section
+          component.button
+        when Components::Container
+          flatten_components(component.components)
+        when Components::SelectMenu, Components::TextInput, Components::Button
+          component
+        end
+      end
+
+      components.compact
     end
   end
 

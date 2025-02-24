@@ -341,7 +341,7 @@ describe Discordrb::Webhook do
 
       webhook.edit_message(message, embeds: embeds, builder: builder)
 
-      expect(Discordrb::API::Webhook).to have_received(:token_edit_message).with(webhook.token, webhook.id, message_id, content, embeds, nil, [])
+      expect(Discordrb::API::Webhook).to have_received(:token_edit_message).with(webhook.token, webhook.id, message_id, content, embeds, nil, [], nil, 0)
     end
 
     it 'returns an updated Message object' do
