@@ -84,7 +84,7 @@ end
 
 class ExampleCalculator
   include Discordrb::PermissionCalculator
-  attr_accessor :server, :roles
+  attr_accessor :server, :roles, :id
 end
 
 describe Discordrb::PermissionCalculator do
@@ -95,8 +95,9 @@ describe Discordrb::PermissionCalculator do
       everyone_role = double('everyone role', id: 0, position: 0, permissions: Discordrb::Permissions.new)
       role_a = double('role a', id: 1, position: 1, permissions: Discordrb::Permissions.new)
       role_b = double('role b', id: 2, position: 2, permissions: Discordrb::Permissions.new([:manage_messages]))
+      data = load_data_file(:text_channel)
+      channel = Discordrb::Channel.new(data, double('bot'), double('server', id: 123))
 
-      channel = double('channel')
       allow(subject).to receive(:permission_overwrite)
         .with(:manage_messages, channel, everyone_role.id)
         .and_return(false)
@@ -123,26 +124,82 @@ describe Discordrb::PermissionCalculator do
       everyone_role = double('everyone role', id: 0, position: 0, permissions: Discordrb::Permissions.new)
       role_a = double('role a', id: 1, position: 1, permissions: Discordrb::Permissions.new([:manage_messages]))
       role_b = double('role b', id: 2, position: 2, permissions: Discordrb::Permissions.new)
-      channel = double('channel')
+      data = load_data_file(:text_channel)
+      data['permission_overwrites'] << {
+        'deny' => Discordrb::Permissions.bits([:manage_messages]),
+        'type' => 'role',
+        'id' => role_a.id,
+        'allow' => 0
+      }
+      data['permission_overwrites'] << {
+        'deny' => 0,
+        'type' => 'role',
+        'id' => role_b.id,
+        'allow' => Discordrb::Permissions.bits([:manage_messages])
+      }
+
+      channel = Discordrb::Channel.new(data, double('bot'), double('server', id: 123))
 
       subject.server = double('server', everyone_role: everyone_role)
       subject.roles = [role_a, role_b]
-
-      allow(subject).to receive(:permission_overwrite).and_return(nil)
-
-      allow(subject).to receive(:permission_overwrite)
-        .with(:manage_messages, channel, role_a.id)
-        .and_return(:deny)
-
-      allow(subject).to receive(:permission_overwrite)
-        .with(:manage_messages, channel, role_b.id)
-        .and_return(:allow)
 
       subject.roles = [role_a]
       expect(subject.__send__(:defined_role_permission?, :manage_messages, channel)).to be false
 
       subject.roles = [role_a, role_b]
       expect(subject.__send__(:defined_role_permission?, :manage_messages, channel)).to be true
+    end
+  end
+
+  describe '#defined_permission?' do
+    context "when roles have allow permissions and channel's permission overwrites {everyone -> deny}" do
+      it 'returns no access' do
+        everyone_role = double('everyone role', id: 0, position: 0, permissions: Discordrb::Permissions.new([:read_messages]))
+        role_a = double('role a', id: 1, position: 1, permissions: Discordrb::Permissions.new(%i[read_messages read_message_history]))
+        role_b = double('role b', id: 2, position: 2, permissions: Discordrb::Permissions.new([:manage_messages]))
+
+        data = load_data_file(:text_channel)
+        data['permission_overwrites'] << {
+          'deny' => Discordrb::Permissions.bits([:read_messages]),
+          'type' => 'role',
+          'id' => everyone_role.id,
+          'allow' => 0
+        }
+        channel = Discordrb::Channel.new(data, double('bot'), double('server', id: 123))
+
+        subject.server = double('server', everyone_role: everyone_role)
+        subject.roles = [role_a, role_b]
+        subject.id = 1
+        expect(subject.__send__(:defined_permission?, :read_messages, channel)).to be false
+      end
+    end
+
+    context "when roles have allow permissions and channel's permission overwrites {everyone -> deny, role_a -> allow}" do
+      it 'returns full access' do
+        everyone_role = double('everyone role', id: 0, position: 0, permissions: Discordrb::Permissions.new([:read_messages]))
+        role_a = double('role a', id: 1, position: 1, permissions: Discordrb::Permissions.new(%i[read_messages read_message_history]))
+        role_b = double('role b', id: 2, position: 2, permissions: Discordrb::Permissions.new([:manage_messages]))
+
+        data = load_data_file(:text_channel)
+        data['permission_overwrites'] << {
+          'deny' => Discordrb::Permissions.bits([:read_messages]),
+          'type' => 'role',
+          'id' => everyone_role.id,
+          'allow' => 0
+        }
+        data['permission_overwrites'] << {
+          'deny' => 0,
+          'type' => 'role',
+          'id' => role_a.id,
+          'allow' => Discordrb::Permissions.bits([:read_messages])
+        }
+        channel = Discordrb::Channel.new(data, double('bot'), double('server', id: 123))
+
+        subject.server = double('server', everyone_role: everyone_role)
+        subject.roles = [role_a, role_b]
+        subject.id = 1
+        expect(subject.__send__(:defined_permission?, :read_messages, channel)).to be true
+      end
     end
   end
 end
