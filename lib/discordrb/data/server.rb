@@ -1042,10 +1042,10 @@ module Discordrb
     # @return [String, nil] The reason these users were banned.
     attr_reader :reason
 
-    # @return [Array<Integer>] Array of IDs of banned users.
+    # @return [Array<Integer>] Array of banned users ID's.
     attr_reader :banned_users
 
-    # @return [Array<Integer>] Array of IDs of users who couldn't be banned.
+    # @return [Array<Integer>] Array of user IDs that couldn't be banned.
     attr_reader :failed_users
 
     # @!visibility private
