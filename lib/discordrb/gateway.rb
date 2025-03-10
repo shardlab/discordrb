@@ -656,7 +656,9 @@ module Discordrb
       LOGGER.log_exception(e)
     end
 
+    # rubocop:disable Lint/UselessConstantScoping
     ZLIB_SUFFIX = "\x00\x00\xFF\xFF".b.freeze
+    # rubocop:enable Lint/UselessConstantScoping
 
     def handle_message(msg)
       case @compress_mode
@@ -794,7 +796,9 @@ module Discordrb
     # - 4004: Authentication failed. Token was wrong, nothing we can do.
     # - 4011: Sharding required. Currently requires developer intervention.
     # - 4014: Use of disabled privileged intents.
+    # rubocop:disable Lint/UselessConstantScoping
     FATAL_CLOSE_CODES = [4003, 4004, 4011, 4014].freeze
+    # rubocop:enable Lint/UselessConstantScoping
 
     def handle_close(e)
       @bot.__send__(:raise_event, Events::DisconnectEvent.new(@bot))

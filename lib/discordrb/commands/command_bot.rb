@@ -109,7 +109,7 @@ module Discordrb::Commands
         spaces_allowed: attributes[:spaces_allowed].nil? ? false : attributes[:spaces_allowed],
 
         # Webhooks allowed to trigger commands
-        webhook_commands: attributes[:webhook_commands].nil? ? true : attributes[:webhook_commands],
+        webhook_commands: attributes[:webhook_commands].nil? || attributes[:webhook_commands],
 
         channels: attributes[:channels] || [],
 
@@ -257,17 +257,9 @@ module Discordrb::Commands
         next arg if types[i].nil? || types[i] == String
 
         if types[i] == Integer
-          begin
-            Integer(arg, 10)
-          rescue ArgumentError
-            nil
-          end
+          Integer(arg, 10, exception: false)
         elsif types[i] == Float
-          begin
-            Float(arg)
-          rescue ArgumentError
-            nil
-          end
+          Float(arg, exception: false)
         elsif types[i] == Time
           begin
             Time.parse arg
@@ -295,11 +287,7 @@ module Discordrb::Commands
             nil
           end
         elsif types[i] == Rational
-          begin
-            Rational(arg)
-          rescue ArgumentError
-            nil
-          end
+          Rational(arg, exception: false)
         elsif types[i] == Range
           begin
             if arg.include? '...'
