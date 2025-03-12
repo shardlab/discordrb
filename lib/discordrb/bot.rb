@@ -1603,6 +1603,10 @@ module Discordrb
 
           event = ModalSubmitEvent.new(data, self)
           raise_event(event)
+        when Interaction::TYPES[:autocomplete]
+
+          event = AutocompleteEvent.new(data, self)
+          raise_event(event)
         end
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)
