@@ -58,9 +58,18 @@ module Discordrb
       "#{name}:#{id}"
     end
 
+    # Get the CDN URL for this emoji.
+    # @param format [String, nil] If `nil`, the URL will default to `webp` for static emoji, and will detect if the user has a `gif` avatar.
+    #   You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this; Discord will not return a gif form of static emoji.
+    # @param size [Integer, nil] If `nil`, no size will be specified in the URL. You can otherwise specify any power of 2 from 16 to 4096.
     # @return [String] the icon URL of the emoji
-    def icon_url
-      API.emoji_icon_url(id)
+    def icon_url(format: nil, size: nil)
+      format ||= if animated
+                   'gif'
+                 else
+                   'webp'
+                 end
+      API.emoji_icon_url(id, format, size: size)
     end
 
     # The inspect method is overwritten to give more useful output
