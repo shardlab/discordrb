@@ -834,6 +834,9 @@ module Discordrb
     def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil)
       type = ApplicationCommand::TYPES[type] || type
 
+      contexts&.map! { |ctx| Interaction::CONTEXTS[ctx] || ctx }
+      integration_types&.map! { |itx| Interaction::INTEGRATION_TYPES[itx] || itx }
+
       builder = Interactions::OptionBuilder.new
       permission_builder = Interactions::PermissionBuilder.new
       yield(builder, permission_builder) if block_given?
@@ -858,6 +861,9 @@ module Discordrb
     # @yieldparam [PermissionBuilder]
     def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil)
       type = ApplicationCommand::TYPES[type] || type
+
+      contexts&.map! { |ctx| Interaction::CONTEXTS[ctx] || ctx }
+      integration_types&.map! { |itx| Interaction::INTEGRATION_TYPES[itx] || itx }
 
       builder = Interactions::OptionBuilder.new
       permission_builder = Interactions::PermissionBuilder.new

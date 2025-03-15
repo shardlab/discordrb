@@ -27,16 +27,16 @@ module Discordrb
 
     # Interaction context types.
     # @see https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types
-    COMMAND_CONTEXTS = {
-      guild: 0,
+    CONTEXTS = {
+      server: 0,
       bot_dm: 1,
       private_channel: 2
     }.freeze
 
     # Application integration types.
     # @see https://discord.com/developers/docs/resources/application#application-object-application-integration-types
-    COMMAND_INTEGRATION_TYPES = {
-      guild_install: 0,
+    INTEGRATION_TYPES = {
+      server_install: 0,
       user_install: 1
     }.freeze
 
@@ -72,6 +72,9 @@ module Discordrb
     # @return [Array<ActionRow>]
     attr_reader :components
 
+    # @return [Integer] The context this command was used in. See {CONTEXTS}.
+    attr_reader :context
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -90,6 +93,7 @@ module Discordrb
                 bot.ensure_user(data['user'])
               end
       @token = data['token']
+      @context = data['context']
       @version = data['version']
       @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
     end
