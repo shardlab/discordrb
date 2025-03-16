@@ -46,7 +46,8 @@ module Discordrb
       37 => :use_external_stickers,    # 137438953472
       38 => :send_messages_in_threads, # 274877906944
       39 => :use_embedded_activities,  # 549755813888
-      40 => :moderate_members          # 1099511627776
+      40 => :moderate_members,         # 1099511627776
+      49 => :send_polls                # 562949953421312
     }.freeze
 
     FLAGS.each do |position, flag|
