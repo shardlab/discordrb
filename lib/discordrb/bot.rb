@@ -834,7 +834,7 @@ module Discordrb
     def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil)
       type = ApplicationCommand::TYPES[type] || type
 
-      default_member_permissions = Permissions.bits(default_member_permissions) if default_member_permissions.is_a?(Array)
+      default_member_permissions = Permissions.bits(default_member_permissions).to_s if default_member_permissions.is_a?(Array)
 
       contexts&.map! { |ctx| Interaction::CONTEXTS[ctx] || ctx }
       integration_types&.map! { |itx| Interaction::INTEGRATION_TYPES[itx] || itx }
@@ -864,7 +864,7 @@ module Discordrb
     def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil)
       type = ApplicationCommand::TYPES[type] || type
 
-      default_member_permissions = Permissions.bits(default_member_permissions) if default_member_permissions.is_a?(Array)
+      default_member_permissions = Permissions.bits(default_member_permissions).to_s if default_member_permissions.is_a?(Array)
 
       contexts&.map! { |ctx| Interaction::CONTEXTS[ctx] || ctx }
       integration_types&.map! { |itx| Interaction::INTEGRATION_TYPES[itx] || itx }
