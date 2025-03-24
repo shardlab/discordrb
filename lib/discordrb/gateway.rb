@@ -136,18 +136,6 @@ module Discordrb
     # The version of the gateway that's supposed to be used.
     GATEWAY_VERSION = 9
 
-    # Suffix indicating the end of a compressed message in streaming mode.
-    # Used to detect when a full zlib-compressed message has been received
-    # before attempting to inflate it.
-    ZLIB_SUFFIX = "\x00\x00\xFF\xFF".b.freeze
-
-    # Close codes that are unrecoverable, after which we should not try to reconnect.
-    # - 4003: Not authenticated. How did this happen?
-    # - 4004: Authentication failed. Token was wrong, nothing we can do.
-    # - 4011: Sharding required. Currently requires developer intervention.
-    # - 4014: Use of disabled privileged intents.
-    FATAL_CLOSE_CODES = [4003, 4004, 4011, 4014].freeze
-
     # Heartbeat ACKs are Discord's way of verifying on the client side whether the connection is still alive. If this is
     # set to true (default value) the gateway client will use that functionality to detect zombie connections and
     # reconnect in such a case; however it may lead to instability if there's some problem with the ACKs. If this occurs
@@ -668,6 +656,8 @@ module Discordrb
       LOGGER.log_exception(e)
     end
 
+    ZLIB_SUFFIX = "\x00\x00\xFF\xFF".b.freeze
+
     def handle_message(msg)
       case @compress_mode
       when :large
@@ -728,7 +718,7 @@ module Discordrb
 
         @session = Session.new(data['session_id'])
         @session.sequence = 0
-        @bot.__send__(:notify_ready) if @intents && @intents.nobits?(INTENTS[:servers])
+        @bot.__send__(:notify_ready) if @intents && (@intents & INTENTS[:servers]).zero?
       when :RESUMED
         # The RESUMED event is received after a successful op 6 (resume). It does nothing except tell the bot the
         # connection is initiated (like READY would). Starting with v5, it doesn't set a new heartbeat interval anymore
@@ -798,6 +788,13 @@ module Discordrb
       close
       handle_close(e)
     end
+
+    # Close codes that are unrecoverable, after which we should not try to reconnect.
+    # - 4003: Not authenticated. How did this happen?
+    # - 4004: Authentication failed. Token was wrong, nothing we can do.
+    # - 4011: Sharding required. Currently requires developer intervention.
+    # - 4014: Use of disabled privileged intents.
+    FATAL_CLOSE_CODES = [4003, 4004, 4011, 4014].freeze
 
     def handle_close(e)
       @bot.__send__(:raise_event, Events::DisconnectEvent.new(@bot))

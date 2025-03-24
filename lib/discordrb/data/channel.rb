@@ -8,9 +8,6 @@ module Discordrb
   class Channel
     include IDObject
 
-    # For bulk_delete checking
-    TWO_WEEKS = 86_400 * 14
-
     # Map of channel types
     TYPES = {
       text: 0,
@@ -943,6 +940,9 @@ module Discordrb
     alias_method :jump_link, :link
 
     private
+
+    # For bulk_delete checking
+    TWO_WEEKS = 86_400 * 14
 
     # Deletes a list of messages on this channel using bulk delete.
     def bulk_delete(ids, strict = false, reason = nil)
