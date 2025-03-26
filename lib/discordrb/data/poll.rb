@@ -117,7 +117,7 @@ module Discordrb
         @poll = poll
         @id = data['answer_id']
         @name = data['poll_media']['text'] if data['poll_media']['text']
-        @count = (@poll.answer_counts[@id] ||= 0 if @poll.finalized?) if @poll.answer_counts
+        @count = (@poll.answer_counts&.fetch(@id, nil) ||= 0 if @poll.finalized?)
         @emoji = Emoji.new(data['poll_media']['emoji'], @bot) if data['poll_media']['emoji']
       end
 
