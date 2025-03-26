@@ -39,11 +39,11 @@ module Discordrb
       @message = message
       @question = data['question']['text']
       @answers = data['answers'].map { |answer| Answer.new(answer, self, @bot) }
-      @expiry = Time.iso8601(data['expiry']) if data['expiry']
+      @expiry = data['expiry'] ? Time.iso8601(data['expiry']) : nil
       @allow_multiselect = data['allow_multiselect']
       @layout_type = data['layout_type']
-      @finalized = data['results']['is_finalized'] if data['results']
-      @answer_counts = process_votes(data['results']['answer_counts']) if data['results']
+      @finalized = data['results'] ? data['results']['is_finalized'] : false
+      @answer_counts = data['results'] ? process_votes(data['results']['answer_counts']) : nil
     end
 
     # Ends this poll. Only works if the bot made the poll.
@@ -69,17 +69,11 @@ module Discordrb
     alias_method :ended?, :expired?
 
     # Returns the answer(s) with the most votes.
-    # @return [Array<Answer>] The most voted answer.
+    # @return [Array<Answer>] The most voted answer(s).
     def most_voted
       return nil if @answer_counts.nil?
 
-      answers = @answer_counts.select do |_, count|
-        count == @answer_counts.values.max
-      end
-
-      answers.keys.map do |key|
-        answer(key)
-      end
+      @answer_counts.map { |k, v| answer(k) if v == @answer_counts.values.max }.compact
     end
 
     # Whether this poll is currently tied.
