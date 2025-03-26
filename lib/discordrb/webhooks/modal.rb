@@ -9,7 +9,7 @@ class Discordrb::Webhooks::Modal
   }.freeze
 
   # This builder is used when constructing an ActionRow. All current components must be within an action row, but this can
-  # change in the future. A message can have 5 action rows, each action row can hold a weight of 5. Buttons have a weight of 1,
+  # change in the future. A message can have 10 action rows, each action row can hold a weight of 5. Buttons have a weight of 1,
   # and dropdowns have a weight of 5.
   class RowBuilder
     # A mapping of short names to types of input styles. `short` is a single line where `paragraph` is a block.
@@ -19,12 +19,14 @@ class Discordrb::Webhooks::Modal
     }.freeze
 
     # @!visibility private
-    def initialize
+    def initialize(id = nil)
+      @id = id
       @components = []
     end
 
     # Add a text input to this action row.
     # @param style [Symbol, Integer] The text input's style type. See {TEXT_INPUT_STYLES}
+    # @param id [Integer] Integer ID for this component. This is not to be confused with custom_id.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
     #  There is a limit of 100 characters to each custom_id.
     # @param label [String, nil] The text label for the field.
@@ -33,10 +35,11 @@ class Discordrb::Webhooks::Modal
     # @param required [true, false, nil] Whether this component is required to be filled, default true.
     # @param value [String, nil] A pre-filled value for this component, max 4000 characters.
     # @param placeholder [String, nil] Custom placeholder text if the input is empty, max 100 characters
-    def text_input(style:, custom_id:, label: nil, min_length: nil, max_length: nil, required: nil, value: nil, placeholder: nil)
+    def text_input(style:, custom_id:, id: nil, label: nil, min_length: nil, max_length: nil, required: nil, value: nil, placeholder: nil)
       style = TEXT_INPUT_STYLES[style] || style
 
       @components << {
+        id: id,
         style: style,
         custom_id: custom_id,
         type: COMPONENT_TYPES[:text_input],
@@ -46,12 +49,12 @@ class Discordrb::Webhooks::Modal
         required: required,
         value: value,
         placeholder: placeholder
-      }
+      }.compact
     end
 
     # @!visibility private
     def to_h
-      { type: COMPONENT_TYPES[:action_row], components: @components }
+      { type: COMPONENT_TYPES[:action_row], id: @id, components: @components }.compact
     end
   end
 
@@ -65,8 +68,8 @@ class Discordrb::Webhooks::Modal
 
   # Add a new ActionRow to the view
   # @yieldparam [RowBuilder]
-  def row
-    new_row = RowBuilder.new
+  def row(id: nil)
+    new_row = RowBuilder.new(id)
 
     yield new_row
 
