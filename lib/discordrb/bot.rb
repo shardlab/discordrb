@@ -836,7 +836,7 @@ module Discordrb
     def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil)
       type = ApplicationCommand::TYPES[type] || type
 
-      default_member_permissions = Permissions.bits(default_member_permissions).to_s if default_member_permissions.is_a?(Array)
+      default_member_permissions = Permissions.bits(default_member_permissions) if default_member_permissions.is_a?(Array)
 
       contexts&.map! { |ctx| Interaction::CONTEXTS[ctx] || ctx }
       integration_types&.map! { |itx| Interaction::INTEGRATION_TYPES[itx] || itx }
@@ -846,9 +846,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions&.to_s, contexts)
              else
-               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, integration_types)
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions&.to_s, contexts, integration_types)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -866,7 +866,7 @@ module Discordrb
     def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil)
       type = ApplicationCommand::TYPES[type] || type
 
-      default_member_permissions = Permissions.bits(default_member_permissions).to_s if default_member_permissions.is_a?(Array)
+      default_member_permissions = Permissions.bits(default_member_permissions) if default_member_permissions.is_a?(Array)
 
       contexts&.map! { |ctx| Interaction::CONTEXTS[ctx] || ctx }
       integration_types&.map! { |itx| Interaction::INTEGRATION_TYPES[itx] || itx }
@@ -877,9 +877,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions&.to_s, contexts)
              else
-               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, integration_types)
+               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts&.to_s, integration_types)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
