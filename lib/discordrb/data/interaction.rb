@@ -36,8 +36,8 @@ module Discordrb
     # Application integration types.
     # @see https://discord.com/developers/docs/resources/application#application-object-application-integration-types
     INTEGRATION_TYPES = {
-      server_install: 0,
-      user_install: 1
+      server: 0,
+      user: 1
     }.freeze
 
     # @return [User, Member] The user that initiated the interaction.
