@@ -268,20 +268,6 @@ module Discordrb::API
     )
   end
 
-  # Acknowledge that a message has been received
-  # The last acknowledged message will be sent in the ready packet,
-  # so this is an easy way to catch up on messages
-  def acknowledge_message(token, channel_id, message_id)
-    request(
-      :channels_cid_messages_mid_ack,
-      nil, # This endpoint is unavailable for bot accounts and thus isn't subject to its rate limit requirements.
-      :post,
-      "#{api_base}/channels/#{channel_id}/messages/#{message_id}/ack",
-      nil,
-      Authorization: token
-    )
-  end
-
   # Get the gateway to be used
   def gateway(token)
     request(
@@ -302,19 +288,6 @@ module Discordrb::API
       :get,
       "#{api_base}/gateway/bot",
       Authorization: token
-    )
-  end
-
-  # Validate a token (this request will fail if the token is invalid)
-  def validate_token(token)
-    request(
-      :auth_login,
-      nil,
-      :post,
-      "#{api_base}/auth/login",
-      {}.to_json,
-      Authorization: token,
-      content_type: :json
     )
   end
 
