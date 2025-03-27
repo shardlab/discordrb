@@ -106,9 +106,10 @@ module Discordrb
     #   to Discord's gateway. `:none` will request that no payloads are received compressed (not recommended for
     #   production bots). `:large` will request that large payloads are received compressed. `:stream` will request
     #   that all data be received in a continuous compressed stream.
-    # @param intents [:all, :unprivileged, Array<Symbol>, :none] Gateway intents that this bot requires. `:all` will
+    # @param intents [:all, :unprivileged, Array<Symbol>, :none, Integer] Gateway intents that this bot requires. `:all` will
     #   request all intents. `:unprivileged` will request only intents that are not defined as "Privileged". `:none`
-    #   will request no intents. An array of symbols will request only those intents specified.
+    #   will request no intents. An array of symbols will request only those intents specified. An integer value will request
+    #   exactly all the intents specified in the bitwise value.
     # @see Discordrb::INTENTS
     def initialize(
       log_mode: :normal,
@@ -1492,6 +1493,10 @@ module Discordrb
 
         event = ChannelRecipientRemoveEvent.new(data, self)
         raise_event(event)
+      when :CHANNEL_PINS_UPDATE
+        event = ChannelPinsUpdateEvent.new(data, self)
+        raise_event(event)
+
       when :GUILD_MEMBER_ADD
         add_guild_member(data)
 
