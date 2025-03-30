@@ -131,7 +131,7 @@ module Discordrb
     #   permissions.defined_permissions #=> [:create_instant_invite, :administrator]
     # @return [Array<Symbol>] the permissions
     def defined_permissions
-      FLAGS.filter_map { |value, name| @bits.anybits?((1 << value)) ? name : nil }
+      FLAGS.filter_map { |value, name| @bits.anybits?(1 << value) ? name : nil }
     end
 
     # Comparison based on permission bits
