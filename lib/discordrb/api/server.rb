@@ -263,8 +263,10 @@ module Discordrb::API::Server
   # connecting to voice, speaking and voice activity (push-to-talk isn't mandatory)
   # https://discord.com/developers/docs/resources/guild#batch-modify-guild-role
   # @param icon [:undef, File]
-  def update_role(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef)
+  def update_role(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef, unicode_emoji = :undef)
     data = { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions }
+
+    data[:unicode_emoji] = unicode_emoji if unicode_emoji != :undef
 
     if icon != :undef && icon
       path_method = %i[original_filename path local_path].find { |meth| icon.respond_to?(meth) }
