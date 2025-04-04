@@ -257,7 +257,7 @@ module Discordrb
                           message_seconds || 0
                         end
 
-      server.ban(@user, nil, message_seconds: delete_messages, reason: reason)
+      server.ban(@user, 0, message_seconds: delete_messages, reason: reason)
     end
 
     # Unbans this member from the server.
