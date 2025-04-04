@@ -27,7 +27,10 @@ module Discordrb::Events
     # @!attribute [r] user
     #   @return [User]
     #   @see Interaction#user
-    delegate :type, :server, :server_id, :channel, :channel_id, :user, to: :interaction
+    # @!attribute [r] context
+    #   @return [Integer]
+    #   @see Interaction#context
+    delegate :type, :server, :server_id, :channel, :channel_id, :context, :user, to: :interaction
 
     def initialize(data, bot)
       @interaction = Discordrb::Interaction.new(data, bot)

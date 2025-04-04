@@ -25,6 +25,21 @@ module Discordrb
       modal: 9
     }.freeze
 
+    # Interaction context types.
+    # @see https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types
+    CONTEXTS = {
+      server: 0,
+      bot_dm: 1,
+      private_channel: 2
+    }.freeze
+
+    # Application integration types.
+    # @see https://discord.com/developers/docs/resources/application#application-object-application-integration-types
+    INTEGRATION_TYPES = {
+      server: 0,
+      user: 1
+    }.freeze
+
     # @return [User, Member] The user that initiated the interaction.
     attr_reader :user
 
@@ -57,6 +72,9 @@ module Discordrb
     # @return [Array<ActionRow>]
     attr_reader :components
 
+    # @return [Integer] The context this command was used in. See {CONTEXTS}.
+    attr_reader :context
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -75,6 +93,7 @@ module Discordrb
                 bot.ensure_user(data['user'])
               end
       @token = data['token']
+      @context = data['context']
       @version = data['version']
       @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
     end
