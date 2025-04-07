@@ -65,7 +65,9 @@ module Discordrb
 
     # Comparison by attributes [:id, :type, :allow, :deny]
     def ==(other)
+      # rubocop:disable Lint/Void
       false unless other.is_a? Discordrb::Overwrite
+      # rubocop:enable Lint/Void
       id == other.id &&
         type == other.type &&
         allow == other.allow &&

@@ -89,10 +89,11 @@ module Discordrb
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
-    # @param components [Array<#to_h>] An array of components
+    # @param components [Array<#to_h>] An array of components.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
+    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil)
       flags |= 1 << 6 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
@@ -105,7 +106,7 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
+      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments)
 
       return unless wait
 
@@ -157,10 +158,11 @@ module Discordrb
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
-    # @param components [Array<#to_h>] An array of components
+    # @param components [Array<#to_h>] An array of components.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
-    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
+    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil)
       flags |= 1 << 6 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
@@ -172,7 +174,7 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
+      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments)
 
       return unless wait
 
@@ -184,10 +186,11 @@ module Discordrb
     # @param content [String] The content of the message.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
-    # @param components [Array<#to_h>] An array of components
+    # @param components [Array<#to_h>] An array of components.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
     # @return [InteractionMessage] The updated response message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil)
+    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
@@ -196,7 +199,7 @@ module Discordrb
 
       components ||= view
       data = builder.to_json_hash
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
+      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments)
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -212,8 +215,9 @@ module Discordrb
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil)
+    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil, attachments: nil)
       flags |= 64 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
@@ -226,7 +230,7 @@ module Discordrb
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a
+        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -235,8 +239,9 @@ module Discordrb
     # @param content [String] The message content.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil)
+    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
@@ -247,7 +252,7 @@ module Discordrb
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -466,19 +471,25 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_length [Integer] A minimum length for option value.
+      # @param max_length [Integer] A maximum length for option value.
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
       # @return (see #option)
-      def string(name, description, required: nil, choices: nil)
-        option(TYPES[:string], name, description, required: required, choices: choices)
+      def string(name, description, required: nil, min_length: nil, max_length: nil, choices: nil)
+        option(TYPES[:string], name, description,
+               required: required, min_length: min_length, max_length: max_length, choices: choices)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_value [Integer] A minimum value for option.
+      # @param max_value [Integer] A maximum value for option.
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
       # @return (see #option)
-      def integer(name, description, required: nil, choices: nil)
-        option(TYPES[:integer], name, description, required: required, choices: choices)
+      def integer(name, description, required: nil, min_value: nil, max_value: nil, choices: nil)
+        option(TYPES[:integer], name, description,
+               required: required, min_value: min_value, max_value: max_value, choices: choices)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -526,6 +537,8 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_value [Float] A minimum value for option.
+      # @param max_value [Float] A maximum value for option.
       # @return (see #option)
       def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil)
         option(TYPES[:number], name, description,
@@ -547,15 +560,18 @@ module Discordrb
       # @param required [true, false] Whether this option must be provided.
       # @param min_value [Integer, Float] A minimum value for integer and number options.
       # @param max_value [Integer, Float] A maximum value for integer and number options.
+      # @param min_length [Integer] A minimum length for string option value.
+      # @param max_length [Integer] A maximum length for string option value.
       # @param channel_types [Array<Integer>] Channel types that can be provides for channel options.
       # @return Hash
       def option(type, name, description, required: nil, choices: nil, options: nil, min_value: nil, max_value: nil,
-                 channel_types: nil)
+                 min_length: nil, max_length: nil, channel_types: nil)
         opt = { type: type, name: name, description: description }
         choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
 
         opt.merge!({ required: required, choices: choices, options: options, min_value: min_value,
-                     max_value: max_value, channel_types: channel_types }.compact)
+                     max_value: max_value, min_length: min_length, max_length: max_length,
+                     channel_types: channel_types }.compact)
 
         @options << opt
         opt
@@ -766,8 +782,8 @@ module Discordrb
       # Respond to this message.
       # @param (see Interaction#send_message)
       # @yieldparam (see Interaction#send_message)
-      def respond(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: true, components: nil, &block)
-        @interaction.send_message(content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, components: components, &block)
+      def respond(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: true, components: nil, attachments: nil, &block)
+        @interaction.send_message(content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, components: components, attachments: attachments, &block)
       end
 
       # Delete this message.
@@ -780,8 +796,8 @@ module Discordrb
       # @param embeds (see Interaction#send_message)
       # @param allowed_mentions (see Interaction#send_message)
       # @yieldparam (see Interaction#send_message)
-      def edit(content: nil, embeds: nil, allowed_mentions: nil, components: nil, &block)
-        @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, &block)
+      def edit(content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil, &block)
+        @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, attachments: attachments, &block)
       end
 
       # @return [Discordrb::Message]

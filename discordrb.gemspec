@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   }
   spec.require_paths = ['lib']
 
+  spec.add_dependency 'base64', '~> 0.2.0'
   spec.add_dependency 'ffi', '>= 1.9.24'
   spec.add_dependency 'opus-ruby'
   spec.add_dependency 'rest-client', '>= 2.0.0'
@@ -34,7 +35,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'discordrb-webhooks', '~> 3.5.0'
 
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = '>= 3.2'
 
   spec.add_development_dependency 'bundler', '>= 1.10', '< 3'
   spec.add_development_dependency 'rake', '~> 13.0'
