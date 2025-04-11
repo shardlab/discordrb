@@ -528,7 +528,7 @@ module Discordrb
 
       icon = icon.respond.to?(:read) ? encode_file(icon) : icon
 
-      response = API::Server.create_role(@bot.token, @id, name, colour, hoist, mentionable, permissions, icon, reason)
+      response = API::Server.create_role(@bot.token, @id, name, colour, hoist, mentionable, permissions, reason, icon)
 
       role = Role.new(JSON.parse(response), @bot, self)
       @roles << role
