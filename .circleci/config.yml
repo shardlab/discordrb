@@ -27,17 +27,6 @@ commands:
             - ./vendor/bundle
 
 jobs:
-  test_ruby_31:
-    docker:
-      - image: ruby:3.1-alpine
-    steps:
-      - setup-env
-      - run:
-          name: Run RSpec
-          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
-      - store_test_results:
-          path: ~/rspec
-
   test_ruby_32:
     docker:
       - image: ruby:3.2-alpine
@@ -49,10 +38,21 @@ jobs:
       - store_test_results:
           path: ~/rspec
 
-
   test_ruby_33:
     docker:
       - image: ruby:3.3-alpine
+    steps:
+      - setup-env
+      - run:
+          name: Run RSpec
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
+      - store_test_results:
+          path: ~/rspec
+
+
+  test_ruby_34:
+    docker:
+      - image: ruby:3.4-alpine
     steps:
       - setup-env
       - run:
@@ -125,9 +125,9 @@ jobs:
 workflows:
   test:
     jobs:
-      - test_ruby_31
       - test_ruby_32
       - test_ruby_33
+      - test_ruby_34
       - rubocop
       - yard
   deploy:
