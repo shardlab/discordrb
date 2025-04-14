@@ -1,4 +1,4 @@
-plugins:
+require:
   - rubocop-performance
   - rubocop-rake
 
