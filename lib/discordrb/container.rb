@@ -649,14 +649,12 @@ module Discordrb
     # This **event** is raised whenever an autocomplete interaction is created.
     # @param name [String, Symbol, nil] An option name to match against.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer] :command_id a command ID to match against.
-    # @option attributes [String, Symbol] :subcommand a subcommand name to match against.
-    # @option attributes [String, Symbol] :subcommand_group a subcommand group to match against.
+    # @option attributes [String, Integer] :command_id A command ID to match against.
+    # @option attributes [String, Symbol] :subcommand A subcommand name to match against.
+    # @option attributes [String, Symbol] :subcommand_group A subcommand group to match against.
     # @option attributes [String, Symbol] :command_name A command name to match against.
     def autocomplete(name = nil, attributes = {}, &block)
-      attributes[:name] = name if name
-
-      register_event(AutocompleteEvent, attributes, block)
+      register_event(AutocompleteEvent, attributes.merge!(name: name), block)
     end
 
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
