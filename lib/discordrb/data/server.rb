@@ -590,10 +590,8 @@ module Discordrb
     # @param limit [Integer] The maximum number of members between 1-1000 to return. Returns 1 member by default.
     # @return [Array<Member>] An array of member objects that match the given parameters.
     def search_members(name:, limit: nil)
-      response = JSON.parse(API::Server.search_guild_members(@bot.token, @id, name, limit))
-      return nil if response.empty?
-
-      response.map { |mem| Member.new(mem, self, @bot) }
+      response = API::Server.search_guild_members(@bot.token, @id, name, limit)
+      JSON.parse(response).map { |member| Member.new(member, self, @bot) }
     end
 
     # Retrieve banned users from this server.

@@ -136,7 +136,7 @@ module Discordrb
     def communication_disabled_until=(timeout_until)
       raise ArgumentError, 'A time out cannot exceed 28 days' if timeout_until && timeout_until > (Time.now + 2_419_200)
 
-      API::Server.update_member(@bot.token, @server_id, @user.id, communication_disabled_until: timeout_until.iso8601)
+      API::Server.update_member(@bot.token, @server_id, @user.id, communication_disabled_until: timeout_until&.iso8601)
     end
 
     alias_method :timeout=, :communication_disabled_until=

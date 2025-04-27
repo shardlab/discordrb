@@ -35,7 +35,7 @@ module Discordrb::API::User
       :guilds_sid_members_me_nick,
       server_id, # This is technically a guild endpoint
       :patch,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/members/@me/nick",
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/members/@me",
       { nick: nick }.to_json,
       Authorization: token,
       content_type: :json,
