@@ -363,6 +363,12 @@ module Discordrb
     # @return [Integer]
     attr_reader :id
 
+    # @return [Array<Integer>]
+    attr_reader :contexts
+
+    # @return [Array<Integer>]
+    attr_reader :integration_types
+
     # @!visibility private
     def initialize(data, bot, server_id = nil)
       @bot = bot
@@ -374,6 +380,9 @@ module Discordrb
       @description = data['description']
       @default_permission = data['default_permission']
       @options = data['options']
+
+      @contexts = data['contexts'] || []
+      @integration_types = data['integration_types'] || []
     end
 
     # @param subcommand [String, nil] The subcommand to mention.
