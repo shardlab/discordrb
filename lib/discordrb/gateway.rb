@@ -93,7 +93,7 @@ module Discordrb
     # @return [String] Used to uniquely identify this session. Mostly used when resuming connections.
     attr_reader :session_id
 
-    # @return [Integer] Incrementing integer used to detemrine the most recent event reccived from Discord.
+    # @return [Integer] Incrementing integer used to determine the most recent event reccived from Discord.
     attr_accessor :sequence
 
     # @return [String] Gateway URL used to reconnect to the gateway node that Discord wants this session to use.
