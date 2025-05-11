@@ -97,7 +97,7 @@ module Discordrb
     attr_accessor :sequence
 
     # @return [String] Gateway URL used to reconnect to the gateway node that Discord wants this session to use.
-    attr_reader :resume_gateway_url
+    attr_accessor :resume_gateway_url
 
     # @!visibility private
     def initialize(session_id, resume_gateway_url)
@@ -267,6 +267,7 @@ module Discordrb
 
           # We can't send anything on zombie connections
           @pipe_broken = true
+          @session&.resume_gateway_url = nil
           reconnect
           return
         end
