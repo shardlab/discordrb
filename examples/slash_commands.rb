@@ -116,7 +116,7 @@ end
 # The name of the parameter with autocomplete enabled is given as the first
 # positional argument to the handler. Other parameters such as command_name
 # and command_id can be passed normally as a hash of attributes.
-bot.autocomplete(:methods) do |event|
+bot.autocomplete(:method) do |event|
   methods = ([].methods + {}.methods + ''.methods + 1.methods).map(&:to_s)
 
   methods.select! { |method| method.include?(event.options["method"]) }
