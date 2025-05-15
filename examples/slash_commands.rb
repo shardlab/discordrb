@@ -119,7 +119,7 @@ end
 bot.autocomplete(:method) do |event|
   methods = ([].methods + {}.methods + ''.methods + 1.methods).map(&:to_s)
 
-  methods.select! { |method| method.include?(event.options["method"]) }
+  methods.select! { |method| method.include?(event.options["method"]) }.first(25)
 
   # `#choices` returns an empty hash that you can use during proccessing
   # in order to create K/V pairs that you can then return to the user.
