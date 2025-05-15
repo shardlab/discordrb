@@ -26,6 +26,10 @@ bot.register_application_command(:example, 'Example commands', server_id: ENV.fe
     end
 
     group.subcommand('button-test', 'Test a button!')
+
+    group.subcommand('methods', 'Available methods!') do |sub|
+      sub.string('method', 'The method to search for', autocomplete: true, required: true)
+    end
   end
 end
 
@@ -107,6 +111,25 @@ end
 
 bot.select_menu(custom_id: 'test_select') do |event|
   event.respond(content: "You selected: #{event.values.join(', ')}")
+end
+
+# The name of the parameter with autocomplete enabled is given as the first
+# positional argument to the handler. Other parameters such as command_name
+# and command_id can be passed normally as a hash of attributes.
+bot.autocomplete(:methods) do |event|
+  methods = ([].methods + {}.methods + ''.methods + 1.methods).map(&:to_s)
+
+  methods.select! { |method| method.include?(event.options["method"]) }
+
+  # `#choices` returns an empty hash that you can use during proccessing
+  # in order to create K/V pairs that you can then return to the user.
+  methods.each { |method| event.choices[method] = method }
+
+  event.respond(choices: event.choices)
+end
+
+bot.application_command(:methods) do |event|
+  event.respond(content: "You picked the method #{event.options["method"]}!")
 end
 
 bot.run

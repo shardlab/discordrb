@@ -134,16 +134,16 @@ module Discordrb::Events
     # Struct to allow accessing data via [] or methods.
     Resolved = Struct.new('Resolved', :channels, :members, :messages, :roles, :users, :attachments) # rubocop:disable Lint/StructNewOverride
 
-    # @return [String] The name of the command.
+    # @return [Symbol] The name of the command.
     attr_reader :command_name
 
     # @return [Integer] The ID of the command.
     attr_reader :command_id
 
-    # @return [String, nil] The name of the subcommand group relevant to this event.
+    # @return [Symbol, nil] The name of the subcommand group relevant to this event.
     attr_reader :subcommand_group
 
-    # @return [String, nil] The name of the subcommand relevant to this event.
+    # @return [Symbol, nil] The name of the subcommand relevant to this event.
     attr_reader :subcommand
 
     # @return [Resolved]
@@ -528,8 +528,8 @@ module Discordrb::Events
 
     # Respond to this interaction with autocomplete choices.
     # @param choices [Array<Hash>, Hash, nil] Autocomplete choices to return.
-    def respond(choices: nil)
-      @interaction.show_autocomplete_choices(choices || @choices)
+    def respond(choices:)
+      @interaction.show_autocomplete_choices(choices)
     end
   end
 end
