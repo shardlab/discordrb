@@ -57,6 +57,10 @@ bot.application_command(:example).group(:fun) do |group|
     STR
   end
 
+  group.subcommand(:methods) do |event|
+    event.respond(content: "You picked the method #{event.options['method']}!")
+  end
+
   group.subcommand(:java) do |event|
     javaisms = %w[Factory Builder Service Provider Instance Class Reducer Map]
     jumble = []
@@ -119,17 +123,17 @@ end
 bot.autocomplete(:method) do |event|
   methods = ([].methods + {}.methods + ''.methods + 1.methods).map(&:to_s)
 
-  methods.select! { |method| method.include?(event.options["method"]) }.first(25)
+  option = event.options['method'] || ''
+
+  methods.select! do |method|
+    method.include?(option) || method.start_with?(option) || false
+  end
 
   # `#choices` returns an empty hash that you can use during proccessing
   # in order to create K/V pairs that you can then return to the user.
-  methods.each { |method| event.choices[method] = method }
+  methods&.first(25)&.each { |method| event.choices[method] = method }
 
   event.respond(choices: event.choices)
-end
-
-bot.application_command(:methods) do |event|
-  event.respond(content: "You picked the method #{event.options["method"]}!")
 end
 
 bot.run

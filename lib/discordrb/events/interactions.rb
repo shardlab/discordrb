@@ -529,7 +529,7 @@ module Discordrb::Events
     # Respond to this interaction with autocomplete choices.
     # @param choices [Array<Hash>, Hash, nil] Autocomplete choices to return.
     def respond(choices:)
-      @interaction.show_autocomplete_choices(choices)
+      @interaction.show_autocomplete_choices(choices) unless choices.empty?
     end
   end
 end
