@@ -452,8 +452,13 @@ module Discordrb
           # suspended (e.g. after op7)
           if (@session && !@session.suspended?) || !@session
             sleep @heartbeat_interval
-            @bot.raise_heartbeat_event
-            heartbeat
+            # Check if we're connected here, since we could possibly be waiting for a reconnect to occur.
+            if @handshaked && !@closed
+              @bot.raise_heartbeat_event
+              heartbeat
+            else
+              LOGGER.debug("Tried to send a heartbeat without being connected! Ignoring, we should be fine.")
+            end
           else
             sleep 1
           end
