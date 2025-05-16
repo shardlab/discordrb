@@ -123,7 +123,9 @@ end
 bot.autocomplete(:method) do |event|
   methods = ([].methods + {}.methods + ''.methods + 1.methods).map(&:to_s)
 
-  option = event.options['method'] || ''
+  # The currently focused choice is an empty string if the user hasn't
+  # inputed anything yet.
+  option = event.options['method']
 
   methods.select! do |method|
     method.include?(option) || method.start_with?(option) || false
