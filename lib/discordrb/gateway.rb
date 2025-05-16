@@ -457,7 +457,7 @@ module Discordrb
               @bot.raise_heartbeat_event
               heartbeat
             else
-              LOGGER.debug("Tried to send a heartbeat without being connected! Ignoring, we should be fine.")
+              LOGGER.debug('Tried to send a heartbeat without being connected! Ignoring, we should be fine.')
             end
           else
             sleep 1
@@ -661,7 +661,9 @@ module Discordrb
       LOGGER.log_exception(e)
     end
 
+    # rubocop:disable Lint/UselessConstantScoping 
     ZLIB_SUFFIX = "\x00\x00\xFF\xFF".b.freeze
+    # rubocop:enable Lint/UselessConstantScoping 
 
     def handle_message(msg)
       case @compress_mode
@@ -794,12 +796,14 @@ module Discordrb
       handle_close(e)
     end
 
+    # rubocop:disable Lint/UselessConstantScoping 
     # Close codes that are unrecoverable, after which we should not try to reconnect.
     # - 4003: Not authenticated. How did this happen?
     # - 4004: Authentication failed. Token was wrong, nothing we can do.
     # - 4011: Sharding required. Currently requires developer intervention.
     # - 4014: Use of disabled privileged intents.
     FATAL_CLOSE_CODES = [4003, 4004, 4011, 4014].freeze
+    # rubocop:enable Lint/UselessConstantScoping 
 
     def handle_close(e)
       @bot.__send__(:raise_event, Events::DisconnectEvent.new(@bot))
