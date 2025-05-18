@@ -220,7 +220,11 @@ module Discordrb
       return update_role_data(unicode_emoji: nil, icon: nil) if icon.nil?
       # rubocop:enable Lint/ReturnInVoidContext
 
-      icon.respond_to?(:read) ? self.icon = icon : update_role_data(unicode_emoji: icon, icon: nil)
+      if icon.respond_to?(:read)
+        update_role_data(unicode_emoji: nil, icon: icon)
+      else
+        update_role_data(unicode_emoji: icon, icon: nil)
+      end
     end
 
     alias_method :color=, :colour=
