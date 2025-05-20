@@ -283,7 +283,7 @@ module Discordrb
       if @user.current_bot?
         API::User.change_own_nickname(@bot.token, @server_id, nick, reason)
       else
-        API::Server.update_member(@bot.token, @server_id, @user.id, nick: nick, reason: nil)
+        API::Server.update_member(@bot.token, @server_id, @user.id, nick: nick, reason: reason)
       end
     end
 
