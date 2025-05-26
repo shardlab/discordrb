@@ -1564,15 +1564,17 @@ module Discordrb
 
         case data['type']
         when Interaction::TYPES[:command]
-          event = ApplicationCommandEvent.new(data, self)
+          # We have to use a seperate variable name besides `event` here, since if we have a handler
+          # for a raw event, `event` would get re-assigned by the time the thread starts runnning.
+          cmd_event = ApplicationCommandEvent.new(data, self)
 
           Thread.new do
-            Thread.current[:discordrb_name] = "it-#{event.interaction.id}"
+            Thread.current[:discordrb_name] = "it-#{cmd_event.interaction.id}"
 
             begin
-              debug("Executing application command #{event.command_name}:#{event.command_id}")
+              debug("Executing application command #{cmd_event.command_name}:#{cmd_event.command_id}")
 
-              @application_commands[event.command_name]&.call(event)
+              @application_commands[cmd_event.command_name]&.call(cmd_event)
             rescue StandardError => e
               log_exception(e)
             end
