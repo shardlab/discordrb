@@ -944,8 +944,10 @@ module Discordrb
 
     private
 
+    # rubocop:disable Lint/UselessConstantScoping
     # For bulk_delete checking
     TWO_WEEKS = 86_400 * 14
+    # rubocop:enable Lint/UselessConstantScoping
 
     # Deletes a list of messages on this channel using bulk delete.
     def bulk_delete(ids, strict = false, reason = nil)
