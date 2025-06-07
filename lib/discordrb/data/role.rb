@@ -54,15 +54,19 @@ module Discordrb
 
       # @return [true, false] Whether this is the guild's Booster role
       attr_reader :premium_subscriber
+      alias_method :premium_subscriber?, :premium_subscriber
 
       # @return [Integer, nil] The id of this role's subscription sku and listing
       attr_reader :subscription_listing_id
 
       # @return [true, false] Whether this role is available for purchase
       attr_reader :available_for_purchase
+      alias_method :available_for_purchase?, :available_for_purchase
 
       # @return [true, false] Whether this role is a guild's linked role
       attr_reader :guild_connections
+      alias_method :guild_connections?, :guild_connections
+      alias_method :server_connections?, :guild_connections
 
       # @!visibility private
       def initialize(data)
