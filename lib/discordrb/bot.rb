@@ -106,9 +106,10 @@ module Discordrb
     #   to Discord's gateway. `:none` will request that no payloads are received compressed (not recommended for
     #   production bots). `:large` will request that large payloads are received compressed. `:stream` will request
     #   that all data be received in a continuous compressed stream.
-    # @param intents [:all, :unprivileged, Array<Symbol>, :none] Gateway intents that this bot requires. `:all` will
+    # @param intents [:all, :unprivileged, Array<Symbol>, :none, Integer] Gateway intents that this bot requires. `:all` will
     #   request all intents. `:unprivileged` will request only intents that are not defined as "Privileged". `:none`
-    #   will request no intents. An array of symbols will request only those intents specified.
+    #   will request no intents. An array of symbols will request only those intents specified. An integer value will request
+    #   exactly all the intents specified in the bitwise value.
     # @see Discordrb::INTENTS
     def initialize(
       log_mode: :normal,
@@ -1100,12 +1101,15 @@ module Discordrb
       server_id = data['guild_id'].to_i
       server = self.server(server_id)
 
-      member = server.member(data['user']['id'].to_i)
-      member.update_roles(data['roles'])
-      member.update_nick(data['nick'])
-      member.update_global_name(data['user']['global_name']) if data['user']['global_name']
-      member.update_boosting_since(data['premium_since'])
-      member.update_communication_disabled_until(data['communication_disabled_until'])
+      if (member = server.member(data['user']['id'].to_i))
+        member.update_roles(data['roles'])
+        member.update_nick(data['nick'])
+        member.update_global_name(data['user']['global_name']) if data['user']['global_name']
+        member.update_boosting_since(data['premium_since'])
+        member.update_communication_disabled_until(data['communication_disabled_until'])
+      else
+        Discordrb::LOGGER.warn("update_guild_member attempted to access a member which doesn't exist! Not sure what happened here, ignoring.")
+      end
     end
 
     # Internal handler for GUILD_MEMBER_DELETE
@@ -1240,6 +1244,8 @@ module Discordrb
         init_cache
 
         @profile = Profile.new(data['user'], self)
+
+        @client_id ||= data['application']['id']&.to_i
 
         # Initialize servers
         @servers = {}
@@ -1452,6 +1458,10 @@ module Discordrb
 
         event = ChannelRecipientRemoveEvent.new(data, self)
         raise_event(event)
+      when :CHANNEL_PINS_UPDATE
+        event = ChannelPinsUpdateEvent.new(data, self)
+        raise_event(event)
+
       when :GUILD_MEMBER_ADD
         add_guild_member(data)
 
@@ -1714,6 +1724,8 @@ module Discordrb
     end
 
     def calculate_intents(intents)
+      intents = [intents] unless intents.is_a? Array
+
       intents.reduce(0) do |sum, intent|
         case intent
         when Symbol
