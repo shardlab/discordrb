@@ -461,8 +461,13 @@ module Discordrb
           # suspended (e.g. after op7)
           if (@session && !@session.suspended?) || !@session
             sleep @heartbeat_interval
-            @bot.raise_heartbeat_event
-            heartbeat
+            # Check if we're connected here, since we could possibly be waiting for a reconnect to occur.
+            if @handshaked && !@closed
+              @bot.raise_heartbeat_event
+              heartbeat
+            else
+              LOGGER.debug('Tried to send a heartbeat without being connected! Ignoring, we should be fine.')
+            end
           else
             sleep 1
           end
@@ -800,6 +805,7 @@ module Discordrb
       handle_close(e)
     end
 
+    # rubocop:disable Lint/UselessConstantScoping
     # Close codes that are unrecoverable, after which we should not try to reconnect.
     # - 4003: Not authenticated. How did this happen?
     # - 4004: Authentication failed. Token was wrong, nothing we can do.
