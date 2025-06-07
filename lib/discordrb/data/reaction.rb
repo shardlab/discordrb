@@ -29,5 +29,11 @@ module Discordrb
     def to_s
       id.nil? ? name : "#{name}:#{id}"
     end
+
+    # Converts this Reaction into a hash that can be sent back to Discord in other endpoints.
+    # @return [Hash] A hash representation of this reaction's emoji.
+    def to_h
+      id.nil? ? { name: name } : { id: id }
+    end
   end
 end
