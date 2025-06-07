@@ -136,7 +136,7 @@ module Discordrb
     def communication_disabled_until=(timeout_until)
       raise ArgumentError, 'A time out cannot exceed 28 days' if timeout_until && timeout_until > (Time.now + 2_419_200)
 
-      API::Server.update_member(@bot.token, @server_id, @user.id, communication_disabled_until: timeout_until.iso8601)
+      API::Server.update_member(@bot.token, @server_id, @user.id, communication_disabled_until: timeout_until&.iso8601)
     end
 
     alias_method :timeout=, :communication_disabled_until=
@@ -276,14 +276,11 @@ module Discordrb
     # Nicknames for other users.
     # @param nick [String, nil] The string to set the nickname to, or nil if it should be reset.
     # @param reason [String] The reason the user's nickname is being changed.
-    def set_nick(nick, reason = nil)
-      # Discord uses the empty string to signify 'no nickname' so we convert nil into that
-      nick ||= ''
-
+    def set_nick(nick, reason = nil)      
       if @user.current_bot?
-        API::User.change_own_nickname(@bot.token, @server_id, nick, reason)
+        API::Server.update_current_member(@bot.token, @server_id, nick, reason)
       else
-        API::Server.update_member(@bot.token, @server_id, @user.id, nick: nick, reason: nil)
+        API::Server.update_member(@bot.token, @server_id, @user.id, nick: nick, reason: reason)
       end
     end
 
