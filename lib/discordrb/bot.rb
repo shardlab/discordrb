@@ -1101,12 +1101,15 @@ module Discordrb
       server_id = data['guild_id'].to_i
       server = self.server(server_id)
 
-      member = server.member(data['user']['id'].to_i)
-      member.update_roles(data['roles'])
-      member.update_nick(data['nick'])
-      member.update_global_name(data['user']['global_name']) if data['user']['global_name']
-      member.update_boosting_since(data['premium_since'])
-      member.update_communication_disabled_until(data['communication_disabled_until'])
+      if (member = server.member(data['user']['id'].to_i))
+        member.update_roles(data['roles'])
+        member.update_nick(data['nick'])
+        member.update_global_name(data['user']['global_name']) if data['user']['global_name']
+        member.update_boosting_since(data['premium_since'])
+        member.update_communication_disabled_until(data['communication_disabled_until'])
+      else
+        Discordrb::LOGGER.warn("update_guild_member attempted to access a member which doesn't exist! Not sure what happened here, ignoring.")
+      end
     end
 
     # Internal handler for GUILD_MEMBER_DELETE
@@ -1241,6 +1244,8 @@ module Discordrb
         init_cache
 
         @profile = Profile.new(data['user'], self)
+
+        @client_id ||= data['application']['id']&.to_i
 
         # Initialize servers
         @servers = {}
