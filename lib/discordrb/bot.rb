@@ -1564,17 +1564,15 @@ module Discordrb
 
         case data['type']
         when Interaction::TYPES[:command]
-          # We have to use a seperate variable name besides `event` here, since if we have a handler
-          # for a raw event, `event` would get re-assigned by the time the thread starts runnning.
-          cmd_event = ApplicationCommandEvent.new(data, self)
+          event = ApplicationCommandEvent.new(data, self)
 
           Thread.new do
-            Thread.current[:discordrb_name] = "it-#{cmd_event.interaction.id}"
+            Thread.current[:discordrb_name] = "it-#{event.interaction.id}"
 
             begin
-              debug("Executing application command #{cmd_event.command_name}:#{cmd_event.command_id}")
+              debug("Executing application command #{event.command_name}:#{event.command_id}")
 
-              @application_commands[cmd_event.command_name]&.call(cmd_event)
+              @application_commands[event.command_name]&.call(event)
             rescue StandardError => e
               log_exception(e)
             end
@@ -1658,8 +1656,10 @@ module Discordrb
       # The existence of this array is checked before for performance reasons, since this has to be done for *every*
       # dispatch.
       if @event_handlers && @event_handlers[RawEvent]
-        event = RawEvent.new(type, data, self)
-        raise_event(event)
+        # Don't assign a seperate variable named event here, because application
+        # command handlers run in a seperate thread, and by the time the thread
+        # start running, event has been re-assigned here, and the thread will error out.  
+        raise_event(RawEvent.new(type, data, self))
       end
     rescue Exception => e
       LOGGER.error('Gateway message error!')
