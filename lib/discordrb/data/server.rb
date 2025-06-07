@@ -620,7 +620,7 @@ module Discordrb
                           message_seconds || 0
                         end
 
-      API::Server.ban_user(@bot.token, @id, user.resolve_id, delete_messages, reason)
+      API::Server.ban_user!(@bot.token, @id, user.resolve_id, delete_messages, reason)
     end
 
     # Unbans a previously banned user from this server.

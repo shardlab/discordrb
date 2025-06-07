@@ -200,9 +200,15 @@ module Discordrb::API::Server
     )
   end
 
+  # @deprecated Please use {ban_user!} instead.
+  # https://discord.com/developers/docs/resources/guild#create-guild-ban
+  def ban_user(token, server_id, user_id, message_days, reason = nil)
+    ban_user!(token, server_id, user_id, message_days * 86_400, reason)
+  end
+
   # Ban a user from a server and delete their messages up to a given amount of time.
   # https://discord.com/developers/docs/resources/guild#create-guild-ban
-  def ban_user(token, server_id, user_id, message_seconds, reason = nil)
+  def ban_user!(token, server_id, user_id, message_seconds, reason = nil)
     Discordrb::API.request(
       :guilds_sid_bans_uid,
       server_id,
