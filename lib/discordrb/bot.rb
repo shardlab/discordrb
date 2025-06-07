@@ -1661,8 +1661,10 @@ module Discordrb
       # The existence of this array is checked before for performance reasons, since this has to be done for *every*
       # dispatch.
       if @event_handlers && @event_handlers[RawEvent]
-        event = RawEvent.new(type, data, self)
-        raise_event(event)
+        # Don't assign a seperate variable named event here, because application
+        # command handlers run in a seperate thread, and by the time the thread
+        # start running, event has been re-assigned here, and the thread will error out.  
+        raise_event(RawEvent.new(type, data, self))
       end
     rescue Exception => e
       LOGGER.error('Gateway message error!')
