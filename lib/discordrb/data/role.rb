@@ -220,9 +220,10 @@ module Discordrb
     # @param icon [File, String, nil] File like object that responds to #read, unicode emoji, or nil.
     # @note Setting the icon to nil will remove the unicode emoji **and** the custom icon.
     def display_icon=(icon)
-      # rubocop:disable Lint/ReturnInVoidContext
-      return update_role_data(unicode_emoji: nil, icon: nil) if icon.nil?
-      # rubocop:enable Lint/ReturnInVoidContext
+      if icon.nil?
+        update_role_data(unicode_emoji: nil, icon: nil)
+        return
+      end
 
       if icon.respond_to?(:read)
         update_role_data(unicode_emoji: nil, icon: icon)
