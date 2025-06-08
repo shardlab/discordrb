@@ -1571,13 +1571,13 @@ module Discordrb
         when Interaction::TYPES[:command]
           event = ApplicationCommandEvent.new(data, self)
 
-          Thread.new do
-            Thread.current[:discordrb_name] = "it-#{event.interaction.id}"
+          Thread.new(event) do |evt|
+            Thread.current[:discordrb_name] = "it-#{evt.interaction.id}"
 
             begin
-              debug("Executing application command #{event.command_name}:#{event.command_id}")
+              debug("Executing application command #{evt.command_name}:#{evt.command_id}")
 
-              @application_commands[event.command_name]&.call(event)
+              @application_commands[evt.command_name]&.call(evt)
             rescue StandardError => e
               log_exception(e)
             end
@@ -1661,10 +1661,8 @@ module Discordrb
       # The existence of this array is checked before for performance reasons, since this has to be done for *every*
       # dispatch.
       if @event_handlers && @event_handlers[RawEvent]
-        # Don't assign a seperate variable named event here, because application
-        # command handlers run in a seperate thread, and by the time the thread
-        # start running, event has been re-assigned here, and the thread will error out.  
-        raise_event(RawEvent.new(type, data, self))
+        event = RawEvent.new(type, data, self)
+        raise_event(event)
       end
     rescue Exception => e
       LOGGER.error('Gateway message error!')
@@ -1694,15 +1692,15 @@ module Discordrb
     end
 
     def call_event(handler, event)
-      t = Thread.new do
+      t = Thread.new(event) do |evt|
         @event_threads ||= []
         @current_thread ||= 0
 
         @event_threads << t
         Thread.current[:discordrb_name] = "et-#{@current_thread += 1}"
         begin
-          handler.call(event)
-          handler.after_call(event)
+          handler.call(evt)
+          handler.after_call(evt)
         rescue StandardError => e
           log_exception(e)
         ensure
