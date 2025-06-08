@@ -1,6 +1,7 @@
 plugins:
   - rubocop-performance
   - rubocop-rake
+  - rubocop-rspec
 
 inherit_mode:
   merge:
@@ -66,6 +67,24 @@ Style/SingleLineBlockParams:
   Methods:
     - reduce: [m, e]
     - inject: [m, e]
+
+
+## RSpec Cops
+
+# TODO: Requires refactoring
+RSpec/ExampleLength:
+  Enabled: false
+# Controversial cop, but 15 memoized helpers is a lot and can be a sign of a test that's doing too much
+RSpec/MultipleMemoizedHelpers:
+  Max: 15
+# Don't enforce a discordrb namespace for spec files
+RSpec/SpecFilePathFormat:
+  CustomTransform:
+    Discordrb: ''
+# Stubbing subjects is required for testing methods that call the another method on the same object - essential for unit tests
+# We should enable this cop for integration tests if we split them out
+RSpec/SubjectStub:
+  Enabled: false
 
 ###################################
 ## NEW COPS TO MAKE DECISIONS ON ##
