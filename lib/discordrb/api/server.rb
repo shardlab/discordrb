@@ -173,6 +173,21 @@ module Discordrb::API::Server
     )
   end
 
+  # Update the current member's properties.
+  # https://discord.com/developers/docs/resources/guild#modify-current-member
+  def update_current_member(token, server_id, nick = :undef, reason = nil)
+    Discordrb::API.request(
+      :guilds_sid_members_me,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/members/@me",
+      { nick: nick }.reject { |_, v| v == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Remove user from server
   # https://discord.com/developers/docs/resources/guild#remove-guild-member
   def remove_member(token, server_id, user_id, reason = nil)

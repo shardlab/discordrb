@@ -28,8 +28,8 @@ module Discordrb::API::User
     )
   end
 
-  # Change the current bot's nickname on a server
-  # https://discord.com/developers/docs/resources/user#modify-current-user
+  # @deprecated Please use {Discordrb::API::Server.update_current_member} instead.
+  # https://discord.com/developers/docs/resources/user#modify-current-user-nick
   def change_own_nickname(token, server_id, nick, reason = nil)
     Discordrb::API.request(
       :guilds_sid_members_me_nick,
