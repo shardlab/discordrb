@@ -73,7 +73,7 @@ module Discordrb
           if (errs = sub_err['_errors'])
             "#{key}: #{errs.map { |e| e['message'] }.join(' ')}"
           elsif sub_err['message'] || sub_err['code']
-            "#{sub_err['code'] ? "#{sub_err['code']}: " : nil}#{err_msg}"
+            "#{"#{sub_err['code']}: " if sub_err['code']}#{err_msg}"
           elsif sub_err.is_a? String
             sub_err
           else
