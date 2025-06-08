@@ -51,7 +51,7 @@ module Discordrb
   end
 
   # @deprecated Please use {Discordrb.id_compare?}
-  alias_method :id_compare, :id_compare?
+  singleton_class.alias_method :id_compare, :id_compare?
 
   # The maximum length a Discord message can have
   CHARACTER_LIMIT = 2000
