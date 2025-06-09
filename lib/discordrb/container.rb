@@ -200,6 +200,7 @@ module Discordrb
     # @option attributes [Time] :after Matches a time after the time the message was sent at.
     # @option attributes [Time] :before Matches a time before the time the message was sent at.
     # @option attributes [Boolean] :private Matches whether or not the channel is private.
+    # @option attributes [Boolean] :allow_role_mention whether the event triggers on bot managed roleid mentions.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MentionEvent] The event that was raised.
     # @return [MentionEventHandler] the event handler that was registered.
