@@ -22,6 +22,13 @@ module Discordrb
     # @return [Time] When the user's timeout will expire.
     attr_reader :communication_disabled_until
     alias_method :timeout, :communication_disabled_until
+
+    # @!attribute [r] avatar_id
+    #   @return [String, nil] the ID of this member's current avatar, can be used to generate an avatar URL.
+    #   @see Member#avatar_url
+    def avatar_id
+      @avatar || @user.avatar_id
+    end
   end
 
   # A member is a user on a server. It differs from regular users in that it has roles, voice statuses and things like
@@ -77,6 +84,7 @@ module Discordrb
       timeout_until = data['communication_disabled_until']
       @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
       @permissions = Permissions.new(data['permissions']) if data['permissions']
+      @avatar_id = data['avatar']
     end
 
     # @return [Server] the server this member is on.
@@ -291,6 +299,13 @@ module Discordrb
       nickname || global_name || username
     end
 
+    # (See User#avatar_url)
+    def avatar_url(format = nil)
+      return @user.avatar_url(format) unless @avatar_id
+
+      API::Server.avatar_url(@server_id, @user.id, @avatar_id, format)
+    end
+
     # Update this member's roles
     # @note For internal use only.
     # @!visibility private
@@ -332,6 +347,7 @@ module Discordrb
       update_nick(data['nick']) if data.key?('nick')
       @mute = data['mute'] if data.key?('mute')
       @deaf = data['deaf'] if data.key?('deaf')
+      @avatar_id = data['avatar'] if data.key?('avatar')
 
       @joined_at = Time.parse(data['joined_at']) if data['joined_at']
       timeout_until = data['communication_disabled_until']
