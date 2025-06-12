@@ -48,10 +48,12 @@ module Discordrb
     private
 
     # Whether the paginator limit has been exceeded
-    def limit_check
+    def limit_exceeded?
       return false if @limit.nil?
 
       @count >= @limit
     end
+
+    alias_method :limit_check, :limit_exceeded?
   end
 end
