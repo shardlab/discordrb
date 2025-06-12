@@ -49,6 +49,17 @@ module Discordrb
     # @see #avatar_url
     attr_accessor :avatar_id
 
+    # @return [true, false] whether the user is an offical Discord System user (part of the urgent message system).
+    attr_reader :system_account
+    alias_method :system_account?, :system_account
+
+    # @return [String] the ID of this user's current banner, can be used to generate a banner URL.
+    # @see #banner_url
+    attr_accessor :banner_id
+
+    # @return [AvatarDecoration, nil] the current user's avatar decoration, or nil if the user doesn't have one.
+    attr_reader :avatar_decoration
+
     # Utility function to get Discord's display name of a user not in server
     # @return [String] the name the user displays as (global_name if they have one, username otherwise)
     def display_name
@@ -94,6 +105,14 @@ module Discordrb
         @public_flags.anybits?(value)
       end
     end
+
+    # Utility function to get a user's banner URL.
+    # @param format [String, nil] If `nil`, the URL will default to `png` for static banners and will detect if the user has a `gif` banner.
+    # You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this.
+    # @return [String, nil] the URL to the banner image or nil if the user doesn't have one.
+    def banner_url(format = nil)
+      API::User.banner_url(@id, @banner_id, format) if @banner_id
+    end
   end
 
   # User on Discord, including internal data like discriminators
@@ -132,6 +151,9 @@ module Discordrb
 
       @status = :offline
       @client_status = process_client_status(data['client_status'])
+      @banner_id = data['banner']
+      @system_account = data.key?('system') ? data['system'] : false
+      @avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
     end
 
     # Get a user's PM channel or send them a PM
@@ -222,6 +244,11 @@ module Discordrb
     # @!visibility private
     def process_client_status(client_status)
       (client_status || {}).to_h { |k, v| [k.to_sym, v.to_sym] }
+    end
+
+    # @!visibility private
+    def process_avatar_decoration(decoration)
+      decoration ? AvatarDecoration.new(decoration, @bot) : nil
     end
 
     # @!method offline?

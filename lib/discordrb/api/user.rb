@@ -152,4 +152,14 @@ module Discordrb::API::User
                end
     "#{Discordrb::API.cdn_url}/avatars/#{user_id}/#{avatar_id}.#{format}"
   end
+
+  # Make a banner URL from the user and banner IDs
+  def banner_url(user_id, banner_id, format = nil)
+    format ||= if banner_id.start_with?('a_')
+                 'gif'
+               else
+                 'png'
+               end
+    "#{Discordrb::API.cdn_url}/banners/#{user_id}/#{banner_id}.#{format}"
+  end
 end
