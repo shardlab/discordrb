@@ -427,9 +427,7 @@ module Discordrb
         @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
       end
 
-      if data.key?('avatar_decoration_data')
-        @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
-      end
+      @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data']) if data.key?('avatar_decoration_data')
     end
 
     include PermissionCalculator

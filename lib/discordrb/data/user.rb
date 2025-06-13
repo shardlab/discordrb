@@ -56,6 +56,9 @@ module Discordrb
     # @return [AvatarDecoration, nil] the current user's avatar decoration, or nil if the user doesn't have one.
     attr_reader :avatar_decoration
 
+    # @return [Collectibles, nil] the collectibles that this user has collected.
+    attr_reader :collectibles
+
     # Utility function to get Discord's display name of a user not in server
     # @return [String] the name the user displays as (global_name if they have one, username otherwise)
     def display_name
@@ -149,6 +152,7 @@ module Discordrb
       @banner_id = data['banner']
       @system_account = data.key?('system') ? data['system'] : false
       @avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
+      @collectibles = Collectibles.new(data['collectibles'], bot) if data['collectibles']
     end
 
     # Get a user's PM channel or send them a PM
@@ -187,7 +191,7 @@ module Discordrb
     # @return [String, nil] the ID of this user's current banner, can be used to generate a banner URL.
     # @see #banner_url
     def banner_id
-      @banner_id ||= JSON.parse(API::User.resolve(@bot.token, @id))['banner'] 
+      @banner_id ||= JSON.parse(API::User.resolve(@bot.token, @id))['banner']
     end
 
     # Set the user's username
@@ -209,6 +213,13 @@ module Discordrb
     # @!visibility private
     def update_avatar_decoration(decoration)
       @avatar_decoration = process_avatar_decoration(decoration)
+    end
+
+    # Set the user's collectibles
+    # @note For internal use only.
+    # @!visibility private
+    def update_collectibles(collectibles)
+      @collectibles = collectibles ? Collectibles.new(collectibles, @bot) : nil
     end
 
     # Set the user's presence data

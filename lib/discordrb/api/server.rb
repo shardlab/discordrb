@@ -586,23 +586,23 @@ module Discordrb::API::Server
     )
   end
 
-  # Make an member avatar URL from the guild, user and avatar IDs
-  def avatar_url(guild_id, user_id, avatar_id, format = nil)
+  # Make an member avatar URL from the server, user and avatar IDs
+  def avatar_url(server_id, user_id, avatar_id, format = nil)
     format ||= if avatar_id.start_with?('a_')
                  'gif'
                else
                  'webp'
                end
-    "#{Discordrb::API.cdn_url}/guilds/#{guild_id}/users/#{user_id}/avatars/#{avatar_id}.#{format}"
+    "#{Discordrb::API.cdn_url}/guilds/#{server_id}/users/#{user_id}/avatars/#{avatar_id}.#{format}"
   end
 
-  # Make a banner URL from the guild, user and banner IDs
-  def banner_url(guild_id, user_id, banner_id, format = nil)
+  # Make a banner URL from the server, user and banner IDs
+  def banner_url(server_id, user_id, banner_id, format = nil)
     format ||= if banner_id.start_with?('a_')
                  'gif'
                else
                  'webp'
                end
-    "#{Discordrb::API.cdn_url}/guilds/#{guild_id}/users/#{user_id}/banners/#{banner_id}.#{format}"
+    "#{Discordrb::API.cdn_url}/guilds/#{server_id}/users/#{user_id}/banners/#{banner_id}.#{format}"
   end
 end

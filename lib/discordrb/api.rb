@@ -236,6 +236,11 @@ module Discordrb::API
     "#{cdn_url}/avatar-decoration-presets/#{avatar_decoration_id}.#{format}"
   end
 
+  # make a nameplate URL from the namplate asset.
+  def nameplate_url(nameplate_asset, format = 'webm')
+    "#{cdn_url}/assets/collectibles/#{nameplate_asset.delete_suffix('/')}/asset.#{format}"
+  end
+
   # Create an OAuth application
   def create_oauth_application(token, name, redirect_uris)
     request(
