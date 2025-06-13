@@ -39,7 +39,7 @@ module Discordrb
     # @return [Integer] the flags set on this member.
     attr_reader :flags
 
-    # @return [true, false] whether the member has not yet passed the server's Membership Screening requirements.
+    # @return [true, false] whether the member has not yet passed the server's membership screening requirements.
     attr_reader :pending
     alias_method :pending?, :pending
 
@@ -419,6 +419,10 @@ module Discordrb
       @joined_at = Time.parse(data['joined_at']) if data['joined_at']
       timeout_until = data['communication_disabled_until']
       @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
+
+      if data.key?('avatar_decoration_data')
+        @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
+      end
     end
 
     include PermissionCalculator

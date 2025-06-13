@@ -53,10 +53,6 @@ module Discordrb
     attr_reader :system_account
     alias_method :system_account?, :system_account
 
-    # @return [String] the ID of this user's current banner, can be used to generate a banner URL.
-    # @see #banner_url
-    attr_accessor :banner_id
-
     # @return [AvatarDecoration, nil] the current user's avatar decoration, or nil if the user doesn't have one.
     attr_reader :avatar_decoration
 
@@ -111,7 +107,7 @@ module Discordrb
     # You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this.
     # @return [String, nil] the URL to the banner image or nil if the user doesn't have one.
     def banner_url(format = nil)
-      API::User.banner_url(@id, @banner_id, format) if @banner_id
+      API::User.banner_url(@id, banner_id, format) if banner_id
     end
   end
 
@@ -139,7 +135,6 @@ module Discordrb
       @id = data['id'].to_i
       @discriminator = data['discriminator']
       @avatar_id = data['avatar']
-      @roles = {}
       @activities = Discordrb::ActivitySet.new
       @public_flags = data['public_flags'] || 0
 
@@ -187,6 +182,12 @@ module Discordrb
     #   user.send_file(File.open('rubytaco.png', 'r'))
     def send_file(file, caption = nil, filename: nil, spoiler: nil)
       pm.send_file(file, caption: caption, filename: filename, spoiler: spoiler)
+    end
+
+    # @return [String, nil] the ID of this user's current banner, can be used to generate a banner URL.
+    # @see #banner_url
+    def banner_id
+      @banner_id ||= JSON.parse(API::User.resolve(@bot.token, @id))['banner'] 
     end
 
     # Set the user's username
