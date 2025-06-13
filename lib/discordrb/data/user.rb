@@ -204,6 +204,13 @@ module Discordrb
       @global_name = global_name
     end
 
+    # Set the user's avatar_decoration
+    # @note For internal use only.
+    # @!visibility private
+    def update_avatar_decoration(decoration)
+      @avatar_decoration = process_avatar_decoration(decoration)
+    end
+
     # Set the user's presence data
     # @note for internal use only
     # @!visibility private

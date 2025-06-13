@@ -415,13 +415,16 @@ module Discordrb
       @server_banner_id = data['banner'] if data.key?('banner')
       @flags = data['flags'] if data.key?('flags')
       @pending = data['pending'] if data.key?('pending')
-      @boosting_since = data['premium_since'] if data.key?('premium_since')
 
       @joined_at = Time.parse(data['joined_at']) if data['joined_at']
 
       if data.key?('communication_disabled_until')
         timeout_until = data['communication_disabled_until']
         @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
+      end
+
+      if data.key('premium_since')
+        @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
       end
 
       if data.key?('avatar_decoration_data')
