@@ -408,17 +408,21 @@ module Discordrb
     # @!visibility private
     def update_data(data)
       update_roles(data['roles']) if data['roles']
-      update_nick(data['nick']) if data.key?('nick')
+      @nick = data['nick'] if data.key?('nick')
       @mute = data['mute'] if data.key?('mute')
       @deaf = data['deaf'] if data.key?('deaf')
       @server_avatar_id = data['avatar'] if data.key?('avatar')
       @server_banner_id = data['banner'] if data.key?('banner')
       @flags = data['flags'] if data.key?('flags')
       @pending = data['pending'] if data.key?('pending')
+      @boosting_since = data['premium_since'] if data.key?('premium_since')
 
       @joined_at = Time.parse(data['joined_at']) if data['joined_at']
-      timeout_until = data['communication_disabled_until']
-      @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
+
+      if data.key?('communication_disabled_until')
+        timeout_until = data['communication_disabled_until']
+        @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
+      end
 
       if data.key?('avatar_decoration_data')
         @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
