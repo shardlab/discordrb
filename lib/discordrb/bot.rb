@@ -1102,7 +1102,7 @@ module Discordrb
       server = self.server(server_id)
 
       if (member = server.member(data['user']['id'].to_i))
-        member.update_data(member)
+        member.update_data(data)
         member.update_global_name(data['user']['global_name']) if data['user']['global_name']
         member.avatar_id = data['user']['avatar'] if data['user'].key('avatar')
         member.update_avatar_decoration(data['user']['avatar_decoration_data']) if data['user'].key?('avatar_decoration_data')
