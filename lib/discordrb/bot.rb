@@ -1102,11 +1102,11 @@ module Discordrb
       server = self.server(server_id)
 
       if (member = server.member(data['user']['id'].to_i))
-        member.update_roles(data['roles'])
-        member.update_nick(data['nick'])
+        member.update_data(data)
         member.update_global_name(data['user']['global_name']) if data['user']['global_name']
-        member.update_boosting_since(data['premium_since'])
-        member.update_communication_disabled_until(data['communication_disabled_until'])
+        member.avatar_id = data['user']['avatar'] if data['user'].key('avatar')
+        member.update_avatar_decoration(data['user']['avatar_decoration_data']) if data['user'].key?('avatar_decoration_data')
+        member.update_collectibles(data['user']['collectibles']) if data['user'].key?('collectibles')
       else
         Discordrb::LOGGER.warn("update_guild_member attempted to access a member which doesn't exist! Not sure what happened here, ignoring.")
       end
