@@ -56,7 +56,7 @@ module Discordrb
     # @return [AvatarDecoration, nil] the current user's avatar decoration, or nil if the user doesn't have one.
     attr_reader :avatar_decoration
 
-    # @return [Collectibles, nil] the collectibles that this user has collected.
+    # @return [Collectibles] the collectibles that this user has collected.
     attr_reader :collectibles
 
     # Utility function to get Discord's display name of a user not in server
@@ -152,7 +152,7 @@ module Discordrb
       @banner_id = data['banner']
       @system_account = data.key?('system') ? data['system'] : false
       @avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
-      @collectibles = Collectibles.new(data['collectibles'], bot) if data['collectibles']
+      @collectibles = Collectibles.new(data['collectibles'] || {}, bot)
     end
 
     # Get a user's PM channel or send them a PM
@@ -219,7 +219,7 @@ module Discordrb
     # @note For internal use only.
     # @!visibility private
     def update_collectibles(collectibles)
-      @collectibles = collectibles ? Collectibles.new(collectibles, @bot) : nil
+      @collectibles = Collectibles.new(collectibles || {}, @bot)
     end
 
     # Set the user's presence data
