@@ -653,8 +653,12 @@ module Discordrb
     # @option attributes [String, Symbol] :subcommand A subcommand name to match against.
     # @option attributes [String, Symbol] :subcommand_group A subcommand group to match against.
     # @option attributes [String, Symbol] :command_name A command name to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [AutocompleteEvent] The event that was raised.
+    # @return [AutocompleteEventHandler] The event handler that was registered.
     def autocomplete(name = nil, attributes = {}, &block)
-      register_event(AutocompleteEvent, attributes.merge!(name: name), block)
+      register_event(AutocompleteEvent, attributes.merge!({ name: name }), block)
     end
 
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.

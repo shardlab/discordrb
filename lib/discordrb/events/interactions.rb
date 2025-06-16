@@ -493,7 +493,8 @@ module Discordrb::Events
         matches_all(@attributes[:command_id], event.command_id) { |a, e| a&.to_i == e },
         matches_all(@attributes[:subcommand], event.subcommand) { |a, e| a&.to_sym == e },
         matches_all(@attributes[:command_name], event.command_name) { |a, e| a&.to_sym == e },
-        matches_all(@attributes[:subcommand_group], event.subcommand_group) { |a, e| a&.to_sym == e }
+        matches_all(@attributes[:subcommand_group], event.subcommand_group) { |a, e| a&.to_sym == e },
+        matches_all(@attributes[:server], event.server_id) { |a, e| a&.resolve_id == e }
       ].reduce(&:&)
     end
   end
