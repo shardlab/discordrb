@@ -154,7 +154,7 @@ module Discordrb::API::Server
   # Update a user properties
   # https://discord.com/developers/docs/resources/guild#modify-guild-member
   def update_member(token, server_id, user_id, nick: :undef, roles: :undef, mute: :undef, deaf: :undef, channel_id: :undef,
-                    communication_disabled_until: :undef, reason: nil)
+                    communication_disabled_until: :undef, flags: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid_members_uid,
       server_id,
@@ -165,8 +165,24 @@ module Discordrb::API::Server
         mute: mute,
         deaf: deaf,
         channel_id: channel_id,
-        communication_disabled_until: communication_disabled_until
+        communication_disabled_until: communication_disabled_until,
+        flags: flags
       }.reject { |_, v| v == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Update the current member's properties.
+  # https://discord.com/developers/docs/resources/guild#modify-current-member
+  def update_current_member(token, server_id, nick = :undef, reason = nil)
+    Discordrb::API.request(
+      :guilds_sid_members_me,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/members/@me",
+      { nick: nick }.reject { |_, v| v == :undef }.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
@@ -576,6 +592,25 @@ module Discordrb::API::Server
       Authorization: token
     )
   end
+
+  # Make an member avatar URL from the server, user and avatar IDs
+  def avatar_url(server_id, user_id, avatar_id, format = nil)
+    format ||= if avatar_id.start_with?('a_')
+                 'gif'
+               else
+                 'webp'
+               end
+    "#{Discordrb::API.cdn_url}/guilds/#{server_id}/users/#{user_id}/avatars/#{avatar_id}.#{format}"
+  end
+
+  # Make a banner URL from the server, user and banner IDs
+  def banner_url(server_id, user_id, banner_id, format = nil)
+    format ||= if banner_id.start_with?('a_')
+                 'gif'
+               else
+                 'webp'
+               end
+    "#{Discordrb::API.cdn_url}/guilds/#{server_id}/users/#{user_id}/banners/#{banner_id}.#{format}"
 
   # Ban multiple users in one go
   # https://discord.com/developers/docs/resources/guild#bulk-guild-ban

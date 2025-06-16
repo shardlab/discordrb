@@ -49,6 +49,16 @@ module Discordrb
     # @see #avatar_url
     attr_accessor :avatar_id
 
+    # @return [true, false] whether the user is an offical Discord System user (part of the urgent message system).
+    attr_reader :system_account
+    alias_method :system_account?, :system_account
+
+    # @return [AvatarDecoration, nil] the current user's avatar decoration, or nil if the user doesn't have one.
+    attr_reader :avatar_decoration
+
+    # @return [Collectibles] the collectibles that this user has collected.
+    attr_reader :collectibles
+
     # Utility function to get Discord's display name of a user not in server
     # @return [String] the name the user displays as (global_name if they have one, username otherwise)
     def display_name
@@ -94,6 +104,14 @@ module Discordrb
         @public_flags.anybits?(value)
       end
     end
+
+    # Utility function to get a user's banner URL.
+    # @param format [String, nil] If `nil`, the URL will default to `png` for static banners and will detect if the user has a `gif` banner.
+    # You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this.
+    # @return [String, nil] the URL to the banner image or nil if the user doesn't have one.
+    def banner_url(format = nil)
+      API::User.banner_url(@id, banner_id, format) if banner_id
+    end
   end
 
   # User on Discord, including internal data like discriminators
@@ -120,7 +138,6 @@ module Discordrb
       @id = data['id'].to_i
       @discriminator = data['discriminator']
       @avatar_id = data['avatar']
-      @roles = {}
       @activities = Discordrb::ActivitySet.new
       @public_flags = data['public_flags'] || 0
 
@@ -132,6 +149,10 @@ module Discordrb
 
       @status = :offline
       @client_status = process_client_status(data['client_status'])
+      @banner_id = data['banner']
+      @system_account = data['system'] || false
+      @avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
+      @collectibles = Collectibles.new(data['collectibles'] || {}, bot)
     end
 
     # Get a user's PM channel or send them a PM
@@ -167,6 +188,12 @@ module Discordrb
       pm.send_file(file, caption: caption, filename: filename, spoiler: spoiler)
     end
 
+    # @return [String, nil] the ID of this user's current banner, can be used to generate a banner URL.
+    # @see #banner_url
+    def banner_id
+      @banner_id ||= JSON.parse(API::User.resolve(@bot.token, @id))['banner']
+    end
+
     # Set the user's username
     # @note for internal use only
     # @!visibility private
@@ -179,6 +206,20 @@ module Discordrb
     # @!visibility private
     def update_global_name(global_name)
       @global_name = global_name
+    end
+
+    # Set the user's avatar_decoration
+    # @note For internal use only.
+    # @!visibility private
+    def update_avatar_decoration(decoration)
+      @avatar_decoration = process_avatar_decoration(decoration)
+    end
+
+    # Set the user's collectibles
+    # @note For internal use only.
+    # @!visibility private
+    def update_collectibles(collectibles)
+      @collectibles = Collectibles.new(collectibles || {}, @bot)
     end
 
     # Set the user's presence data
@@ -222,6 +263,11 @@ module Discordrb
     # @!visibility private
     def process_client_status(client_status)
       (client_status || {}).to_h { |k, v| [k.to_sym, v.to_sym] }
+    end
+
+    # @!visibility private
+    def process_avatar_decoration(decoration)
+      decoration ? AvatarDecoration.new(decoration, @bot) : nil
     end
 
     # @!method offline?
