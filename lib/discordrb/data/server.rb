@@ -641,7 +641,6 @@ module Discordrb
       if users.size == 1
         begin
           ban(users.first, 0, message_seconds: message_seconds, reason: reason)
-          
           return BulkBan.new({ 'banned_users' => users }, self, reason)
         rescue StandardError
           return BulkBan.new({ 'failed_users' => users }, self, reason)
