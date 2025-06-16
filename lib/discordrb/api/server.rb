@@ -611,6 +611,7 @@ module Discordrb::API::Server
                  'webp'
                end
     "#{Discordrb::API.cdn_url}/guilds/#{server_id}/users/#{user_id}/banners/#{banner_id}.#{format}"
+  end
 
   # Ban multiple users in one go
   # https://discord.com/developers/docs/resources/guild#bulk-guild-ban

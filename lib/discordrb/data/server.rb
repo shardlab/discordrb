@@ -634,11 +634,19 @@ module Discordrb
     # @param users [Array<User, String, Integer>] Array of up to 200 users to ban.
     # @param message_seconds [Integer] How many seconds of messages sent by the users should be deleted.
     # @param reason [String] The reason these users are being banned.
-    # @return [nil, BulkBan] nil if only a single user was provided or a bulk ban object otherwise.
+    # @return [BulkBan]
     def bulk_ban(users, message_seconds: 0, reason: nil)
       raise ArgumentError, 'Can only ban between 1 and 200 users!' unless users.size.between?(1, 200)
 
-      return ban(users.first, 0, message_seconds: message_seconds, reason: reason) if users.size == 1
+      if users.size == 1
+        begin
+          ban(users.first, 0, message_seconds: message_seconds, reason: reason)
+          
+          return BulkBan.new({ 'banned_users' => users }, self, reason)
+        rescue StandardError
+          return BulkBan.new({ 'failed_users' => users }, self, reason)
+        end
+      end
 
       response = API::Server.bulk_ban(@bot.token, @id, users.map(&:resolve_id), message_seconds, reason)
       BulkBan.new(JSON.parse(response), self, reason)
@@ -1052,8 +1060,8 @@ module Discordrb
     def initialize(data, server, reason)
       @server = server
       @reason = reason
-      @banned_users = data['banned_users'].map(&:resolve_id)
-      @failed_users = data['failed_users'].map(&:resolve_id)
+      @banned_users = data['banned_users']&.map(&:resolve_id) || []
+      @failed_users = data['failed_users']&.map(&:resolve_id) || []
     end
   end
 end
