@@ -944,8 +944,10 @@ module Discordrb
 
     private
 
+    # rubocop:disable Lint/UselessConstantScoping
     # For bulk_delete checking
     TWO_WEEKS = 86_400 * 14
+    # rubocop:enable Lint/UselessConstantScoping
 
     # Deletes a list of messages on this channel using bulk delete.
     def bulk_delete(ids, strict = false, reason = nil)
@@ -968,7 +970,7 @@ module Discordrb
     def update_channel_data(new_data)
       new_nsfw = new_data[:nsfw].is_a?(TrueClass) || new_data[:nsfw].is_a?(FalseClass) ? new_data[:nsfw] : @nsfw
       # send permission_overwrite only when explicitly set
-      overwrites = new_data[:permission_overwrites] ? new_data[:permission_overwrites].map { |_, v| v.to_hash } : nil
+      overwrites = new_data[:permission_overwrites] ? new_data[:permission_overwrites].map(&:to_hash) : nil
       response = JSON.parse(API::Channel.update(@bot.token, @id,
                                                 new_data[:name] || @name,
                                                 new_data[:topic] || @topic,
