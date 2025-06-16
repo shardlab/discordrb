@@ -150,7 +150,7 @@ module Discordrb
       @status = :offline
       @client_status = process_client_status(data['client_status'])
       @banner_id = data['banner']
-      @system_account = data.key?('system') ? data['system'] : false
+      @system_account = data['system'] || false
       @avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
       @collectibles = Collectibles.new(data['collectibles'] || {}, bot)
     end
