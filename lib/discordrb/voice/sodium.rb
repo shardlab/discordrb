@@ -1,98 +1,155 @@
 # frozen_string_literal: true
 
 require 'ffi'
+require 'securerandom'
 
 module Discordrb::Voice
   # @!visibility private
   module Sodium
-    extend ::FFI::Library
+    extend FFI::Library
+    ffi_lib 'sodium'
 
-    ffi_lib(['sodium', 'libsodium.so.18', 'libsodium.so.23'])
+    # @!group Constants
 
-    # Encryption & decryption
-    attach_function(:crypto_secretbox_xsalsa20poly1305, %i[pointer pointer ulong_long pointer pointer], :int)
-    attach_function(:crypto_secretbox_xsalsa20poly1305_open, %i[pointer pointer ulong_long pointer pointer], :int)
+    # Initializes libsodium
+    # @return [Integer] 0 on success
+    attach_function :sodium_init, [], :int
 
-    # Constants
-    attach_function(:crypto_secretbox_xsalsa20poly1305_keybytes, [], :size_t)
-    attach_function(:crypto_secretbox_xsalsa20poly1305_noncebytes, [], :size_t)
-    attach_function(:crypto_secretbox_xsalsa20poly1305_zerobytes, [], :size_t)
-    attach_function(:crypto_secretbox_xsalsa20poly1305_boxzerobytes, [], :size_t)
+    # Returns the key size (in bytes)
+    # @return [Integer]
+    attach_function :crypto_aead_xchacha20poly1305_ietf_keybytes, [], :size_t
+
+    # Returns the nonce size (in bytes)
+    # @return [Integer]
+    attach_function :crypto_aead_xchacha20poly1305_ietf_npubbytes, [], :size_t
+
+    # Returns the authentication tag size (in bytes)
+    # @return [Integer]
+    attach_function :crypto_aead_xchacha20poly1305_ietf_abytes, [], :size_t
+
+    # @!endgroup
+
+    # @!group AEAD Encrypt/Decrypt
+
+    # Performs authenticated encryption using XChaCha20-Poly1305
+    #
+    # @param c [FFI::Pointer] output buffer for ciphertext
+    # @param clen_p [FFI::Pointer] output pointer for ciphertext length
+    # @param m [FFI::Pointer] input message pointer
+    # @param mlen [Integer] length of the message
+    # @param ad [FFI::Pointer] pointer to associated data
+    # @param adlen [Integer] length of associated data
+    # @param nsec [FFI::Pointer, nil] (not used, must be nil)
+    # @param npub [FFI::Pointer] nonce pointer
+    # @param k [FFI::Pointer] key pointer
+    # @return [Integer] 0 on success
+    attach_function :crypto_aead_xchacha20poly1305_ietf_encrypt, [
+      :pointer, :pointer, :pointer, :ulong_long,
+      :pointer, :ulong_long,
+      :pointer, :pointer, :pointer
+    ], :int
+
+    # Decrypts XChaCha20-Poly1305 AEAD-encrypted data
+    #
+    # @param m [FFI::Pointer] output buffer for decrypted message
+    # @param mlen_p [FFI::Pointer] output pointer for decrypted length
+    # @param nsec [FFI::Pointer, nil] (not used, must be nil)
+    # @param c [FFI::Pointer] ciphertext pointer
+    # @param clen [Integer] length of ciphertext
+    # @param ad [FFI::Pointer] pointer to associated data
+    # @param adlen [Integer] length of associated data
+    # @param npub [FFI::Pointer] nonce pointer
+    # @param k [FFI::Pointer] key pointer
+    # @return [Integer] 0 on success
+    attach_function :crypto_aead_xchacha20poly1305_ietf_decrypt, [
+      :pointer, :pointer, :pointer, :pointer, :ulong_long,
+      :pointer, :ulong_long, :pointer, :pointer
+    ], :int
+
+    # @!endgroup
   end
 
-  # Utility class for interacting with required `xsalsa20poly1305` functions for voice transmission
-  # @!visibility private
-  class SecretBox
-    # Exception raised when a key or nonce with invalid length is used
-    class LengthError < RuntimeError
+  Sodium.sodium_init
+
+  # High-level wrapper class
+  class XChaCha20AEAD
+    KEY_BYTES = Sodium.crypto_aead_xchacha20poly1305_ietf_keybytes
+    NONCE_BYTES = Sodium.crypto_aead_xchacha20poly1305_ietf_npubbytes
+    TAG_BYTES = Sodium.crypto_aead_xchacha20poly1305_ietf_abytes
+
+    # Generates a random key
+    # @return [String] binary key
+    def self.generate_key
+      SecureRandom.random_bytes(KEY_BYTES)
     end
 
-    # Exception raised when encryption or decryption fails
-    class CryptoError < RuntimeError
+    # Generates a random nonce
+    # @return [String] binary nonce
+    def self.generate_nonce
+      SecureRandom.random_bytes(NONCE_BYTES)
     end
 
-    # Required key length
-    KEY_LENGTH = Sodium.crypto_secretbox_xsalsa20poly1305_keybytes
+    # Encrypts a message using XChaCha20-Poly1305
+    #
+    # @param message [String] plaintext to encrypt
+    # @param key [String] 32-byte encryption key
+    # @param nonce [String] 24-byte nonce
+    # @param ad [String] optional associated data
+    # @return [String] ciphertext (includes the auth tag)
+    def self.encrypt(message, ad, nonce, key)
+      raise ArgumentError, "Invalid key size" unless key.bytesize == KEY_BYTES
+      raise ArgumentError, "Invalid nonce size" unless nonce.bytesize == NONCE_BYTES
 
-    # Required nonce length
-    NONCE_BYTES = Sodium.crypto_secretbox_xsalsa20poly1305_noncebytes
+      message_ptr = FFI::MemoryPointer.from_string(message)
+      ad_ptr = FFI::MemoryPointer.from_string(ad)
 
-    # Zero byte padding for encryption
-    ZERO_BYTES = Sodium.crypto_secretbox_xsalsa20poly1305_zerobytes
+      c_len = message.bytesize + TAG_BYTES
+      ciphertext = FFI::MemoryPointer.new(:uchar, c_len)
+      clen_p = FFI::MemoryPointer.new(:ulong_long)
 
-    # Zero byte padding for decryption
-    BOX_ZERO_BYTES = Sodium.crypto_secretbox_xsalsa20poly1305_boxzerobytes
+      result = Sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
+        ciphertext, clen_p,
+        message_ptr, message.bytesize,
+        ad_ptr, ad.bytesize,
+        nil,
+        FFI::MemoryPointer.from_string(nonce),
+        FFI::MemoryPointer.from_string(key)
+      )
 
-    # @param key [String] Crypto key of length {KEY_LENGTH}
-    def initialize(key)
-      raise(LengthError, 'Key length') if key.bytesize != KEY_LENGTH
+      raise "Encryption failed" unless result.zero?
 
-      @key = key
+      ciphertext.read_string(clen_p.read_ulong_long)
     end
 
-    # Encrypts a message using this box's key
-    # @param nonce [String] encryption nonce for this message
-    # @param message [String] message to be encrypted
-    def box(nonce, message)
-      raise(LengthError, 'Nonce length') if nonce.bytesize != NONCE_BYTES
+    # Decrypts a ciphertext using XChaCha20-Poly1305
+    #
+    # @param ciphertext [String] the encrypted data (with tag)
+    # @param key [String] 32-byte decryption key
+    # @param nonce [String] 24-byte nonce
+    # @param ad [String] optional associated data
+    # @return [String] decrypted plaintext
+    def self.decrypt(ciphertext, nonce, ad, key)
+      raise ArgumentError, "Invalid key size" unless key.bytesize == KEY_BYTES
+      raise ArgumentError, "Invalid nonce size" unless nonce.bytesize == NONCE_BYTES
 
-      message_padded = prepend_zeroes(ZERO_BYTES, message)
-      buffer = zero_string(message_padded.bytesize)
+      c_ptr = FFI::MemoryPointer.from_string(ciphertext)
+      ad_ptr = FFI::MemoryPointer.from_string(ad)
 
-      success = Sodium.crypto_secretbox_xsalsa20poly1305(buffer, message_padded, message_padded.bytesize, nonce, @key)
-      raise(CryptoError, "Encryption failed (#{success})") unless success.zero?
+      m_ptr = FFI::MemoryPointer.new(:uchar, ciphertext.bytesize - TAG_BYTES)
+      mlen_p = FFI::MemoryPointer.new(:ulong_long)
 
-      remove_zeroes(BOX_ZERO_BYTES, buffer)
-    end
+      result = Sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
+        m_ptr, mlen_p,
+        nil,
+        c_ptr, ciphertext.bytesize,
+        ad_ptr, ad.bytesize,
+        FFI::MemoryPointer.from_string(nonce),
+        FFI::MemoryPointer.from_string(key)
+      )
 
-    # Decrypts the given ciphertext using this box's key
-    # @param nonce [String] encryption nonce for this ciphertext
-    # @param ciphertext [String] ciphertext to decrypt
-    def open(nonce, ciphertext)
-      raise(LengthError, 'Nonce length') if nonce.bytesize != NONCE_BYTES
+      raise "Decryption failed" unless result.zero?
 
-      ct_padded = prepend_zeroes(BOX_ZERO_BYTES, ciphertext)
-      buffer = zero_string(ct_padded.bytesize)
-
-      success = Sodium.crypto_secretbox_xsalsa20poly1305_open(buffer, ct_padded, ct_padded.bytesize, nonce, @key)
-      raise(CryptoError, "Decryption failed (#{success})") unless success.zero?
-
-      remove_zeroes(ZERO_BYTES, buffer)
-    end
-
-    private
-
-    def zero_string(size)
-      str = "\0" * size
-      str.force_encoding('ASCII-8BIT') if str.respond_to?(:force_encoding)
-    end
-
-    def prepend_zeroes(size, string)
-      zero_string(size) + string
-    end
-
-    def remove_zeroes(size, string)
-      string.slice!(size, string.bytesize - size)
+      m_ptr.read_string(mlen_p.read_ulong_long)
     end
   end
 end

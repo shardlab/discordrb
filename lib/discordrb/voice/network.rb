@@ -22,14 +22,14 @@ module Discordrb::Voice
   # Signifies to Discord that encryption should be used
   # @deprecated Discord now supports multiple encryption options.
   # TODO: Resolve replacement for this constant.
-  ENCRYPTED_MODE = 'xsalsa20_poly1305'
+  ENCRYPTED_MODE = 'aead_xchacha20_poly1305_rtpsize'
 
   # Signifies to Discord that no encryption should be used
   # @deprecated Discord no longer supports unencrypted voice communication.
   PLAIN_MODE = 'plain'
 
   # Encryption modes supported by Discord
-  ENCRYPTION_MODES = %w[xsalsa20_poly1305_lite xsalsa20_poly1305_suffix xsalsa20_poly1305].freeze
+  ENCRYPTION_MODES = %w[aead_xchacha20_poly1305_rtpsize].freeze
 
   # Represents a UDP connection to a voice server. This connection is used to send the actual audio data.
   class VoiceUDP
@@ -82,15 +82,11 @@ module Discordrb::Voice
     #   sequence number multiplied by 960)
     def send_audio(buf, sequence, time)
       # Header of the audio packet
-      header = [0x80, 0x78, sequence, time, @ssrc].pack('CCnNN')
+      header = generate_header(sequence, time)
 
       nonce = generate_nonce(header)
-      buf = encrypt_audio(buf, nonce)
-
-      data = header + buf
-
-      # xsalsa20_poly1305 does not require an appended nonce
-      data += nonce unless @mode == 'xsalsa20_poly1305'
+      buf = encrypt_audio(buf, header, nonce)
+      data = header + buf + nonce.byteslice(0, 4)
 
       send_packet(data)
     end
@@ -120,15 +116,20 @@ module Discordrb::Voice
 
     # Encrypts audio data using libsodium
     # @param buf [String] The encoded audio data to be encrypted
+    # @param header [String] The RTP header of the packet, used as associated data
     # @param nonce [String] The nonce to be used to encrypt the data
     # @return [String] the audio data, encrypted
-    def encrypt_audio(buf, nonce)
+    def encrypt_audio(buf, header, nonce)
+            # return header + box.encrypt(bytes(data), bytes(header), bytes(nonce)).ciphertext + nonce[:4]
+
       raise 'No secret key found, despite encryption being enabled!' unless @secret_key
 
-      secret_box = Discordrb::Voice::SecretBox.new(@secret_key)
-
-      # Nonces must be 24 bytes in length. We right pad with null bytes for poly1305 and poly1305_lite
-      secret_box.box(nonce.ljust(24, "\0"), buf)
+      case @mode
+      when 'aead_xchacha20_poly1305_rtpsize'
+        Discordrb::Voice::XChaCha20AEAD.encrypt(buf, header, nonce, @secret_key)
+      else
+        raise "`#{@mode}' is not a supported encryption mode"
+      end
     end
 
     def send_packet(packet)
@@ -137,28 +138,24 @@ module Discordrb::Voice
 
     # @param header [String] The header of the packet, to be used as the nonce
     # @return [String]
-    # @note
-    #   The nonce generated depends on the encryption mode.
-    #   In xsalsa20_poly1305 the nonce is the header plus twelve null bytes for padding.
-    #   In xsalsa20_poly1305_suffix, the nonce is 24 random bytes
-    #   In xsalsa20_poly1305_lite, the nonce is an incremental 4 byte int.
     def generate_nonce(header)
       case @mode
-      when 'xsalsa20_poly1305'
-        header
-      when 'xsalsa20_poly1305_suffix'
-        Random.urandom(24)
-      when 'xsalsa20_poly1305_lite'
-        case @lite_nonce
+      when 'aead_xchacha20_poly1305_rtpsize'
+        case @incremental_nonce
         when nil, 0xff_ff_ff_ff
-          @lite_nonce = 0
+          @incremental_nonce = 0
         else
-          @lite_nonce += 1
+          @incremental_nonce += 1
         end
-        [@lite_nonce].pack('N')
+        [@incremental_nonce].pack('N').ljust(24, "\0")
       else
         raise "`#{@mode}' is not a supported encryption mode"
       end
+    end
+
+    # @return [String]
+    def generate_header(sequence, time)
+      [0x80, 0x78, sequence, time, @ssrc].pack('CCnNN')
     end
   end
 
