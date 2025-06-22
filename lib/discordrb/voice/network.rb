@@ -84,7 +84,7 @@ module Discordrb::Voice
       # Header of the audio packet
       header = generate_header(sequence, time)
 
-      nonce = generate_nonce(header)
+      nonce = generate_nonce
       buf = encrypt_audio(buf, header, nonce)
       data = header + buf + nonce.byteslice(0, 4)
 
@@ -120,8 +120,6 @@ module Discordrb::Voice
     # @param nonce [String] The nonce to be used to encrypt the data
     # @return [String] the audio data, encrypted
     def encrypt_audio(buf, header, nonce)
-            # return header + box.encrypt(bytes(data), bytes(header), bytes(nonce)).ciphertext + nonce[:4]
-
       raise 'No secret key found, despite encryption being enabled!' unless @secret_key
 
       case @mode
@@ -136,9 +134,8 @@ module Discordrb::Voice
       @socket.send(packet, 0, @ip, @port)
     end
 
-    # @param header [String] The header of the packet, to be used as the nonce
     # @return [String]
-    def generate_nonce(header)
+    def generate_nonce
       case @mode
       when 'aead_xchacha20_poly1305_rtpsize'
         case @incremental_nonce

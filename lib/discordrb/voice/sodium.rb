@@ -43,10 +43,10 @@ module Discordrb::Voice
     # @param npub [FFI::Pointer] nonce pointer
     # @param k [FFI::Pointer] key pointer
     # @return [Integer] 0 on success
-    attach_function :crypto_aead_xchacha20poly1305_ietf_encrypt, [
-      :pointer, :pointer, :pointer, :ulong_long,
-      :pointer, :ulong_long,
-      :pointer, :pointer, :pointer
+    attach_function :crypto_aead_xchacha20poly1305_ietf_encrypt, %i[
+      pointer pointer pointer ulong_long
+      pointer ulong_long
+      pointer pointer pointer
     ], :int
 
     # Decrypts XChaCha20-Poly1305 AEAD-encrypted data
@@ -61,9 +61,9 @@ module Discordrb::Voice
     # @param npub [FFI::Pointer] nonce pointer
     # @param k [FFI::Pointer] key pointer
     # @return [Integer] 0 on success
-    attach_function :crypto_aead_xchacha20poly1305_ietf_decrypt, [
-      :pointer, :pointer, :pointer, :pointer, :ulong_long,
-      :pointer, :ulong_long, :pointer, :pointer
+    attach_function :crypto_aead_xchacha20poly1305_ietf_decrypt, %i[
+      pointer pointer pointer pointer ulong_long
+      pointer ulong_long pointer pointer
     ], :int
 
     # @!endgroup
@@ -94,14 +94,14 @@ module Discordrb::Voice
     # @param message [String] plaintext to encrypt
     # @param key [String] 32-byte encryption key
     # @param nonce [String] 24-byte nonce
-    # @param ad [String] optional associated data
+    # @param add [String] optional associated data
     # @return [String] ciphertext (includes the auth tag)
-    def self.encrypt(message, ad, nonce, key)
-      raise ArgumentError, "Invalid key size" unless key.bytesize == KEY_BYTES
-      raise ArgumentError, "Invalid nonce size" unless nonce.bytesize == NONCE_BYTES
+    def self.encrypt(message, add, nonce, key)
+      raise ArgumentError, 'Invalid key size' unless key.bytesize == KEY_BYTES
+      raise ArgumentError, 'Invalid nonce size' unless nonce.bytesize == NONCE_BYTES
 
       message_ptr = FFI::MemoryPointer.from_string(message)
-      ad_ptr = FFI::MemoryPointer.from_string(ad)
+      ad_ptr = FFI::MemoryPointer.from_string(add)
 
       c_len = message.bytesize + TAG_BYTES
       ciphertext = FFI::MemoryPointer.new(:uchar, c_len)
@@ -116,7 +116,7 @@ module Discordrb::Voice
         FFI::MemoryPointer.from_string(key)
       )
 
-      raise "Encryption failed" unless result.zero?
+      raise 'Encryption failed' unless result.zero?
 
       ciphertext.read_string(clen_p.read_ulong_long)
     end
@@ -126,14 +126,14 @@ module Discordrb::Voice
     # @param ciphertext [String] the encrypted data (with tag)
     # @param key [String] 32-byte decryption key
     # @param nonce [String] 24-byte nonce
-    # @param ad [String] optional associated data
+    # @param add [String] optional associated data
     # @return [String] decrypted plaintext
-    def self.decrypt(ciphertext, nonce, ad, key)
-      raise ArgumentError, "Invalid key size" unless key.bytesize == KEY_BYTES
-      raise ArgumentError, "Invalid nonce size" unless nonce.bytesize == NONCE_BYTES
+    def self.decrypt(ciphertext, nonce, add, key)
+      raise ArgumentError, 'Invalid key size' unless key.bytesize == KEY_BYTES
+      raise ArgumentError, 'Invalid nonce size' unless nonce.bytesize == NONCE_BYTES
 
       c_ptr = FFI::MemoryPointer.from_string(ciphertext)
-      ad_ptr = FFI::MemoryPointer.from_string(ad)
+      ad_ptr = FFI::MemoryPointer.from_string(add)
 
       m_ptr = FFI::MemoryPointer.new(:uchar, ciphertext.bytesize - TAG_BYTES)
       mlen_p = FFI::MemoryPointer.new(:ulong_long)
@@ -147,7 +147,7 @@ module Discordrb::Voice
         FFI::MemoryPointer.from_string(key)
       )
 
-      raise "Decryption failed" unless result.zero?
+      raise 'Decryption failed' unless result.zero?
 
       m_ptr.read_string(mlen_p.read_ulong_long)
     end
