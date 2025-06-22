@@ -635,6 +635,32 @@ module Discordrb
       register_event(ChannelSelectEvent, attributes, block)
     end
 
+    # This **event** is raised whenever a message is pinned or unpinned.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Channel] :channel A channel to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ChannelPinsUpdateEvent] The event that was raised.
+    # @return [ChannelPinsUpdateEventHandler] The event handler that was registered.
+    def channel_pins_update(attributes = {}, &block)
+      register_event(ChannelPinsUpdateEvent, attributes, block)
+    end
+    
+    # This **event** is raised whenever an autocomplete interaction is created.
+    # @param name [String, Symbol, nil] An option name to match against.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :command_id A command ID to match against.
+    # @option attributes [String, Symbol] :subcommand A subcommand name to match against.
+    # @option attributes [String, Symbol] :subcommand_group A subcommand group to match against.
+    # @option attributes [String, Symbol] :command_name A command name to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [AutocompleteEvent] The event that was raised.
+    # @return [AutocompleteEventHandler] The event handler that was registered.
+    def autocomplete(name = nil, attributes = {}, &block)
+      register_event(AutocompleteEvent, attributes.merge!({ name: name }), block)
+    end
+
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Symbol, Regexp] :type Matches the event type of the dispatch.
