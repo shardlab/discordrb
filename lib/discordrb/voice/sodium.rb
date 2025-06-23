@@ -110,7 +110,7 @@ module Discordrb::Voice
       result = Sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
         ciphertext, clen_p,
         message_ptr, message.bytesize,
-        ad_ptr, ad.bytesize,
+        ad_ptr, add.bytesize,
         nil,
         FFI::MemoryPointer.from_string(nonce),
         FFI::MemoryPointer.from_string(key)

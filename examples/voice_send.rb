@@ -33,7 +33,7 @@ bot.command(:play_mp3) do |event|
   #
   # It returns a `VoiceBot` object that methods such as `play_file` can be called on.
   voice_bot = event.voice
-  voice_bot.play_file('data/music.mp3')
+  voice_bot.play_file(File.expand_path('data/music.mp3', __dir__))
 end
 
 # DCA is a custom audio format developed by a couple people from the Discord API community (including myself, meew0).
@@ -47,7 +47,7 @@ bot.command(:play_dca) do |event|
 
   # Since the DCA format is non-standard (i.e. ffmpeg doesn't support it), a separate method other than `play_file` has
   # to be used to play DCA files back. `play_dca` fulfills that role.
-  voice_bot.play_dca('data/music.dca')
+  voice_bot.play_dca(File.expand_path('data/music.dca', __dir__))
 end
 
 bot.run
