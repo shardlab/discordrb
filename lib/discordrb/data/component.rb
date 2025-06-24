@@ -291,7 +291,7 @@ module Discordrb
       # @return [String] The URL this attachment can be downloaded at.
       attr_reader :url
 
-      # @return [String, nil] The attachment's proxied URL.
+      # @return [String] The attachment's proxied URL.
       attr_reader :proxy_url
 
       # @return [Integer, nil] The width of an image file, in pixels, or `nil` if the file is not an image.
@@ -300,8 +300,11 @@ module Discordrb
       # @return [Integer, nil] The height of an image file, in pixels, or `nil` if the file is not an image.
       attr_reader :height
 
-      # @return [String, nil] The media's content type.
+      # @return [String] The media's content type.
       attr_reader :content_type
+
+      # @return [Integer, nil] The id of the uploaded attachment. Only present if the media item was uploaded as an attachment.
+      attr_reader :attachment_id
 
       # @!visibility private
       def initialize(data, bot)
@@ -311,6 +314,7 @@ module Discordrb
         @width = data['width']
         @height = data['height']
         @content_type = data['content_type']
+        @attachment_id = data['attachment_id']&.to_i
       end
     end
 
