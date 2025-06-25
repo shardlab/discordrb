@@ -53,7 +53,5 @@ module Discordrb
 
       @count >= @limit
     end
-
-    alias_method :limit_check, :limit_exceeded?
   end
 end
