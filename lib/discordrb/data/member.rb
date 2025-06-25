@@ -172,7 +172,7 @@ module Discordrb
     def add_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.count == 1
+      if role_ids.count.one?
         API::Server.add_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
         old_role_ids = resolve_role_ids
@@ -187,7 +187,7 @@ module Discordrb
     def remove_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.count == 1
+      if role_ids.count.one?
         API::Server.remove_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
         old_role_ids = resolve_role_ids

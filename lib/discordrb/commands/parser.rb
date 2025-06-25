@@ -211,7 +211,7 @@ module Discordrb::Commands
         b_level -= 1
         next unless b_level.zero?
 
-        nested = @chain[b_start + 1..index - 1]
+        nested = @chain[(b_start + 1)..(index - 1)]
         subchain = CommandChain.new(nested, @bot, true)
         result += subchain.execute(event)
       end
@@ -245,8 +245,8 @@ module Discordrb::Commands
         command = command.gsub hacky_delim, @attributes[:chain_delimiter]
 
         first_space = command.index ' '
-        command_name = first_space ? command[0..first_space - 1] : command
-        arguments = first_space ? command[first_space + 1..] : ''
+        command_name = first_space ? command[0..(first_space - 1)] : command
+        arguments = first_space ? command[(first_space + 1)..] : ''
 
         # Append a previous sign if none is present
         arguments += @attributes[:previous] unless arguments.include? @attributes[:previous]
@@ -318,7 +318,7 @@ module Discordrb::Commands
           arg.split ' '
         end
 
-        chain = chain[chain_args_index + 1..]
+        chain = chain[(chain_args_index + 1)..]
       end
 
       [chain_args, chain]

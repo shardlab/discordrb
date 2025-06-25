@@ -24,7 +24,7 @@ module Discordrb
     # no more results or the configured `limit` is reached.
     def each
       last_page = nil
-      until limit_check
+      until limit_exceeded?
         page = @block.call(last_page)
         return if page.empty?
 
@@ -38,7 +38,7 @@ module Discordrb
         enumerator.each do |item|
           yield item
           @count += 1
-          break if limit_check
+          break if limit_exceeded?
         end
 
         last_page = page
