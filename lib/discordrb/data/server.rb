@@ -637,7 +637,7 @@ module Discordrb
     # @return [BulkBan]
     def bulk_ban(users:, message_seconds: 0, reason: nil)
       raise ArgumentError, 'Can only ban between 1 and 200 users!' unless users.size.between?(1, 200)
-      
+
       return ban(users.first, 0, message_seconds: message_seconds, reason: reason) if users.size == 1
 
       response = API::Server.bulk_ban(@bot.token, @id, users.map(&:resolve_id), message_seconds, reason)
@@ -849,6 +849,20 @@ module Discordrb
     # @return [Channel, nil] the system channel (used for automatic welcome messages) of a server, or `nil` if none is set.
     def system_channel
       @bot.channel(@system_channel_id) if @system_channel_id
+    end
+
+    # Fetch the onboarding flow for this server.
+    # @return [Onboarding] The onboarding flow for new members in a server.
+    def onboarding
+      response = API::Server.onboarding(@bot.token, @id)
+      Onboarding.new(JSON.parse(response), self, @bot)
+    end
+
+    # Fetch the welcome screen shown to new server members.
+    # @return [WelcomeScreen] The welcome screen for this server.
+    def welcome_screen
+      response = API::Server.welcome_screen(@bot.token, @id)
+      WelcomeScreen.new(JSON.parse(response), self, @bot)
     end
 
     # Updates the cached data with new data

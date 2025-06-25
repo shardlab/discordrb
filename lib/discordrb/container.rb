@@ -645,7 +645,7 @@ module Discordrb
     def channel_pins_update(attributes = {}, &block)
       register_event(ChannelPinsUpdateEvent, attributes, block)
     end
-    
+
     # This **event** is raised whenever an autocomplete interaction is created.
     # @param name [String, Symbol, nil] An option name to match against.
     # @param attributes [Hash] The event's attributes.
