@@ -3,6 +3,7 @@
 require 'ffi'
 require 'securerandom'
 
+# :nodoc:
 module Discordrb::Voice
   # @!visibility private
   module Sodium
