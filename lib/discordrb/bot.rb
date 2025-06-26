@@ -1633,8 +1633,10 @@ module Discordrb
 
         # raise ThreadDeleteEvent
       when :THREAD_LIST_SYNC
+        server = self.server(data['guild_id'].to_i)
+
         data['members'].map { |member| ensure_thread_member(member) }
-        data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
+        data['threads'].map { |channel| ensure_channel(channel, server) }
 
         # raise ThreadListSyncEvent?
       when :THREAD_MEMBER_UPDATE
