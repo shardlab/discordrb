@@ -1377,6 +1377,12 @@ module Discordrb
       when :MESSAGE_REACTION_ADD
         add_message_reaction(data)
 
+        if data['member']
+          server = self.server(data['guild_id'].to_i)
+
+          server.cache_member(Member.new(data['member'], server, self))
+        end
+
         return if profile.id == data['user_id'].to_i && !should_parse_self
 
         event = ReactionAddEvent.new(data, self)
