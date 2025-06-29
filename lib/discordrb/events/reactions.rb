@@ -14,6 +14,17 @@ module Discordrb::Events
     # @!visibility private
     attr_reader :message_id
 
+    # @return [true, false] whether the reaction is a burst reaction.
+    attr_reader :burst
+    alias_method :burst?, :burst
+
+    # @return [Integer] the type of the reaction. 0 for normal, 1 for burst.
+    attr_reader :type
+
+    # @return [Array<ColourRGB>] an array of colors used for animations in burst reactions.
+    attr_reader :burst_colours
+    alias_method :burst_colors, :burst_colours
+
     def initialize(data, bot)
       @bot = bot
 
@@ -21,6 +32,9 @@ module Discordrb::Events
       @user_id = data['user_id'].to_i
       @message_id = data['message_id'].to_i
       @channel_id = data['channel_id'].to_i
+      @burst = data['burst']
+      @type = data['type']
+      @burst_colours = data['burst_colors']&.map { |b| Discordrb::ColourRGB.new(b.delete('#')) } || []
     end
 
     # @return [User, Member] the user that reacted to this message, or member if a server exists.
@@ -88,6 +102,14 @@ module Discordrb::Events
             e.current_bot?
           else
             a == e
+          end
+        end,
+        matches_all(@attributes[:type], event.type) do |a, e|
+          case a
+          when Integer
+            a == e
+          when Symbol, String
+            Discordrb::Reaction::TYPES[a.to_sym] == e
           end
         end
       ].reduce(true, &:&)
