@@ -32,10 +32,10 @@ module Discordrb::Commands
         channels: attributes[:channels] || nil,
 
         # Whether this command is usable in a command chain
-        chain_usable: attributes[:chain_usable].nil? ? true : attributes[:chain_usable],
+        chain_usable: attributes[:chain_usable].nil? || attributes[:chain_usable],
 
         # Whether this command should show up in the help command
-        help_available: attributes[:help_available].nil? ? true : attributes[:help_available],
+        help_available: attributes[:help_available].nil? || attributes[:help_available],
 
         # Description (for help command)
         description: attributes[:description] || nil,
@@ -159,7 +159,7 @@ module Discordrb::Commands
       escaped = false
       hacky_delim, hacky_space, hacky_prev, hacky_newline = [0xe001, 0xe002, 0xe003, 0xe004].pack('U*').chars
 
-      @chain.each_char.each_with_index do |char, index|
+      @chain.each_char.with_index do |char, index|
         # Escape character
         if char == '\\' && !escaped
           escaped = true

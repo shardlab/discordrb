@@ -90,14 +90,22 @@ module Discordrb
   # This class stores the data of an active gateway session. Note that this is different from a websocket connection -
   # there may be multiple sessions per connection or one session may persist over multiple connections.
   class Session
+    # @return [String] Used to uniquely identify this session. Mostly used when resuming connections.
     attr_reader :session_id
+
+    # @return [Integer] Incrementing integer used to determine the most recent event reccived from Discord.
     attr_accessor :sequence
 
-    def initialize(session_id)
+    # @return [String] Gateway URL used to reconnect to the gateway node that Discord wants this session to use.
+    attr_reader :resume_gateway_url
+
+    # @!visibility private
+    def initialize(session_id, resume_gateway_url)
       @session_id = session_id
       @sequence = 0
       @suspended = false
       @invalid = false
+      @resume_gateway_url = resume_gateway_url
     end
 
     # Flags this session as suspended, so we know not to try and send heartbeats, etc. to the gateway until we've reconnected
@@ -117,6 +125,7 @@ module Discordrb
     # Flags this session as being invalid
     def invalidate
       @invalid = true
+      @resume_gateway_url = nil
     end
 
     def invalid?
@@ -134,7 +143,7 @@ module Discordrb
     LARGE_THRESHOLD = 100
 
     # The version of the gateway that's supposed to be used.
-    GATEWAY_VERSION = 8
+    GATEWAY_VERSION = 9
 
     # Heartbeat ACKs are Discord's way of verifying on the client side whether the connection is still alive. If this is
     # set to true (default value) the gateway client will use that functionality to detect zombie connections and
@@ -280,11 +289,11 @@ module Discordrb
     def identify
       compress = @compress_mode == :large
       send_identify(@token, {
-                      '$os': RUBY_PLATFORM,
-                      '$browser': 'discordrb',
-                      '$device': 'discordrb',
-                      '$referrer': '',
-                      '$referring_domain': ''
+                      os: RUBY_PLATFORM,
+                      browser: 'discordrb',
+                      device: 'discordrb',
+                      referrer: '',
+                      referring_domain: ''
                     }, compress, LARGE_THRESHOLD, @shard_key, @intents)
     end
 
@@ -295,11 +304,11 @@ module Discordrb
     # @param properties [Hash<Symbol => String>] A list of properties for Discord to use in analytics. The following
     #   keys are recognised:
     #
-    #    - "$os" (recommended value: the operating system the bot is running on)
-    #    - "$browser" (recommended value: library name)
-    #    - "$device" (recommended value: library name)
-    #    - "$referrer" (recommended value: empty)
-    #    - "$referring_domain" (recommended value: empty)
+    #    - "os" (recommended value: the operating system the bot is running on)
+    #    - "browser" (recommended value: library name)
+    #    - "device" (recommended value: library name)
+    #    - "referrer" (recommended value: empty)
+    #    - "referring_domain" (recommended value: empty)
     #
     # @param compress [true, false] Whether certain large packets should be compressed using zlib.
     # @param large_threshold [Integer] The member threshold after which a server counts as large and will have to have
@@ -452,8 +461,13 @@ module Discordrb
           # suspended (e.g. after op7)
           if (@session && !@session.suspended?) || !@session
             sleep @heartbeat_interval
-            @bot.raise_heartbeat_event
-            heartbeat
+            # Check if we're connected here, since we could possibly be waiting for a reconnect to occur.
+            if @handshaked && !@closed
+              @bot.raise_heartbeat_event
+              heartbeat
+            else
+              LOGGER.debug('Tried to send a heartbeat without being connected! Ignoring, we should be fine.')
+            end
           else
             sleep 1
           end
@@ -538,7 +552,7 @@ module Discordrb
     end
 
     def process_gateway
-      raw_url = find_gateway
+      raw_url = @session&.resume_gateway_url || find_gateway
 
       # Append a slash in case it's not there (I'm not sure how well WSCS handles it otherwise)
       raw_url += '/' unless raw_url.end_with? '/'
@@ -656,7 +670,9 @@ module Discordrb
       LOGGER.log_exception(e)
     end
 
+    # rubocop:disable Lint/UselessConstantScoping
     ZLIB_SUFFIX = "\x00\x00\xFF\xFF".b.freeze
+    # rubocop:enable Lint/UselessConstantScoping
 
     def handle_message(msg)
       case @compress_mode
@@ -716,9 +732,9 @@ module Discordrb
       when :READY
         LOGGER.info("Discord using gateway protocol version: #{data['v']}, requested: #{GATEWAY_VERSION}")
 
-        @session = Session.new(data['session_id'])
+        @session = Session.new(data['session_id'], data['resume_gateway_url'])
         @session.sequence = 0
-        @bot.__send__(:notify_ready) if @intents && (@intents & INTENTS[:servers]).zero?
+        @bot.__send__(:notify_ready) if @intents && @intents.nobits?(INTENTS[:servers])
       when :RESUMED
         # The RESUMED event is received after a successful op 6 (resume). It does nothing except tell the bot the
         # connection is initiated (like READY would). Starting with v5, it doesn't set a new heartbeat interval anymore
@@ -789,12 +805,15 @@ module Discordrb
       handle_close(e)
     end
 
+    # rubocop:disable Lint/UselessConstantScoping
     # Close codes that are unrecoverable, after which we should not try to reconnect.
     # - 4003: Not authenticated. How did this happen?
     # - 4004: Authentication failed. Token was wrong, nothing we can do.
     # - 4011: Sharding required. Currently requires developer intervention.
     # - 4014: Use of disabled privileged intents.
+    # rubocop:disable Lint/UselessConstantScoping
     FATAL_CLOSE_CODES = [4003, 4004, 4011, 4014].freeze
+    # rubocop:enable Lint/UselessConstantScoping
 
     def handle_close(e)
       @bot.__send__(:raise_event, Events::DisconnectEvent.new(@bot))

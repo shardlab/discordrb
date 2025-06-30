@@ -29,7 +29,7 @@ describe Discordrb::Overwrite do
     context 'when object is a User type' do
       let(:user_types) { [Discordrb::User, Discordrb::Member, Discordrb::Recipient, Discordrb::Profile] }
       let(:users) do
-        user_types.collect { |k| [k, instance_double(k)] }.to_h
+        user_types.to_h { |k| [k, instance_double(k)] }
       end
 
       before do
@@ -40,7 +40,7 @@ describe Discordrb::Overwrite do
       end
 
       it 'infers type from a User object' do
-        users.each do |_user_type, user|
+        users.each_value do |user|
           expect(described_class.new(user).type).to eq :member
         end
       end

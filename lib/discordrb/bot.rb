@@ -2,7 +2,6 @@
 
 require 'rest-client'
 require 'zlib'
-require 'set'
 
 require 'discordrb/events/message'
 require 'discordrb/events/typing'
@@ -20,6 +19,7 @@ require 'discordrb/events/reactions'
 require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
+require 'discordrb/events/threads'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -106,9 +106,10 @@ module Discordrb
     #   to Discord's gateway. `:none` will request that no payloads are received compressed (not recommended for
     #   production bots). `:large` will request that large payloads are received compressed. `:stream` will request
     #   that all data be received in a continuous compressed stream.
-    # @param intents [:all, :unprivileged, Array<Symbol>, :none] Gateway intents that this bot requires. `:all` will
+    # @param intents [:all, :unprivileged, Array<Symbol>, :none, Integer] Gateway intents that this bot requires. `:all` will
     #   request all intents. `:unprivileged` will request only intents that are not defined as "Privileged". `:none`
-    #   will request no intents. An array of symbols will request only those intents specified.
+    #   will request no intents. An array of symbols will request only those intents specified. An integer value will request
+    #   exactly all the intents specified in the bitwise value.
     # @see Discordrb::INTENTS
     def initialize(
       log_mode: :normal,
@@ -180,6 +181,14 @@ module Discordrb
       gateway_check
       unavailable_servers_check
       @servers
+    end
+
+    # The list of members in threads the bot can see.
+    # @return [Hash<Integer => Hash<Integer => Hash<String => Object>>]
+    def thread_members
+      gateway_check
+      unavailable_servers_check
+      @thread_members
     end
 
     # @overload emoji(id)
@@ -298,13 +307,21 @@ module Discordrb
     # Creates an OAuth invite URL that can be used to invite this bot to a particular server.
     # @param server [Server, nil] The server the bot should be invited to, or nil if a general invite should be created.
     # @param permission_bits [String, Integer] Permission bits that should be appended to invite url.
+    # @param redirect_uri [String] Redirect URI that should be appended to invite url.
+    # @param scopes [Array<String>] Scopes that should be appended to invite url.
     # @return [String] the OAuth invite URL.
-    def invite_url(server: nil, permission_bits: nil)
+    def invite_url(server: nil, permission_bits: nil, redirect_uri: nil, scopes: ['bot'])
       @client_id ||= bot_application.id
 
-      server_id_str = server ? "&guild_id=#{server.id}" : ''
-      permission_bits_str = permission_bits ? "&permissions=#{permission_bits}" : ''
-      "https://discord.com/oauth2/authorize?&client_id=#{@client_id}#{server_id_str}#{permission_bits_str}&scope=bot"
+      query = URI.encode_www_form({
+        client_id: @client_id,
+        guild_id: server&.id,
+        permissions: permission_bits,
+        redirect_uri: redirect_uri,
+        scope: scopes.join(' ')
+      }.compact)
+
+      "https://discord.com/oauth2/authorize?#{query}"
     end
 
     # @return [Hash<Integer => VoiceBot>] the voice connections this bot currently has, by the server ID to which they are connected.
@@ -381,18 +398,20 @@ module Discordrb
     # @param channel [Channel, String, Integer] The channel, or its ID, to send something to.
     # @param content [String] The text that should be sent as a message. It is limited to 2000 characters (Discord imposed).
     # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
-    # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
+    # @param embeds [Hash, Discordrb::Webhooks::Embed, Array<Hash>, Array<Discordrb::Webhooks::Embed> nil] The rich embed(s) to append to this message.
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @return [Message] The message that was sent.
-    def send_message(channel, content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+    def send_message(channel, content, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       channel = channel.resolve_id
       debug("Sending message to #{channel} with content '#{content}'")
       allowed_mentions = { parse: [] } if allowed_mentions == false
       message_reference = { message_id: message_reference.id } if message_reference.respond_to?(:id)
+      embeds = (embeds.instance_of?(Array) ? embeds.map(&:to_hash) : [embeds&.to_hash]).compact
 
-      response = API::Channel.create_message(token, channel, content, tts, embed&.to_hash, nil, attachments, allowed_mentions&.to_hash, message_reference, components)
+      response = API::Channel.create_message(token, channel, content, tts, embeds, nil, attachments, allowed_mentions&.to_hash, message_reference, components, flags)
       Message.new(JSON.parse(response), self)
     end
 
@@ -402,16 +421,17 @@ module Discordrb
     # @param content [String] The text that should be sent as a message. It is limited to 2000 characters (Discord imposed).
     # @param timeout [Float] The amount of time in seconds after which the message sent will be deleted.
     # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
-    # @param embed [Hash, Discordrb::Webhooks::Embed, nil] The rich embed to append to this message.
+    # @param embeds [Hash, Discordrb::Webhooks::Embed, Array<Hash>, Array<Discordrb::Webhooks::Embed> nil] The rich embed(s) to append to this message.
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    def send_temporary_message(channel, content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       Thread.new do
         Thread.current[:discordrb_name] = "#{@current_thread}-temp-msg"
 
-        message = send_message(channel, content, tts, embed, attachments, allowed_mentions, message_reference, components)
+        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components, flags)
         sleep(timeout)
         message.delete
       end
@@ -507,7 +527,7 @@ module Discordrb
             end
           end
         elsif /(?<animated>^a|^${0}):(?<name>\w+):(?<id>\d+)/ =~ mention
-          array_to_return << (emoji(id) || Emoji.new({ 'animated' => !animated.nil?, 'name' => name, 'id' => id }, self, nil))
+          array_to_return << (emoji(id) || Emoji.new({ 'animated' => animated != '', 'name' => name, 'id' => id }, self, nil))
         end
       end
       array_to_return
@@ -615,6 +635,36 @@ module Discordrb
     def invisible
       gateway_check
       update_status(:invisible, @activity, nil)
+    end
+
+    # Join a thread
+    # @param channel [Channel, Integer, String]
+    def join_thread(channel)
+      API::Channel.join_thread(@token, channel.resolve_id)
+      nil
+    end
+
+    # Leave a thread
+    # @param channel [Channel, Integer, String]
+    def leave_thread(channel)
+      API::Channel.leave_thread(@token, channel.resolve_id)
+      nil
+    end
+
+    # Add a member to a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def add_thread_member(channel, member)
+      API::Channel.add_thread_member(@token, channel.resolve_id, member.resolve_id)
+      nil
+    end
+
+    # Remove a member from a thread
+    # @param channel [Channel, Integer, String]
+    # @param member [Member, Integer, String]
+    def remove_thread_member(channel, member)
+      API::Channel.remove_thread_member(@token, channel.resolve_id, member.resolve_id)
+      nil
     end
 
     # Sets debug mode. If debug mode is on, many things will be outputted to STDOUT.
@@ -784,7 +834,7 @@ module Discordrb
     #       end
     #     end
     #   end
-    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input)
+    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
@@ -792,9 +842,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type)
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
              else
-               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type)
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -809,7 +859,7 @@ module Discordrb
 
     # @yieldparam [OptionBuilder]
     # @yieldparam [PermissionBuilder]
-    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input)
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
@@ -818,9 +868,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
              else
-               API::Application.edit_guild_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission.type)
+               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -906,8 +956,14 @@ module Discordrb
 
       username = data['user']['username']
       if username && !member_is_new # Don't set the username for newly-cached members
-        debug "Implicitly updating presence-obtained information for member #{user_id}"
+        debug "Implicitly updating presence-obtained information username for member #{user_id}"
         member.update_username(username)
+      end
+
+      global_name = data['user']['global_name']
+      if global_name && !member_is_new # Don't set the global_name for newly-cached members
+        debug "Implicitly updating presence-obtained information global_name for member #{user_id}"
+        member.update_global_name(global_name)
       end
 
       member.update_presence(data)
@@ -1007,6 +1063,8 @@ module Discordrb
       elsif channel.group?
         @channels.delete(channel.id)
       end
+
+      @thread_members.delete(channel.id) if channel.thread?
     end
 
     # Internal handler for CHANNEL_RECIPIENT_ADD
@@ -1043,11 +1101,11 @@ module Discordrb
       server_id = data['guild_id'].to_i
       server = self.server(server_id)
 
-      member = server.member(data['user']['id'].to_i)
-      member.update_roles(data['roles'])
-      member.update_nick(data['nick'])
-      member.update_boosting_since(data['premium_since'])
-      member.update_communication_disabled_until(data['communication_disabled_until'])
+      if (member = server.member(data['user']['id'].to_i))
+        member.update_data(data)
+      else
+        Discordrb::LOGGER.warn("update_guild_member attempted to access a member which doesn't exist! Not sure what happened here, ignoring.")
+      end
     end
 
     # Internal handler for GUILD_MEMBER_DELETE
@@ -1163,7 +1221,7 @@ module Discordrb
 
     def handle_dispatch(type, data)
       # Check whether there are still unavailable servers and there have been more than 10 seconds since READY
-      if @unavailable_servers&.positive? && (Time.now - @unavailable_timeout_time) > 10 && !((@intents || 0) & INTENTS[:servers]).zero?
+      if @unavailable_servers&.positive? && (Time.now - @unavailable_timeout_time) > 10 && !(@intents || 0).nobits?(INTENTS[:servers])
         # The server streaming timed out!
         LOGGER.debug("Server streaming timed out with #{@unavailable_servers} servers remaining")
         LOGGER.debug('Calling ready now because server loading is taking a long time. Servers may be unavailable due to an outage, or your bot is on very large servers.')
@@ -1182,6 +1240,8 @@ module Discordrb
         init_cache
 
         @profile = Profile.new(data['user'], self)
+
+        @client_id ||= data['application']['id']&.to_i
 
         # Initialize servers
         @servers = {}
@@ -1394,6 +1454,10 @@ module Discordrb
 
         event = ChannelRecipientRemoveEvent.new(data, self)
         raise_event(event)
+      when :CHANNEL_PINS_UPDATE
+        event = ChannelPinsUpdateEvent.new(data, self)
+        raise_event(event)
+
       when :GUILD_MEMBER_ADD
         add_guild_member(data)
 
@@ -1503,13 +1567,13 @@ module Discordrb
         when Interaction::TYPES[:command]
           event = ApplicationCommandEvent.new(data, self)
 
-          Thread.new do
-            Thread.current[:discordrb_name] = "it-#{event.interaction.id}"
+          Thread.new(event) do |evt|
+            Thread.current[:discordrb_name] = "it-#{evt.interaction.id}"
 
             begin
-              debug("Executing application command #{event.command_name}:#{event.command_id}")
+              debug("Executing application command #{evt.command_name}:#{evt.command_id}")
 
-              @application_commands[event.command_name]&.call(event)
+              @application_commands[evt.command_name]&.call(evt)
             rescue StandardError => e
               log_exception(e)
             end
@@ -1520,14 +1584,71 @@ module Discordrb
             event = ButtonEvent.new(data, self)
 
             raise_event(event)
-          when Webhooks::View::COMPONENT_TYPES[:select_menu]
-            event = SelectMenuEvent.new(data, self)
+          when Webhooks::View::COMPONENT_TYPES[:string_select]
+            event = StringSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:user_select]
+            event = UserSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:role_select]
+            event = RoleSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:mentionable_select]
+            event = MentionableSelectEvent.new(data, self)
+
+            raise_event(event)
+          when Webhooks::View::COMPONENT_TYPES[:channel_select]
+            event = ChannelSelectEvent.new(data, self)
 
             raise_event(event)
           end
+        when Interaction::TYPES[:modal_submit]
+
+          event = ModalSubmitEvent.new(data, self)
+          raise_event(event)
+        when Interaction::TYPES[:autocomplete]
+
+          event = AutocompleteEvent.new(data, self)
+          raise_event(event)
         end
       when :WEBHOOKS_UPDATE
         event = WebhookUpdateEvent.new(data, self)
+        raise_event(event)
+      when :THREAD_CREATE
+        create_channel(data)
+
+        event = ThreadCreateEvent.new(data, self)
+        raise_event(event)
+      when :THREAD_UPDATE
+        update_channel(data)
+
+        event = ThreadUpdateEvent.new(data, self)
+        raise_event(event)
+      when :THREAD_DELETE
+        delete_channel(data)
+        @thread_members.delete(data['id']&.resolve_id)
+
+        # raise ThreadDeleteEvent
+      when :THREAD_LIST_SYNC
+        data['members'].map { |member| ensure_thread_member(member) }
+        data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
+
+        # raise ThreadListSyncEvent?
+      when :THREAD_MEMBER_UPDATE
+        ensure_thread_member(data)
+      when :THREAD_MEMBERS_UPDATE
+        data['added_members']&.each do |added_member|
+          ensure_thread_member(added_member) if added_member['user_id']
+        end
+
+        data['removed_member_ids']&.each do |member_id|
+          @thread_members[data['id']&.resolve_id]&.delete(member_id&.resolve_id)
+        end
+
+        event = ThreadMembersUpdateEvent.new(data, self)
         raise_event(event)
       else
         # another event that we don't support yet
@@ -1571,15 +1692,15 @@ module Discordrb
     end
 
     def call_event(handler, event)
-      t = Thread.new do
+      t = Thread.new(event) do |evt|
         @event_threads ||= []
         @current_thread ||= 0
 
         @event_threads << t
         Thread.current[:discordrb_name] = "et-#{@current_thread += 1}"
         begin
-          handler.call(event)
-          handler.after_call(event)
+          handler.call(evt)
+          handler.after_call(evt)
         rescue StandardError => e
           log_exception(e)
         ensure
@@ -1590,7 +1711,7 @@ module Discordrb
 
     def handle_awaits(event)
       @awaits ||= {}
-      @awaits.each do |_, await|
+      @awaits.each_value do |await|
         key, should_delete = await.match(event)
         next unless key
 
@@ -1603,6 +1724,8 @@ module Discordrb
     end
 
     def calculate_intents(intents)
+      intents = [intents] unless intents.is_a? Array
+
       intents.reduce(0) do |sum, intent|
         case intent
         when Symbol

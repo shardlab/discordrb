@@ -100,7 +100,7 @@ module Discordrb
                 end
 
       @uses = data['uses']
-      @inviter = data['inviter'] ? (@bot.user(data['inviter']['id'].to_i) || User.new(data['inviter'], bot)) : nil
+      @inviter = data['inviter'] ? bot.ensure_user(data['inviter']) : nil
       @temporary = data['temporary']
       @revoked = data['revoked']
       @online_member_count = data['approximate_presence_count']

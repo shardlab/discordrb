@@ -6,7 +6,7 @@ commands:
     steps:
       - run:
           name: Install OS packages
-          command: apk add git build-base ruby-dev ruby-etc ruby-json libsodium
+          command: apk add git build-base ruby-dev ruby-etc ruby-json libsodium-dev
       - checkout
       - run:
           name: "Ruby version"
@@ -27,45 +27,50 @@ commands:
             - ./vendor/bundle
 
 jobs:
-  test_ruby_26:
+  test_ruby_32:
     docker:
-      - image: ruby:2.6-alpine
+      - image: ruby:3.2-alpine
     steps:
       - setup-env
       - run:
           name: Run RSpec
-          command: bundle exec rspec
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
+      - store_test_results:
+          path: ~/rspec
 
-  test_ruby_27:
+  test_ruby_33:
     docker:
-      - image: ruby:2.7-alpine
+      - image: ruby:3.3-alpine
     steps:
       - setup-env
       - run:
           name: Run RSpec
-          command: bundle exec rspec
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
+      - store_test_results:
+          path: ~/rspec
 
-  test_ruby_30:
+
+  test_ruby_34:
     docker:
-      - image: ruby:3.0-alpine
+      - image: ruby:3.4-alpine
     steps:
       - setup-env
       - run:
           name: Run RSpec
-          command: bundle exec rspec
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o ~/rspec/rspec.xml
 
   rubocop:
     docker:
-      - image: ruby:2.6-alpine
+      - image: ruby:3.3-alpine
     steps:
       - setup-env
       - run:
           name: Run Rubocop
-          command: bundle exec rubocop -P
+          command: bundle exec rubocop
 
   yard:
     docker:
-      - image: ruby:2.6-alpine
+      - image: ruby:3.3-alpine
     steps:
       - setup-env
       - attach_workspace:
@@ -79,13 +84,22 @@ jobs:
             - docs
 
   pages:
-    machine: true
+    docker:
+      - image: alpine
     steps:
+      - run:
+          name: Install OS packages
+          command: apk add git openssh-client-default
       - attach_workspace:
           at: /tmp/workspace
       - run:
           name: Clone docs
-          command: git clone $CIRCLE_REPOSITORY_URL -b gh-pages .
+          command: |
+            mkdir -p ~/.ssh
+
+            echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=' >> ~/.ssh/known_hosts
+
+            git clone $CIRCLE_REPOSITORY_URL -b gh-pages .
       - add_ssh_keys:
           fingerprints:
             - "9a:4c:50:94:23:46:81:74:41:97:87:04:4e:59:4b:4e"
@@ -111,9 +125,9 @@ jobs:
 workflows:
   test:
     jobs:
-      - test_ruby_26
-      - test_ruby_27
-      - test_ruby_30
+      - test_ruby_32
+      - test_ruby_33
+      - test_ruby_34
       - rubocop
       - yard
   deploy:

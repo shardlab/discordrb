@@ -21,6 +21,7 @@ module Discordrb
 
       @channels = {}
       @pm_channels = {}
+      @thread_members = {}
     end
 
     # Returns or caches the available voice regions
@@ -169,6 +170,16 @@ module Discordrb
       else
         @channels[data['id'].to_i] = Channel.new(data, self, server)
       end
+    end
+
+    # Ensures a given thread member object is cached.
+    # @param data [Hash] Thread member data.
+    def ensure_thread_member(data)
+      thread_id = data['id'].to_i
+      user_id = data['user_id'].to_i
+
+      @thread_members[thread_id] ||= {}
+      @thread_members[thread_id][user_id] = data.slice('join_timestamp', 'flags')
     end
 
     # Requests member chunks for a given server ID.
