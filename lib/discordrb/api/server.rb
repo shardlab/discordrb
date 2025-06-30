@@ -216,17 +216,24 @@ module Discordrb::API::Server
     )
   end
 
-  # Ban a user from a server and delete their messages from the last message_days days
+  # @deprecated Please use {ban_user!} instead.
   # https://discord.com/developers/docs/resources/guild#create-guild-ban
   def ban_user(token, server_id, user_id, message_days, reason = nil)
-    reason = URI.encode_www_form_component(reason) if reason
+    ban_user!(token, server_id, user_id, message_days * 86_400, reason)
+  end
+
+  # Ban a user from a server and delete their messages up to a given amount of time.
+  # https://discord.com/developers/docs/resources/guild#create-guild-ban
+  def ban_user!(token, server_id, user_id, message_seconds, reason = nil)
     Discordrb::API.request(
       :guilds_sid_bans_uid,
       server_id,
       :put,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/bans/#{user_id}?delete_message_days=#{message_days}&reason=#{reason}",
-      nil,
-      Authorization: token
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/bans/#{user_id}",
+      { delete_message_seconds: message_seconds }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
     )
   end
 
@@ -604,5 +611,20 @@ module Discordrb::API::Server
                  'webp'
                end
     "#{Discordrb::API.cdn_url}/guilds/#{server_id}/users/#{user_id}/banners/#{banner_id}.#{format}"
+  end
+
+  # Ban multiple users in one go
+  # https://discord.com/developers/docs/resources/guild#bulk-guild-ban
+  def bulk_ban(token, server_id, users, message_seconds, reason = nil)
+    Discordrb::API.request(
+      :guilds_sid_bulk_bans,
+      server_id,
+      :post,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/bulk-ban",
+      { user_ids: users, delete_message_seconds: message_seconds }.compact.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
   end
 end

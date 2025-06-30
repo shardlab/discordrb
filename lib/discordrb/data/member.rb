@@ -303,10 +303,11 @@ module Discordrb
     end
 
     # Bans this member from the server.
-    # @param message_days [Integer] How many days worth of messages sent by the member should be deleted.
+    # @param message_days [Integer] How many days worth of messages sent by the member should be deleted. This parameter is deprecated and will be removed in 4.0.
+    # @param message_seconds [Integer] How many seconds worth of messages sent by the member should be deleted.
     # @param reason [String] The reason this member is being banned.
-    def ban(message_days = 0, reason: nil)
-      server.ban(@user, message_days, reason: reason)
+    def ban(message_days = 0, message_seconds: nil, reason: nil)
+      server.ban(@user, message_days, message_seconds: message_seconds, reason: reason)
     end
 
     # Unbans this member from the server.
@@ -427,10 +428,12 @@ module Discordrb
         @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
       end
 
-      @user.update_global_name(data['user']['global_name']) if data['user']['global_name']
-      @user.avatar_id = data['user']['avatar'] if data['user'].key('avatar')
-      @user.update_avatar_decoration(data['user']['avatar_decoration_data']) if data['user'].key?('avatar_decoration_data')
-      @user.update_collectibles(data['user']['collectibles']) if data['user'].key?('collectibles')
+      if (user = data['user'])
+        @user.update_global_name(user['global_name']) if user['global_name']
+        @user.avatar_id = user['avatar'] if user.key('avatar')
+        @user.update_avatar_decoration(user['avatar_decoration_data']) if user.key?('avatar_decoration_data')
+        @user.update_collectibles(user['collectibles']) if user.key?('collectibles')
+      end
 
       @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data']) if data.key?('avatar_decoration_data')
     end
