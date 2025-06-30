@@ -10,12 +10,6 @@ module Discordrb
     alias_method :text, :content
     alias_method :to_s, :content
 
-    # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
-    #   {User} for old messages when the author has left the server since then)
-    attr_reader :author
-    alias_method :user, :author
-    alias_method :writer, :author
-
     # @return [Channel] the channel in which this message was sent.
     attr_reader :channel
 
@@ -169,6 +163,22 @@ module Discordrb
       @thread = data['thread'] ? @bot.ensure_channel(data['thread'], @server) : nil
     end
 
+    # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
+    #   {User} for old messages when the author has left the server since then)
+    def author
+      return @author if @author
+      
+      if @channel.server
+        @author = @channel.server.member(@author_id)        
+        Discordrb::LOGGER.debug("Member with ID #{@author_id} not cached (possibly left the server).") unless @author
+      end
+
+      @author||= @bot.user(@author_id)
+    end
+
+    alias_method :user, :author
+    alias_method :writer, :author
+    
     # Replies to this message with the specified content.
     # @deprecated Please use {#respond}.
     # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
