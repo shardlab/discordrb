@@ -433,6 +433,7 @@ module Discordrb
         @user.avatar_id = user['avatar'] if user.key('avatar')
         @user.update_avatar_decoration(user['avatar_decoration_data']) if user.key?('avatar_decoration_data')
         @user.update_collectibles(user['collectibles']) if user.key?('collectibles')
+        @user.update_primary_server(user['primary_guild']) if user.key?('primary_guild')
       end
 
       @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data']) if data.key?('avatar_decoration_data')
