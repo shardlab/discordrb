@@ -47,5 +47,7 @@ module Discordrb
 
       Discordrb.id_compare(other.server_id, @server_id)
     end
+
+    alias_method :eql?, :==
   end
 end
