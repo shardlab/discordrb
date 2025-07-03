@@ -122,7 +122,7 @@ module Discordrb
   # @param file [File, #read] A file like object that responds to #read.
   # @return [String] The base64 encoded file object as image data.
   def self.encode_file(file)
-    path_method = %i[original_filename path local_path].find { |meth| file.respond_to?(meth) }
+    path_method = %i[original_filename path local_path].find { |method| file.respond_to?(method) }
 
     raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
     raise ArgumentError, 'File object must respond to read.' unless file.respond_to?(:read)
