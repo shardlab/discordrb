@@ -527,7 +527,7 @@ module Discordrb
             end
           end
         elsif /(?<animated>^a|^${0}):(?<name>\w+):(?<id>\d+)/ =~ mention
-          array_to_return << (emoji(id) || Emoji.new({ 'animated' => !animated.nil?, 'name' => name, 'id' => id }, self, nil))
+          array_to_return << (emoji(id) || Emoji.new({ 'animated' => animated != '', 'name' => name, 'id' => id }, self, nil))
         end
       end
       array_to_return
@@ -1102,11 +1102,7 @@ module Discordrb
       server = self.server(server_id)
 
       if (member = server.member(data['user']['id'].to_i))
-        member.update_roles(data['roles'])
-        member.update_nick(data['nick'])
-        member.update_global_name(data['user']['global_name']) if data['user']['global_name']
-        member.update_boosting_since(data['premium_since'])
-        member.update_communication_disabled_until(data['communication_disabled_until'])
+        member.update_data(data)
       else
         Discordrb::LOGGER.warn("update_guild_member attempted to access a member which doesn't exist! Not sure what happened here, ignoring.")
       end
@@ -1571,13 +1567,13 @@ module Discordrb
         when Interaction::TYPES[:command]
           event = ApplicationCommandEvent.new(data, self)
 
-          Thread.new do
-            Thread.current[:discordrb_name] = "it-#{event.interaction.id}"
+          Thread.new(event) do |evt|
+            Thread.current[:discordrb_name] = "it-#{evt.interaction.id}"
 
             begin
-              debug("Executing application command #{event.command_name}:#{event.command_id}")
+              debug("Executing application command #{evt.command_name}:#{evt.command_id}")
 
-              @application_commands[event.command_name]&.call(event)
+              @application_commands[evt.command_name]&.call(evt)
             rescue StandardError => e
               log_exception(e)
             end
@@ -1612,6 +1608,10 @@ module Discordrb
         when Interaction::TYPES[:modal_submit]
 
           event = ModalSubmitEvent.new(data, self)
+          raise_event(event)
+        when Interaction::TYPES[:autocomplete]
+
+          event = AutocompleteEvent.new(data, self)
           raise_event(event)
         end
       when :WEBHOOKS_UPDATE
@@ -1692,15 +1692,15 @@ module Discordrb
     end
 
     def call_event(handler, event)
-      t = Thread.new do
+      t = Thread.new(event) do |evt|
         @event_threads ||= []
         @current_thread ||= 0
 
         @event_threads << t
         Thread.current[:discordrb_name] = "et-#{@current_thread += 1}"
         begin
-          handler.call(event)
-          handler.after_call(event)
+          handler.call(evt)
+          handler.after_call(evt)
         rescue StandardError => e
           log_exception(e)
         ensure

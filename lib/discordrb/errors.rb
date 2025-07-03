@@ -174,6 +174,9 @@ module Discordrb
     # Unauthorized
     Unauthorized = Unauthorised = Code(40_001)
 
+    # Unable to bulk ban any users
+    UnableToBulkBanUsers = Code(500_000)
+
     # Missing Access
     MissingAccess = Code(50_001)
 
