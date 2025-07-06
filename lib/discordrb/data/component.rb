@@ -258,13 +258,13 @@ module Discordrb
 
     # Sections allow you to group text display components with an accessory.
     class Section
-      # @return [Integer] ID of this section.
+      # @return [Integer] the ID of this section.
       attr_reader :id
 
-      # @return [Button, Thumbnail] The accessory of this section.
+      # @return [Button, Thumbnail] the accessory of this section.
       attr_reader :accessory
 
-      # @return [Array<TextDisplay>] Array of components in this section.
+      # @return [Array<TextDisplay>] array of components in this section.
       attr_reader :components
 
       # @!visibility private
@@ -275,12 +275,12 @@ module Discordrb
         @components = data['components'].map { |component| Components.from_data(component, bot) }
       end
 
-      # @return [Boolean] If the accessory is a button or not.
+      # @return [true, false] whether the accessory is a button or not.
       def button?
         @accessory.is_a?(Button)
       end
 
-      # @return [Boolean] If the accessory is a thumbnail or not.
+      # @return [true, false] whether the accessory is a thumbnail or not.
       def thumbnail?
         @accessory.is_a?(Thumbnail)
       end
@@ -288,22 +288,22 @@ module Discordrb
 
     # Unfurled media objects allow you to specify an arbitrary url or attachment://<filename> reference.
     class UnfurledMedia
-      # @return [String] The URL this attachment can be downloaded at.
+      # @return [String] the URL this attachment can be downloaded at.
       attr_reader :url
 
-      # @return [String] The attachment's proxied URL.
+      # @return [String] the attachment's proxied URL.
       attr_reader :proxy_url
 
-      # @return [Integer, nil] The width of an image file, in pixels, or `nil` if the file is not an image.
+      # @return [Integer, nil] the width of an image file, in pixels, or `nil` if the file is not an image.
       attr_reader :width
 
-      # @return [Integer, nil] The height of an image file, in pixels, or `nil` if the file is not an image.
+      # @return [Integer, nil] the height of an image file, in pixels, or `nil` if the file is not an image.
       attr_reader :height
 
-      # @return [String] The media's content type.
+      # @return [String] the media's content type.
       attr_reader :content_type
 
-      # @return [Integer, nil] The id of the uploaded attachment. Only present if the media item was uploaded as an attachment.
+      # @return [Integer, nil] the ID of the uploaded attachment. Only present if the media item was uploaded as an attachment.
       attr_reader :attachment_id
 
       # @!visibility private
@@ -320,14 +320,14 @@ module Discordrb
 
     # Seperators allow you to divide other components with a barrier.
     class Seperator
-      # @return [Integer] ID of this seperator.
+      # @return [Integer] the ID of this seperator.
       attr_reader :id
 
-      # @return [true, false] If this seperator is a divider or not.
+      # @return [true, false] if this seperator is a divider or not.
       attr_reader :divider
       alias_method :divider?, :divider
 
-      # @return [Integer] If this seperator has `small` (1) or `large` (2) spacing.
+      # @return [Integer] if this seperator has `small` (1) or `large` (2) spacing.
       attr_reader :spacing
 
       # @!visibility private
@@ -338,12 +338,12 @@ module Discordrb
         @spacing = data['spacing']
       end
 
-      # @return [true, false] If the spacing is small.
+      # @return [true, false] whether the spacing is small.
       def small?
         @spacing == 1
       end
 
-      # @return [true, false] If the spacing is large.
+      # @return [true, false] whether the spacing is large.
       def large?
         @spacing == 2
       end
@@ -353,11 +353,12 @@ module Discordrb
     class MediaGallery
       # A media Gallery item.
       class Item
-        # @return [UnfurledMedia] Media of this gallery item.
+        # @return [UnfurledMedia] the media of this gallery item.
         attr_reader :media
 
-        # @return [String, nil] Alt text/description of this item.
+        # @return [String, nil] the alternative text of this item.
         attr_reader :description
+        alias_method :alt_text, :description
 
         # @return [true, false] If this gallery item is spoilered.
         attr_reader :spoiler
@@ -372,10 +373,10 @@ module Discordrb
         end
       end
 
-      # @return [Integer] ID of this gallery.
+      # @return [Integer] the ID of this gallery.
       attr_reader :id
 
-      # @return [Array<Item>] Array of media gallery items.
+      # @return [Array<Item>] array of media gallery items.
       attr_reader :items
 
       # @!visibility private
@@ -388,16 +389,17 @@ module Discordrb
 
     # Thumbnails are containers for media. They can have alt text, and be spoilered.
     class Thumbnail
-      # @return [Integer] ID of this thumbnail.
+      # @return [Integer] the ID of this thumbnail.
       attr_reader :id
 
-      # @return [UnfurledMedia] Media item of this thumbnail.
+      # @return [UnfurledMedia] media item of this thumbnail.
       attr_reader :media
 
-      # @return [String, nil] Alt text/description of this thumbnail.
+      # @return [String, nil] the alternative text of this thumbnail.
       attr_reader :description
+      alias_method :alt_text, :description
 
-      # @return [true, false] If this thumbnail is spoilered or not.
+      # @return [true, false] if this thumbnail is spoilered or not.
       attr_reader :spoiler
       alias_method :spoiler?, :spoiler
 
@@ -413,18 +415,18 @@ module Discordrb
 
     # Containers allow you to group together other components. You can add an accent color and spoiler them.
     class Container
-      # @return [Integer] ID of this container.
+      # @return [Integer] the ID of this container.
       attr_reader :id
 
-      # @return [ColourRGB, nil] The accent color of this thumbnail, or nil if there isn't one.
+      # @return [ColourRGB, nil] the accent color of this thumbnail, or nil if there isn't one.
       attr_reader :colour
       alias_method :color, :colour
 
-      # @return [true, false] If this container is spoilered or not.
+      # @return [true, false] if this container is spoilered or not.
       attr_reader :spoiler
       alias_method :spoiler?, :spoiler
 
-      # @return [Array<Component>] Components included within this container.
+      # @return [Array<Component>] the components included within this container.
       attr_reader :components
 
       # @!visibility private
@@ -439,13 +441,19 @@ module Discordrb
 
     # File components allow you to send a file. You can spoiler these files as well.
     class File
-      # @return [Integer] ID of this file.
+      # @return [Integer] the ID of this file.
       attr_reader :id
 
-      # @return [UnfurledMedia] The attached file.
+      # @return [UnfurledMedia] the attached file.
       attr_reader :file
 
-      # @return [true, false] If this file is spoilered or not.
+      # @return [String] the name of the attached file.
+      attr_reader :name
+
+      # @return [Integer] the size of the attached file in bytes.
+      attr_reader :size
+
+      # @return [true, false] if this file is spoilered or not.
       attr_reader :spoiler
       alias_method :spoiler?, :spoiler
 
@@ -454,16 +462,18 @@ module Discordrb
         @bot = bot
         @id = data['id']
         @file = UnfurledMedia.new(data['file'], bot)
+        @name = data['name']
+        @size = data['size']
         @spoiler = data['spoiler']
       end
     end
 
     # Text displays are a lightweight container for text.
     class TextDisplay
-      # @return [Integer] ID of this text display.
+      # @return [Integer] the ID of this text display.
       attr_reader :id
 
-      # @return [String] The content within this text display.
+      # @return [String] the content within this text display.
       attr_reader :content
       alias_method :text, :content
       alias_method :to_s, :content
