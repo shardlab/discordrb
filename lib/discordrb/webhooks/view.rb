@@ -81,7 +81,7 @@ class Discordrb::Webhooks::View
     # @param disabled [true, false, nil] Grey out the component to make it unusable.
     # @yieldparam builder [SelectMenuBuilder]
     def string_select(custom_id:, options: [], id: nil, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
-      builder = SelectMenuBuilder.new(custom_id, id, options, placeholder, min_values, max_values, disabled, select_type: :string_select)
+      builder = SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values, disabled, select_type: :string_select, id: id)
 
       yield builder if block_given?
 
@@ -99,7 +99,7 @@ class Discordrb::Webhooks::View
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param disabled [true, false, nil] Grey out the component to make it unusable.
     def user_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
-      @components << SelectMenuBuilder.new(custom_id, id, [], placeholder, min_values, max_values, disabled, select_type: :user_select).to_h
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :user_select, id: id).to_h
     end
 
     # Add a select role to this action row.
@@ -111,7 +111,7 @@ class Discordrb::Webhooks::View
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param disabled [true, false, nil] Grey out the component to make it unusable.
     def role_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
-      @components << SelectMenuBuilder.new(custom_id, id, [], placeholder, min_values, max_values, disabled, select_type: :role_select).to_h
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :role_select, id: id).to_h
     end
 
     # Add a select mentionable to this action row.
@@ -123,7 +123,7 @@ class Discordrb::Webhooks::View
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param disabled [true, false, nil] Grey out the component to make it unusable.
     def mentionable_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
-      @components << SelectMenuBuilder.new(custom_id, id, [], placeholder, min_values, max_values, disabled, select_type: :mentionable_select).to_h
+      @components << SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :mentionable_select, id: id).to_h
     end
 
     # Add a select channel to this action row.
@@ -134,8 +134,13 @@ class Discordrb::Webhooks::View
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param disabled [true, false, nil] Grey out the component to make it unusable.
-    def channel_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, disabled: nil)
-      @components << SelectMenuBuilder.new(custom_id, id, [], placeholder, min_values, max_values, disabled, select_type: :channel_select).to_h
+    # @param channel_types [Array<Symbol, Integer>, nil] The channel types to include in the select menu.
+    def channel_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, disabled: nil, channel_types: nil)
+      builder = SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :channel_select, id: id).to_h
+
+      builder[:channel_types] = channel_types.map { |type| Discordrb::Channel::TYPES[type] || type } if channel_types
+
+      @components << builder
     end
 
     # @!visibility private
@@ -147,7 +152,7 @@ class Discordrb::Webhooks::View
   # A builder to assist in adding options to select menus.
   class SelectMenuBuilder
     # @!visibility hidden
-    def initialize(custom_id, id = nil, options = [], placeholder = nil, min_values = nil, max_values = nil, disabled = nil, select_type: :string_select)
+    def initialize(custom_id, options = [], placeholder = nil, min_values = nil, max_values = nil, disabled = nil, select_type: :string_select, id: nil)
       @id = id
       @custom_id = custom_id
       @options = options
