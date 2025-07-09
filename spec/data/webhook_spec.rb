@@ -3,15 +3,15 @@
 require 'discordrb'
 
 describe Discordrb::Webhook do
-  let(:token) { double('token') }
-  let(:reason) { double('reason') }
-  let(:server) { double('server', member: double) }
-  let(:channel) { double('channel', server: server) }
-  let(:bot) { double('bot', channel: channel, token: token) }
-
   subject(:webhook) do
     described_class.new(webhook_data, bot)
   end
+
+  let(:token) { double }
+  let(:reason) { double }
+  let(:server) { instance_double(Discordrb::Server, 'server', member: double) }
+  let(:channel) { instance_double(Discordrb::Channel, 'channel', server: server) }
+  let(:bot) { instance_double(Discordrb::Bot, 'bot', channel: channel, token: token) }
 
   fixture :webhook_data, %i[webhook]
   fixture_property :webhook_name, :webhook_data, ['name']
@@ -33,84 +33,95 @@ describe Discordrb::Webhook do
   fixture_property :avatar_string, :avatar_data, ['avatar']
 
   describe '#initialize' do
-    it 'sets readers' do
-      expect(webhook.name).to eq webhook_name
-      expect(webhook.id).to eq webhook_id
-      expect(webhook.token).to eq webhook_token
-      expect(webhook.avatar).to eq webhook_avatar
-      expect(webhook.server).to eq server
-      expect(webhook.channel).to eq channel
+    shared_examples 'sets reader' do |property, reference|
+      it "sets #{property}" do
+        # we pass a symbol to send to avoid calling the method when including the shared example - we can only call it in the test
+        expect(webhook.send(property)).to eq send(reference)
+      end
     end
 
+    include_examples 'sets reader', :name, :webhook_name
+    include_examples 'sets reader', :id, :webhook_id
+    include_examples 'sets reader', :token, :webhook_token
+    include_examples 'sets reader', :avatar, :webhook_avatar
+    include_examples 'sets reader', :server, :server
+    include_examples 'sets reader', :channel, :channel
+
+    # TODO: Rework redundant test with better setup
     context 'when webhook from a token' do
       before { webhook.instance_variable_set(:@owner, nil) }
+
       it 'doesn\'t set owner' do
-        expect(webhook.owner).to eq nil
+        expect(webhook.owner).to be_nil
       end
     end
 
-    context 'when webhook is from auth' do
-      context 'when owner cached' do
-        let(:member) { double('member') }
-        let(:server) { double('server', member: member) }
+    context 'when owner cached' do
+      let(:member) { double }
+      let(:server) { instance_double(Discordrb::Server, 'server', member: member) }
 
-        it 'sets owner from cache' do
-          expect(webhook.owner).to eq member
-        end
+      it 'sets owner from cache' do
+        expect(webhook.owner).to eq member
       end
+    end
 
-      context 'when owner not cached' do
-        let(:server) { double('server', member: nil) }
-        let(:user) { double('user') }
-        let(:bot) { double('bot', channel: channel, ensure_user: user) }
+    context 'when owner not cached' do
+      let(:server) { instance_double(Discordrb::Server, 'server', member: nil) }
+      let(:user) { double }
+      let(:bot) { instance_double(Discordrb::Bot, 'bot', channel: channel, ensure_user: user) }
 
-        it 'gets user' do
-          expect(webhook.owner).to eq user
-        end
+      it 'gets user' do
+        expect(webhook.owner).to eq user
       end
     end
   end
 
   describe '#avatar=' do
     it 'calls update_webhook' do
-      expect(webhook).to receive(:update_webhook).with(avatar: avatar_string)
+      allow(webhook).to receive(:update_webhook)
       webhook.avatar = avatar_string
+      expect(webhook).to have_received(:update_webhook).with(avatar: avatar_string)
     end
   end
 
   describe '#delete_avatar' do
     it 'calls update_webhook' do
-      expect(webhook).to receive(:update_webhook).with(avatar: nil)
+      allow(webhook).to receive(:update_webhook)
       webhook.delete_avatar
+      expect(webhook).to have_received(:update_webhook).with(avatar: nil)
     end
   end
 
   describe '#channel=' do
     it 'calls update_webhook' do
-      expect(webhook).to receive(:update_webhook).with(channel_id: edited_webhook_channel_id.to_i)
+      allow(webhook).to receive(:update_webhook)
       webhook.channel = edited_webhook_channel_id
+      expect(webhook).to have_received(:update_webhook).with(channel_id: edited_webhook_channel_id.to_i)
     end
   end
 
   describe '#name=' do
     it 'calls update_webhook' do
-      expect(webhook).to receive(:update_webhook).with(name: edited_webhook_name)
+      allow(webhook).to receive(:update_webhook)
       webhook.name = edited_webhook_name
+      expect(webhook).to have_received(:update_webhook).with(name: edited_webhook_name)
     end
   end
 
   describe '#update' do
     it 'calls update_webhook' do
-      expect(webhook).to receive(:update_webhook).with(avatar: avatar_string, channel_id: edited_webhook_channel_id.to_i, name: edited_webhook_name, reason: reason)
+      allow(webhook).to receive(:update_webhook)
       webhook.update(avatar: avatar_string, channel: edited_webhook_channel_id, name: edited_webhook_name, reason: reason)
+      expect(webhook).to have_received(:update_webhook).with(avatar: avatar_string, channel_id: edited_webhook_channel_id.to_i, name: edited_webhook_name, reason: reason)
     end
   end
 
   describe '#delete' do
     context 'when webhook is from auth' do
       it 'calls the API' do
-        expect(Discordrb::API::Webhook).to receive(:delete_webhook).with(token, webhook_id, reason)
+        allow(Discordrb::API::Webhook).to receive(:delete_webhook)
         webhook.delete(reason)
+        expect(Discordrb::API::Webhook).to have_received(:delete_webhook).with(token, webhook_id, reason)
       end
     end
 
@@ -118,26 +129,29 @@ describe Discordrb::Webhook do
       before { webhook.instance_variable_set(:@owner, nil) }
 
       it 'calls the token API' do
-        expect(Discordrb::API::Webhook).to receive(:token_delete_webhook).with(webhook_token, webhook_id, reason)
+        allow(Discordrb::API::Webhook).to receive(:token_delete_webhook)
         webhook.delete(reason)
+        expect(Discordrb::API::Webhook).to have_received(:token_delete_webhook).with(webhook_token, webhook_id, reason)
       end
     end
   end
 
   describe '#avatar_url' do
-    context 'avatar is set' do
+    context 'when avatar is set' do
       it 'calls the correct API helper' do
-        expect(Discordrb::API::User).to receive(:avatar_url).with(webhook_id, webhook_avatar)
+        allow(Discordrb::API::User).to receive(:avatar_url)
         webhook.avatar_url
+        expect(Discordrb::API::User).to have_received(:avatar_url).with(webhook_id, webhook_avatar)
       end
     end
 
-    context 'avatar is not set' do
+    context 'when avatar is not set' do
       before { webhook.instance_variable_set(:@avatar, nil) }
 
       it 'calls the correct API helper' do
-        expect(Discordrb::API::User).to receive(:default_avatar)
+        allow(Discordrb::API::User).to receive(:default_avatar)
         webhook.avatar_url
+        expect(Discordrb::API::User).to have_received(:default_avatar)
       end
     end
   end
@@ -151,29 +165,30 @@ describe Discordrb::Webhook do
   describe '#token?' do
     context 'when webhook is from auth' do
       it 'returns false' do
-        expect(webhook.token?).to eq false
+        expect(webhook.token?).to be false
       end
     end
 
     context 'when webhook is from token' do
       before { webhook.instance_variable_set(:@owner, nil) }
+
       it 'returns true' do
-        expect(webhook.token?).to eq true
+        expect(webhook.token?).to be true
       end
     end
   end
 
   describe '#avatarise' do
-    context 'avatar responds to read' do
+    context 'when avatar responds to read' do
       it 'returns encoded' do
-        avatar = double('avatar', read: 'text')
+        avatar = instance_double(IO, 'avatar', read: 'text')
         expect(webhook.send(:avatarise, avatar)).to eq "data:image/jpg;base64,#{Base64.strict_encode64('text')}"
       end
     end
 
-    context 'avatar does not respond to read' do
+    context 'when avatar does not respond to read' do
       it 'returns itself' do
-        avatar = double('avatar')
+        avatar = double
         expect(webhook.send(:avatarise, avatar)).to eq avatar
       end
     end
@@ -181,20 +196,20 @@ describe Discordrb::Webhook do
 
   describe '#update_internal' do
     it 'sets name' do
-      name = double('name')
+      name = double
       webhook.send(:update_internal, 'name' => name)
       expect(webhook.instance_variable_get(:@name)).to eq name
     end
 
     it 'sets avatar' do
-      avatar = double('avatar')
+      avatar = double
       webhook.send(:update_internal, 'avatar' => avatar)
       expect(webhook.instance_variable_get(:@avatar_id)).to eq avatar
     end
 
     it 'sets channel' do
-      channel = double('channel')
-      channel_id = double('channel_id')
+      channel = double
+      channel_id = double
       allow(bot).to receive(:channel).with(channel_id).and_return(channel)
       webhook.send(:update_internal, 'channel_id' => channel_id)
       expect(webhook.instance_variable_get(:@channel)).to eq channel
@@ -202,35 +217,38 @@ describe Discordrb::Webhook do
   end
 
   describe '#update_webhook' do
-    context 'API returns valid data' do
+    context 'when the API returns valid data' do
       it 'calls update_internal' do
         webhook
-        data = double('data', :[] => double)
+        data = instance_double(Hash, 'data', :[] => double)
         allow(JSON).to receive(:parse).and_return(data)
         allow(Discordrb::API::Webhook).to receive(:update_webhook)
-        expect(webhook).to receive(:update_internal).with(data)
-        webhook.send(:update_webhook, double('data', delete: reason))
+        allow(webhook).to receive(:update_internal)
+        webhook.send(:update_webhook, instance_double(Hash, 'data', delete: reason))
+        expect(webhook).to have_received(:update_internal).with(data)
       end
     end
 
-    context 'API returns error' do
+    context 'when the API returns an error' do
       it 'doesn\'t call update_internal' do
         webhook
-        data = double('data', :[] => nil)
+        data = instance_double(Hash, 'data', :[] => nil)
         allow(JSON).to receive(:parse).and_return(data)
         allow(Discordrb::API::Webhook).to receive(:update_webhook)
-        expect(webhook).to_not receive(:update_internal)
-        webhook.send(:update_webhook, double('data', delete: reason))
+        allow(webhook).to receive(:update_internal)
+        webhook.send(:update_webhook, instance_double(Hash, 'data', delete: reason))
+        expect(webhook).not_to have_received(:update_internal)
       end
     end
 
     context 'when webhook is from auth' do
       it 'calls auth API' do
         webhook
-        data = double('data', delete: reason)
-        allow(JSON).to receive(:parse).and_return(double('received_data', :[] => double))
-        expect(Discordrb::API::Webhook).to receive(:update_webhook).with(token, webhook_id, data, reason)
+        data = instance_double(Hash, 'data', delete: reason)
+        allow(JSON).to receive(:parse).and_return(instance_double(Hash, 'received_data', :[] => double))
+        allow(Discordrb::API::Webhook).to receive(:update_webhook)
         webhook.send(:update_webhook, data)
+        expect(Discordrb::API::Webhook).to have_received(:update_webhook).with(token, webhook_id, data, reason)
       end
     end
 
@@ -238,10 +256,11 @@ describe Discordrb::Webhook do
       before { webhook.instance_variable_set(:@owner, nil) }
 
       it 'calls token API' do
-        data = double('data', delete: reason)
-        allow(JSON).to receive(:parse).and_return(double('received_data', :[] => double))
-        expect(Discordrb::API::Webhook).to receive(:token_update_webhook).with(webhook_token, webhook_id, data, reason)
+        data = instance_double(Hash, 'data', delete: reason)
+        allow(JSON).to receive(:parse).and_return(instance_double(Hash, 'received_data', :[] => double))
+        allow(Discordrb::API::Webhook).to receive(:token_update_webhook)
         webhook.send(:update_webhook, data)
+        expect(Discordrb::API::Webhook).to have_received(:token_update_webhook).with(webhook_token, webhook_id, data, reason)
       end
     end
   end

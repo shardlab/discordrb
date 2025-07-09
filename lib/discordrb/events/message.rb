@@ -256,6 +256,8 @@ module Discordrb::Events
       ].reduce(true, &:&)
     end
 
+    alias_method :matching?, :matches?
+
     # @see EventHandler#after_call
     def after_call(event)
       if event.file.nil?
