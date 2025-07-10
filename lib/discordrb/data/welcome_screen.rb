@@ -52,7 +52,7 @@ module Discordrb
                                                               new_data.key?(:description) ? new_data[:description] : :undef)))
     end
 
-    # Channels and their display options inside of a welcome screen.
+    # A welcome channel and its display options within a welcome screen.
     class WelcomeChannel
       # @return [String] the description shown for this channel.
       attr_reader :description
@@ -68,8 +68,21 @@ module Discordrb
         @bot = bot
         @description = data['description']
         @channel = bot.channel(data['channel_id'])
-        @emoji = bot.emoji(data['emoji_id']) if data['emoji_id']
-        @emoji = Emoji.new({ 'name' => data['emoji_name'], 'animated' => false }, bot) if data['emoji_name']
+        @emoji = if data['emoji_id']
+                   bot.emoji(data['emoji_id'])
+                 elsif data['emoji_name']
+                   Emoji.new({ 'name' => data['emoji_name'], 'animated' => false }, bot)
+                 end
+      end
+
+      # @!visibility private
+      def to_h
+        {
+          channel_id: @channel.id,
+          description: @description,
+          emoji_name: @emoji&.name,
+          emoji_id: @emoji&.id
+        }
       end
     end
   end

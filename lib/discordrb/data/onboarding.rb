@@ -12,17 +12,18 @@ module Discordrb
     # @return [Server] the server this onboarding object is for.
     attr_reader :server
 
-    # @return [Integer] the current onboarding mode.
+    # @return [Integer] the current mode of onboarding.
+    # @see MODES
     attr_reader :mode
 
     # @return [true, false] whether onboarding is enabled or not.
     attr_reader :enabled
     alias_method :enabled?, :enabled
 
-    # @return [Array<Prompt>] prompts shown during onboarding.
+    # @return [Array<Prompt>] the prompts shown during the inital onboarding flow.
     attr_reader :prompts
 
-    # @return [Array<Channel>] default channels that members automatically get opted into.
+    # @return [Array<Channel>] the default channels that members automatically get opted into.
     attr_reader :default_channels
 
     # @!visibility private
@@ -77,6 +78,8 @@ module Discordrb
       update_data(prompts: new_prompts.map(&:to_h))
     end
 
+    alias_method :remove_prompt, :delete_prompt
+
     # Add one or more prompts to this onboarding flow.
     # @yieldparam [PromptBuilder]
     def create_prompts
@@ -115,15 +118,16 @@ module Discordrb
       }.freeze
 
       # @return [Integer] the type of this prompt.
+      # @see TYPES
       attr_reader :type
 
-      # @return [Array<Option>] options inside of this prompt.
+      # @return [Array<Option>] the options inside of this prompt.
       attr_reader :options
 
       # @return [String] the title/question of this prompt.
       attr_reader :title
 
-      # @return [true, false] whether users are limited to selecting one option for the prompt
+      # @return [true, false] whether users are limited to selecting one option for the prompt.
       attr_reader :single_select
       alias_method :single_select?, :single_select
 
@@ -183,31 +187,30 @@ module Discordrb
     class Option
       include IDObject
 
-      # @return [Emoji, nil] the emoji of this option.
-      attr_reader :emoji
-
       # @return [String] the title of this option.
       attr_reader :title
+
+      # @return [Emoji, nil] the emoji of this option.
+      attr_reader :emoji
 
       # @return [String, nil] the description of this option.
       attr_reader :description
 
-      # @return [Array<Role>] roles assigned to a member when the option is selected.
+      # @return [Array<Role>] the roles assigned to a member when the option is selected.
       attr_reader :roles
 
-      # @return [Array<Channel>] channels a member is added to when the option is selected.
+      # @return [Array<Channel>] the channels a member is added to when the option is selected.
       attr_reader :channels
 
       # @!visibility private
       def initialize(data, server, bot)
         @bot = bot
-        @server = server
         @id = data['id'].to_i
-        @emoji = Discordrb::Emoji.new(data['emoji'], bot) if data['emoji']
         @title = data['title']
         @description = data['description']
         @roles = data['role_ids'].map { |id| server.role(id) }
-        @channels = data['channel_ids'].map { |id| bot.channel(id) }
+        @channels = data['channel_ids'].filter_map { |id| bot.channel(id) }
+        @emoji = Discordrb::Emoji.new(data['emoji'], bot) if data['emoji']&.values&.any?
       end
 
       # @!visibility private
@@ -238,17 +241,17 @@ module Discordrb
 
       # @param title [String] The title of the prompt.
       # @param type [Symbol, Integer] The type of prompt. See {Prompt::TYPES}.
-      # @param multi_select [Boolean] whether users can select multiple options for the prompt.
-      # @param required [Boolean] whether this prompt is required before a user completes the onboarding flow.
-      # @param in_onboarding [Boolean] whether the prompt is present in the onboarding flow. If false, the prompt
+      # @param single_select [true, false] whether users can only select one option for the prompt. Default true.
+      # @param required [true, false] whether this prompt is required before a user completes the onboarding flow.
+      # @param in_onboarding [true, false] whether the prompt is present in the onboarding flow. If false, the prompt
       #   will only appear in the Channels & Roles tab.
       # @yieldparam [OptionBuilder]
-      def prompt(title:, type:, required:, multi_select: true, in_onboarding: true)
+      def prompt(title:, type:, required:, single_select: true, in_onboarding: true)
         yield (builder = OptionBuilder.new)
 
         @prompts << { title: title, type: Prompt::TYPES[type] || type, options: builder.to_a,
                       required: required, in_onboarding: in_onboarding, id: @prompts.size + 1,
-                      single_select: !multi_select }
+                      single_select: single_select }
       end
     end
 
