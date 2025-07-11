@@ -398,6 +398,108 @@ module Discordrb
     def delete
       @bot.delete_application_command(@id, server_id: @server_id)
     end
+
+    # Get the permission configuration for the this application command on a specific server.
+    # @param server_id [Integer, String, nil] The ID of the server to fetch command permissions for.
+    # @return [Array<Permission>] the permissions for this application command in the given server.
+    def permissions(server_id: nil)
+      raise ArgumentError, 'A server ID must be provided for global application commands' if @server_id.nil? && server_id.nil?
+
+      response = JSON.parse(API::Application.get_application_command_permissions(@bot.token, @bot.profile.id, @server_id || server_id&.resolve_id, @id))
+      response['permissions'].map { |permission| Permission.new(permission.merge({ '_command' => response.except('permissions') }), @bot) }
+    rescue Discordrb::Errors::UnknownError
+      # If there aren't any explicit overwrites configured for the command, the response is a 400.
+      []
+    end
+
+    # An application command permission for a channel, member, or a role.
+    class Permission
+      # Map of permission types.
+      TYPES = {
+        role: 1,
+        member: 2,
+        channel: 3
+      }.freeze
+
+      # @return [Integer] the type of this permission.
+      # @see TYPES
+      attr_reader :type
+
+      # @return [Integer] the ID of the thing this permission is for.
+      attr_reader :target_id
+
+      # @return [Integer] the ID of the server this permission is for.
+      attr_reader :server_id
+
+      # @!visibility private
+      def initialize(data, bot)
+        @bot = bot
+        @type = data['type']
+        @target_id = data['id'].to_i
+        @overwrite = data['permission']
+        @command_id = data['_command']['id'].to_i
+        @server_id = data['_command']['guild_id'].to_i
+        @application_id = data['_command']['application_id'].to_i
+      end
+
+      # Whether this permission has been allowed, e.g has a green check in the UI.
+      # @return [true, false]
+      def allowed?
+        @overwrite == true
+      end
+
+      # Whether this permission has been denied, e.g has a red check in the UI.
+      # @return [true, false]
+      def denied?
+        @overwrite == false
+      end
+
+      # Whether this permission is applied to the everyone role in the server.
+      # @return [true, false]
+      def everyone?
+        @target_id == @server_id
+      end
+
+      # Whether this permission is the default for all commands that don't
+      #  contain explicit permission oerwrites.
+      # @return [true, false]
+      def default?
+        @command_id == @application_id
+      end
+
+      # Whether this permission is applied to every channel in the server.
+      # @return [true, false]
+      def all_channels?
+        @target_id == (@server_id - 1)
+      end
+
+      # Get the user, role, or channel(s) that this permission targets.
+      # @return [Array<Channel>, Role, Member]
+      def target
+        case @type
+        when TYPES[:role]
+          @bot.server(@server_id).role(@target_id)
+        when TYPES[:member]
+          @bot.server(@server_id).member(@target_id)
+        when TYPES[:channel]
+          all_channels ? @bot.server(@server_id).channels : [@bot.channel(@target_id)]
+        end
+      end
+
+      alias_method :targets, :target
+
+      # @!method role?
+      #   @return [true, false] whether this permission is for a role.
+      # @!method member?
+      #   @return [true, false] whether this permission is for a member.
+      # @!method channel?
+      #   @return [true, false] whether this permission is for a channel.
+      TYPES.each do |name, value|
+        define_method("#{name}?") do
+          @type == value
+        end
+      end
+    end
   end
 
   # Objects specific to Interactions.
