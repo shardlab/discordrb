@@ -319,25 +319,26 @@ module Discordrb::API::Channel
   end
 
   # Get a list of pinned messages in a channel
-  # https://discord.com/developers/docs/resources/channel#get-pinned-messages
-  def pinned_messages(token, channel_id)
+  # https://discord.com/developers/docs/resources/message#get-channel-pins
+  def pinned_messages(token, channel_id, limit = 50, before = nil)
+    query = URI.encode_www_form({ limit: limit, before: before }.compact)
     Discordrb::API.request(
       :channels_cid_pins,
       channel_id,
       :get,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/pins",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/pins?#{query}",
       Authorization: token
     )
   end
 
   # Pin a message
-  # https://discord.com/developers/docs/resources/channel#add-pinned-channel-message
+  # https://discord.com/developers/docs/resources/message#pin-message
   def pin_message(token, channel_id, message_id, reason = nil)
     Discordrb::API.request(
       :channels_cid_pins_mid,
       channel_id,
       :put,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/pins/#{message_id}",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/pins/#{message_id}",
       nil,
       Authorization: token,
       'X-Audit-Log-Reason': reason
@@ -345,13 +346,13 @@ module Discordrb::API::Channel
   end
 
   # Unpin a message
-  # https://discord.com/developers/docs/resources/channel#delete-pinned-channel-message
+  # https://discord.com/developers/docs/resources/message#unpin-message
   def unpin_message(token, channel_id, message_id, reason = nil)
     Discordrb::API.request(
       :channels_cid_pins_mid,
       channel_id,
       :delete,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/pins/#{message_id}",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/pins/#{message_id}",
       Authorization: token,
       'X-Audit-Log-Reason': reason
     )

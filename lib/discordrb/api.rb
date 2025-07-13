@@ -241,6 +241,11 @@ module Discordrb::API
     "#{cdn_url}/assets/collectibles/#{nameplate_asset.delete_suffix('/')}/asset.#{format}"
   end
 
+  # make a server tag badge URL from a server ID and badge ID.
+  def server_tag_badge_url(server_id, badge_id, format = 'webp')
+    "#{cdn_url}/guild-tag-badges/#{server_id}/#{badge_id}.#{format}"
+  end
+
   # Create an OAuth application
   def create_oauth_application(token, name, redirect_uris)
     request(

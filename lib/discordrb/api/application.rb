@@ -199,4 +199,16 @@ module Discordrb::API::Application
       content_type: :json
     )
   end
+
+  # Get the permissions for a specific command in a guild.
+  # https://discord.com/developers/docs/interactions/application-commands#get-application-command-permissions
+  def get_application_command_permissions(token, application_id, guild_id, command_id)
+    Discordrb::API.request(
+      :applications_aid_guilds_gid_commands_cid_permissions,
+      guild_id,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands/#{command_id}/permissions",
+      Authorization: token
+    )
+  end
 end

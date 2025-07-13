@@ -169,14 +169,14 @@ describe Discordrb::Events do
       describe 'end_with attribute' do
         it "matches #{matching}" do
           handler = Discordrb::Events::MessageEventHandler.new({ end_with: expr }, double('proc'))
-          event = double('event', channel: double('channel', private?: false), author: double('author'), timestamp: double('timestamp'), content: matching)
+          event = double('event', channel: double('channel', private?: false), author: double('author'), timestamp: double('timestamp'), content: matching, message: matching)
           allow(event).to receive(:is_a?).with(Discordrb::Events::MessageEvent).and_return(true)
           expect(handler.matches?(event)).to be_truthy
         end
 
         it "doesn't match #{non_matching}" do
           handler = Discordrb::Events::MessageEventHandler.new({ end_with: expr }, double('proc'))
-          event = double('event', channel: double('channel', private?: false), author: double('author'), timestamp: double('timestamp'), content: non_matching)
+          event = double('event', channel: double('channel', private?: false), author: double('author'), timestamp: double('timestamp'), content: non_matching, message: matching)
           allow(event).to receive(:is_a?).with(Discordrb::Events::MessageEvent).and_return(true)
           expect(handler.matches?(event)).to be_falsy
         end
