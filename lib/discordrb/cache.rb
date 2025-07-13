@@ -199,7 +199,7 @@ module Discordrb
     # @return [String] Only the code for the invite.
     def resolve_invite_code(invite)
       invite = invite.code if invite.is_a? Discordrb::Invite
-      invite = invite[invite.rindex('/') + 1..] if invite.start_with?('http', 'discord.gg')
+      invite = invite[(invite.rindex('/') + 1)..] if invite.start_with?('http', 'discord.gg')
       invite
     end
 
