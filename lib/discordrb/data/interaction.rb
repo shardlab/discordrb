@@ -406,7 +406,7 @@ module Discordrb
       raise ArgumentError, 'A server ID must be provided for global application commands' if @server_id.nil? && server_id.nil?
 
       response = JSON.parse(API::Application.get_application_command_permissions(@bot.token, @bot.profile.id, @server_id || server_id&.resolve_id, @id))
-      response['permissions'].map { |permission| Permission.new(permission.merge({ '_command' => response.except('permissions') }), @bot) }
+      response['permissions'].map { |permission| Permission.new(permission, response, @bot) }
     rescue Discordrb::Errors::UnknownError
       # If there aren't any explicit overwrites configured for the command, the response is a 400.
       []
@@ -432,14 +432,14 @@ module Discordrb
       attr_reader :server_id
 
       # @!visibility private
-      def initialize(data, bot)
+      def initialize(data, command, bot)
         @bot = bot
         @type = data['type']
         @target_id = data['id'].to_i
         @overwrite = data['permission']
-        @command_id = data['_command']['id'].to_i
-        @server_id = data['_command']['guild_id'].to_i
-        @application_id = data['_command']['application_id'].to_i
+        @command_id = command['id'].to_i
+        @server_id = command['guild_id'].to_i
+        @application_id = command['application_id'].to_i
       end
 
       # Whether this permission has been allowed, e.g has a green check in the UI.
