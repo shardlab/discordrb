@@ -11,8 +11,24 @@ module Discordrb
     # @return [Server, nil] the server of this emoji
     attr_reader :server
 
+    # @return [User, nil] the user who uploaded this emoji, or nil if the emoji's server is unknown
+    attr_reader :user
+
     # @return [Array<Role>, nil] roles this emoji is active for, or nil if the emoji's server is unknown
     attr_reader :roles
+
+    # @return [Boolean, nil] if the emoji requires colons to be used, or nil if the emoji's server is unknown
+    attr_reader :requires_colons
+    alias_method :requires_colons?, :requires_colons
+
+    # @return [Boolean, nil] whether this emoji is managed by an integration, or nil if the emoji's server is unknown
+    attr_reader :managed
+    alias_method :managed?, :managed
+
+    # @return [Boolean, nil] if this emoji is currently usable, or nil if the emoji's server is unknown
+    attr_reader :available
+    alias_method :available?, :available
+    alias_method :usable?, :available
 
     # @return [true, false] if the emoji is animated
     attr_reader :animated
@@ -27,6 +43,10 @@ module Discordrb
       @server = server
       @id = data['id']&.to_i
       @animated = data['animated']
+      @managed = data['managed']
+      @available = data['available']
+      @requires_colons = data['require_colons']
+      @user = data['user'] ? bot.ensure_user(data['user']) : nil
 
       process_roles(data['roles']) if server
     end
