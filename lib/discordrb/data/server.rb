@@ -637,7 +637,7 @@ module Discordrb
     # @return [BulkBan]
     def bulk_ban(users:, message_seconds: 0, reason: nil)
       raise ArgumentError, 'Can only ban between 1 and 200 users!' unless users.size.between?(1, 200)
-      
+
       return ban(users.first, 0, message_seconds: message_seconds, reason: reason) if users.size == 1
 
       response = API::Server.bulk_ban(@bot.token, @id, users.map(&:resolve_id), message_seconds, reason)
