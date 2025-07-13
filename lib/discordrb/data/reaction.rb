@@ -26,7 +26,7 @@ module Discordrb
     attr_reader :me_burst
     alias_method :me_burst?, :me_burst
 
-    # @return [Array<ColourRGB>] colors used for animations in burst reactions
+    # @return [Array<ColourRGB>] an array of colors used for animations in burst reactions
     attr_reader :burst_colours
     alias_method :burst_colors, :burst_colours
 

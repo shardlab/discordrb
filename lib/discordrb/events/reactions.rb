@@ -14,14 +14,14 @@ module Discordrb::Events
     # @!visibility private
     attr_reader :message_id
 
-    # @return [true, false] if the reaction is a burst reaction
+    # @return [true, false] whether the reaction is a burst reaction.
     attr_reader :burst
     alias_method :burst?, :burst
 
-    # @return [Integer] the type of the reaction. 0 for normal, 1 for burst
+    # @return [Integer] the type of the reaction. 0 for normal, 1 for burst.
     attr_reader :type
 
-    # @return [Array<ColourRGB>] colors used for animations in burst reactions
+    # @return [Array<ColourRGB>] an array of colors used for animations in burst reactions.
     attr_reader :burst_colours
     alias_method :burst_colors, :burst_colours
 
@@ -108,10 +108,8 @@ module Discordrb::Events
           case a
           when Integer
             a == e
-          when :normal
-            e.zero?
-          when :burst
-            e == 1
+          when Symbol, String
+            Discordrb::Reaction::TYPES[a.to_sym] == e
           end
         end
       ].reduce(true, &:&)
