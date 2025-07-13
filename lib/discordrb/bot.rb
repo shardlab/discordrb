@@ -1584,6 +1584,10 @@ module Discordrb
           event = ServerEmojiUpdateEvent.new(server, old_emoji_data[e], new_emoji_data[e], self)
           raise_event(event)
         end
+      when :APPLICATION_COMMAND_PERMISSIONS_UPDATE
+        event = ApplicationCommandPermissionsUpdateEvent.new(data, self)
+
+        raise_event(event)
       when :INTERACTION_CREATE
         event = InteractionCreateEvent.new(data, self)
         raise_event(event)
