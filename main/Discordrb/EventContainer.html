@@ -248,6 +248,29 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#autocomplete-instance_method" title="#autocomplete (instance method)">#<strong>autocomplete</strong>(name = nil, attributes = {}) {|event| ... } &#x21d2; AutocompleteEventHandler </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>This <strong>event</strong> is raised whenever an autocomplete interaction is created.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#await-instance_method" title="#await (instance method)">#<strong>await</strong>(attributes = {}) {|event| ... } &#x21d2; AwaitEventHandler </a>
     
 
@@ -1552,7 +1575,7 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="Events.html" title="Discordrb::Events (module)">Events</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Events.html#matches_all-class_method" title="Discordrb::Events.matches_all (method)">matches_all</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="Events.html#added_members-instance_method" title="Discordrb::Events#added_members (method)">#added_members</a></span>, <span class='object_link'><a href="Events.html#matches_all-class_method" title="Discordrb::Events.matches_all (method)">matches_all</a></span></p>
 
 
   <div id="class_method_details" class="method_details_list">
@@ -1620,14 +1643,14 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
       <pre class="lines">
 
 
-744
-745
-746
-747
-748</pre>
+759
+760
+761
+762
+763</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 744</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 759</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class_from_string'>class_from_string</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_str'>str</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>::</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_inject'>inject</span><span class='lparen'>(</span><span class='const'>Object</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_mod'>mod</span><span class='comma'>,</span> <span class='id identifier rubyid_class_name'>class_name</span><span class='op'>|</span>
@@ -1707,15 +1730,15 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
       <pre class="lines">
 
 
-734
-735
-736
-737
-738
-739</pre>
+749
+750
+751
+752
+753
+754</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 734</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 749</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_event_class'>event_class</span><span class='lparen'>(</span><span class='id identifier rubyid_handler_class'>handler_class</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_class_name'>class_name</span> <span class='op'>=</span> <span class='id identifier rubyid_handler_class'>handler_class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -1796,12 +1819,12 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
       <pre class="lines">
 
 
-726
-727
-728</pre>
+741
+742
+743</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 726</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 741</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_handler_class'>handler_class</span><span class='lparen'>(</span><span class='id identifier rubyid_event_class'>event_class</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_class_from_string'>class_from_string</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_event_class'>event_class</span><span class='embexpr_end'>}</span><span class='tstring_content'>Handler</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -1866,15 +1889,15 @@ methods like <span class='object_link'><a href="#message-instance_method" title=
       <pre class="lines">
 
 
-694
-695
-696
-697
-698
-699</pre>
+709
+710
+711
+712
+713
+714</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 694</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 709</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_handler'>add_handler</span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_clazz'>clazz</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::EventContainer (module)">EventContainer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_event_class'><span class='object_link'><a href="#event_class-class_method" title="Discordrb::EventContainer.event_class (method)">event_class</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span>
@@ -2024,6 +2047,208 @@ methods like <span class='object_link'><a href="#message-instance_method" title=
   <span class='kw'>end</span>
 
   <span class='ivar'>@application_commands</span><span class='lbracket'>[</span><span class='id identifier rubyid_name'>name</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Events/ApplicationCommandEventHandler.html" title="Discordrb::Events::ApplicationCommandEventHandler (class)">ApplicationCommandEventHandler</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="autocomplete-instance_method">
+  
+    #<strong>autocomplete</strong>(name = nil, attributes = {}) {|event| ... } &#x21d2; <tt><span class='object_link'><a href="Events/AutocompleteEventHandler.html" title="Discordrb::Events::AutocompleteEventHandler (class)">AutocompleteEventHandler</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>This <strong>event</strong> is raised whenever an autocomplete interaction is created.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>name</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>An option name to match against.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>attributes</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The event&#39;s attributes.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>attributes</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:command_id</span>
+          <span class="type">(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>A command ID to match against.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:subcommand</span>
+          <span class="type">(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>A subcommand name to match against.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:subcommand_group</span>
+          <span class="type">(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>A subcommand group to match against.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:command_name</span>
+          <span class="type">(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>A command name to match against.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:server</span>
+          <span class="type">(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt><span class='object_link'><a href="Server.html" title="Discordrb::Server (class)">Server</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>A server to match against.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>The block is executed when the event is raised.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Events/AutocompleteEvent.html" title="Discordrb::Events::AutocompleteEvent (class)">AutocompleteEvent</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The event that was raised.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Events/AutocompleteEventHandler.html" title="Discordrb::Events::AutocompleteEventHandler (class)">AutocompleteEventHandler</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The event handler that was registered.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+660
+661
+662</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 660</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_autocomplete'>autocomplete</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/AutocompleteEvent.html" title="Discordrb::Events::AutocompleteEvent (class)">AutocompleteEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -3403,13 +3628,13 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-686
-687
-688
-689</pre>
+701
+702
+703
+704</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 686</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 701</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clear!'>clear!</span>
   <span class='ivar'>@event_handlers</span><span class='op'>&amp;.</span><span class='id identifier rubyid_clear'>clear</span>
@@ -3703,24 +3928,24 @@ setting some kind of uptime variable or whatever else. The only limit is yoursel
       <pre class="lines">
 
 
-703
-704
-705
-706
-707
-708
-709
-710
-711
-712
-713
-714
-715
-716
-717</pre>
+718
+719
+720
+721
+722
+723
+724
+725
+726
+727
+728
+729
+730
+731
+732</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 703</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 718</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_include_events'>include_events</span><span class='lparen'>(</span><span class='id identifier rubyid_container'>container</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_application_command_handlers'>application_command_handlers</span> <span class='op'>=</span> <span class='id identifier rubyid_container'>container</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_get'>instance_variable_get</span><span class='lparen'>(</span><span class='symbol'>:@application_commands</span><span class='rparen'>)</span>
@@ -6531,12 +6756,12 @@ on various device types (<code>:desktop</code>, <code>:mobile</code>, or <code>:
       <pre class="lines">
 
 
-655
-656
-657</pre>
+670
+671
+672</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 655</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 670</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_raw'>raw</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/RawEvent.html" title="Discordrb::Events::RawEvent (class)">RawEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -7207,12 +7432,12 @@ initialization. It&#39;s the recommended way to do things when the bot has finis
       <pre class="lines">
 
 
-681
-682
-683</pre>
+696
+697
+698</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 681</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 696</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_application_command_handler'>remove_application_command_handler</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='ivar'>@application_commands</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
@@ -7267,14 +7492,14 @@ initialization. It&#39;s the recommended way to do things when the bot has finis
       <pre class="lines">
 
 
-673
-674
-675
-676
-677</pre>
+688
+689
+690
+691
+692</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 673</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 688</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_handler'>remove_handler</span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_clazz'>clazz</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::EventContainer (module)">EventContainer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_event_class'><span class='object_link'><a href="#event_class-class_method" title="Discordrb::EventContainer.event_class (method)">event_class</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span>
@@ -9314,12 +9539,12 @@ discordrb.</p>
       <pre class="lines">
 
 
-666
-667
-668</pre>
+681
+682
+683</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 666</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 681</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unknown'>unknown</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/UnknownEvent.html" title="Discordrb::Events::UnknownEvent (class)">UnknownEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -10280,9 +10505,9 @@ moves between voice channels, as well as their mute and deaf status for themselv
 </div>
 
       <div id="footer">
-  Generated on Thu Apr  3 23:38:38 2025 by
+  Generated on Sun Jul 13 22:04:55 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.37 (ruby-3.3.7).
+  0.9.37 (ruby-3.3.8).
 </div>
 
     </div>

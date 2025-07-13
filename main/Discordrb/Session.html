@@ -120,33 +120,7 @@ there may be multiple sessions per connection or one session may persist over mu
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#sequence-instance_method" title="#sequence (instance method)">#<strong>sequence</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute sequence.</p>
-</div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#session_id-instance_method" title="#session_id (instance method)">#<strong>session_id</strong>  &#x21d2; Object </a>
+      <a href="#resume_gateway_url-instance_method" title="#resume_gateway_url (instance method)">#<strong>resume_gateway_url</strong>  &#x21d2; String </a>
     
 
     
@@ -165,7 +139,61 @@ there may be multiple sessions per connection or one session may persist over mu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute session_id.</p>
+    <span class="summary_desc"><div class='inline'><p>Gateway URL used to reconnect to the gateway node that Discord wants this session to use.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sequence-instance_method" title="#sequence (instance method)">#<strong>sequence</strong>  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Incrementing integer used to determine the most recent event reccived from Discord.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#session_id-instance_method" title="#session_id (instance method)">#<strong>session_id</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Used to uniquely identify this session.</p>
 </div></span>
   
 </li>
@@ -183,31 +211,6 @@ there may be multiple sessions per connection or one session may persist over mu
     </h2>
 
     <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(session_id)  &#x21d2; Session </a>
-    
-
-    
-  </span>
-  
-  
-    <span class="note title constructor">constructor</span>
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>A new instance of Session.</p>
-</div></span>
-  
-</li>
-
       
         <li class="public ">
   <span class="summary_signature">
@@ -347,66 +350,16 @@ there may be multiple sessions per connection or one session may persist over mu
     </ul>
   
 
-<div id="constructor_details" class="method_details_list">
-  <h2>Constructor Details</h2>
-  
-    <div class="method_details first">
-  <h3 class="signature first" id="initialize-instance_method">
-  
-    #<strong>initialize</strong>(session_id)  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Session (class)">Session</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns a new instance of Session.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-96
-97
-98
-99
-100
-101</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 96</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_session_id'>session_id</span><span class='rparen'>)</span>
-  <span class='ivar'>@session_id</span> <span class='op'>=</span> <span class='id identifier rubyid_session_id'>session_id</span>
-  <span class='ivar'>@sequence</span> <span class='op'>=</span> <span class='int'>0</span>
-  <span class='ivar'>@suspended</span> <span class='op'>=</span> <span class='kw'>false</span>
-  <span class='ivar'>@invalid</span> <span class='op'>=</span> <span class='kw'>false</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-  
-</div>
 
   <div id="instance_attr_details" class="attr_details">
     <h2>Instance Attribute Details</h2>
     
       
-      <span id="sequence=-instance_method"></span>
+      <span id=""></span>
       <div class="method_details first">
-  <h3 class="signature first" id="sequence-instance_method">
+  <h3 class="signature first" id="resume_gateway_url-instance_method">
   
-    #<strong>sequence</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>resume_gateway_url</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>  <span class="extras">(readonly)</span>
   
 
   
@@ -414,13 +367,30 @@ there may be multiple sessions per connection or one session may persist over mu
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the value of attribute sequence.</p>
+    <p>Returns Gateway URL used to reconnect to the gateway node that Discord wants this session to use.</p>
 
 
   </div>
 </div>
 <div class="tags">
   
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Gateway URL used to reconnect to the gateway node that Discord wants this session to use.</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -428,12 +398,71 @@ there may be multiple sessions per connection or one session may persist over mu
       <pre class="lines">
 
 
-94
-95
-96</pre>
+100
+101
+102</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 94</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 100</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_resume_gateway_url'>resume_gateway_url</span>
+  <span class='ivar'>@resume_gateway_url</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="sequence=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="sequence-instance_method">
+  
+    #<strong>sequence</strong>  &#x21d2; <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Incrementing integer used to determine the most recent event reccived from Discord.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Incrementing integer used to determine the most recent event reccived from Discord.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+97
+98
+99</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 97</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sequence'>sequence</span>
   <span class='ivar'>@sequence</span>
@@ -448,7 +477,7 @@ there may be multiple sessions per connection or one session may persist over mu
       <div class="method_details ">
   <h3 class="signature " id="session_id-instance_method">
   
-    #<strong>session_id</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+    #<strong>session_id</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>  <span class="extras">(readonly)</span>
   
 
   
@@ -456,13 +485,30 @@ there may be multiple sessions per connection or one session may persist over mu
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the value of attribute session_id.</p>
+    <p>Returns Used to uniquely identify this session. Mostly used when resuming connections.</p>
 
 
   </div>
 </div>
 <div class="tags">
   
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Used to uniquely identify this session. Mostly used when resuming connections.</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -470,12 +516,12 @@ there may be multiple sessions per connection or one session may persist over mu
       <pre class="lines">
 
 
-93
 94
-95</pre>
+95
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 93</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_session_id'>session_id</span>
   <span class='ivar'>@session_id</span>
@@ -529,12 +575,12 @@ there may be multiple sessions per connection or one session may persist over mu
       <pre class="lines">
 
 
-122
-123
-124</pre>
+131
+132
+133</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 122</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 131</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invalid?'>invalid?</span>
   <span class='ivar'>@invalid</span>
@@ -569,15 +615,17 @@ there may be multiple sessions per connection or one session may persist over mu
       <pre class="lines">
 
 
-118
-119
-120</pre>
+126
+127
+128
+129</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 118</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 126</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invalidate'>invalidate</span>
   <span class='ivar'>@invalid</span> <span class='op'>=</span> <span class='kw'>true</span>
+  <span class='ivar'>@resume_gateway_url</span> <span class='op'>=</span> <span class='kw'>nil</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -609,12 +657,12 @@ there may be multiple sessions per connection or one session may persist over mu
       <pre class="lines">
 
 
-113
-114
-115</pre>
+121
+122
+123</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 113</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 121</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_resume'>resume</span>
   <span class='ivar'>@suspended</span> <span class='op'>=</span> <span class='kw'>false</span>
@@ -661,12 +709,12 @@ there may be multiple sessions per connection or one session may persist over mu
       <pre class="lines">
 
 
-126
-127
-128</pre>
+135
+136
+137</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 126</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 135</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_should_resume?'>should_resume?</span>
   <span class='id identifier rubyid_suspended?'>suspended?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_invalid?'>invalid?</span>
@@ -701,12 +749,12 @@ there may be multiple sessions per connection or one session may persist over mu
       <pre class="lines">
 
 
-104
-105
-106</pre>
+112
+113
+114</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 104</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 112</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_suspend'>suspend</span>
   <span class='ivar'>@suspended</span> <span class='op'>=</span> <span class='kw'>true</span>
@@ -753,12 +801,12 @@ there may be multiple sessions per connection or one session may persist over mu
       <pre class="lines">
 
 
-108
-109
-110</pre>
+116
+117
+118</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 108</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/gateway.rb', line 116</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_suspended?'>suspended?</span>
   <span class='ivar'>@suspended</span>
@@ -773,9 +821,9 @@ there may be multiple sessions per connection or one session may persist over mu
 </div>
 
       <div id="footer">
-  Generated on Thu Apr  3 23:38:39 2025 by
+  Generated on Sun Jul 13 22:04:56 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.37 (ruby-3.3.7).
+  0.9.37 (ruby-3.3.8).
 </div>
 
     </div>

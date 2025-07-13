@@ -362,7 +362,7 @@ no more results or the configured <code>limit</code> is reached.</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_each'>each</span>
   <span class='id identifier rubyid_last_page'>last_page</span> <span class='op'>=</span> <span class='kw'>nil</span>
-  <span class='kw'>until</span> <span class='id identifier rubyid_limit_check'>limit_check</span>
+  <span class='kw'>until</span> <span class='id identifier rubyid_limit_exceeded?'>limit_exceeded?</span>
     <span class='id identifier rubyid_page'>page</span> <span class='op'>=</span> <span class='ivar'>@block</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_last_page'>last_page</span><span class='rparen'>)</span>
     <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_page'>page</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
 
@@ -376,7 +376,7 @@ no more results or the configured <code>limit</code> is reached.</p>
     <span class='id identifier rubyid_enumerator'>enumerator</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_item'>item</span><span class='op'>|</span>
       <span class='kw'>yield</span> <span class='id identifier rubyid_item'>item</span>
       <span class='ivar'>@count</span> <span class='op'>+=</span> <span class='int'>1</span>
-      <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_limit_check'>limit_check</span>
+      <span class='kw'>break</span> <span class='kw'>if</span> <span class='id identifier rubyid_limit_exceeded?'>limit_exceeded?</span>
     <span class='kw'>end</span>
 
     <span class='id identifier rubyid_last_page'>last_page</span> <span class='op'>=</span> <span class='id identifier rubyid_page'>page</span>
@@ -392,9 +392,9 @@ no more results or the configured <code>limit</code> is reached.</p>
 </div>
 
       <div id="footer">
-  Generated on Thu Apr  3 23:38:40 2025 by
+  Generated on Sun Jul 13 22:04:57 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.37 (ruby-3.3.7).
+  0.9.37 (ruby-3.3.8).
 </div>
 
     </div>

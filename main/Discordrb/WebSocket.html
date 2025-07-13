@@ -450,6 +450,16 @@ will be passed as the first parameter to the handler.</p>
       <pre class="lines">
 
 
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
 31
 32
 33
@@ -463,20 +473,10 @@ will be passed as the first parameter to the handler.</p>
 41
 42
 43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54</pre>
+44</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 21</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_endpoint'>endpoint</span><span class='comma'>,</span> <span class='id identifier rubyid_open_handler'>open_handler</span><span class='comma'>,</span> <span class='id identifier rubyid_message_handler'>message_handler</span><span class='comma'>,</span> <span class='id identifier rubyid_close_handler'>close_handler</span><span class='comma'>,</span> <span class='id identifier rubyid_error_handler'>error_handler</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Discordrb.html#LOGGER-constant" title="Discordrb::LOGGER (constant)">LOGGER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Using WSCS version: </span><span class='embexpr_beg'>#{</span><span class='op'>::</span><span class='const'>WebSocket</span><span class='op'>::</span><span class='const'>Client</span><span class='op'>::</span><span class='const'>Simple</span><span class='op'>::</span><span class='const'>VERSION</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -539,12 +539,12 @@ will be passed as the first parameter to the handler.</p>
       <pre class="lines">
 
 
-19
-20
-21</pre>
+9
+10
+11</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 9</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_close_handler'>close_handler</span>
   <span class='ivar'>@close_handler</span>
@@ -581,12 +581,12 @@ will be passed as the first parameter to the handler.</p>
       <pre class="lines">
 
 
-19
-20
-21</pre>
+9
+10
+11</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 9</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_error_handler'>error_handler</span>
   <span class='ivar'>@error_handler</span>
@@ -623,12 +623,12 @@ will be passed as the first parameter to the handler.</p>
       <pre class="lines">
 
 
-19
-20
-21</pre>
+9
+10
+11</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 9</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_message_handler'>message_handler</span>
   <span class='ivar'>@message_handler</span>
@@ -665,12 +665,12 @@ will be passed as the first parameter to the handler.</p>
       <pre class="lines">
 
 
-19
-20
-21</pre>
+9
+10
+11</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 9</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_open_handler'>open_handler</span>
   <span class='ivar'>@open_handler</span>
@@ -712,12 +712,12 @@ will be passed as the first parameter to the handler.</p>
       <pre class="lines">
 
 
-63
-64
-65</pre>
+53
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 63</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 53</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_close'>close</span>
   <span class='ivar'>@client</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span>
@@ -771,12 +771,12 @@ will be passed as the first parameter to the handler.</p>
       <pre class="lines">
 
 
-58
-59
-60</pre>
+48
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 58</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
   <span class='ivar'>@client</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
@@ -828,12 +828,12 @@ will be passed as the first parameter to the handler.</p>
       <pre class="lines">
 
 
-68
-69
-70</pre>
+58
+59
+60</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/websocket.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_thread'>thread</span>
   <span class='ivar'>@client</span><span class='period'>.</span><span class='id identifier rubyid_thread'>thread</span>
@@ -848,9 +848,9 @@ will be passed as the first parameter to the handler.</p>
 </div>
 
       <div id="footer">
-  Generated on Thu Apr  3 23:38:47 2025 by
+  Generated on Sun Jul 13 22:04:57 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.37 (ruby-3.3.7).
+  0.9.37 (ruby-3.3.8).
 </div>
 
     </div>
