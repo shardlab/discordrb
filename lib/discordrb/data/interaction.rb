@@ -92,11 +92,13 @@ module Discordrb
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @param components [Array<#to_h>] An array of components.
-    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil)
+    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, has_components: false)
       flags |= 1 << 6 if ephemeral
+      flags |= (1 << 15) if has_components
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -161,11 +163,13 @@ module Discordrb
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @param components [Array<#to_h>] An array of components.
-    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
-    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil)
+    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, has_components: false)
       flags |= 1 << 6 if ephemeral
+      flags |= (1 << 15) if has_components
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -188,11 +192,15 @@ module Discordrb
     # @param content [String] The content of the message.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param flags [Integer] Message flags.
     # @param components [Array<#to_h>] An array of components.
-    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @return [InteractionMessage] The updated response message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil)
+    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, components: nil, attachments: nil, has_components: false)
+      flags |= (1 << 15) if has_components
+
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
@@ -201,7 +209,7 @@ module Discordrb
 
       components ||= view
       data = builder.to_json_hash
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments)
+      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags)
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -217,10 +225,12 @@ module Discordrb
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
-    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil, attachments: nil)
+    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil, attachments: nil, has_components: false)
       flags |= 64 if ephemeral
+      flags |= (1 << 15) if has_components
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -242,10 +252,13 @@ module Discordrb
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil)
+    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil, has_components: false)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
+
+      flags = (1 << 15) if has_components
 
       prepare_builder(builder, content, embeds, allowed_mentions)
       yield builder, view if block_given?
@@ -254,7 +267,7 @@ module Discordrb
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
