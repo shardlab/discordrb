@@ -41,11 +41,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'redcarpet', '~> 3.5' # YARD markdown formatting
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.5'
-  spec.add_development_dependency 'rspec-prof', '~> 0.0'
-  spec.add_development_dependency 'rubocop', '~> 1.0'
-  spec.add_development_dependency 'rubocop-performance', '~> 1.0'
-  spec.add_development_dependency 'rubocop-rake', '~> 0.6'
+  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.6.0'
+  spec.add_development_dependency 'rspec-prof', '~> 0.0.7'
+  spec.add_development_dependency 'rubocop', '~> 1.77.0'
+  spec.add_development_dependency 'rubocop-performance', '~> 1.25.0'
+  spec.add_development_dependency 'rubocop-rake', '~> 0.7.0'
   spec.add_development_dependency 'simplecov', '~> 0.21'
-  spec.add_development_dependency 'yard', '~> 0.9'
+  spec.add_development_dependency 'yard', '~> 0.9.37'
 end
