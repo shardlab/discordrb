@@ -661,6 +661,18 @@ module Discordrb
       register_event(AutocompleteEvent, attributes.merge!({ name: name }), block)
     end
 
+    # This **event** is raised whenever an application command's permissions are updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :command_id A command ID to match against.
+    # @option attributes [String, Integer] :application_id An application ID to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ApplicationCommandPermissionsUpdateEvent] The event that was raised.
+    # @return [ApplicationCommandPermissionsUpdateEventHandler] The event handler that was registered.
+    def application_command_permissions_update(attributes = {}, &block)
+      register_event(ApplicationCommandPermissionsUpdateEvent, attributes, block)
+    end
+
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Symbol, Regexp] :type Matches the event type of the dispatch.

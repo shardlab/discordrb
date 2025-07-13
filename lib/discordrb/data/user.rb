@@ -59,6 +59,10 @@ module Discordrb
     # @return [Collectibles] the collectibles that this user has collected.
     attr_reader :collectibles
 
+    # @return [PrimaryServer, nil] the server tag the user has adopted, or nil if the user doesn't have one displayed.
+    attr_reader :primary_server
+    alias_method :server_tag, :primary_server
+
     # Utility function to get Discord's display name of a user not in server
     # @return [String] the name the user displays as (global_name if they have one, username otherwise)
     def display_name
@@ -140,12 +144,8 @@ module Discordrb
       @avatar_id = data['avatar']
       @activities = Discordrb::ActivitySet.new
       @public_flags = data['public_flags'] || 0
-
-      @bot_account = false
-      @bot_account = true if data['bot']
-
-      @webhook_account = false
-      @webhook_account = true if data['_webhook']
+      @bot_account = data['bot'] || false
+      @webhook_account = data['_webhook'] || false
 
       @status = :offline
       @client_status = process_client_status(data['client_status'])
@@ -153,6 +153,8 @@ module Discordrb
       @system_account = data['system'] || false
       @avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
       @collectibles = Collectibles.new(data['collectibles'] || {}, bot)
+
+      @primary_server = process_primary_server(data['primary_guild'] || {})
     end
 
     # Get a user's PM channel or send them a PM
@@ -222,6 +224,13 @@ module Discordrb
       @collectibles = Collectibles.new(collectibles || {}, @bot)
     end
 
+    # Set the user's primary server
+    # @note For internal use only.
+    # @!visibility private
+    def update_primary_server(server)
+      @primary_server = process_primary_server(server || {})
+    end
+
     # Set the user's presence data
     # @note for internal use only
     # @!visibility private
@@ -268,6 +277,11 @@ module Discordrb
     # @!visibility private
     def process_avatar_decoration(decoration)
       decoration ? AvatarDecoration.new(decoration, @bot) : nil
+    end
+
+    # @!visibility private
+    def process_primary_server(server)
+      PrimaryServer.new(server, @bot) if server['identity_enabled']
     end
 
     # @!method offline?

@@ -71,7 +71,19 @@ module Discordrb::Events
 
   # Member is updated (roles added or deleted)
   # @see Discordrb::EventContainer#member_update
-  class ServerMemberUpdateEvent < ServerMemberEvent; end
+  class ServerMemberUpdateEvent < ServerMemberEvent
+    # Override init_user so we don't make requests all the time on large servers
+    def init_user(data, _)
+      @user_id = data['user']['id']
+    end
+
+    # @return [Member] the member in question.
+    def user
+      @server&.member(@user_id)
+    end
+
+    alias_method :member, :user
+  end
 
   # Event handler for {ServerMemberUpdateEvent}
   class ServerMemberUpdateEventHandler < ServerMemberEventHandler; end
