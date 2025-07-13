@@ -229,7 +229,9 @@ module Discordrb::Events
             a == e
           end
         end,
-        matches_all(@attributes[:from], event.author) do |a, e|
+        matches_all(@attributes[:from], event.message) do |a, e|
+          # Resolve the author in the block in order to prevent resolving the author even when the attribute is `nil`
+          e = e.author
           case a
           when String
             a == e.name

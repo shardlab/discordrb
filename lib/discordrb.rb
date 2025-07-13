@@ -46,9 +46,12 @@ module Discordrb
   NO_INTENTS = 0
 
   # Compares two objects based on IDs - either the objects' IDs are equal, or one object is equal to the other's ID.
-  def self.id_compare(one_id, other)
+  def self.id_compare?(one_id, other)
     other.respond_to?(:resolve_id) ? (one_id.resolve_id == other.resolve_id) : (one_id == other)
   end
+
+  # @deprecated Please use {Discordrb.id_compare?}
+  singleton_class.alias_method :id_compare, :id_compare?
 
   # The maximum length a Discord message can have
   CHARACTER_LIMIT = 2000
