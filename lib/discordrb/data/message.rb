@@ -10,12 +10,6 @@ module Discordrb
     alias_method :text, :content
     alias_method :to_s, :content
 
-    # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
-    #   {User} for old messages when the author has left the server since then)
-    attr_reader :author
-    alias_method :user, :author
-    alias_method :writer, :author
-
     # @return [Channel] the channel in which this message was sent.
     attr_reader :channel
 
@@ -79,6 +73,9 @@ module Discordrb
     # @return [Channel, nil] The thread that was started from this message, or nil.
     attr_reader :thread
 
+    # @return [Time, nil] the time at when this message was pinned. Only present on messages fetched via {Channel#pins}.
+    attr_reader :pinned_at
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -97,35 +94,21 @@ module Discordrb
 
       @webhook_id = data['webhook_id']&.to_i
 
-      @author = if data['author']
-                  if @webhook_id
-                    # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
-                    # a User and return that instead.
-                    Discordrb::LOGGER.debug("Webhook user: #{data['author']['id']}")
-                    User.new(data['author'].merge({ '_webhook' => true }), @bot)
-                  elsif @channel.private?
-                    # Turn the message user into a recipient - we can't use the channel recipient
-                    # directly because the bot may also send messages to the channel
-                    Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
-                  else
-                    member = @channel.server.member(data['author']['id'].to_i)
+      if data['author']
+        if @webhook_id
+          # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
+          # a User and return that instead.
+          Discordrb::LOGGER.debug("Webhook user: #{data['author']['id']}")
+          @author = User.new(data['author'].merge({ '_webhook' => true }), @bot)
+        elsif @channel.private?
 
-                    if member
-                      member.update_data(data['member']) if data['member']
-                      member.update_global_name(data['author']['global_name']) if data['author']['global_name']
-                    else
-                      Discordrb::LOGGER.debug("Member with ID #{data['author']['id']} not cached (possibly left the server).")
-                      member = if data['member']
-                                 member_data = data['author'].merge(data['member'])
-                                 Member.new(member_data, @server, bot)
-                               else
-                                 @bot.ensure_user(data['author'])
-                               end
-                    end
-
-                    member
-                  end
-                end
+          # Turn the message user into a recipient - we can't use the channel recipient
+          # directly because the bot may also send messages to the channel
+          @author = Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
+        else
+          @author_id = data['author']['id'].to_i
+        end
+      end
 
       @timestamp = Time.parse(data['timestamp']) if data['timestamp']
       @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
@@ -167,7 +150,25 @@ module Discordrb
       @flags = data['flags'] || 0
 
       @thread = data['thread'] ? @bot.ensure_channel(data['thread'], @server) : nil
+
+      @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
     end
+
+    # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
+    #   {User} for old messages when the author has left the server since then)
+    def author
+      return @author if @author
+
+      if @channel.server
+        @author = @channel.server.member(@author_id)
+        Discordrb::LOGGER.debug("Member with ID #{@author_id} not cached (possibly left the server).") if @author.nil?
+      end
+
+      @author ||= @bot.user(@author_id)
+    end
+
+    alias_method :user, :author
+    alias_method :writer, :author
 
     # Replies to this message with the specified content.
     # @deprecated Please use {#respond}.

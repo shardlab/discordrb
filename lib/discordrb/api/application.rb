@@ -200,6 +200,18 @@ module Discordrb::API::Application
     )
   end
 
+  # Get the permissions for a specific command in a guild.
+  # https://discord.com/developers/docs/interactions/application-commands#get-application-command-permissions
+  def get_application_command_permissions(token, application_id, guild_id, command_id)
+    Discordrb::API.request(
+      :applications_aid_guilds_gid_commands_cid_permissions,
+      guild_id,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands/#{command_id}/permissions",
+      Authorization: token
+    )
+  end
+
   # Get a list of application emojis.
   # https://discord.com/developers/docs/resources/emoji#list-application-emojis
   def list_application_emojis(token, application_id)
