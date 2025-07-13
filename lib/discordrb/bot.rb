@@ -1111,10 +1111,11 @@ module Discordrb
       server_id = data['guild_id'].to_i
       server = self.server(server_id)
 
-      if (member = server.member(data['user']['id'].to_i))
+      # Only attempt to update members that're already cached
+      if (member = server.member(data['user']['id'].to_i, false))
         member.update_data(data)
       else
-        Discordrb::LOGGER.warn("update_guild_member attempted to access a member which doesn't exist! Not sure what happened here, ignoring.")
+        ensure_user(data['user'])
       end
     end
 
@@ -1311,12 +1312,21 @@ module Discordrb
           return
         end
 
+        if !should_parse_self && profile.id == data['author']['id'].to_i
+          debug('Ignored message from the current bot')
+          return
+        end
+
         # If create_message is overwritten with a method that returns the parsed message, use that instead, so we don't
         # parse the message twice (which is just thrown away performance)
         message = create_message(data)
         message = Message.new(data, self) unless message.is_a? Message
 
-        return if message.from_bot? && !should_parse_self
+        # Update the existing member if it exists in the cache.
+        if data['member']
+          member = message.channel.server&.member(data['author']['id'].to_i, false)
+          member&.update_data(data['member'])
+        end
 
         # Dispatch a ChannelCreateEvent for channels we don't have cached
         if message.channel.private? && @pm_channels[message.channel.recipient.id].nil?
@@ -1340,16 +1350,25 @@ module Discordrb
       when :MESSAGE_UPDATE
         update_message(data)
 
+        if !should_parse_self && profile.id == data['author']['id'].to_i
+          debug('Ignored message from the current bot')
+          return
+        end
+
         message = Message.new(data, self)
 
         event = MessageUpdateEvent.new(message, self)
         raise_event(event)
 
-        return if message.from_bot? && !should_parse_self
-
-        unless message.author
+        if data['author'].nil?
           LOGGER.debug("Edited a message with nil author! Content: #{message.content.inspect}, channel: #{message.channel.inspect}")
           return
+        end
+
+        # Update the existing member if it exists in the cache.
+        if data['member']
+          member = message.channel.server&.member(data['author']['id'].to_i, false)
+          member&.update_data(data['member'])
         end
 
         event = MessageEditEvent.new(message, self)
@@ -1388,6 +1407,12 @@ module Discordrb
         add_message_reaction(data)
 
         return if profile.id == data['user_id'].to_i && !should_parse_self
+
+        if data['member']
+          server = self.server(data['guild_id'].to_i)
+
+          server&.cache_member(Member.new(data['member'], server, self))
+        end
 
         event = ReactionAddEvent.new(data, self)
         raise_event(event)
@@ -1569,6 +1594,10 @@ module Discordrb
           event = ServerEmojiUpdateEvent.new(server, old_emoji_data[e], new_emoji_data[e], self)
           raise_event(event)
         end
+      when :APPLICATION_COMMAND_PERMISSIONS_UPDATE
+        event = ApplicationCommandPermissionsUpdateEvent.new(data, self)
+
+        raise_event(event)
       when :INTERACTION_CREATE
         event = InteractionCreateEvent.new(data, self)
         raise_event(event)
