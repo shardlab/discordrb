@@ -341,6 +341,29 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#get_application_command_permissions-class_method" title="get_application_command_permissions (class method)">.<strong>get_application_command_permissions</strong>(token, application_id, guild_id, command_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Get the permissions for a specific command in a guild.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#get_global_command-class_method" title="get_global_command (class method)">.<strong>get_global_command</strong>(token, application_id, command_id)  &#x21d2; Object </a>
     
 
@@ -1025,6 +1048,59 @@
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="get_application_command_permissions-class_method">
+  
+    .<strong>get_application_command_permissions</strong>(token, application_id, guild_id, command_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Get the permissions for a specific command in a guild.
+<a href="https://discord.com/developers/docs/interactions/application-commands#get-application-command-permissions">https://discord.com/developers/docs/interactions/application-commands#get-application-command-permissions</a></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+205
+206
+207
+208
+209
+210
+211
+212
+213</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/application.rb', line 205</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_application_command_permissions'>get_application_command_permissions</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_application_id'>application_id</span><span class='comma'>,</span> <span class='id identifier rubyid_guild_id'>guild_id</span><span class='comma'>,</span> <span class='id identifier rubyid_command_id'>command_id</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
+    <span class='symbol'>:applications_aid_guilds_gid_commands_cid_permissions</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_guild_id'>guild_id</span><span class='comma'>,</span>
+    <span class='symbol'>:get</span><span class='comma'>,</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_base'><span class='object_link'><a href="../API.html#api_base-class_method" title="Discordrb::API.api_base (method)">api_base</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'>/applications/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_application_id'>application_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>/guilds/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_guild_id'>guild_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>/commands/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_command_id'>command_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>/permissions</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='label'>Authorization:</span> <span class='id identifier rubyid_token'>token</span>
+  <span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="get_global_command-class_method">
   
     .<strong>get_global_command</strong>(token, application_id, command_id)  &#x21d2; <tt>Object</tt> 
@@ -1294,7 +1370,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Jul 13 22:04:56 2025 by
+  Generated on Sun Jul 13 22:06:54 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.8).
 </div>
