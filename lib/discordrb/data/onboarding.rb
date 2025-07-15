@@ -23,9 +23,6 @@ module Discordrb
     # @return [Array<Prompt>] the prompts shown during the inital onboarding flow.
     attr_reader :prompts
 
-    # @return [Array<Channel>] the default channels that members automatically get opted into.
-    attr_reader :default_channels
-
     # @!visibility private
     def initialize(data, server, bot)
       @bot = bot
@@ -50,6 +47,11 @@ module Discordrb
       prompts.find { |prompt| prompt.id == id.resolve_id }
     end
 
+    # @return [Array<Channel>] the default channels that members automatically get opted into.
+    def default_channels
+      @default_channel_ids.filter_map { |id| @bot.channel(id) }
+    end
+
     # Set the default channels for this onboarding flow.
     # @param channels [Array<Channel, Integer, String>] the new default channels.
     def default_channels=(channels)
@@ -68,17 +70,17 @@ module Discordrb
       update_data(mode: MODES[mode] || mode)
     end
 
-    # Remove a prompt from this onboarding flow.
-    # @param id [Integer, String] the ID of the prompt to remove.
-    def delete_prompt(id)
-      new_prompts = prompts.dup.tap do |new_array|
-        new_array.delete(prompt(id))
+    # Remove one or more prompts from this onboarding flow.
+    # @param ids [Integer, String] the IDs of the prompts to remove.
+    def delete_prompts(*ids)
+      new_prompts = prompts.reject do |prompt|
+        ids.map(&:resolve_id).any?(prompt.id)
       end
 
       update_data(prompts: new_prompts.map(&:to_h))
     end
 
-    alias_method :remove_prompt, :delete_prompt
+    alias_method :delete_prompt, :delete_prompts
 
     # Add one or more prompts to this onboarding flow.
     # @yieldparam [PromptBuilder]
@@ -88,14 +90,14 @@ module Discordrb
       update_data(prompts: prompts.map(&:to_h) + builder.to_a)
     end
 
-    alias_method :add_prompts, :create_prompts
+    alias_method :create_prompt, :create_prompts
 
     # @!visibility private
     def from_other(new_data)
       @mode = new_data['mode']
       @enabled = new_data['enabled']
+      @default_channel_ids = new_data['default_channel_ids'].map(&:resolve_id)
       @prompts = new_data['prompts'].map { |prompt| Prompt.new(prompt, @server, @bot) }
-      @default_channels = new_data['default_channel_ids'].filter_map { |id| @bot.channel(id) }
     end
 
     # @!visibility private
@@ -199,18 +201,20 @@ module Discordrb
       # @return [Array<Role>] the roles assigned to a member when the option is selected.
       attr_reader :roles
 
-      # @return [Array<Channel>] the channels a member is added to when the option is selected.
-      attr_reader :channels
-
       # @!visibility private
       def initialize(data, server, bot)
         @bot = bot
         @id = data['id'].to_i
         @title = data['title']
         @description = data['description']
+        @channel_ids = data['channel_ids'].map(&:resolve_id)
         @roles = data['role_ids'].map { |id| server.role(id) }
-        @channels = data['channel_ids'].filter_map { |id| bot.channel(id) }
         @emoji = Discordrb::Emoji.new(data['emoji'], bot) if data['emoji']&.values&.any?
+      end
+
+      # @return [Array<Channel>] the channels a member is added to when the option is selected.
+      def channels
+        @channel_ids.filter_map { |id| @bot.channel(id) }
       end
 
       # @!visibility private
@@ -219,7 +223,7 @@ module Discordrb
           id: @id,
           title: @title,
           description: @description,
-          channel_ids: @channels.map(&:resolve_id),
+          channel_ids: @channel_ids,
           role_ids: @roles.map(&:resolve_id),
           emoji_id: @emoji&.id,
           emoji_name: @emoji&.name,
