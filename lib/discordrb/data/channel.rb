@@ -855,6 +855,16 @@ module Discordrb
       invites.map { |invite_data| Invite.new(invite_data, @bot) }
     end
 
+    # Follow the announcement (news) channel to send crossposted messages to a target channel.
+    # @param target [Channel, Integer, String] The target channel to send crossposted messages to.
+    # @param reason [String, nil] The audit log reason shown for the created webhook in the target channel.
+    # @return [Integer] the ID of the created webhook in the target channel.
+    def follow(target, reason: nil)
+      raise 'Cannot follow a non-announcement channel' unless news?
+
+      JSON.parse(API::Channel.follow_channel(@bot.token, @id, target.resolve_id, reason))['webhook_id'].to_i
+    end
+
     # Start a thread.
     # @param name [String] The name of the thread.
     # @param auto_archive_duration [60, 1440, 4320, 10080] How long before a thread is automatically
