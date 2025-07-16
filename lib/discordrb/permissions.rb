@@ -136,9 +136,8 @@ module Discordrb
 
     # Comparison based on permission bits
     def ==(other)
-      # rubocop:disable Lint/Void
-      false unless other.is_a? Discordrb::Permissions
-      # rubocop:enable Lint/Void
+      return false unless other.is_a?(Discordrb::Permissions)
+
       bits == other.bits
     end
   end
