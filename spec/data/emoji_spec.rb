@@ -4,7 +4,6 @@ require 'discordrb'
 
 describe Discordrb::Emoji do
   let(:bot) { double('bot') }
-  let(:user) { double('user') }
 
   subject(:emoji) do
     server = double('server', role: double)

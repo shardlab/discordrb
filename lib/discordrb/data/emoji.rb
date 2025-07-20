@@ -15,8 +15,7 @@ module Discordrb
     attr_reader :roles
 
     # @return [User, nil] the user who uploaded this emoji, or nil if the emoji's server is unknown
-    attr_reader :user
-    alias_method :creator, :user
+    attr_reader :creator
 
     # @return [Boolean, nil] if the emoji requires colons to be used, or nil if the emoji's server is unknown
     attr_reader :requires_colons
@@ -47,7 +46,7 @@ module Discordrb
       @managed = data['managed']
       @available = data['available']
       @requires_colons = data['require_colons']
-      @user = data['user'] ? bot.ensure_user(data['user']) : nil
+      @creator = data['user'] ? bot.ensure_user(data['user']) : nil
 
       process_roles(data['roles']) if server
     end
