@@ -527,7 +527,7 @@ module Discordrb
                       permissions
                     end
 
-      icon = icon.respond.to?(:read) ? Discordrb.encode64(icon) : icon
+      icon = icon.respond_to?(:read) ? Discordrb.encode64(icon) : icon
 
       response = API::Server.create_role(@bot.token, @id, name, colour, hoist, mentionable, permissions, reason, icon, unicode_emoji)
 
