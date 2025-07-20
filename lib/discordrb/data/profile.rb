@@ -23,7 +23,7 @@ module Discordrb
     #  something readable (e.g. File Object) or as a data URL.
     def avatar=(avatar)
       if avatar.respond_to? :read
-        update_profile_data(avatar: encode_file(avatar))
+        update_profile_data(avatar: Discordrb.encode64(avatar))
       else
         update_profile_data(avatar: avatar)
       end

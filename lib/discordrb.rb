@@ -123,15 +123,15 @@ module Discordrb
 
   # A utility method to base64 encode a file like object using its mime type.
   # @param file [File, #read] A file like object that responds to #read.
-  # @return [String] The base64 encoded file object as image data.
-  def self.encode_file(file)
+  # @return [String] The file object encoded as base64 image data.
+  def self.encode64(file)
     path_method = %i[original_filename path local_path].find { |method| file.respond_to?(method) }
 
     raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
     raise ArgumentError, 'File object must respond to read.' unless file.respond_to?(:read)
 
-    mime = MIME::Types.type_for(file.__send__(path_method)).first&.to_s || 'image/jpeg'
-    "data:#{mime};base64,#{Base64.encode64(file.read).strip}"
+    mime_type = MIME::Types.type_for(file.__send__(path_method)).first&.to_s || 'image/jpeg'
+    "data:#{mime_type};base64,#{Base64.encode64(file.read).strip}"
   end
 end
 

@@ -925,7 +925,7 @@ module Discordrb
     # @param image [String, #read] Base64 string with the image data, or an object that responds to #read.
     # @return [Emoji] The emoji that has been created.
     def create_application_emoji(name:, image:)
-      image = image.respond_to?(:read) ? encode_file(image) : image
+      image = image.respond_to?(:read) ? Discordrb.encode64(image) : image
       response = API::Application.create_application_emoji(@token, profile.id, name, image)
       Emoji.new(JSON.parse(response), self)
     end

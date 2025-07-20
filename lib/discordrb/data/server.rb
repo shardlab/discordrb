@@ -512,7 +512,7 @@ module Discordrb
     # @param hoist [true, false]
     # @param mentionable [true, false]
     # @param permissions [Integer, Array<Symbol>, Permissions, #bits] The permissions to write to the new role.
-    # @param icon [String, #read] The base64 encoded image data, or a file like object that responds to #read.
+    # @param icon [String, #read, nil] The base64 encoded image data, or a file like object that responds to #read.
     # @param unicode_emoji [String, nil] The unicode emoji of the role to create, or nil.
     # @param reason [String] The reason the for the creation of this role.
     # @return [Role] the created role.
@@ -527,7 +527,7 @@ module Discordrb
                       permissions
                     end
 
-      icon = icon.respond.to?(:read) ? encode_file(icon) : icon
+      icon = icon.respond.to?(:read) ? Discordrb.encode64(icon) : icon
 
       response = API::Server.create_role(@bot.token, @id, name, colour, hoist, mentionable, permissions, reason, icon, unicode_emoji)
 
@@ -543,7 +543,7 @@ module Discordrb
     # @param reason [String] The reason the for the creation of this emoji.
     # @return [Emoji] The emoji that has been added.
     def add_emoji(name, image, roles = [], reason: nil)
-      image = image.respond_to?(:read) ? encode_file(image) : image
+      image = image.respond_to?(:read) ? Discordrb.encode64(image) : image
       data = JSON.parse(API::Server.add_emoji(@bot.token, @id, image, name, roles.map(&:resolve_id), reason))
       new_emoji = Emoji.new(data, @bot, self)
       @emoji[new_emoji.id] = new_emoji
@@ -706,7 +706,7 @@ module Discordrb
     # @param icon [String, #read] The new icon, in base64-encoded JPG format.
     def icon=(icon)
       if icon.respond_to? :read
-        update_server_data(icon_id: encode_file(icon))
+        update_server_data(icon_id: Discordrb.encode64(icon))
       else
         update_server_data(icon_id: icon)
       end
