@@ -35,6 +35,7 @@ class Discordrb::Webhooks::View
     file: 13,
     seperator: 14,
     container: 17
+    # label: 18, # (defined in modal.rb)
   }.freeze
 
   # This builder is used when constructing an ActionRow. Button and select menu components must be within an action row, but this can
@@ -49,7 +50,7 @@ class Discordrb::Webhooks::View
 
     # Add a button to this action row.
     # @param style [Symbol, Integer] The button's style type. See {BUTTON_STYLES}
-    # @param id [Integer] Integer ID for this component. This is not to be confused with custom_id.
+    # @param id [Integer] The integer ID for this component. This is not to be confused with custom_id.
     # @param label [String, nil] The text label for the button. Either a label or emoji must be provided.
     # @param emoji [#to_h, String, Integer] An emoji ID, or unicode emoji to attach to the button. Can also be a object
     #   that responds to `#to_h` which returns a hash in the format of `{ id: Integer, name: string }`.
@@ -70,10 +71,10 @@ class Discordrb::Webhooks::View
       @components << { type: COMPONENT_TYPES[:button], id: id, label: label, emoji: emoji, style: style, custom_id: custom_id, disabled: disabled, url: url }.compact
     end
 
-    # Add a select string to this action row.
+    # Add a string select to this action row.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
     #   There is a limit of 100 characters to each custom_id.
-    # @param id [Integer] Integer ID for this component. This is not to be confused with custom_id.
+    # @param id [Integer] The integer ID for this component. This is not to be confused with custom_id.
     # @param options [Array<Hash>] Options that can be selected in this menu. Can also be provided via the yielded builder.
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
@@ -93,7 +94,7 @@ class Discordrb::Webhooks::View
     # Add a select user to this action row.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
     #   There is a limit of 100 characters to each custom_id.
-    # @param id [Integer] Integer ID for this component. This is not to be confused with custom_id.
+    # @param id [Integer] The integer ID for this component. This is not to be confused with custom_id.
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
@@ -105,7 +106,7 @@ class Discordrb::Webhooks::View
     # Add a select role to this action row.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
     #   There is a limit of 100 characters to each custom_id.
-    # @param id [Integer] Integer ID for this component. This is not to be confused with custom_id.
+    # @param id [Integer] The integer ID for this component. This is not to be confused with custom_id.
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
@@ -117,7 +118,7 @@ class Discordrb::Webhooks::View
     # Add a select mentionable to this action row.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
     #   There is a limit of 100 characters to each custom_id.
-    # @param id [Integer] Integer ID for this component. This is not to be confused with custom_id.
+    # @param id [Integer] The integer ID for this component. This is not to be confused with custom_id.
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
@@ -129,7 +130,7 @@ class Discordrb::Webhooks::View
     # Add a select channel to this action row.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
     #   There is a limit of 100 characters to each custom_id.
-    # @param id [Integer] Integer ID for this component. This is not to be confused with custom_id.
+    # @param id [Integer] The integer ID for this component. This is not to be confused with custom_id.
     # @param placeholder [String, nil] Default text to show when no entries are selected.
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
@@ -152,7 +153,7 @@ class Discordrb::Webhooks::View
   # A builder to assist in adding options to select menus.
   class SelectMenuBuilder
     # @!visibility hidden
-    def initialize(custom_id, options = [], placeholder = nil, min_values = nil, max_values = nil, disabled = nil, select_type: :string_select, id: nil)
+    def initialize(custom_id, options = [], placeholder = nil, min_values = nil, max_values = nil, disabled = nil, select_type: :string_select, id: nil, required: nil)
       @id = id
       @custom_id = custom_id
       @options = options
@@ -161,6 +162,7 @@ class Discordrb::Webhooks::View
       @max_values = max_values
       @disabled = disabled
       @select_type = select_type
+      @required = required
     end
 
     # Add an option to this select menu.
@@ -191,25 +193,26 @@ class Discordrb::Webhooks::View
         min_values: @min_values,
         max_values: @max_values,
         custom_id: @custom_id,
-        disabled: @disabled
+        disabled: @disabled,
+        required: @required
       }.compact
     end
   end
 
   # A text display component allows you to send text.
   class TextDisplayBuilder
-    # Set the integer ID of this component.
-    # @return [Integer, nil] integer ID of this component.
+    # Set the 32-bit integer ID of this component.
+    # @return [Integer, nil] the integer ID of this text display.
     attr_accessor :id
 
     # Set the content of this component.
-    # @return [String] Content of this component.
+    # @return [String] the content of this text display.
     attr_accessor :text
 
     # @!visibility private
-    def initialize(text = nil, id = nil)
-      @text = text
+    def initialize(id = nil, text = nil)
       @id = id
+      @text = text
     end
 
     # @!visibility private
@@ -218,91 +221,80 @@ class Discordrb::Webhooks::View
     end
   end
 
-  # A seperator allows you to seperate components.
+  # A seperator allows you to add seperation between components.
   class SeperatorBuilder
-    # Set the integer ID of this component.
-    # @return [Integer, nil] integer ID of this component.
+    # Set the 32-bit integer ID of this seperator.
+    # @return [Integer, nil] the integer ID of this seperator.
     attr_accessor :id
 
-    # Whether this seperator is a divider.
-    # @return [true, false] If this seperator is a divider.
+    # Set whether this seperator is a divider.
+    # @return [true, false] if this seperator is a divider.
     attr_accessor :divider
 
-    # @!visibility private
-    def initialize(divider = nil, spacing = nil, id = nil)
-      @spacing = SEPERATOR_SIZES[spacing] || spacing
-      @divider = divider
-      @id = id
-    end
+    # Set the spacing size of this seperator.
+    # @return [Symbol, Integer] the spacing of the seperator. See {SEPERATOR_SIZES}.
+    attr_accessor :spacing
 
-    # Set the spacing of this builder.
-    # @param space [Symbol, Integer] The space of the component. See {SEPERATOR_SIZES}.
-    def spacing=(space)
-      @spacing = SEPERATOR_SIZES[space] || space
+    # @!visibility private
+    def initialize(id = nil, divider = nil, spacing = nil)
+      @id = id
+      @spacing = spacing
+      @divider = divider
     end
 
     # @!visibility private
     def to_h
-      { type: COMPONENT_TYPES[:seperator],
-        divider: @divider,
-        spacing: @spacing,
-        id: @id }.compact
+      { type: COMPONENT_TYPES[:seperator], id: @id, spacing: SEPERATOR_SIZES[spacing] || spacing, divider: @divider }.compact
     end
   end
 
-  # A file component lets you send a file. Only attachment://<filename> references
-  # are currently supported at the time of writing.
+  # A file component lets you send a file via an attachment://<filename> reference.
   class FileBuilder
-    # If this file should be spoilered.
-    # @return [true, false] If this file is a spoiler or not.
-    attr_accessor :spoiler
-
-    # Set the integer ID of this component.
-    # @return [Integer, nil] integer ID of this component.
+    # Set the 32-bit integer ID of this file.
+    # @return [Integer, nil] the integer ID of this file.
     attr_accessor :id
 
+    # Set the attachment://<filename> reference of this file.
+    # @return [String, nil] the attachment://<filename> reference.
+    attr_accessor :url
+
+    # Set whether this file should be spoilered.
+    # @return [true, false] whether or not this file is spoilered.
+    attr_accessor :spoiler
+
     # @!visibility private
-    def initialize(file = nil, spoiler = false, id = nil)
+    def initialize(id = nil, url = nil, spoiler = false)
       @id = id
-      @file = { url: file }
+      @url = url
       @spoiler = spoiler
     end
 
-    # Set the file URL of this component.
-    # @param file [String] attachment://<filename> reference.
-    def file=(file)
-      @file[:url] = file
-    end
-
     # @!visibility private
     def to_h
-      { type: COMPONENT_TYPES[:file],
-        id: @id,
-        spoiler: @spoiler,
-        file: @file }.compact
+      { type: COMPONENT_TYPES[:file], id: @id, spoiler: @spoiler, file: { url: @url } }.compact
     end
   end
 
-  # A media gallery container lets you group files into a gallery or a grid.
+  # A media gallery component lets you group together images, videos, or GIFs into a gallery grid.
   class MediaGalleryBuilder
-    # Set the integer ID of this component.
-    # @return [Integer, nil] integer ID of this component.
+    # Set the 32-bit integer ID of this media gallery.
+    # @return [Integer, nil] the integer ID of this media gallery.
     attr_accessor :id
 
-    # Set the items of this component.
-    # @return [Array<Hash>] Media gallery items serialized as a hash.
+    # Set the media gallery items of this media gallery.
+    # @return [Array<#to_h>] the items in the media gallery.
     attr_accessor :items
 
     # @!visibility private
-    def initialize(items = [], id = nil)
+    def initialize(id = nil, items = [])
       @id = id
       @items = items
     end
 
-    # Add a gallery item to this media gallery collection.
+    # Add a gallery item to the media gallery.
     # @param url [String] The URL of this media item.
-    # @param description [String, nil] An optional description of this media item.
-    # @param spoiler [true, false] Whether this argument should be spoilered. Defaults to false.
+    # @param description [String, nil] A description of this media item.
+    # @param spoiler [true, false] Whether the gallery item should be spoilered.
     def gallery_item(url:, description: nil, spoiler: false)
       @items << { media: { url: url }, description: description, spoiler: spoiler }.compact
     end
@@ -311,42 +303,45 @@ class Discordrb::Webhooks::View
 
     # @!visibility private
     def to_h
-      { type: COMPONENT_TYPES[:media_gallery], items: @items }
+      { type: COMPONENT_TYPES[:media_gallery], items: @items.map(&:to_h) }
     end
   end
 
-  # A section allows you to group together text display components,
-  # and optionally pair it with a button or a thumbnail. More components
-  # may be supported in the future.
+  # A section allows you to group together text display components, and pair them with an accessory.
   class SectionBuilder
-    # Set the integer ID of this component.
-    # @return [Integer, nil] integer ID of this component.
+    # Set the 32-bit integer ID of this section.
+    # @return [Integer, nil] the integer ID of this section.
     attr_accessor :id
 
     # @!visibility private
-    def initialize(components = [], accessory = nil, id = nil)
-      @components = components
-      @accessory = accessory
+    def initialize(id = nil, accessory = nil, components = [])
       @id = id
+      @accessory = accessory
+      @components = components
     end
 
-    # Add a text display component to this section.
-    # @param text [String] Content of the component.
-    # @param id [Integer, nil] The 32-bit integer ID of this component.
-    def text_display(text:, id: nil)
-      @components << { type: COMPONENT_TYPES[:text_display], content: text, id: id }.compact
+    # Add a text display component to the section.
+    # @param id [Integer, nil] Integer ID of this component.
+    # @param text [String] Set the text display of this component.
+    # @yieldparam builder [TextDisplayBuilder] The text display builder is yielded to allow for modification of attributes.
+    def text_display(id: nil, text: nil)
+      builder = TextDisplayBuilder.new(id, text)
+
+      yield builder if block_given?
+
+      @components << builder
     end
 
-    # Set the accessory to a thumbnail for this media gallery collection.
-    # @param url [String] The URL of the media item for this thumbnail.
-    # @param description [String, nil] An optional description of this media item.
-    # @param spoiler [true, false] Whether this argument should be spoilered. Defaults to false.
+    # Set the thumbnail for this section.
+    # @param url [String] The URL to the thumbnail's media item.
+    # @param description [String, nil] A description for the thumbnail's media item.
+    # @param spoiler [true, false] Whether the thumbanail should be spoilered.
     # @param id [Integer, nil] The 32-bit integer ID of this component.
     def thumbnail(url:, description: nil, spoiler: false, id: nil)
       @accessory = { type: COMPONENT_TYPES[:thumbnail], media: { url: url }, description: description, spoiler: spoiler, id: id }.compact
     end
 
-    # Set the accessory to a button for this media gallery collection.
+    # Set the button for this section.
     # @param style [Symbol, Integer] The button's style type. See {BUTTON_STYLES}
     # @param id [Integer] Integer ID for this component. This is not to be confused with custom_id.
     # @param label [String, nil] The text label for the button. Either a label or emoji must be provided.
@@ -371,49 +366,41 @@ class Discordrb::Webhooks::View
 
     # @!visibility private
     def to_h
-      { type: COMPONENT_TYPES[:section], components: @components, accessory: @accessory }.compact
+      { type: COMPONENT_TYPES[:section], components: @components.map(&:to_h), accessory: @accessory.to_h }.compact
     end
   end
 
   # This builder can be used to construct a container. A container can hold several other types of components
   # including other action rows. A container can currently have a maximum of 10 components inside of it.
   class ContainerBuilder
-    # The integer ID of this component.
-    # @return [Integer, nil] integer ID of this component.
+    # Set the 32-bit integer ID of this container.
+    # @return [Integer, nil] the integer ID of this container.
     attr_accessor :id
 
-    # @return [Integer, nil] the colour of the bar on the side, in decimal form.
-    attr_reader :colour
+    # Set the accent colour of this container.
+    # @return [Integer, nil] the colour of the container's sidebar.
+    attr_accessor :colour
     alias_method :color, :colour
+    alias_method :color=, :colour=
 
-    # If this container should be spoilered.
-    # @return [true, false] If this container is a spoiler or not.
+    # Set whether this container should be spoilered.
+    # @return [true, false] if this container is a spoiler or not.
     attr_accessor :spoiler
 
     # @!visibility private
-    def initialize(id = nil, components = [], colour = nil, spoiler = nil)
-      @components = components
-      @spoiler = spoiler
+    def initialize(id = nil, colour = nil, spoiler = nil, components = [])
       @id = id
-
-      process_color(colour)
+      @colour = colour
+      @spoiler = spoiler
+      @components = components
     end
-
-    # Sets the colour of the bar to the side of the embed to something new.
-    # @param value [String, Integer, {Integer, Integer, Integer}, #to_i, nil] The colour in decimal,
-    # hexadecimal, R/G/B decimal, or nil if the container should have no color.
-    def colour=(value)
-      process_color(value)
-    end
-
-    alias_method :color=, :colour=
 
     # Add a text display component to this container.
-    # @param id [Integer, nil] Integer ID of this component.
+    # @param id [Integer, nil] The 32-bit integer ID of this component.
     # @param text [String] Set the text display of this component.
     # @yieldparam builder [TextDisplayBuilder] The text display object is yielded to allow for modification of attributes.
     def text_display(id: nil, text: nil)
-      builder = TextDisplayBuilder.new(text, id)
+      builder = TextDisplayBuilder.new(id, text)
 
       yield builder if block_given?
 
@@ -421,12 +408,12 @@ class Discordrb::Webhooks::View
     end
 
     # Add a section to this container.
-    # @param id [Integer, nil] Integer ID of this section component.
-    # @param components [Array<Components>] Optional array of text display components.
-    # @param accessory [Hash, nil] Optional thumbnail or button accessory to include.
+    # @param id [Integer, nil] The 32-bit integer ID of this section component.
+    # @param accessory [#to_h, nil] An optional thumbnail or button accessory to include.
+    # @param components [Array<#to_h>] An optional array of components to include.
     # @yieldparam builder [SectionBuilder] The section object is yielded to allow for modification of attributes.
-    def section(id: nil, components: [], accessory: nil)
-      builder = SectionBuilder.new(components, accessory, id)
+    def section(id: nil, accessory: nil, components: [])
+      builder = SectionBuilder.new(id, accessory, components)
 
       yield builder if block_given?
 
@@ -434,11 +421,11 @@ class Discordrb::Webhooks::View
     end
 
     # Add a media gallery to this container.
-    # @param id [Integer, nil] Integer ID of this media gallery component.
+    # @param id [Integer, nil] The 32-bit integer ID of this media gallery component.
     # @param items [Array<Hash>] Array of media gallery components to include.
     # @yieldparam builder [MediaGalleryBuilder] The media gallery object is yielded to allow for modification of attributes.
     def media_gallery(id: nil, items: [])
-      builder = MediaGalleryBuilder.new(items, id)
+      builder = MediaGalleryBuilder.new(id, items)
 
       yield builder if block_given?
 
@@ -446,12 +433,12 @@ class Discordrb::Webhooks::View
     end
 
     # Add a seperator to this container.
-    # @param id [Integer, nil] Integer ID of this seperator component.
+    # @param id [Integer, nil] The 32-bit integer ID of this seperator component.
     # @param divider [true, false] Whether this seperator is a divider. Defaults to true.
     # @param spacing [Integer, nil] The amount of spacing for this seperator component.
-    # @yieldparam builder [SeperatorBuilder] The seperator object is yielded to allow for modification of attributes.
+    # @yieldparam builder [SectionBuilder] The section builder is yielded to allow for modification of attributes.
     def seperator(id: nil, divider: true, spacing: nil)
-      builder = SeperatorBuilder.new(divider, spacing, id)
+      builder = SeperatorBuilder.new(id, divider, spacing)
 
       yield builder if block_given?
 
@@ -459,21 +446,21 @@ class Discordrb::Webhooks::View
     end
 
     # Add a file to this container.
-    # @param id [Integer, nil] Integer ID of this file component.
-    # @param file [String, nil] An attachment://<filename> reference.
+    # @param id [Integer, nil] The 32-bit integer ID of this file component.
+    # @param url [String, nil] An attachment://<filename> reference.
     # @param spoiler [true, false] If this file should be spoilered. Defaults to false.
     # @yieldparam builder [FileBuilder] The file object is yielded to allow for modification of attributes.
-    def file(id: nil, file: nil, spoiler: false)
-      builder = FileBuilder.new(file, spoiler, id)
+    def file(id: nil, url: nil, spoiler: false)
+      builder = FileBuilder.new(id, url, spoiler)
 
       yield builder if block_given?
 
       @components << builder
     end
 
-    # Add an action row to this container, this allows for some interesting nesting.
-    # @param id [Integer] ID of this action row.
-    # @yieldparam builder [RowBuilder] The row builder object is yielded to allow for addition of components.
+    # Add an action row component to this container.
+    # @param id [Integer, nil] The 32-bit integer ID of this action row component.
+    # @yieldparam builder [RowBuilder] the action row builder is yielded to allow for the addition of components.
     def row(id: nil)
       builder = RowBuilder.new(id)
 
@@ -485,7 +472,7 @@ class Discordrb::Webhooks::View
     # @!visibility private
     def to_h
       { type: COMPONENT_TYPES[:container],
-        accent_color: @colour,
+        accent_color: process_colour(@colour),
         spoiler: @spoiler,
         components: @components.map(&:to_h) }.compact
     end
@@ -495,44 +482,45 @@ class Discordrb::Webhooks::View
     # @!visibility private
     # @note for internal use only
     # Process the color into an integer value.
-    def process_color(value)
-      @colour = case value
-                when Array
-                  (value[0] << 16) | (value[1] << 8) | value[2]
-                when String
-                  value.delete('#').to_i(16)
-                else
-                  value&.to_i
-                end
+    def process_colour(value)
+      case value
+      when Array
+        (value[0] << 16) | (value[1] << 8) | value[2]
+      when String
+        value.delete('#').to_i(16)
+      else
+        value&.to_i
+      end
     end
   end
 
   # @!visibility private
   attr_reader :components
 
+  # @!visibility private
   def initialize
     @components = []
 
     yield self if block_given?
   end
 
-  # Add a new ActionRow to the view
-  # @param id [Integer] ID of this action row.
-  # @yieldparam [RowBuilder]
+  # Add an action row component to the view.
+  # @param id [Integer, nil] The 32-bit integer ID of this action row component.
+  # @yieldparam builder [RowBuilder] the action row builder is yielded to allow for the addition of components.
   def row(id: nil)
-    new_row = RowBuilder.new(id)
+    builder = RowBuilder.new(id)
 
-    yield new_row
+    yield builder
 
-    @components << new_row
+    @components << builder
   end
 
   # Add a text display component to the view.
-  # @param id [Integer, nil] Integer ID of this component.
+  # @param id [Integer, nil] The 32-bit integer ID of this component.
   # @param text [String] Set the text display of this component.
-  # @yieldparam builder [TextDisplayBuilder] The text display object is yielded to allow for modification of attributes.
+  # @yieldparam builder [TextDisplayBuilder] The text display builder is yielded to allow for modification of attributes.
   def text_display(id: nil, text: nil)
-    builder = TextDisplayBuilder.new(text, id)
+    builder = TextDisplayBuilder.new(id, text)
 
     yield builder if block_given?
 
@@ -540,12 +528,12 @@ class Discordrb::Webhooks::View
   end
 
   # Add a section component to the view.
-  # @param id [Integer, nil] Integer ID of this section component.
-  # @param components [Array<Components>] Optional array of text display components.
-  # @param accessory [Hash, nil] Optional thumbnail or button accessory to include.
-  # @yieldparam builder [SectionBuilder] The section object is yielded to allow for modification of attributes.
-  def section(id: nil, components: [], accessory: nil)
-    builder = SectionBuilder.new(components, accessory, id)
+  # @param id [Integer, nil] The 32-bit integer ID of this section component.
+  # @param accessory [#to_h, nil] An optional thumbnail or button accessory to include.
+  # @param components [Array<#to_h>] An optional array of components to include.
+  # @yieldparam builder [SectionBuilder] The section builder is yielded to allow for modification of attributes.
+  def section(id: nil, accessory: nil, components: [])
+    builder = SectionBuilder.new(id, accessory, components)
 
     yield builder if block_given?
 
@@ -553,11 +541,11 @@ class Discordrb::Webhooks::View
   end
 
   # Add a media gallery to the view.
-  # @param id [Integer, nil] Integer ID of this media gallery component.
+  # @param id [Integer, nil] The 32-bit integer ID of this media gallery component.
   # @param items [Array<Hash>] Array of media gallery components to include.
-  # @yieldparam builder [MediaGalleryBuilder] The media gallery object is yielded to allow for modification of attributes.
+  # @yieldparam builder [MediaGalleryBuilder] The media gallery builder is yielded to allow for modification of attributes.
   def media_gallery(id: nil, items: [])
-    builder = MediaGalleryBuilder.new(items, id)
+    builder = MediaGalleryBuilder.new(id, items)
 
     yield builder if block_given?
 
@@ -565,12 +553,12 @@ class Discordrb::Webhooks::View
   end
 
   # Add a seperator to the view.
-  # @param id [Integer, nil] Integer ID of this seperator component.
+  # @param id [Integer, nil] The 32-bit integer ID of this seperator component.
   # @param divider [true, false] Whether this seperator is a divider. Defaults to true.
   # @param spacing [Integer, nil] The amount of spacing for this seperator component.
-  # @yieldparam builder [SeperatorBuilder] The seperator object is yielded to allow for modification of attributes.
+  # @yieldparam builder [SeperatorBuilder] The seperator builder is yielded to allow for modification of attributes.
   def seperator(id: nil, divider: true, spacing: nil)
-    builder = SeperatorBuilder.new(divider, spacing, id)
+    builder = SeperatorBuilder.new(id, divider, spacing)
 
     yield builder if block_given?
 
@@ -578,12 +566,12 @@ class Discordrb::Webhooks::View
   end
 
   # Add a file to the view.
-  # @param id [Integer, nil] Integer ID of this file component.
-  # @param file [String, nil] An attachment://<filename> reference.
+  # @param id [Integer, nil] The 32-bit integer ID of this file component.
+  # @param url [String, nil] An attachment://<filename> reference.
   # @param spoiler [true, false] If this file should be spoilered. Defaults to false.
-  # @yieldparam builder [FileBuilder] The file object is yielded to allow for modification of attributes.
-  def file(id: nil, file: nil, spoiler: false)
-    builder = FileBuilder.new(file, spoiler, id)
+  # @yieldparam builder [FileBuilder] The file builder is yielded to allow for modification of attributes.
+  def file(id: nil, url: nil, spoiler: false)
+    builder = FileBuilder.new(id, url, spoiler)
 
     yield builder if block_given?
 
@@ -591,14 +579,14 @@ class Discordrb::Webhooks::View
   end
 
   # Add a container to the view.
-  # @param id [Integer, nil] Integer ID of this container component.
-  # @param components [Array<Hash>] Container components to include.
+  # @param id [Integer, nil] The 32-bit integer ID of this container component.
   # @param colour [String, Integer, {Integer, Integer, Integer}, #to_i, nil] The colour in decimal,
-  # hexadecimal, R/G/B decimal, or nil if the container should have no color.
+  #   hexadecimal, R/G/B decimal, or nil if the container should have no color.
   # @param spoiler [true, false] Whether this container should be spoilered. Defaults to false.
-  # @yieldparam builder [ContainerBuilder] The container object is yielded to allow for modification of attributes.
-  def container(id: nil, components: [], colour: nil, color: nil, spoiler: false)
-    builder = ContainerBuilder.new(id, components, colour || color, spoiler)
+  # @param components [Array<#to_h>] The components the container should include.
+  # @yieldparam builder [ContainerBuilder] The container builder is yielded to allow for modification of attributes.
+  def container(id: nil, colour: nil, color: nil, spoiler: false, components: [])
+    builder = ContainerBuilder.new(id, colour || color, spoiler, components)
 
     yield builder if block_given?
 
@@ -606,14 +594,14 @@ class Discordrb::Webhooks::View
   end
 
   # @!visibility private
-  # @return [Array<RowBuilder>]
-  def rows
-    @components.select { |component| component.is_a?(RowBuilder) }
-  end
-
-  # @!visibility private
   # @return [Array<Hash>]
   def to_a
     @components.map(&:to_h)
+  end
+
+  # @!visibility private
+  # @return [Array<RowBuilder>]
+  def rows
+    @components.select { |component| component.is_a?(RowBuilder) }
   end
 end
