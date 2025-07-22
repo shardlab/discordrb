@@ -32,6 +32,8 @@ module Discordrb
         Seperator.new(data, bot)
       when Webhooks::View::COMPONENT_TYPES[:container]
         Container.new(data, bot)
+      when Webhooks::Modal::COMPONENT_TYPES[:label]
+        Label.new(data, bot)
       end
     end
 
@@ -39,10 +41,10 @@ module Discordrb
     class ActionRow
       include Enumerable
 
-      # @return [Integer]
+      # @return [Integer] the integer ID of this action row component.
       attr_reader :id
 
-      # @return [Array<Button>]
+      # @return [Array<Button>] the components contained within this action row.
       attr_reader :components
 
       # @!visibility private
@@ -77,25 +79,27 @@ module Discordrb
 
     # An interactable button component.
     class Button
-      # @return [Integer]
+      # @return [Integer] the ID of this button component.
       attr_reader :id
 
-      # @return [String]
+      # @return [String] the label of this button component.
       attr_reader :label
 
-      # @return [Integer]
+      # @return [Integer] the style of this button component.
+      # @see Webhooks::View::BUTTON_STYLES
       attr_reader :style
 
-      # @return [String]
+      # @return [String] the custom ID of this button component.
       attr_reader :custom_id
 
-      # @return [true, false]
+      # @return [true, false] whether this button component is disabled.
       attr_reader :disabled
 
-      # @return [String, nil]
+      # @return [String, nil] the URL of this button component, if the
+      #   button's style is {#link?}.
       attr_reader :url
 
-      # @return [Emoji, nil]
+      # @return [Emoji, nil] the custom emoji of this button component.
       attr_reader :emoji
 
       # @!visibility private
@@ -142,16 +146,16 @@ module Discordrb
     class SelectMenu
       # A select menu option.
       class Option
-        # @return [String]
+        # @return [String] the user-facing label of this option.
         attr_reader :label
 
-        # @return [String]
+        # @return [String] the value of this option.
         attr_reader :value
 
-        # @return [String, nil]
+        # @return [String, nil] the description of this option.
         attr_reader :description
 
-        # @return [Emoji, nil]
+        # @return [Emoji, nil] the emoji of this option, or `nil` for no emoji.
         attr_reader :emoji
 
         # @!visibility hidden
@@ -163,22 +167,25 @@ module Discordrb
         end
       end
 
-      # @return [Integer]
+      # @return [Integer] the ID of this select menu component.
       attr_reader :id
 
-      # @return [String]
+      # @return [Array<String>] the values that were selected for this select menu component.
+      attr_reader :values
+
+      # @return [String] the custom ID of this select menu component.
       attr_reader :custom_id
 
-      # @return [Integer, nil]
+      # @return [Integer, nil] the minimum amount of options that can be chosen for this select menu component.
       attr_reader :max_values
 
-      # @return [Integer, nil]
+      # @return [Integer, nil] the minimum amount of options that must be chosen for this select menu component.
       attr_reader :min_values
 
-      # @return [String, nil]
+      # @return [String, nil] the placeholder text shown on this select menu when no options have been selected.
       attr_reader :placeholder
 
-      # @return [Array<Option>]
+      # @return [Array<Option>] the options that were selected for this select menu component.
       attr_reader :options
 
       # @!visibility private
@@ -191,7 +198,8 @@ module Discordrb
         @placeholder = data['placeholder']
         @custom_id = data['custom_id']
         @emoji = Emoji.new(data['emoji'], @bot) if data['emoji']
-        @options = data['options'].map { |opt| Option.new(opt) }
+        @options = data['options']&.map { |opt| Option.new(opt) } || []
+        @values = data['values'] || @options&.map(&:value)
       end
     end
 
@@ -202,31 +210,32 @@ module Discordrb
       # Multi-line text input
       PARAGRAPH = 2
 
-      # @return [Integer]
+      # @return [Integer] the ID of this text input componet.
       attr_reader :id
 
-      # @return [String]
+      # @return [String] the custom ID of this text input component.
       attr_reader :custom_id
 
-      # @return [Symbol]
+      # @return [Symbol] the style of this component. Will either be (`:short`) or (`:paragraph`).
       attr_reader :style
 
-      # @return [String]
+      # @return [String] the label shown above this text input component.
       attr_reader :label
 
-      # @return [Integer, nil]
+      # @return [Integer, nil] the minimum amount of characters that must be typed into this text input component.
       attr_reader :min_length
 
-      # @return [Integer, nil]
+      # @return [Integer, nil] the maximum amount of characters that must be typed into this text input component.
       attr_reader :max_length
 
-      # @return [true, false]
+      # @return [true, false] whether something must be typed into this text input component.
       attr_reader :required
+      alias_method :required?, :required
 
-      # @return [String, nil]
+      # @return [String, nil] the value the user typed into this text input component.
       attr_reader :value
 
-      # @return [String, nil]
+      # @return [String, nil] the placeholder text shown on this text input component.
       attr_reader :placeholder
 
       # @!visibility private
@@ -243,16 +252,14 @@ module Discordrb
         @custom_id = data['custom_id']
       end
 
+      # @return [true, false] whether the text input's style is (`:short`).
       def short?
         @style == :short
       end
 
+      # @return [true, false] whether the text input's style is (`:paragraph`).
       def paragraph?
         @style == :paragraph
-      end
-
-      def required?
-        @required
       end
     end
 
@@ -435,7 +442,7 @@ module Discordrb
         @id = data['id']
         @spoiler = data['spoiler']
         @colour = data['accent_color'] ? ColourRGB.new(data['accent_color']) : nil
-        @components = data['components'].map { |component| Components.from_data(component, bot) }
+        @components = data['components'].filter_map { |component| Components.from_data(component, bot) }
       end
     end
 
@@ -483,6 +490,41 @@ module Discordrb
         @bot = bot
         @id = data['id']
         @content = data['content']
+      end
+    end
+
+    # Label components are containers for other components within a modal.
+    class Label
+      # @return [Integer] the ID of this label component.
+      attr_reader :id
+
+      # @return [String, nil] the label of this label component.
+      attr_reader :label
+
+      # @return [String, nil] the description of this label component.
+      attr_reader :description
+
+      # @return [SelectMenu, TextInput] the interactive component of this label component.
+      attr_reader :component
+      alias_method :components, :component
+
+      # @!visibility private
+      def initialize(data, bot)
+        @bot = bot
+        @id = data['id']
+        @label = data['label']
+        @description = data['description']
+        @component = Components.from_data(data['component'], bot)
+      end
+
+      # @return [true, false] whether the component is a text input or not.
+      def text_input?
+        @component.is_a?(TextInput)
+      end
+
+      # @return [true, false] whether the component is a select menu or not.
+      def select_menu?
+        @component.is_a?(SelectMenu)
       end
     end
   end
