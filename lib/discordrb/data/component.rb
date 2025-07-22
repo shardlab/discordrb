@@ -435,7 +435,7 @@ module Discordrb
         @id = data['id']
         @spoiler = data['spoiler']
         @colour = data['accent_color'] ? ColourRGB.new(data['accent_color']) : nil
-        @components = data['components'].map { |component| Components.from_data(component, bot) }
+        @components = data['components'].filter_map { |component| Components.from_data(component, bot) }
       end
     end
 

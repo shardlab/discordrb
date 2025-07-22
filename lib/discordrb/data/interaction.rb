@@ -298,28 +298,37 @@ module Discordrb
       @bot.channel(@channel_id)
     end
 
-    # @return [Hash, nil] Returns the button that triggered this interaction if applicable, otherwise nil
+    # @return [Button, nil] Returns the button that triggered this interaction if applicable, otherwise nil.
     def button
-      return unless @type == TYPES[:component]
-
-      @message['components'].each do |row|
-        Components::ActionRow.new(row, @bot).buttons.each do |button|
-          return button if button.custom_id == @data['custom_id']
-        end
-      end
+      @type == TYPES[:component] ? get_component(@data['custom_id']) : nil
     end
 
-    # @return [Array<TextInput>]
+    # @return [Array<TextInput>] The text input components associated with this interaction.
     def text_inputs
-      @components&.select { |component| component.is_a? TextInput } | []
+      @components&.select { |component| component.is_a? TextInput } || []
     end
 
-    # @return [TextInput, Button, SelectMenu]
+    # Get a component by its custom ID.
+    # @param custom_id [String] the custom ID of the component to find.
+    # @return [TextInput, Button, SelectMenu, nil] The component associated with the custom ID, or `nil` if it can't be found.
     def get_component(custom_id)
       top_level = @components.flat_map(&:components) || []
-      message_level = (@message.instance_of?(Hash) ? Message.new(@message, @bot) : @message)&.components&.flat_map(&:components) || []
-      components = top_level.concat(message_level)
-      components.find { |component| component.custom_id == custom_id }
+      message_level = @message.instance_of?(Hash) ? Message.new(@message, @bot) : @message
+      message_level = message_level&.components&.flat_map do |component|
+        case component
+        when Components::Button
+          component
+        when Components::ActionRow
+          component.components
+        when Components::Section
+          component.accessory if component.button?
+        when Components::Container
+          component.components.select { |c| c.is_a?(Components::ActionRow) }.map(&:components)
+        end
+      end
+
+      components = top_level.concat(message_level&.compact || [])
+      components.find { |component| component.respond_to?(:custom_id) ? component.custom_id == custom_id : false }
     end
 
     private
