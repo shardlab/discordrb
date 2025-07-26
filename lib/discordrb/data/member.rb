@@ -228,7 +228,7 @@ module Discordrb
     def add_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.one?
+      if role_ids.count.one?
         API::Server.add_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
         old_role_ids = resolve_role_ids
@@ -243,7 +243,7 @@ module Discordrb
     def remove_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.one?
+      if role_ids.count.one?
         API::Server.remove_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
         old_role_ids = resolve_role_ids
@@ -433,6 +433,7 @@ module Discordrb
         @user.avatar_id = user['avatar'] if user.key('avatar')
         @user.update_avatar_decoration(user['avatar_decoration_data']) if user.key?('avatar_decoration_data')
         @user.update_collectibles(user['collectibles']) if user.key?('collectibles')
+        @user.update_primary_server(user['primary_guild']) if user.key?('primary_guild')
       end
 
       @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data']) if data.key?('avatar_decoration_data')
