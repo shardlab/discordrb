@@ -5,6 +5,7 @@ require 'socket'
 require 'json'
 
 require 'discordrb/websocket'
+require 'discordrb/voice/opcodes'
 
 begin
   LIBSODIUM_AVAILABLE = if ENV['DISCORDRB_NONACL']
@@ -161,7 +162,7 @@ module Discordrb::Voice
   # circle around users on Discord, and obtaining UDP connection info.
   class VoiceWS
     # The version of the voice gateway that's supposed to be used.
-    VOICE_GATEWAY_VERSION = 4
+    VOICE_GATEWAY_VERSION = 8
 
     # @return [VoiceUDP] the UDP voice connection over which the actual audio data is sent.
     attr_reader :udp
@@ -180,7 +181,7 @@ module Discordrb::Voice
       @token = token
       @session = session
 
-      @endpoint = endpoint.split(':').first
+      @endpoint = endpoint
 
       @udp = VoiceUDP.new
     end
@@ -191,15 +192,15 @@ module Discordrb::Voice
     # @param session_id [String] The voice session ID
     # @param token [String] The Discord authentication token
     def send_init(server_id, bot_user_id, session_id, token)
-      @client.send({
-        op: 0,
-        d: {
+      send_opcode(
+        Opcodes::IDENTIFY,
+        {
           server_id: server_id,
           user_id: bot_user_id,
           session_id: session_id,
           token: token
         }
-      }.to_json)
+      )
     end
 
     # Sends the UDP connection packet (op 1)
@@ -207,9 +208,9 @@ module Discordrb::Voice
     # @param port [Integer] The port to bind UDP to
     # @param mode [Object] Which mode to use for the voice connection
     def send_udp_connection(ip, port, mode)
-      @client.send({
-        op: 1,
-        d: {
+      send_opcode(
+        Opcodes::SELECT_PROTOCOL,
+        {
           protocol: 'udp',
           data: {
             address: ip,
@@ -217,7 +218,7 @@ module Discordrb::Voice
             mode: mode
           }
         }
-      }.to_json)
+      )
     end
 
     # Send a heartbeat (op 3), has to be done every @heartbeat_interval seconds or the connection will terminate
@@ -225,22 +226,33 @@ module Discordrb::Voice
       millis = Time.now.strftime('%s%L').to_i
       @bot.debug("Sending voice heartbeat at #{millis}")
 
-      @client.send({
-        op: 3,
-        d: millis
-      }.to_json)
+      send_opcode(
+        Opcodes::HEARTBEAT,
+        {
+          t: millis,
+          seq_ack: @seq
+        }
+      )
     end
 
     # Send a speaking packet (op 5). This determines the green circle around the avatar in the voice channel
     # @param value [true, false, Integer] Whether or not the bot should be speaking, can also be a bitmask denoting audio type.
     def send_speaking(value)
       @bot.debug("Speaking: #{value}")
-      @client.send({
-        op: 5,
-        d: {
+      send_opcode(
+        Opcodes::SPEAKING,
+        {
           speaking: value,
           delay: 0
         }
+      )
+    end
+
+    def send_opcode(opcode, data)
+      @bot.debug("Sending voice opcode #{opcode} with data: #{data}")
+      @client.send({
+        op: opcode,
+        d: data
       }.to_json)
     end
 
@@ -259,6 +271,8 @@ module Discordrb::Voice
       @bot.debug("Received VWS message! #{msg}")
       packet = JSON.parse(msg)
 
+      @seq = packet['seq'] if packet['seq']
+
       case packet['op']
       when 2
         # Opcode 2 contains data to initialize the UDP connection
@@ -274,6 +288,7 @@ module Discordrb::Voice
       when 4
         # Opcode 4 sends the secret key used for encryption
         @ws_data = packet['d']
+        @seq = 0
 
         @ready = true
         @udp.secret_key = @ws_data['secret_key'].pack('C*')
@@ -281,6 +296,7 @@ module Discordrb::Voice
       when 8
         # Opcode 8 contains the heartbeat interval.
         @heartbeat_interval = packet['d']['heartbeat_interval']
+        send_heartbeat
       end
     end
 
@@ -341,7 +357,7 @@ module Discordrb::Voice
     end
 
     def init_ws
-      host = "wss://#{@endpoint}:443/?v=#{VOICE_GATEWAY_VERSION}"
+      host = "wss://#{@endpoint}/?v=#{VOICE_GATEWAY_VERSION}"
       @bot.debug("Connecting VWS to host: #{host}")
 
       # Connect the WS
