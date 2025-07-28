@@ -123,6 +123,8 @@
     
 
     
+      (also: #available_for_purchase?)
+    
   </span>
   
   
@@ -178,6 +180,8 @@
       <a href="#guild_connections-instance_method" title="#guild_connections (instance method)">#<strong>guild_connections</strong>  &#x21d2; true, false </a>
     
 
+    
+      (also: #guild_connections?, #server_connections?)
     
   </span>
   
@@ -235,6 +239,8 @@
     
 
     
+      (also: #premium_subscriber?)
+    
   </span>
   
   
@@ -289,96 +295,6 @@
 
 
 
-  
-    <h2>
-      Instance Method Summary
-      <small><a href="#" class="summary_toggle">collapse</a></small>
-    </h2>
-
-    <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(data)  &#x21d2; Tags </a>
-    
-
-    
-  </span>
-  
-  
-    <span class="note title constructor">constructor</span>
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>A new instance of Tags.</p>
-</div></span>
-  
-</li>
-
-      
-    </ul>
-  
-
-<div id="constructor_details" class="method_details_list">
-  <h2>Constructor Details</h2>
-  
-    <div class="method_details first">
-  <h3 class="signature first" id="initialize-instance_method">
-  
-    #<strong>initialize</strong>(data)  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Role::Tags (class)">Tags</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns a new instance of Tags.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-61
-62
-63
-64
-65
-66
-67
-68</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 61</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
-  <span class='ivar'>@bot_id</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>bot_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
-  <span class='ivar'>@integration_id</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>integration_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
-  <span class='ivar'>@premium_subscriber</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>premium_subscriber</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-  <span class='ivar'>@subscription_listing_id</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>subscription_listing_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
-  <span class='ivar'>@available_for_purchase</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>available_for_purchase</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-  <span class='ivar'>@guild_connections</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>guild_connections</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-  
-</div>
 
   <div id="instance_attr_details" class="attr_details">
     <h2>Instance Attribute Details</h2>
@@ -391,6 +307,10 @@
     #<strong>available_for_purchase</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt>  <span class="extras">(readonly)</span>
   
 
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='available_for_purchase?-instance_method'>available_for_purchase?</span></span>
+    </span>
   
 
   
@@ -427,12 +347,12 @@
       <pre class="lines">
 
 
-56
-57
-58</pre>
+63
+64
+65</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 56</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 63</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_available_for_purchase'>available_for_purchase</span>
   <span class='ivar'>@available_for_purchase</span>
@@ -486,12 +406,12 @@
       <pre class="lines">
 
 
-44
-45
-46</pre>
+50
+51
+52</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 50</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bot_id'>bot_id</span>
   <span class='ivar'>@bot_id</span>
@@ -509,6 +429,10 @@
     #<strong>guild_connections</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt>  <span class="extras">(readonly)</span>
   
 
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='guild_connections?-instance_method'>guild_connections?</span>, <span id='server_connections?-instance_method'>server_connections?</span></span>
+    </span>
   
 
   
@@ -545,12 +469,12 @@
       <pre class="lines">
 
 
-59
-60
-61</pre>
+67
+68
+69</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 67</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_guild_connections'>guild_connections</span>
   <span class='ivar'>@guild_connections</span>
@@ -604,12 +528,12 @@
       <pre class="lines">
 
 
-47
-48
-49</pre>
+53
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 53</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_integration_id'>integration_id</span>
   <span class='ivar'>@integration_id</span>
@@ -627,6 +551,10 @@
     #<strong>premium_subscriber</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt>  <span class="extras">(readonly)</span>
   
 
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='premium_subscriber?-instance_method'>premium_subscriber?</span></span>
+    </span>
   
 
   
@@ -663,12 +591,12 @@
       <pre class="lines">
 
 
-50
-51
-52</pre>
+56
+57
+58</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 56</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_premium_subscriber'>premium_subscriber</span>
   <span class='ivar'>@premium_subscriber</span>
@@ -722,12 +650,12 @@
       <pre class="lines">
 
 
-53
-54
-55</pre>
+60
+61
+62</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 60</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_subscription_listing_id'>subscription_listing_id</span>
   <span class='ivar'>@subscription_listing_id</span>
@@ -743,9 +671,9 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Jul 13 22:06:55 2025 by
+  Generated on Mon Jul 28 03:14:22 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.37 (ruby-3.3.8).
+  0.9.37 (ruby-3.3.9).
 </div>
 
     </div>
