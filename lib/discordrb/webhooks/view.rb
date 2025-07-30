@@ -253,6 +253,10 @@ class Discordrb::Webhooks::View
   # A file component lets you send a file. Only attachment://<filename> references
   # are currently supported at the time of writing.
   class FileBuilder
+    # Set the attachment://<filename> reference of this file.
+    # @return [String, nil] the attachment://<filename> reference.
+    attr_accessor :url
+
     # If this file should be spoilered.
     # @return [true, false] If this file is a spoiler or not.
     attr_accessor :spoiler
@@ -262,16 +266,10 @@ class Discordrb::Webhooks::View
     attr_accessor :id
 
     # @!visibility private
-    def initialize(file = nil, spoiler = false, id = nil)
+    def initialize(url = nil, spoiler = false, id = nil)
       @id = id
-      @file = { url: file }
+      @url = url
       @spoiler = spoiler
-    end
-
-    # Set the file URL of this component.
-    # @param file [String] attachment://<filename> reference.
-    def file=(file)
-      @file[:url] = file
     end
 
     # @!visibility private
@@ -279,7 +277,7 @@ class Discordrb::Webhooks::View
       { type: COMPONENT_TYPES[:file],
         id: @id,
         spoiler: @spoiler,
-        file: @file }.compact
+        file: { url: @url } }.compact
     end
   end
 
@@ -460,11 +458,11 @@ class Discordrb::Webhooks::View
 
     # Add a file to this container.
     # @param id [Integer, nil] Integer ID of this file component.
-    # @param file [String, nil] An attachment://<filename> reference.
+    # @param url [String, nil] An attachment://<filename> reference.
     # @param spoiler [true, false] If this file should be spoilered. Defaults to false.
     # @yieldparam builder [FileBuilder] The file object is yielded to allow for modification of attributes.
-    def file(id: nil, file: nil, spoiler: false)
-      builder = FileBuilder.new(file, spoiler, id)
+    def file(id: nil, url: nil, spoiler: false)
+      builder = FileBuilder.new(url, spoiler, id)
 
       yield builder if block_given?
 
@@ -579,11 +577,11 @@ class Discordrb::Webhooks::View
 
   # Add a file to the view.
   # @param id [Integer, nil] Integer ID of this file component.
-  # @param file [String, nil] An attachment://<filename> reference.
+  # @param url [String, nil] An attachment://<filename> reference.
   # @param spoiler [true, false] If this file should be spoilered. Defaults to false.
   # @yieldparam builder [FileBuilder] The file object is yielded to allow for modification of attributes.
-  def file(id: nil, file: nil, spoiler: false)
-    builder = FileBuilder.new(file, spoiler, id)
+  def file(id: nil, url: nil, spoiler: false)
+    builder = FileBuilder.new(url, spoiler, id)
 
     yield builder if block_given?
 

@@ -2,7 +2,7 @@
 
 require 'discordrb'
 
-bot = Discordrb::Bot.new(token: ENV.fetch('BOT_TOKEN', nil), intents: %i[servers server_emojis])
+bot = Discordrb::Bot.new(token: ENV.fetch('BOT_TOKEN', nil), intents: %i[servers server_emojis server_messages])
 
 bot.register_application_command(:components, 'Components version two!', server_id: ENV.fetch('SERVER_ID', nil)) do |option|
   option.boolean('color', 'Whether the container should include an accent color.', required: false)
@@ -73,6 +73,57 @@ bot.select_menu(custom_id: 'emojis') do |event|
     event.respond(content: "You're viewing very boring stats!", ephemeral: true)
   else
     event.respond(content: 'What kind of stats...', ephemeral: true)
+  end
+end
+
+# The second example is a little more generic and uses a standard message sent to a channel.
+bot.message(content: '!sample') do |event|
+  # Any of the components used below can be used within a container as well!
+  event.send_message!(has_components: true, attachments: [File.open('data/image.jpg')]) do |_, view|
+    view.text_display(text: <<~CONTENT)
+      This is a text display component! Any markdown that can be used in the `content` field can be used here.
+      ~~Underlined~~, **bold text**, *etc*.
+      ```ruby
+        puts('Goodbye World')
+      ```
+    CONTENT
+
+    # This is a seperator component! We used this in the example above to generate a visual barrier.
+    # A seperator can be used to add invisible padding between components when setting `divider:` to `false`.
+    view.seperator(divider: false, spacing: :large)
+
+    # A media gallery is a container for multiple pieces of media, be it videos, GIFs or staic images. You can add
+    # alt text and spoiler the media items. Visually, when there are multiple media items in a single gallery,
+    # these look similar to when you upload multiple images together and they get grouped into a gallery grid.
+    view.media_gallery do |gallery|
+      gallery.item(url: 'https://static.wikitide.net/sillycatsbookwiki/f/f7/Apple_Cat.jpg', description: 'Greedy Cat')
+      gallery.item(url: 'https://media.tenor.com/FkXcRz7-9PwAAAAd/oh-boy-patrick.gif', spoiler: true)
+      gallery.item(url: 'attachment://image.jpg', description: 'Brownie Cake', spoiler: true)
+    end
+
+    # This is a file object. File objectd can only reference an attachment that was uploaded with the messages.
+    # Any attachments included with a components V2 message must be manaully exposed via a component. File components
+    # do not display and sort of preview or description.
+    view.file(url: `attachment://image.png`, spoiler: true)
+
+    # This is well, a section! Section's allow you to have multiple text display components,
+    # and an optional accessory. In the emoji stats example above, we had a section with a
+    # thumbnail component. Currently, a section must container either a thumbnail **or**
+    # a button, but not both at the same time.
+    view.section(id: rand(100..600)) do |section|
+      section.text_display(text: 'Cookie Clicker! How many cookies can you earn? Timer starts at the first click!')
+      section.button(label: 'earn cookie', style: :primary, custom_id: 'cookie_clicker', emoji: 648974637182484500)
+    end
+
+    # When the divider KWARG is set to true, the seperator will function as a visibile barrier.
+    view.seperator(divider: true, spacing: :small)
+
+    # Last but not least, action rows can still be used! At the time of writing, most interactive components
+    # must be contained within an action row (except for buttons in sections).
+    view.row do |row|
+      row.button(label: 'delete message', style: :danger, custom_id: 'delete')
+      row.button(label: 'inspect message', style: :secondary, custom_id: 'inspect')
+    end
   end
 end
 
