@@ -78,64 +78,42 @@ end
 
 # The second example is a little more generic and uses a standard message sent to a channel.
 bot.message(content: '!sample') do |event|
-  # Any of the components used below can be used within a container as well!
-  event.send_message!(has_components: true, attachments: [File.open('data/music.mp3')]) do |_, view|
+  # Any of the components used below can be used within a container as well.
+  event.send_message!(has_components: true) do |_, view|
     view.text_display(text: <<~CONTENT)
-      This is a text display component! Any markdown that can be used in the `content` field can be used here.\n
+      This is a text display component! Any markdown that can be used in the `content` field can also be used here.\n
       ~~strikethrough~~ **bold text** *italics* ||spoiler|| `code` __underline__ [masked link](https://youtu.be/dQw4w9WgXcQ)\n
-      ```crystal
-      puts('Goodbye World')
+      ```ruby
+      puts("Hello World!")
       ```
     CONTENT
 
     # Just like in the example above, we can set `:divider` to true in order to generate a barrier.
     view.seperator(divider: true, spacing: :large)
 
-    # This is well, a section! Section's allow you to have multiple text display components,
-    # and an optional accessory. In the emoji stats example above, we had a section with a
-    # thumbnail component. Currently, a section must container either a thumbnail **or**
-    # a button, but not both at the same time.
-    view.section do |section|
-      section.text_display(text: <<~CONTENT)
-        This is text from the first section! A section must have either a button or a thumbnail accessory on the right hand side.
-      CONTENT
-
-      section.button(label: 'test button', style: :primary, custom_id: 'cookie_clicker', emoji: 648974637182484500)
-    end
-
-    # This is a seperator component! We used this in the example above to generate a visual barrier.
-    # A seperator can be used to add invisible padding between components when setting `divider:` to `false`.
-    view.seperator(divider: false, spacing: :small)
-
-    # Most components support setting the `ID` field, but it isn't required to be set.
-    view.section(id: rand(100..600)) do |section|
-      section.text_display(text: <<~CONTENT)
-        This is text from the second section! You can see what a thumbnail looks like on the right.
-      CONTENT
-
-      section.thumbnail(url: 'https://avatars.githubusercontent.com/u/74277651?s=200&v=4')
-    end
-
-    # A media gallery is a container for multiple pieces of media, be it videos, GIFs or staic images. You can add
-    # alt text and spoiler the media items. Visually, when there are multiple media items in a single gallery,
-    # these look similar to when you upload multiple images together and they get grouped into a gallery grid.
+    # A media gallery is a container for multiple pieces of media, such as videos, GIFs or staic images.
+    # You can add optionally add alt text via the `description:` argument and spoiler each media item.
     view.media_gallery do |gallery|
       gallery.item(url: 'https://static.wikitide.net/sillycatsbookwiki/f/f7/Apple_Cat.jpg', description: 'Greedy Cat')
       gallery.item(url: 'https://media.tenor.com/FkXcRz7-9PwAAAAd/oh-boy-patrick.gif', spoiler: true)
     end
 
-    # This is a file object. File objectd can only reference an attachment that was uploaded with the messages.
-    # Any attachments included with a components V2 message must be manaully exposed via a component. File components
-    # do not display and sort of preview or description.
-    view.file(url: 'attachment://music.mp3', spoiler: true)
+    # A Section allows you to group together text display components and pair them with an accessory.
+    # In the emoji stats example above, we had a section with a  thumbnail component. At the time of writing,
+    # a section must container either a thumbnail **or** a button, but not both at the same time.
+    view.section(id: rand(100..600)) do |section|
+      section.text_display(text: 'This is text from a section. This section has a button instead of a thumbnail.')
 
-    # Last but not least, action rows can still be used! At the time of writing, most interactive components
-    # must be contained within an action row (except for buttons in sections).
-    view.row do |row|
-      row.button(label: 'delete message', style: :danger, custom_id: 'delete')
-      row.button(label: 'inspect message', style: :secondary, custom_id: 'inspect')
+      section.button(label: 'Delete', style: :danger, custom_id: 'delete_message', emoji: 577658883468689409)
     end
   end
+end
+
+# Delete the message that was sent in response to "!sample".
+bot.button(custom_id: 'delete_message') do |event|
+  event.respond(content: 'Successfully deleted the message.', ephemeral: true)
+
+  event.message.delete
 end
 
 bot.run
