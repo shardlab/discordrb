@@ -424,6 +424,10 @@ module Discordrb
           component
         when Components::ActionRow
           component.buttons
+        when Components::Section
+          component.accessory if component.button?
+        when Components::Container
+          component.components.select { |c| c.is_a?(Components::ActionRow) }.map(&:buttons)
         end
       end
 

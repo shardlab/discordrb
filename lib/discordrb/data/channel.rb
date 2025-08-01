@@ -428,7 +428,7 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
     # @return [Message] the message that was sent.
     def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
@@ -445,7 +445,7 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
     def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
@@ -463,7 +463,7 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
     # @yield [embed] Yields the embed to allow for easy building inside a block.
     # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
     # @return [Message] The resulting message.
@@ -474,6 +474,38 @@ module Discordrb
       yield(embed, view) if block_given?
 
       send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a, flags)
+    end
+
+    # Send a message to this channel.
+    # @param content [String] The content of the message.
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param embeds [Array<Hash, Webhooks::Embed>] The embeds that should be attached to the message.
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, nil] Mentions that are allowed to ping on this message.
+    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param components [View, Array<#to_h>] Interaction components to associate with this message.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
+    # @param silent [true, false] whether this message should not trigger any desktop or mobile notifications. This will still mention any users if set to true.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
+    # @yieldparam view [Webhooks::View] An optional component builder. Arguments passed to the method overwrite builder data.
+    # @return [Message] The resulting created message.
+    def send_message!(content: '', tts: false, embeds: [], allowed_mentions: nil, message_reference: nil, components: nil, attachments: nil, has_components: false, silent: false, flags: 0)
+      builder = Discordrb::Webhooks::Builder.new
+      view = Discordrb::Webhooks::View.new
+
+      builder.tts = tts
+      builder.content = content
+      embeds.each { |embed| builder << embed }
+      builder.allowed_mentions = allowed_mentions
+
+      yield(builder, view) if block_given?
+
+      builder = builder.to_json_hash
+      flags |= (1 << 12) if silent
+      flags |= (1 << 15) if has_components
+
+      @bot.send_message(@id, builder[:content], builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], message_reference, components || view.to_a, flags)
     end
 
     # Sends multiple messages to a channel
