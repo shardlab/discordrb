@@ -203,6 +203,11 @@ module Discordrb::API
     "#{cdn_url}/splashes/#{server_id}/#{splash_id}.#{format}"
   end
 
+  # Make a discovery splash URL from server and splash IDs
+  def discovery_splash_url(server_id, splash_id, format = 'webp')
+    "#{cdn_url}/discovery-splashes/#{server_id}/#{splash_id}.#{format}"
+  end
+
   # Make a banner URL from server and banner IDs
   def banner_url(server_id, banner_id, format = 'webp')
     "#{cdn_url}/banners/#{server_id}/#{banner_id}.#{format}"

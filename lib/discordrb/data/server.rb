@@ -325,6 +325,11 @@ module Discordrb
       @channels.reject { |c| c.parent || c.category? }
     end
 
+    # @return [ServerPreview] the preview of this server shown in the discovery page.
+    def preview
+      @bot.server_preview(@id)
+    end
+
     # @return [String, nil] the widget URL to the server that displays the amount of online members in a
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
@@ -659,20 +664,9 @@ module Discordrb
       API::Server.update_member(@bot.token, @id, user.resolve_id, channel_id: channel&.resolve_id)
     end
 
-    # Deletes this server. Be aware that this is permanent and impossible to undo, so be careful!
-    def delete
-      API::Server.delete(@bot.token, @id)
-    end
-
     # Leave the server.
     def leave
       API::User.leave_server(@bot.token, @id)
-    end
-
-    # Transfers server ownership to another user.
-    # @param user [User, String, Integer] The user who should become the new owner.
-    def owner=(user)
-      API::Server.transfer_ownership(@bot.token, @id, user.resolve_id)
     end
 
     # Sets the server's name.
