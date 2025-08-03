@@ -34,6 +34,12 @@ module Discordrb
       @bot.server(@server_id)
     end
 
+    # Get the server preview associated with this primary server.
+    # @return [ServerPreview, nil] the server preview associated with this primary server, or `nil` if it can't be accessed.
+    def server_preview
+      @bot.server_preview(@server_id)
+    end
+
     # Utility method to get a server tag's badge URL.
     # @param format [String] the URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
     # @return [String] the URL to the server tag's badge image.
@@ -42,6 +48,7 @@ module Discordrb
     end
 
     # Comparison based off of server ID.
+    # @return [true, false] if the other object is equal to this primary server.
     def ==(other)
       return false unless other.is_a?(PrimaryServer)
 
