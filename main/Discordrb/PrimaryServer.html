@@ -248,7 +248,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#==-instance_method" title="#== (instance method)">#<strong>==</strong>(other)  &#x21d2; Object </a>
+      <a href="#==-instance_method" title="#== (instance method)">#<strong>==</strong>(other)  &#x21d2; true, false </a>
     
 
     
@@ -311,6 +311,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Get the server associated with this primary server.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#server_preview-instance_method" title="#server_preview (instance method)">#<strong>server_preview</strong>  &#x21d2; ServerPreview<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Get the server preview associated with this primary server.</p>
 </div></span>
   
 </li>
@@ -584,7 +607,7 @@
       <div class="method_details first">
   <h3 class="signature first" id="==-instance_method">
   
-    #<strong>==</strong>(other)  &#x21d2; <tt>Object</tt> 
+    #<strong>==</strong>(other)  &#x21d2; <tt>true</tt>, <tt>false</tt> 
   
 
   
@@ -603,6 +626,23 @@
 </div>
 <div class="tags">
   
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>if the other object is equal to this primary server.</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -610,14 +650,14 @@
       <pre class="lines">
 
 
-45
-46
-47
-48
-49</pre>
+52
+53
+54
+55
+56</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/primary_server.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/primary_server.rb', line 52</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="Discordrb::PrimaryServer (class)">PrimaryServer</a></span></span><span class='rparen'>)</span>
@@ -692,12 +732,12 @@
       <pre class="lines">
 
 
-40
-41
-42</pre>
+46
+47
+48</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/primary_server.rb', line 40</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/primary_server.rb', line 46</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_badge_url'>badge_url</span><span class='lparen'>(</span><span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>webp</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_server_tag_badge_url'><span class='object_link'><a href="API.html#server_tag_badge_url-class_method" title="Discordrb::API.server_tag_badge_url (method)">server_tag_badge_url</a></span></span><span class='lparen'>(</span><span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='ivar'>@badge_id</span><span class='comma'>,</span> <span class='id identifier rubyid_format'>format</span><span class='rparen'>)</span>
@@ -781,12 +821,69 @@
 </table>
 </div>
     
+      <div class="method_details ">
+  <h3 class="signature " id="server_preview-instance_method">
+  
+    #<strong>server_preview</strong>  &#x21d2; <tt><span class='object_link'><a href="ServerPreview.html" title="Discordrb::ServerPreview (class)">ServerPreview</a></span></tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Get the server preview associated with this primary server.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ServerPreview.html" title="Discordrb::ServerPreview (class)">ServerPreview</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the server preview associated with this primary server, or <code>nil</code> if it can&#39;t be accessed.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+39
+40
+41</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/primary_server.rb', line 39</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_server_preview'>server_preview</span>
+  <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_server_preview'>server_preview</span><span class='lparen'>(</span><span class='ivar'>@server_id</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 </div>
 
       <div id="footer">
-  Generated on Mon Jul 28 03:14:31 2025 by
+  Generated on Sun Aug  3 14:49:54 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
