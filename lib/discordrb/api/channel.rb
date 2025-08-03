@@ -609,4 +609,19 @@ module Discordrb::API::Channel
       Authorization: token
     )
   end
+
+  # Follow an annoucement channel.
+  # https://discord.com/developers/docs/resources/channel#follow-announcement-channel
+  def follow_channel(token, channel_id, webhook_channel_id, reason = nil)
+    Discordrb::API.request(
+      :channels_cid_followers,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/followers",
+      { webhook_channel_id: webhook_channel_id }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
 end
