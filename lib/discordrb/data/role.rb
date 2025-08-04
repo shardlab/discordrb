@@ -35,8 +35,14 @@ module Discordrb
     # @return [String, nil] The icon hash for this role.
     attr_reader :icon
 
-    # @return [Tags, nil] The role tags
+    # @return [Tags, nil] The role tags.
     attr_reader :tags
+
+    # @return [Integer] The flags for this role.
+    attr_reader :flags
+
+    # @return [String, nil] The unicode emoji of this role, or nil.
+    attr_reader :unicode_emoji
 
     # Wrapper for the role tags
     class Tags
@@ -48,16 +54,21 @@ module Discordrb
 
       # @return [true, false] Whether this is the guild's Booster role
       attr_reader :premium_subscriber
+      alias_method :premium_subscriber?, :premium_subscriber
 
       # @return [Integer, nil] The id of this role's subscription sku and listing
       attr_reader :subscription_listing_id
 
       # @return [true, false] Whether this role is available for purchase
       attr_reader :available_for_purchase
+      alias_method :available_for_purchase?, :available_for_purchase
 
       # @return [true, false] Whether this role is a guild's linked role
       attr_reader :guild_connections
+      alias_method :guild_connections?, :guild_connections
+      alias_method :server_connections?, :guild_connections
 
+      # @!visibility private
       def initialize(data)
         @bot_id = data['bot_id']&.resolve_id
         @integration_id = data['integration_id']&.resolve_id
@@ -107,6 +118,10 @@ module Discordrb
       @icon = data['icon']
 
       @tags = Tags.new(data['tags']) if data['tags']
+
+      @flags = data['flags']
+
+      @unicode_emoji = data['unicode_emoji']
     end
 
     # @return [String] a string that will mention this role, if it is mentionable.
@@ -133,6 +148,8 @@ module Discordrb
       @position = other.position
       @managed = other.managed
       @icon = other.icon
+      @flags = other.flags
+      @unicode_emoji = other.unicode_emoji
     end
 
     # Updates the data cache from a hash containing data
@@ -143,6 +160,9 @@ module Discordrb
       @hoist = new_data['hoist'] unless new_data['hoist'].nil?
       @hoist = new_data[:hoist] unless new_data[:hoist].nil?
       @colour = new_data[:colour] || (new_data['color'] ? ColourRGB.new(new_data['color']) : @colour)
+      @flags = new_data[:flags] || new_data['flags'] || @flags
+      @unicode_emoji = new_data[:unicode_emoji] if new_data.key?(:unicode_emoji)
+      @unicode_emoji = new_data['unicode_emoji'] if new_data.key?('unicode_emoji')
     end
 
     # Sets the role name to something new
@@ -170,9 +190,15 @@ module Discordrb
     end
 
     # Upload a role icon for servers with the ROLE_ICONS feature.
-    # @param file [File]
+    # @param file [File, nil] File like object that responds to #read, or nil.
     def icon=(file)
       update_role_data(icon: file)
+    end
+
+    # Set a role icon to a unicode emoji for servers with the ROLE_ICONS feature.
+    # @param emoji [String, nil] The new unicode emoji for this role, or nil.
+    def unicode_emoji=(emoji)
+      update_role_data(unicode_emoji: emoji)
     end
 
     # @param format ['webp', 'png', 'jpeg']
@@ -181,6 +207,29 @@ module Discordrb
       return nil unless @icon
 
       Discordrb::API.role_icon_url(@id, @icon, format)
+    end
+
+    # Get the icon that a role has displayed.
+    # @return [String, nil] Icon URL, the unicode emoji, or nil if this role doesn't have any icon.
+    # @note A role can have a unicode emoji, and an icon, but only the icon will be shown in the UI.
+    def display_icon
+      icon_url || unicode_emoji
+    end
+
+    # Set the icon this role is displaying.
+    # @param icon [File, String, nil] File like object that responds to #read, unicode emoji, or nil.
+    # @note Setting the icon to nil will remove the unicode emoji **and** the custom icon.
+    def display_icon=(icon)
+      if icon.nil?
+        update_role_data(unicode_emoji: nil, icon: nil)
+        return
+      end
+
+      if icon.respond_to?(:read)
+        update_role_data(unicode_emoji: nil, icon: icon)
+      else
+        update_role_data(unicode_emoji: icon, icon: nil)
+      end
     end
 
     alias_method :color=, :colour=
@@ -228,7 +277,7 @@ module Discordrb
 
     # The inspect method is overwritten to give more useful output
     def inspect
-      "<Role name=#{@name} permissions=#{@permissions.inspect} hoist=#{@hoist} colour=#{@colour.inspect} server=#{@server.inspect} position=#{@position} mentionable=#{@mentionable}>"
+      "<Role name=#{@name} permissions=#{@permissions.inspect} hoist=#{@hoist} colour=#{@colour.inspect} server=#{@server.inspect} position=#{@position} mentionable=#{@mentionable} unicode_emoji=#{@unicode_emoji} flags=#{@flags}>"
     end
 
     private
@@ -241,7 +290,8 @@ module Discordrb
                               new_data[:mentionable].nil? ? @mentionable : new_data[:mentionable],
                               new_data[:permissions] || @permissions.bits,
                               nil,
-                              new_data.key?(:icon) ? new_data[:icon] : :undef)
+                              new_data.key?(:icon) ? new_data[:icon] : :undef,
+                              new_data.key?(:unicode_emoji) ? new_data[:unicode_emoji] : :undef)
       update_data(new_data)
     end
   end
