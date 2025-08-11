@@ -27,6 +27,21 @@ module Discordrb
       modal: 9
     }.freeze
 
+    # Interaction context types.
+    # @see https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types
+    COMMAND_CONTEXTS = {
+      guild: 0,
+      bot_dm: 1,
+      private_channel: 2
+    }.freeze
+
+    # Application integration types.
+    # @see https://discord.com/developers/docs/resources/application#application-object-application-integration-types
+    COMMAND_INTEGRATION_TYPES = {
+      guild_install: 0,
+      user_install: 1
+    }.freeze
+
     # @return [User, Member] The user that initiated the interaction.
     attr_reader :user
 
