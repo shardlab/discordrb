@@ -428,9 +428,10 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @return [Message] the message that was sent.
-    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference, components)
+    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+      @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
     alias_method :send, :send_message
@@ -444,8 +445,9 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference, components)
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+      @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
     # Convenience method to send a message with an embed.
@@ -461,16 +463,17 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @yield [embed] Yields the embed to allow for easy building inside a block.
     # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
     # @return [Message] The resulting message.
-    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil)
+    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       embed ||= Discordrb::Webhooks::Embed.new
       view = Discordrb::Webhooks::View.new
 
       yield(embed, view) if block_given?
 
-      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a)
+      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a, flags)
     end
 
     # Sends multiple messages to a channel
@@ -656,11 +659,27 @@ module Discordrb
 
     alias_method :message, :load_message
 
-    # Requests all pinned messages in a channel.
-    # @return [Array<Message>] the received messages.
-    def pins
-      msgs = API::Channel.pinned_messages(@bot.token, @id)
-      JSON.parse(msgs).map { |msg| Message.new(msg, @bot) }
+    # Requests the pinned messages in a channel.
+    # @param limit [Integer, nil] the limit of how many pinned messages to retrieve. `nil` will return all the pinned messages.
+    # @return [Array<Message>] the messages pinned in the channel.
+    def pins(limit: 50)
+      get_pins = proc do |fetch_limit, before = nil|
+        resp = API::Channel.pinned_messages(@bot.token, @id, fetch_limit, before&.iso8601)
+        JSON.parse(resp)['items'].map { |pin| Message.new(pin['message'].merge({ 'pinned_at' => pin['pinned_at'] }), @bot) }
+      end
+
+      # Can be done without pagination.
+      return get_pins.call(limit) if limit && limit <= 50
+
+      paginator = Paginator.new(limit, :down) do |last_page|
+        if last_page && last_page.count < 50
+          []
+        else
+          get_pins.call(50, last_page&.last&.pinned_at)
+        end
+      end
+
+      paginator.to_a
     end
 
     # Delete the last N messages on this channel.
@@ -941,8 +960,10 @@ module Discordrb
 
     private
 
+    # rubocop:disable Lint/UselessConstantScoping
     # For bulk_delete checking
     TWO_WEEKS = 86_400 * 14
+    # rubocop:enable Lint/UselessConstantScoping
 
     # Deletes a list of messages on this channel using bulk delete.
     def bulk_delete(ids, strict = false, reason = nil)
@@ -965,7 +986,7 @@ module Discordrb
     def update_channel_data(new_data)
       new_nsfw = new_data[:nsfw].is_a?(TrueClass) || new_data[:nsfw].is_a?(FalseClass) ? new_data[:nsfw] : @nsfw
       # send permission_overwrite only when explicitly set
-      overwrites = new_data[:permission_overwrites] ? new_data[:permission_overwrites].map { |_, v| v.to_hash } : nil
+      overwrites = new_data[:permission_overwrites] ? new_data[:permission_overwrites].map(&:to_hash) : nil
       response = JSON.parse(API::Channel.update(@bot.token, @id,
                                                 new_data[:name] || @name,
                                                 new_data[:topic] || @topic,

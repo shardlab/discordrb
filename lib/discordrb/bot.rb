@@ -106,9 +106,10 @@ module Discordrb
     #   to Discord's gateway. `:none` will request that no payloads are received compressed (not recommended for
     #   production bots). `:large` will request that large payloads are received compressed. `:stream` will request
     #   that all data be received in a continuous compressed stream.
-    # @param intents [:all, :unprivileged, Array<Symbol>, :none] Gateway intents that this bot requires. `:all` will
+    # @param intents [:all, :unprivileged, Array<Symbol>, :none, Integer] Gateway intents that this bot requires. `:all` will
     #   request all intents. `:unprivileged` will request only intents that are not defined as "Privileged". `:none`
-    #   will request no intents. An array of symbols will request only those intents specified.
+    #   will request no intents. An array of symbols will request only those intents specified. An integer value will request
+    #   exactly all the intents specified in the bitwise value.
     # @see Discordrb::INTENTS
     def initialize(
       log_mode: :normal,
@@ -401,15 +402,16 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @return [Message] The message that was sent.
-    def send_message(channel, content, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+    def send_message(channel, content, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       channel = channel.resolve_id
       debug("Sending message to #{channel} with content '#{content}'")
       allowed_mentions = { parse: [] } if allowed_mentions == false
       message_reference = { message_id: message_reference.id } if message_reference.respond_to?(:id)
       embeds = (embeds.instance_of?(Array) ? embeds.map(&:to_hash) : [embeds&.to_hash]).compact
 
-      response = API::Channel.create_message(token, channel, content, tts, embeds, nil, attachments, allowed_mentions&.to_hash, message_reference, components)
+      response = API::Channel.create_message(token, channel, content, tts, embeds, nil, attachments, allowed_mentions&.to_hash, message_reference, components, flags)
       Message.new(JSON.parse(response), self)
     end
 
@@ -424,11 +426,12 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       Thread.new do
         Thread.current[:discordrb_name] = "#{@current_thread}-temp-msg"
 
-        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components)
+        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components, flags)
         sleep(timeout)
         message.delete
       end
@@ -460,20 +463,6 @@ module Discordrb
       channel = channel.resolve_id
       response = API::Channel.upload_file(token, channel, file, caption: caption, tts: tts)
       Message.new(JSON.parse(response), self)
-    end
-
-    # Creates a server on Discord with a specified name and a region.
-    # @note Discord's API doesn't directly return the server when creating it, so this method
-    #   waits until the data has been received via the websocket. This may make the execution take a while.
-    # @param name [String] The name the new server should have. Doesn't have to be alphanumeric.
-    # @param region [Symbol] The region where the server should be created, for example 'eu-central' or 'hongkong'.
-    # @return [Server] The server that was created.
-    def create_server(name, region = :'eu-central')
-      response = API::Server.create(token, name, region)
-      id = JSON.parse(response)['id'].to_i
-      sleep 0.1 until (server = @servers[id])
-      debug "Successfully created server #{server.id} with name #{server.name}"
-      server
     end
 
     # Creates a new application to do OAuth authorization with. This allows you to use OAuth to authorize users using
@@ -524,7 +513,7 @@ module Discordrb
             end
           end
         elsif /(?<animated>^a|^${0}):(?<name>\w+):(?<id>\d+)/ =~ mention
-          array_to_return << (emoji(id) || Emoji.new({ 'animated' => !animated.nil?, 'name' => name, 'id' => id }, self, nil))
+          array_to_return << (emoji(id) || Emoji.new({ 'animated' => animated != '', 'name' => name, 'id' => id }, self, nil))
         end
       end
       array_to_return
@@ -1098,12 +1087,12 @@ module Discordrb
       server_id = data['guild_id'].to_i
       server = self.server(server_id)
 
-      member = server.member(data['user']['id'].to_i)
-      member.update_roles(data['roles'])
-      member.update_nick(data['nick'])
-      member.update_global_name(data['user']['global_name']) if data['user']['global_name']
-      member.update_boosting_since(data['premium_since'])
-      member.update_communication_disabled_until(data['communication_disabled_until'])
+      # Only attempt to update members that're already cached
+      if (member = server.member(data['user']['id'].to_i, false))
+        member.update_data(data)
+      else
+        ensure_user(data['user'])
+      end
     end
 
     # Internal handler for GUILD_MEMBER_DELETE
@@ -1219,7 +1208,7 @@ module Discordrb
 
     def handle_dispatch(type, data)
       # Check whether there are still unavailable servers and there have been more than 10 seconds since READY
-      if @unavailable_servers&.positive? && (Time.now - @unavailable_timeout_time) > 10 && !((@intents || 0) & INTENTS[:servers]).zero?
+      if @unavailable_servers&.positive? && (Time.now - @unavailable_timeout_time) > 10 && !(@intents || 0).nobits?(INTENTS[:servers])
         # The server streaming timed out!
         LOGGER.debug("Server streaming timed out with #{@unavailable_servers} servers remaining")
         LOGGER.debug('Calling ready now because server loading is taking a long time. Servers may be unavailable due to an outage, or your bot is on very large servers.')
@@ -1238,6 +1227,8 @@ module Discordrb
         init_cache
 
         @profile = Profile.new(data['user'], self)
+
+        @client_id ||= data['application']['id']&.to_i
 
         # Initialize servers
         @servers = {}
@@ -1297,12 +1288,21 @@ module Discordrb
           return
         end
 
+        if !should_parse_self && profile.id == data['author']['id'].to_i
+          debug('Ignored message from the current bot')
+          return
+        end
+
         # If create_message is overwritten with a method that returns the parsed message, use that instead, so we don't
         # parse the message twice (which is just thrown away performance)
         message = create_message(data)
         message = Message.new(data, self) unless message.is_a? Message
 
-        return if message.from_bot? && !should_parse_self
+        # Update the existing member if it exists in the cache.
+        if data['member']
+          member = message.channel.server&.member(data['author']['id'].to_i, false)
+          member&.update_data(data['member'])
+        end
 
         # Dispatch a ChannelCreateEvent for channels we don't have cached
         if message.channel.private? && @pm_channels[message.channel.recipient.id].nil?
@@ -1326,16 +1326,25 @@ module Discordrb
       when :MESSAGE_UPDATE
         update_message(data)
 
+        if !should_parse_self && profile.id == data['author']['id'].to_i
+          debug('Ignored message from the current bot')
+          return
+        end
+
         message = Message.new(data, self)
 
         event = MessageUpdateEvent.new(message, self)
         raise_event(event)
 
-        return if message.from_bot? && !should_parse_self
-
-        unless message.author
+        if data['author'].nil?
           LOGGER.debug("Edited a message with nil author! Content: #{message.content.inspect}, channel: #{message.channel.inspect}")
           return
+        end
+
+        # Update the existing member if it exists in the cache.
+        if data['member']
+          member = message.channel.server&.member(data['author']['id'].to_i, false)
+          member&.update_data(data['member'])
         end
 
         event = MessageEditEvent.new(message, self)
@@ -1374,6 +1383,12 @@ module Discordrb
         add_message_reaction(data)
 
         return if profile.id == data['user_id'].to_i && !should_parse_self
+
+        if data['member']
+          server = self.server(data['guild_id'].to_i)
+
+          server&.cache_member(Member.new(data['member'], server, self))
+        end
 
         event = ReactionAddEvent.new(data, self)
         raise_event(event)
@@ -1450,6 +1465,10 @@ module Discordrb
 
         event = ChannelRecipientRemoveEvent.new(data, self)
         raise_event(event)
+      when :CHANNEL_PINS_UPDATE
+        event = ChannelPinsUpdateEvent.new(data, self)
+        raise_event(event)
+
       when :GUILD_MEMBER_ADD
         add_guild_member(data)
 
@@ -1551,6 +1570,10 @@ module Discordrb
           event = ServerEmojiUpdateEvent.new(server, old_emoji_data[e], new_emoji_data[e], self)
           raise_event(event)
         end
+      when :APPLICATION_COMMAND_PERMISSIONS_UPDATE
+        event = ApplicationCommandPermissionsUpdateEvent.new(data, self)
+
+        raise_event(event)
       when :INTERACTION_CREATE
         event = InteractionCreateEvent.new(data, self)
         raise_event(event)
@@ -1559,13 +1582,13 @@ module Discordrb
         when Interaction::TYPES[:command]
           event = ApplicationCommandEvent.new(data, self)
 
-          Thread.new do
-            Thread.current[:discordrb_name] = "it-#{event.interaction.id}"
+          Thread.new(event) do |evt|
+            Thread.current[:discordrb_name] = "it-#{evt.interaction.id}"
 
             begin
-              debug("Executing application command #{event.command_name}:#{event.command_id}")
+              debug("Executing application command #{evt.command_name}:#{evt.command_id}")
 
-              @application_commands[event.command_name]&.call(event)
+              @application_commands[evt.command_name]&.call(evt)
             rescue StandardError => e
               log_exception(e)
             end
@@ -1600,6 +1623,10 @@ module Discordrb
         when Interaction::TYPES[:modal_submit]
 
           event = ModalSubmitEvent.new(data, self)
+          raise_event(event)
+        when Interaction::TYPES[:autocomplete]
+
+          event = AutocompleteEvent.new(data, self)
           raise_event(event)
         end
       when :WEBHOOKS_UPDATE
@@ -1680,15 +1707,15 @@ module Discordrb
     end
 
     def call_event(handler, event)
-      t = Thread.new do
+      t = Thread.new(event) do |evt|
         @event_threads ||= []
         @current_thread ||= 0
 
         @event_threads << t
         Thread.current[:discordrb_name] = "et-#{@current_thread += 1}"
         begin
-          handler.call(event)
-          handler.after_call(event)
+          handler.call(evt)
+          handler.after_call(evt)
         rescue StandardError => e
           log_exception(e)
         ensure
@@ -1712,6 +1739,8 @@ module Discordrb
     end
 
     def calculate_intents(intents)
+      intents = [intents] unless intents.is_a? Array
+
       intents.reduce(0) do |sum, intent|
         case intent
         when Symbol

@@ -4,20 +4,6 @@
 module Discordrb::API::Server
   module_function
 
-  # Create a server
-  # https://discord.com/developers/docs/resources/guild#create-guild
-  def create(token, name, region = :'eu-central')
-    Discordrb::API.request(
-      :guilds,
-      nil,
-      :post,
-      "#{Discordrb::API.api_base}/guilds",
-      { name: name, region: region.to_s }.to_json,
-      Authorization: token,
-      content_type: :json
-    )
-  end
-
   # Get a server's data
   # https://discord.com/developers/docs/resources/guild#get-guild
   def resolve(token, server_id, with_counts = nil)
@@ -45,33 +31,6 @@ module Discordrb::API::Server
     )
   end
 
-  # Transfer server ownership
-  # https://discord.com/developers/docs/resources/guild#modify-guild
-  def transfer_ownership(token, server_id, user_id, reason = nil)
-    Discordrb::API.request(
-      :guilds_sid,
-      server_id,
-      :patch,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}",
-      { owner_id: user_id }.to_json,
-      Authorization: token,
-      content_type: :json,
-      'X-Audit-Log-Reason': reason
-    )
-  end
-
-  # Delete a server
-  # https://discord.com/developers/docs/resources/guild#delete-guild
-  def delete(token, server_id)
-    Discordrb::API.request(
-      :guilds_sid,
-      server_id,
-      :delete,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}",
-      Authorization: token
-    )
-  end
-
   # Get a server's channels list
   # https://discord.com/developers/docs/resources/guild#get-guild-channels
   def channels(token, server_id)
@@ -96,6 +55,18 @@ module Discordrb::API::Server
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get the preview of a server.
+  # https://discord.com/developers/docs/resources/guild#get-guild-preview
+  def preview(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_preview,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/preview",
+      Authorization: token
     )
   end
 
@@ -154,7 +125,7 @@ module Discordrb::API::Server
   # Update a user properties
   # https://discord.com/developers/docs/resources/guild#modify-guild-member
   def update_member(token, server_id, user_id, nick: :undef, roles: :undef, mute: :undef, deaf: :undef, channel_id: :undef,
-                    communication_disabled_until: :undef, reason: nil)
+                    communication_disabled_until: :undef, flags: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid_members_uid,
       server_id,
@@ -165,8 +136,24 @@ module Discordrb::API::Server
         mute: mute,
         deaf: deaf,
         channel_id: channel_id,
-        communication_disabled_until: communication_disabled_until
+        communication_disabled_until: communication_disabled_until,
+        flags: flags
       }.reject { |_, v| v == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Update the current member's properties.
+  # https://discord.com/developers/docs/resources/guild#modify-current-member
+  def update_current_member(token, server_id, nick = :undef, reason = nil)
+    Discordrb::API.request(
+      :guilds_sid_members_me,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/members/@me",
+      { nick: nick }.reject { |_, v| v == :undef }.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
@@ -200,17 +187,24 @@ module Discordrb::API::Server
     )
   end
 
-  # Ban a user from a server and delete their messages from the last message_days days
+  # @deprecated Please use {ban_user!} instead.
   # https://discord.com/developers/docs/resources/guild#create-guild-ban
   def ban_user(token, server_id, user_id, message_days, reason = nil)
-    reason = URI.encode_www_form_component(reason) if reason
+    ban_user!(token, server_id, user_id, message_days * 86_400, reason)
+  end
+
+  # Ban a user from a server and delete their messages up to a given amount of time.
+  # https://discord.com/developers/docs/resources/guild#create-guild-ban
+  def ban_user!(token, server_id, user_id, message_seconds, reason = nil)
     Discordrb::API.request(
       :guilds_sid_bans_uid,
       server_id,
       :put,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/bans/#{user_id}?delete_message_days=#{message_days}&reason=#{reason}",
-      nil,
-      Authorization: token
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/bans/#{user_id}",
+      { delete_message_seconds: message_seconds }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
     )
   end
 
@@ -263,8 +257,10 @@ module Discordrb::API::Server
   # connecting to voice, speaking and voice activity (push-to-talk isn't mandatory)
   # https://discord.com/developers/docs/resources/guild#batch-modify-guild-role
   # @param icon [:undef, File]
-  def update_role(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef)
+  def update_role(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef, unicode_emoji = :undef)
     data = { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions }
+
+    data[:unicode_emoji] = unicode_emoji if unicode_emoji != :undef
 
     if icon != :undef && icon
       path_method = %i[original_filename path local_path].find { |meth| icon.respond_to?(meth) }
@@ -567,6 +563,41 @@ module Discordrb::API::Server
       { access_token: access_token, nick: nick, roles: roles, mute: mute, deaf: deaf }.to_json,
       content_type: :json,
       Authorization: token
+    )
+  end
+
+  # Make an member avatar URL from the server, user and avatar IDs
+  def avatar_url(server_id, user_id, avatar_id, format = nil)
+    format ||= if avatar_id.start_with?('a_')
+                 'gif'
+               else
+                 'webp'
+               end
+    "#{Discordrb::API.cdn_url}/guilds/#{server_id}/users/#{user_id}/avatars/#{avatar_id}.#{format}"
+  end
+
+  # Make a banner URL from the server, user and banner IDs
+  def banner_url(server_id, user_id, banner_id, format = nil)
+    format ||= if banner_id.start_with?('a_')
+                 'gif'
+               else
+                 'webp'
+               end
+    "#{Discordrb::API.cdn_url}/guilds/#{server_id}/users/#{user_id}/banners/#{banner_id}.#{format}"
+  end
+
+  # Ban multiple users in one go
+  # https://discord.com/developers/docs/resources/guild#bulk-guild-ban
+  def bulk_ban(token, server_id, users, message_seconds, reason = nil)
+    Discordrb::API.request(
+      :guilds_sid_bulk_bans,
+      server_id,
+      :post,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/bulk-ban",
+      { user_ids: users, delete_message_seconds: message_seconds }.compact.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
     )
   end
 end
