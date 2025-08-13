@@ -354,6 +354,9 @@ module Discordrb
     # @return [Integer]
     attr_reader :id
 
+    # @return [true, false]
+    attr_reader :nsfw
+
     # @!visibility private
     def initialize(data, bot, server_id = nil)
       @bot = bot
@@ -365,6 +368,7 @@ module Discordrb
       @description = data['description']
       @default_permission = data['default_permission']
       @options = data['options']
+      @nsfw = data['nsfw'] || false
     end
 
     # @param subcommand [String, nil] The subcommand to mention.
@@ -387,10 +391,11 @@ module Discordrb
     # @param name [String] The name to use for this command.
     # @param description [String] The description of this command.
     # @param default_permission [true, false] Whether this command is available with default permissions.
+    # @param nsfw [true, false] Whether this command should be marked as age-restricted.
     # @yieldparam (see Bot#edit_application_command)
     # @return (see Bot#edit_application_command)
-    def edit(name: nil, description: nil, default_permission: nil, &block)
-      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, &block)
+    def edit(name: nil, description: nil, default_permission: nil, nsfw: nil, &block)
+      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, nsfw: nsfw, &block)
     end
 
     # Delete this application command.
