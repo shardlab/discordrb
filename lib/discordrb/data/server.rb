@@ -411,6 +411,7 @@ module Discordrb
         overwrites = channel.permission_overwrites.reject { |id, _| id == role_id }
         channel.update_overwrites(overwrites)
       end
+      @automod_rules.each_value { |rule| rule.exempt_roles.reject! { |r| r.id == role_id } }
     end
 
     # Updates the positions of all roles on the server
@@ -989,6 +990,7 @@ module Discordrb
     def delete_channel(id)
       @channels.reject! { |e| e.id == id }
       @channels_by_id.delete(id)
+      @automod_rules.each_value { |rule| rule.exempt_channels.reject! { |c| c.id == id } }
     end
 
     # Updates the cached emoji data with new data
