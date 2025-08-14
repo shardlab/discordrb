@@ -13,7 +13,8 @@ module Discordrb
       started_home_actions: 1 << 5,
       completed_home_actions: 1 << 6,
       automod_quarantined_username: 1 << 7,
-      dm_settings_upsell_acknowledged: 1 << 9
+      dm_settings_upsell_acknowledged: 1 << 9,
+      automod_quarantined_server_tag: 1 << 10
     }.freeze
 
     # @return [Time] when this member joined the server.
