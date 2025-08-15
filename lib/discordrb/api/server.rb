@@ -238,13 +238,13 @@ module Discordrb::API::Server
   # sending TTS messages, embedding links, sending files, reading the history, mentioning everybody,
   # connecting to voice, speaking and voice activity (push-to-talk isn't mandatory)
   # https://discord.com/developers/docs/resources/guild#get-guild-roles
-  def create_role(token, server_id, name, colour, hoist, mentionable, packed_permissions, reason = nil)
+  def create_role(token, server_id, name, colour, hoist, mentionable, packed_permissions, reason = nil, colours = nil)
     Discordrb::API.request(
       :guilds_sid_roles,
       server_id,
       :post,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/roles",
-      { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions }.to_json,
+      { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions, colors: colours }.compact.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
@@ -257,10 +257,8 @@ module Discordrb::API::Server
   # connecting to voice, speaking and voice activity (push-to-talk isn't mandatory)
   # https://discord.com/developers/docs/resources/guild#batch-modify-guild-role
   # @param icon [:undef, File]
-  def update_role(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef, unicode_emoji = :undef)
-    data = { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions }
-
-    data[:unicode_emoji] = unicode_emoji if unicode_emoji != :undef
+  def update_role(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef, unicode_emoji = :undef, colours = :undef)
+    data = { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions, colors: colours, unicode_emoji: unicode_emoji }
 
     if icon != :undef && icon
       path_method = %i[original_filename path local_path].find { |meth| icon.respond_to?(meth) }
@@ -279,7 +277,7 @@ module Discordrb::API::Server
       server_id,
       :patch,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/#{role_id}",
-      data.to_json,
+      data.reject { |_, value| value == :undef }.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
