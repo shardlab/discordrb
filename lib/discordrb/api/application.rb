@@ -50,7 +50,7 @@ module Discordrb::API::Application
       nil,
       :patch,
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands/#{command_id}",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw, integration_types: integration_types  }.compact.to_json,
+      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw, integration_types: integration_types }.compact.to_json,
       Authorization: token,
       content_type: :json
     )
