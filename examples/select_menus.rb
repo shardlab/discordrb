@@ -5,73 +5,53 @@ require 'securerandom'
 
 bot = Discordrb::Bot.new(token: ENV.fetch('DISCORDRB_TOKEN'))
 
-bot.message do |event|
-  if event.message.content == 'TEST'
-    event.channel.send_message('Examples of different select menus')
+bot.message(content: 'TEST') do |event|
+  event.channel.send_message!(content: 'Examples of different select menus')
 
-    event.channel.send_message(
-      'string_select (old select_menu, but alias define to keep legacy)', false, nil, nil, nil, nil,
-      Discordrb::Components::View.new do |builder|
-        builder.row do |r|
-          r.string_select(custom_id: 'string_select', placeholder: 'Test of StringSelect', max_values: 3) do |ss|
-            ss.option(label: 'Value 1', value: '1', description: 'First value', emoji: { name: '1️⃣' })
-            ss.option(label: 'Value 2', value: '2', description: 'Second value', emoji: { name: '2️⃣' })
-            ss.option(label: 'Value 3', value: '3', description: 'Third value', emoji: { name: '3️⃣' })
-          end
-          # Same as above with the alias to keep the compatibility with the old method
-          # r.select_menu(custom_id: 'string_select', placeholder: 'Test of StringSelect', max_values: 3) do |ss|
-          #   ss.option(label: 'Value 1', value: '1', description: 'First value', emoji: { name: '1️⃣' })
-          #   ss.option(label: 'Value 2', value: '2', description: 'Second value', emoji: { name: '2️⃣' })
-          #   ss.option(label: 'Value 3', value: '3', description: 'Third value', emoji: { name: '3️⃣' })
-          # end
-        end
+  event.channel.send_message!(content: 'string_select (old select_menu, but alias define to keep legacy)') do |_, view|
+    view.row do |row|
+      row.string_select(custom_id: 'string_select', placeholder: 'Test of StringSelect', max_values: 3) do |menu|
+        menu.option(label: 'Value 1', value: '1', description: 'First value', emoji: { name: '1️⃣' })
+        menu.option(label: 'Value 2', value: '2', description: 'Second value', emoji: { name: '2️⃣' })
+        menu.option(label: 'Value 3', value: '3', description: 'Third value', emoji: { name: '3️⃣' })
       end
-    )
+      # Same as above with the alias to keep the compatibility with the old method
+      # r.select_menu(custom_id: 'string_select', placeholder: 'Test of StringSelect', max_values: 3) do |ss|
+      #   ss.option(label: 'Value 1', value: '1', description: 'First value', emoji: { name: '1️⃣' })
+      #   ss.option(label: 'Value 2', value: '2', description: 'Second value', emoji: { name: '2️⃣' })
+      #   ss.option(label: 'Value 3', value: '3', description: 'Third value', emoji: { name: '3️⃣' })
+      # end
+    end
+  end
 
-    event.channel.send_message(
-      'user_select', false, nil, nil, nil, nil,
-      Discordrb::Components::View.new do |builder|
-        builder.row do |r|
-          r.user_select(custom_id: 'user_select', placeholder: 'Test of UserSelect', max_values: 3, disabled: true)
-        end
-      end
-    )
+  event.channel.send_message!(content: 'user_select') do |_, view|
+    view.row do |row|
+      row.user_select(custom_id: 'user_select', placeholder: 'Test of UserSelect', max_values: 3, disabled: true)
+    end
+  end
 
-    event.channel.send_message(
-      'user_select', false, nil, nil, nil, nil,
-      Discordrb::Components::View.new do |builder|
-        builder.row do |r|
-          r.user_select(custom_id: 'user_select', placeholder: 'Test of UserSelect', max_values: 3)
-        end
-      end
-    )
+  event.channel.send_message!(content: 'user_select') do |_, view|
+    view.row do |row|
+      row.user_select(custom_id: 'user_select', placeholder: 'Test of UserSelect', max_values: 3)
+    end
+  end
 
-    event.channel.send_message(
-      'role_select', false, nil, nil, nil, nil,
-      Discordrb::Components::View.new do |builder|
-        builder.row do |r|
-          r.role_select(custom_id: 'role_select', placeholder: 'Test of RoleSelect', max_values: 3)
-        end
-      end
-    )
+  event.channel.send_message!(content: 'role_select') do |_, view|
+    view.row do |row|
+      row.role_select(custom_id: 'role_select', placeholder: 'Test of RoleSelect', max_values: 3)
+    end
+  end
 
-    event.channel.send_message(
-      'mentionable_select', false, nil, nil, nil, nil,
-      Discordrb::Components::View.new do |builder|
-        builder.row do |r|
-          r.mentionable_select(custom_id: 'mentionable_select', placeholder: 'Test of MentionableSelect', max_values: 3)
-        end
-      end
-    )
+  event.channel.send_message!(content: 'mentionable_select') do |_, view|
+    view.row do |row|
+      row.mentionable_select(custom_id: 'mentionable_select', placeholder: 'Test of MentionableSelect', max_values: 3)
+    end
+  end
 
-    event.channel.send_message(
-      'channel_select', false, nil, nil, nil, nil,
-      Discordrb::Components::View.new do |builder|
-        builder.row do |r|
-          r.channel_select(custom_id: 'channel_select', placeholder: 'Test of ChannelSelect', max_values: 3)
-        end
-      end
-    )
+  event.channel.send_message!(content: 'channel_select') do |_, view|
+    view.row do |row|
+      row.channel_select(custom_id: 'channel_select', placeholder: 'Test of ChannelSelect', max_values: 3)
+    end
   end
 end
 
