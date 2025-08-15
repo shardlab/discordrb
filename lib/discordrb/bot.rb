@@ -465,20 +465,6 @@ module Discordrb
       Message.new(JSON.parse(response), self)
     end
 
-    # Creates a server on Discord with a specified name and a region.
-    # @note Discord's API doesn't directly return the server when creating it, so this method
-    #   waits until the data has been received via the websocket. This may make the execution take a while.
-    # @param name [String] The name the new server should have. Doesn't have to be alphanumeric.
-    # @param region [Symbol] The region where the server should be created, for example 'eu-central' or 'hongkong'.
-    # @return [Server] The server that was created.
-    def create_server(name, region = :'eu-central')
-      response = API::Server.create(token, name, region)
-      id = JSON.parse(response)['id'].to_i
-      sleep 0.1 until (server = @servers[id])
-      debug "Successfully created server #{server.id} with name #{server.name}"
-      server
-    end
-
     # Creates a new application to do OAuth authorization with. This allows you to use OAuth to authorize users using
     # Discord. For information how to use this, see the docs: https://discord.com/developers/docs/topics/oauth2
     # @param name [String] What your application should be called.
@@ -834,7 +820,7 @@ module Discordrb
     #       end
     #     end
     #   end
-    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil)
+    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, nsfw: false, integration_types: nil)
       type = ApplicationCommand::TYPES[type] || type
 
       default_member_permissions = Permissions.bits(default_member_permissions) if default_member_permissions.is_a?(Array)
@@ -847,9 +833,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions&.to_s, contexts)
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions&.to_s, contexts, nsfw)
              else
-               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions&.to_s, contexts, integration_types)
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions&.to_s, contexts, nsfw, integration_types)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -864,7 +850,7 @@ module Discordrb
 
     # @yieldparam [OptionBuilder]
     # @yieldparam [PermissionBuilder]
-    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, integration_types: nil)
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, nsfw: nil, integration_types: nil)
       type = ApplicationCommand::TYPES[type] || type
 
       default_member_permissions = Permissions.bits(default_member_permissions) if default_member_permissions.is_a?(Array)
@@ -878,9 +864,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions&.to_s, contexts)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions&.to_s, contexts, nsfw)
              else
-               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts&.to_s, integration_types)
+               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions&.to_s, contexts, nsfw, integration_types)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
