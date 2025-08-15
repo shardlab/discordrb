@@ -295,6 +295,33 @@ for the respective resource.</p>
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#nsfw-instance_method" title="#nsfw (instance method)">#<strong>nsfw</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#options-instance_method" title="#options (instance method)">#<strong>options</strong>  &#x21d2; Hash </a>
     
 
@@ -385,7 +412,7 @@ for the respective resource.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#edit-instance_method" title="#edit (instance method)">#<strong>edit</strong>(name: nil, description: nil, default_permission: nil) {|, | ... } &#x21d2; Object </a>
+      <a href="#edit-instance_method" title="#edit (instance method)">#<strong>edit</strong>(name: nil, description: nil, default_permission: nil, nsfw: nil) {|, | ... } &#x21d2; Object </a>
     
 
     
@@ -732,6 +759,60 @@ for the respective resource.</p>
       
       <span id=""></span>
       <div class="method_details ">
+  <h3 class="signature " id="nsfw-instance_method">
+  
+    #<strong>nsfw</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+358
+359
+360</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 358</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_nsfw'>nsfw</span>
+  <span class='ivar'>@nsfw</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
   <h3 class="signature " id="options-instance_method">
   
     #<strong>options</strong>  &#x21d2; <tt>Hash</tt>  <span class="extras">(readonly)</span>
@@ -869,12 +950,12 @@ for the respective resource.</p>
       <pre class="lines">
 
 
-398
-399
-400</pre>
+403
+404
+405</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 398</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 403</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_delete_application_command'>delete_application_command</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='label'>server_id:</span> <span class='ivar'>@server_id</span><span class='rparen'>)</span>
@@ -887,7 +968,7 @@ for the respective resource.</p>
       <div class="method_details ">
   <h3 class="signature " id="edit-instance_method">
   
-    #<strong>edit</strong>(name: nil, description: nil, default_permission: nil) {|, | ... } &#x21d2; <tt>Object</tt> 
+    #<strong>edit</strong>(name: nil, description: nil, default_permission: nil, nsfw: nil) {|, | ... } &#x21d2; <tt>Object</tt> 
   
 
   
@@ -954,6 +1035,23 @@ for the respective resource.</p>
       
     </li>
   
+    <li>
+      
+        <span class='name'>nsfw</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether this command should be marked as age-restricted.</p>
+</div>
+      
+    </li>
+  
 </ul>
 
 <p class="tag_title">Yield Parameters:</p>
@@ -989,15 +1087,15 @@ for the respective resource.</p>
       <pre class="lines">
 
 
-392
-393
-394</pre>
+397
+398
+399</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 392</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 397</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_edit'>edit</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>default_permission:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-  <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_edit_application_command'>edit_application_command</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='label'>server_id:</span> <span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>default_permission:</span> <span class='id identifier rubyid_default_permission'>default_permission</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_edit'>edit</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>default_permission:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>nsfw:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_edit_application_command'>edit_application_command</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='label'>server_id:</span> <span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>default_permission:</span> <span class='id identifier rubyid_default_permission'>default_permission</span><span class='comma'>,</span> <span class='label'>nsfw:</span> <span class='id identifier rubyid_nsfw'>nsfw</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1088,20 +1186,20 @@ for the respective resource.</p>
       <pre class="lines">
 
 
-373
-374
-375
-376
 377
 378
 379
 380
 381
 382
-383</pre>
+383
+384
+385
+386
+387</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 373</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 377</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mention'>mention</span><span class='lparen'>(</span><span class='label'>subcommand_group:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>subcommand:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_subcommand_group'>subcommand_group</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_subcommand'>subcommand</span>
@@ -1182,18 +1280,18 @@ for the respective resource.</p>
       <pre class="lines">
 
 
-405
-406
-407
-408
-409
 410
 411
 412
-413</pre>
+413
+414
+415
+416
+417
+418</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 405</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 410</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_permissions'>permissions</span><span class='lparen'>(</span><span class='label'>server_id:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>A server ID must be provided for global application commands</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='ivar'>@server_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -1214,7 +1312,7 @@ for the respective resource.</p>
 </div>
 
       <div id="footer">
-  Generated on Fri Aug 15 14:30:56 2025 by
+  Generated on Fri Aug 15 14:39:07 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
