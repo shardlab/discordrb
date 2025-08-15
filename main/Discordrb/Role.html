@@ -153,7 +153,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The role colour.</p>
+    <span class="summary_desc"><div class='inline'><p>The primary colour of this role.</p>
 </div></span>
   
 </li>
@@ -193,6 +193,8 @@
       <a href="#hoist-instance_method" title="#hoist (instance method)">#<strong>hoist</strong>  &#x21d2; true, false </a>
     
 
+    
+      (also: #hoist?)
     
   </span>
   
@@ -382,6 +384,34 @@
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#secondary_colour-instance_method" title="#secondary_colour (instance method)">#<strong>secondary_colour</strong>  &#x21d2; ColourRGB<sup>?</sup> </a>
+    
+
+    
+      (also: #secondary_color)
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The secondary colour of this role.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#server-instance_method" title="#server (instance method)">#<strong>server</strong>  &#x21d2; Server </a>
     
 
@@ -430,6 +460,34 @@
 
   
     <span class="summary_desc"><div class='inline'><p>The role tags.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#tertiary_colour-instance_method" title="#tertiary_colour (instance method)">#<strong>tertiary_colour</strong>  &#x21d2; ColourRGB<sup>?</sup> </a>
+    
+
+    
+      (also: #tertiary_color)
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The tertiary colour of this role.</p>
 </div></span>
   
 </li>
@@ -543,6 +601,75 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Set the icon this role is displaying.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#gradient%3F-instance_method" title="#gradient? (instance method)">#<strong>gradient?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether or not the role has a two-point gradient.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#holographic=-instance_method" title="#holographic= (instance method)">#<strong>holographic=</strong>(holographic)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Sets whether the role colour should be a holographic style.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#holographic%3F-instance_method" title="#holographic? (instance method)">#<strong>holographic?</strong>  &#x21d2; true, false </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether or not the role is of the holographic style.</p>
 </div></span>
   
 </li>
@@ -690,6 +817,31 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#update_colours-instance_method" title="#update_colours (instance method)">#<strong>update_colours</strong>(primary: :undef, secondary: :undef, tertiary: :undef, holographic: :undef)  &#x21d2; Object </a>
+    
+
+    
+      (also: #update_colors)
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A rich interface designed to make working with role colours simple.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -725,7 +877,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the role colour.</p>
+    <p>Returns the primary colour of this role.</p>
 
 
   </div>
@@ -743,7 +895,7 @@
       
       
         &mdash;
-        <div class='inline'><p>the role colour</p>
+        <div class='inline'><p>the primary colour of this role.</p>
 </div>
       
     </li>
@@ -756,12 +908,12 @@
       <pre class="lines">
 
 
-29
 30
-31</pre>
+31
+32</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 30</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_colour'>colour</span>
   <span class='ivar'>@colour</span>
@@ -815,12 +967,12 @@
       <pre class="lines">
 
 
-42
 43
-44</pre>
+44
+45</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 43</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_flags'>flags</span>
   <span class='ivar'>@flags</span>
@@ -838,6 +990,10 @@
     #<strong>hoist</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
   
 
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='hoist?-instance_method'>hoist?</span></span>
+    </span>
   
 
   
@@ -933,12 +1089,12 @@
       <pre class="lines">
 
 
-36
 37
-38</pre>
+38
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 36</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_icon'>icon</span>
   <span class='ivar'>@icon</span>
@@ -996,12 +1152,12 @@
       <pre class="lines">
 
 
-21
 22
-23</pre>
+23
+24</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 21</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 22</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_managed'>managed</span>
   <span class='ivar'>@managed</span>
@@ -1059,12 +1215,12 @@
       <pre class="lines">
 
 
-25
 26
-27</pre>
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mentionable'>mentionable</span>
   <span class='ivar'>@mentionable</span>
@@ -1236,15 +1392,78 @@
       <pre class="lines">
 
 
-33
 34
-35</pre>
+35
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 33</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 34</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_position'>position</span>
   <span class='ivar'>@position</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="secondary_colour=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="secondary_colour-instance_method">
+  
+    #<strong>secondary_colour</strong>  &#x21d2; <tt><span class='object_link'><a href="ColourRGB.html" title="Discordrb::ColourRGB (class)">ColourRGB</a></span></tt><sup>?</sup> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='secondary_color-instance_method'>secondary_color</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the secondary colour of this role.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ColourRGB.html" title="Discordrb::ColourRGB (class)">ColourRGB</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the secondary colour of this role.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+49
+50
+51</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 49</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_secondary_colour'>secondary_colour</span>
+  <span class='ivar'>@secondary_colour</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1354,15 +1573,78 @@
       <pre class="lines">
 
 
-39
 40
-41</pre>
+41
+42</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 40</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_tags'>tags</span>
   <span class='ivar'>@tags</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="tertiary_colour=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="tertiary_colour-instance_method">
+  
+    #<strong>tertiary_colour</strong>  &#x21d2; <tt><span class='object_link'><a href="ColourRGB.html" title="Discordrb::ColourRGB (class)">ColourRGB</a></span></tt><sup>?</sup> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='tertiary_color-instance_method'>tertiary_color</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the tertiary colour of this role.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ColourRGB.html" title="Discordrb::ColourRGB (class)">ColourRGB</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the tertiary colour of this role.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+53
+54
+55</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 53</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_tertiary_colour'>tertiary_colour</span>
+  <span class='ivar'>@tertiary_colour</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1413,12 +1695,12 @@
       <pre class="lines">
 
 
-45
 46
-47</pre>
+47
+48</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 46</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unicode_emoji'>unicode_emoji</span>
   <span class='ivar'>@unicode_emoji</span>
@@ -1481,13 +1763,13 @@
       <pre class="lines">
 
 
-273
-274
-275
-276</pre>
+325
+326
+327
+328</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 273</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 325</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Server.html" title="Discordrb::API::Server (module)">Server</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_role'><span class='object_link'><a href="API/Server.html#delete_role-class_method" title="Discordrb::API::Server.delete_role (method)">delete_role</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@server</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span><span class='rparen'>)</span>
@@ -1547,12 +1829,12 @@
       <pre class="lines">
 
 
-215
-216
-217</pre>
+253
+254
+255</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 215</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 253</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_display_icon'>display_icon</span>
   <span class='id identifier rubyid_icon_url'>icon_url</span> <span class='op'>||</span> <span class='id identifier rubyid_unicode_emoji'>unicode_emoji</span>
@@ -1613,21 +1895,21 @@
       <pre class="lines">
 
 
-222
-223
-224
-225
-226
-227
-228
-229
-230
-231
-232
-233</pre>
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 222</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 260</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_display_icon='>display_icon=</span><span class='lparen'>(</span><span class='id identifier rubyid_icon'>icon</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_icon'>icon</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -1640,6 +1922,171 @@
   <span class='kw'>else</span>
     <span class='id identifier rubyid_update_role_data'>update_role_data</span><span class='lparen'>(</span><span class='label'>unicode_emoji:</span> <span class='id identifier rubyid_icon'>icon</span><span class='comma'>,</span> <span class='label'>icon:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="gradient?-instance_method">
+  
+    #<strong>gradient?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Whether or not the role has a two-point gradient.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+281
+282
+283</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 281</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_gradient?'>gradient?</span>
+  <span class='op'>!</span><span class='ivar'>@secondary_colour</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@tertiary_colour</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="holographic=-instance_method">
+  
+    #<strong>holographic=</strong>(holographic)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Sets whether the role colour should be a holographic style.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>holographic</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>whether the role colour should be a holographic style.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+226
+227
+228</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 226</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_holographic='>holographic=</span><span class='lparen'>(</span><span class='id identifier rubyid_holographic'>holographic</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_update_colours'>update_colours</span><span class='lparen'>(</span><span class='label'>holographic:</span> <span class='id identifier rubyid_holographic'>holographic</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="holographic?-instance_method">
+  
+    #<strong>holographic?</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Whether or not the role is of the holographic style.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+275
+276
+277</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 275</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_holographic?'>holographic?</span>
+  <span class='op'>!</span><span class='ivar'>@tertiary_colour</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1705,14 +2152,14 @@
       <pre class="lines">
 
 
-206
-207
-208
-209
-210</pre>
+244
+245
+246
+247
+248</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 206</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 244</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_icon_url'>icon_url</span><span class='lparen'>(</span><span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>webp</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>unless</span> <span class='ivar'>@icon</span>
@@ -1749,12 +2196,12 @@
       <pre class="lines">
 
 
-279
-280
-281</pre>
+358
+359
+360</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 279</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 358</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;Role name=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@name</span><span class='embexpr_end'>}</span><span class='tstring_content'> permissions=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@permissions</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'> hoist=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@hoist</span><span class='embexpr_end'>}</span><span class='tstring_content'> colour=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@colour</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'> server=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@server</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'> position=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@position</span><span class='embexpr_end'>}</span><span class='tstring_content'> mentionable=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@mentionable</span><span class='embexpr_end'>}</span><span class='tstring_content'> unicode_emoji=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@unicode_emoji</span><span class='embexpr_end'>}</span><span class='tstring_content'> flags=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@flags</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
@@ -1817,12 +2264,12 @@
       <pre class="lines">
 
 
-134
-135
-136</pre>
+147
+148
+149</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 134</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 147</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_members'>members</span>
   <span class='ivar'>@server</span><span class='period'>.</span><span class='id identifier rubyid_members'>members</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_m'>m</span><span class='period'>.</span><span class='id identifier rubyid_role?'>role?</span> <span class='kw'>self</span> <span class='rbrace'>}</span>
@@ -1874,12 +2321,12 @@
       <pre class="lines">
 
 
-128
-129
-130</pre>
+141
+142
+143</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 128</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 141</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mention'>mention</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;@&amp;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
@@ -1966,13 +2413,13 @@ when calling externally.</p>
       <pre class="lines">
 
 
-247
-248
-249
-250</pre>
+299
+300
+301
+302</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 247</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 299</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_packed='>packed=</span><span class='lparen'>(</span><span class='id identifier rubyid_packed'>packed</span><span class='comma'>,</span> <span class='id identifier rubyid_update_perms'>update_perms</span> <span class='op'>=</span> <span class='kw'>true</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_update_role_data'>update_role_data</span><span class='lparen'>(</span><span class='label'>permissions:</span> <span class='id identifier rubyid_packed'>packed</span><span class='rparen'>)</span>
@@ -2051,21 +2498,21 @@ the role will be moved above the @everyone role.</p>
       <pre class="lines">
 
 
-256
-257
-258
-259
-260
-261
-262
-263
-264
-265
-266
-267</pre>
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 256</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 308</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sort_above'>sort_above</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_other'>other</span> <span class='op'>=</span> <span class='ivar'>@server</span><span class='period'>.</span><span class='id identifier rubyid_role'>role</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_other'>other</span>
@@ -2084,12 +2531,159 @@ the role will be moved above the @everyone role.</p>
 </table>
 </div>
     
+      <div class="method_details ">
+  <h3 class="signature " id="update_colours-instance_method">
+  
+    #<strong>update_colours</strong>(primary: :undef, secondary: :undef, tertiary: :undef, holographic: :undef)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='update_colors-instance_method'>update_colors</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A rich interface designed to make working with role colours simple.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>primary</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ColourRGB.html" title="Discordrb::ColourRGB (class)">ColourRGB</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>:undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The new primary/base colour of this role, or nil to clear the primary colour.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>secondary</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ColourRGB.html" title="Discordrb::ColourRGB (class)">ColourRGB</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>:undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The new secondary colour of this role, or nil to clear the secondary colour.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>tertiary</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ColourRGB.html" title="Discordrb::ColourRGB (class)">ColourRGB</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>:undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The new tertiary colour of this role, or nil to clear the tertiary colour.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>holographic</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>:undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether to apply or remove the holographic style to the role colour, overriding any other
+arguments that were passed. Using this argument is recommended over passing individual colours.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/role.rb', line 336</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_update_colours'>update_colours</span><span class='lparen'>(</span><span class='label'>primary:</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='label'>secondary:</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='label'>tertiary:</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='label'>holographic:</span> <span class='symbol'>:undef</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_colours'>colours</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='label'>primary_color:</span> <span class='lparen'>(</span><span class='id identifier rubyid_primary'>primary</span> <span class='op'>==</span> <span class='symbol'>:undef</span> <span class='op'>?</span> <span class='ivar'>@colour</span> <span class='op'>:</span> <span class='id identifier rubyid_primary'>primary</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
+    <span class='label'>tertiary_color:</span> <span class='lparen'>(</span><span class='id identifier rubyid_tertiary'>tertiary</span> <span class='op'>==</span> <span class='symbol'>:undef</span> <span class='op'>?</span> <span class='ivar'>@tertiary_colour</span> <span class='op'>:</span> <span class='id identifier rubyid_tertiary'>tertiary</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
+    <span class='label'>secondary_color:</span> <span class='lparen'>(</span><span class='id identifier rubyid_secondary'>secondary</span> <span class='op'>==</span> <span class='symbol'>:undef</span> <span class='op'>?</span> <span class='ivar'>@secondary_colour</span> <span class='op'>:</span> <span class='id identifier rubyid_secondary'>secondary</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span>
+  <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_holographic_colours'>holographic_colours</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+    <span class='label'>primary_color:</span> <span class='int'>11_127_295</span><span class='comma'>,</span>
+    <span class='label'>tertiary_color:</span> <span class='int'>16_761_760</span><span class='comma'>,</span>
+    <span class='label'>secondary_color:</span> <span class='int'>16_759_788</span>
+  <span class='rbrace'>}</span>
+
+  <span class='comment'># Only set the tertiary_color to `nil` if holographic is explicitly set to false.
+</span>  <span class='id identifier rubyid_colours'>colours</span><span class='lbracket'>[</span><span class='symbol'>:tertiary_color</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>nil</span> <span class='kw'>if</span> <span class='id identifier rubyid_holographic'>holographic</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>FalseClass</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_holographic?'>holographic?</span>
+
+  <span class='id identifier rubyid_update_role_data'>update_role_data</span><span class='lparen'>(</span><span class='label'>colours:</span> <span class='id identifier rubyid_holographic'>holographic</span> <span class='op'>==</span> <span class='kw'>true</span> <span class='op'>?</span> <span class='id identifier rubyid_holographic_colours'>holographic_colours</span> <span class='op'>:</span> <span class='id identifier rubyid_colours'>colours</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 </div>
 
       <div id="footer">
-  Generated on Sun Aug  3 14:49:48 2025 by
+  Generated on Fri Aug 15 14:30:16 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>

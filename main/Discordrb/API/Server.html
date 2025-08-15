@@ -433,7 +433,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#create_role-class_method" title="create_role (class method)">.<strong>create_role</strong>(token, server_id, name, colour, hoist, mentionable, packed_permissions, reason = nil)  &#x21d2; Object </a>
+      <a href="#create_role-class_method" title="create_role (class method)">.<strong>create_role</strong>(token, server_id, name, colour, hoist, mentionable, packed_permissions, reason = nil, colours = nil)  &#x21d2; Object </a>
     
 
     
@@ -1010,7 +1010,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#update_role-class_method" title="update_role (class method)">.<strong>update_role</strong>(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef, unicode_emoji = :undef)  &#x21d2; Object </a>
+      <a href="#update_role-class_method" title="update_role (class method)">.<strong>update_role</strong>(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef, unicode_emoji = :undef, colours = :undef)  &#x21d2; Object </a>
     
 
     
@@ -1136,6 +1136,8 @@
       <pre class="lines">
 
 
+488
+489
 490
 491
 492
@@ -1145,12 +1147,10 @@
 496
 497
 498
-499
-500
-501</pre>
+499</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 490</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 488</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_emoji'>add_emoji</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_image'>image</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_roles'>roles</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1195,6 +1195,8 @@
       <pre class="lines">
 
 
+555
+556
 557
 558
 559
@@ -1203,12 +1205,10 @@
 562
 563
 564
-565
-566
-567</pre>
+565</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 557</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 555</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_member'>add_member</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_user_id'>user_id</span><span class='comma'>,</span> <span class='id identifier rubyid_access_token'>access_token</span><span class='comma'>,</span> <span class='id identifier rubyid_nick'>nick</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_roles'>roles</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_mute'>mute</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_deaf'>deaf</span> <span class='op'>=</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1252,6 +1252,8 @@
       <pre class="lines">
 
 
+316
+317
 318
 319
 320
@@ -1260,12 +1262,10 @@
 323
 324
 325
-326
-327
-328</pre>
+326</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 318</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 316</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_member_role'>add_member_role</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_user_id'>user_id</span><span class='comma'>,</span> <span class='id identifier rubyid_role_id'>role_id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1309,18 +1309,18 @@
       <pre class="lines">
 
 
+381
+382
 383
 384
 385
 386
 387
 388
-389
-390
-391</pre>
+389</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 383</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 381</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_audit_logs'>audit_logs</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_limit'>limit</span><span class='comma'>,</span> <span class='id identifier rubyid_user_id'>user_id</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_action_type'>action_type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_before'>before</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1361,17 +1361,17 @@
       <pre class="lines">
 
 
+568
+569
 570
 571
 572
 573
 574
-575
-576
-577</pre>
+575</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 570</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 568</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_avatar_url'>avatar_url</span><span class='lparen'>(</span><span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_user_id'>user_id</span><span class='comma'>,</span> <span class='id identifier rubyid_avatar_id'>avatar_id</span><span class='comma'>,</span> <span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_format'>format</span> <span class='op'>||=</span> <span class='kw'>if</span> <span class='id identifier rubyid_avatar_id'>avatar_id</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>a_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -1512,17 +1512,17 @@
       <pre class="lines">
 
 
+578
+579
 580
 581
 582
 583
 584
-585
-586
-587</pre>
+585</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 580</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 578</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_banner_url'>banner_url</span><span class='lparen'>(</span><span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_user_id'>user_id</span><span class='comma'>,</span> <span class='id identifier rubyid_banner_id'>banner_id</span><span class='comma'>,</span> <span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_format'>format</span> <span class='op'>||=</span> <span class='kw'>if</span> <span class='id identifier rubyid_banner_id'>banner_id</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>a_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -1618,6 +1618,8 @@
       <pre class="lines">
 
 
+355
+356
 357
 358
 359
@@ -1626,12 +1628,10 @@
 362
 363
 364
-365
-366
-367</pre>
+365</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 357</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 355</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_begin_prune'>begin_prune</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_days'>days</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1675,6 +1675,8 @@
       <pre class="lines">
 
 
+589
+590
 591
 592
 593
@@ -1684,12 +1686,10 @@
 597
 598
 599
-600
-601
-602</pre>
+600</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 591</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 589</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bulk_ban'>bulk_ban</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_users'>users</span><span class='comma'>,</span> <span class='id identifier rubyid_message_seconds'>message_seconds</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1846,6 +1846,8 @@
       <pre class="lines">
 
 
+405
+406
 407
 408
 409
@@ -1854,12 +1856,10 @@
 412
 413
 414
-415
-416
-417</pre>
+415</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 407</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 405</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_integration'>create_integration</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -1880,7 +1880,7 @@
       <div class="method_details ">
   <h3 class="signature " id="create_role-class_method">
   
-    .<strong>create_role</strong>(token, server_id, name, colour, hoist, mentionable, packed_permissions, reason = nil)  &#x21d2; <tt>Object</tt> 
+    .<strong>create_role</strong>(token, server_id, name, colour, hoist, mentionable, packed_permissions, reason = nil, colours = nil)  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -1922,13 +1922,13 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 241</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_create_role'>create_role</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_colour'>colour</span><span class='comma'>,</span> <span class='id identifier rubyid_hoist'>hoist</span><span class='comma'>,</span> <span class='id identifier rubyid_mentionable'>mentionable</span><span class='comma'>,</span> <span class='id identifier rubyid_packed_permissions'>packed_permissions</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_create_role'>create_role</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_colour'>colour</span><span class='comma'>,</span> <span class='id identifier rubyid_hoist'>hoist</span><span class='comma'>,</span> <span class='id identifier rubyid_mentionable'>mentionable</span><span class='comma'>,</span> <span class='id identifier rubyid_packed_permissions'>packed_permissions</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_colours'>colours</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
     <span class='symbol'>:guilds_sid_roles</span><span class='comma'>,</span>
     <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span>
     <span class='symbol'>:post</span><span class='comma'>,</span>
     <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_base'><span class='object_link'><a href="../API.html#api_base-class_method" title="Discordrb::API.api_base (method)">api_base</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'>/guilds/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_server_id'>server_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>/roles</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
-    <span class='lbrace'>{</span> <span class='label'>color:</span> <span class='id identifier rubyid_colour'>colour</span><span class='comma'>,</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>hoist:</span> <span class='id identifier rubyid_hoist'>hoist</span><span class='comma'>,</span> <span class='label'>mentionable:</span> <span class='id identifier rubyid_mentionable'>mentionable</span><span class='comma'>,</span> <span class='label'>permissions:</span> <span class='id identifier rubyid_packed_permissions'>packed_permissions</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='comma'>,</span>
+    <span class='lbrace'>{</span> <span class='label'>color:</span> <span class='id identifier rubyid_colour'>colour</span><span class='comma'>,</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>hoist:</span> <span class='id identifier rubyid_hoist'>hoist</span><span class='comma'>,</span> <span class='label'>mentionable:</span> <span class='id identifier rubyid_mentionable'>mentionable</span><span class='comma'>,</span> <span class='label'>permissions:</span> <span class='id identifier rubyid_packed_permissions'>packed_permissions</span><span class='comma'>,</span> <span class='label'>colors:</span> <span class='id identifier rubyid_colours'>colours</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='comma'>,</span>
     <span class='label'>Authorization:</span> <span class='id identifier rubyid_token'>token</span><span class='comma'>,</span>
     <span class='label'>content_type:</span> <span class='symbol'>:json</span><span class='comma'>,</span>
     <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>X-Audit-Log-Reason</span><span class='label_end'>&#39;:</span> <span class='id identifier rubyid_reason'>reason</span>
@@ -1965,6 +1965,8 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+518
+519
 520
 521
 522
@@ -1972,12 +1974,10 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 524
 525
 526
-527
-528
-529</pre>
+527</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 520</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 518</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_emoji'>delete_emoji</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_emoji_id'>emoji_id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2020,6 +2020,8 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+433
+434
 435
 436
 437
@@ -2027,12 +2029,10 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 439
 440
 441
-442
-443
-444</pre>
+442</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 435</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 433</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_integration'>delete_integration</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_integration_id'>integration_id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2075,6 +2075,8 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+303
+304
 305
 306
 307
@@ -2082,12 +2084,10 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 309
 310
 311
-312
-313
-314</pre>
+312</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 305</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 303</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_role'>delete_role</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_role_id'>role_id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2130,6 +2130,8 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+503
+504
 505
 506
 507
@@ -2139,12 +2141,10 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 511
 512
 513
-514
-515
-516</pre>
+514</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 505</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 503</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_emoji'>edit_emoji</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_emoji_id'>emoji_id</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_roles'>roles</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2189,18 +2189,18 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+393
+394
 395
 396
 397
 398
 399
 400
-401
-402
-403</pre>
+401</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 395</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 393</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_integrations'>integrations</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2242,18 +2242,18 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+369
+370
 371
 372
 373
 374
 375
 376
-377
-378
-379</pre>
+377</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 371</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 369</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invites'>invites</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2299,6 +2299,8 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+472
+473
 474
 475
 476
@@ -2308,12 +2310,10 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 480
 481
 482
-483
-484
-485</pre>
+483</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 474</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 472</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_modify_widget'>modify_widget</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='comma'>,</span> <span class='id identifier rubyid_channel_id'>channel_id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2411,18 +2411,18 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+343
+344
 345
 346
 347
 348
 349
 350
-351
-352
-353</pre>
+351</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 345</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 343</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_prune_count'>prune_count</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_days'>days</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2464,18 +2464,18 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+531
+532
 533
 534
 535
 536
 537
 538
-539
-540
-541</pre>
+539</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 533</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 531</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_regions'>regions</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2574,6 +2574,8 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+330
+331
 332
 333
 334
@@ -2581,12 +2583,10 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 336
 337
 338
-339
-340
-341</pre>
+339</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 332</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 330</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_member_role'>remove_member_role</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_user_id'>user_id</span><span class='comma'>,</span> <span class='id identifier rubyid_role_id'>role_id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -2898,6 +2898,8 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+446
+447
 448
 449
 450
@@ -2905,12 +2907,10 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 452
 453
 454
-455
-456
-457</pre>
+455</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 448</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 446</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sync_integration'>sync_integration</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_integration_id'>integration_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -3183,6 +3183,8 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+419
+420
 421
 422
 423
@@ -3191,12 +3193,10 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 426
 427
 428
-429
-430
-431</pre>
+429</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 421</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 419</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_integration'>update_integration</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_integration_id'>integration_id</span><span class='comma'>,</span> <span class='id identifier rubyid_expire_behavior'>expire_behavior</span><span class='comma'>,</span> <span class='id identifier rubyid_expire_grace_period'>expire_grace_period</span><span class='comma'>,</span> <span class='id identifier rubyid_enable_emoticons'>enable_emoticons</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -3292,7 +3292,7 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <div class="method_details ">
   <h3 class="signature " id="update_role-class_method">
   
-    .<strong>update_role</strong>(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef, unicode_emoji = :undef)  &#x21d2; <tt>Object</tt> 
+    .<strong>update_role</strong>(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef, unicode_emoji = :undef, colours = :undef)  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -3360,17 +3360,13 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 282
 283
 284
-285
-286
-287</pre>
+285</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 260</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_update_role'>update_role</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_role_id'>role_id</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_colour'>colour</span><span class='comma'>,</span> <span class='id identifier rubyid_hoist'>hoist</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_mentionable'>mentionable</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_packed_permissions'>packed_permissions</span> <span class='op'>=</span> <span class='int'>104_324_161</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_icon'>icon</span> <span class='op'>=</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='id identifier rubyid_unicode_emoji'>unicode_emoji</span> <span class='op'>=</span> <span class='symbol'>:undef</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>color:</span> <span class='id identifier rubyid_colour'>colour</span><span class='comma'>,</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>hoist:</span> <span class='id identifier rubyid_hoist'>hoist</span><span class='comma'>,</span> <span class='label'>mentionable:</span> <span class='id identifier rubyid_mentionable'>mentionable</span><span class='comma'>,</span> <span class='label'>permissions:</span> <span class='id identifier rubyid_packed_permissions'>packed_permissions</span> <span class='rbrace'>}</span>
-
-  <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:unicode_emoji</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_unicode_emoji'>unicode_emoji</span> <span class='kw'>if</span> <span class='id identifier rubyid_unicode_emoji'>unicode_emoji</span> <span class='op'>!=</span> <span class='symbol'>:undef</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_update_role'>update_role</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_role_id'>role_id</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_colour'>colour</span><span class='comma'>,</span> <span class='id identifier rubyid_hoist'>hoist</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_mentionable'>mentionable</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_packed_permissions'>packed_permissions</span> <span class='op'>=</span> <span class='int'>104_324_161</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_icon'>icon</span> <span class='op'>=</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='id identifier rubyid_unicode_emoji'>unicode_emoji</span> <span class='op'>=</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='id identifier rubyid_colours'>colours</span> <span class='op'>=</span> <span class='symbol'>:undef</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>color:</span> <span class='id identifier rubyid_colour'>colour</span><span class='comma'>,</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>hoist:</span> <span class='id identifier rubyid_hoist'>hoist</span><span class='comma'>,</span> <span class='label'>mentionable:</span> <span class='id identifier rubyid_mentionable'>mentionable</span><span class='comma'>,</span> <span class='label'>permissions:</span> <span class='id identifier rubyid_packed_permissions'>packed_permissions</span><span class='comma'>,</span> <span class='label'>colors:</span> <span class='id identifier rubyid_colours'>colours</span><span class='comma'>,</span> <span class='label'>unicode_emoji:</span> <span class='id identifier rubyid_unicode_emoji'>unicode_emoji</span> <span class='rbrace'>}</span>
 
   <span class='kw'>if</span> <span class='id identifier rubyid_icon'>icon</span> <span class='op'>!=</span> <span class='symbol'>:undef</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_icon'>icon</span>
     <span class='id identifier rubyid_path_method'>path_method</span> <span class='op'>=</span> <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>original_filename</span><span class='words_sep'> </span><span class='tstring_content'>path</span><span class='words_sep'> </span><span class='tstring_content'>local_path</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_meth'>meth</span><span class='op'>|</span> <span class='id identifier rubyid_icon'>icon</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='id identifier rubyid_meth'>meth</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -3389,7 +3385,7 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
     <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span>
     <span class='symbol'>:patch</span><span class='comma'>,</span>
     <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_base'><span class='object_link'><a href="../API.html#api_base-class_method" title="Discordrb::API.api_base (method)">api_base</a></span></span><span class='embexpr_end'>}</span><span class='tstring_content'>/guilds/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_server_id'>server_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>/roles/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_role_id'>role_id</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
-    <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_reject'>reject</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span> <span class='id identifier rubyid_value'>value</span> <span class='op'>==</span> <span class='symbol'>:undef</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='comma'>,</span>
     <span class='label'>Authorization:</span> <span class='id identifier rubyid_token'>token</span><span class='comma'>,</span>
     <span class='label'>content_type:</span> <span class='symbol'>:json</span><span class='comma'>,</span>
     <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>X-Audit-Log-Reason</span><span class='label_end'>&#39;:</span> <span class='id identifier rubyid_reason'>reason</span>
@@ -3426,6 +3422,8 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+289
+290
 291
 292
 293
@@ -3434,12 +3432,10 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 296
 297
 298
-299
-300
-301</pre>
+299</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 291</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 289</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_role_positions'>update_role_positions</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_roles'>roles</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -3483,18 +3479,18 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+543
+544
 545
 546
 547
 548
 549
 550
-551
-552
-553</pre>
+551</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 545</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 543</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_webhooks'>webhooks</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -3540,18 +3536,18 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
       <pre class="lines">
 
 
+459
+460
 461
 462
 463
 464
 465
 466
-467
-468
-469</pre>
+467</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 461</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/api/server.rb', line 459</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_widget'>widget</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
@@ -3572,7 +3568,7 @@ connecting to voice, speaking and voice activity (push-to-talk isn&#39;t mandato
 </div>
 
       <div id="footer">
-  Generated on Sun Aug  3 14:49:47 2025 by
+  Generated on Fri Aug 15 14:30:15 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
