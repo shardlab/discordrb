@@ -211,11 +211,7 @@ module Discordrb
     private
 
     def avatarise(avatar)
-      if avatar.respond_to? :read
-        "data:image/jpg;base64,#{Base64.strict_encode64(avatar.read)}"
-      else
-        avatar
-      end
+      avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar
     end
 
     def update_internal(data)
