@@ -325,6 +325,11 @@ module Discordrb
       @channels.reject { |c| c.parent || c.category? }
     end
 
+    # @return [ServerPreview] the preview of this server shown in the discovery page.
+    def preview
+      @bot.server_preview(@id)
+    end
+
     # @return [String, nil] the widget URL to the server that displays the amount of online members in a
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
@@ -507,14 +512,16 @@ module Discordrb
     # Creates a role on this server which can then be modified. It will be initialized
     # with the regular role defaults the client uses unless specified, i.e. name is "new role",
     # permissions are the default, colour is the default etc.
-    # @param name [String] Name of the role to create
-    # @param colour [Integer, ColourRGB, #combined] The roles colour
-    # @param hoist [true, false]
-    # @param mentionable [true, false]
+    # @param name [String] Name of the role to create.
+    # @param colour [Integer, ColourRGB, #combined] The roles  primary colour.
+    # @param hoist [true, false] whether members of this role should be displayed seperately in the members list.
+    # @param mentionable [true, false] whether this role can mentioned by anyone in the server.
     # @param permissions [Integer, Array<Symbol>, Permissions, #bits] The permissions to write to the new role.
     # @param reason [String] The reason the for the creation of this role.
+    # @param secondary_colour [Integer, ColourRGB, nil] The secondary colour of the role to create.
+    # @param tertiary_colour [Integer, ColourRGB, nil] The tertiary colour of the role to create.
     # @return [Role] the created role.
-    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, reason: nil)
+    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, secondary_colour: nil, tertiary_colour: nil, reason: nil)
       colour = colour.respond_to?(:combined) ? colour.combined : colour
 
       permissions = if permissions.is_a?(Array)
@@ -525,7 +532,13 @@ module Discordrb
                       permissions
                     end
 
-      response = API::Server.create_role(@bot.token, @id, name, colour, hoist, mentionable, permissions, reason)
+      colours = {
+        primary_color: colour&.to_i,
+        tertiary_color: tertiary_colour&.to_i,
+        secondary_color: secondary_colour&.to_i
+      }
+
+      response = API::Server.create_role(@bot.token, @id, name, nil, hoist, mentionable, permissions&.to_s, reason, colours)
 
       role = Role.new(JSON.parse(response), @bot, self)
       @roles << role
@@ -659,20 +672,9 @@ module Discordrb
       API::Server.update_member(@bot.token, @id, user.resolve_id, channel_id: channel&.resolve_id)
     end
 
-    # Deletes this server. Be aware that this is permanent and impossible to undo, so be careful!
-    def delete
-      API::Server.delete(@bot.token, @id)
-    end
-
     # Leave the server.
     def leave
       API::User.leave_server(@bot.token, @id)
-    end
-
-    # Transfers server ownership to another user.
-    # @param user [User, String, Integer] The user who should become the new owner.
-    def owner=(user)
-      API::Server.transfer_ownership(@bot.token, @id, user.resolve_id)
     end
 
     # Sets the server's name.
