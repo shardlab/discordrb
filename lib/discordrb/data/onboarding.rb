@@ -31,20 +31,20 @@ module Discordrb
     end
 
     # @return [true, false] whether the onboarding mode only counts default channels towards constraints.
-    def default?
+    def default_mode?
       @mode == MODES[:default]
     end
 
     # @return [true, false] whether the onboarding mode counts default channels and questions towards constraints.
-    def advanced?
+    def advanced_mode?
       @mode == MODES[:advanced]
     end
 
     # Get a prompt by its ID.
-    # @param id [Integer, String] the ID of the prompt to find.
-    # @return [Prompt, nil] the prompt, or nil if it couldn't be found.
+    # @param id [Integer, String, Prompt] the ID of the prompt to find.
+    # @return [Prompt, nil] the prompt, or `nil` if it couldn't be found.
     def prompt(id)
-      prompts.find { |prompt| prompt.id == id.resolve_id }
+      @prompts.find { |prompt| prompt.id == id.resolve_id }
     end
 
     # @return [Array<Channel>] the default channels that members automatically get opted into.
@@ -70,11 +70,18 @@ module Discordrb
       update_data(mode: MODES[mode] || mode)
     end
 
+    # Set the prompts for this onboarding flow in bulk.
+    # @param prompts [Array<Hash>] the new prompts to set.
+    def prompts=(prompts)
+      update_data(prompts: prompts.to_a.map(&:to_h))
+    end
+
     # Remove one or more prompts from this onboarding flow.
-    # @param ids [Integer, String] the IDs of the prompts to remove.
+    # @param ids [Integer, String, Prompt] the IDs of the prompts to remove.
+    # @return [void]
     def delete_prompts(*ids)
-      new_prompts = prompts.reject do |prompt|
-        ids.map(&:resolve_id).any?(prompt.id)
+      new_prompts = @prompts.reject do |prompt|
+        [*ids].map(&:resolve_id).any?(prompt.id)
       end
 
       update_data(prompts: new_prompts.map(&:to_h))
@@ -83,11 +90,12 @@ module Discordrb
     alias_method :delete_prompt, :delete_prompts
 
     # Add one or more prompts to this onboarding flow.
-    # @yieldparam [PromptBuilder]
+    # @yieldparam builder [PromptBuilder] The prompt builder.
+    # @return [void]
     def create_prompts
       yield (builder = PromptBuilder.new)
 
-      update_data(prompts: prompts.map(&:to_h) + builder.to_a)
+      update_data(prompts: @prompts.map(&:to_h) + builder.to_a)
     end
 
     alias_method :create_prompt, :create_prompts
@@ -123,11 +131,11 @@ module Discordrb
       # @see TYPES
       attr_reader :type
 
-      # @return [Array<Option>] the options inside of this prompt.
-      attr_reader :options
-
       # @return [String] the title/question of this prompt.
       attr_reader :title
+
+      # @return [Array<Option>] the options inside of this prompt.
+      attr_reader :options
 
       # @return [true, false] whether users are limited to selecting one option for the prompt.
       attr_reader :single_select
@@ -137,7 +145,7 @@ module Discordrb
       attr_reader :required
       alias_method :required?, :required
 
-      # @return [true, false] whether the prompt is present in the onboarding flow. If false, the prompt
+      # @return [true, false] whether the prompt is present in the initial onboarding flow. If false, the prompt
       #   will only appear in the Channels & Roles tab.
       attr_reader :in_onboarding
       alias_method :in_onboarding?, :in_onboarding
@@ -155,10 +163,10 @@ module Discordrb
       end
 
       # Get an option by its ID.
-      # @param id [Integer, String] the ID of the option to find.
-      # @return [Option, nil] the option or nil if it couldn't be found.
+      # @param id [Integer, String, Option] the ID of the option to find.
+      # @return [Option, nil] the option or `nil` if it couldn't be found.
       def option(id)
-        options.find { |option| option.id == id.resolve_id }
+        @options.find { |option| option.id == id.resolve_id }
       end
 
       # @return [true, false] whether this prompt has multiple choices.

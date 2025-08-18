@@ -9,7 +9,7 @@ module Discordrb
     # @return [String] the server description shown in the welcome screen.
     attr_reader :description
 
-    # @return [Array<WelcomeChannel>] channels linked in the welcome screen and their display options.
+    # @return [Array<WelcomeChannel>] channels linked in the welcome screen.
     attr_reader :channels
 
     # @!visibility private
@@ -19,11 +19,10 @@ module Discordrb
       from_other(data)
     end
 
-    # Get a welcome channel by its channel ID.
-    # @param id [Integer, String] the ID of the channel to find.
-    # @return [WelcomeChannel, nil] the welcome channel, or nil if it couldn't be found.
-    def channel(id)
-      channels.find { |chan| chan.channel.id == id.resolve_id }
+    # Set whether this welcome screen is enabled or not.
+    # @param enabled [true, false] whether the welcome screen is enabled or not.
+    def enabled=(enabled)
+      update_data(enabled: enabled)
     end
 
     # Set the description of the welcome screen.
@@ -32,10 +31,45 @@ module Discordrb
       update_data(description: description)
     end
 
-    # Set whether this welcome screen is enabled or not.
-    # @param enabled [true, false] whether the welcome screen is enabled or not.
-    def enabled=(enabled)
-      update_data(enabled: enabled)
+    # Set the channels of the welcome screen.
+    # @param channels [Array<Hash>] the new welcome channels to set.
+    def channels=(channels)
+      update_data(channels: channels.to_a.map(&:to_h))
+    end
+
+    # Remove one or more prompts from the welcome screen.
+    # @param ids [Integer, String] the IDs of the welcome channels to remove.
+    def delete_channels(*ids)
+      channels = @channels.reject do |channel|
+        [*ids].map(&:resolve_id).any?(channel.id)
+      end
+
+      update_data(channels: channels.map(&:to_h))
+    end
+
+    alias_method :delete_channel, :delete_channels
+
+    # Get a welcome channel by its channel ID.
+    # @param id [Integer, String, Channel, WelcomeChannel] the ID of the channel to find.
+    # @return [WelcomeChannel, nil] the welcome channel, or `nil` if it couldn't be found.
+    def channel(id)
+      @channels.find { |welcome| welcome.channel.id == id.resolve_id }
+    end
+
+    # Add a welcome channel to the welcome screen.
+    # @param channel [Channel, Integer, String] the channel the welcome channel references.
+    # @param description [String] the description to show for the welcome channel.
+    # @param emoji [Emoji, String, Integer, Hash, nil] An emoji, its ID, or a unicode emoji to display alongside the channel.
+    def create_channel(channel, description:, emoji: nil)
+      emoji = case emoji
+              when Integer, String
+                emoji.to_i.positive? ? { emoji_id: emoji } : { emoji_name: emoji }
+              when Emoji, Reaction
+                emoji.id.nil? ? { emoji_name: emoji.name } : { emoji_id: emoji.id }
+              end
+
+      update_data(channels: (@channels.map(&:to_h) << { channel_id: channel.resolve_id,
+                                                        description: description, **emoji }))
     end
 
     # @!visibility private
