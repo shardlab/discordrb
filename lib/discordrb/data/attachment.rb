@@ -5,7 +5,7 @@ module Discordrb
   class Attachment
     include IDObject
 
-    # @return [Message] the message this attachment belongs to.
+    # @return [Message, Snapshot] the message or message snapshot this attachment belongs to.
     attr_reader :message
 
     # @return [String] the CDN URL this attachment can be downloaded at.
