@@ -677,9 +677,8 @@ module Discordrb
       LOGGER.log_exception(e)
     end
 
-    # rubocop:disable Lint/UselessConstantScoping
     ZLIB_SUFFIX = "\x00\x00\xFF\xFF".b.freeze
-    # rubocop:enable Lint/UselessConstantScoping
+    private_constant :ZLIB_SUFFIX
 
     def handle_message(msg)
       case @compress_mode
