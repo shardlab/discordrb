@@ -598,4 +598,58 @@ module Discordrb::API::Server
       'X-Audit-Log-Reason': reason
     )
   end
+
+  # Get the onboarding configuration for a server.
+  # https://discord.com/developers/docs/resources/webhook#get-guild-onboarding
+  def onboarding(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_onboarding,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/onboarding",
+      Authorization: token
+    )
+  end
+
+  # Modify the onboarding configuration for a server.
+  # https://discord.com/developers/docs/resources/guild#modify-guild-onboarding
+  def modify_onboarding(token, server_id, mode = :undef, prompts = :undef, default_channels = :undef, enabled = :undef, reason = nil)
+    Discordrb::API.request(
+      :guilds_sid_onboarding,
+      server_id,
+      :put,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/onboarding",
+      { mode: mode, prompts: prompts, default_channel_ids: default_channels, enabled: enabled }.reject { |_, v| v == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get the welcome screen object for a server.
+  # https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen
+  def welcome_screen(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_welcome_screen,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/welcome-screen",
+      Authorization: token
+    )
+  end
+
+  # Modify the welcome screen object for a server.
+  # https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen
+  def modify_welcome_screen(token, server_id, enabled = :undef, welcome_channels = :undef, description = :undef)
+    Discordrb::API.request(
+      :guilds_sid_welcome_screen,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/welcome-screen",
+      { enabled: enabled, welcome_channels: welcome_channels, description: description }.reject { |_, v| v == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
 end
