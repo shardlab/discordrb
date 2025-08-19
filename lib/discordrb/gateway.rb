@@ -298,9 +298,7 @@ module Discordrb
       send_identify(@token, {
                       os: RUBY_PLATFORM,
                       browser: 'discordrb',
-                      device: 'discordrb',
-                      referrer: '',
-                      referring_domain: ''
+                      device: 'discordrb'
                     }, compress, LARGE_THRESHOLD, @shard_key, @intents)
     end
 
