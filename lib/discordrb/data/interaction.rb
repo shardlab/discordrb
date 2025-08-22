@@ -307,7 +307,7 @@ module Discordrb
     # @return [Array<TextInput>] The text input components associated with this interaction.
     def text_inputs
       @components&.select do |component|
-        component.is_a?(TextInput) || (component.is_a?(Label) && component.component.is_a?(TextInput))
+        component.is_a?(Components::TextInput) || (component.is_a?(Components::Label) && component.text_input?)
       end
     end
 
@@ -315,25 +315,10 @@ module Discordrb
     # @param custom_id [String] the custom ID of the component to find.
     # @return [TextInput, Button, SelectMenu, nil] The component associated with the custom ID, or `nil` if it can't be found.
     def get_component(custom_id)
-      top_level = @components.flat_map(&:components) || []
       message_level = @message.instance_of?(Hash) ? Message.new(@message, @bot) : @message
-      message_level = message_level&.components&.flat_map do |component|
-        case component
-        when Components::Button
-          component
-        when Components::ActionRow
-          component.components
-        when Components::Section
-          component.accessory if component.button?
-        when Components::Container
-          component.components.select { |c| c.is_a?(Components::ActionRow) }.map(&:components)
-        when Components::Label
-          component.component
-        end
-      end
+      message_level = flatten_components(message_level&.components || [])
 
-      top_level = [top_level] unless top_level.is_a?(Array)
-      components = top_level.concat(message_level&.compact || [])
+      components = flatten_components(@components).concat(message_level)
       components.find { |component| component.respond_to?(:custom_id) ? component.custom_id == custom_id : false }
     end
 
@@ -348,6 +333,26 @@ module Discordrb
       builder.content = content
       builder.allowed_mentions = allowed_mentions
       embeds&.each { |embed| builder << embed }
+    end
+
+    # @!visibility private
+    def flatten_components(components)
+      components = components.flat_map do |component|
+        case component
+        when Components::ActionRow
+          component.components
+        when Components::Label
+          component.component
+        when Components::Section
+          component.accessory if component.button?
+        when Components::Container
+          flatten_components(component.components)
+        when Components::SelectMenu, Components::TextInput, Components::Button
+          component
+        end
+      end
+
+      components.compact
     end
   end
 

@@ -135,11 +135,11 @@ class Discordrb::Webhooks::View
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param disabled [true, false, nil] Grey out the component to make it unusable.
-    # @param channel_types [Array<Symbol, Integer>, nil] The channel types to include in the select menu.
-    def channel_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, disabled: nil, channel_types: nil)
+    # @param types [Array<Symbol, Integer>, nil] The channel types to include in the select menu.
+    def channel_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, disabled: nil, types: nil)
       builder = SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, disabled, select_type: :channel_select, id: id).to_h
 
-      builder[:channel_types] = channel_types.map { |type| Discordrb::Channel::TYPES[type] || type } if channel_types
+      builder[:channel_types] = types.map { |type| Discordrb::Channel::TYPES[type] || type } if types
 
       @components << builder
     end

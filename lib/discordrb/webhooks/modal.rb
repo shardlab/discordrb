@@ -7,6 +7,11 @@ class Discordrb::Webhooks::Modal
     action_row: 1,
     string_select: 3,
     text_input: 4,
+    user_select: 5,
+    role_select: 6,
+    mentionable_select: 7,
+    channel_select: 8,
+    text_display: 10,
     label: 18
   }.freeze
 
@@ -75,8 +80,7 @@ class Discordrb::Webhooks::Modal
     # @param required [true, false] Whether a value must be selected for the component.
     # @yieldparam builder [SelectMenuBuilder] The select menu builder is yielded to allow for the modification of atrributes.
     def string_select(custom_id:, options: [], id: nil, placeholder: nil, min_values: nil, max_values: nil, required: true)
-      builder = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values, nil,
-                                                                 select_type: :string_select, id: id, required: required)
+      builder = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, options, placeholder, min_values, max_values, nil, select_type: :string_select, id: id, required: required)
 
       yield builder if block_given?
 
@@ -84,6 +88,59 @@ class Discordrb::Webhooks::Modal
     end
 
     alias_method :select_menu, :string_select
+
+    # Add a select user to the label component.
+    # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
+    #   There is a limit of 100 characters to each custom_id.
+    # @param id [Integer] The integer ID for this component. This is not to be confused with custom_id.
+    # @param placeholder [String, nil] Default text to show when no entries are selected.
+    # @param min_values [Integer, nil] The minimum amount of values a user must select.
+    # @param max_values [Integer, nil] The maximum amount of values a user can select.
+    # @param required [true, false] Whether a value must be selected for the component.
+    def user_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: true)
+      @component = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :user_select, id: id, required: required).to_h
+    end
+
+    # Add a select role to the label component.
+    # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
+    #   There is a limit of 100 characters to each custom_id.
+    # @param id [Integer] The integer ID for this component. This is not to be confused with custom_id.
+    # @param placeholder [String, nil] Default text to show when no entries are selected.
+    # @param min_values [Integer, nil] The minimum amount of values a user must select.
+    # @param max_values [Integer, nil] The maximum amount of values a user can select.
+    # @param required [true, false] Whether a value must be selected for the component.
+    def role_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: true)
+      @component = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :role_select, id: id, required: required).to_h
+    end
+
+    # Add a select mentionable to the label component.
+    # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
+    #   There is a limit of 100 characters to each custom_id.
+    # @param id [Integer] The integer ID for this component. This is not to be confused with custom_id.
+    # @param placeholder [String, nil] Default text to show when no entries are selected.
+    # @param min_values [Integer, nil] The minimum amount of values a user must select.
+    # @param max_values [Integer, nil] The maximum amount of values a user can select.
+    # @param required [true, false] Whether a value must be selected for the component.
+    def mentionable_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: true)
+      @component = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :mentionable_select, id: id, required: required).to_h
+    end
+
+    # Add a select channel to the label component.
+    # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
+    #   There is a limit of 100 characters to each custom_id.
+    # @param id [Integer] The integer ID for this component. This is not to be confused with custom_id.
+    # @param placeholder [String, nil] Default text to show when no entries are selected.
+    # @param min_values [Integer, nil] The minimum amount of values a user must select.
+    # @param max_values [Integer, nil] The maximum amount of values a user can select.
+    # @param required [true, false] Whether a value must be selected for the component.
+    # @param types [Array<Symbol, Integer>, nil] The channel types to include in the select menu.
+    def channel_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: true, types: nil)
+      builder = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :channel_select, id: id, required: required).to_h
+
+      builder[:channel_types] = types.map { |type| Discordrb::Channel::TYPES[type] || type } if types
+
+      @component = builder
+    end
 
     # @!visibility private
     def to_h
@@ -114,8 +171,20 @@ class Discordrb::Webhooks::Modal
     @components << builder
   end
 
-  # @deprecated Please use {#label}
+  # @deprecated Please use {#label} instead.
   alias_method :row, :label
+
+  # Add a text display component to the modal view.
+  # @param id [Integer, nil] The 32-bit integer ID of this component.
+  # @param text [String] Set the text display of this component.
+  # @yieldparam builder [TextDisplayBuilder] The text display builder is yielded to allow for modification of attributes.
+  def text_display(id: nil, text: nil)
+    builder = Discordrb::Webhooks::View::TextDisplayBuilder.new(id, text)
+
+    yield builder if block_given?
+
+    @components << builder
+  end
 
   # @!visibility private
   # @return [Array<Hash>]

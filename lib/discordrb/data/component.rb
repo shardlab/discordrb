@@ -14,7 +14,7 @@ module Discordrb
         ActionRow.new(data, bot)
       when Webhooks::View::COMPONENT_TYPES[:button]
         Button.new(data, bot)
-      when Webhooks::View::COMPONENT_TYPES[:string_select]
+      when 3, 5, 6, 7, 8 # Select Menu Types
         SelectMenu.new(data, bot)
       when Webhooks::Modal::COMPONENT_TYPES[:text_input]
         TextInput.new(data, bot)
@@ -170,7 +170,7 @@ module Discordrb
       # @return [Integer] the ID of this select menu component.
       attr_reader :id
 
-      # @return [Array<String>] the values that were selected for this select menu component.
+      # @return [Array<String>] the selected values in the modal.
       attr_reader :values
 
       # @return [String] the custom ID of this select menu component.
@@ -506,7 +506,6 @@ module Discordrb
 
       # @return [SelectMenu, TextInput] the interactive component of this label component.
       attr_reader :component
-      alias_method :components, :component
 
       # @!visibility private
       def initialize(data, bot)

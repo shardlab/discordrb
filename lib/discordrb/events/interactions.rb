@@ -407,14 +407,57 @@ module Discordrb::Events
 
   # An event for when a user submits a modal.
   class ModalSubmitEvent < ComponentEvent
-    # @return [Array<TextInputComponent>]
+    # Struct to allow accessing data via [] or methods.
+    ResolvedData = Struct.new('Resolved', :channels, :members, :roles, :users) # rubocop:disable Lint/StructNewOverride
+
+    # @return [Array<Component>] an array of partial component objects that were in the modal.
     attr_reader :components
+
+    # @return [ResolvedData] The resolved values for any select menu components.
+    attr_reader :resolved
+
+    # @!visibility private
+    def initialize(data, bot)
+      super
+
+      @resolved = ResolvedData.new({}, {}, {}, {})
+      process_resolved(data['data']['resolved']) if data['data']['resolved']
+    end
 
     # Get the value of an input passed to the modal.
     # @param custom_id [String] The custom ID of the component to look for.
     # @return [String, nil]
     def value(custom_id)
       get_component(custom_id)&.value
+    end
+
+    # Get the selected values from a select menu in a label.
+    # @param custom_id [String] The custom ID of the select menu to look for.
+    # @return [Array<String>, nil]
+    def values(custom_id)
+      get_component(custom_id)&.values
+    end
+
+    # @!visibility private
+    def process_resolved(resolved_data)
+      resolved_data['users']&.each do |id, data|
+        @resolved[:users][id.to_i] = @bot.ensure_user(data)
+      end
+
+      resolved_data['roles']&.each do |id, data|
+        @resolved[:roles][id.to_i] = Discordrb::Role.new(data, @bot)
+      end
+
+      resolved_data['channels']&.each do |id, data|
+        data['guild_id'] = @interaction.server_id
+        @resolved[:channels][id.to_i] = Discordrb::Channel.new(data, @bot)
+      end
+
+      resolved_data['members']&.each do |id, data|
+        data['user'] = resolved_data['users'][id]
+        data['guild_id'] = @interaction.server_id
+        @resolved[:members][id.to_i] = Discordrb::Member.new(data, nil, @bot)
+      end
     end
   end
 

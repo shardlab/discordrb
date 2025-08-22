@@ -29,7 +29,7 @@ bot.application_command(:container) do |event|
       end
 
       # Unlike embeds, if the accent color isn't set, the container simply won't have an accent color.
-      container.color = event.user.color if event.options['color']
+      container.color = rand(0..0xFFFFFF) if event.options['color']
 
       # A seperator can appear as a thin, and translucent line when setting `divider` to true. Otherwise,
       # the seperator can function as an invisible barrier to proivde padding between components.
@@ -113,24 +113,19 @@ end
 bot.message(content: '!file') do |event|
   # Any attachments that are provided must be manually exposed via the component system.
   event.send_message!(attachments: [File.open('data/music.mp3', 'rb')], has_components: true) do |_, view|
-    # Add a random accent color to the container.
-    view.container(color: rand(0..0xFFFFFF)) do |container|
-      # Feel free to try and remove the section and thumbnail.
+    view.container do |container|
       container.section do |section|
         section.thumbnail(url: 'https://cdn.discordapp.com/icons/81384788765712384/a363a84e969bcbe1353eb2fdfb2e50e6.webp')
 
-        # Triple hashtags can be used to create something that looks like a heading.
         section.text_display(text: '### Musical File')
 
-        # Fun fact, all of the information below can be found if you inspect the audio file's metadata.
+        # All of the information below can be found if you inspect the audio file's metadata.
         section.text_display(text: <<~CONTENT)
           > **Title:** Discordrb Theme
           > **Composed:** <t:1472839597:R>
           > **Album:** Discord API Music
         CONTENT
       end
-
-      container.seperator(divider: true, spacing: :small)
 
       # Try setting `spoiler` to true in order to spoiler the file.
       container.file(url: 'attachment://music.mp3', spoiler: false)
