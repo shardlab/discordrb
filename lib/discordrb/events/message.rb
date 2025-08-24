@@ -56,10 +56,8 @@ module Discordrb::Events
 
     # # Sends a message to the channel this message was sent in, right now.
     # @see Channel#send_message!
-    def send_message!(**parameters)
-      # HACK: We can accept any arguments with `**`, and then validate the arguments when actually
-      #   unpacking them into `Channel#send_message!`
-      channel.send_message!(**parameters)
+    def send_message!(...)
+      channel.send_message!(...)
     end
 
     # Adds a string to be sent after the event has finished execution. Avoids problems with rate limiting because only
