@@ -5,16 +5,27 @@ module Discordrb
   class Message
     include IDObject
 
+    # Map of message flags.
+    FLAGS = {
+      crossposted: 1 << 0,
+      crosspost: 1 << 1,
+      suppress_embeds: 1 << 2,
+      source_message_deleted: 1 << 3,
+      urgent: 1 << 4,
+      thread: 1 << 5,
+      ephemeral: 1 << 6,
+      loading: 1 << 7,
+      failed_to_mention_roles: 1 << 8,
+      suppress_notifications: 1 << 12,
+      voice_message: 1 << 13,
+      snapshot: 1 << 14,
+      uikit_components: 1 << 15
+    }.freeze
+
     # @return [String] the content of this message.
     attr_reader :content
     alias_method :text, :content
     alias_method :to_s, :content
-
-    # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
-    #   {User} for old messages when the author has left the server since then)
-    attr_reader :author
-    alias_method :user, :author
-    alias_method :writer, :author
 
     # @return [Channel] the channel in which this message was sent.
     attr_reader :channel
@@ -61,17 +72,26 @@ module Discordrb
     attr_reader :pinned
     alias_method :pinned?, :pinned
 
+    # @return [Integer] what the type of the message is
+    attr_reader :type
+
     # @return [Server, nil] the server in which this message was sent.
     attr_reader :server
 
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
 
-    # @return [Array<Component>]
+    # @return [Array<Component>] Interaction components for this message.
     attr_reader :components
 
-    # The discriminator that webhook user accounts have.
-    ZERO_DISCRIM = '0000'
+    # @return [Integer] flags set on the message.
+    attr_reader :flags
+
+    # @return [Channel, nil] The thread that was started from this message, or nil.
+    attr_reader :thread
+
+    # @return [Time, nil] the time at when this message was pinned. Only present on messages fetched via {Channel#pins}.
+    attr_reader :pinned_at
 
     # @!visibility private
     def initialize(data, bot)
@@ -79,6 +99,7 @@ module Discordrb
       @content = data['content']
       @channel = bot.channel(data['channel_id'].to_i)
       @pinned = data['pinned']
+      @type = data['type']
       @tts = data['tts']
       @nonce = data['nonce']
       @mention_everyone = data['mention_everyone']
@@ -88,36 +109,23 @@ module Discordrb
 
       @server = @channel.server
 
-      @author = if data['author']
-                  if data['author']['discriminator'] == ZERO_DISCRIM
-                    # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
-                    # a User and return that instead.
-                    Discordrb::LOGGER.debug("Webhook user: #{data['author']['id']}")
-                    User.new(data['author'], @bot)
-                  elsif @channel.private?
-                    # Turn the message user into a recipient - we can't use the channel recipient
-                    # directly because the bot may also send messages to the channel
-                    Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
-                  else
-                    member = @channel.server.member(data['author']['id'].to_i)
+      @webhook_id = data['webhook_id']&.to_i
 
-                    if member
-                      member.update_data(data['member']) if data['member']
-                    else
-                      Discordrb::LOGGER.debug("Member with ID #{data['author']['id']} not cached (possibly left the server).")
-                      member = if data['member']
-                                 member_data = data['author'].merge(data['member'])
-                                 Member.new(member_data, @server, bot)
-                               else
-                                 @bot.ensure_user(data['author'])
-                               end
-                    end
+      if data['author']
+        if @webhook_id
+          # This is a webhook user! It would be pointless to try to resolve a member here, so we just create
+          # a User and return that instead.
+          Discordrb::LOGGER.debug("Webhook user: #{data['author']['id']}")
+          @author = User.new(data['author'].merge({ '_webhook' => true }), @bot)
+        elsif @channel.private?
 
-                    member
-                  end
-                end
-
-      @webhook_id = data['webhook_id'].to_i if data['webhook_id']
+          # Turn the message user into a recipient - we can't use the channel recipient
+          # directly because the bot may also send messages to the channel
+          @author = Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
+        else
+          @author_id = data['author']['id'].to_i
+        end
+      end
 
       @timestamp = Time.parse(data['timestamp']) if data['timestamp']
       @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
@@ -155,7 +163,29 @@ module Discordrb
 
       @components = []
       @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+
+      @flags = data['flags'] || 0
+
+      @thread = data['thread'] ? @bot.ensure_channel(data['thread'], @server) : nil
+
+      @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
     end
+
+    # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
+    #   {User} for old messages when the author has left the server since then)
+    def author
+      return @author if @author
+
+      if @channel.server
+        @author = @channel.server.member(@author_id)
+        Discordrb::LOGGER.debug("Member with ID #{@author_id} not cached (possibly left the server).") if @author.nil?
+      end
+
+      @author ||= @bot.user(@author_id)
+    end
+
+    alias_method :user, :author
+    alias_method :writer, :author
 
     # Replies to this message with the specified content.
     # @deprecated Please use {#respond}.
@@ -174,27 +204,33 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param mention_user [true, false] Whether the user that is being replied to should be pinged by the reply.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @return (see #respond)
-    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil)
+    def reply!(content, tts: false, embed: nil, attachments: nil, allowed_mentions: {}, mention_user: false, components: nil, flags: 0)
       allowed_mentions = { parse: [] } if allowed_mentions == false
       allowed_mentions = allowed_mentions.to_hash.transform_keys(&:to_sym)
       allowed_mentions[:replied_user] = mention_user
 
-      respond(content, tts, embed, attachments, allowed_mentions, self, components)
+      respond(content, tts, embed, attachments, allowed_mentions, self, components, flags)
     end
 
     # (see Channel#send_message)
-    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+    def respond(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+      @channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
     # Edits this message to have the specified content instead.
     # You can only edit your own messages.
     # @param new_content [String] the new content the message should have.
-    # @param new_embed [Hash, Discordrb::Webhooks::Embed, nil] The new embed the message should have. If `nil` the message will be changed to have no embed.
+    # @param new_embeds [Hash, Discordrb::Webhooks::Embed, Array<Hash>, Array<Discordrb::Webhooks::Embed>, nil] The new embeds the message should have. If `nil` the message will be changed to have no embeds.
+    # @param new_components [View, Array<Hash>] The new components the message should have. If `nil` the message will be changed to have no components.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) can be edited.
     # @return [Message] the resulting message.
-    def edit(new_content, new_embed = nil, components = nil)
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embed ? new_embed.to_hash : nil, components)
+    def edit(new_content, new_embeds = nil, new_components = nil, flags = 0)
+      new_embeds = (new_embeds.instance_of?(Array) ? new_embeds.map(&:to_hash) : [new_embeds&.to_hash]).compact
+      new_components = new_components.to_a
+
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embeds, new_components, flags)
       Message.new(JSON.parse(response), @bot)
     end
 
@@ -216,6 +252,12 @@ module Discordrb
       API::Channel.unpin_message(@bot.token, @channel.id, @id, reason)
       @pinned = false
       nil
+    end
+
+    # Crossposts a message in a news channel.
+    def crosspost
+      response = API::Channel.crosspost_message(@bot.token, @channel.id, @id)
+      Message.new(JSON.parse(response), @bot)
     end
 
     # Add an {Await} for a message with the same user and channel.
@@ -280,6 +322,14 @@ module Discordrb
       @reactions.select(&:me)
     end
 
+    # Removes embeds from the message
+    # @return [Message] the resulting message.
+    def suppress_embeds
+      flags = @flags | (1 << 2)
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, :undef, :undef, :undef, :undef, flags)
+      Message.new(JSON.parse(response), @bot)
+    end
+
     # Reacts to a message.
     # @param reaction [String, #to_reaction] the unicode emoji or {Emoji}
     def create_reaction(reaction)
@@ -302,7 +352,7 @@ module Discordrb
 
       get_reactions = proc do |fetch_limit, after_id = nil|
         resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit)
-        return JSON.parse(resp).map { |d| User.new(d, @bot) }
+        JSON.parse(resp).map { |d| User.new(d, @bot) }
       end
 
       # Can be done without pagination
@@ -368,6 +418,12 @@ module Discordrb
       !@referenced_message.nil?
     end
 
+    # Whether or not this message was of type "CHAT_INPUT_COMMAND"
+    # @return [true, false]
+    def chat_input_command?
+      @type == 20
+    end
+
     # @return [Message, nil] the Message this Message was sent in reply to.
     def referenced_message
       return @referenced_message if @referenced_message
@@ -389,6 +445,20 @@ module Discordrb
       end
 
       results.flatten.compact
+    end
+
+    # to_message -> self or message
+    # @return [Discordrb::Message]
+    def to_message
+      self
+    end
+
+    alias_method :message, :to_message
+
+    FLAGS.each do |name, value|
+      define_method("#{name}?") do
+        @flags.anybits?(value)
+      end
     end
   end
 end

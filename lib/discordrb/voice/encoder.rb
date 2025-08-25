@@ -77,7 +77,7 @@ module Discordrb::Voice
     # @param options [String] ffmpeg options to pass after the -i flag
     # @return [IO] the audio, encoded as s16le PCM
     def encode_file(file, options = '')
-      command = "#{ffmpeg_command} -loglevel 0 -i \"#{file}\" #{options} -f s16le -ar 48000 -ac 2 #{filter_volume_argument} pipe:1"
+      command = ffmpeg_command(input: file, options: options)
       IO.popen(command)
     end
 
@@ -87,14 +87,23 @@ module Discordrb::Voice
     # @param options [String] ffmpeg options to pass after the -i flag
     # @return [IO] the audio, encoded as s16le PCM
     def encode_io(io, options = '')
-      command = "#{ffmpeg_command} -loglevel 0 -i - #{options} -f s16le -ar 48000 -ac 2 #{filter_volume_argument} pipe:1"
+      command = ffmpeg_command(options: options)
       IO.popen(command, in: io)
     end
 
     private
 
-    def ffmpeg_command
-      @use_avconv ? 'avconv' : 'ffmpeg'
+    def ffmpeg_command(input: '-', options: null)
+      [
+        @use_avconv ? 'avconv' : 'ffmpeg',
+        '-loglevel', '0',
+        '-i', input,
+        '-f', 's16le',
+        '-ar', '48000',
+        '-ac', '2',
+        'pipe:1',
+        filter_volume_argument
+      ].concat(options.split).reject { |segment| segment.nil? || segment == '' }
     end
 
     def filter_volume_argument

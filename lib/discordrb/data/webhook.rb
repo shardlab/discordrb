@@ -84,9 +84,9 @@ module Discordrb
     def update(data)
       # Only pass a value for avatar if the key is defined as sending nil will delete the
       data[:avatar] = avatarise(data[:avatar]) if data.key?(:avatar)
-      data[:channel_id] = data[:channel].resolve_id
+      data[:channel_id] = data[:channel]&.resolve_id
       data.delete(:channel)
-      update_webhook(data)
+      update_webhook(**data)
     end
 
     # Deletes the webhook.
@@ -192,7 +192,7 @@ module Discordrb
     # Utility function to get a webhook's avatar URL.
     # @return [String] the URL to the avatar image
     def avatar_url
-      return API::User.default_avatar unless @avatar
+      return API::User.default_avatar(@id) unless @avatar
 
       API::User.avatar_url(@id, @avatar)
     end

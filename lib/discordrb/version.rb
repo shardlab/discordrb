@@ -3,5 +3,5 @@
 # Discordrb and all its functionality, in this case only the version.
 module Discordrb
   # The current version of discordrb.
-  VERSION = '3.4.2'
+  VERSION = '3.5.0'
 end

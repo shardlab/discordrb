@@ -203,6 +203,11 @@ module Discordrb::API
     "#{cdn_url}/splashes/#{server_id}/#{splash_id}.#{format}"
   end
 
+  # Make a discovery splash URL from server and splash IDs
+  def discovery_splash_url(server_id, splash_id, format = 'webp')
+    "#{cdn_url}/discovery-splashes/#{server_id}/#{splash_id}.#{format}"
+  end
+
   # Make a banner URL from server and banner IDs
   def banner_url(server_id, banner_id, format = 'webp')
     "#{cdn_url}/banners/#{server_id}/#{banner_id}.#{format}"
@@ -223,11 +228,6 @@ module Discordrb::API
     "#{cdn_url}/app-assets/#{application_id}/achievements/#{achievement_id}/icons/#{icon_hash}.#{format}"
   end
 
-  # Make a cover URL for a Scheduled Event.
-  def scheduled_event_cover_url(scheduled_event_id, image_hash, format = 'webp')
-    "#{cdn_url}/guild-events/#{scheduled_event_id}/#{image_hash}.#{format}"
-  end
-
   # Login to the server
   def login(email, password)
     request(
@@ -240,16 +240,32 @@ module Discordrb::API
     )
   end
 
-  # Logout from the server
-  def logout(token)
-    request(
-      :auth_logout,
-      nil,
-      :post,
-      "#{api_base}/auth/logout",
-      nil,
-      Authorization: token
-    )
+  # @param role_id [String, Integer]
+  # @param icon_hash [String]
+  # @param format ['webp', 'png', 'jpeg']
+  # @return [String]
+  def role_icon_url(role_id, icon_hash, format = 'webp')
+    "#{cdn_url}/role-icons/#{role_id}/#{icon_hash}.#{format}"
+  end
+
+  # make an avatar decoration URL from an avatar decoration ID.
+  def avatar_decoration_url(avatar_decoration_id, format = 'png')
+    "#{cdn_url}/avatar-decoration-presets/#{avatar_decoration_id}.#{format}"
+  end
+
+  # make a nameplate URL from the nameplate asset.
+  def nameplate_url(nameplate_asset, format = 'webm')
+    "#{cdn_url}/assets/collectibles/#{nameplate_asset.delete_suffix('/')}/asset.#{format}"
+  end
+
+  # make a server tag badge URL from a server ID and badge ID.
+  def server_tag_badge_url(server_id, badge_id, format = 'webp')
+    "#{cdn_url}/guild-tag-badges/#{server_id}/#{badge_id}.#{format}"
+  end
+  
+  # Make a cover URL for a Scheduled Event.
+  def scheduled_event_cover_url(scheduled_event_id, image_hash, format = 'webp')
+    "#{cdn_url}/guild-events/#{scheduled_event_id}/#{image_hash}.#{format}"
   end
 
   # Create an OAuth application

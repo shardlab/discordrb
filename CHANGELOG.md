@@ -1,21 +1,35 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.4.2] - 2020-2-5
-[3.4.1]: https://github.com/shardlab/discordrb/releases/tag/v3.4.2
+## [3.5.0] - 2023-07-05
+[3.5.0]: https://github.com/shardlab/discordrb/releases/tag/v3.5.0
+
+[View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.4.2..v3.5.0)
+
+### Summary
+
+Lots of changes, Discord is changing their API and we're trying to keep up. This release is a bit of a mess, but it's a necessary one.
+
+## [3.4.2] - 2020-02-05
+
+[3.4.2]: https://github.com/shardlab/discordrb/releases/tag/v3.4.2
 
 [View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.4.1..v3.4.2)
 
 ### Summary
+
 I failed to update rest-client dependencies properly, and discovered that you can't republish gem versions the hard way.
 
 ### Changed
+
 - `rest-client` has a requirement of `>= 2.0.0` on both `discordrb` and `discordrb-webhooks`
 
-## [3.4.1] - 2020-2-4
+## [3.4.1] - 2020-02-04
+
 [3.4.1]: https://github.com/shardlab/discordrb/releases/tag/v3.4.1
 
 [View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.4.0..v3.4.1)
@@ -26,10 +40,12 @@ With 3.4.0, mistakes were made during the version bump leading to a bit of a dep
 This micro bump fixes this, fixes a few other code issues, and adds a few minor features.
 
 ### Added
+
 - Added support for `competing` activity types ([#21](https://github.com/shardlab/discordrb/pull/21), thanks @kaine119)
 - Support for a callable command_does_not_exist_message ([#25](https://github.com/shardlab/discordrb/pull/25), thanks @kmcphillips)
 
 ### Fixed
+
 - `Bot#send_temporary_message` now properly passes `message_reference` ([#17](https://github.com/shardlab/discordrb/pull/17) thanks @swarley)
 - Rate limit precision is only supplied when the route requires headers ([#11](https://github.com/shardlab/discordrb/pull/11) thanks @dali546)
 - Remove pointless conditional in `Invite` initializer ([#26](https://github.com/shardlab/discordrb/pull/26) thanks @swarley)
@@ -37,6 +53,7 @@ This micro bump fixes this, fixes a few other code issues, and adds a few minor 
 - Links to messages now work when a `guild_id` is not present in a non DM message. ([#27](https://github.com/shardlab/discordrb/pull/27) thanks @swarley)
 
 ## [3.4.0] - 2020-12-06
+
 [3.4.0]: https://github.com/shardlab/discordrb/releases/tag/v3.3.0
 
 [View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.4.0...v3.3.0)
@@ -53,8 +70,8 @@ Intents allow you to pick and choose what types of events are fed to your bot ov
 Discordrb::Bot.new(token: 'B0T.T0K3N', intents: %i[servers server_messages])
 ```
 
-
 In this example, we would only recieve the following events
+
 - GUILD_CREATE
 - GUILD_UPDATE
 - GUILD_DELETE
@@ -74,7 +91,7 @@ This feature is still experimental, as it is still unclear how some interactions
 
 ### Added
 
-- `Bot#parse_mentions`, which extracts *all* mentions found in a string ([#526](https://github.com/discordrb/discordrb/pull/526), thanks @SanksTheYokai)
+- `Bot#parse_mentions`, which extracts _all_ mentions found in a string ([#526](https://github.com/discordrb/discordrb/pull/526), thanks @SanksTheYokai)
 - Issue and pull request templates ([#585](https://github.com/discordrb/discordrb/pull/585))
 - `Server#bot` method for obtaining your bot's own `Member` on a particular server ([#597](https://github.com/discordrb/discordrb/pull/597))
 - `Attachment#spoiler?`, to check if an attachment is a spoiler or not ([#603](https://github.com/discordrb/discordrb/pull/603), thanks @swarley)
@@ -147,7 +164,7 @@ This feature is still experimental, as it is still unclear how some interactions
 - **(breaking change)** `Message#reactions` is changed to return an Array instead of a hash, fixing reactions with the same `name` value from being discarded (#[593](https://github.com/discordrb/discordrb/pull/596))
 - `Channel#nsfw=` correctly forwards updated value to the API ([#628](https://github.com/discordrb/discordrb/pull/628))
 - `Emoji#==` works correctly for unicode emoji ([#590](https://github.com/discordrb/discordrb/pull/590), thanks @soukouki)
-- Attribute matching for voice state update events ([#625](https://github.com/discordrb/discordrb/pull/625), thanks @swarley) 
+- Attribute matching for voice state update events ([#625](https://github.com/discordrb/discordrb/pull/625), thanks @swarley)
 - `Emoji#to_reaction` works correctly for unicode emoji ([#642](https://github.com/discordrb/discordrb/pull/642), thanks @z64)
 - `Server#add_member_using_token` returns `nil` when user is already a member ([#643](https://github.com/discordrb/discordrb/pull/643), thanks @swarley)
 - `CommandBot`'s `Integer` parser interprets all integers as base 10 ([#656](https://github.com/discordrb/discordrb/pull/656), thanks @joshleblanc)
@@ -165,10 +182,10 @@ This feature is still experimental, as it is still unclear how some interactions
 - Removed dependency on `rbnacl` in favor of our own FFI bindings ([#641](https://github.com/discordrb/discordrb/pull/641), thanks @z64)
 
 ## [3.3.0] - 2018-10-27
+
 [3.3.0]: https://github.com/discordrb/discordrb/releases/tag/v3.3.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v3.2.1...v3.3.0)
-
 
 ### Summary
 
@@ -184,7 +201,7 @@ Since there is a lot here, here are highlights of the more notable changes in th
 - `CommandBot` now supports a new method of "aliasing" commands with the `aliases:` keyword. It accepts an array
   of symbols of alternate command names. Currently this is supported by passing an array of symbols for the command
   name itself, but this essentially makes "copies" of the command, meaning each alias will show up in your help command.
-  Using `aliases` instead, the library will recognize that these other names *are aliases* instead of copying the command.
+  Using `aliases` instead, the library will recognize that these other names _are aliases_ instead of copying the command.
   Aliases will be listed when users use `!help` with the command name, or any of its aliases. For now you may chose to use
   either style, but you cannot use both. Specifying an array for the command name is now considered deprecated.
 
@@ -283,7 +300,7 @@ Thank you to all of our contributors!
 - `Voice::Encoder#encode_file` now accepts options for ffmpeg ([#341](https://github.com/discordrb/discordrb/pull/341), thanks @oyisre)
 - Objects that implement `IDObject` can now be compared using more operators ([#346](https://github.com/discordrb/discordrb/pull/346), thanks @mattantonelli)
 - Filled in permissions bit for viewing a server's audit log ([#349](https://github.com/discordrb/discordrb/pull/349), thanks @Daniel-Worrall)
-- https://cdn.discordapp.com is now used as the base URL for CDN resources like avatars and server icons ([#358](https://github.com/discordrb/discordrb/pull/358))
+- <https://cdn.discordapp.com> is now used as the base URL for CDN resources like avatars and server icons ([#358](https://github.com/discordrb/discordrb/pull/358))
 - Reaction events raised from the bot's actions will respect `parse_self` ([#350](https://github.com/discordrb/discordrb/pull/350), thanks @Daniel-Worrall)
 - `Webhooks::Embed#initialize` parses its `color`/`colour` argument ([#364](https://github.com/discordrb/discordrb/pull/364), thanks @Daniel-Worrall)
 - Webhook related events can now be matched on webhook ID ([#363](https://github.com/discordrb/discordrb/pull/363), thanks @Daniel-Worrall)
@@ -363,34 +380,41 @@ Thank you to all of our contributors!
 - `Attachment#initialize` correctly sets `@id` instance variable ([#575](https://github.com/discordrb/discordrb/pull/575), thanks @kandayo)
 
 ## [3.2.1] - 2017-02-18
+
 [3.2.1]: https://github.com/discordrb/discordrb/releases/tag/v3.2.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v3.2.0.1...v3.2.1)
 
 ### Changed
+
 - `Bot#stop` and `Gateway#stop` now explicitly return `nil`, for more convenient use in commands
 - The API method to query for users has been removed as the endpoint no longer exists
 - Some more methods have been changed to resolve IDs, which means they can be called with integer and string IDs instead of just the objects ([#313](https://github.com/discordrb/discordrb/pull/313), thanks @LikeLakers2)
 - Bulk deleting now uses the new non-deprecated URL – this has no immediate effect, but once the old one will be removed bots using it will not be able to bulk delete anymore (see also [#309](https://github.com/discordrb/discordrb/issues/309))
 
 ### Fixed
+
 - Fixed another bug with resumes that caused issues when resuming a zombie connection
 - Fixed a bug that caused issues when playing short files ([#326](https://github.com/discordrb/discordrb/issues/316))
 
 ## [3.2.0.1] - 2017-01-29
+
 [3.2.0.1]: https://github.com/discordrb/discordrb/releases/tag/v3.2.0.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v3.2.0...v3.2.0.1)
 
 ### Fixed
+
 - Attempt to fix an issue that causes a strange problem with dependencies when installing discordrb
 
 ## [3.2.0] - 2017-01-29
+
 [3.2.0]: https://github.com/discordrb/discordrb/releases/tag/v3.2.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v3.1.1...v3.2.0)
 
 ### Added
+
 - Various parts of gateway error handling were improved, leading to significant stability improvements:
   - A long standing bug was fixed that prevented resumes in most cases, which caused unnecessary reconnections.
   - The error handler that handles problems with sending the raw data over TCP now catches errors more broadly.
@@ -418,6 +442,7 @@ Thank you to all of our contributors!
 - `Server#role` now resolves IDs, so they can be passed as strings if necessary.
 
 ### Fixed
+
 - Fixed bots' shard settings being ignored in certain cases
 - Parsing role mentions using `Bot#parse_mention` works properly now.
 - Fixed some specific REST methods that were broken by the API module refactor ([#302](https://github.com/discordrb/discordrb/pull/302), thanks @LikeLakers2)
@@ -438,19 +463,23 @@ Thank you to all of our contributors!
 - Fixed a specific edge case in command chain handling where handling commands with the same name as the chain delimiter was broken
 
 ## [3.1.1] - 2016-10-21
+
 [3.1.1]: https://github.com/discordrb/discordrb/releases/tag/v3.1.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v3.1.0...v3.1.1)
 
 ### Fixed
+
 - An oversight where a `GUILD_DELETE` dispatch would cause an internal error was fixed. ([#256](https://github.com/discordrb/discordrb/pull/256), thanks @greenbigfrog)
 
 ## [3.1.0] - 2016-10-20
+
 [3.1.0]: https://github.com/discordrb/discordrb/releases/tag/v3.1.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v3.0.2...v3.1.0)
 
 ### Added
+
 - Emoji handling support ([#226](https://github.com/discordrb/discordrb/pull/226), thanks @greenbigfrog)
 - A `channels` attribute has been added to `CommandBot` as well as `Command` to restrict the channels in which either of the two works ([#249](https://github.com/discordrb/discordrb/pull/249), thanks @Xzanth)
 - The bulk deletion endpoint is now exposed directly using the `Channel#delete_messages` method ([#235](https://github.com/discordrb/discordrb/pull/235), thanks @z64)
@@ -459,6 +488,7 @@ Thank you to all of our contributors!
 - The specs have been improved; they're still not exhaustive by far but there are at least slightly more now.
 
 ### Fixed
+
 - Fixed an important bug that caused the logger not to work in some cases. ([#243](https://github.com/discordrb/discordrb/pull/243), thanks @Daniel-Worrall)
 - Fixed logger token redaction.
 - `unavailable_servers` should no longer crash the bot due to being nil in some cases ([#244](https://github.com/discordrb/discordrb/pull/244), thanks @Daniel-Worrall)
@@ -467,17 +497,21 @@ Thank you to all of our contributors!
 - Changing nicknames works again, it has apparently been broken in 3.0.0.
 
 ## [3.0.2] - 2016-10-07
+
 [3.0.2]: https://github.com/discordrb/discordrb/releases/tag/v3.0.2
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v3.0.1...v3.0.2)
 
 ### Changed
+
 - A small change to how CommandBot parameter lists are formatted ([#240](https://github.com/discordrb/discordrb/pull/240), thanks @FormalHellhound)
 
 ### Fixed
+
 - Setting properties on a channel (e.g. `Channel#topic=`) works again ([#238](https://github.com/discordrb/discordrb/issues/238) / [#239](https://github.com/discordrb/discordrb/pull/239), thanks @Daniel-Worrall)
 
 ## [3.0.1] - 2016-10-01
+
 [3.0.1]: https://github.com/discordrb/discordrb/releases/tag/v3.0.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v3.0.0...v3.0.1)
@@ -485,15 +519,18 @@ Thank you to all of our contributors!
 A tiny update to support webhook-sent messages properly!
 
 ### Added
+
 - Added the utility methods `Message#webhook?` and `User#webhook?` to check whether a message or a user belongs to a webhook
 - Added `Message#webhook_id` to get the ID of the sending webhook for webhook messages
 - Added the `webhook_commands` parameter to CommandBot that, if false (default true), prevents webhook-sent messages from being parsed and handled as commands.
 
 ### Fixed
+
 - Fixed webhook-sent messages being ignored because their author couldn't be resolved.
 - Fixed a minor performance problem where a CommandBot would create unnecessarily create redundant objects for every received message.
 
 ## [3.0.0] - 2016-09-30
+
 [3.0.0]: https://github.com/discordrb/discordrb/releases/tag/v3.0.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v2.1.3...v3.0.0)
@@ -503,6 +540,7 @@ I didn't think there could possibly be a release larger than 2.0.0 was, but here
 As with 2.0.0, there are some breaking changes! They are, as always, highlighted in bold.
 
 ### Added
+
 - **The `application_id` parameter has been renamed to `client_id`**. With the changes to how bot applications work, it would just be confusing to have it be called `application_id` any longer. If you try to use `application_id` now, it will raise a descriptive exception; with 3.1.0 that will be removed too (you'll get a less descriptive exception).
 - The gateway implementation has been completely rewritten, for more performance, stability and maintainability. This means that **to call some internal methods like `inject_reconnect`, a `Gateway` instance (available as `Bot#gateway`) now needs to be used.**
 - **User login using email and password has been removed**. Use a user token instead, see also [here](https://github.com/discord/discord-api-docs/issues/69#issuecomment-223886862).
@@ -554,6 +592,7 @@ As with 2.0.0, there are some breaking changes! They are, as always, highlighted
 - A large amount of fixes and clarifications have been made to the docs.
 
 ### Fixed
+
 - The almost a year old bug where changing the own user's username would reset its avatar has finally been fixed.
 - The issue where resolving a large server with the owner offline would sometimes cause a stack overflow has been fixed ([#169](https://github.com/discordrb/discordrb/issues/169) / [#170](https://github.com/discordrb/discordrb/issues/170) / [#191](https://github.com/discordrb/discordrb/pull/191), thanks @stoodfarback)
 - Fixed an issue where if a server had an AFK channel set, but that AFK channel couldn't be connected to, resolving the server (and in turn all objects depending on it) would fail. This likely fixes any random `NoPermission` errors you've ever encountered in your log.
@@ -573,26 +612,31 @@ As with 2.0.0, there are some breaking changes! They are, as always, highlighted
 - A possible regression in PM channel creation was fixed. ([#227](https://github.com/discordrb/discordrb/issues/227) / [#228](https://github.com/discordrb/discordrb/pull/228), thanks @heimidal)
 
 ## [2.1.3] - 2016-06-11
+
 [2.1.3]: https://github.com/discordrb/discordrb/releases/tag/v2.1.3
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v2.1.2...v2.1.3)
 
 ### Fixed
+
 - Various messages that were just printed to stdout that should have been using the `Logger` system now do ([#132](https://github.com/discordrb/discordrb/issues/132) and [#133](https://github.com/discordrb/discordrb/pull/133), thanks @PoVa)
 - A mistake in the documentation was fixed ([#140](https://github.com/discordrb/discordrb/issues/140))
 - Handling of the `GUILD_MEMBER_DELETE` gateway event should now work even if, for whatever reason, Discord sends an invalid server ID ([#129](https://github.com/discordrb/discordrb/issues/129))
 - If the processing of a particular voice packet takes too long, the user will now be warned instead of an error being raised ([#134](https://github.com/discordrb/discordrb/issues/134))
 
 ## [2.1.2] - 2016-05-29
+
 [2.1.2]: https://github.com/discordrb/discordrb/releases/tag/v2.1.2
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v2.1.1...v2.1.2)
 
 ### Added
+
 - A reader was added (`Bot#awaits`) to read the hash of awaits, so ones that aren't necessary anymore can be deleted.
 - `Channel#prune` now uses the bulk delete endpoint which means it will be much faster and no longer rate limited ([#118](https://github.com/discordrb/discordrb/pull/118), thanks @snapcase)
 
 ### Fixed
+
 - A few unresolved links in the documentation were fixed.
 - The tracking of streamed servers was updated so that very long lists of servers should now all be processed.
 - Resolution methods now return nil if the object to resolve can't be found, which should alleviate some rare caching problems ([#124](https://github.com/discordrb/discordrb/pull/124), thanks @Snazzah)
@@ -601,20 +645,24 @@ As with 2.0.0, there are some breaking changes! They are, as always, highlighted
 - Uncached members in messages are now logged.
 
 ## [2.1.1] - 2016-05-08
+
 [2.1.1]: https://github.com/discordrb/discordrb/releases/tag/v2.1.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v2.1.0...v2.1.1)
 
 ### Fixed
+
 - Fixed a caching error that occurred when deleting roles ([#113](https://github.com/discordrb/discordrb/issues/113))
 - Commands should no longer be triggered with nil authors ([#114](https://github.com/discordrb/discordrb/issues/114))
 
 ## [2.1.0] - 2016-04-30
+
 [2.1.0]: https://github.com/discordrb/discordrb/releases/tag/v2.1.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v2.0.4...v2.1.0)
 
 ### Added
+
 - API support for the April 29 Discord update, which was the first feature update in a while with more than a few additions to the API, was added. This includes: ([#111](https://github.com/discordrb/discordrb/pull/111))
   - Members' nicknames can now be set and read (`Member#nick`) and updates to them are being tracked.
   - Roles now have a `mentionable?` property and a `mention` utility method.
@@ -622,20 +670,23 @@ As with 2.0.0, there are some breaking changes! They are, as always, highlighted
 - The internal REST rate limit handler was updated:
   - It now tracks message rate limits server wide to properly handle new bot account rate limits. ([#100](https://github.com/discordrb/discordrb/issues/100))
   - It now keeps track of all requests, even those that are known not to be rate limited (it just won't do anything to them). This allows for more flexibility should future rate limits be added.
-- Guild sharding is now supported using the optional `shard_id` and `num_shards` to bot initializers. Read about it here: https://github.com/discord/discord-api-docs/issues/17 ([#98](https://github.com/discordrb/discordrb/issues/98))
+- Guild sharding is now supported using the optional `shard_id` and `num_shards` to bot initializers. Read about it here: <https://github.com/discord/discord-api-docs/issues/17> ([#98](https://github.com/discordrb/discordrb/issues/98))
 - Commands can now require users to have specific action permissions to be able to execute them using the `:required_permissions` attribute. ([#104](https://github.com/discordrb/discordrb/issues/104) / [#112](https://github.com/discordrb/discordrb/pull/112))
 - A `heartbeat` event was added that gets triggered every now and then to allow for roughly periodic actions. ([#110](https://github.com/discordrb/discordrb/pull/110))
 - Prefixes are now more flexible in the format they can have - arrays and callables are now allowed as well. Read the documentation for more info.([#107](https://github.com/discordrb/discordrb/issues/107) / [#109](https://github.com/discordrb/discordrb/pull/109))
 
 ## [2.0.4] - 2016-04-19
+
 [2.0.4]: https://github.com/discordrb/discordrb/releases/tag/v2.0.4
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v2.0.3...v2.0.4)
 
 ### Added
+
 - Added a utility method `Invite#url` ([#86](https://github.com/discordrb/discordrb/issues/86)/[#101](https://github.com/discordrb/discordrb/pull/101), thanks @PoVa)
 
 ### Fixed
+
 - Fix a caching inconsistency where a server's channels and a bot's channels wouldn't be identical. This caused server channels to not update properly ([#105](https://github.com/discordrb/discordrb/issues/105))
 - Setting avatars should now work again on Windows ([#96](https://github.com/discordrb/discordrb/issues/96))
 - Message edit events should no longer be raised with nil authors ([#95](https://github.com/discordrb/discordrb/issues/95))
@@ -644,27 +695,32 @@ As with 2.0.0, there are some breaking changes! They are, as always, highlighted
 - Fixed some possible problems with heartbeats not being sent with unstable connections
 
 ## [2.0.3] - 2016-04-15
+
 [2.0.3]: https://github.com/discordrb/discordrb/releases/tag/v2.0.3
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v2.0.2...v2.0.3)
 
 ### Added
+
 - All examples now fully use v2 ([#92](https://github.com/discordrb/discordrb/pull/92), thanks @snapcase)
 - The message that occurs when a command is missing permission can now be changed or disabled ([#94](https://github.com/discordrb/discordrb/pull/94), thanks @snapcase)
 - The log message that occurs when you disconnect from the WebSocket is now more compact ([#90](https://github.com/discordrb/discordrb/issues/90))
 - `Bot#ignored?` now exists to check whether a user is ignored
 
 ### Fixed
+
 - A problem where getting channel history would sometimes cause an exception has been fixed ([#88](https://github.com/discordrb/discordrb/issues/88))
 - `split_message` should now behave correctly in a specific edge case ([#85](https://github.com/discordrb/discordrb/pull/85), thanks @AnhNhan)
 - DCA playback should no longer cause an error when playback ends due to a specific reason
 
 ## [2.0.2] - 2016-04-10
+
 [2.0.2]: https://github.com/discordrb/discordrb/releases/tag/v2.0.2
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v2.0.1...v2.0.2)
 
 ### Added
+
 - Added `Server#text_channels` and `#voice_channels` ([#79](https://github.com/discordrb/discordrb/issues/79))
 - Added `Server#online_users` ([#80](https://github.com/discordrb/discordrb/issues/80))
 - Added `Member#role?` ([#83](https://github.com/discordrb/discordrb/issues/83))
@@ -672,6 +728,7 @@ As with 2.0.0, there are some breaking changes! They are, as always, highlighted
 - `Bot#send_message` can now take channel objects as well as the ID
 
 ### Fixed
+
 - Removing the bot from a server will no longer result in a gateway message error
 - Fixed an exception raised if a previously unavailable guild goes online after the stream timeout
 - `server_create` will no longer be raised for newly available guilds
@@ -679,62 +736,72 @@ As with 2.0.0, there are some breaking changes! They are, as always, highlighted
 - Fixed an error where rarely a server's owner wouldn't be initialized correctly
 
 ## [2.0.1] - 2016-04-10
+
 [2.0.1]: https://github.com/discordrb/discordrb/releases/tag/v2.0.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v2.0.0...v2.0.1)
 
 ### Added
+
 - Added some more examples ([#75](https://github.com/discordrb/discordrb/pull/75), thanks @greenbigfrog)
 - Users can now be ignored from messages at gateway level (`Bot#ignore_user`, `Bot#unignore_user`)
 - `Member#add_role` and `Member#remove_role` were re-added from User - they were missing before
 
 ### Fixed
+
 - Fixed some typos in the documentation
 - If a server is actually unavailable it will no longer spam the console with timeout messages
 - VoiceBot now sends five frames of silence after finishing a track. This fixes an issue where the sound from the last track would bleed over into the new one due to interpolation.
 - Fixed a bug where playing something right after connecting to voice would sometimes cause the encryption key to not be set
 
 ## [2.0.0] - 2016-04-08
+
 [2.0.0]: https://github.com/discordrb/discordrb/releases/tag/v2.0.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.8.1...v2.0.0)
 
 ### Added
+
 This is the first major update with some breaking changes! Those are highlighted in bold with migration advice after them. Ask in the Discord channel (see the README) if you have questions.
 
 - **Bot initializers now only use named parameters.** This shouldn't be a hard change to adjust to, but everyone will have to do it. Here's some examples:
- ```rb
- # Previously
- bot = Discordrb::Bot.new 'email@example.com', 'hunter2', true
 
- # Now
- bot = Discordrb::Bot.new email: 'email@example.com', password: 'hunter2', log_mode: :debug
- ```
- ```rb
- # Previously
- bot = Discordrb::Bot.new :token, 'TOKEN HERE'
+```rb
+# Previously
+bot = Discordrb::Bot.new 'email@example.com', 'hunter2', true
 
- # Now
- bot = Discordrb::Bot.new token: 'TOKEN HERE', application_id: 163456789123456789
- ```
- ```rb
- # Previously
- bot = Discordrb::Commands::CommandBot.new :token, 'TOKEN HERE', '!', nil, {advanced_functionality: false}
+# Now
+bot = Discordrb::Bot.new email: 'email@example.com', password: 'hunter2', log_mode: :debug
+```
 
- # Now
- bot = Discordrb::Commands::CommandBot.new token: 'TOKEN HERE', application_id: 163456789123456789, prefix: '!', advanced_functionality: false
- ```
- - Connecting to multiple voice channels at once (only available with bot accounts) is now supported. **This means `bot.voice` now takes the server ID as the parameter**. For a seamless switch, the utility method `MessageEvent#voice` was added - simply replace `bot.voice` with `event.voice` in all instances.
- - **The `Member` and `Recipient` classes were split off from `User`**. Members are users on servers and recipients are partners in private messages. Since both are delegates to `User`, most things will work as before, but most notably roles were changed to no longer be by ID (for example, instead of `event.author.roles(event.server.id)`, you'd just use `event.author.roles` instead).
- - **All previously deprecated methods were removed.** This includes:
-   - `Server#afk_channel_id=` (use `afk_channel=`, it works with the ID too)
-   - `Channel#is_private` (use `private?` instead, it's more reliable with edge cases like Twitch subscriber-only channels)
-   - `Bot#find` (use `find_channel` instead, it does the exact same thing without confusion with `find_user`)
- - **`Server` is now used instead of `Guild` in all external methods and classes.** Previously, all the events regarding roles and such were called `GuildRoleXYZEvent`, now they're all called `ServerRoleXYZEvent` for consistency with other attributes and methods.
- - **`advanced_functionality` is now disabled by default.** If you absolutely need it, you can easily re-enable it by just setting that parameter in the CommandBot initializer, but for most people that didn't need it this will fix some bugs with mentions in commands and such.
- - **`User#bot?` was renamed to `User#current_bot?`** with the addition of the `User#bot_account?` reader to check for bot account-ness (the "BOT" tag visible on Discord)
- - Member chunks will no longer automatically be requested on startup, but rather once they're actually needed (`event.server.members`). This is both a performance change (much faster startup for large bots especially) and an important API compliance one - this is what the Discord devs have requested.
- - Initial support for bots that have no WebSocket connection was started. This is useful for web apps that need to get information on something without having to run something in the background all the time. A tutorial on these will be coming soon, in the meantime, use this short example:
+```rb
+# Previously
+bot = Discordrb::Bot.new :token, 'TOKEN HERE'
+
+# Now
+bot = Discordrb::Bot.new token: 'TOKEN HERE', application_id: 163456789123456789
+```
+
+```rb
+# Previously
+bot = Discordrb::Commands::CommandBot.new :token, 'TOKEN HERE', '!', nil, {advanced_functionality: false}
+
+# Now
+bot = Discordrb::Commands::CommandBot.new token: 'TOKEN HERE', application_id: 163456789123456789, prefix: '!', advanced_functionality: false
+```
+
+- Connecting to multiple voice channels at once (only available with bot accounts) is now supported. **This means `bot.voice` now takes the server ID as the parameter**. For a seamless switch, the utility method `MessageEvent#voice` was added - simply replace `bot.voice` with `event.voice` in all instances.
+- **The `Member` and `Recipient` classes were split off from `User`**. Members are users on servers and recipients are partners in private messages. Since both are delegates to `User`, most things will work as before, but most notably roles were changed to no longer be by ID (for example, instead of `event.author.roles(event.server.id)`, you'd just use `event.author.roles` instead).
+- **All previously deprecated methods were removed.** This includes:
+  - `Server#afk_channel_id=` (use `afk_channel=`, it works with the ID too)
+  - `Channel#is_private` (use `private?` instead, it's more reliable with edge cases like Twitch subscriber-only channels)
+  - `Bot#find` (use `find_channel` instead, it does the exact same thing without confusion with `find_user`)
+- **`Server` is now used instead of `Guild` in all external methods and classes.** Previously, all the events regarding roles and such were called `GuildRoleXYZEvent`, now they're all called `ServerRoleXYZEvent` for consistency with other attributes and methods.
+- **`advanced_functionality` is now disabled by default.** If you absolutely need it, you can easily re-enable it by just setting that parameter in the CommandBot initializer, but for most people that didn't need it this will fix some bugs with mentions in commands and such.
+- **`User#bot?` was renamed to `User#current_bot?`** with the addition of the `User#bot_account?` reader to check for bot account-ness (the "BOT" tag visible on Discord)
+- Member chunks will no longer automatically be requested on startup, but rather once they're actually needed (`event.server.members`). This is both a performance change (much faster startup for large bots especially) and an important API compliance one - this is what the Discord devs have requested.
+- Initial support for bots that have no WebSocket connection was started. This is useful for web apps that need to get information on something without having to run something in the background all the time. A tutorial on these will be coming soon, in the meantime, use this short example:
+
 ```rb
 require 'discordrb'
 require 'discordrb/light'
@@ -742,31 +809,33 @@ require 'discordrb/light'
 bot = Discordrb::Light::LightBot.new 'token here'
 puts bot.profile.username
 ```
- - OAuth bot accounts are now better supported using a method `Bot#invite_url` to get a bot's invite URL and sending tokens using the new `Bot` prefix.
- - discordrb now fully uses [websocket-client-simple](https://github.com/shokai/websocket-client-simple) (a.k.a. WSCS) instead of Faye::WebSocket, this means that the annoying OpenSSL library thing won't have to be done anymore.
- - The new version of the Discord gateway (v4) is supported and used by default. This should bring more stability and possibly slight performance improvements.
- - Some older v3 features that weren't supported before are now:
-   - Compressed ready packets (should decrease network overhead for very large bots)
- - Discord rate limits are now supported better - the client will never send a message if it knows it's going to be rate limited, instead it's going to wait for the correct time.
- - Requests will now automatically be retried if a 502 (cloudflare error) is received.
- - `MessageEditEvent`s now have a whole message instead of just the ID to allow for checking the content of edited messages.
- - `Message`s now have an `attachments` array with files attached to the message.
- - `ReadyEvent` and `DisconnectEvent` now have the bot as a readable attribute - useful for container-based bots that don't have a way to get them otherwise.
- - `Bot#find_channel` can now parse channel mentions and search for specific types of channels (text or voice).
- - `Server#create_channel` can now create voice channels.
- - A utility function `User#distinct` was added to get the distinct representation of a user (i.e. name + discrim, for example "meew0#9811")
- - The `User#discriminator` attribute now has more aliases (`#tag`, `#discord_tag`, `#discrim`)
- - `Permission` objects can now be created or set even without a role writer, useful to quickly get byte representations of permissions
- - Permission overwrites can now be defined more easily using the utility method `Channel#define_overwrite`
- - `Message`s returned at the end of commands (for example using `User#pm` or `Message#edit`) will now no longer be sent ([#66](https://github.com/discordrb/discordrb/issues/66))
- - The `:with_text` event attribute is now aliased to `:exact_text` ([#65](https://github.com/discordrb/discordrb/issues/65))
- - Server icons (`Server#icon=`) can now be set just like avatars (`Profile#avatar=`)
- - Lots of comments were added to the examples and some bugs fixed
- - The overall performance and memory usage was improved, especially on Ruby 2.3 (using the new frozen string literal comment)
- - The documentation was slightly improved.
+
+- OAuth bot accounts are now better supported using a method `Bot#invite_url` to get a bot's invite URL and sending tokens using the new `Bot` prefix.
+- discordrb now fully uses [websocket-client-simple](https://github.com/shokai/websocket-client-simple) (a.k.a. WSCS) instead of Faye::WebSocket, this means that the annoying OpenSSL library thing won't have to be done anymore.
+- The new version of the Discord gateway (v4) is supported and used by default. This should bring more stability and possibly slight performance improvements.
+- Some older v3 features that weren't supported before are now:
+  - Compressed ready packets (should decrease network overhead for very large bots)
+- Discord rate limits are now supported better - the client will never send a message if it knows it's going to be rate limited, instead it's going to wait for the correct time.
+- Requests will now automatically be retried if a 502 (cloudflare error) is received.
+- `MessageEditEvent`s now have a whole message instead of just the ID to allow for checking the content of edited messages.
+- `Message`s now have an `attachments` array with files attached to the message.
+- `ReadyEvent` and `DisconnectEvent` now have the bot as a readable attribute - useful for container-based bots that don't have a way to get them otherwise.
+- `Bot#find_channel` can now parse channel mentions and search for specific types of channels (text or voice).
+- `Server#create_channel` can now create voice channels.
+- A utility function `User#distinct` was added to get the distinct representation of a user (i.e. name + discrim, for example "meew0#9811")
+- The `User#discriminator` attribute now has more aliases (`#tag`, `#discord_tag`, `#discrim`)
+- `Permission` objects can now be created or set even without a role writer, useful to quickly get byte representations of permissions
+- Permission overwrites can now be defined more easily using the utility method `Channel#define_overwrite`
+- `Message`s returned at the end of commands (for example using `User#pm` or `Message#edit`) will now no longer be sent ([#66](https://github.com/discordrb/discordrb/issues/66))
+- The `:with_text` event attribute is now aliased to `:exact_text` ([#65](https://github.com/discordrb/discordrb/issues/65))
+- Server icons (`Server#icon=`) can now be set just like avatars (`Profile#avatar=`)
+- Lots of comments were added to the examples and some bugs fixed
+- The overall performance and memory usage was improved, especially on Ruby 2.3 (using the new frozen string literal comment)
+- The documentation was slightly improved.
 
 ### Fixed
-- A *lot* of latent bugs with caching were fixed. This doesn't really have a noticeable effect, it just means better stability and reliability as a whole.
+
+- A _lot_ of latent bugs with caching were fixed. This doesn't really have a noticeable effect, it just means better stability and reliability as a whole.
 - **Command bots no longer respond when there are spaces between the prefix and the command.** Because this behaviour may be desirable, a `spaces_allowed` attribute was added to the CommandBot initializer that can be set to true to re-enable this behaviour.
 - Permission calculation (`User#permission?`) has been thoroughly rewritten and should now account for edge cases like server owners and Manage Permissions.
 - The gateway reconnect logic now uses a correct falloff system - before it would start at 1 second between attempts and immediately jump to 120. Now the transition is more smooth.
@@ -776,456 +845,552 @@ puts bot.profile.username
 - Command bots now obey `should_parse_self`
 
 ## [1.8.1] - 2016-03-11
+
 [1.8.1]: https://github.com/discordrb/discordrb/releases/tag/v1.8.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.8.0...v1.8.1)
 
 ### Fixed
-* Fixed an error (caused by an undocumented API change) that would write a traceback to the console every time someone started typing in a channel invisible to the bot.
+
+- Fixed an error (caused by an undocumented API change) that would write a traceback to the console every time someone started typing in a channel invisible to the bot.
 
 ## [1.8.0] - 2016-03-11
+
 [1.8.0]: https://github.com/discordrb/discordrb/releases/tag/v1.8.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.7.5...v1.8.0)
 
 ### Added
-* The built-in logger has been somewhat redone.
-  * It now has a fancy mode, settable using `Discordrb::LOGGER.fancy = true/false`, that makes use of ANSI escape codes to prettify the log output.
-  * It now supports more things than just `debug`, there's also `warn`, `error`, `good`, `info`, `in`, and `out`.
-  * You now have finer control over what gets output, using `Discordrb::LOGGER.mode=` which accepts one of `:debug`, `:verbose`, `:normal`, `:quiet`, `:silent`.
-* You can now log in with just a token by setting the email parameter to `:token` and the password to the token you want to log in with.
-* DCA playback now supports `DCA1`.
-* All data classes (now generalized using the `IDObject` mixin) have a `creation_date` parameter that specifies when the object was created.
-* `Channel#mention` was added that mentions a channel analogous to `User#mention`.
-* The aliases `tag` and `discord_tag` have been added to the discriminator because that's what Discord calls them now.
+
+- The built-in logger has been somewhat redone.
+  - It now has a fancy mode, settable using `Discordrb::LOGGER.fancy = true/false`, that makes use of ANSI escape codes to prettify the log output.
+  - It now supports more things than just `debug`, there's also `warn`, `error`, `good`, `info`, `in`, and `out`.
+  - You now have finer control over what gets output, using `Discordrb::LOGGER.mode=` which accepts one of `:debug`, `:verbose`, `:normal`, `:quiet`, `:silent`.
+- You can now log in with just a token by setting the email parameter to `:token` and the password to the token you want to log in with.
+- DCA playback now supports `DCA1`.
+- All data classes (now generalized using the `IDObject` mixin) have a `creation_date` parameter that specifies when the object was created.
+- `Channel#mention` was added that mentions a channel analogous to `User#mention`.
+- The aliases `tag` and `discord_tag` have been added to the discriminator because that's what Discord calls them now.
 
 ### Fixed
-* A problem some users had where voice playback would leak FFmpeg processes has been fixed.
-* The VWS internal thread now has a name in debug messages (`vws-i`)
-* Users' voice channels should now always be set if they are in one
+
+- A problem some users had where voice playback would leak FFmpeg processes has been fixed.
+- The VWS internal thread now has a name in debug messages (`vws-i`)
+- Users' voice channels should now always be set if they are in one
 
 ## [1.7.5] - 2016-03-03
+
 [1.7.5]: https://github.com/discordrb/discordrb/releases/tag/v1.7.5
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.7.4...v1.7.5)
 
 ### Changed
-* `Channel#send_message` and `Bot#send_message` now have an extra `tts` parameter (false by default) to specify whether the message should use TTS.
+
+- `Channel#send_message` and `Bot#send_message` now have an extra `tts` parameter (false by default) to specify whether the message should use TTS.
 
 ### Fixed
-* Attempting to `p` a data class, especially a `User` or `Profile`, should no longer lock up the interpreter due to very deep recursion.
-* Manual TTS using `API.send_message` will now work correctly.
+
+- Attempting to `p` a data class, especially a `User` or `Profile`, should no longer lock up the interpreter due to very deep recursion.
+- Manual TTS using `API.send_message` will now work correctly.
 
 ## [1.7.4] - 2016-02-28
+
 [1.7.4]: https://github.com/discordrb/discordrb/releases/tag/v1.7.4
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.7.3...v1.7.4)
 
 ### Added
-* Added methods `Channel#text?` and `Channel#voice?` to check a channel's type.
-* Frequently allocated strings have been turned into symbols or frozen constants, this should improve performance slightly.
+
+- Added methods `Channel#text?` and `Channel#voice?` to check a channel's type.
+- Frequently allocated strings have been turned into symbols or frozen constants, this should improve performance slightly.
 
 ### Fixed
-* `VoiceBot#destroy` will now properly disconnect you and should no longer cause segfaults.
-* Fixed a bug where you couldn't set any settings on a role created using `Server#create_role`.
-* Fixed `Profile#avatar=` doing absolutely nothing.
+
+- `VoiceBot#destroy` will now properly disconnect you and should no longer cause segfaults.
+- Fixed a bug where you couldn't set any settings on a role created using `Server#create_role`.
+- Fixed `Profile#avatar=` doing absolutely nothing.
 
 ## [1.7.3] - 2016-02-27
+
 [1.7.3]: https://github.com/discordrb/discordrb/releases/tag/v1.7.3
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.7.2...v1.7.3)
 
 ### Added
-* The server banlist can now be accessed more nicely using `Server#bans`.
-* Some abstractions for OAuth application creation were added - `bot.create_oauth_application` and `bot.update_oauth_application`. See the docs about how to use them.
+
+- The server banlist can now be accessed more nicely using `Server#bans`.
+- Some abstractions for OAuth application creation were added - `bot.create_oauth_application` and `bot.update_oauth_application`. See the docs about how to use them.
 
 ## [1.7.2] - 2016-02-25
+
 [1.7.2]: https://github.com/discordrb/discordrb/releases/tag/v1.7.2
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.7.1...v1.7.2)
 
 ### Changed
-* The `bot` object can now be read from all events, not just from command ones.
-* You can now set the `filter_volume` on VoiceBot, which corresponds to the old way of doing volume handling, in case the new way is too slow for you.
+
+- The `bot` object can now be read from all events, not just from command ones.
+- You can now set the `filter_volume` on VoiceBot, which corresponds to the old way of doing volume handling, in case the new way is too slow for you.
 
 ## [1.7.1] - 2016-02-23
+
 [1.7.1]: https://github.com/discordrb/discordrb/releases/tag/v1.7.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.7.0...v1.7.1)
 
 ### Added
-* A `clear!` method was added to EventContainer that removes all events from it, so you can overwrite modules by defining them again. (It's unnecessary for CommandContainers because commands can never be duplicate.)
+
+- A `clear!` method was added to EventContainer that removes all events from it, so you can overwrite modules by defining them again. (It's unnecessary for CommandContainers because commands can never be duplicate.)
 
 ### Fixed
-* The tokens will now be verified correctly when obtained from the cache. (I messed up last time)
-* Events of the same type in different containers will now be merged correctly when including both containers.
-* Got rid of the annoying `undefined method 'game' for nil:NilClass` error that sometimes occurred on startup. (It was harmless but now it's gone entirely)
+
+- The tokens will now be verified correctly when obtained from the cache. (I messed up last time)
+- Events of the same type in different containers will now be merged correctly when including both containers.
+- Got rid of the annoying `undefined method 'game' for nil:NilClass` error that sometimes occurred on startup. (It was harmless but now it's gone entirely)
 
 ## [1.7.0] - 2016-02-23
+
 [1.7.0]: https://github.com/discordrb/discordrb/releases/tag/v1.7.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.6.6...v1.7.0)
 
 ### Added
-* **`bot.find` and `bot.find_user` have had their fuzzy search feature removed because it only caused problems. If you still need it, you can copy the code from the repo's history.** In addition, `find` was renamed to `find_channel` but still exists as a (deprecated) alias.
-* The in-line documentation using Yard is now complete and can be [accessed at RubyDoc](https://www.rubydoc.info/github/discordrb/discordrb/master/). It's not quite polished yet and some things may be confusing, but it should be mostly usable.
-* Events and commands can now be thoroughly modularized using a system I call 'containers'. (TODO: Add a tutorial here later)
-* Support for the latest API changes:
-  * `Server.leave` does something different than `Server.delete`
-  * The WebSocket connection now uses version 3 of the protocol
-* Voice bots now support playing DCA files using the [`play_dca`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FVoice%2FVoiceBot%3Aplay_dca) method. (TODO: Add a section to the voice tutorial)
-* The [volume](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FVoice%2FVoiceBot%3Avolume) of a voice bot can now be changed during playback and not only for future playbacks.
-* A `Channel.prune` method was added to quickly delete lots of messages from a channel. (It appears that this is something lots of bots do.)
-* [`Server#members`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FServer%3Amembers) is now aliased to `users`.
-* An attribute [`Server#member_count`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FServer%3Amember_count) was added that is accurate even if chunked members have not been added yet.
-* An attribute [`Server#large?`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FServer%3Alarge) was added that is true if a server could possibly have an inaccurate list of members.
-* Some more specific error classes have been added to replace the RestClient generic ones.
-* Quickly sending a message using the `event << 'text'` syntax now works in every type of message event, not just commands.
-* You can now set the bitrate of sent audio data using `bot.voice.encoder.bitrate = 64000` (see [`Encoder#bitrate=`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb/Voice/Encoder#bitrate%3D-instance_method)). Note that sent audio data will always be unaffected by voice channel bitrate settings, those only tell the client at what bitrate it should send.
-* A rate limiting feature was added to commands - you can define buckets using the [`bucket`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FCommands%2FRateLimiter%3Abucket) method and use them as a parameter for [`command`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FCommands%2FCommandContainer%3Acommand).
-  * A [`SimpleRateLimiter`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb/Commands/SimpleRateLimiter) class was also added if you want rate limiting independent from commands (e. g. for events)
-* Connecting to the WebSocket now uses an exponential falloff system so we don't spam Discord with requests anymore.
-* Debug timestamps are now accurate to milliseconds.
+
+- **`bot.find` and `bot.find_user` have had their fuzzy search feature removed because it only caused problems. If you still need it, you can copy the code from the repo's history.** In addition, `find` was renamed to `find_channel` but still exists as a (deprecated) alias.
+- The in-line documentation using Yard is now complete and can be [accessed at RubyDoc](https://www.rubydoc.info/github/discordrb/discordrb/master/). It's not quite polished yet and some things may be confusing, but it should be mostly usable.
+- Events and commands can now be thoroughly modularized using a system I call 'containers'. (TODO: Add a tutorial here later)
+- Support for the latest API changes:
+  - `Server.leave` does something different than `Server.delete`
+  - The WebSocket connection now uses version 3 of the protocol
+- Voice bots now support playing DCA files using the [`play_dca`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FVoice%2FVoiceBot%3Aplay_dca) method. (TODO: Add a section to the voice tutorial)
+- The [volume](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FVoice%2FVoiceBot%3Avolume) of a voice bot can now be changed during playback and not only for future playbacks.
+- A `Channel.prune` method was added to quickly delete lots of messages from a channel. (It appears that this is something lots of bots do.)
+- [`Server#members`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FServer%3Amembers) is now aliased to `users`.
+- An attribute [`Server#member_count`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FServer%3Amember_count) was added that is accurate even if chunked members have not been added yet.
+- An attribute [`Server#large?`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FServer%3Alarge) was added that is true if a server could possibly have an inaccurate list of members.
+- Some more specific error classes have been added to replace the RestClient generic ones.
+- Quickly sending a message using the `event << 'text'` syntax now works in every type of message event, not just commands.
+- You can now set the bitrate of sent audio data using `bot.voice.encoder.bitrate = 64000` (see [`Encoder#bitrate=`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb/Voice/Encoder#bitrate%3D-instance_method)). Note that sent audio data will always be unaffected by voice channel bitrate settings, those only tell the client at what bitrate it should send.
+- A rate limiting feature was added to commands - you can define buckets using the [`bucket`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FCommands%2FRateLimiter%3Abucket) method and use them as a parameter for [`command`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb%2FCommands%2FCommandContainer%3Acommand).
+  - A [`SimpleRateLimiter`](https://www.rubydoc.info/github/discordrb/discordrb/master/Discordrb/Commands/SimpleRateLimiter) class was also added if you want rate limiting independent from commands (e. g. for events)
+- Connecting to the WebSocket now uses an exponential falloff system so we don't spam Discord with requests anymore.
+- Debug timestamps are now accurate to milliseconds.
 
 ### Fixed
-* The token cacher will now detect whether a cached token has been invalidated due to a password change.
-* `break`ing from an event or command will no longer spew `LocalJumpError`s to the console.
+
+- The token cacher will now detect whether a cached token has been invalidated due to a password change.
+- `break`ing from an event or command will no longer spew `LocalJumpError`s to the console.
 
 ## [1.6.6] - 2016-02-13
+
 [1.6.6]: https://github.com/discordrb/discordrb/releases/tag/v1.6.6
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.6.5...v1.6.6)
 
 ### Fixed
-* Fixed a problem that would cause an incompatibility with Ruby 2.1
-* Fixed servers sometimes containing duplicate members
+
+- Fixed a problem that would cause an incompatibility with Ruby 2.1
+- Fixed servers sometimes containing duplicate members
 
 ## [1.6.5] - 2016-02-12
+
 [1.6.5]: https://github.com/discordrb/discordrb/releases/tag/v1.6.5
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.6.4...v1.6.5)
 
 ### Changed
-* The bot will now request the users that would previously be sent all in one READY packet in multiple chunks. This improves startup time slightly and ensures compatibility with the latest Discord change, but it also means that some users won't be in server members lists until a while after creation (usually a couple seconds at most).
+
+- The bot will now request the users that would previously be sent all in one READY packet in multiple chunks. This improves startup time slightly and ensures compatibility with the latest Discord change, but it also means that some users won't be in server members lists until a while after creation (usually a couple seconds at most).
 
 ## [1.6.4] - 2016-02-10
+
 [1.6.4]: https://github.com/discordrb/discordrb/releases/tag/v1.6.4
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.6.3...v1.6.4)
 
 ### Fixed
-* Fixed a bug that made the joining of servers using an invite impossible.
+
+- Fixed a bug that made the joining of servers using an invite impossible.
 
 ## [1.6.3] - 2016-02-08
+
 [1.6.3]: https://github.com/discordrb/discordrb/releases/tag/v1.6.3
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.6.2...v1.6.3)
 
 ### Fixed
-* Fixed a bug that prevented the banning of users over the API
+
+- Fixed a bug that prevented the banning of users over the API
 
 ## [1.6.2] - 2016-02-06
+
 [1.6.2]: https://github.com/discordrb/discordrb/releases/tag/v1.6.2
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.6.1...v1.6.2)
 
 ### Fixed
-* RbNaCl is now installed directly instead of the wrapper that also contains libsodium. This has the disadvantage that you will have to install libsodium manually but at least it's not broken on Windows anymore.
+
+- RbNaCl is now installed directly instead of the wrapper that also contains libsodium. This has the disadvantage that you will have to install libsodium manually but at least it's not broken on Windows anymore.
 
 ## [1.6.1] - 2016-02-04
+
 [1.6.1]: https://github.com/discordrb/discordrb/releases/tag/v1.6.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.6.0...v1.6.1)
 
 ### Changed
-* It's now possible to prevent the `READY` packet from being printed in debug mode, run `bot.suppress_ready_debug` once before the `bot.run` to do it.
+
+- It's now possible to prevent the `READY` packet from being printed in debug mode, run `bot.suppress_ready_debug` once before the `bot.run` to do it.
 
 ### Fixed
-* Token cache files with invalid JSON syntax will no longer crash the bot at login.
+
+- Token cache files with invalid JSON syntax will no longer crash the bot at login.
 
 ## [1.6.0] - 2016-02-01
+
 [1.6.0]: https://github.com/discordrb/discordrb/releases/tag/v1.6.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.5.4...v1.6.0)
 
 ### Added
-* The inline documentation using YARD was greatly improved and is now mostly usable, at least for the data classes and voice classes. It's still not complete enough to be released on GitHub, but you can build it yourself using [YARD](https://yardoc.org/).
-* It's now possible to encrypt sent voice data using an optional parameter in `voice_connect`. The encryption uses RbNaCl's [SecretBox](https://github.com/cryptosphere/rbnacl/wiki/Secret-Key-Encryption#algorithm-details) and is enabled by default.
-* The [new library comparison](https://discordapi.com/unofficial/comparison.html) is now fully supported, barring voice receive and multi-send: (#39)
-  * `bot.invite` will create an `Invite` object from a code containing information about it.
-  * `server.move(user, channel)` will move a user to a different voice channel.
-  * The events `bot.message_edit` and `bot.message_delete` are now available for message editing and deletion. Note that Discord doesn't provide the content of edited/deleted messages, so you'll have to implement message caching yourself if you really need it.
-  * The events `bot.user_ban` and `bot.user_unban` are now available for users getting banned/unbanned from servers.
-* A bot's name can now be sent using `bot.name=`. This data will be sent to Discord with the user-agent and it might be used for cool statistics in the future.
-* Discord server ownership transfer is now implemented using the writer `server.owner=`. (#41)
-* `CommandBot`s can now have command aliases by simply using an array of symbols as the command name.
-* A utility method `server.default_channel` was implemented that returns the default text channel of a server, usually called #general. (An alias `general_channel` is available too.)
-* Tokens will no longer appear in debug output, so you're safe sending output logs to other people.
-* A reader `server.owner` that returns the server's owner as a `User` was added. Previously, users had to manually get the `User` object using `bot.user`.
-* Most methods that accept IDs or data objects now also accept `Integer`s or `String`s containing the IDs now. This is implemented by adding a method `resolve_id` to all objects that could potentially contain an ID. (Note that this change is not complete yet and I might have missed some methods.) (#40)
-* The writer `server.afk_channel_id=` is now deprecated as its functionality is now covered by `server.afk_channel=`.
-* A new reader `user.avatar_url` was added that returns the full image URL to a user's avatar.
-* To avoid confusion with `avatar_url`, the reader `user.avatar` was renamed to `avatar_id`. (`user.avatar` still exists but is now deprecated.)
-* Symbols are now used instead of strings as hash keys in all methods that send JSON data to somewhere. This might improve performance slightly.
+
+- The inline documentation using YARD was greatly improved and is now mostly usable, at least for the data classes and voice classes. It's still not complete enough to be released on GitHub, but you can build it yourself using [YARD](https://yardoc.org/).
+- It's now possible to encrypt sent voice data using an optional parameter in `voice_connect`. The encryption uses RbNaCl's [SecretBox](https://github.com/cryptosphere/rbnacl/wiki/Secret-Key-Encryption#algorithm-details) and is enabled by default.
+- The [new library comparison](https://discordapi.com/unofficial/comparison.html) is now fully supported, barring voice receive and multi-send: (#39)
+  - `bot.invite` will create an `Invite` object from a code containing information about it.
+  - `server.move(user, channel)` will move a user to a different voice channel.
+  - The events `bot.message_edit` and `bot.message_delete` are now available for message editing and deletion. Note that Discord doesn't provide the content of edited/deleted messages, so you'll have to implement message caching yourself if you really need it.
+  - The events `bot.user_ban` and `bot.user_unban` are now available for users getting banned/unbanned from servers.
+- A bot's name can now be sent using `bot.name=`. This data will be sent to Discord with the user-agent and it might be used for cool statistics in the future.
+- Discord server ownership transfer is now implemented using the writer `server.owner=`. (#41)
+- `CommandBot`s can now have command aliases by simply using an array of symbols as the command name.
+- A utility method `server.default_channel` was implemented that returns the default text channel of a server, usually called #general. (An alias `general_channel` is available too.)
+- Tokens will no longer appear in debug output, so you're safe sending output logs to other people.
+- A reader `server.owner` that returns the server's owner as a `User` was added. Previously, users had to manually get the `User` object using `bot.user`.
+- Most methods that accept IDs or data objects now also accept `Integer`s or `String`s containing the IDs now. This is implemented by adding a method `resolve_id` to all objects that could potentially contain an ID. (Note that this change is not complete yet and I might have missed some methods.) (#40)
+- The writer `server.afk_channel_id=` is now deprecated as its functionality is now covered by `server.afk_channel=`.
+- A new reader `user.avatar_url` was added that returns the full image URL to a user's avatar.
+- To avoid confusion with `avatar_url`, the reader `user.avatar` was renamed to `avatar_id`. (`user.avatar` still exists but is now deprecated.)
+- Symbols are now used instead of strings as hash keys in all methods that send JSON data to somewhere. This might improve performance slightly.
 
 ### Fixed
-* Fixed the reader `server.afk_channel_id` not containing a value sometimes.
-* An issue was fixed where attempting to create a `Server` object from a stub server that didn't contain any role data would cause an exception.
-* The `Invite` `server` property will now be initialized directly from the invite data instead of the channel the invite is to, to prevent it being `nil` when the invite channel was stubbed.
-* The `inviter` of an `Invite` will now be `nil` instead of causing an exception when it doesn't exist in the invite data.
+
+- Fixed the reader `server.afk_channel_id` not containing a value sometimes.
+- An issue was fixed where attempting to create a `Server` object from a stub server that didn't contain any role data would cause an exception.
+- The `Invite` `server` property will now be initialized directly from the invite data instead of the channel the invite is to, to prevent it being `nil` when the invite channel was stubbed.
+- The `inviter` of an `Invite` will now be `nil` instead of causing an exception when it doesn't exist in the invite data.
 
 ## [1.5.4] - 2016-01-16
+
 [1.5.4]: https://github.com/discordrb/discordrb/releases/tag/v1.5.4
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.5.3...v1.5.4)
 
 ### Changed
-* The `opus-ruby` and `levenshtein` dependencies are now optional - if you don't need them, it won't crash immediately (only when you try to use voice / `find` with a threshold > 0, respectively)
+
+- The `opus-ruby` and `levenshtein` dependencies are now optional - if you don't need them, it won't crash immediately (only when you try to use voice / `find` with a threshold > 0, respectively)
 
 ### Fixed
-* Voice volume can now be properly set when using avconv (#37, thanks @purintai)
-* `websocket-client-simple`, which is required for voice, is now specified in the dependencies.
+
+- Voice volume can now be properly set when using avconv (#37, thanks @purintai)
+- `websocket-client-simple`, which is required for voice, is now specified in the dependencies.
 
 ## [1.5.3] - 2016-01-11
+
 [1.5.3]: https://github.com/discordrb/discordrb/releases/tag/v1.5.3
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.5.2...v1.5.3)
 
 ### Added
-* Voice bot length adjustments are now configurable using `bot.voice.adjust_interval` and `bot.voice.adjust_offset` (make sure the latter is less than the first, or no adjustment will be performed at all)
-* Length adjustments can now be made more smooth using `bot.voice.adjust_average` (true allows for more smooth adjustments, *may* improve stutteriness but might make it worse as well)
+
+- Voice bot length adjustments are now configurable using `bot.voice.adjust_interval` and `bot.voice.adjust_offset` (make sure the latter is less than the first, or no adjustment will be performed at all)
+- Length adjustments can now be made more smooth using `bot.voice.adjust_average` (true allows for more smooth adjustments, _may_ improve stutteriness but might make it worse as well)
 
 ## [1.5.2] - 2016-01-11
+
 [1.5.2]: https://github.com/discordrb/discordrb/releases/tag/v1.5.2
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.5.1...v1.5.2)
 
 ### Added
-* `bot.voice_connect` can now use a channel ID directly.
-* A reader `bot.volume` now exists for the corresponding writer.
-* The attribute `bot.encoder.use_avconv` was added that makes the bot use avconv instead of ffmpeg (for those on Ubuntu 14.x)
-* The PBKDF2 iteration count for token caching was increased to 300,000 for extra security.
+
+- `bot.voice_connect` can now use a channel ID directly.
+- A reader `bot.volume` now exists for the corresponding writer.
+- The attribute `bot.encoder.use_avconv` was added that makes the bot use avconv instead of ffmpeg (for those on Ubuntu 14.x)
+- The PBKDF2 iteration count for token caching was increased to 300,000 for extra security.
 
 ### Fixed
-* Fix a bug where `play_file` wouldn't properly accept string file paths (#36, thanks @purintai)
-* Fix a concurrency issue where `VoiceBot` would try to read from nil
+
+- Fix a bug where `play_file` wouldn't properly accept string file paths (#36, thanks @purintai)
+- Fix a concurrency issue where `VoiceBot` would try to read from nil
 
 ## [1.5.1] - 2016-01-10
+
 [1.5.1]: https://github.com/discordrb/discordrb/releases/tag/v1.5.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.5.0...v1.5.1)
 
 ### Added
-* The connection to voice was made more reliable. I haven't experienced any issues with it myself but I got reports where `recv` worked better than `recvmsg`.
+
+- The connection to voice was made more reliable. I haven't experienced any issues with it myself but I got reports where `recv` worked better than `recvmsg`.
 
 ## [1.5.0] - 2016-01-10
+
 [1.5.0]: https://github.com/discordrb/discordrb/releases/tag/v1.5.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.4.8...v1.5.0)
 
 ### Added
-* Voice support: discordrb can now connect to voice using `bot.voice_connect` and do the following things:
-  * Play files and URLs using `VoiceBot.play_file`
-  * Play arbitrary streams using `VoiceBot.play_io`
-  * Set the volume of future playbacks using `VoiceBot.volume=`
-  * Pause and resume playback (`VoiceBot.pause` and `VoiceBot.continue`)
-* Authentication tokens are now cached and no login request will be made if a cached token is found. This is mostly to reduce strain on Discord's servers.
+
+- Voice support: discordrb can now connect to voice using `bot.voice_connect` and do the following things:
+  - Play files and URLs using `VoiceBot.play_file`
+  - Play arbitrary streams using `VoiceBot.play_io`
+  - Set the volume of future playbacks using `VoiceBot.volume=`
+  - Pause and resume playback (`VoiceBot.pause` and `VoiceBot.continue`)
+- Authentication tokens are now cached and no login request will be made if a cached token is found. This is mostly to reduce strain on Discord's servers.
 
 ### Fixed
-* Some latent ID casting errors were fixed - those would probably never have been noticed anyway, but they're fixed now.
-* `Bot.parse_mention` now works, it didn't work at all previously
+
+- Some latent ID casting errors were fixed - those would probably never have been noticed anyway, but they're fixed now.
+- `Bot.parse_mention` now works, it didn't work at all previously
 
 ## [1.4.8] - 2016-01-06
+
 [1.4.8]: https://github.com/discordrb/discordrb/releases/tag/v1.4.8
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.4.7...v1.4.8)
 
 ### Added
-* The `User` class now has the methods `add_role` and `remove_role` which add a role to a user and remove it, respectively.
-* All data classes now have a useful `==` implementation.
-* **The `Game` class and all references to it were removed**. Games are now only identified by their name.
+
+- The `User` class now has the methods `add_role` and `remove_role` which add a role to a user and remove it, respectively.
+- All data classes now have a useful `==` implementation.
+- **The `Game` class and all references to it were removed**. Games are now only identified by their name.
 
 ### Fixed
-* When a role is deleted, the ID is now obtained correctly. (#30)
+
+- When a role is deleted, the ID is now obtained correctly. (#30)
 
 ## [1.4.7] - 2016-01-03
+
 [1.4.7]: https://github.com/discordrb/discordrb/releases/tag/v1.4.7
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.4.6...v1.4.7)
 
 ### Added
-* Presence event handling is now divided into two separate events; `PresenceEvent` to handle online/offline/idle statuses and `PlayingEvent` to handle users playing games.
-* The `user` property of `MessageEvent` is now automatically resolved to the cached user, so you can modify roles instantly without having to resolve it yourself.
-* `Message` now has a useful `to_s` method that just returns the content.
+
+- Presence event handling is now divided into two separate events; `PresenceEvent` to handle online/offline/idle statuses and `PlayingEvent` to handle users playing games.
+- The `user` property of `MessageEvent` is now automatically resolved to the cached user, so you can modify roles instantly without having to resolve it yourself.
+- `Message` now has a useful `to_s` method that just returns the content.
 
 ### Fixed
-* The `TypingEvent` `user` property is now initialized correctly (#29, thanks @purintai)
+
+- The `TypingEvent` `user` property is now initialized correctly (#29, thanks @purintai)
 
 ## [1.4.6] - 2015-12-25
+
 [1.4.6]: https://github.com/discordrb/discordrb/releases/tag/v1.4.6
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.4.4...v1.4.6)
 
 ### Fixed
-* The `user` and `server` properties of `PresenceEvent` are now initialized correctly.
+
+- The `user` and `server` properties of `PresenceEvent` are now initialized correctly.
 
 ## 1.4.5
+
 <!-- This was never tagged in the git repo -->
+
 ### Changed
-* The `Bot.game` property can now be set to an arbitrary string.
-* Discord mentions are handled in the old way again, after Discord reverted an API change.
+
+- The `Bot.game` property can now be set to an arbitrary string.
+- Discord mentions are handled in the old way again, after Discord reverted an API change.
 
 ## [1.4.4] - 2015-12-18
+
 [1.4.4]: https://github.com/discordrb/discordrb/releases/tag/v1.4.4
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.4.3...v1.4.4)
 
 ### Added
-* Add `Server.leave_server` as an alias for `delete_server`
-* Use the new Discord mention format (mentions array). **Reverted in 1.4.5**
-* Discord rate limited API calls are now handled correctly - discordrb will try again after the specified time.
-* Debug logging is now handled by a separate `Logger` class
+
+- Add `Server.leave_server` as an alias for `delete_server`
+- Use the new Discord mention format (mentions array). **Reverted in 1.4.5**
+- Discord rate limited API calls are now handled correctly - discordrb will try again after the specified time.
+- Debug logging is now handled by a separate `Logger` class
 
 ### Fixed
-* Message timestamps are now parsed correctly.
-* The quickadders for awaits (`User.await`, `Channel.await` etc.) now add the correct awaits.
+
+- Message timestamps are now parsed correctly.
+- The quickadders for awaits (`User.await`, `Channel.await` etc.) now add the correct awaits.
 
 ## [1.4.3] - 2015-12-11
+
 [1.4.3]: https://github.com/discordrb/discordrb/releases/tag/v1.4.3
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.4.2...v1.4.3)
 
 ### Added
-* Added a method `Bot.find_user` analogous to `Bot.find`.
+
+- Added a method `Bot.find_user` analogous to `Bot.find`.
 
 ### Fixed
-* Remove a leftover debug line (#23, thanks @VxJasonxV)
+
+- Remove a leftover debug line (#23, thanks @VxJasonxV)
 
 ## [1.4.2] - 2015-12-10
+
 [1.4.2]: https://github.com/discordrb/discordrb/releases/tag/v1.4.2
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.4.1...v1.4.2)
 
 ### Changed
-* discordrb will now send a user agent in the format requested by the Discord devs.
+
+- discordrb will now send a user agent in the format requested by the Discord devs.
 
 ## [1.4.1] - 2015-12-07
+
 [1.4.1]: https://github.com/discordrb/discordrb/releases/tag/v1.4.1
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.4.0...v1.4.1)
 
 ### Fixed
-* Empty messages will now never be sent
-* The command-not-found message in `CommandBot` can now be disabled properly
+
+- Empty messages will now never be sent
+- The command-not-found message in `CommandBot` can now be disabled properly
 
 ## [1.4.0] - 2015-12-04
+
 [1.4.0]: https://github.com/discordrb/discordrb/releases/tag/v1.4.0
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.3.12...v1.4.0)
 
 ### Added
-* All methods and classes where the words "colour" or "color" are used now have had aliases added with the respective other spelling. (Internally, everything uses "colour" now).
-* discordrb now supports everything on the Discord API comparison, except for voice (see also #22)
-  * Roles can now be created, edited and deleted and their permissions modified.
-  * There is now a method to get a channel's message history.
-  * The bot's user profile can now be edited.
-  * Servers can now be created, edited and deleted.
-  * The user can now display a "typing" message in a channel.
-  * Invites can now be created and deleted, and an `Invite` class was made to represent them.
-* Command and event handling is now threaded, with each command/event handler execution in a separate thread.
-* Debug messages now specify the current thread's name.
-* discordrb now handles created/updated/deleted servers properly with events added to handle them.
-* The list of games handled by Discord will now be updated automatically.
+
+- All methods and classes where the words "colour" or "color" are used now have had aliases added with the respective other spelling. (Internally, everything uses "colour" now).
+- discordrb now supports everything on the Discord API comparison, except for voice (see also #22)
+  - Roles can now be created, edited and deleted and their permissions modified.
+  - There is now a method to get a channel's message history.
+  - The bot's user profile can now be edited.
+  - Servers can now be created, edited and deleted.
+  - The user can now display a "typing" message in a channel.
+  - Invites can now be created and deleted, and an `Invite` class was made to represent them.
+- Command and event handling is now threaded, with each command/event handler execution in a separate thread.
+- Debug messages now specify the current thread's name.
+- discordrb now handles created/updated/deleted servers properly with events added to handle them.
+- The list of games handled by Discord will now be updated automatically.
 
 ### Fixed
-* Fixed a bug where command handling would crash if the command didn't exist.
+
+- Fixed a bug where command handling would crash if the command didn't exist.
 
 ## [1.3.12] - 2015-11-30
+
 [1.3.12]: https://github.com/discordrb/discordrb/releases/tag/v1.3.12
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.3.11...v1.3.12)
 
 ### Added
-* Add an attribute `Bot.should_parse_self` (false by default) that prevents the bot from raising an event if it receives a message from itself.
-* `User.bot?` and `Message.from_bot?` were implemented to check whether the user is the bot or the message was sent by it.
-* Add an event for private messages specifically (`Bot.pm` and `PrivateMessageEvent`)
+
+- Add an attribute `Bot.should_parse_self` (false by default) that prevents the bot from raising an event if it receives a message from itself.
+- `User.bot?` and `Message.from_bot?` were implemented to check whether the user is the bot or the message was sent by it.
+- Add an event for private messages specifically (`Bot.pm` and `PrivateMessageEvent`)
 
 ### Fixed
-* Fix the `MessageEvent` attribute that checks whether the message is from the bot not working at all.
+
+- Fix the `MessageEvent` attribute that checks whether the message is from the bot not working at all.
 
 ## [1.3.11] - 2015-11-29
+
 [1.3.11]: https://github.com/discordrb/discordrb/releases/tag/v1.3.11
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.3.10...v1.3.11)
 
 ### Added
-* Add a user selector (`:bot`) that is usable in the `from:` `MessageEvent` attribute to check whether the message was sent by a bot.
+
+- Add a user selector (`:bot`) that is usable in the `from:` `MessageEvent` attribute to check whether the message was sent by a bot.
 
 ### Fixed
-* `Channel.private?` now checks for the server being nil instead of the `is_private` attribute provided by Discord as the latter is unreliable. (wtf)
+
+- `Channel.private?` now checks for the server being nil instead of the `is_private` attribute provided by Discord as the latter is unreliable. (wtf)
 
 ## [1.3.10] - 2015-11-28
+
 [1.3.10]: https://github.com/discordrb/discordrb/releases/tag/v1.3.10
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.3.9...v1.3.10)
 
 ### Added
-* Add a method `Channel.private?` to check for a PM channel
-* Add a `MessageEvent` attribute (`:private`) to check whether a message was sent in a PM channel
-* Add various aliases to `MessageEvent` attributes
-* Allow regexes to check for strings in `MessageEvent` attributes
+
+- Add a method `Channel.private?` to check for a PM channel
+- Add a `MessageEvent` attribute (`:private`) to check whether a message was sent in a PM channel
+- Add various aliases to `MessageEvent` attributes
+- Allow regexes to check for strings in `MessageEvent` attributes
 
 ### Fixed
-* The `matches_all` method would break in certain edge cases. This didn't really affect discordrb and I don't think anyone else uses that method (it's pretty useless otherwise). This has been fixed
+
+- The `matches_all` method would break in certain edge cases. This didn't really affect discordrb and I don't think anyone else uses that method (it's pretty useless otherwise). This has been fixed
 
 ## [1.3.9] - 2015-11-27
+
 [1.3.9]: https://github.com/discordrb/discordrb/releases/tag/v1.3.9
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.3.8...v1.3.9)
 
 ### Added
-* Add awaits, a powerful way to add temporary event handlers.
-* Add a `Bot.find` method to fuzzy-search for channels.
-* Add methods to kick, ban and unban users.
+
+- Add awaits, a powerful way to add temporary event handlers.
+- Add a `Bot.find` method to fuzzy-search for channels.
+- Add methods to kick, ban and unban users.
 
 ### Fixed
-* Permission overrides now work correctly for private channels (i. e. they don't exist at all)
-* Users joining and leaving servers are now handled correctly.
+
+- Permission overrides now work correctly for private channels (i. e. they don't exist at all)
+- Users joining and leaving servers are now handled correctly.
 
 ## [1.3.8] - 2015-11-12
+
 [1.3.8]: https://github.com/discordrb/discordrb/releases/tag/v1.3.8
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.3.7...v1.3.8)
 
 ### Added
-* Added `Bot.users` and `Bot.servers` readers to get the list of users and servers.
+
+- Added `Bot.users` and `Bot.servers` readers to get the list of users and servers.
 
 ### Fixed
-* POST requests to API calls that don't need a payload will now send a `nil` payload instead. This fixes the bot being unable to join any servers and various other latent problems. (#21, thanks @davidkus)
+
+- POST requests to API calls that don't need a payload will now send a `nil` payload instead. This fixes the bot being unable to join any servers and various other latent problems. (#21, thanks @davidkus)
 
 ## [1.3.7] - 2015-11-07
+
 [1.3.7]: https://github.com/discordrb/discordrb/releases/tag/v1.3.7
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.3.6...v1.3.7)
 
 ### Fixed
-* Fix the command bot being included wrong, which caused crashes upon startup.
+
+- Fix the command bot being included wrong, which caused crashes upon startup.
 
 ## [1.3.6] - 2015-11-07
+
 [1.3.6]: https://github.com/discordrb/discordrb/releases/tag/v1.3.6
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.3.5...v1.3.6)
 
 ### Added
-* The bot can now be stopped from the script using the new method `Bot.stop`.
+
+- The bot can now be stopped from the script using the new method `Bot.stop`.
 
 ### Fixed
-* Fix some wrong file requires which caused crashes sometimes.
+
+- Fix some wrong file requires which caused crashes sometimes.
 
 ## [1.3.5] - 2015-11-07
+
 [1.3.5]: https://github.com/discordrb/discordrb/releases/tag/v1.3.5
 
 [View diff for this release.](https://github.com/discordrb/discordrb/compare/v1.3.4...v1.3.5)
 
 ### Added
-* The bot can now be run asynchronously using `Bot.run(:async)` to do further initialization after the bot was started.
+
+- The bot can now be run asynchronously using `Bot.run(:async)` to do further initialization after the bot was started.

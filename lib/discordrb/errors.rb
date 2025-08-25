@@ -45,7 +45,7 @@ module Discordrb
       end
 
       # @return [String] A message including the message and flattened errors.
-      def full_message
+      def full_message(*)
         error_list = @errors.collect { |err| "\t- #{err}" }
 
         "#{@message}\n#{error_list.join("\n")}"
@@ -73,7 +73,7 @@ module Discordrb
           if (errs = sub_err['_errors'])
             "#{key}: #{errs.map { |e| e['message'] }.join(' ')}"
           elsif sub_err['message'] || sub_err['code']
-            "#{sub_err['code'] ? "#{sub_err['code']}: " : nil}#{err_msg}"
+            "#{"#{sub_err['code']}: " if sub_err['code']}#{err_msg}"
           elsif sub_err.is_a? String
             sub_err
           else
@@ -173,6 +173,9 @@ module Discordrb
 
     # Unauthorized
     Unauthorized = Unauthorised = Code(40_001)
+
+    # Unable to bulk ban any users
+    UnableToBulkBanUsers = Code(500_000)
 
     # Missing Access
     MissingAccess = Code(50_001)

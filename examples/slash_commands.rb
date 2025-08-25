@@ -2,16 +2,16 @@
 
 require 'discordrb'
 
-bot = Discordrb::Bot.new(token: ENV['SLASH_COMMAND_BOT_TOKEN'], intents: [:server_messages])
+bot = Discordrb::Bot.new(token: ENV.fetch('SLASH_COMMAND_BOT_TOKEN', nil), intents: [:server_messages])
 
-# We need to register our application comomands separately from the handlers with a special DSL.
+# We need to register our application commands separately from the handlers with a special DSL.
 # This example uses server specific commands so that they appear immediately for testing,
 # but you can omit the server_id as well to register a global command that can take up to an hour
 # to appear.
 #
 # You may want to have a separate script for registering your commands so you don't need to do this every
 # time you start your bot.
-bot.register_application_command(:example, 'Example commands', server_id: ENV['SLASH_COMMAND_BOT_SERVER_ID']) do |cmd|
+bot.register_application_command(:example, 'Example commands', server_id: ENV.fetch('SLASH_COMMAND_BOT_SERVER_ID', nil)) do |cmd|
   cmd.subcommand_group(:fun, 'Fun things!') do |group|
     group.subcommand('8ball', 'Shake the magic 8 ball') do |sub|
       sub.string('question', 'Ask a question to receive wisdom', required: true)
@@ -26,10 +26,14 @@ bot.register_application_command(:example, 'Example commands', server_id: ENV['S
     end
 
     group.subcommand('button-test', 'Test a button!')
+
+    group.subcommand('methods', 'Available methods!') do |sub|
+      sub.string('method', 'The method to search for', autocomplete: true, required: true)
+    end
   end
 end
 
-bot.register_application_command(:spongecase, 'Are you mocking me?', server_id: ENV['SLASH_COMMAND_BOT_SERVER_ID']) do |cmd|
+bot.register_application_command(:spongecase, 'Are you mocking me?', server_id: ENV.fetch('SLASH_COMMAND_BOT_SERVER_ID', nil)) do |cmd|
   cmd.string('message', 'Message to spongecase')
   cmd.boolean('with_picture', 'Show the mocking sponge?')
 end
@@ -51,6 +55,10 @@ bot.application_command(:example).group(:fun) do |group|
       ```
       _#{wisdom}_
     STR
+  end
+
+  group.subcommand(:methods) do |event|
+    event.respond(content: "You picked the method #{event.options['method']}!")
   end
 
   group.subcommand(:java) do |event|
@@ -107,6 +115,27 @@ end
 
 bot.select_menu(custom_id: 'test_select') do |event|
   event.respond(content: "You selected: #{event.values.join(', ')}")
+end
+
+# The name of the parameter with autocomplete enabled is given as the first
+# positional argument to the handler. Other parameters such as command_name
+# and command_id can be passed normally as a hash of attributes.
+bot.autocomplete(:method) do |event|
+  methods = ([].methods + {}.methods + ''.methods + 1.methods).map(&:to_s)
+
+  # The currently focused choice is an empty string if the user hasn't
+  # inputed anything yet.
+  option = event.options['method']
+
+  methods.select! do |method|
+    method.include?(option) || method.start_with?(option) || false
+  end
+
+  # `#choices` returns an empty hash that you can use during proccessing
+  # in order to create K/V pairs that you can then return to the user.
+  methods&.first(25)&.each { |method| event.choices[method] = method }
+
+  event.respond(choices: event.choices)
 end
 
 bot.run

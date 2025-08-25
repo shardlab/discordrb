@@ -75,8 +75,8 @@ module Discordrb::API::Channel
   # https://discord.com/developers/docs/resources/channel#create-message
   # @param attachments [Array<File>, nil] Attachments to use with `attachment://` in embeds. See
   #   https://discord.com/developers/docs/resources/channel#create-message-using-attachments-within-embeds
-  def create_message(token, channel_id, message, tts = false, embed = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-    body = { content: message, tts: tts, embed: embed, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a }
+  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil, enforce_nonce = false)
+    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags, enforce_nonce: enforce_nonce }
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h
              { **files, payload_json: body.to_json }
@@ -117,13 +117,13 @@ module Discordrb::API::Channel
 
   # Edit a message
   # https://discord.com/developers/docs/resources/channel#edit-message
-  def edit_message(token, channel_id, message_id, message, mentions = [], embed = nil, components = nil)
+  def edit_message(token, channel_id, message_id, message, mentions = [], embeds = nil, components = nil, flags = nil)
     Discordrb::API.request(
       :channels_cid_messages_mid,
       channel_id,
       :patch,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}",
-      { content: message, mentions: mentions, embed: embed, components: components }.to_json,
+      { content: message, mentions: mentions, embeds: embeds, components: components, flags: flags }.reject { |_, v| v == :undef }.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -139,6 +139,18 @@ module Discordrb::API::Channel
       "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}",
       Authorization: token,
       'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Crosspost a message
+  # https://discord.com/developers/docs/resources/message#crosspost-message
+  def crosspost_message(token, channel_id, message_id)
+    Discordrb::API.request(
+      :channels_cid_messages_mid,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/crosspost",
+      Authorization: token
     )
   end
 
@@ -224,6 +236,20 @@ module Discordrb::API::Channel
     )
   end
 
+  # Deletes all the reactions for a given emoji on a message
+  # https://discord.com/developers/docs/resources/channel#delete-all-reactions-for-emoji
+  def delete_all_emoji_reactions(token, channel_id, message_id, emoji)
+    emoji = URI.encode_www_form_component(emoji) unless emoji.ascii_only?
+
+    Discordrb::API.request(
+      :channels_cid_messages_mid_reactions_emoji,
+      channel_id,
+      :delete,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/reactions/#{emoji}",
+      Authorization: token
+    )
+  end
+
   # Update a channels permission for a role or member
   # https://discord.com/developers/docs/resources/channel#edit-channel-permissions
   def update_permission(token, channel_id, overwrite_id, allow, deny, type, reason = nil)
@@ -293,25 +319,26 @@ module Discordrb::API::Channel
   end
 
   # Get a list of pinned messages in a channel
-  # https://discord.com/developers/docs/resources/channel#get-pinned-messages
-  def pinned_messages(token, channel_id)
+  # https://discord.com/developers/docs/resources/message#get-channel-pins
+  def pinned_messages(token, channel_id, limit = 50, before = nil)
+    query = URI.encode_www_form({ limit: limit, before: before }.compact)
     Discordrb::API.request(
       :channels_cid_pins,
       channel_id,
       :get,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/pins",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/pins?#{query}",
       Authorization: token
     )
   end
 
   # Pin a message
-  # https://discord.com/developers/docs/resources/channel#add-pinned-channel-message
+  # https://discord.com/developers/docs/resources/message#pin-message
   def pin_message(token, channel_id, message_id, reason = nil)
     Discordrb::API.request(
       :channels_cid_pins_mid,
       channel_id,
       :put,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/pins/#{message_id}",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/pins/#{message_id}",
       nil,
       Authorization: token,
       'X-Audit-Log-Reason': reason
@@ -319,13 +346,13 @@ module Discordrb::API::Channel
   end
 
   # Unpin a message
-  # https://discord.com/developers/docs/resources/channel#delete-pinned-channel-message
+  # https://discord.com/developers/docs/resources/message#unpin-message
   def unpin_message(token, channel_id, message_id, reason = nil)
     Discordrb::API.request(
       :channels_cid_pins_mid,
       channel_id,
       :delete,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/pins/#{message_id}",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/pins/#{message_id}",
       Authorization: token,
       'X-Audit-Log-Reason': reason
     )

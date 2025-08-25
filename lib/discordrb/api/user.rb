@@ -28,8 +28,8 @@ module Discordrb::API::User
     )
   end
 
-  # Change the current bot's nickname on a server
-  # https://discord.com/developers/docs/resources/user#modify-current-user
+  # @deprecated Please use {Discordrb::API::Server.update_current_member} instead.
+  # https://discord.com/developers/docs/resources/user#modify-current-user-nick
   def change_own_nickname(token, server_id, nick, reason = nil)
     Discordrb::API.request(
       :guilds_sid_members_me_nick,
@@ -132,9 +132,14 @@ module Discordrb::API::User
     )
   end
 
-  # Returns one of the "default" discord avatars from the CDN given a discriminator
-  def default_avatar(discrim = 0)
-    index = discrim.to_i % 5
+  # Returns one of the "default" discord avatars from the CDN given a discriminator or id since new usernames
+  # TODO: Maybe change this method again after discriminator removal ?
+  def default_avatar(discrim_id = 0, legacy: false)
+    index = if legacy
+              discrim_id.to_i % 5
+            else
+              (discrim_id.to_i >> 22) % 5
+            end
     "#{Discordrb::API.cdn_url}/embed/avatars/#{index}.png"
   end
 
@@ -146,5 +151,15 @@ module Discordrb::API::User
                  'webp'
                end
     "#{Discordrb::API.cdn_url}/avatars/#{user_id}/#{avatar_id}.#{format}"
+  end
+
+  # Make a banner URL from the user and banner IDs
+  def banner_url(user_id, banner_id, format = nil)
+    format ||= if banner_id.start_with?('a_')
+                 'gif'
+               else
+                 'png'
+               end
+    "#{Discordrb::API.cdn_url}/banners/#{user_id}/#{banner_id}.#{format}"
   end
 end
