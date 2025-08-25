@@ -228,18 +228,6 @@ module Discordrb::API
     "#{cdn_url}/app-assets/#{application_id}/achievements/#{achievement_id}/icons/#{icon_hash}.#{format}"
   end
 
-  # Login to the server
-  def login(email, password)
-    request(
-      :auth_login,
-      nil,
-      :post,
-      "#{api_base}/auth/login",
-      email: email,
-      password: password
-    )
-  end
-
   # @param role_id [String, Integer]
   # @param icon_hash [String]
   # @param format ['webp', 'png', 'jpeg']
@@ -262,10 +250,10 @@ module Discordrb::API
   def server_tag_badge_url(server_id, badge_id, format = 'webp')
     "#{cdn_url}/guild-tag-badges/#{server_id}/#{badge_id}.#{format}"
   end
-  
-  # Make a cover URL for a Scheduled Event.
-  def scheduled_event_cover_url(scheduled_event_id, image_hash, format = 'webp')
-    "#{cdn_url}/guild-events/#{scheduled_event_id}/#{image_hash}.#{format}"
+
+  # make a scheduled event cover URL from a scheduled event ID and a cover ID.
+  def scheduled_event_cover_url(scheduled_event_id, cover_id, format = 'webp')
+    "#{cdn_url}/guild-events/#{scheduled_event_id}/#{cover_id}.#{format}"
   end
 
   # Create an OAuth application

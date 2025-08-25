@@ -1168,6 +1168,18 @@ module Discordrb
       server.update_emoji_data(data)
     end
 
+    # Internal handler for GUILD_SCHEDULED_EVENT_CREATE and GUILD_SCHEDULED_EVENT_DELETE
+    def update_guild_scheduled_event(data)
+      server = self.server(data['guild_id'].to_i)
+      event = server&.scheduled_event(data['id'].to_i, request: false)
+
+      if event
+        event.from_other(data)
+      else
+        server&.cache_scheduled_event(ScheduledEvent.new(data, server, self))
+      end
+    end
+
     # Internal handler for MESSAGE_CREATE
     def create_message(data); end
 
@@ -1671,22 +1683,25 @@ module Discordrb
         event = ThreadMembersUpdateEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_CREATE
-        # TODO: Add a method here to update the cached scheduled events on the given server.
-        event = ServerScheduledEventCreateEvent.new(data, self)
+        update_guild_scheduled_event(data)
+
+        event = ScheduledEventCreateEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_UPDATE
-        # TODO: Add a method here to update the cached scheduled events on the given server.
-        event = ServerScheduledEventUpdateEvent.new(data, self)
+        update_guild_scheduled_event(data)
+
+        event = ScheduledEventUpdateEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_DELETE
-        # TODO: Add a method here to update the cached scheduled events on the given server.
-        event = ServerScheduledEventDeleteEvent.new(data, self)
+        self.server(data['guild_id'].to_i).delete_scheduled_event(data['id'].to_i)
+
+        event = ScheduledEventDeleteEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_USER_ADD
-        event = ServerScheduledEventUserAddEvent.new(data, self)
+        event = ScheduledEventUserAddEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_USER_REMOVE
-        event = ServerScheduledEventUserRemoveEvent.new(data, self)
+        event = ScheduledEventUserRemoveEvent.new(data, self)
         raise_event(event)
       else
         # another event that we don't support yet
