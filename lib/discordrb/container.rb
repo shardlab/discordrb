@@ -14,6 +14,7 @@ require 'discordrb/events/await'
 require 'discordrb/events/bans'
 require 'discordrb/events/reactions'
 require 'discordrb/events/interactions'
+require 'discordrb/events/scheduled_events'
 
 require 'discordrb/await'
 
@@ -451,6 +452,59 @@ module Discordrb
     # @return [ServerRoleUpdateEventHandler] the event handler that was registered.
     def server_role_update(attributes = {}, &block)
       register_event(ServerRoleUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised when a scheduled event is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server ID.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerScheduledEventCreateEvent] The event that was raised.
+    # @return [ServerScheduledEventCreateEventHandler] the event handler that was registered.
+    def server_scheduled_event_create(attributes = {}, &block)
+      register_event(ServerScheduledEventCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised when a scheduled event is updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server ID.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerScheduledEventUpdateEvent] The event that was raised.
+    # @return [ServerScheduledEventUpdateEventHandler] the event handler that was registered.
+    def server_scheduled_event_update(attributes = {}, &block)
+      register_event(ServerScheduledEventUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised when a scheduled event is deleted.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server ID.
+    # @option attributes [String, Integer] :id Matches the scheduled event ID.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerScheduledEventDeleteEvent] The event that was raised.
+    # @return [ServerScheduledEventDeleteEventHandler] the event handler that was registered.
+    def server_scheduled_event_delete(attributes = {}, &block)
+      register_event(ServerScheduledEventDeleteEvent, attributes, block)
+    end
+
+    # This **event** is raised when a user is added to a scheduled event.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server ID.
+    # @option attributes [String, Integer] :id Matches the scheduled event ID.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerScheduledEventUserAddEvent] The event that was raised.
+    # @return [ServerScheduledEventUserAddEventHandler] the event handler that was registered.
+    def server_scheduled_event_user_add(attributes = {}, &block)
+      register_event(ServerScheduledEventUserAddEvent, attributes, block)
+    end
+
+    # This **event** is raised when a user is removed from a scheduled event.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server ID.
+    # @option attributes [String, Integer] :id Matches the scheduled event ID.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerScheduledEventUserRemoveEvent] The event that was raised.
+    # @return [ServerScheduledEventUserRemoveEventHandler] the event handler that was registered.
+    def server_scheduled_event_user_remove(attributes = {}, &block)
+      register_event(ServerScheduledEventUserRemoveEvent, attributes, block)
     end
 
     # This **event** is raised when a webhook is updated.
