@@ -343,15 +343,17 @@ module Discordrb
     # Returns the list of users who reacted with a certain reaction.
     # @param reaction [String, #to_reaction] the unicode emoji or {Emoji}
     # @param limit [Integer] the limit of how many users to retrieve. `nil` will return all users
+    # @param type [Integer, Symbol] the type of reaction to get. See {Reaction::TYPES}
     # @example Get all the users that reacted with a thumbs up.
     #   thumbs_up_reactions = message.reacted_with("\u{1F44D}")
     # @return [Array<User>] the users who used this reaction
-    def reacted_with(reaction, limit: 100)
+    def reacted_with(reaction, limit: 100, type: :normal)
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
       reaction = reaction.to_s if reaction.respond_to?(:to_s)
+      type = Reaction::TYPES[type] || type
 
       get_reactions = proc do |fetch_limit, after_id = nil|
-        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit)
+        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit, type)
         JSON.parse(resp).map { |d| User.new(d, @bot) }
       end
 
