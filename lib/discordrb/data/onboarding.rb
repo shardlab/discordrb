@@ -30,6 +30,12 @@ module Discordrb
       from_other(data)
     end
 
+    # Get a string that will mention the Channels & Roles tab.
+    # @return [String] a string that can be used to mention the onboarding flow.
+    def mention
+      '<id:customize>'
+    end
+
     # @return [true, false] whether the onboarding mode only counts default channels towards constraints.
     def default_mode?
       @mode == MODES[:default]
