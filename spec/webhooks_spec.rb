@@ -94,7 +94,7 @@ describe Discordrb::Webhooks do
         client = described_class.new(id: id, token: token)
         url = client.instance_variable_get(:@url)
 
-        expect(url).to eq "https://discord.com/api/v8/webhooks/#{id}/#{token}"
+        expect(url).to eq "https://discord.com/api/v9/webhooks/#{id}/#{token}"
       end
 
       it 'takes a provided url' do
@@ -116,12 +116,15 @@ describe Discordrb::Webhooks do
       end
 
       it 'takes a default builder' do
-        expect { |b| subject.execute(default_builder, &b) }.to yield_with_args(default_builder)
+        expect { |b| subject.execute(default_builder, &b) }.to yield_with_args(default_builder, instance_of(Discordrb::Webhooks::View))
       end
 
       context 'when a builder is not provided' do
         it 'creates a new builder if none is provided' do
-          expect { |b| subject.execute(&b) }.to yield_with_args(instance_of(Discordrb::Webhooks::Builder))
+          expect { |b| subject.execute(&b) }.to yield_with_args(
+            instance_of(Discordrb::Webhooks::Builder),
+            instance_of(Discordrb::Webhooks::View)
+          )
         end
       end
 
@@ -131,7 +134,7 @@ describe Discordrb::Webhooks do
 
           subject.execute(default_builder)
 
-          expect(subject).to have_received(:post_multipart).with(default_builder, anything)
+          expect(subject).to have_received(:post_multipart).with(default_builder, any_args)
         end
       end
 
@@ -139,7 +142,7 @@ describe Discordrb::Webhooks do
         it 'POSTs json data' do
           subject.execute(default_builder)
 
-          expect(subject).to have_received(:post_json).with(default_builder, anything)
+          expect(subject).to have_received(:post_json).with(default_builder, any_args)
         end
       end
     end
@@ -224,35 +227,37 @@ describe Discordrb::Webhooks do
       end
 
       it 'makes a POST request with JSON data' do
-        subject.__send__(:post_json, builder, false)
+        subject.__send__(:post_json, builder, [], false)
 
-        expect(RestClient).to have_received(:post).with(provided_url, builder.to_json_hash.to_json, content_type: :json)
+        expect(RestClient).to have_received(:post).with(provided_url, builder.to_json_hash.merge({ components: [] }).to_json, content_type: :json)
       end
 
       it 'waits when wait=true' do
-        subject.__send__(:post_json, builder, true)
+        subject.__send__(:post_json, builder, [], true)
 
         expect(provided_url).to have_received(:+).with('?wait=true')
       end
     end
 
     describe '#post_multipart' do
+      let(:post_data) { instance_double(Hash) }
       let(:multipart_hash) { instance_double(Hash) }
       let(:builder) { instance_double(Discordrb::Webhooks::Builder, to_multipart_hash: multipart_hash) }
 
       before do
         allow(RestClient).to receive(:post).with(any_args)
         allow(provided_url).to receive(:+).with(anything).and_return(provided_url)
+        allow(multipart_hash).to receive(:merge).with(instance_of(Hash)).and_return(post_data)
       end
 
       it 'makes a POST request with multipart data' do
-        subject.__send__(:post_multipart, builder, false)
+        subject.__send__(:post_multipart, builder, [], false)
 
-        expect(RestClient).to have_received(:post).with(provided_url, multipart_hash)
+        expect(RestClient).to have_received(:post).with(provided_url, post_data)
       end
 
       it 'waits for a response when wait=true' do
-        subject.__send__(:post_multipart, builder, true)
+        subject.__send__(:post_multipart, builder, [], true)
 
         expect(provided_url).to have_received(:+).with('?wait=true')
       end

@@ -31,8 +31,8 @@ describe Discordrb::Permissions do
       it 'sets an attribute for each flag' do
         expect(
           [
-            subject.instance_variable_get('@foo'),
-            subject.instance_variable_get('@bar')
+            subject.instance_variable_get(:@foo),
+            subject.instance_variable_get(:@bar)
           ]
         ).to eq [false, false]
       end

@@ -3,6 +3,19 @@
 module Discordrb
   # Mixin for the attributes members and private members should have
   module MemberAttributes
+    # Map of server member flags
+    MEMBER_FLAGS = {
+      rejoined: 1 << 0,
+      completed_onboarding: 1 << 1,
+      bypassed_verification: 1 << 2,
+      started_onboarding: 1 << 3,
+      guest: 1 << 4,
+      started_home_actions: 1 << 5,
+      completed_home_actions: 1 << 6,
+      automod_quarantined_username: 1 << 7,
+      dm_settings_upsell_acknowledged: 1 << 9
+    }.freeze
+
     # @return [Time] when this member joined the server.
     attr_reader :joined_at
 
@@ -18,6 +31,48 @@ module Discordrb
 
     # @return [Server] the server this member is on.
     attr_reader :server
+
+    # @return [Time] When the user's timeout will expire.
+    attr_reader :communication_disabled_until
+    alias_method :timeout, :communication_disabled_until
+
+    # @return [Integer] the flags set on this member.
+    attr_reader :flags
+
+    # @return [true, false] whether the member has not yet passed the server's membership screening requirements.
+    attr_reader :pending
+    alias_method :pending?, :pending
+
+    # @return [String, nil] the ID of this user's current avatar, can be used to generate a server avatar URL.
+    # @see #server_avatar_url
+    attr_reader :server_avatar_id
+
+    # @return [String, nil] the ID of this user's current server banner, can be used to generate a banner URL.
+    # @see #server_banner_url
+    attr_reader :server_banner_id
+
+    # @return [AvatarDecoration, nil] the user's current server avatar decoration, or nil for no server avatar decoration.
+    attr_reader :server_avatar_decoration
+
+    # Utility method to get a member's server avatar URL.
+    # @param format [String, nil] If `nil`, the URL will default to `webp` for static avatars, and will detect if the member has a `gif` avatar. You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this.
+    # @return [String, nil] the URL to the avatar image, or nil if the member doesn't have one.
+    def server_avatar_url(format = nil)
+      API::Server.avatar_url(@server_id, @user.id, @server_avatar_id, format) if @server_avatar_id
+    end
+
+    # Utility method to get a member's server banner URL.
+    # @param format [String, nil] If `nil`, the URL will default to `webp` for static banners, and will detect if the member has a `gif` banner. You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this.
+    # @return [String, nil] the URL to the banner image, or nil if the member doesn't have one.
+    def server_banner_url(format = nil)
+      API::Server.banner_url(@server_id, @user.id, @server_banner_id, format) if @server_banner_id
+    end
+
+    MEMBER_FLAGS.each do |name, value|
+      define_method("#{name}?") do
+        @flags.anybits?(value)
+      end
+    end
   end
 
   # A member is a user on a server. It differs from regular users in that it has roles, voice statuses and things like
@@ -60,7 +115,7 @@ module Discordrb
       @bot = bot
 
       @user = bot.ensure_user(data['user'])
-      super @user # Initialize the delegate class
+      super(@user) # Initialize the delegate class
 
       @server = server
       @server_id = server&.id || data['guild_id'].to_i
@@ -70,6 +125,14 @@ module Discordrb
       @nick = data['nick']
       @joined_at = data['joined_at'] ? Time.parse(data['joined_at']) : nil
       @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
+      timeout_until = data['communication_disabled_until']
+      @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
+      @permissions = Permissions.new(data['permissions']) if data['permissions']
+      @server_avatar_id = data['avatar']
+      @server_banner_id = data['banner']
+      @flags = data['flags'] || 0
+      @pending = data.key?('pending') ? data['pending'] : false
+      @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
     end
 
     # @return [Server] the server this member is on.
@@ -108,13 +171,31 @@ module Discordrb
     # @return [true, false] whether this member has the specified role.
     def role?(role)
       role = role.resolve_id
-      @role_ids.any?(role)
+      roles.any?(role)
     end
 
     # @see Member#set_roles
     def roles=(role)
       set_roles(role)
     end
+
+    # Check if the current user has communication disabled.
+    # @return [true, false]
+    def communication_disabled?
+      !@communication_disabled_until.nil? && @communication_disabled_until > Time.now
+    end
+
+    alias_method :timeout?, :communication_disabled?
+
+    # Set a user's timeout duration, or remove it by setting the timeout to `nil`.
+    # @param timeout_until [Time, nil] When the timeout will end.
+    def communication_disabled_until=(timeout_until)
+      raise ArgumentError, 'A time out cannot exceed 28 days' if timeout_until && timeout_until > (Time.now + 2_419_200)
+
+      API::Server.update_member(@bot.token, @server_id, @user.id, communication_disabled_until: timeout_until&.iso8601)
+    end
+
+    alias_method :timeout=, :communication_disabled_until=
 
     # Bulk sets a member's roles.
     # @param role [Role, Array<Role>] The role(s) to set.
@@ -135,7 +216,7 @@ module Discordrb
     def modify_roles(add, remove, reason = nil)
       add_role_ids = role_id_array(add)
       remove_role_ids = role_id_array(remove)
-      old_role_ids = @role_ids
+      old_role_ids = resolve_role_ids
       new_role_ids = (old_role_ids - remove_role_ids + add_role_ids).uniq
 
       API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
@@ -147,10 +228,10 @@ module Discordrb
     def add_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.count == 1
+      if role_ids.count.one?
         API::Server.add_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
-        old_role_ids = @role_ids
+        old_role_ids = resolve_role_ids
         new_role_ids = (old_role_ids + role_ids).uniq
         API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
       end
@@ -162,10 +243,10 @@ module Discordrb
     def remove_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.count == 1
+      if role_ids.count.one?
         API::Server.remove_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
-        old_role_ids = @role_ids
+        old_role_ids = resolve_role_ids
         new_role_ids = old_role_ids.reject { |i| role_ids.include?(i) }
         API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
       end
@@ -222,10 +303,11 @@ module Discordrb
     end
 
     # Bans this member from the server.
-    # @param message_days [Integer] How many days worth of messages sent by the member should be deleted.
+    # @param message_days [Integer] How many days worth of messages sent by the member should be deleted. This parameter is deprecated and will be removed in 4.0.
+    # @param message_seconds [Integer] How many seconds worth of messages sent by the member should be deleted.
     # @param reason [String] The reason this member is being banned.
-    def ban(message_days = 0, reason: nil)
-      server.ban(@user, message_days, reason: reason)
+    def ban(message_days = 0, message_seconds: nil, reason: nil)
+      server.ban(@user, message_days, message_seconds: message_seconds, reason: reason)
     end
 
     # Unbans this member from the server.
@@ -252,21 +334,41 @@ module Discordrb
     # @param nick [String, nil] The string to set the nickname to, or nil if it should be reset.
     # @param reason [String] The reason the user's nickname is being changed.
     def set_nick(nick, reason = nil)
-      # Discord uses the empty string to signify 'no nickname' so we convert nil into that
-      nick ||= ''
-
       if @user.current_bot?
-        API::User.change_own_nickname(@bot.token, @server_id, nick, reason)
+        API::Server.update_current_member(@bot.token, @server_id, nick, reason)
       else
-        API::Server.update_member(@bot.token, @server_id, @user.id, nick: nick, reason: nil)
+        API::Server.update_member(@bot.token, @server_id, @user.id, nick: nick, reason: reason)
       end
     end
 
     alias_method :set_nickname, :set_nick
 
-    # @return [String] the name the user displays as (nickname if they have one, username otherwise)
+    # @return [String] the name the user displays as (nickname if they have one, global_name if they have one, username otherwise)
     def display_name
-      nickname || username
+      nickname || global_name || username
+    end
+
+    # @param format [String, nil] If `nil`, the URL will default to `webp` for static avatars, and will detect if the member has a `gif` avatar. You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this.
+    # @return [String, nil] the avatar that the user has displayed (server avatar if they have one, user avatar if they have one, nil otherwise)
+    def display_avatar_url(format = nil)
+      server_avatar_url(format) || avatar_url(format)
+    end
+
+    # @param format [String, nil] If `nil`, the URL will default to `webp` for static banners, and will detect if the member has a `gif` banner. You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this.
+    # @return [String, nil] the banner that the user has displayed (server banner if they have one, user banner if they have one, nil otherwise)
+    def display_banner_url(format = nil)
+      server_banner_url(format) || banner_url(format)
+    end
+
+    # @return [AvatarDecoration, nil] the avatar decoration that the user displays (server avatar decoration if they have one, user avatar decoration if they have one, nil otherwise)
+    def display_avatar_decoration
+      server_avatar_decoration || avatar_decoration
+    end
+
+    # Set the flags for this member.
+    # @param flags [Integer, nil] The new bitwise value of flags for this member, or nil.
+    def flags=(flags)
+      API::Server.update_member(@bot.token, @server_id, @user.id, flags: flags)
     end
 
     # Update this member's roles
@@ -296,16 +398,45 @@ module Discordrb
       @boosting_since = time
     end
 
+    # @!visibility private
+    def update_communication_disabled_until(time)
+      time = time ? Time.parse(time) : nil
+      @communication_disabled_until = time
+    end
+
     # Update this member
     # @note For internal use only.
     # @!visibility private
     def update_data(data)
       update_roles(data['roles']) if data['roles']
-      update_nick(data['nick']) if data.key?('nick')
+      @nick = data['nick'] if data.key?('nick')
       @mute = data['mute'] if data.key?('mute')
       @deaf = data['deaf'] if data.key?('deaf')
+      @server_avatar_id = data['avatar'] if data.key?('avatar')
+      @server_banner_id = data['banner'] if data.key?('banner')
+      @flags = data['flags'] if data.key?('flags')
+      @pending = data['pending'] if data.key?('pending')
 
       @joined_at = Time.parse(data['joined_at']) if data['joined_at']
+
+      if data.key?('communication_disabled_until')
+        timeout_until = data['communication_disabled_until']
+        @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
+      end
+
+      if data.key('premium_since')
+        @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
+      end
+
+      if (user = data['user'])
+        @user.update_global_name(user['global_name']) if user['global_name']
+        @user.avatar_id = user['avatar'] if user.key('avatar')
+        @user.update_avatar_decoration(user['avatar_decoration_data']) if user.key?('avatar_decoration_data')
+        @user.update_collectibles(user['collectibles']) if user.key?('collectibles')
+        @user.update_primary_server(user['primary_guild']) if user.key?('primary_guild')
+      end
+
+      @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data']) if data.key?('avatar_decoration_data')
     end
 
     include PermissionCalculator
@@ -330,6 +461,10 @@ module Discordrb
     def voice_state_attribute(name)
       voice_state = server.voice_states[@user.id]
       voice_state&.send name
+    end
+
+    def resolve_role_ids
+      @roles ? @roles.collect(&:id) : @role_ids
     end
   end
 end

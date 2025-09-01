@@ -21,8 +21,8 @@ module Discordrb
 
       @channels = {}
       @pm_channels = {}
-
-      @restricted_channels = []
+      @thread_members = {}
+      @server_previews = {}
     end
 
     # Returns or caches the available voice regions
@@ -42,28 +42,21 @@ module Discordrb
     # @param id [Integer] The channel ID for which to search for.
     # @param server [Server] The server for which to search the channel for. If this isn't specified, it will be
     #   inferred using the API
-    # @return [Channel] The channel identified by the ID.
+    # @return [Channel, nil] The channel identified by the ID.
+    # @raise Discordrb::Errors::NoPermission
     def channel(id, server = nil)
       id = id.resolve_id
-
-      raise Discordrb::Errors::NoPermission if @restricted_channels.include? id
 
       debug("Obtaining data for channel with id #{id}")
       return @channels[id] if @channels[id]
 
       begin
-        begin
-          response = API::Channel.resolve(token, id)
-        rescue RestClient::ResourceNotFound
-          return nil
-        end
-        channel = Channel.new(JSON.parse(response), self, server)
-        @channels[id] = channel
-      rescue Discordrb::Errors::NoPermission
-        debug "Tried to get access to restricted channel #{id}, blacklisting it"
-        @restricted_channels << id
-        raise
+        response = API::Channel.resolve(token, id)
+      rescue Discordrb::Errors::UnknownChannel
+        return nil
       end
+      channel = Channel.new(JSON.parse(response), self, server)
+      @channels[id] = channel
     end
 
     alias_method :group_channel, :channel
@@ -79,7 +72,7 @@ module Discordrb
       LOGGER.out("Resolving user #{id}")
       begin
         response = API::User.resolve(token, id)
-      rescue RestClient::ResourceNotFound
+      rescue Discordrb::Errors::UnknownUser
         return nil
       end
       user = User.new(JSON.parse(response), self)
@@ -111,7 +104,6 @@ module Discordrb
     def member(server_or_id, user_id)
       server_id = server_or_id.resolve_id
       user_id = user_id.resolve_id
-
       server = server_or_id.is_a?(Server) ? server_or_id : self.server(server_id)
 
       return server.member(user_id) if server.member_cached?(user_id)
@@ -119,7 +111,7 @@ module Discordrb
       LOGGER.out("Resolving member #{server_id} on server #{user_id}")
       begin
         response = API::Server.resolve_member(token, server_id, user_id)
-      rescue RestClient::ResourceNotFound
+      rescue Discordrb::Errors::UnknownUser, Discordrb::Errors::UnknownMember
         return nil
       end
       member = Member.new(JSON.parse(response), server, self)
@@ -143,6 +135,19 @@ module Discordrb
 
     alias_method :private_channel, :pm_channel
 
+    # Get a server preview. If the bot isn't a member of the server, the server must be discoverable.
+    # @param id [Integer, String, Server] the ID of the server preview to get.
+    # @return [ServerPreview, nil] the server preview, or `nil` if the server isn't accessible.
+    def server_preview(id)
+      id = id.resolve_id
+      return @server_previews[id] if @server_previews[id]
+
+      response = JSON.parse(API::Server.preview(token, id))
+      @server_previews[id] = ServerPreview.new(response, self)
+    rescue StandardError
+      nil
+    end
+
     # Ensures a given user object is cached and if not, cache it from the given data hash.
     # @param data [Hash] A data hash representing a user.
     # @return [User] the user represented by the data hash.
@@ -156,10 +161,14 @@ module Discordrb
 
     # Ensures a given server object is cached and if not, cache it from the given data hash.
     # @param data [Hash] A data hash representing a server.
+    # @param force_cache [true, false] Whether the object in cache should be updated with the given
+    #   data if it already exists.
     # @return [Server] the server represented by the data hash.
-    def ensure_server(data)
+    def ensure_server(data, force_cache = false)
       if @servers.include?(data['id'].to_i)
-        @servers[data['id'].to_i]
+        server = @servers[data['id'].to_i]
+        server.update_data(data) if force_cache
+        server
       else
         @servers[data['id'].to_i] = Server.new(data, self)
       end
@@ -175,6 +184,16 @@ module Discordrb
       else
         @channels[data['id'].to_i] = Channel.new(data, self, server)
       end
+    end
+
+    # Ensures a given thread member object is cached.
+    # @param data [Hash] Thread member data.
+    def ensure_thread_member(data)
+      thread_id = data['id'].to_i
+      user_id = data['user_id'].to_i
+
+      @thread_members[thread_id] ||= {}
+      @thread_members[thread_id][user_id] = data.slice('join_timestamp', 'flags')
     end
 
     # Requests member chunks for a given server ID.
@@ -194,7 +213,7 @@ module Discordrb
     # @return [String] Only the code for the invite.
     def resolve_invite_code(invite)
       invite = invite.code if invite.is_a? Discordrb::Invite
-      invite = invite[invite.rindex('/') + 1..] if invite.start_with?('http', 'discord.gg')
+      invite = invite[(invite.rindex('/') + 1)..] if invite.start_with?('http', 'discord.gg')
       invite
     end
 

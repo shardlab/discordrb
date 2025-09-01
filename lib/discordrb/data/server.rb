@@ -66,28 +66,15 @@ module Discordrb
       @bot = bot
       @owner_id = data['owner_id'].to_i
       @id = data['id'].to_i
-
-      process_channels(data['channels'])
-      update_data(data)
-
-      @large = data['large']
-      @member_count = data['member_count'] || 0
-      @splash_id = nil
-      @banner_id = nil
-      @features = data['features'].map { |element| element.downcase.to_sym }
       @members = {}
       @voice_states = {}
       @emoji = {}
 
-      process_roles(data['roles'])
-      process_emoji(data['emojis'])
-      process_members(data['members'])
-      process_presences(data['presences'])
-      process_voice_states(data['voice_states'])
+      process_channels(data['channels'])
+      update_data(data)
 
       # Whether this server's members have been chunked (resolved using op 8 and GUILD_MEMBERS_CHUNK) yet
       @chunked = false
-      @processed_chunk_members = 0
 
       @booster_count = data['premium_subscription_count'] || 0
       @boost_level = data['premium_tier']
@@ -150,7 +137,7 @@ module Discordrb
       @bot.debug("Members for server #{@id} not chunked yet - initiating")
 
       # If the SERVER_MEMBERS intent flag isn't set, the gateway won't respond when we ask for members.
-      raise 'The :server_members intent is required to get server members' if (@bot.gateway.intents & INTENTS[:server_members]).zero?
+      raise 'The :server_members intent is required to get server members' if @bot.gateway.intents.nobits?(INTENTS[:server_members])
 
       @bot.request_chunks(@id)
       sleep 0.05 until @chunked
@@ -338,6 +325,11 @@ module Discordrb
       @channels.reject { |c| c.parent || c.category? }
     end
 
+    # @return [ServerPreview] the preview of this server shown in the discovery page.
+    def preview
+      @bot.server_preview(@id)
+    end
+
     # @return [String, nil] the widget URL to the server that displays the amount of online members in a
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
@@ -410,7 +402,7 @@ module Discordrb
     # @!visibility private
     def delete_role(role_id)
       @roles.reject! { |r| r.id == role_id }
-      @members.each do |_, member|
+      @members.each_value do |member|
         new_roles = member.roles.reject { |r| r.id == role_id }
         member.update_roles(new_roles)
       end
@@ -520,14 +512,16 @@ module Discordrb
     # Creates a role on this server which can then be modified. It will be initialized
     # with the regular role defaults the client uses unless specified, i.e. name is "new role",
     # permissions are the default, colour is the default etc.
-    # @param name [String] Name of the role to create
-    # @param colour [Integer, ColourRGB, #combined] The roles colour
-    # @param hoist [true, false]
-    # @param mentionable [true, false]
+    # @param name [String] Name of the role to create.
+    # @param colour [Integer, ColourRGB, #combined] The roles  primary colour.
+    # @param hoist [true, false] whether members of this role should be displayed seperately in the members list.
+    # @param mentionable [true, false] whether this role can mentioned by anyone in the server.
     # @param permissions [Integer, Array<Symbol>, Permissions, #bits] The permissions to write to the new role.
     # @param reason [String] The reason the for the creation of this role.
+    # @param secondary_colour [Integer, ColourRGB, nil] The secondary colour of the role to create.
+    # @param tertiary_colour [Integer, ColourRGB, nil] The tertiary colour of the role to create.
     # @return [Role] the created role.
-    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, reason: nil)
+    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, secondary_colour: nil, tertiary_colour: nil, reason: nil)
       colour = colour.respond_to?(:combined) ? colour.combined : colour
 
       permissions = if permissions.is_a?(Array)
@@ -538,7 +532,13 @@ module Discordrb
                       permissions
                     end
 
-      response = API::Server.create_role(@bot.token, @id, name, colour, hoist, mentionable, permissions, reason)
+      colours = {
+        primary_color: colour&.to_i,
+        tertiary_color: tertiary_colour&.to_i,
+        secondary_color: secondary_colour&.to_i
+      }
+
+      response = API::Server.create_role(@bot.token, @id, name, nil, hoist, mentionable, permissions&.to_s, reason, colours)
 
       role = Role.new(JSON.parse(response), @bot, self)
       @roles << role
@@ -586,7 +586,7 @@ module Discordrb
     # The amount of emoji the server can have, based on its current Nitro Boost Level.
     # @return [Integer] the max amount of emoji
     def max_emoji
-      case @level
+      case @boost_level
       when 1
         100
       when 2
@@ -598,9 +598,24 @@ module Discordrb
       end
     end
 
+    # Searches a server for members that matches a username or a nickname.
+    # @param name [String] The username or nickname to search for.
+    # @param limit [Integer] The maximum number of members between 1-1000 to return. Returns 1 member by default.
+    # @return [Array<Member>, nil] An array of member objects that match the given parameters, or nil for no members.
+    def search_members(name:, limit: nil)
+      response = JSON.parse(API::Server.search_guild_members(@bot.token, @id, name, limit))
+      return nil if response.empty?
+
+      response.map { |mem| Member.new(mem, self, @bot) }
+    end
+
+    # Retrieve banned users from this server.
+    # @param limit [Integer] Number of users to return (up to maximum 1000, default 1000).
+    # @param before_id [Integer] Consider only users before given user id.
+    # @param after_id [Integer] Consider only users after given user id.
     # @return [Array<ServerBan>] a list of banned users on this server and the reason they were banned.
-    def bans
-      response = JSON.parse(API::Server.bans(@bot.token, @id))
+    def bans(limit: nil, before_id: nil, after_id: nil)
+      response = JSON.parse(API::Server.bans(@bot.token, @id, limit, before_id, after_id))
       response.map do |e|
         ServerBan.new(self, User.new(e['user'], @bot), e['reason'])
       end
@@ -608,10 +623,17 @@ module Discordrb
 
     # Bans a user from this server.
     # @param user [User, String, Integer] The user to ban.
-    # @param message_days [Integer] How many days worth of messages sent by the user should be deleted.
+    # @param message_days [Integer] How many days worth of messages sent by the user should be deleted. This is deprecated and will be removed in 4.0.
+    # @param message_seconds [Integer] How many seconds of messages sent by the user should be deleted.
     # @param reason [String] The reason the user is being banned.
-    def ban(user, message_days = 0, reason: nil)
-      API::Server.ban_user(@bot.token, @id, user.resolve_id, message_days, reason)
+    def ban(user, message_days = 0, message_seconds: nil, reason: nil)
+      delete_messages = if message_days != 0 && message_days
+                          message_days * 86_400
+                        else
+                          message_seconds || 0
+                        end
+
+      API::Server.ban_user!(@bot.token, @id, user.resolve_id, delete_messages, reason)
     end
 
     # Unbans a previously banned user from this server.
@@ -621,6 +643,20 @@ module Discordrb
       API::Server.unban_user(@bot.token, @id, user.resolve_id, reason)
     end
 
+    # Ban up to 200 users from this server in one go.
+    # @param users [Array<User, String, Integer>] Array of up to 200 users to ban.
+    # @param message_seconds [Integer] How many seconds of messages sent by the users should be deleted.
+    # @param reason [String] The reason these users are being banned.
+    # @return [BulkBan]
+    def bulk_ban(users:, message_seconds: 0, reason: nil)
+      raise ArgumentError, 'Can only ban between 1 and 200 users!' unless users.size.between?(1, 200)
+
+      return ban(users.first, 0, message_seconds: message_seconds, reason: reason) if users.size == 1
+
+      response = API::Server.bulk_ban(@bot.token, @id, users.map(&:resolve_id), message_seconds, reason)
+      BulkBan.new(JSON.parse(response), self, reason)
+    end
+
     # Kicks a user from this server.
     # @param user [User, String, Integer] The user to kick.
     # @param reason [String] The reason the user is being kicked.
@@ -628,27 +664,17 @@ module Discordrb
       API::Server.remove_member(@bot.token, @id, user.resolve_id, reason)
     end
 
-    # Forcibly moves a user into a different voice channel. Only works if the bot has the permission needed.
+    # Forcibly moves a user into a different voice channel.
+    # Only works if the bot has the permission needed and if the user is already connected to some voice channel on this server.
     # @param user [User, String, Integer] The user to move.
-    # @param channel [Channel, String, Integer] The voice channel to move into.
+    # @param channel [Channel, String, Integer, nil] The voice channel to move into. (If nil, the user is disconnected from the voice channel)
     def move(user, channel)
-      API::Server.update_member(@bot.token, @id, user.resolve_id, channel_id: channel.resolve_id)
-    end
-
-    # Deletes this server. Be aware that this is permanent and impossible to undo, so be careful!
-    def delete
-      API::Server.delete(@bot.token, @id)
+      API::Server.update_member(@bot.token, @id, user.resolve_id, channel_id: channel&.resolve_id)
     end
 
     # Leave the server.
     def leave
       API::User.leave_server(@bot.token, @id)
-    end
-
-    # Transfers server ownership to another user.
-    # @param user [User, String, Integer] The user who should become the new owner.
-    def owner=(user)
-      API::Server.transfer_ownership(@bot.token, @id, user.resolve_id)
     end
 
     # Sets the server's name.
@@ -805,19 +831,16 @@ module Discordrb
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
     # @note For internal use only
     # @!visibility private
-    def process_chunk(members)
+    def process_chunk(members, chunk_index, chunk_count)
       process_members(members)
-      @processed_chunk_members += members.length
-      LOGGER.debug("Processed one chunk on server #{@id} - length #{members.length}")
+      LOGGER.debug("Processed chunk #{chunk_index + 1}/#{chunk_count} server #{@id} - index #{chunk_index} - length #{members.length}")
 
-      # Don't bother with the rest of the method if it's not truly the last packet
-      return unless @processed_chunk_members == @member_count
+      return if chunk_index + 1 < chunk_count
 
       LOGGER.debug("Finished chunking server #{@id}")
 
       # Reset everything to normal
       @chunked = true
-      @processed_chunk_members = 0
     end
 
     # @return [Channel, nil] the AFK voice channel of this server, or `nil` if none is set.
@@ -841,11 +864,11 @@ module Discordrb
       @afk_timeout = new_data[:afk_timeout] || new_data['afk_timeout'] || @afk_timeout
 
       afk_channel_id = new_data[:afk_channel_id] || new_data['afk_channel_id'] || @afk_channel
-      @afk_channel_id = afk_channel_id.nil? ? nil : afk_channel_id.resolve_id
+      @afk_channel_id = afk_channel_id&.resolve_id
       widget_channel_id = new_data[:widget_channel_id] || new_data['widget_channel_id'] || @widget_channel
-      @widget_channel_id = widget_channel_id.nil? ? nil : widget_channel_id.resolve_id
+      @widget_channel_id = widget_channel_id&.resolve_id
       system_channel_id = new_data[:system_channel_id] || new_data['system_channel_id'] || @system_channel
-      @system_channel_id = system_channel_id.nil? ? nil : system_channel_id.resolve_id
+      @system_channel_id = system_channel_id&.resolve_id
 
       @widget_enabled = new_data[:widget_enabled] || new_data['widget_enabled']
       @splash = new_data[:splash_id] || new_data['splash_id'] || @splash_id
@@ -853,6 +876,20 @@ module Discordrb
       @verification_level = new_data[:verification_level] || new_data['verification_level'] || @verification_level
       @explicit_content_filter = new_data[:explicit_content_filter] || new_data['explicit_content_filter'] || @explicit_content_filter
       @default_message_notifications = new_data[:default_message_notifications] || new_data['default_message_notifications'] || @default_message_notifications
+
+      @large = new_data.key?('large') ? new_data['large'] : @large
+      @member_count = new_data['member_count'] || @member_count || 0
+      @splash_id = new_data['splash'] || @splash_id
+      @banner_id = new_data['banner'] || @banner_id
+      @features = new_data['features'] ? new_data['features'].map { |element| element.downcase.to_sym } : @features || []
+
+      process_channels(new_data['channels']) if new_data['channels']
+      process_roles(new_data['roles']) if new_data['roles']
+      process_emoji(new_data['emojis']) if new_data['emojis']
+      process_members(new_data['members']) if new_data['members']
+      process_presences(new_data['presences']) if new_data['presences']
+      process_voice_states(new_data['voice_states']) if new_data['voice_states']
+      process_active_threads(new_data['threads']) if new_data['threads']
     end
 
     # Adds a channel to this server's cache
@@ -970,6 +1007,19 @@ module Discordrb
         update_voice_state(element)
       end
     end
+
+    def process_active_threads(threads)
+      @channels ||= []
+      @channels_by_id ||= {}
+
+      return unless threads
+
+      threads.each do |element|
+        thread = @bot.ensure_channel(element, self)
+        @channels << thread
+        @channels_by_id[thread.id] = thread
+      end
+    end
   end
 
   # A ban entry on a server
@@ -998,5 +1048,28 @@ module Discordrb
 
     alias_method :unban, :remove
     alias_method :lift, :remove
+  end
+
+  # A bulk ban entry on a server
+  class BulkBan
+    # @return [Server] The server this bulk ban belongs to.
+    attr_reader :server
+
+    # @return [String, nil] The reason these users were banned.
+    attr_reader :reason
+
+    # @return [Array<Integer>] Array of user IDs that were banned.
+    attr_reader :banned_users
+
+    # @return [Array<Integer>] Array of user IDs that couldn't be banned.
+    attr_reader :failed_users
+
+    # @!visibility private
+    def initialize(data, server, reason)
+      @server = server
+      @reason = reason
+      @banned_users = data['banned_users']&.map(&:resolve_id) || []
+      @failed_users = data['failed_users']&.map(&:resolve_id) || []
+    end
   end
 end

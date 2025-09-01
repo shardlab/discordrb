@@ -27,6 +27,25 @@ module Discordrb
     # @return [Integer, nil] the height of an image file, in pixels, or `nil` if the file is not an image.
     attr_reader :height
 
+    # @return [String, nil] the attachment's description.
+    attr_reader :description
+
+    # @return [String, nil] the attachment's media type.
+    attr_reader :content_type
+
+    # @return [true, false] whether this attachment is ephemeral.
+    attr_reader :ephemeral
+    alias_method :ephemeral?, :ephemeral
+
+    # @return [Float, nil] the duration of the voice message in seconds.
+    attr_reader :duration_seconds
+
+    # @return [String, nil] the base64 encoded bytearray representing a sampled waveform for a voice message.
+    attr_reader :waveform
+
+    # @return [Integer] the flags set on this attachment combined as a bitfield.
+    attr_reader :flags
+
     # @!visibility private
     def initialize(data, message, bot)
       @bot = bot
@@ -41,6 +60,15 @@ module Discordrb
 
       @width = data['width']
       @height = data['height']
+
+      @description = data['description']
+      @content_type = data['content_type']
+
+      @ephemeral = data['ephemeral']
+
+      @duration_seconds = data['duration_secs']&.to_f
+      @waveform = data['waveform']
+      @flags = data['flags'] || 0
     end
 
     # @return [true, false] whether this file is an image file.

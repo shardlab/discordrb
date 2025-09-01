@@ -1,4 +1,4 @@
-require:
+plugins:
   - rubocop-performance
   - rubocop-rake
 
@@ -8,7 +8,7 @@ inherit_mode:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 3.3
 
 # Disable line length checks
 Layout/LineLength:
@@ -66,3 +66,53 @@ Style/SingleLineBlockParams:
   Methods:
     - reduce: [m, e]
     - inject: [m, e]
+
+###################################
+## NEW COPS TO MAKE DECISIONS ON ##
+###################################
+
+# TODO: Decide how you want to handle this:
+# https://rubydoc.info/gems/rubocop/RuboCop/Cop/Style/HashSyntax
+Style/HashSyntax:
+  EnforcedShorthandSyntax: either
+
+Style/ArgumentsForwarding:
+  Enabled: false
+
+Performance/StringIdentifierArgument:
+  Enabled: false
+
+Style/ComparableClamp:
+  Enabled: false
+
+Style/SuperArguments:
+  Enabled: false
+
+Naming/BlockForwarding:
+  Enabled: false
+
+Style/RedundantSelfAssignmentBranch:
+  Enabled: false
+
+Performance/MapCompact:
+  Enabled: false
+
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+Style/RedundantReturn:
+  Enabled: false
+
+Style/RedundantParentheses:
+  Enabled: false
+
+# This will probably be a breaking change, but should happen
+Style/ReturnNilInPredicateMethodDefinition:
+  Enabled: false
+
+# FIXME: Disabled due to breaking tests, should probably refactor the code instead
+Style/SafeNavigation:
+  Enabled: false

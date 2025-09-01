@@ -32,10 +32,10 @@ module Discordrb::Commands
         channels: attributes[:channels] || nil,
 
         # Whether this command is usable in a command chain
-        chain_usable: attributes[:chain_usable].nil? ? true : attributes[:chain_usable],
+        chain_usable: attributes[:chain_usable].nil? || attributes[:chain_usable],
 
         # Whether this command should show up in the help command
-        help_available: attributes[:help_available].nil? ? true : attributes[:help_available],
+        help_available: attributes[:help_available].nil? || attributes[:help_available],
 
         # Description (for help command)
         description: attributes[:description] || nil,
@@ -159,7 +159,7 @@ module Discordrb::Commands
       escaped = false
       hacky_delim, hacky_space, hacky_prev, hacky_newline = [0xe001, 0xe002, 0xe003, 0xe004].pack('U*').chars
 
-      @chain.each_char.each_with_index do |char, index|
+      @chain.each_char.with_index do |char, index|
         # Escape character
         if char == '\\' && !escaped
           escaped = true
@@ -211,7 +211,7 @@ module Discordrb::Commands
         b_level -= 1
         next unless b_level.zero?
 
-        nested = @chain[b_start + 1..index - 1]
+        nested = @chain[(b_start + 1)..(index - 1)]
         subchain = CommandChain.new(nested, @bot, true)
         result += subchain.execute(event)
       end
@@ -245,8 +245,8 @@ module Discordrb::Commands
         command = command.gsub hacky_delim, @attributes[:chain_delimiter]
 
         first_space = command.index ' '
-        command_name = first_space ? command[0..first_space - 1] : command
-        arguments = first_space ? command[first_space + 1..] : ''
+        command_name = first_space ? command[0..(first_space - 1)] : command
+        arguments = first_space ? command[(first_space + 1)..] : ''
 
         # Append a previous sign if none is present
         arguments += @attributes[:previous] unless arguments.include? @attributes[:previous]
@@ -318,7 +318,7 @@ module Discordrb::Commands
           arg.split ' '
         end
 
-        chain = chain[chain_args_index + 1..]
+        chain = chain[(chain_args_index + 1)..]
       end
 
       [chain_args, chain]

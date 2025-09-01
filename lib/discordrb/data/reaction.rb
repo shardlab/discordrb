@@ -16,10 +16,11 @@ module Discordrb
     # @return [String] the name or unicode representation of the emoji
     attr_reader :name
 
+    # @!visibility private
     def initialize(data)
       @count = data['count']
       @me = data['me']
-      @id = data['emoji']['id'].nil? ? nil : data['emoji']['id'].to_i
+      @id = data['emoji']['id']&.to_i
       @name = data['emoji']['name']
     end
 

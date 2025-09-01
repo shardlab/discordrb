@@ -24,7 +24,7 @@ describe Discordrb::Webhook do
   fixture_property :edited_webhook_name, :update_name_data, ['name']
 
   fixture :update_avatar_data, %i[webhook update_avatar]
-  fixture_property :edited_webhook_avatar, :update_channel_data, ['avatar']
+  fixture_property :edited_webhook_avatar, :update_avatar_data, ['avatar']
 
   fixture :update_channel_data, %i[webhook update_channel]
   fixture_property :edited_webhook_channel_id, :update_channel_data, ['channel_id']
@@ -268,7 +268,7 @@ describe Discordrb::Webhook do
 
     context 'when no builder is provided' do
       it 'creates a new builder' do
-        expect { |b| webhook.execute(wait: false, &b) }.to yield_with_args(instance_of(Discordrb::Webhooks::Builder), instance_of(Discordrb::Components::View))
+        expect { |b| webhook.execute(wait: false, &b) }.to yield_with_args(instance_of(Discordrb::Webhooks::Builder), instance_of(Discordrb::Webhooks::View))
       end
     end
 
@@ -326,7 +326,10 @@ describe Discordrb::Webhook do
 
     context 'when no builder is provided' do
       it 'creates a new builder' do
-        expect { |b| webhook.edit_message(message, &b) }.to yield_with_args(instance_of(Discordrb::Webhooks::Builder))
+        expect { |b| webhook.edit_message(message, &b) }.to yield_with_args(
+          instance_of(Discordrb::Webhooks::Builder),
+          instance_of(Discordrb::Webhooks::View)
+        )
       end
     end
 
@@ -338,7 +341,7 @@ describe Discordrb::Webhook do
 
       webhook.edit_message(message, embeds: embeds, builder: builder)
 
-      expect(Discordrb::API::Webhook).to have_received(:token_edit_message).with(webhook.token, webhook.id, message_id, content, embeds, nil, nil)
+      expect(Discordrb::API::Webhook).to have_received(:token_edit_message).with(webhook.token, webhook.id, message_id, content, embeds, nil, [])
     end
 
     it 'returns an updated Message object' do

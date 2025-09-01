@@ -10,7 +10,7 @@ module Discordrb
   Thread.current[:discordrb_name] = 'main'
 
   # The default debug logger used by discordrb.
-  LOGGER = Logger.new(ENV['DISCORDRB_FANCY_LOG'])
+  LOGGER = Logger.new(ENV.fetch('DISCORDRB_FANCY_LOG', false))
 
   # The Unix timestamp Discord IDs are based on
   DISCORD_EPOCH = 1_420_070_400_000
@@ -46,12 +46,27 @@ module Discordrb
   NO_INTENTS = 0
 
   # Compares two objects based on IDs - either the objects' IDs are equal, or one object is equal to the other's ID.
-  def self.id_compare(one_id, other)
+  def self.id_compare?(one_id, other)
     other.respond_to?(:resolve_id) ? (one_id.resolve_id == other.resolve_id) : (one_id == other)
   end
 
+  # @deprecated Please use {Discordrb.id_compare?}
+  singleton_class.alias_method :id_compare, :id_compare?
+
   # The maximum length a Discord message can have
   CHARACTER_LIMIT = 2000
+
+  # For creating timestamps with {timestamp}
+  # @see https://discord.com/developers/docs/reference#message-formatting-timestamp-styles
+  TIMESTAMP_STYLES = {
+    short_time: 't', # 16:20
+    long_time: 'T', # 16:20:30
+    short_date: 'd', # 20/04/2021
+    long_date: 'D', # 20 April 2021
+    short_datetime: 'f', # 20 April 2021 16:20
+    long_datetime: 'F', # Tuesday, 20 April 2021 16:20
+    relative: 'R' # 2 months ago
+  }.freeze
 
   # Splits a message into chunks of 2000 characters. Attempts to split by lines if possible.
   # @param msg [String] The message to split.
@@ -90,6 +105,20 @@ module Discordrb
 
     # Otherwise, call the method recursively to split the rest of the string and add it onto the ideal array
     ideal_ary + split_message(rest)
+  end
+
+  # @param time [Time, Integer] The time to create the timestamp from, or a unix timestamp integer.
+  # @param style [Symbol, String] One of the keys from {TIMESTAMP_STYLES} or a string with the style.
+  # @return [String]
+  # @example
+  #   Discordrb.timestamp(Time.now, :short_time)
+  #   # => "<t:1632146954:t>"
+  def self.timestamp(time, style = nil)
+    if style.nil?
+      "<t:#{time.to_i}>"
+    else
+      "<t:#{time.to_i}:#{TIMESTAMP_STYLES[style] || style}>"
+    end
   end
 end
 

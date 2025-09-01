@@ -38,18 +38,21 @@ module Discordrb::Webhooks
     #     end
     #   end
     # @return [RestClient::Response] the response returned by Discord.
-    def execute(builder = nil, wait = false)
+    def execute(builder = nil, wait = false, components = nil)
       raise TypeError, 'builder needs to be nil or like a Discordrb::Webhooks::Builder!' unless
         (builder.respond_to?(:file) && builder.respond_to?(:to_multipart_hash)) || builder.respond_to?(:to_json_hash) || builder.nil?
 
       builder ||= Builder.new
+      view = View.new
 
-      yield builder if block_given?
+      yield(builder, view) if block_given?
+
+      components ||= view
 
       if builder.file
-        post_multipart(builder, wait)
+        post_multipart(builder, components, wait)
       else
-        post_json(builder, wait)
+        post_json(builder, components, wait)
       end
     end
 
@@ -114,16 +117,18 @@ module Discordrb::Webhooks
       end
     end
 
-    def post_json(builder, wait)
-      RestClient.post(@url + (wait ? '?wait=true' : ''), builder.to_json_hash.to_json, content_type: :json)
+    def post_json(builder, components, wait)
+      data = builder.to_json_hash.merge({ components: components.to_a })
+      RestClient.post(@url + (wait ? '?wait=true' : ''), data.to_json, content_type: :json)
     end
 
-    def post_multipart(builder, wait)
-      RestClient.post(@url + (wait ? '?wait=true' : ''), builder.to_multipart_hash)
+    def post_multipart(builder, components, wait)
+      data = builder.to_multipart_hash.merge({ components: components.to_a })
+      RestClient.post(@url + (wait ? '?wait=true' : ''), data)
     end
 
     def generate_url(id, token)
-      "https://discord.com/api/v8/webhooks/#{id}/#{token}"
+      "https://discord.com/api/v9/webhooks/#{id}/#{token}"
     end
   end
 end

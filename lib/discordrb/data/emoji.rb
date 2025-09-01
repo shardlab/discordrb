@@ -25,7 +25,7 @@ module Discordrb
 
       @name = data['name']
       @server = server
-      @id = data['id'].nil? ? nil : data['id'].to_i
+      @id = data['id']&.to_i
       @animated = data['animated']
 
       process_roles(data['roles']) if server
