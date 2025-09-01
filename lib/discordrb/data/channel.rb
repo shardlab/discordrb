@@ -476,10 +476,55 @@ module Discordrb
       send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a, flags)
     end
 
+    # Send a message to this channel.
+    # @example This sends a silent message with an embed.
+    #   channel.send_message!(content: 'Hi <@171764626755813376>', flags: :suppress_notifications) do |builder|
+    #     builder.add_embed do |embed|
+    #       embed.title = 'The Ruby logo'
+    #       embed.image = Discordrb::Webhooks::EmbedImage.new(url: 'https://www.ruby-lang.org/images/header-ruby-logo.png')
+    #     end
+    #   end
+    # @param content [String] The content of the message. Should not be longer than 2000 characters or it will result in an error.
+    # @param timeout [Float, nil] The amount of time in seconds after which the message sent will be deleted, or `nil` if the message should not be deleted.
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param embeds [Array<Hash, Webhooks::Embed>] The embeds that should be attached to the message.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, nil] Mentions that are allowed to ping on this message.
+    # @param reference [Message, String, Integer, Hash, nil] The optional message, or message ID, to reply to or forward.
+    # @param components [View, Array<#to_h>] Interaction components to associate with this message.
+    # @param flags [Integer, Symbol, Array<Symbol, Integer>] Flags for this message. Currently only `:suppress_embeds` (1 << 2), `:suppress_notifications` (1 << 12), and `:uikit_components` (1 << 15) can be set.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables sending content and embeds.
+    # @param nonce [nil, String, Integer, false] The 25 character nonce that should be used when sending this message.
+    # @param enforce_nonce [true, false] Whether the provided nonce should be enforced and used for message de-duplication.
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the builder overwrite method data.
+    # @yieldparam view [Webhooks::View] An optional component builder. Arguments passed to the builder overwrite method data.
+    # @return [Message, nil] The resulting message that was created, or `nil` if the `timeout` parameter was set to a non `nil` value.
+    def send_message!(content: '', timeout: nil, tts: false, embeds: [], attachments: nil, allowed_mentions: nil, reference: nil, components: nil, flags: 0, has_components: false, nonce: nil, enforce_nonce: false)
+      builder = Discordrb::Webhooks::Builder.new
+      view = Discordrb::Webhooks::View.new
+
+      builder.tts = tts
+      builder.content = content
+      embeds&.each { |embed| builder << embed }
+      builder.allowed_mentions = allowed_mentions
+
+      yield(builder, view) if block_given?
+
+      flags = Array(flags).map { |flag| Discordrb::Message::FLAGS[flag] || flag }.reduce(&:|)
+      flags |= (1 << 15) if has_components
+      builder = builder.to_json_hash
+
+      if timeout
+        @bot.send_temporary_message(@id, builder[:content], timeout, builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce)
+      else
+        @bot.send_message(@id, builder[:content], builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce)
+      end
+    end
+
     # Sends multiple messages to a channel
     # @param content [Array<String>] The messages to send.
     def send_multiple(content)
-      content.each { |e| send_message(e) }
+      content.each { |text| send_message!(content: text) }
     end
 
     # Splits a message into chunks whose length is at most the Discord character limit, then sends them individually.

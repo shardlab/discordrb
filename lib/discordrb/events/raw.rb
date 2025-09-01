@@ -14,6 +14,7 @@ module Discordrb::Events
     attr_reader :data
     alias_method :d, :data
 
+    # @!visibility private
     def initialize(type, data, bot)
       @type = type
       @data = data

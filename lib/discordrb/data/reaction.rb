@@ -16,6 +16,7 @@ module Discordrb
     # @return [String] the name or unicode representation of the emoji
     attr_reader :name
 
+    # @!visibility private
     def initialize(data)
       @count = data['count']
       @me = data['me']

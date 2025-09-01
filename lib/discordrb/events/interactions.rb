@@ -29,6 +29,7 @@ module Discordrb::Events
     #   @see Interaction#user
     delegate :type, :server, :server_id, :channel, :channel_id, :user, to: :interaction
 
+    # @!visibility private
     def initialize(data, bot)
       @interaction = Discordrb::Interaction.new(data, bot)
       @bot = bot
@@ -155,6 +156,7 @@ module Discordrb::Events
     # @return [Integer, nil] The target of this command when it is a context command.
     attr_reader :target_id
 
+    # @!visibility private
     def initialize(data, bot)
       super
 
