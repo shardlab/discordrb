@@ -259,12 +259,12 @@
       <pre class="lines">
 
 
-238
-239
-240</pre>
+240
+241
+242</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 238</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 240</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_subcommands'>subcommands</span>
   <span class='ivar'>@subcommands</span>
@@ -361,18 +361,18 @@
       <pre class="lines">
 
 
-250
-251
 252
 253
 254
 255
 256
 257
-258</pre>
+258
+259
+260</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 250</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 252</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_group'>group</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Unable to mix subcommands and groups</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='ivar'>@subcommands</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Proc</span> <span class='rbrace'>}</span>
@@ -468,16 +468,16 @@
       <pre class="lines">
 
 
-263
-264
 265
 266
 267
 268
-269</pre>
+269
+270
+271</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 263</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 265</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_subcommand'>subcommand</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Unable to mix subcommands and groups</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='ivar'>@subcommands</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Hash</span> <span class='rbrace'>}</span>
@@ -496,7 +496,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Aug 17 21:29:39 2025 by
+  Generated on Mon Sep  1 22:21:39 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>

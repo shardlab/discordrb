@@ -3204,7 +3204,7 @@ same codebase. Not required but I recommend setting it anyway.</p>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='ivar'>@type</span> <span class='op'>==</span> <span class='symbol'>:bot</span>
 
   <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_oauth_application'><span class='object_link'><a href="API.html#oauth_application-class_method" title="Discordrb::API.oauth_application (method)">oauth_application</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
-  <span class='const'><span class='object_link'><a href="Application.html" title="Discordrb::Application (class)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Application.html#initialize-instance_method" title="Discordrb::Application#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="Application.html" title="Discordrb::Application (class)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -7785,7 +7785,7 @@ directly, you should leave it as true.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Aug 17 21:29:31 2025 by
+  Generated on Mon Sep  1 22:21:33 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>

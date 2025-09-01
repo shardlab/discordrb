@@ -214,42 +214,6 @@
   <p class="inherited"><span class='object_link'><a href="Event.html#bot-instance_method" title="Discordrb::Events::Event#bot (method)">#bot</a></span></p>
 
 
-  
-    <h2>
-      Instance Method Summary
-      <small><a href="#" class="summary_toggle">collapse</a></small>
-    </h2>
-
-    <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(server, old_emoji, emoji, bot)  &#x21d2; ServerEmojiUpdateEvent </a>
-    
-
-    
-  </span>
-  
-  
-    <span class="note title constructor">constructor</span>
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>A new instance of ServerEmojiUpdateEvent.</p>
-</div></span>
-  
-</li>
-
-      
-    </ul>
-  
-
 
   
   
@@ -257,7 +221,7 @@
   
   
   
-  
+  <h2>Method Summary</h2>
   
   <h3 class="inherited">Methods inherited from <span class='object_link'><a href="ServerEvent.html" title="Discordrb::Events::ServerEvent (class)">ServerEvent</a></span></h3>
   <p class="inherited"><span class='object_link'><a href="ServerEvent.html#init_server-instance_method" title="Discordrb::Events::ServerEvent#init_server (method)">#init_server</a></span></p>
@@ -267,57 +231,7 @@
   
   
   
-  <div id="constructor_details" class="method_details_list">
-  <h2>Constructor Details</h2>
   
-    <div class="method_details first">
-  <h3 class="signature first" id="initialize-instance_method">
-  
-    #<strong>initialize</strong>(server, old_emoji, emoji, bot)  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Events::ServerEmojiUpdateEvent (class)">ServerEmojiUpdateEvent</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns a new instance of ServerEmojiUpdateEvent.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-130
-131
-132
-133
-134
-135</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/guilds.rb', line 130</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_server'>server</span><span class='comma'>,</span> <span class='id identifier rubyid_old_emoji'>old_emoji</span><span class='comma'>,</span> <span class='id identifier rubyid_emoji'>emoji</span><span class='comma'>,</span> <span class='id identifier rubyid_bot'>bot</span><span class='rparen'>)</span>
-  <span class='ivar'>@bot</span> <span class='op'>=</span> <span class='id identifier rubyid_bot'>bot</span>
-  <span class='ivar'>@old_emoji</span> <span class='op'>=</span> <span class='id identifier rubyid_old_emoji'>old_emoji</span>
-  <span class='ivar'>@emoji</span> <span class='op'>=</span> <span class='id identifier rubyid_emoji'>emoji</span>
-  <span class='ivar'>@server</span> <span class='op'>=</span> <span class='id identifier rubyid_server'>server</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-  
-</div>
-
   <div id="instance_attr_details" class="attr_details">
     <h2>Instance Attribute Details</h2>
     
@@ -365,12 +279,12 @@
       <pre class="lines">
 
 
-128
-129
-130</pre>
+132
+133
+134</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/guilds.rb', line 128</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/guilds.rb', line 132</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emoji'>emoji</span>
   <span class='ivar'>@emoji</span>
@@ -424,12 +338,12 @@
       <pre class="lines">
 
 
-125
-126
-127</pre>
+129
+130
+131</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/guilds.rb', line 125</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/guilds.rb', line 129</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_old_emoji'>old_emoji</span>
   <span class='ivar'>@old_emoji</span>
@@ -483,12 +397,12 @@
       <pre class="lines">
 
 
-122
-123
-124</pre>
+126
+127
+128</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/guilds.rb', line 122</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/guilds.rb', line 126</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server'>server</span>
   <span class='ivar'>@server</span>
@@ -504,7 +418,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Aug 17 21:29:35 2025 by
+  Generated on Mon Sep  1 22:21:36 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
