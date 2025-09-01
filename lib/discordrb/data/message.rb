@@ -21,6 +21,33 @@ module Discordrb
       snapshot: 1 << 14,
       uikit_components: 1 << 15
     }.freeze
+    
+    # Map of message types.
+    TYPES = {
+      default: 0,
+      recipient_add: 1,
+      recipient_remove: 2,
+      call: 3,
+      channel_name_change: 4,
+      channel_icon_change: 5,
+      channel_pinned_message: 6,
+      guild_member_join: 7,
+      user_premium_guild_subscription: 8,
+      user_premium_guild_subscription_tier_1: 9,
+      user_premium_guild_subscription_tier_2: 10,
+      user_premium_guild_subscription_tier_3: 11,
+      channel_follow_add: 12,
+      guild_discovery_disqualified: 14,
+      guild_discovery_requalified: 15,
+      guild_discovery_grace_period_initial_warning: 16,
+      guild_discovery_grace_period_final_warning: 17,
+      thread_created: 18,
+      reply: 19,
+      chat_input_command: 20,
+      thread_starter_message: 21,
+      guild_invite_reminder: 22,
+      context_menu_command: 23
+    }.freeze   
 
     # @return [String] the content of this message.
     attr_reader :content
@@ -446,6 +473,60 @@ module Discordrb
 
       results.flatten.compact
     end
+
+    # @!group Types
+    # @!attribute [r] default?
+    #   @return [true, false]
+    # @!attribute [r] recipient_add?
+    #   @return [true, false]
+    # @!attribute [r] recipient_remove?
+    #   @return [true, false]
+    # @!attribute [r] call?
+    #   @return [true, false]
+    # @!attribute [r] channel_name_change?
+    #   @return [true, false]
+    # @!attribute [r] channel_icon_change?
+    #   @return [true, false]
+    # @!attribute [r] channel_pinned_message?
+    #   @return [true, false]
+    # @!attribute [r] guild_member_join?
+    #   @return [true, false]
+    # @!attribute [r] user_premium_guild_subscription?
+    #   @return [true, false]
+    # @!attribute [r] user_premium_guild_subscription_tier_1?
+    #   @return [true, false]
+    # @!attribute [r] user_premium_guild_subscription_tier_2?
+    #   @return [true, false]
+    # @!attribute [r] user_premium_guild_subscription_tier_3?
+    #   @return [true, false]
+    # @!attribute [r] channel_follow_add?
+    #   @return [true, false]
+    # @!attribute [r] guild_discovery_disqualified?
+    #   @return [true, false]
+    # @!attribute [r] guild_discovery_requalified?
+    #   @return [true, false]
+    # @!attribute [r] guild_discovery_grace_period_initial_warning?
+    #   @return [true, false]
+    # @!attribute [r] guild_discovery_grace_period_final_warning?
+    #   @return [true, false]
+    # @!attribute [r] thread_created?
+    #   @return [true, false]
+    # @!attribute [r] reply?
+    #   @return [true, false]
+    # @!attribute [r] chat_input_command?
+    #   @return [true, false]
+    # @!attribute [r] thread_starter_message?
+    #   @return [true, false]
+    # @!attribute [r] guild_invite_reminder?
+    #   @return [true, false]
+    # @!attribute [r] context_menu_command?
+    #   @return [true, false]
+    # @!endgroup
+    TYPES.each do |name, value|
+      define_method("#{name}?") do
+        @type == value
+      end
+    end 
 
     # to_message -> self or message
     # @return [Discordrb::Message]
