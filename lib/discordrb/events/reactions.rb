@@ -25,6 +25,7 @@ module Discordrb::Events
     attr_reader :burst_colours
     alias_method :burst_colors, :burst_colours
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -135,6 +136,7 @@ module Discordrb::Events
     # @!visibility private
     attr_reader :message_id
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 

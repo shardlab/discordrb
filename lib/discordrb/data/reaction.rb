@@ -3,7 +3,7 @@
 module Discordrb
   # A reaction to a message.
   class Reaction
-    # Map of reaction types
+    # Map of reaction types.
     TYPES = {
       normal: 0,
       burst: 1
