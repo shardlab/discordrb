@@ -9,6 +9,7 @@ module Discordrb
     # @return [Integer] this account's ID.
     attr_reader :id
 
+    # @!visibility private
     def initialize(data)
       @name = data['name']
       @id = data['id'].to_i
@@ -35,6 +36,7 @@ module Discordrb
     # @return [User, nil] the bot associated with this application.
     attr_reader :bot
 
+    # @!visibility private
     def initialize(data, bot)
       @id = data['id'].to_i
       @name = data['name']
@@ -93,6 +95,7 @@ module Discordrb
     # @return [true, false] has this integration been revoked.
     attr_reader :revoked
 
+    # @!visibility private
     def initialize(data, bot, server)
       @bot = bot
 
