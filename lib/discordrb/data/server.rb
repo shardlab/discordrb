@@ -557,6 +557,7 @@ module Discordrb
     # @return [Emoji] The emoji that has been added.
     def add_emoji(name, image, roles = [], reason: nil)
       image = image.respond_to?(:read) ? Discordrb.encode64(image) : image
+
       data = JSON.parse(API::Server.add_emoji(@bot.token, @id, image, name, roles.map(&:resolve_id), reason))
       new_emoji = Emoji.new(data, @bot, self)
       @emoji[new_emoji.id] = new_emoji
