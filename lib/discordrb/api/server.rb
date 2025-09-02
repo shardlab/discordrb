@@ -261,7 +261,7 @@ module Discordrb::API::Server
     data = { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions, colors: colours, unicode_emoji: unicode_emoji }
 
     if icon != :undef && icon
-      Discordrb.encode64(icon)
+      data[:icon] = Discordrb.encode64(icon)
     elsif icon.nil?
       data[:icon] = nil
     end
