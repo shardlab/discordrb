@@ -264,6 +264,14 @@ module Discordrb::Events
             match ? (e == match[0]) : false
           end
         end,
+        matches_all(@attributes[:type] || @attributes[:message_type], event.message.type) do |a, e|
+          case a
+          when String, Symbol
+            Discordrb::Message::TYPES[a.to_sym] == e
+          when Integer
+            a == e
+          end
+        end,
         matches_all(@attributes[:after], event.timestamp) { |a, e| a > e },
         matches_all(@attributes[:before], event.timestamp) { |a, e| a < e },
         matches_all(@attributes[:private], event.channel.private?) { |a, e| !e == !a }

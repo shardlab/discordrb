@@ -21,7 +21,7 @@ module Discordrb
       snapshot: 1 << 14,
       uikit_components: 1 << 15
     }.freeze
-    
+
     # Map of message types.
     TYPES = {
       default: 0,
@@ -31,23 +31,37 @@ module Discordrb
       channel_name_change: 4,
       channel_icon_change: 5,
       channel_pinned_message: 6,
-      guild_member_join: 7,
-      user_premium_guild_subscription: 8,
-      user_premium_guild_subscription_tier_1: 9,
-      user_premium_guild_subscription_tier_2: 10,
-      user_premium_guild_subscription_tier_3: 11,
+      member_join: 7,
+      server_boost: 8,
+      server_boost_tier_one: 9,
+      server_boost_tier_two: 10,
+      server_boost_tier_three: 11,
       channel_follow_add: 12,
-      guild_discovery_disqualified: 14,
-      guild_discovery_requalified: 15,
-      guild_discovery_grace_period_initial_warning: 16,
-      guild_discovery_grace_period_final_warning: 17,
+      server_discovery_disqualified: 14,
+      server_discovery_requalified: 15,
+      server_discovery_grace_period_initial_warning: 16,
+      server_discovery_grace_period_final_warning: 17,
       thread_created: 18,
       reply: 19,
       chat_input_command: 20,
       thread_starter_message: 21,
-      guild_invite_reminder: 22,
-      context_menu_command: 23
-    }.freeze   
+      server_invite_reminder: 22,
+      context_menu_command: 23,
+      automod_action: 24,
+      role_subscription_purchase: 25,
+      interaction_premium_upsell: 26,
+      stage_start: 27,
+      stage_end: 28,
+      stage_speaker: 29,
+      stage_topic: 31,
+      server_application_premium_subscription: 32,
+      server_incident_alert_mode_enabled: 36,
+      server_incident_alert_mode_disabled: 37,
+      server_incident_report_raid: 38,
+      server_incident_report_false_alarm: 39,
+      purchase_notification: 44,
+      poll_result: 46
+    }.freeze
 
     # @return [String] the content of this message.
     attr_reader :content
@@ -445,12 +459,6 @@ module Discordrb
       !@referenced_message.nil?
     end
 
-    # Whether or not this message was of type "CHAT_INPUT_COMMAND"
-    # @return [true, false]
-    def chat_input_command?
-      @type == 20
-    end
-
     # @return [Message, nil] the Message this Message was sent in reply to.
     def referenced_message
       return @referenced_message if @referenced_message
@@ -474,60 +482,6 @@ module Discordrb
       results.flatten.compact
     end
 
-    # @!group Types
-    # @!attribute [r] default?
-    #   @return [true, false]
-    # @!attribute [r] recipient_add?
-    #   @return [true, false]
-    # @!attribute [r] recipient_remove?
-    #   @return [true, false]
-    # @!attribute [r] call?
-    #   @return [true, false]
-    # @!attribute [r] channel_name_change?
-    #   @return [true, false]
-    # @!attribute [r] channel_icon_change?
-    #   @return [true, false]
-    # @!attribute [r] channel_pinned_message?
-    #   @return [true, false]
-    # @!attribute [r] guild_member_join?
-    #   @return [true, false]
-    # @!attribute [r] user_premium_guild_subscription?
-    #   @return [true, false]
-    # @!attribute [r] user_premium_guild_subscription_tier_1?
-    #   @return [true, false]
-    # @!attribute [r] user_premium_guild_subscription_tier_2?
-    #   @return [true, false]
-    # @!attribute [r] user_premium_guild_subscription_tier_3?
-    #   @return [true, false]
-    # @!attribute [r] channel_follow_add?
-    #   @return [true, false]
-    # @!attribute [r] guild_discovery_disqualified?
-    #   @return [true, false]
-    # @!attribute [r] guild_discovery_requalified?
-    #   @return [true, false]
-    # @!attribute [r] guild_discovery_grace_period_initial_warning?
-    #   @return [true, false]
-    # @!attribute [r] guild_discovery_grace_period_final_warning?
-    #   @return [true, false]
-    # @!attribute [r] thread_created?
-    #   @return [true, false]
-    # @!attribute [r] reply?
-    #   @return [true, false]
-    # @!attribute [r] chat_input_command?
-    #   @return [true, false]
-    # @!attribute [r] thread_starter_message?
-    #   @return [true, false]
-    # @!attribute [r] guild_invite_reminder?
-    #   @return [true, false]
-    # @!attribute [r] context_menu_command?
-    #   @return [true, false]
-    # @!endgroup
-    TYPES.each do |name, value|
-      define_method("#{name}?") do
-        @type == value
-      end
-    end 
-
     # to_message -> self or message
     # @return [Discordrb::Message]
     def to_message
@@ -539,6 +493,12 @@ module Discordrb
     FLAGS.each do |name, value|
       define_method("#{name}?") do
         @flags.anybits?(value)
+      end
+    end
+
+    TYPES.each do |name, value|
+      define_method("#{name}?") do
+        @type == value
       end
     end
   end

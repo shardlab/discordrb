@@ -32,6 +32,7 @@ module Discordrb
     # @option attributes [Time] :after Matches a time after the time the message was sent at.
     # @option attributes [Time] :before Matches a time before the time the message was sent at.
     # @option attributes [Boolean] :private Matches whether or not the channel is private.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was sent.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageEvent] The event that was raised.
     # @return [MessageEventHandler] the event handler that was registered.
