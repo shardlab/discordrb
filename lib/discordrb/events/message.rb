@@ -54,6 +54,14 @@ module Discordrb::Events
       channel.send_temporary_message(content, timeout, tts, embed, attachments, allowed_mentions, components, flags)
     end
 
+    # # Sends a message to the channel this message was sent in, right now.
+    # @see Channel#send_message!
+    def send_message!(**parameters)
+      # HACK: We can accept any arguments with `**`, and then validate the arguments when actually
+      #   unpacking them into `Channel#send_message!`
+      channel.send_message!(**parameters)
+    end
+
     # Adds a string to be sent after the event has finished execution. Avoids problems with rate limiting because only
     # one message is ever sent. If it is used multiple times, the strings will bunch up into one message (separated by
     # newlines)
@@ -87,6 +95,9 @@ module Discordrb::Events
     alias_method :send, :send_message
     alias_method :respond, :send_message
     alias_method :send_temp, :send_temporary_message
+
+    alias_method :send!, :send_message!
+    alias_method :respond!, :send_message!
   end
 
   # Event raised when a text message is sent to a channel
@@ -127,6 +138,7 @@ module Discordrb::Events
     #   @see Channel#server
     delegate :server, to: :channel
 
+    # @!visibility private
     def initialize(message, bot)
       @bot = bot
       @message = message

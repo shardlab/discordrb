@@ -707,7 +707,7 @@ module Discordrb
     # Sets the server's icon.
     # @param icon [String, #read] The new icon, in base64-encoded JPG format.
     def icon=(icon)
-      if icon.respond_to? :read
+      if icon.respond_to?(:read)
         update_server_data(icon_id: Discordrb.encode64(icon))
       else
         update_server_data(icon_id: icon)

@@ -31,6 +31,7 @@ module Discordrb
     # @return [Member, User, nil] the user object of the owner or nil if the webhook was requested using the token.
     attr_reader :owner
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 

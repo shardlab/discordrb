@@ -5,6 +5,23 @@ module Discordrb
   class Message
     include IDObject
 
+    # Map of message flags.
+    FLAGS = {
+      crossposted: 1 << 0,
+      crosspost: 1 << 1,
+      suppress_embeds: 1 << 2,
+      source_message_deleted: 1 << 3,
+      urgent: 1 << 4,
+      thread: 1 << 5,
+      ephemeral: 1 << 6,
+      loading: 1 << 7,
+      failed_to_mention_roles: 1 << 8,
+      suppress_notifications: 1 << 12,
+      voice_message: 1 << 13,
+      snapshot: 1 << 14,
+      uikit_components: 1 << 15
+    }.freeze
+
     # @return [String] the content of this message.
     attr_reader :content
     alias_method :text, :content
@@ -437,5 +454,11 @@ module Discordrb
     end
 
     alias_method :message, :to_message
+
+    FLAGS.each do |name, value|
+      define_method("#{name}?") do
+        @flags.anybits?(value)
+      end
+    end
   end
 end

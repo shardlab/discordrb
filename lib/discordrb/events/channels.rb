@@ -29,6 +29,7 @@ module Discordrb::Events
     #   @see Channel#server
     delegate :name, :server, :type, :owner_id, :recipients, :topic, :user_limit, :position, :permission_overwrites, to: :channel
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
       @channel = data.is_a?(Discordrb::Channel) ? data : bot.channel(data['id'].to_i)
@@ -83,6 +84,7 @@ module Discordrb::Events
     # @return [Integer, nil] the channel's owner ID if this is a group channel
     attr_reader :owner_id
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -134,6 +136,7 @@ module Discordrb::Events
 
     delegate :id, to: :recipient
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -179,6 +182,7 @@ module Discordrb::Events
     # @return [Server, nil] The server this event originates from.
     attr_reader :server
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
