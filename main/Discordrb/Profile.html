@@ -429,24 +429,14 @@ something readable (e.g. File Object) or as a data URL.</p>
 27
 28
 29
-30
-31
-32
-33
-34
-35</pre>
+30</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 24</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_avatar='>avatar=</span><span class='lparen'>(</span><span class='id identifier rubyid_avatar'>avatar</span><span class='rparen'>)</span>
-  <span class='kw'>if</span> <span class='id identifier rubyid_avatar'>avatar</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span> <span class='symbol'>:read</span>
-    <span class='comment'># Set the file to binary mode if supported, so we don&#39;t get problems with Windows
-</span>    <span class='id identifier rubyid_avatar'>avatar</span><span class='period'>.</span><span class='id identifier rubyid_binmode'>binmode</span> <span class='kw'>if</span> <span class='id identifier rubyid_avatar'>avatar</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:binmode</span><span class='rparen'>)</span>
-
-    <span class='id identifier rubyid_avatar_string'>avatar_string</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data:image/jpg;base64,</span><span class='tstring_end'>&#39;</span></span>
-    <span class='id identifier rubyid_avatar_string'>avatar_string</span> <span class='op'>+=</span> <span class='const'>Base64</span><span class='period'>.</span><span class='id identifier rubyid_strict_encode64'>strict_encode64</span><span class='lparen'>(</span><span class='id identifier rubyid_avatar'>avatar</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_update_profile_data'>update_profile_data</span><span class='lparen'>(</span><span class='label'>avatar:</span> <span class='id identifier rubyid_avatar_string'>avatar_string</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_avatar'>avatar</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:read</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_update_profile_data'>update_profile_data</span><span class='lparen'>(</span><span class='label'>avatar:</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='period'>.</span><span class='id identifier rubyid_encode64'><span class='object_link'><a href="../Discordrb.html#encode64-class_method" title="Discordrb.encode64 (method)">encode64</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_avatar'>avatar</span><span class='rparen'>)</span><span class='rparen'>)</span>
   <span class='kw'>else</span>
     <span class='id identifier rubyid_update_profile_data'>update_profile_data</span><span class='lparen'>(</span><span class='label'>avatar:</span> <span class='id identifier rubyid_avatar'>avatar</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
@@ -545,12 +535,12 @@ something readable (e.g. File Object) or as a data URL.</p>
       <pre class="lines">
 
 
-59
-60
-61</pre>
+54
+55
+56</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 54</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dnd'>dnd</span>
   <span class='id identifier rubyid_update_profile_status_setting'>update_profile_status_setting</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>dnd</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -592,12 +582,12 @@ something readable (e.g. File Object) or as a data URL.</p>
       <pre class="lines">
 
 
-53
-54
-55</pre>
+48
+49
+50</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_idle'>idle</span>
   <span class='id identifier rubyid_update_profile_status_setting'>update_profile_status_setting</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>idle</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -632,12 +622,12 @@ something readable (e.g. File Object) or as a data URL.</p>
       <pre class="lines">
 
 
-72
-73
-74</pre>
+67
+68
+69</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 72</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 67</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;Profile user=</span><span class='embexpr_beg'>#{</span><span class='kw'>super</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
@@ -679,12 +669,12 @@ something readable (e.g. File Object) or as a data URL.</p>
       <pre class="lines">
 
 
-67
-68
-69</pre>
+62
+63
+64</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 67</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 62</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invisible'>invisible</span>
   <span class='id identifier rubyid_update_profile_status_setting'>update_profile_status_setting</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invisible</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -726,12 +716,12 @@ something readable (e.g. File Object) or as a data URL.</p>
       <pre class="lines">
 
 
-47
-48
-49</pre>
+42
+43
+44</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 42</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_online'>online</span>
   <span class='id identifier rubyid_update_profile_status_setting'>update_profile_status_setting</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>online</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -809,7 +799,7 @@ something readable (e.g. File Object) or as a data URL.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Sep  1 22:21:35 2025 by
+  Generated on Tue Sep  2 02:44:29 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
