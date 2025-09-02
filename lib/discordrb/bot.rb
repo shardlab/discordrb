@@ -924,7 +924,7 @@ module Discordrb
     # @param emoji_id [Integer, String, Emoji] ID of the application emoji to edit.
     # @param name [String] The new name of the emoji.
     # @return [Emoji] Returns the updated emoji object on success.
-    def edit_application_emoji(emoji_id:, name:)
+    def edit_application_emoji(emoji_id, name:)
       response = API::Application.edit_application_emoji(@token, profile.id, emoji_id.resolve_id, name)
       Emoji.new(JSON.parse(response), self)
     end
