@@ -513,7 +513,7 @@ module Discordrb
     # with the regular role defaults the client uses unless specified, i.e. name is "new role",
     # permissions are the default, colour is the default etc.
     # @param name [String] Name of the role to create.
-    # @param colour [Integer, ColourRGB, #combined] The roles  primary colour.
+    # @param colour [Integer, ColourRGB, #combined] The primary colour of the role to create.
     # @param hoist [true, false] whether members of this role should be displayed seperately in the members list.
     # @param mentionable [true, false] whether this role can mentioned by anyone in the server.
     # @param permissions [Integer, Array<Symbol>, Permissions, #bits] The permissions to write to the new role.
@@ -552,13 +552,9 @@ module Discordrb
     # @param reason [String] The reason the for the creation of this emoji.
     # @return [Emoji] The emoji that has been added.
     def add_emoji(name, image, roles = [], reason: nil)
-      image_string = image
-      if image.respond_to? :read
-        image_string = 'data:image/jpg;base64,'
-        image_string += Base64.strict_encode64(image.read)
-      end
+      image = image.respond_to?(:read) ? Discordrb.encode64(image) : image
 
-      data = JSON.parse(API::Server.add_emoji(@bot.token, @id, image_string, name, roles.map(&:resolve_id), reason))
+      data = JSON.parse(API::Server.add_emoji(@bot.token, @id, image, name, roles.map(&:resolve_id), reason))
       new_emoji = Emoji.new(data, @bot, self)
       @emoji[new_emoji.id] = new_emoji
     end
@@ -708,10 +704,8 @@ module Discordrb
     # Sets the server's icon.
     # @param icon [String, #read] The new icon, in base64-encoded JPG format.
     def icon=(icon)
-      if icon.respond_to? :read
-        icon_string = 'data:image/jpg;base64,'
-        icon_string += Base64.strict_encode64(icon.read)
-        update_server_data(icon_id: icon_string)
+      if icon.respond_to?(:read)
+        update_server_data(icon_id: Discordrb.encode64(icon))
       else
         update_server_data(icon_id: icon)
       end
