@@ -5,7 +5,7 @@ module Discordrb
   # A freshly generated embed object will not appear in a message object
   # unless grabbed from its ID in a channel.
   class Embed
-    # @return [Message] the message this embed object is contained in.
+    # @return [Message, Snapshot] the message or message snapshot this embed object is contained in.
     attr_reader :message
 
     # @return [String] the URL this embed object is based on.

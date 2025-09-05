@@ -93,6 +93,9 @@ module Discordrb
     # @return [Time, nil] the time at when this message was pinned. Only present on messages fetched via {Channel#pins}.
     attr_reader :pinned_at
 
+    # @return [Array<Snapshot>] the message snapshots included in this message.
+    attr_reader :snapshots
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -169,6 +172,8 @@ module Discordrb
       @thread = data['thread'] ? @bot.ensure_channel(data['thread'], @server) : nil
 
       @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
+
+      @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
     end
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
@@ -430,7 +435,7 @@ module Discordrb
       return nil unless @message_reference
 
       referenced_channel = @bot.channel(@message_reference['channel_id'])
-      @referenced_message = referenced_channel.message(@message_reference['message_id'])
+      @referenced_message = referenced_channel&.message(@message_reference['message_id'])
     end
 
     # @return [Array<Components::Button>]
@@ -459,6 +464,30 @@ module Discordrb
       define_method("#{name}?") do
         @flags.anybits?(value)
       end
+    end
+
+    # Convert this message to a hash that can be used to reference this message in a forward or a reply.
+    # @param type [Integer, Symbol] The reference type to set. Can either be one of `:reply` or `:forward`.
+    # @param must_exist [true, false] Whether to raise an error if this message was deleted when sending it.
+    # @return [Hash] the message as a hash representation that can be used in a forwarded message or a reply.
+    def to_reference(type: :reply, must_exist: true)
+      type = (type == :reply ? 0 : 1) if type.is_a?(Symbol)
+
+      { type: type, message_id: @id, channel_id: @channel.id, fail_if_not_exists: must_exist }
+    end
+
+    # Forward this message to another channel.
+    # @param channel [Integer, String, Channel] The target channel to forward this message to.
+    # @param must_exist [true, false] Whether to raise an error if this message was deleted when sending it.
+    # @param timeout [Float, nil] The amount of time in seconds after which the message sent will be deleted.
+    # @param flags [Integer, Symbol, Array<Integer, Symbol>] The message flags to set on the forwarded message.
+    # @param nonce [String, Integer, nil] The 25 character optional nonce that should be used when forwarding this message.
+    # @param enforce_nonce [true, false] Whether the provided nonce should be enforced and used for message de-duplication.
+    # @return [Message, nil] the message that was created from forwarding this one, or `nil` if this is a temporary message.
+    def forward(channel, must_exist: true, timeout: nil, flags: 0, nonce: nil, enforce_nonce: false)
+      reference = to_reference(type: :forward, must_exist: must_exist)
+
+      @bot.channel(channel).send_message!(reference: reference, timeout: timeout, flags: flags, nonce: nonce, enforce_nonce: enforce_nonce)
     end
   end
 end
