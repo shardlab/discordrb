@@ -28,7 +28,6 @@ module Discordrb
     # @return [Boolean, nil] if this emoji is currently usable, or nil if the emoji's server is unknown
     attr_reader :available
     alias_method :available?, :available
-    alias_method :usable?, :available
 
     # @return [true, false] if the emoji is animated
     attr_reader :animated
