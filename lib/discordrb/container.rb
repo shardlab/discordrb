@@ -94,6 +94,7 @@ module Discordrb
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer] :id Matches the ID of the message that was edited.
     # @option attributes [String, Integer, Channel] :in Matches the channel the message was edited in.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was edited.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageEditEvent] The event that was raised.
     # @return [MessageEditEventHandler] the event handler that was registered.
@@ -119,6 +120,7 @@ module Discordrb
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer] :id Matches the ID of the message that was updated.
     # @option attributes [String, Integer, Channel] :in Matches the channel the message was updated in.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was updated.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageUpdateEvent] The event that was raised.
     # @return [MessageUpdateEventHandler] the event handler that was registered.
@@ -201,6 +203,7 @@ module Discordrb
     # @option attributes [Time] :after Matches a time after the time the message was sent at.
     # @option attributes [Time] :before Matches a time before the time the message was sent at.
     # @option attributes [Boolean] :private Matches whether or not the channel is private.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was sent.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MentionEvent] The event that was raised.
     # @return [MentionEventHandler] the event handler that was registered.

@@ -31,7 +31,7 @@ module Discordrb
       channel_name_change: 4,
       channel_icon_change: 5,
       channel_pinned_message: 6,
-      member_join: 7,
+      server_member_join: 7,
       server_boost: 8,
       server_boost_tier_one: 9,
       server_boost_tier_two: 10,
@@ -53,6 +53,7 @@ module Discordrb
       stage_start: 27,
       stage_end: 28,
       stage_speaker: 29,
+      stage_raise_hand: 30,
       stage_topic: 31,
       server_application_premium_subscription: 32,
       server_incident_alert_mode_enabled: 36,
@@ -60,7 +61,17 @@ module Discordrb
       server_incident_report_raid: 38,
       server_incident_report_false_alarm: 39,
       purchase_notification: 44,
-      poll_result: 46
+      poll_result: 46,
+      changelog: 47,
+      server_join_request_accepted: 52,
+      server_join_request_rejected: 53,
+      server_join_request_withdrawn: 54,
+      report_to_mod_deleted_message: 58,
+      report_to_mod_timeout_user: 59,
+      report_to_mod_kick_user: 60,
+      report_to_mod_ban_user: 61,
+      report_to_mod_closed_report: 62,
+      server_emoji_added: 63
     }.freeze
 
     # @return [String] the content of this message.
@@ -133,6 +144,9 @@ module Discordrb
 
     # @return [Time, nil] the time at when this message was pinned. Only present on messages fetched via {Channel#pins}.
     attr_reader :pinned_at
+
+    # @return [Call, nil] the call in a private channel that prompted this message.
+    attr_reader :call
 
     # @!visibility private
     def initialize(data, bot)
@@ -210,6 +224,8 @@ module Discordrb
       @thread = data['thread'] ? @bot.ensure_channel(data['thread'], @server) : nil
 
       @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
+
+      @call = data['call'] ? Call.new(data['call'], @bot) : nil
     end
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
