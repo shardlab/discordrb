@@ -43,15 +43,21 @@ module Discordrb::API::User
     )
   end
 
-  # Update user data
+  # @deprecated Please use {update_current_user} instead.
   # https://discord.com/developers/docs/resources/user#modify-current-user
-  def update_profile(token, email, password, new_username, avatar, new_password = nil)
+  def update_profile(token, _email, _password, new_username, avatar, _new_password = nil)
+    update_current_user(token, new_username, avatar)
+  end
+
+  # Update the properties of the user for the current bot.
+  # https://discord.com/developers/docs/resources/user#modify-current-user
+  def update_current_user(token, username = :undef, avatar = :undef, banner = :undef)
     Discordrb::API.request(
       :users_me,
       nil,
       :patch,
       "#{Discordrb::API.api_base}/users/@me",
-      { avatar: avatar, email: email, new_password: new_password, password: password, username: new_username }.to_json,
+      { username: username, avatar: avatar, banner: banner }.reject { |_, value| value == :undef }.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -116,19 +122,6 @@ module Discordrb::API::User
       :get,
       "#{Discordrb::API.api_base}/users/@me/connections",
       Authorization: token
-    )
-  end
-
-  # Change user status setting
-  def change_status_setting(token, status)
-    Discordrb::API.request(
-      :users_me_settings,
-      nil,
-      :patch,
-      "#{Discordrb::API.api_base}/users/@me/settings",
-      { status: status }.to_json,
-      Authorization: token,
-      content_type: :json
     )
   end
 

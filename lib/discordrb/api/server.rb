@@ -147,13 +147,13 @@ module Discordrb::API::Server
 
   # Update the current member's properties.
   # https://discord.com/developers/docs/resources/guild#modify-current-member
-  def update_current_member(token, server_id, nick = :undef, reason = nil)
+  def update_current_member(token, server_id, nick = :undef, reason = nil, banner = :undef, avatar = :undef, bio = :undef)
     Discordrb::API.request(
       :guilds_sid_members_me,
       server_id,
       :patch,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/members/@me",
-      { nick: nick }.reject { |_, v| v == :undef }.to_json,
+      { nick: nick, banner: banner, avatar: avatar, bio: bio }.reject { |_, v| v == :undef }.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason

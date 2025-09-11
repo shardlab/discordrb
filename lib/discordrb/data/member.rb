@@ -13,7 +13,8 @@ module Discordrb
       started_home_actions: 1 << 5,
       completed_home_actions: 1 << 6,
       automod_quarantined_username: 1 << 7,
-      dm_settings_upsell_acknowledged: 1 << 9
+      dm_settings_upsell_acknowledged: 1 << 9,
+      automod_quarantined_server_tag: 1 << 10
     }.freeze
 
     # @return [Time] when this member joined the server.
@@ -369,6 +370,34 @@ module Discordrb
     # @param flags [Integer, nil] The new bitwise value of flags for this member, or nil.
     def flags=(flags)
       API::Server.update_member(@bot.token, @server_id, @user.id, flags: flags)
+    end
+
+    # Set the server banner for the current bot.
+    # @param banner [File, nil] A file like object that responds to read, or `nil`.
+    def server_banner=(banner)
+      raise 'Can only set a banner for the current bot' unless current_bot?
+
+      banner = banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner
+
+      update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id, :undef, nil, banner)))
+    end
+
+    # Set the server avatar for the current bot.
+    # @param avatar [File, nil] A file like object that responds to read, or `nil`.
+    def server_avatar=(avatar)
+      raise 'Can only set an avatar for the current bot' unless current_bot?
+
+      avatar = avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar
+
+      update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id, :undef, nil, :undef, avatar)))
+    end
+
+    # Set the server bio for the current bot.
+    # @param bio [String, nil] The new server bio for the bot, or nil.
+    def server_bio=(bio)
+      raise 'Can only set a bio for the current bot' unless current_bot?
+
+      update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id, :undef, nil, :undef, :undef, bio)))
     end
 
     # Update this member's roles
