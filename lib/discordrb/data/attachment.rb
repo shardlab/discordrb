@@ -5,9 +5,6 @@ module Discordrb
   class Attachment
     include IDObject
 
-    # @return [Message, Snapshot] the message or message snapshot this attachment belongs to.
-    attr_reader :message
-
     # @return [String] the CDN URL this attachment can be downloaded at.
     attr_reader :url
 
@@ -79,6 +76,16 @@ module Discordrb
     # @return [true, false] whether this file is tagged as a spoiler.
     def spoiler?
       @filename.start_with? 'SPOILER_'
+    end
+
+    # @return [Message, nil] the message this attachment object belongs to.
+    def message
+      @message unless @message.is_a?(Snapshot)
+    end
+
+    # @return [Snapshot, nil] the message snapshot this attachment object belongs to.
+    def snapshot
+      @message unless @message.is_a?(Message)
     end
   end
 end

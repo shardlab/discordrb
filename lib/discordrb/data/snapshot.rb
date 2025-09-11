@@ -99,5 +99,12 @@ module Discordrb
         @flags.anybits?(value)
       end
     end
+
+    # @see Discordrb::Message::TYPES
+    Message::TYPES.each do |name, value|
+      define_method("#{name}?") do
+        @type == value
+      end
+    end
   end
 end

@@ -5,9 +5,6 @@ module Discordrb
   # A freshly generated embed object will not appear in a message object
   # unless grabbed from its ID in a channel.
   class Embed
-    # @return [Message, Snapshot] the message or message snapshot this embed object is contained in.
-    attr_reader :message
-
     # @return [String] the URL this embed object is based on.
     attr_reader :url
 
@@ -69,6 +66,16 @@ module Discordrb
       @thumbnail = data['thumbnail'].nil? ? nil : EmbedThumbnail.new(data['thumbnail'], self)
       @author = data['author'].nil? ? nil : EmbedAuthor.new(data['author'], self)
       @fields = data['fields'].nil? ? nil : data['fields'].map { |field| EmbedField.new(field, self) }
+    end
+
+    # @return [Message, nil] the message this embed object is contained in.
+    def message
+      @message unless @message.is_a?(Snapshot)
+    end
+
+    # @return [Snapshot, nil] the message snapshot this embed object is contained in.
+    def snapshot
+      @message unless @message.is_a?(Message)
     end
   end
 
