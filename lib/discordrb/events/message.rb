@@ -56,10 +56,8 @@ module Discordrb::Events
 
     # # Sends a message to the channel this message was sent in, right now.
     # @see Channel#send_message!
-    def send_message!(**parameters)
-      # HACK: We can accept any arguments with `**`, and then validate the arguments when actually
-      #   unpacking them into `Channel#send_message!`
-      channel.send_message!(**parameters)
+    def send_message!(...)
+      channel.send_message!(...)
     end
 
     # Adds a string to be sent after the event has finished execution. Avoids problems with rate limiting because only
@@ -138,6 +136,7 @@ module Discordrb::Events
     #   @see Channel#server
     delegate :server, to: :channel
 
+    # @!visibility private
     def initialize(message, bot)
       @bot = bot
       @message = message
@@ -261,6 +260,14 @@ module Discordrb::Events
           when Regexp
             match = a.match(e)
             match ? (e == match[0]) : false
+          end
+        end,
+        matches_all(@attributes[:type] || @attributes[:message_type], event.message.type) do |a, e|
+          case a
+          when String, Symbol
+            Discordrb::Message::TYPES[a.to_sym] == e
+          when Integer
+            a == e
           end
         end,
         matches_all(@attributes[:after], event.timestamp) { |a, e| a > e },

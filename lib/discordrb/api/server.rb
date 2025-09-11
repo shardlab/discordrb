@@ -261,13 +261,7 @@ module Discordrb::API::Server
     data = { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions, colors: colours, unicode_emoji: unicode_emoji }
 
     if icon != :undef && icon
-      path_method = %i[original_filename path local_path].find { |meth| icon.respond_to?(meth) }
-
-      raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
-      raise ArgumentError, 'File must respond to read' unless icon.respond_to? :read
-
-      mime_type = MIME::Types.type_for(icon.__send__(path_method)).first&.to_s || 'image/jpeg'
-      data[:icon] = "data:#{mime_type};base64,#{Base64.encode64(icon.read).strip}"
+      data[:icon] = Discordrb.encode64(icon)
     elsif icon.nil?
       data[:icon] = nil
     end

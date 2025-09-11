@@ -28,6 +28,7 @@ module Discordrb
     # @return [true, false] whether this is a custom voice region (used for events/etc)
     attr_reader :custom
 
+    # @!visibility private
     def initialize(data)
       @id = data['id']
 
