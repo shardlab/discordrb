@@ -34,6 +34,7 @@ module Discordrb::Events
 
     alias temporary? temporary
 
+    # @!visibility private
     def initialize(data, invite, bot)
       @bot = bot
       @invite = invite
@@ -53,6 +54,7 @@ module Discordrb::Events
     # @return [String] The code of the deleted invite.
     attr_reader :code
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
       @channel = bot.channel(data['channel_id'])
