@@ -35,67 +35,59 @@ module Discordrb::Events
       @bot = bot
     end
 
-    # (see Interaction#respond)
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, &block)
-      @interaction.respond(
-        content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
-        flags: flags, ephemeral: ephemeral, wait: wait, components: components, attachments: attachments,
-        &block
-      )
+    # @see Interaction#respond
+    def respond(...)
+      @interaction.respond(...)
     end
 
-    # (see Interaction#defer)
-    def defer(flags: 0, ephemeral: true)
-      @interaction.defer(flags: flags, ephemeral: ephemeral)
+    # @see Interaction#defer
+    def defer(...)
+      @interaction.defer(...)
     end
 
-    # (see Interaction#update_message)
-    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, &block)
-      @interaction.update_message(
-        content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
-        flags: flags, ephemeral: ephemeral, wait: wait, components: components, attachments: attachments,
-        &block
-      )
+    # @see Interaction#update_message
+    def update_message(...)
+      @interaction.update_message(...)
     end
 
-    # (see Interaction#show_modal)
-    def show_modal(title:, custom_id:, components: nil, &block)
-      @interaction.show_modal(title: title, custom_id: custom_id, components: components, &block)
+    # @see Interaction#show_modal
+    def show_modal(...)
+      @interaction.show_modal(...)
     end
 
-    # (see Interaction#edit_response)
-    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil, &block)
-      @interaction.edit_response(content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, attachments: attachments, &block)
+    # @see Interaction#edit_response
+    def edit_response(...)
+      @interaction.edit_response(...)
     end
 
-    # (see Interaction#delete_response)
+    # @see Interaction#delete_response
     def delete_response
       @interaction.delete_response
     end
 
-    # (see Interaction#send_message)
-    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: nil, components: nil, attachments: nil, &block)
-      @interaction.send_message(content: content, embeds: embeds, tts: tts, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, components: components, attachments: attachments, &block)
+    # @see Interaction#send_message
+    def send_message(...)
+      @interaction.send_message(...)
     end
 
-    # (see Interaction#edit_message)
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, attachments: nil, &block)
-      @interaction.edit_message(message, content: content, embeds: embeds, allowed_mentions: allowed_mentions, attachments: attachments, &block)
+    # @see Interaction#edit_message
+    def edit_message(...)
+      @interaction.edit_message(...)
     end
 
-    # (see Interaction#delete_message)
-    def delete_message(message)
-      @interaction.delete_message(message)
+    # @see Interaction#delete_message
+    def delete_message(...)
+      @interaction.delete_message(...)
     end
 
-    # (see Interaction#defer_update)
+    # @see Interaction#defer_update
     def defer_update
       @interaction.defer_update
     end
 
-    # (see Interaction#get_component)
-    def get_component(custom_id)
-      @interaction.get_component(custom_id)
+    # @see Interaction#get_component
+    def get_component(...)
+      @interaction.get_component(...)
     end
   end
 
