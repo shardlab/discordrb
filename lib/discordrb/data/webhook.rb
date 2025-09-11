@@ -31,6 +31,7 @@ module Discordrb
     # @return [Member, User, nil] the user object of the owner or nil if the webhook was requested using the token.
     attr_reader :owner
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -211,11 +212,7 @@ module Discordrb
     private
 
     def avatarise(avatar)
-      if avatar.respond_to? :read
-        "data:image/jpg;base64,#{Base64.strict_encode64(avatar.read)}"
-      else
-        avatar
-      end
+      avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar
     end
 
     def update_internal(data)

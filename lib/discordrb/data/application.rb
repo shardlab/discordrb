@@ -22,6 +22,7 @@ module Discordrb
     # @return [User] the user object of the owner
     attr_reader :owner
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
