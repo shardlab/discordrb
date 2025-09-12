@@ -3,7 +3,7 @@
 module Discordrb
   # The onboarding flow for new members in a server.
   class Onboarding
-    # Map of onboarding mode types.
+    # Map of onboarding modes.
     MODES = {
       default: 0,
       advanced: 1
