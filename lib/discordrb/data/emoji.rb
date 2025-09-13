@@ -34,7 +34,7 @@ module Discordrb
     # ID or name based comparison
     def ==(other)
       return false unless other.is_a? Emoji
-      return Discordrb.id_compare(@id, other) if @id
+      return Discordrb.id_compare?(@id, other) if @id
 
       name == other.name
     end
