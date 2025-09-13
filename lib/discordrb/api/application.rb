@@ -211,4 +211,18 @@ module Discordrb::API::Application
       Authorization: token
     )
   end
+
+  # Edit the current application for the requesting bot user.
+  # https://discord.com/developers/docs/resources/application#edit-current-application
+  def update_current_application(token, custom_install_url = :undef, description = :undef, role_connections_verification_url = :undef, install_params = :undef, integration_types_config = :undef, flags = :undef, interactions_endpoint_url = :undef, tags = :undef, event_webhooks_url = :undef, event_webhooks_status = :undef, event_webhooks_types = :undef, icon = :undef, cover_image = :undef)
+    Discordrb::API.request(
+      :applications_me,
+      nil,
+      :patch,
+      "#{Discordrb::API.api_base}/applications/@me",
+      { custom_install_url: custom_install_url, description: description, role_connections_verification_url: role_connections_verification_url, install_params: install_params, integration_types_config: integration_types_config, flags: flags, interactions_endpoint_url: interactions_endpoint_url, tags: tags, event_webhooks_url: event_webhooks_url, event_webhooks_status: event_webhooks_status, event_webhooks_types: event_webhooks_types, icon: icon, cover_image: cover_image }.reject { |_, v| v == :undef }.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
 end
