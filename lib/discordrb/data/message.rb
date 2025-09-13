@@ -92,9 +92,6 @@ module Discordrb
     # @return [Array<User>] the users that were mentioned in this message.
     attr_reader :mentions
 
-    # @return [Array<Role>] the roles that were mentioned in this message.
-    attr_reader :role_mentions
-
     # @return [Array<Attachment>] the files attached to this message.
     attr_reader :attachments
 
@@ -127,9 +124,6 @@ module Discordrb
     # @return [Integer] what the type of the message is
     attr_reader :type
 
-    # @return [Server, nil] the server in which this message was sent.
-    attr_reader :server
-
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
 
@@ -151,20 +145,23 @@ module Discordrb
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
+      @id = data['id'].to_i
       @content = data['content']
-      @channel = bot.channel(data['channel_id'].to_i)
       @pinned = data['pinned']
       @type = data['type']
       @tts = data['tts']
       @nonce = data['nonce']
       @mention_everyone = data['mention_everyone']
+      @webhook_id = data['webhook_id']&.to_i
+
+      @channel = if data['_channel_data']
+                   @bot.ensure_channel(data['_channel_data'])
+                 else
+                   bot.channel(data['channel_id'].to_i)
+                 end
 
       @referenced_message = Message.new(data['referenced_message'], bot) if data['referenced_message']
       @message_reference = data['message_reference']
-
-      @server = @channel.server
-
-      @webhook_id = data['webhook_id']&.to_i
 
       if data['author']
         if @webhook_id
@@ -185,7 +182,6 @@ module Discordrb
       @timestamp = Time.parse(data['timestamp']) if data['timestamp']
       @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
       @edited = !@edited_timestamp.nil?
-      @id = data['id'].to_i
 
       @emoji = []
 
@@ -201,14 +197,7 @@ module Discordrb
         @mentions << bot.ensure_user(element)
       end
 
-      @role_mentions = []
-
-      # Role mentions can only happen on public servers so make sure we only parse them there
-      if @channel.text?
-        data['mention_roles']&.each do |element|
-          @role_mentions << @channel.server.role(element.to_i)
-        end
-      end
+      @mention_roles = data['mention_roles']&.map(&:to_i) || []
 
       @attachments = []
       @attachments = data['attachments'].map { |e| Attachment.new(e, self, @bot) } if data['attachments']
@@ -221,7 +210,7 @@ module Discordrb
 
       @flags = data['flags'] || 0
 
-      @thread = data['thread'] ? @bot.ensure_channel(data['thread'], @server) : nil
+      @thread = data['thread'] ? @bot.ensure_channel(data['thread']) : nil
 
       @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
 
@@ -233,7 +222,7 @@ module Discordrb
     def author
       return @author if @author
 
-      if @channel.server
+      unless @channel.private?
         @author = @channel.server.member(@author_id)
         Discordrb::LOGGER.debug("Member with ID #{@author_id} not cached (possibly left the server).") if @author.nil?
       end
@@ -243,6 +232,25 @@ module Discordrb
 
     alias_method :user, :author
     alias_method :writer, :author
+
+    # @return [Server, nil] the server this message was sent in. If this message was sent in a PM channel, it will be nil.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    #   authorized with the `bot` scope.
+    def server
+      return if @channel.private?
+
+      @server ||= @channel.server
+    end
+
+    # Get the roles that were mentioned in this message.
+    # @return [Array<Role>] the roles that were mentioned in this message.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    #   authorized with the `bot` scope.
+    def role_mentions
+      return [] if @channel.private? || @mention_roles.empty?
+
+      @role_mentions ||= @mention_roles.map { |id| server.role(id) }
+    end
 
     # Replies to this message with the specified content.
     # @deprecated Please use {#respond}.
@@ -292,12 +300,14 @@ module Discordrb
     end
 
     # Deletes this message.
+    # @return [nil]
     def delete(reason = nil)
       API::Channel.delete_message(@bot.token, @channel.id, @id, reason)
       nil
     end
 
     # Pins this message
+    # @return [nil]
     def pin(reason = nil)
       API::Channel.pin_message(@bot.token, @channel.id, @id, reason)
       @pinned = true
@@ -305,6 +315,7 @@ module Discordrb
     end
 
     # Unpins this message
+    # @return [nil]
     def unpin(reason = nil)
       API::Channel.unpin_message(@bot.token, @channel.id, @id, reason)
       @pinned = false
@@ -312,6 +323,7 @@ module Discordrb
     end
 
     # Crossposts a message in a news channel.
+    # @return [Message] the updated message object.
     def crosspost
       response = API::Channel.crosspost_message(@bot.token, @channel.id, @id)
       Message.new(JSON.parse(response), @bot)
@@ -389,6 +401,7 @@ module Discordrb
 
     # Reacts to a message.
     # @param reaction [String, #to_reaction] the unicode emoji or {Emoji}
+    # @return [nil]
     def create_reaction(reaction)
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
       API::Channel.create_reaction(@bot.token, @channel.id, @id, reaction)
@@ -464,7 +477,7 @@ module Discordrb
 
     # @return [String] a URL that a user can use to navigate to this message in the client
     def link
-      "https://discord.com/channels/#{@server&.id || '@me'}/#{@channel.id}/#{@id}"
+      "https://discord.com/channels/#{server&.id || '@me'}/#{@channel.id}/#{@id}"
     end
 
     alias_method :jump_link, :link
