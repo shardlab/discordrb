@@ -93,22 +93,23 @@ module Discordrb
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @param components [Array<#to_h>] An array of components.
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to this message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil)
+    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, poll: nil)
       flags |= 1 << 6 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
       # Set builder defaults from parameters
-      prepare_builder(builder, content, embeds, allowed_mentions)
+      prepare_builder(builder, content, embeds, allowed_mentions, poll)
       yield(builder, view) if block_given?
 
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments)
+      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, data[:poll])
 
       return unless wait
 
@@ -162,21 +163,22 @@ module Discordrb
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
     # @param components [Array<#to_h>] An array of components.
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to this message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
-    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil)
+    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, poll: nil)
       flags |= 1 << 6 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
-      prepare_builder(builder, content, embeds, allowed_mentions)
+      prepare_builder(builder, content, embeds, allowed_mentions, poll)
       yield(builder, view) if block_given?
 
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments)
+      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, data[:poll])
 
       return unless wait
 
@@ -190,18 +192,19 @@ module Discordrb
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @param components [Array<#to_h>] An array of components.
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to this message.
     # @return [InteractionMessage] The updated response message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil)
+    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil, poll: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
-      prepare_builder(builder, content, embeds, allowed_mentions)
+      prepare_builder(builder, content, embeds, allowed_mentions, poll)
       yield(builder, view) if block_given?
 
       components ||= view
       data = builder.to_json_hash
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments)
+      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, data[:poll])
 
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -219,20 +222,20 @@ module Discordrb
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil, attachments: nil)
+    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil, attachments: nil, poll: nil)
       flags |= 64 if ephemeral
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
-      prepare_builder(builder, content, embeds, allowed_mentions)
+      prepare_builder(builder, content, embeds, allowed_mentions, poll)
       yield builder, view if block_given?
 
       components ||= view
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments
+        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, data[:poll]
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -243,18 +246,19 @@ module Discordrb
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil)
+    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil, poll: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
-      prepare_builder(builder, content, embeds, allowed_mentions)
+      prepare_builder(builder, content, embeds, allowed_mentions, poll)
       yield builder, view if block_given?
 
       components ||= view
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments,
+        data[:poll]
       )
       Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
     end
@@ -316,7 +320,9 @@ module Discordrb
     # @param content [String, nil]
     # @param embeds [Array<Hash, Discordrb::Webhooks::Embed>, nil]
     # @param allowed_mentions [AllowedMentions, Hash, nil]
-    def prepare_builder(builder, content, embeds, allowed_mentions)
+    # @param poll [Poll, Poll::Builder, Hash, nil]
+    def prepare_builder(builder, content, embeds, allowed_mentions, poll)
+      builder.poll = poll
       builder.content = content
       builder.allowed_mentions = allowed_mentions
       embeds&.each { |embed| builder << embed }

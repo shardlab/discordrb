@@ -496,14 +496,16 @@ module Discordrb
     # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables sending content and embeds.
     # @param nonce [nil, String, Integer, false] The 25 character nonce that should be used when sending this message.
     # @param enforce_nonce [true, false] Whether the provided nonce should be enforced and used for message de-duplication.
+    # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to this message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the builder overwrite method data.
     # @yieldparam view [Webhooks::View] An optional component builder. Arguments passed to the builder overwrite method data.
     # @return [Message, nil] The resulting message that was created, or `nil` if the `timeout` parameter was set to a non `nil` value.
-    def send_message!(content: '', timeout: nil, tts: false, embeds: [], attachments: nil, allowed_mentions: nil, reference: nil, components: nil, flags: 0, has_components: false, nonce: nil, enforce_nonce: false)
+    def send_message!(content: '', timeout: nil, tts: false, embeds: [], attachments: nil, allowed_mentions: nil, reference: nil, components: nil, flags: 0, has_components: false, nonce: nil, enforce_nonce: false, poll: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
       builder.tts = tts
+      builder.poll = poll
       builder.content = content
       embeds&.each { |embed| builder << embed }
       builder.allowed_mentions = allowed_mentions
@@ -515,9 +517,9 @@ module Discordrb
       builder = builder.to_json_hash
 
       if timeout
-        @bot.send_temporary_message(@id, builder[:content], timeout, builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce)
+        @bot.send_temporary_message(@id, builder[:content], timeout, builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce, builder[:poll])
       else
-        @bot.send_message(@id, builder[:content], builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce)
+        @bot.send_message(@id, builder[:content], builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce, builder[:poll])
       end
     end
 

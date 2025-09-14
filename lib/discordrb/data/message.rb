@@ -148,6 +148,9 @@ module Discordrb
     # @return [Call, nil] the call in a private channel that prompted this message.
     attr_reader :call
 
+    # @return [Poll, nil] the poll that was sent with this message, or nil.
+    attr_reader :poll
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -226,6 +229,8 @@ module Discordrb
       @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
 
       @call = data['call'] ? Call.new(data['call'], @bot) : nil
+
+      @poll = data['poll'] ? Poll.new(data['poll'], self, @bot) : nil
     end
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
