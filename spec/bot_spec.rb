@@ -151,7 +151,7 @@ describe Discordrb::Bot do
       let(:user_id) { instance_double(Integer, 'user_id') }
       let(:author) { instance_double(Discordrb::User, id: user_id) }
       let(:message_fixture) { { 'author' => { 'id' => user_id }, 'channel_id' => channel_id } }
-      let(:message) { instance_double(Discordrb::Message, channel: channel, from_bot?: false, mentions: []) }
+      let(:message) { instance_double(Discordrb::Message, channel: channel, from_bot?: false, mentions: [], role_mentions: []) }
       let(:profile) { instance_double(Discordrb::Profile, id: 123_456, current_bot?: false) }
 
       before do
