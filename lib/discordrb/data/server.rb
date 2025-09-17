@@ -137,7 +137,7 @@ module Discordrb
       @bot.debug("Members for server #{@id} not chunked yet - initiating")
 
       # If the SERVER_MEMBERS intent flag isn't set, the gateway won't respond when we ask for members.
-      raise 'The :server_members intent is required to get server members' if (@bot.gateway.intents & INTENTS[:server_members]).zero?
+      raise 'The :server_members intent is required to get server members' if @bot.gateway.intents.nobits?(INTENTS[:server_members])
 
       @bot.request_chunks(@id)
       sleep 0.05 until @chunked
@@ -325,6 +325,11 @@ module Discordrb
       @channels.reject { |c| c.parent || c.category? }
     end
 
+    # @return [ServerPreview] the preview of this server shown in the discovery page.
+    def preview
+      @bot.server_preview(@id)
+    end
+
     # @return [String, nil] the widget URL to the server that displays the amount of online members in a
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
@@ -507,14 +512,16 @@ module Discordrb
     # Creates a role on this server which can then be modified. It will be initialized
     # with the regular role defaults the client uses unless specified, i.e. name is "new role",
     # permissions are the default, colour is the default etc.
-    # @param name [String] Name of the role to create
-    # @param colour [Integer, ColourRGB, #combined] The roles colour
-    # @param hoist [true, false]
-    # @param mentionable [true, false]
+    # @param name [String] Name of the role to create.
+    # @param colour [Integer, ColourRGB, #combined] The primary colour of the role to create.
+    # @param hoist [true, false] whether members of this role should be displayed seperately in the members list.
+    # @param mentionable [true, false] whether this role can mentioned by anyone in the server.
     # @param permissions [Integer, Array<Symbol>, Permissions, #bits] The permissions to write to the new role.
     # @param reason [String] The reason the for the creation of this role.
+    # @param secondary_colour [Integer, ColourRGB, nil] The secondary colour of the role to create.
+    # @param tertiary_colour [Integer, ColourRGB, nil] The tertiary colour of the role to create.
     # @return [Role] the created role.
-    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, reason: nil)
+    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, secondary_colour: nil, tertiary_colour: nil, reason: nil)
       colour = colour.respond_to?(:combined) ? colour.combined : colour
 
       permissions = if permissions.is_a?(Array)
@@ -525,7 +532,13 @@ module Discordrb
                       permissions
                     end
 
-      response = API::Server.create_role(@bot.token, @id, name, colour, hoist, mentionable, permissions, reason)
+      colours = {
+        primary_color: colour&.to_i,
+        tertiary_color: tertiary_colour&.to_i,
+        secondary_color: secondary_colour&.to_i
+      }
+
+      response = API::Server.create_role(@bot.token, @id, name, nil, hoist, mentionable, permissions&.to_s, reason, colours)
 
       role = Role.new(JSON.parse(response), @bot, self)
       @roles << role
@@ -539,13 +552,9 @@ module Discordrb
     # @param reason [String] The reason the for the creation of this emoji.
     # @return [Emoji] The emoji that has been added.
     def add_emoji(name, image, roles = [], reason: nil)
-      image_string = image
-      if image.respond_to? :read
-        image_string = 'data:image/jpg;base64,'
-        image_string += Base64.strict_encode64(image.read)
-      end
+      image = image.respond_to?(:read) ? Discordrb.encode64(image) : image
 
-      data = JSON.parse(API::Server.add_emoji(@bot.token, @id, image_string, name, roles.map(&:resolve_id), reason))
+      data = JSON.parse(API::Server.add_emoji(@bot.token, @id, image, name, roles.map(&:resolve_id), reason))
       new_emoji = Emoji.new(data, @bot, self)
       @emoji[new_emoji.id] = new_emoji
     end
@@ -585,6 +594,17 @@ module Discordrb
       end
     end
 
+    # Searches a server for members that matches a username or a nickname.
+    # @param name [String] The username or nickname to search for.
+    # @param limit [Integer] The maximum number of members between 1-1000 to return. Returns 1 member by default.
+    # @return [Array<Member>, nil] An array of member objects that match the given parameters, or nil for no members.
+    def search_members(name:, limit: nil)
+      response = JSON.parse(API::Server.search_guild_members(@bot.token, @id, name, limit))
+      return nil if response.empty?
+
+      response.map { |mem| Member.new(mem, self, @bot) }
+    end
+
     # Retrieve banned users from this server.
     # @param limit [Integer] Number of users to return (up to maximum 1000, default 1000).
     # @param before_id [Integer] Consider only users before given user id.
@@ -599,10 +619,17 @@ module Discordrb
 
     # Bans a user from this server.
     # @param user [User, String, Integer] The user to ban.
-    # @param message_days [Integer] How many days worth of messages sent by the user should be deleted.
+    # @param message_days [Integer] How many days worth of messages sent by the user should be deleted. This is deprecated and will be removed in 4.0.
+    # @param message_seconds [Integer] How many seconds of messages sent by the user should be deleted.
     # @param reason [String] The reason the user is being banned.
-    def ban(user, message_days = 0, reason: nil)
-      API::Server.ban_user(@bot.token, @id, user.resolve_id, message_days, reason)
+    def ban(user, message_days = 0, message_seconds: nil, reason: nil)
+      delete_messages = if message_days != 0 && message_days
+                          message_days * 86_400
+                        else
+                          message_seconds || 0
+                        end
+
+      API::Server.ban_user!(@bot.token, @id, user.resolve_id, delete_messages, reason)
     end
 
     # Unbans a previously banned user from this server.
@@ -610,6 +637,20 @@ module Discordrb
     # @param reason [String] The reason the user is being unbanned.
     def unban(user, reason = nil)
       API::Server.unban_user(@bot.token, @id, user.resolve_id, reason)
+    end
+
+    # Ban up to 200 users from this server in one go.
+    # @param users [Array<User, String, Integer>] Array of up to 200 users to ban.
+    # @param message_seconds [Integer] How many seconds of messages sent by the users should be deleted.
+    # @param reason [String] The reason these users are being banned.
+    # @return [BulkBan]
+    def bulk_ban(users:, message_seconds: 0, reason: nil)
+      raise ArgumentError, 'Can only ban between 1 and 200 users!' unless users.size.between?(1, 200)
+
+      return ban(users.first, 0, message_seconds: message_seconds, reason: reason) if users.size == 1
+
+      response = API::Server.bulk_ban(@bot.token, @id, users.map(&:resolve_id), message_seconds, reason)
+      BulkBan.new(JSON.parse(response), self, reason)
     end
 
     # Kicks a user from this server.
@@ -627,20 +668,9 @@ module Discordrb
       API::Server.update_member(@bot.token, @id, user.resolve_id, channel_id: channel&.resolve_id)
     end
 
-    # Deletes this server. Be aware that this is permanent and impossible to undo, so be careful!
-    def delete
-      API::Server.delete(@bot.token, @id)
-    end
-
     # Leave the server.
     def leave
       API::User.leave_server(@bot.token, @id)
-    end
-
-    # Transfers server ownership to another user.
-    # @param user [User, String, Integer] The user who should become the new owner.
-    def owner=(user)
-      API::Server.transfer_ownership(@bot.token, @id, user.resolve_id)
     end
 
     # Sets the server's name.
@@ -674,10 +704,8 @@ module Discordrb
     # Sets the server's icon.
     # @param icon [String, #read] The new icon, in base64-encoded JPG format.
     def icon=(icon)
-      if icon.respond_to? :read
-        icon_string = 'data:image/jpg;base64,'
-        icon_string += Base64.strict_encode64(icon.read)
-        update_server_data(icon_id: icon_string)
+      if icon.respond_to?(:read)
+        update_server_data(icon_id: Discordrb.encode64(icon))
       else
         update_server_data(icon_id: icon)
       end
@@ -855,6 +883,7 @@ module Discordrb
       process_members(new_data['members']) if new_data['members']
       process_presences(new_data['presences']) if new_data['presences']
       process_voice_states(new_data['voice_states']) if new_data['voice_states']
+      process_active_threads(new_data['threads']) if new_data['threads']
     end
 
     # Adds a channel to this server's cache
@@ -972,6 +1001,19 @@ module Discordrb
         update_voice_state(element)
       end
     end
+
+    def process_active_threads(threads)
+      @channels ||= []
+      @channels_by_id ||= {}
+
+      return unless threads
+
+      threads.each do |element|
+        thread = @bot.ensure_channel(element, self)
+        @channels << thread
+        @channels_by_id[thread.id] = thread
+      end
+    end
   end
 
   # A ban entry on a server
@@ -1000,5 +1042,28 @@ module Discordrb
 
     alias_method :unban, :remove
     alias_method :lift, :remove
+  end
+
+  # A bulk ban entry on a server
+  class BulkBan
+    # @return [Server] The server this bulk ban belongs to.
+    attr_reader :server
+
+    # @return [String, nil] The reason these users were banned.
+    attr_reader :reason
+
+    # @return [Array<Integer>] Array of user IDs that were banned.
+    attr_reader :banned_users
+
+    # @return [Array<Integer>] Array of user IDs that couldn't be banned.
+    attr_reader :failed_users
+
+    # @!visibility private
+    def initialize(data, server, reason)
+      @server = server
+      @reason = reason
+      @banned_users = data['banned_users']&.map(&:resolve_id) || []
+      @failed_users = data['failed_users']&.map(&:resolve_id) || []
+    end
   end
 end

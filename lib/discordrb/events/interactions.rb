@@ -29,70 +29,65 @@ module Discordrb::Events
     #   @see Interaction#user
     delegate :type, :server, :server_id, :channel, :channel_id, :user, to: :interaction
 
+    # @!visibility private
     def initialize(data, bot)
       @interaction = Discordrb::Interaction.new(data, bot)
       @bot = bot
     end
 
-    # (see Interaction#respond)
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, &block)
-      @interaction.respond(
-        content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
-        flags: flags, ephemeral: ephemeral, wait: wait, components: components, &block
-      )
+    # @see Interaction#respond
+    def respond(...)
+      @interaction.respond(...)
     end
 
-    # (see Interaction#defer)
-    def defer(flags: 0, ephemeral: true)
-      @interaction.defer(flags: flags, ephemeral: ephemeral)
+    # @see Interaction#defer
+    def defer(...)
+      @interaction.defer(...)
     end
 
-    # (see Interaction#update_message)
-    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, &block)
-      @interaction.update_message(
-        content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
-        flags: flags, ephemeral: ephemeral, wait: wait, components: components, &block
-      )
+    # @see Interaction#update_message
+    def update_message(...)
+      @interaction.update_message(...)
     end
 
-    # (see Interaction#show_modal)
-    def show_modal(title:, custom_id:, components: nil, &block)
-      @interaction.show_modal(title: title, custom_id: custom_id, components: components, &block)
+    # @see Interaction#show_modal
+    def show_modal(...)
+      @interaction.show_modal(...)
     end
 
-    # (see Interaction#edit_response)
-    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil, &block)
-      @interaction.edit_response(content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, &block)
+    # @see Interaction#edit_response
+    def edit_response(...)
+      @interaction.edit_response(...)
     end
 
-    # (see Interaction#delete_response)
+    # @see Interaction#delete_response
     def delete_response
       @interaction.delete_response
     end
 
-    # (see Interaction#send_message)
-    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: nil, components: nil, &block)
-      @interaction.send_message(content: content, embeds: embeds, tts: tts, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, components: components, &block)
+    # @see Interaction#send_message
+    def send_message(...)
+      @interaction.send_message(...)
     end
 
-    # (see Interaction#edit_message)
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, &block)
-      @interaction.edit_message(message, content: content, embeds: embeds, allowed_mentions: allowed_mentions, &block)
+    # @see Interaction#edit_message
+    def edit_message(...)
+      @interaction.edit_message(...)
     end
 
-    # (see Interaction#delete_message)
-    def delete_message(message)
-      @interaction.delete_message(message)
+    # @see Interaction#delete_message
+    def delete_message(...)
+      @interaction.delete_message(...)
     end
 
-    # (see Interaction#defer_update)
+    # @see Interaction#defer_update
     def defer_update
       @interaction.defer_update
     end
 
-    # (see Interaction#get_component)
-    def get_component(custom_id)
-      @interaction.get_component(custom_id)
+    # @see Interaction#get_component
+    def get_component(...)
+      @interaction.get_component(...)
     end
   end
 
@@ -132,16 +127,16 @@ module Discordrb::Events
     # Struct to allow accessing data via [] or methods.
     Resolved = Struct.new('Resolved', :channels, :members, :messages, :roles, :users, :attachments) # rubocop:disable Lint/StructNewOverride
 
-    # @return [String] The name of the command.
+    # @return [Symbol] The name of the command.
     attr_reader :command_name
 
     # @return [Integer] The ID of the command.
     attr_reader :command_id
 
-    # @return [String, nil] The name of the subcommand group relevant to this event.
+    # @return [Symbol, nil] The name of the subcommand group relevant to this event.
     attr_reader :subcommand_group
 
-    # @return [String, nil] The name of the subcommand relevant to this event.
+    # @return [Symbol, nil] The name of the subcommand relevant to this event.
     attr_reader :subcommand
 
     # @return [Resolved]
@@ -153,6 +148,7 @@ module Discordrb::Events
     # @return [Integer, nil] The target of this command when it is a context command.
     attr_reader :target_id
 
+    # @!visibility private
     def initialize(data, bot)
       super
 
@@ -453,8 +449,8 @@ module Discordrb::Events
     def initialize(data, bot)
       super
 
-      users   = data['data']['resolved']['users'].keys.map { |e| bot.user(e) }
-      roles   = data['data']['resolved']['roles'] ? data['data']['resolved']['roles'].keys.map { |e| bot.server(data['guild_id']).role(e) } : []
+      users = data['data']['resolved']['users'].keys.map { |e| bot.user(e) }
+      roles = data['data']['resolved']['roles'] ? data['data']['resolved']['roles'].keys.map { |e| bot.server(data['guild_id']).role(e) } : []
       @values = { users: users, roles: roles }
     end
   end
@@ -478,5 +474,102 @@ module Discordrb::Events
 
   # Event handler for a select channel component.
   class ChannelSelectEventHandler < ComponentEventHandler
+  end
+
+  # Event handler for an autocomplete option choices.
+  class AutocompleteEventHandler < InteractionCreateEventHandler
+    def matches?(event)
+      return false unless super
+      return false unless event.is_a?(AutocompleteEvent)
+
+      [
+        matches_all(@attributes[:name], event.focused) { |a, e| a&.to_s == e },
+        matches_all(@attributes[:command_id], event.command_id) { |a, e| a&.to_i == e },
+        matches_all(@attributes[:subcommand], event.subcommand) { |a, e| a&.to_sym == e },
+        matches_all(@attributes[:command_name], event.command_name) { |a, e| a&.to_sym == e },
+        matches_all(@attributes[:subcommand_group], event.subcommand_group) { |a, e| a&.to_sym == e },
+        matches_all(@attributes[:server], event.server_id) { |a, e| a&.resolve_id == e }
+      ].reduce(&:&)
+    end
+  end
+
+  # An event for an autocomplete option choice.
+  class AutocompleteEvent < ApplicationCommandEvent
+    # @return [String] Name of the currently focused option.
+    attr_reader :focused
+
+    # @return [Hash] An empty hash that can be used to return choices by adding K/V pairs.
+    attr_reader :choices
+
+    # @!visibility private
+    def initialize(data, bot)
+      super
+
+      @choices = {}
+
+      options = data['data']['options']
+
+      options = case options[0]['type']
+                when 1
+                  options[0]['options']
+                when 2
+                  options[0]['options'][0]['options']
+                else
+                  options
+                end
+
+      @focused = options.find { |opt| opt.key?('focused') }['name']
+    end
+
+    # Respond to this interaction with autocomplete choices.
+    # @param choices [Array<Hash>, Hash, nil] Autocomplete choices to return.
+    def respond(choices:)
+      @interaction.show_autocomplete_choices(choices || [])
+    end
+  end
+
+  # An event for whenever an application command's permissions are updated.
+  class ApplicationCommandPermissionsUpdateEvent < Event
+    # @return [Integer] the ID of the server where the command permissions were updated.
+    attr_reader :server_id
+
+    # @return [Integer, nil] the ID of the application command that was updated.
+    attr_reader :command_id
+
+    # @return [Array<ApplicationCommand::Permission>] the permissions that were updated.
+    attr_reader :permissions
+
+    # @return [Integer] the ID of the application whose commands were updated.
+    attr_reader :application_id
+
+    # @!visibility private
+    def initialize(data, bot)
+      @bot = bot
+      @server_id = data['guild_id'].to_i
+      @application_id = data['application_id'].to_i
+      @command_id = data['id'].to_i if data['id'].to_i != @application_id
+      @permissions = data['permissions'].map do |permission|
+        Discordrb::ApplicationCommand::Permission.new(permission, data, bot)
+      end
+    end
+
+    # @return [Server] the server where the command's permissions were updated.
+    def server
+      @bot.server(@server_id)
+    end
+  end
+
+  # Event handler for the APPLICATION_COMMAND_PERMISSIONS_UPDATE event.
+  class ApplicationCommandPermissionsUpdateEventHandler < EventHandler
+    # @!visibility private
+    def matches?(event)
+      return false unless event.is_a?(ApplicationCommandPermissionsUpdateEvent)
+
+      [
+        matches_all(@attributes[:server], event.server_id) { |a, e| a.resolve_id == e },
+        matches_all(@attributes[:command_id], event.command_id) { |a, e| a.resolve_id == e },
+        matches_all(@attributes[:application_id], event.application_id) { |a, e| a.resolve_id == e }
+      ].reduce(&:&)
+    end
   end
 end
