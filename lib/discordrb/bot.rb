@@ -1318,17 +1318,15 @@ module Discordrb
         event = MessageEvent.new(message, self)
         raise_event(event)
 
-        if message.mentions.any? { |user| user.id == @profile.id }
-          event = MentionEvent.new(message, self)
-          event.role_mention = false
+        # Raise a mention event for any direct mentions.
+        if message.mentions.any? { |user| user.id == profile.id }
+          event = MentionEvent.new(message, self, false)
           raise_event(event)
         end
-        # Raises a MentionEvent for a bot's managed integration role:
-        # A managed role is auto-generated for any bots joined to a server with permissions > 0
-        # For this to generate an event, set role_managed: true
-        if message.role_mentions.any? { |role| role.managed? == true && role.tags.bot_id == @profile.id }
-          event = MentionEvent.new(message, self)
-          event.role_mention = true
+
+        # Raise a mention event for the current bot's auto-generated role.
+        if message.role_mentions.any? { |role| role.tags&.bot_id == profile.id }
+          event = MentionEvent.new(message, self, true)
           raise_event(event)
         end
 
