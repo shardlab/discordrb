@@ -16,6 +16,7 @@ module Discordrb
 
     # @return [true, false] whether or not this role should be displayed separately from other users
     attr_reader :hoist
+    alias_method :hoist?, :hoist
 
     # @return [true, false] whether or not this role is managed by an integration or a bot
     attr_reader :managed
@@ -25,7 +26,7 @@ module Discordrb
     attr_reader :mentionable
     alias_method :mentionable?, :mentionable
 
-    # @return [ColourRGB] the role colour
+    # @return [ColourRGB] the primary colour of this role.
     attr_reader :colour
     alias_method :color, :colour
 
@@ -43,6 +44,14 @@ module Discordrb
 
     # @return [String, nil] The unicode emoji of this role, or nil.
     attr_reader :unicode_emoji
+
+    # @return [ColourRGB, nil] the secondary colour of this role.
+    attr_reader :secondary_colour
+    alias_method :secondary_color, :secondary_colour
+
+    # @return [ColourRGB, nil] the tertiary colour of this role.
+    attr_reader :tertiary_colour
+    alias_method :tertiary_color, :tertiary_colour
 
     # Wrapper for the role tags
     class Tags
@@ -103,7 +112,7 @@ module Discordrb
     def initialize(data, bot, server = nil)
       @bot = bot
       @server = server
-      @permissions = Permissions.new(data['permissions'], RoleWriter.new(self, @bot.token))
+      @permissions = Permissions.new(data['permissions'].to_i, RoleWriter.new(self, @bot.token))
       @name = data['name']
       @id = data['id'].to_i
 
@@ -113,7 +122,8 @@ module Discordrb
       @mentionable = data['mentionable']
       @managed = data['managed']
 
-      @colour = ColourRGB.new(data['color'])
+      colours = data['colors']
+      @colour = ColourRGB.new(colours['primary_color'])
 
       @icon = data['icon']
 
@@ -122,6 +132,9 @@ module Discordrb
       @flags = data['flags']
 
       @unicode_emoji = data['unicode_emoji']
+
+      @tertiary_colour = ColourRGB.new(colours['tertiary_color']) if colours['tertiary_color']
+      @secondary_colour = ColourRGB.new(colours['secondary_color']) if colours['secondary_color']
     end
 
     # @return [String] a string that will mention this role, if it is mentionable.
@@ -150,19 +163,26 @@ module Discordrb
       @icon = other.icon
       @flags = other.flags
       @unicode_emoji = other.unicode_emoji
+      @secondary_colour = other.secondary_colour
+      @tertiary_colour = other.tertiary_colour
     end
 
     # Updates the data cache from a hash containing data
     # @note For internal use only
     # @!visibility private
     def update_data(new_data)
-      @name = new_data[:name] || new_data['name'] || @name
-      @hoist = new_data['hoist'] unless new_data['hoist'].nil?
-      @hoist = new_data[:hoist] unless new_data[:hoist].nil?
-      @colour = new_data[:colour] || (new_data['color'] ? ColourRGB.new(new_data['color']) : @colour)
-      @flags = new_data[:flags] || new_data['flags'] || @flags
-      @unicode_emoji = new_data[:unicode_emoji] if new_data.key?(:unicode_emoji)
-      @unicode_emoji = new_data['unicode_emoji'] if new_data.key?('unicode_emoji')
+      @name = new_data['name']
+      @hoist = new_data['hoist']
+      @icon = new_data['icon']
+      @unicode_emoji = new_data['unicode_emoji']
+      @position = new_data['position']
+      @mentionable = new_data['mentionable']
+      @flags = new_data['flags']
+      colours = new_data['colors']
+      @permissions.bits = new_data['permissions'].to_i
+      @colour = ColourRGB.new(colours['primary_color'])
+      @secondary_color = ColourRGB.new(colours['secondary_color']) if colours['secondary_color']
+      @tertiary_colour = ColourRGB.new(colours['tertiary_color']) if colours['tertiary_color']
     end
 
     # Sets the role name to something new
@@ -183,10 +203,28 @@ module Discordrb
       update_role_data(mentionable: mentionable)
     end
 
-    # Sets the role colour to something new
-    # @param colour [ColourRGB] The new colour
+    # Sets the primary role colour to something new.
+    # @param colour [ColourRGB, Integer, nil] The new colour.
     def colour=(colour)
-      update_role_data(colour: colour)
+      update_colors(primary: colour)
+    end
+
+    # Sets the secondary role colour to something new.
+    # @param colour [ColourRGB, Integer, nil] The new secondary colour.
+    def secondary_colour=(colour)
+      update_colours(secondary: colour)
+    end
+
+    # Sets the tertiary role colour to something new.
+    # @param colour [ColourRGB, Integer, nil] The new tertiary colour.
+    def tertiary_colour=(colour)
+      update_colours(tertiary: colour)
+    end
+
+    # Sets whether the role colour should be a holographic style.
+    # @param holographic [true, false] whether the role colour should be a holographic style.
+    def holographic=(holographic)
+      update_colours(holographic: holographic)
     end
 
     # Upload a role icon for servers with the ROLE_ICONS feature.
@@ -232,7 +270,21 @@ module Discordrb
       end
     end
 
+    # Whether or not the role is of the holographic style.
+    # @return [true, false]
+    def holographic?
+      !@tertiary_colour.nil?
+    end
+
+    # Whether or not the role has a two-point gradient.
+    # @return [true, false]
+    def gradient?
+      !@secondary_colour.nil? && @tertiary_colour.nil?
+    end
+
     alias_method :color=, :colour=
+    alias_method :secondary_color=, :secondary_colour=
+    alias_method :tertiary_color=, :tertiary_colour=
 
     # Changes this role's permissions to a fixed bitfield. This allows setting multiple permissions at once with just
     # one API call.
@@ -275,6 +327,33 @@ module Discordrb
       @server.delete_role(@id)
     end
 
+    # A rich interface designed to make working with role colours simple.
+    # @param primary [ColourRGB, Integer, nil] The new primary/base colour of this role, or nil to clear the primary colour.
+    # @param secondary [ColourRGB, Integer, nil] The new secondary colour of this role, or nil to clear the secondary colour.
+    # @param tertiary [ColourRGB, Integer,nil] The new tertiary colour of this role, or nil to clear the tertiary colour.
+    # @param holographic [true, false] Whether to apply or remove the holographic style to the role colour, overriding any other
+    #   arguments that were passed. Using this argument is recommended over passing individual colours.
+    def update_colours(primary: :undef, secondary: :undef, tertiary: :undef, holographic: :undef)
+      colours = {
+        primary_color: (primary == :undef ? @colour : primary)&.to_i,
+        tertiary_color: (tertiary == :undef ? @tertiary_colour : tertiary)&.to_i,
+        secondary_color: (secondary == :undef ? @secondary_colour : secondary)&.to_i
+      }
+
+      holographic_colours = {
+        primary_color: 11_127_295,
+        tertiary_color: 16_761_760,
+        secondary_color: 16_759_788
+      }
+
+      # Only set the tertiary_color to `nil` if holographic is explicitly set to false.
+      colours[:tertiary_color] = nil if holographic.is_a?(FalseClass) && holographic?
+
+      update_role_data(colours: holographic == true ? holographic_colours : colours)
+    end
+
+    alias_method :update_colors, :update_colours
+
     # The inspect method is overwritten to give more useful output
     def inspect
       "<Role name=#{@name} permissions=#{@permissions.inspect} hoist=#{@hoist} colour=#{@colour.inspect} server=#{@server.inspect} position=#{@position} mentionable=#{@mentionable} unicode_emoji=#{@unicode_emoji} flags=#{@flags}>"
@@ -283,16 +362,16 @@ module Discordrb
     private
 
     def update_role_data(new_data)
-      API::Server.update_role(@bot.token, @server.id, @id,
-                              new_data[:name] || @name,
-                              (new_data[:colour] || @colour).combined,
-                              new_data[:hoist].nil? ? @hoist : new_data[:hoist],
-                              new_data[:mentionable].nil? ? @mentionable : new_data[:mentionable],
-                              new_data[:permissions] || @permissions.bits,
-                              nil,
-                              new_data.key?(:icon) ? new_data[:icon] : :undef,
-                              new_data.key?(:unicode_emoji) ? new_data[:unicode_emoji] : :undef)
-      update_data(new_data)
+      update_data(JSON.parse(API::Server.update_role(@bot.token, @server.id, @id,
+                                                     new_data[:name] || @name,
+                                                     :undef,
+                                                     new_data.key?(:hoist) ? new_data[:hoist] : :undef,
+                                                     new_data.key?(:mentionable) ? new_data[:mentionable] : :undef,
+                                                     new_data[:permissions] || @permissions.bits,
+                                                     nil,
+                                                     new_data.key?(:icon) ? new_data[:icon] : :undef,
+                                                     new_data.key?(:unicode_emoji) ? new_data[:unicode_emoji] : :undef,
+                                                     new_data.key?(:colours) ? new_data[:colours] : :undef)))
     end
   end
 end

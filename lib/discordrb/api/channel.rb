@@ -18,8 +18,8 @@ module Discordrb::API::Channel
 
   # Update a channel's data
   # https://discord.com/developers/docs/resources/channel#modify-channel
-  def update(token, channel_id, name, topic, position, bitrate, user_limit, nsfw, permission_overwrites = nil, parent_id = nil, rate_limit_per_user = nil, reason = nil)
-    data = { name: name, position: position, topic: topic, bitrate: bitrate, user_limit: user_limit, nsfw: nsfw, parent_id: parent_id, rate_limit_per_user: rate_limit_per_user }
+  def update(token, channel_id, name, topic, position, bitrate, user_limit, nsfw, permission_overwrites = nil, parent_id = nil, rate_limit_per_user = nil, reason = nil, archived = nil, auto_archive_duration = nil, locked = nil, invitable = nil, flags = nil, applied_tags = nil)
+    data = { name: name, position: position, topic: topic, bitrate: bitrate, user_limit: user_limit, nsfw: nsfw, parent_id: parent_id, rate_limit_per_user: rate_limit_per_user, archived: archived, auto_archive_duration: auto_archive_duration, locked: locked, invitable: invitable, flags: flags, applied_tags: applied_tags }
     data[:permission_overwrites] = permission_overwrites unless permission_overwrites.nil?
     Discordrb::API.request(
       :channels_cid,
@@ -75,8 +75,8 @@ module Discordrb::API::Channel
   # https://discord.com/developers/docs/resources/channel#create-message
   # @param attachments [Array<File>, nil] Attachments to use with `attachment://` in embeds. See
   #   https://discord.com/developers/docs/resources/channel#create-message-using-attachments-within-embeds
-  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil)
-    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags }
+  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil, enforce_nonce = false)
+    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags, enforce_nonce: enforce_nonce }
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h
              { **files, payload_json: body.to_json }

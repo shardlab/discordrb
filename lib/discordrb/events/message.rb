@@ -54,6 +54,12 @@ module Discordrb::Events
       channel.send_temporary_message(content, timeout, tts, embed, attachments, allowed_mentions, components, flags)
     end
 
+    # # Sends a message to the channel this message was sent in, right now.
+    # @see Channel#send_message!
+    def send_message!(...)
+      channel.send_message!(...)
+    end
+
     # Adds a string to be sent after the event has finished execution. Avoids problems with rate limiting because only
     # one message is ever sent. If it is used multiple times, the strings will bunch up into one message (separated by
     # newlines)
@@ -87,6 +93,9 @@ module Discordrb::Events
     alias_method :send, :send_message
     alias_method :respond, :send_message
     alias_method :send_temp, :send_temporary_message
+
+    alias_method :send!, :send_message!
+    alias_method :respond!, :send_message!
   end
 
   # Event raised when a text message is sent to a channel
@@ -127,6 +136,7 @@ module Discordrb::Events
     #   @see Channel#server
     delegate :server, to: :channel
 
+    # @!visibility private
     def initialize(message, bot)
       @bot = bot
       @message = message
@@ -250,6 +260,14 @@ module Discordrb::Events
           when Regexp
             match = a.match(e)
             match ? (e == match[0]) : false
+          end
+        end,
+        matches_all(@attributes[:type] || @attributes[:message_type], event.message.type) do |a, e|
+          case a
+          when String, Symbol
+            Discordrb::Message::TYPES[a.to_sym] == e
+          when Integer
+            a == e
           end
         end,
         matches_all(@attributes[:after], event.timestamp) { |a, e| a > e },

@@ -400,18 +400,20 @@ module Discordrb
     # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
     # @param embeds [Hash, Discordrb::Webhooks::Embed, Array<Hash>, Array<Discordrb::Webhooks::Embed> nil] The rich embed(s) to append to this message.
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
-    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param message_reference [Message, String, Integer, Hash, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
+    # @param nonce [String, nil] A optional nonce in order to verify that a message was sent. Maximum of twenty-five characters.
+    # @param enforce_nonce [true, false] whether the nonce should be enforced and used for message de-duplication.
     # @return [Message] The message that was sent.
-    def send_message(channel, content, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+    def send_message(channel, content, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0, nonce = nil, enforce_nonce = false)
       channel = channel.resolve_id
       debug("Sending message to #{channel} with content '#{content}'")
       allowed_mentions = { parse: [] } if allowed_mentions == false
-      message_reference = { message_id: message_reference.id } if message_reference.respond_to?(:id)
+      message_reference = { message_id: message_reference.resolve_id } if message_reference.respond_to?(:resolve_id)
       embeds = (embeds.instance_of?(Array) ? embeds.map(&:to_hash) : [embeds&.to_hash]).compact
 
-      response = API::Channel.create_message(token, channel, content, tts, embeds, nil, attachments, allowed_mentions&.to_hash, message_reference, components, flags)
+      response = API::Channel.create_message(token, channel, content, tts, embeds, nonce, attachments, allowed_mentions&.to_hash, message_reference, components, flags, enforce_nonce)
       Message.new(JSON.parse(response), self)
     end
 
@@ -426,12 +428,14 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
-    def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
+    # @param nonce [String, nil] A optional nonce in order to verify that a message was sent. Maximum of twenty-five characters.
+    # @param enforce_nonce [true, false] whether the nonce should be enforced and used for message de-duplication.
+    def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0, nonce = nil, enforce_nonce = false)
       Thread.new do
         Thread.current[:discordrb_name] = "#{@current_thread}-temp-msg"
 
-        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components, flags)
+        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components, flags, nonce, enforce_nonce)
         sleep(timeout)
         message.delete
       end
@@ -820,7 +824,7 @@ module Discordrb
     #       end
     #     end
     #   end
-    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil)
+    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, nsfw: false)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
@@ -828,9 +832,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
              else
-               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -845,7 +849,7 @@ module Discordrb
 
     # @yieldparam [OptionBuilder]
     # @yieldparam [PermissionBuilder]
-    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil)
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, nsfw: nil)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
@@ -854,9 +858,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
              else
-               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
+               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
