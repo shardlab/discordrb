@@ -166,6 +166,18 @@ module Discordrb
       register_event(ReactionRemoveAllEvent, attributes, block)
     end
 
+    # This **event** is raised when somebody removes all instances of a single reaction from a message.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Message] :message Matches the message where the reaction was removed.
+    # @option attributes [String, Integer, Channel] :in Matches the channel where the reaction was removed.
+    # @option attributes [String, Integer] :emoji Matches the ID of the emoji that was removed, or its name.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ReactionRemoveEmojiEvent] The event that was raised.
+    # @return [ReactionRemoveEmojiEventHandler] The event handler that was registered.
+    def reaction_remove_emoji(attributes = {}, &block)
+      register_event(ReactionRemoveEmojiEvent, attributes, block)
+    end
+
     # This **event** is raised when a user's status (online/offline/idle) changes.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, User] :from Matches the user whose status changed.

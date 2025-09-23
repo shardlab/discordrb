@@ -402,6 +402,13 @@ module Discordrb
       API::Channel.delete_all_reactions(@bot.token, @channel.id, @id)
     end
 
+    # Removes all reactions for a single emoji.
+    # @param reaction [String, #to_reaction] the reaction to remove.
+    def delete_all_reactions_for_emoji(reaction)
+      reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
+      API::Channel.delete_all_emoji_reactions(@bot.token, @channel.id, @id, reaction.to_s)
+    end
+
     # The inspect method is overwritten to give more useful output
     def inspect
       "<Message content=\"#{@content}\" id=#{@id} timestamp=#{@timestamp} author=#{@author} channel=#{@channel}>"

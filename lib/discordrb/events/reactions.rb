@@ -179,4 +179,40 @@ module Discordrb::Events
       ].reduce(true, &:&)
     end
   end
+
+  # Event raised when all instances of a single reaction are removed from a message.
+  class ReactionRemoveEmojiEvent < ReactionRemoveAllEvent
+    # @return [Emoji] the emoji that was removed.
+    attr_reader :emoji
+
+    # @!visibility private
+    def initialize(data, bot)
+      super
+
+      @emoji = Discordrb::Emoji.new(data['emoji'], bot)
+    end
+  end
+
+  # Event handler for {ReactionRemoveEmojiEvent}.
+  class ReactionRemoveEmojiEventHandler < ReactionRemoveAllEventHandler
+    # @!visibility private
+    def matches?(event)
+      # Check for the proper event type.
+      return false unless super
+      return false unless event.is_a?(ReactionRemoveEmojiEvent)
+
+      [
+        matches_all(@attributes[:emoji], event.emoji) do |a, e|
+          case a
+          when Integer
+            e.id == a
+          when String
+            e.name == a || e.name == a.delete(':') || e.id == a.resolve_id
+          else
+            e == a
+          end
+        end
+      ].reduce(true, &:&)
+    end
+  end
 end

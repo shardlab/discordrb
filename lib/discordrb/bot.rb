@@ -1408,6 +1408,10 @@ module Discordrb
 
         event = ReactionRemoveAllEvent.new(data, self)
         raise_event(event)
+      when :MESSAGE_REACTION_REMOVE_EMOJI
+
+        event = ReactionRemoveEmojiEvent.new(data, self)
+        raise_event(event)
       when :PRESENCE_UPDATE
         # Ignore friends list presences
         return unless data['guild_id']
