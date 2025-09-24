@@ -609,4 +609,29 @@ module Discordrb::API::Channel
       Authorization: token
     )
   end
+
+  # Start a thread in a forum or media channel.
+  # https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
+  def start_thread_in_forum_or_media_channel(token, channel_id, name, message, attachments = nil, rate_limit_per_user = nil, auto_archive_duration = nil, applied_tags = [], reason = nil)
+    body = { name: name, message: message, rate_limit_per_user: rate_limit_per_user, auto_archive_duration: auto_archive_duration, applied_tags: applied_tags }.compact
+
+    body = if attachments
+             files = [*0...attachments.size].zip(attachments).to_h
+             { **files, payload_json: body.to_json }
+           else
+             body.to_json
+           end
+
+    headers = { Authorization: token, 'X-Audit-Log-Reason': reason }
+    headers[:content_type] = :json unless attachments
+
+    Discordrb::API.request(
+      :channels_cid_threads,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/threads",
+      body,
+      headers
+    )
+  end
 end

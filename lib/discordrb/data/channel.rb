@@ -920,6 +920,43 @@ module Discordrb
       Channel.new(JSON.parse(data), @bot, @server)
     end
 
+    # Start a thread in a forum or media channel.
+    # @param name [String] The name of the forum post to create.
+    # @param auto_archive_duration [Integer, nil] How long before the post is automatically archived.
+    # @param rate_limit_per_user [Integer, nil] The slowmode rate of the forum post to create.
+    # @param tags [Array<#resolve_id>, nil] The tags of the forum channel to apply onto the forum post.
+    # @param content [String, nil] The content of the forum post's starter message.
+    # @param embeds [Array<Hash, Webhooks::Embed>, nil] The embeds that should be attached to the forum post's starter message.
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, nil] Mentions that are allowed to ping on this forum post's starter message.
+    # @param components [Webhooks::View, Array<#to_h>, nil] The interaction components to associate with this forum post's starter message.
+    # @param stickers [Array<#resolve_id>, nil] The stickers to include in the forum post's starter message.
+    # @param attachments [Array<File>, nil] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param flags [Integer, Symbol, Array<Symbol, Integer>, nil] The flags to set on the forum post's starter message. Currently only `:suppress_embeds` (1 << 2), `:suppress_notifications` (1 << 12), and `:uikit_components` (1 << 15) can be set.
+    # @param has_components [true, false] Whether the starter message for this forum post includes any V2 components. Enabling this disables sending content and embeds.
+    # @param reason [String, nil] The reason for creating this forum post.
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the builder overwrite method data.
+    # @yieldparam view [Webhooks::View] An optional component builder. Arguments passed to the builder overwrite method data.
+    # @return [Message] the starter message of the forum post. The forum post that was created can be accessed via {Message#thread}.
+    def start_forum_thread(name:, auto_archive_duration: nil, rate_limit_per_user: nil, tags: nil, content: nil, embeds: nil, allowed_mentions: nil, components: nil, stickers: nil, attachments: nil, flags: nil, has_components: false, reason: nil)
+      builder = Discordrb::Webhooks::Builder.new
+      view = Discordrb::Webhooks::View.new
+
+      builder.content = content
+      embeds&.each { |embed| builder << embed }
+      builder.allowed_mentions = allowed_mentions
+
+      yield(builder, view) if block_given?
+
+      flags = Array(flags).map { |flag| Discordrb::Message::FLAGS[flag] || flag }.reduce(&:|)
+      flags |= (1 << 15) if has_components
+      builder = builder.to_json_hash
+
+      message = { content: builder[:content], embeds: builder[:embeds], allowed_mentions: builder[:allowed_mentions], components: components&.to_a || view.to_a, sticker_ids: stickers&.map(&:resolve_id), flags: flags }
+      response = JSON.parse(API::Channel.start_thread_in_forum_or_media_channel(@bot.token, @id, name, message.compact, attachments, rate_limit_per_user, auto_archive_duration, tags&.map(&:resolve_id), reason))
+
+      Message.new(response['message'].merge!('channel_id' => response['id'], 'thread' => response), @bot)
+    end
+
     # @!group Threads
 
     # Join this thread.
