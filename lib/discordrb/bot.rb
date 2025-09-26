@@ -895,6 +895,85 @@ module Discordrb
       API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
     end
 
+    # Creates a guild channel.
+    # @param server_id [Discordrb::Server, Integer, String] The server's ID, where the channel will be created.
+    # @param channel_name [String] The name of the channel to create (1-100 characters).
+    # @param type [:text, :voice, :news, :stage_voice, :forum] The channel type. Use {#create_channel_category} for categories.
+    # @param topic [String, nil] Channel topic (text, news, forum).
+    # @param parent_category_id [Channel, Integer, String, nil] Parent category to place the channel under.
+    # @param position [Integer, nil] Sorting position of the channel.
+    # @param bitrate [Integer, nil] Bitrate in bits (voice, stage_voice).
+    # @param user_limit [Integer, nil] User limit (voice).
+    # @param nsfw [true, false] Whether the channel is marked NSFW (text, news, forum).
+    # @param permission_overwrites [Array<Hash>, nil] Permission overwrites in API format.
+    # @param rate_limit_per_user [Integer, nil] Slowmode delay in seconds (text, forum).
+    # @return [Channel, nil] The created channel, or nil if it could not be found in cache yet.
+    # @raise [ArgumentError] if server_id or channel_name is missing, or if type is invalid.
+    # @example Create a text channel
+    #   bot.create_guild_channel(123456789012345678, 'chat')
+    # @example Create a voice channel with limits
+    #   bot.create_guild_channel(123456789012345678, 'Music VC', type: :voice, bitrate: 64000, user_limit: 5)
+    # @example Create a news channel inside a category
+    #   bot.create_guild_channel(123456789012345678, 'announcements', type: :news, parent_category_id: 987654321098765432)
+    # @example Create an NSFW forum with slowmode
+    #   bot.create_guild_channel(123456789012345678, 'spicy-forum', type: :forum, nsfw: true, rate_limit_per_user: 10)
+    def create_guild_channel(server_id, channel_name, type: :text, topic: nil, parent_category_id: nil, position: nil, bitrate: nil, user_limit: nil, nsfw: false, permission_overwrites: nil, rate_limit_per_user: nil)
+      raise ArgumentError, 'Server id required to create a channel' unless server_id
+      raise ArgumentError, 'Channel name required to create a channel' unless channel_name
+
+      allowed_types = %i[text voice news stage_voice forum].freeze
+
+      raise ArgumentError, 'Invalid channel type. Use create_channel_category instead.' if type.to_sym == :category
+      raise ArgumentError, 'Invalid channel type. Only text, voice, news, stage_voice and forum supported' unless allowed_types.include?(type.to_sym)
+
+      server_id = server_id.id if server_id && server_id.instance_of?(Discordrb::Server)
+      parent_category_id = parent_category_id.id if parent_category_id && parent_category_id.instance_of?(Discordrb::Channel)
+
+
+      body = API::Channel.create(
+        @token,
+        server_id,
+        channel_name,
+        type: type,
+        topic: topic,
+        parent_id: parent_category_id,
+        position: position,
+        bitrate: bitrate,
+        user_limit: user_limit,
+        nsfw: nsfw,
+        permission_overwrites: permission_overwrites,
+        rate_limit_per_user: rate_limit_per_user
+      )
+      parsed_body = JSON.parse(body)
+
+      channel = channel(parsed_body['id'])
+      return unless channel
+
+      create_channel(channel)
+    end
+
+    # Creates a guild category channel.
+    # @param server_id [Discordrb::Server, Integer, String] The server, or its ID, where the category will be created.
+    # @param channel_name [String] The name of the category to create.
+    # @return [Channel, nil] The created category channel, or nil if it could not be found in cache yet.
+    # @raise [ArgumentError] if server_id or channel_name is missing.
+    # @example Create a category
+    #   bot.create_channel_category(123456789012345678, 'Projects')
+    def create_channel_category(server_id, channel_name)
+      raise ArgumentError, 'Server id required to create a channel' unless server_id
+      raise ArgumentError, 'Channel name required to create a channel' unless channel_name
+
+      server_id = server_id.id if server_id.instance_of?(Discordrb::Server)
+
+      body = API::Channel.create(@token, server_id, channel_name, type: :category)
+      parsed_body = JSON.parse(body)
+
+      channel = channel(parsed_body['id'])
+      return unless channel
+
+      create_channel(channel)
+    end
+
     private
 
     # Throws a useful exception if there's currently no gateway connection.

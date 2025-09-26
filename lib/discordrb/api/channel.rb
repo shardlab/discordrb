@@ -16,6 +16,37 @@ module Discordrb::API::Channel
     )
   end
 
+  # Create a channel
+  # https://discord.com/developers/docs/resources/guild#create-guild-channel
+  def create(token, server_id, name, type: :text, topic: nil, position: nil, bitrate: nil, user_limit: nil, nsfw: false, permission_overwrites: nil, parent_id: nil, rate_limit_per_user: nil)
+    channel_type = Discordrb::Channel::TYPES[type]
+    raise ArgumentError, "Unknown channel type: #{type.inspect}" if channel_type.nil? || !channel_type.instance_of?(Integer)
+
+    payload = {
+      name: name,
+      position: position,
+      type: channel_type,
+      topic: topic,
+      bitrate: bitrate,
+      user_limit: user_limit,
+      nsfw: nsfw,
+      parent_id: parent_id,
+      rate_limit_per_user: rate_limit_per_user
+    }.compact
+    payload[:permission_overwrites] = permission_overwrites unless permission_overwrites.nil?
+    endpoint = "#{Discordrb::API.api_base}/guilds/#{server_id}/channels"
+
+    Discordrb::API.request(
+      :channels_create_cid,
+      server_id,
+      :post,
+      endpoint,
+      payload.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
   # Update a channel's data
   # https://discord.com/developers/docs/resources/channel#modify-channel
   def update(token, channel_id, name, topic, position, bitrate, user_limit, nsfw, permission_overwrites = nil, parent_id = nil, rate_limit_per_user = nil, reason = nil, archived = nil, auto_archive_duration = nil, locked = nil, invitable = nil, flags = nil, applied_tags = nil)
