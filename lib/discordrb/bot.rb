@@ -929,7 +929,6 @@ module Discordrb
       server_id = server_id.id if server_id && server_id.instance_of?(Discordrb::Server)
       parent_category_id = parent_category_id.id if parent_category_id && parent_category_id.instance_of?(Discordrb::Channel)
 
-
       body = API::Channel.create(
         @token,
         server_id,
