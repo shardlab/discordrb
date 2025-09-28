@@ -1305,6 +1305,7 @@ module Discordrb
         # Update the existing member if it exists in the cache.
         if data['member']
           member = message.channel.server&.member(data['author']['id'].to_i, false)
+          data['member']['user'] = data['author']
           member&.update_data(data['member'])
         end
 
@@ -1348,6 +1349,7 @@ module Discordrb
         # Update the existing member if it exists in the cache.
         if data['member']
           member = message.channel.server&.member(data['author']['id'].to_i, false)
+          data['member']['user'] = data['author']
           member&.update_data(data['member'])
         end
 
