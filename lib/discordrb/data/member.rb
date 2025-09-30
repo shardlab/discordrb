@@ -192,7 +192,7 @@ module Discordrb
     def communication_disabled_until=(timeout_until)
       raise ArgumentError, 'A time out cannot exceed 28 days' if timeout_until && timeout_until > (Time.now + 2_419_200)
 
-      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, communication_disabled_until: timeout_until&.iso8601)))
+      update_member_data(communication_disabled_until: timeout_until&.iso8601)
     end
 
     alias_method :timeout=, :communication_disabled_until=
@@ -202,7 +202,7 @@ module Discordrb
     # @param reason [String] The reason the user's roles are being changed.
     def set_roles(role, reason = nil)
       role_ids = role_id_array(role)
-      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, roles: role_ids, reason: reason)))
+      update_member_data(roles: role_ids, reason: reason)
     end
 
     # Adds and removes roles from a member.
@@ -219,7 +219,7 @@ module Discordrb
       old_role_ids = resolve_role_ids
       new_role_ids = (old_role_ids - remove_role_ids + add_role_ids).uniq
 
-      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)))
+      update_member_data(roles: new_role_ids, reason: reason)
     end
 
     # Adds one or more roles to this member.
@@ -233,7 +233,7 @@ module Discordrb
       else
         old_role_ids = resolve_role_ids
         new_role_ids = (old_role_ids + role_ids).uniq
-        update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)))
+        update_member_data(roles: new_role_ids, reason: reason)
       end
     end
 
@@ -248,7 +248,7 @@ module Discordrb
       else
         old_role_ids = resolve_role_ids
         new_role_ids = old_role_ids.reject { |i| role_ids.include?(i) }
-        update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)))
+        update_member_data(roles: new_role_ids, reason: reason)
       end
     end
 
@@ -287,25 +287,25 @@ module Discordrb
     # Server deafens this member.
     # @param reason [String, nil] The reason for defeaning this member.
     def server_deafen(reason: nil)
-      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, deaf: true, reason: reason)))
+      update_member_data(deaf: true, reason: reason)
     end
 
     # Server undeafens this member.
     # @param reason [String, nil] The reason for un-defeaning this member.
     def server_undeafen(reason: nil)
-      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, deaf: false, reason: reason)))
+      update_member_data(deaf: false, reason: reason)
     end
 
     # Server mutes this member.
     # @param reason [String, nil] The reason for muting this member.
     def server_mute(reason: nil)
-      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, mute: true, reason: reason)))
+      update_member_data(mute: true, reason: reason)
     end
 
     # Server unmutes this member.
     # @param reason [String, nil] The reason for un-muting this member.
     def server_unmute(reason: nil)
-      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, mute: false, reason: reason)))
+      update_member_data(mute: false, reason: reason)
     end
 
     # Bans this member from the server.
@@ -341,9 +341,9 @@ module Discordrb
     # @param reason [String] The reason the user's nickname is being changed.
     def set_nick(nick, reason = nil)
       if @user.current_bot?
-        update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id, nick, reason)))
+        update_current_member_data(nick: nick, reason: reason)
       else
-        update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, nick: nick, reason: reason)))
+        update_member_data(nick: nick, reason: reason)
       end
     end
 
@@ -374,7 +374,7 @@ module Discordrb
     # Set the flags for this member.
     # @param flags [Integer, nil] The new bitwise value of flags for this member, or nil.
     def flags=(flags)
-      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, flags: flags)))
+      update_member_data(flags: flags)
     end
 
     # Update this member's roles
@@ -469,8 +469,21 @@ module Discordrb
       voice_state&.send name
     end
 
+    # @!visibility private
     def resolve_role_ids
       @roles ? @roles.collect(&:id) : @role_ids
+    end
+
+    # @!visibility private
+    def update_member_data(new_data)
+      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, **new_data)))
+    end
+
+    # @!visibility private
+    def update_current_member_data(new_data)
+      update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id,
+                                                               new_data.key?(:nick) ? new_data[:nick] : :undef,
+                                                               new_data[:reason])))
     end
   end
 end
