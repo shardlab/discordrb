@@ -64,7 +64,7 @@ module Discordrb
     attr_reader :rate_limit_per_user
     alias_method :slowmode_rate, :rate_limit_per_user
 
-    # @return [Integer, nil] An approximate count of messages sent in a thread. Stops counting at 50.
+    # @return [Integer, nil] An approximate count of messages sent in a thread, excluding deleted messages.
     attr_reader :message_count
 
     # @return [Integer, nil] An approximate count of members in a thread. Stops counting at 50.
@@ -72,6 +72,7 @@ module Discordrb
 
     # @return [true, false, nil] Whether or not this thread is archived.
     attr_reader :archived
+    alias_method :archived?, :archived
 
     # @return [Integer, nil] How long after the last message before a thread is automatically archived.
     attr_reader :auto_archive_duration
@@ -89,9 +90,13 @@ module Discordrb
     # @return [Integer, nil] Member flags for this thread, used for notifications.
     attr_reader :member_flags
 
-    # @return [true, false] For private threads, determines whether non-moderators can add other non-moderators to
+    # @return [true, false, nil] For private threads, determines whether non-moderators can add other non-moderators to
     #   a thread.
     attr_reader :invitable
+    alias_method :invitable?, :invitable
+
+    # @return [Time, nil] The time at when the last pinned message was pinned in this channel.
+    attr_reader :last_pin_timestamp
 
     # @return [true, false] whether or not this channel is a PM or group channel.
     def private?
@@ -158,6 +163,7 @@ module Discordrb
         @member_flags = member['flags']
       end
 
+      process_last_pin_timestamp(data['last_pin_timestamp'])
       process_permission_overwrites(data['permission_overwrites'])
     end
 
@@ -642,6 +648,7 @@ module Discordrb
     # @!visibility private
     def update_from(other)
       @name = other.name
+      @type = other.type
       @position = other.position
       @topic = other.topic
       @recipients = other.recipients
@@ -651,6 +658,13 @@ module Discordrb
       @nsfw = other.nsfw
       @parent_id = other.parent_id
       @rate_limit_per_user = other.rate_limit_per_user
+      @archived = other.archived?
+      @auto_archive_duration = other.auto_archive_duration
+      @archive_timestamp = other.archive_timestamp
+      @locked = other.locked?
+      @invitable = other.invitable?
+      @message_count = other.message_count
+      @last_pin_timestamp = other.last_pin_timestamp
     end
 
     # The list of users currently in this channel. For a voice channel, it will return all the members currently
@@ -979,6 +993,14 @@ module Discordrb
       @recipients.delete(recipient)
     end
 
+    # Set the last pin timestamp of a channel.
+    # @param time [String, nil] the time of the last pinned message in the channel
+    # @note For internal use only
+    # @!visibility private
+    def process_last_pin_timestamp(time)
+      @last_pin_timestamp = time.is_a?(String) ? Time.parse(time) : time
+    end
+
     # Updates the cached data with new data
     # @note For internal use only
     # @!visibility private
@@ -994,6 +1016,7 @@ module Discordrb
       @parent_id = new_data[:parent_id] || new_data['parent_id'] || @parent_id
       process_permission_overwrites(new_data[:permission_overwrites] || new_data['permission_overwrites'])
       @rate_limit_per_user = new_data[:rate_limit_per_user] || new_data['rate_limit_per_user'] || @rate_limit_per_user
+      process_last_pin_timestamp(new_data['last_pin_timestamp']) if new_data['last_pin_timestamp']
     end
 
     # @return [String] a URL that a user can use to navigate to this channel in the client
