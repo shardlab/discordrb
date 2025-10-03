@@ -1276,6 +1276,8 @@ module Discordrb
         id = data['guild_id'].to_i
         server = server(id)
         server.process_chunk(data['members'], data['chunk_index'], data['chunk_count'])
+      when :USER_UPDATE
+        @profile = Profile.new(data, self)
       when :INVITE_CREATE
         invite = Invite.new(data, self)
         raise_event(InviteCreateEvent.new(data, invite, self))
