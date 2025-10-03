@@ -383,9 +383,7 @@ module Discordrb
     def server_banner=(banner)
       raise 'Can only set a banner for the current bot' unless current_bot?
 
-      banner = banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner
-
-      update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id, :undef, nil, banner)))
+      update_current_member_data(banner: banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner)
     end
 
     # Set the server avatar for the current bot.
@@ -393,9 +391,7 @@ module Discordrb
     def server_avatar=(avatar)
       raise 'Can only set an avatar for the current bot' unless current_bot?
 
-      avatar = avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar
-
-      update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id, :undef, nil, :undef, avatar)))
+      update_current_member_data(avatar: avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar)
     end
 
     # Set the server bio for the current bot.
@@ -403,7 +399,7 @@ module Discordrb
     def server_bio=(bio)
       raise 'Can only set a bio for the current bot' unless current_bot?
 
-      update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id, :undef, nil, :undef, :undef, bio)))
+      update_current_member_data(bio: bio)
     end
 
     # Update this member's roles
@@ -512,7 +508,10 @@ module Discordrb
     def update_current_member_data(new_data)
       update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id,
                                                                new_data.key?(:nick) ? new_data[:nick] : :undef,
-                                                               new_data[:reason])))
+                                                               new_data[:reason],
+                                                               new_data.key?(:bio) ? new_data[:bio] : :undef,
+                                                               new_data.key?(:banner) ? new_data[:banner] : :undef,
+                                                               new_data.key?(:avatar) ? new_data[:avatar] : :undef)))
     end
   end
 end
