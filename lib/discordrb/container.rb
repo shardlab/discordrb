@@ -33,6 +33,7 @@ module Discordrb
     # @option attributes [Time] :before Matches a time before the time the message was sent at.
     # @option attributes [Boolean] :private Matches whether or not the channel is private.
     # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was sent.
+    # @option attributes [Server, Integer, String] :server Matches the server the message was sent in.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageEvent] The event that was raised.
     # @return [MessageEventHandler] the event handler that was registered.
@@ -95,6 +96,7 @@ module Discordrb
     # @option attributes [String, Integer] :id Matches the ID of the message that was edited.
     # @option attributes [String, Integer, Channel] :in Matches the channel the message was edited in.
     # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was edited.
+    # @option attributes [Server, Integer, String] :server Matches the server the message was edited in.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageEditEvent] The event that was raised.
     # @return [MessageEditEventHandler] the event handler that was registered.
@@ -106,6 +108,7 @@ module Discordrb
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer] :id Matches the ID of the message that was deleted.
     # @option attributes [String, Integer, Channel] :in Matches the channel the message was deleted in.
+    # @option attributes [Server, Integer, String] :server Matches the server the message was deleted in.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageDeleteEvent] The event that was raised.
     # @return [MessageDeleteEventHandler] the event handler that was registered.
@@ -121,6 +124,7 @@ module Discordrb
     # @option attributes [String, Integer] :id Matches the ID of the message that was updated.
     # @option attributes [String, Integer, Channel] :in Matches the channel the message was updated in.
     # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was updated.
+    # @option attributes [Server, Integer, String] :server Matches the server the message was updated in.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageUpdateEvent] The event that was raised.
     # @return [MessageUpdateEventHandler] the event handler that was registered.

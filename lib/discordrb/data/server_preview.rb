@@ -33,6 +33,7 @@ module Discordrb
     def initialize(data, bot)
       @bot = bot
       @id = data['id'].to_i
+      @name = data['name']
       @icon_id = data['icon']
       @splash_id = data['splash']
       @description = data['description']

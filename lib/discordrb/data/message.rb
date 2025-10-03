@@ -148,6 +148,9 @@ module Discordrb
     # @return [Call, nil] the call in a private channel that prompted this message.
     attr_reader :call
 
+    # @return [Array<Snapshot>] the message snapshots included in this message.
+    attr_reader :snapshots
+
     # @return [Poll, nil] the poll that was sent with this message, or nil.
     attr_reader :poll
 
@@ -230,6 +233,8 @@ module Discordrb
 
       @call = data['call'] ? Call.new(data['call'], @bot) : nil
 
+      @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
+      
       @poll = data['poll'] ? Poll.new(data['poll'], self, @bot) : nil
     end
 
@@ -392,6 +397,17 @@ module Discordrb
       Message.new(JSON.parse(response), @bot)
     end
 
+    # Check if this message mentions a specific user or role.
+    # @param target [Role, User, Member, Integer, String] The mention to match against.
+    # @return [true, false] whether or not this message mentions the target.
+    def mentions?(target)
+      mentions = (@mentions + role_mentions)
+
+      mentions << server if @mention_everyone
+
+      mentions.any?(target.resolve_id)
+    end
+
     # Reacts to a message.
     # @param reaction [String, #to_reaction] the unicode emoji or {Emoji}
     def create_reaction(reaction)
@@ -486,7 +502,7 @@ module Discordrb
       return nil unless @message_reference
 
       referenced_channel = @bot.channel(@message_reference['channel_id'])
-      @referenced_message = referenced_channel.message(@message_reference['message_id'])
+      @referenced_message = referenced_channel&.message(@message_reference['message_id'])
     end
 
     # @return [Array<Components::Button>]
@@ -521,6 +537,30 @@ module Discordrb
       define_method("#{name}?") do
         @type == value
       end
+    end
+
+    # Convert this message to a hash that can be used to reference this message in a forward or a reply.
+    # @param type [Integer, Symbol] The reference type to set. Can either be one of `:reply` or `:forward`.
+    # @param must_exist [true, false] Whether to raise an error if this message was deleted when sending it.
+    # @return [Hash] the message as a hash representation that can be used in a forwarded message or a reply.
+    def to_reference(type: :reply, must_exist: true)
+      type = (type == :reply ? 0 : 1) if type.is_a?(Symbol)
+
+      { type: type, message_id: @id, channel_id: @channel.id, fail_if_not_exists: must_exist }
+    end
+
+    # Forward this message to another channel.
+    # @param channel [Integer, String, Channel] The target channel to forward this message to.
+    # @param must_exist [true, false] Whether to raise an error if this message was deleted when sending it.
+    # @param timeout [Float, nil] The amount of time in seconds after which the message sent will be deleted.
+    # @param flags [Integer, Symbol, Array<Integer, Symbol>] The message flags to set on the forwarded message.
+    # @param nonce [String, Integer, nil] The 25 character optional nonce that should be used when forwarding this message.
+    # @param enforce_nonce [true, false] Whether the provided nonce should be enforced and used for message de-duplication.
+    # @return [Message, nil] the message that was created from forwarding this one, or `nil` if this is a temporary message.
+    def forward(channel, must_exist: true, timeout: nil, flags: 0, nonce: nil, enforce_nonce: false)
+      reference = to_reference(type: :forward, must_exist: must_exist)
+
+      @bot.channel(channel).send_message!(reference: reference, timeout: timeout, flags: flags, nonce: nonce, enforce_nonce: enforce_nonce)
     end
   end
 end
