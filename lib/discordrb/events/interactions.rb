@@ -157,7 +157,6 @@ module Discordrb::Events
       @command_id = command_data['id']
       @command_name = command_data['name'].to_sym
 
-      @channel_data = data['channel']
       @target_id = command_data['target_id']&.to_i
       @resolved = Resolved.new({}, {}, {}, {}, {}, {})
       process_resolved(command_data['resolved']) if command_data['resolved']
@@ -214,7 +213,6 @@ module Discordrb::Events
       end
 
       resolved_data['messages']&.each do |id, data|
-        data['_channel_data'] = @channel_data
         @resolved[:messages][id.to_i] = Discordrb::Message.new(data, @bot)
       end
 

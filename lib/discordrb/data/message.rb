@@ -147,18 +147,13 @@ module Discordrb
       @bot = bot
       @id = data['id'].to_i
       @content = data['content']
+      @channel = bot.channel(data['channel_id'].to_i)
       @pinned = data['pinned']
       @type = data['type']
       @tts = data['tts']
       @nonce = data['nonce']
       @mention_everyone = data['mention_everyone']
       @webhook_id = data['webhook_id']&.to_i
-
-      @channel = if data['_channel_data']
-                   @bot.ensure_channel(data['_channel_data'])
-                 else
-                   bot.channel(data['channel_id'].to_i)
-                 end
 
       @referenced_message = Message.new(data['referenced_message'], bot) if data['referenced_message']
       @message_reference = data['message_reference']
