@@ -276,7 +276,6 @@ module Discordrb::API::Application
     )
   end
 
-
   # Edit the current application for the requesting bot user.
   # https://discord.com/developers/docs/resources/application#edit-current-application
   def update_current_application(token, custom_install_url = :undef, description = :undef, role_connections_verification_url = :undef, install_params = :undef, integration_types_config = :undef, flags = :undef, interactions_endpoint_url = :undef, tags = :undef, event_webhooks_url = :undef, event_webhooks_status = :undef, event_webhooks_types = :undef, icon = :undef, cover_image = :undef)
