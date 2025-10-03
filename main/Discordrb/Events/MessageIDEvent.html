@@ -155,6 +155,34 @@
 </li>
 
     
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#server-instance_method" title="#server (instance method)">#<strong>server</strong>  &#x21d2; Server<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The server associated with this event.</p>
+</div></span>
+  
+</li>
+
+    
   </ul>
 
 
@@ -235,15 +263,74 @@
       <pre class="lines">
 
 
-306
 307
-308</pre>
+308
+309</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/message.rb', line 306</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/message.rb', line 307</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_id'>id</span>
   <span class='ivar'>@id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="server-instance_method">
+  
+    #<strong>server</strong>  &#x21d2; <tt><span class='object_link'><a href="../Server.html" title="Discordrb::Server (class)">Server</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the server associated with this event.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Server.html" title="Discordrb::Server (class)">Server</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the server associated with this event</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+310
+311
+312</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/message.rb', line 310</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_server'>server</span>
+  <span class='ivar'>@server</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -256,7 +343,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Oct  3 16:47:00 2025 by
+  Generated on Fri Oct  3 16:54:31 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>

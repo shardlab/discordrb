@@ -1666,14 +1666,14 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
       <pre class="lines">
 
 
-775
-776
-777
-778
-779</pre>
+779
+780
+781
+782
+783</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 775</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 779</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class_from_string'>class_from_string</span><span class='lparen'>(</span><span class='id identifier rubyid_str'>str</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_str'>str</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>::</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_inject'>inject</span><span class='lparen'>(</span><span class='const'>Object</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_mod'>mod</span><span class='comma'>,</span> <span class='id identifier rubyid_class_name'>class_name</span><span class='op'>|</span>
@@ -1753,15 +1753,15 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
       <pre class="lines">
 
 
-765
-766
-767
-768
 769
-770</pre>
+770
+771
+772
+773
+774</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 765</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 769</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_event_class'>event_class</span><span class='lparen'>(</span><span class='id identifier rubyid_handler_class'>handler_class</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_class_name'>class_name</span> <span class='op'>=</span> <span class='id identifier rubyid_handler_class'>handler_class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -1842,12 +1842,12 @@ from the <span class='object_link'><a href="Bot.html" title="Discordrb::Bot (cla
       <pre class="lines">
 
 
-757
-758
-759</pre>
+761
+762
+763</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 757</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 761</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_handler_class'>handler_class</span><span class='lparen'>(</span><span class='id identifier rubyid_event_class'>event_class</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_class_from_string'>class_from_string</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_event_class'>event_class</span><span class='embexpr_end'>}</span><span class='tstring_content'>Handler</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -1912,15 +1912,15 @@ methods like <span class='object_link'><a href="#message-instance_method" title=
       <pre class="lines">
 
 
-725
-726
-727
-728
 729
-730</pre>
+730
+731
+732
+733
+734</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 725</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 729</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_handler'>add_handler</span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_clazz'>clazz</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::EventContainer (module)">EventContainer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_event_class'><span class='object_link'><a href="#event_class-class_method" title="Discordrb::EventContainer.event_class (method)">event_class</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span>
@@ -2047,19 +2047,19 @@ methods like <span class='object_link'><a href="#message-instance_method" title=
       <pre class="lines">
 
 
-550
-551
-552
-553
 554
 555
 556
 557
 558
-559</pre>
+559
+560
+561
+562
+563</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 550</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 554</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_application_command'>application_command</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@application_commands</span> <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -2220,12 +2220,12 @@ methods like <span class='object_link'><a href="#message-instance_method" title=
       <pre class="lines">
 
 
-676
-677
-678</pre>
+680
+681
+682</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 676</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 680</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_application_command_permissions_update'>application_command_permissions_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ApplicationCommandPermissionsUpdateEvent.html" title="Discordrb::Events::ApplicationCommandPermissionsUpdateEvent (class)">ApplicationCommandPermissionsUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -2422,12 +2422,12 @@ methods like <span class='object_link'><a href="#message-instance_method" title=
       <pre class="lines">
 
 
-664
-665
-666</pre>
+668
+669
+670</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 664</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 668</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_autocomplete'>autocomplete</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/AutocompleteEvent.html" title="Discordrb::Events::AutocompleteEvent (class)">AutocompleteEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span> <span class='rbrace'>}</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -2570,12 +2570,12 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-480
-481
-482</pre>
+484
+485
+486</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 480</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 484</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_await'>await</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/AwaitEvent.html" title="Discordrb::Events::AwaitEvent (class)">AwaitEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -2717,12 +2717,12 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-568
-569
-570</pre>
+572
+573
+574</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 568</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 572</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_button'>button</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ButtonEvent.html" title="Discordrb::Events::ButtonEvent (class)">ButtonEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -2864,12 +2864,12 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-221
-222
-223</pre>
+225
+226
+227</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 221</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 225</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channel_create'>channel_create</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ChannelCreateEvent.html" title="Discordrb::Events::ChannelCreateEvent (class)">ChannelCreateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3011,12 +3011,12 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-243
-244
-245</pre>
+247
+248
+249</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 243</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 247</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channel_delete'>channel_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ChannelDeleteEvent.html" title="Discordrb::Events::ChannelDeleteEvent (class)">ChannelDeleteEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3158,12 +3158,12 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-649
-650
-651</pre>
+653
+654
+655</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 649</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 653</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channel_pins_update'>channel_pins_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ChannelPinsUpdateEvent.html" title="Discordrb::Events::ChannelPinsUpdateEvent (class)">ChannelPinsUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3317,12 +3317,12 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-255
-256
-257</pre>
+259
+260
+261</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 255</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 259</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channel_recipient_add'>channel_recipient_add</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ChannelRecipientAddEvent.html" title="Discordrb::Events::ChannelRecipientAddEvent (class)">ChannelRecipientAddEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3476,12 +3476,12 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-267
-268
-269</pre>
+271
+272
+273</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 267</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 271</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channel_recipient_remove'>channel_recipient_remove</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ChannelRecipientRemoveEvent.html" title="Discordrb::Events::ChannelRecipientRemoveEvent (class)">ChannelRecipientRemoveEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3623,12 +3623,12 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-638
-639
-640</pre>
+642
+643
+644</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 638</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 642</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channel_select'>channel_select</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ChannelSelectEvent.html" title="Discordrb::Events::ChannelSelectEvent (class)">ChannelSelectEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3770,12 +3770,12 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-232
-233
-234</pre>
+236
+237
+238</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 232</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 236</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channel_update'>channel_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ChannelUpdateEvent.html" title="Discordrb::Events::ChannelUpdateEvent (class)">ChannelUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3810,13 +3810,13 @@ on an await without having to rely on the await&#39;s block.</p>
       <pre class="lines">
 
 
-717
-718
-719
-720</pre>
+721
+722
+723
+724</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 717</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 721</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clear!'>clear!</span>
   <span class='ivar'>@event_handlers</span><span class='op'>&amp;.</span><span class='id identifier rubyid_clear'>clear</span>
@@ -3927,12 +3927,12 @@ external causes. It&#39;s the recommended way to do clean-up tasks.</p>
       <pre class="lines">
 
 
-59
 60
-61</pre>
+61
+62</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 60</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_disconnected'>disconnected</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/DisconnectEvent.html" title="Discordrb::Events::DisconnectEvent (class)">DisconnectEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -4047,12 +4047,12 @@ setting some kind of uptime variable or whatever else. The only limit is yoursel
       <pre class="lines">
 
 
-74
 75
-76</pre>
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_heartbeat'>heartbeat</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/HeartbeatEvent.html" title="Discordrb::Events::HeartbeatEvent (class)">HeartbeatEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -4110,10 +4110,6 @@ setting some kind of uptime variable or whatever else. The only limit is yoursel
       <pre class="lines">
 
 
-734
-735
-736
-737
 738
 739
 740
@@ -4124,10 +4120,14 @@ setting some kind of uptime variable or whatever else. The only limit is yoursel
 745
 746
 747
-748</pre>
+748
+749
+750
+751
+752</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 734</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 738</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_include_events'>include_events</span><span class='lparen'>(</span><span class='id identifier rubyid_container'>container</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_application_command_handlers'>application_command_handlers</span> <span class='op'>=</span> <span class='id identifier rubyid_container'>container</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_get'>instance_variable_get</span><span class='lparen'>(</span><span class='symbol'>:@application_commands</span><span class='rparen'>)</span>
@@ -4306,12 +4306,12 @@ of the key in <span class='object_link'><a href="Interaction.html#TYPES-constant
       <pre class="lines">
 
 
-540
-541
-542</pre>
+544
+545
+546</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 540</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 544</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_interaction_create'>interaction_create</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/InteractionCreateEvent.html" title="Discordrb::Events::InteractionCreateEvent (class)">InteractionCreateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -4477,12 +4477,12 @@ of the key in <span class='object_link'><a href="Interaction.html#TYPES-constant
       <pre class="lines">
 
 
-515
-516
-517</pre>
+519
+520
+521</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 515</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 519</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invite_create'>invite_create</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/InviteCreateEvent.html" title="Discordrb::Events::InviteCreateEvent (class)">InviteCreateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -4624,12 +4624,12 @@ of the key in <span class='object_link'><a href="Interaction.html#TYPES-constant
       <pre class="lines">
 
 
-526
-527
-528</pre>
+530
+531
+532</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 526</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 530</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_invite_delete'>invite_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/InviteDeleteEvent.html" title="Discordrb::Events::InviteDeleteEvent (class)">InviteDeleteEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -4759,12 +4759,12 @@ of the key in <span class='object_link'><a href="Interaction.html#TYPES-constant
       <pre class="lines">
 
 
-304
-305
-306</pre>
+308
+309
+310</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 304</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 308</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_member_join'>member_join</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerMemberAddEvent.html" title="Discordrb::Events::ServerMemberAddEvent (class)">ServerMemberAddEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -4894,12 +4894,12 @@ of the key in <span class='object_link'><a href="Interaction.html#TYPES-constant
       <pre class="lines">
 
 
-325
-326
-327</pre>
+329
+330
+331</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 325</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 329</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_member_leave'>member_leave</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerMemberDeleteEvent.html" title="Discordrb::Events::ServerMemberDeleteEvent (class)">ServerMemberDeleteEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -5030,12 +5030,12 @@ or roles are updated.</p>
       <pre class="lines">
 
 
-315
-316
-317</pre>
+319
+320
+321</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 315</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 319</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_member_update'>member_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerMemberUpdateEvent.html" title="Discordrb::Events::ServerMemberUpdateEvent (class)">ServerMemberUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -5273,12 +5273,12 @@ or roles are updated.</p>
       <pre class="lines">
 
 
-210
-211
-212</pre>
+214
+215
+216</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 210</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 214</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mention'>mention</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/MentionEvent.html" title="Discordrb::Events::MentionEvent (class)">MentionEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -5420,12 +5420,12 @@ or roles are updated.</p>
       <pre class="lines">
 
 
-627
-628
-629</pre>
+631
+632
+633</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 627</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 631</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mentionable_select'>mentionable_select</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/MentionableSelectEvent.html" title="Discordrb::Events::MentionableSelectEvent (class)">MentionableSelectEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -5600,6 +5600,18 @@ or roles are updated.</p>
           
         </li>
       
+        <li>
+          <span class="name">:server</span>
+          <span class="type">(<tt><span class='object_link'><a href="Server.html" title="Discordrb::Server (class)">Server</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>Matches the server the message was sent in.</p>
+</div>
+          
+        </li>
+      
     </ul>
   
 
@@ -5663,12 +5675,12 @@ or roles are updated.</p>
       <pre class="lines">
 
 
-39
 40
-41</pre>
+41
+42</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 40</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_message'>message</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/MessageEvent.html" title="Discordrb::Events::MessageEvent (class)">MessageEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -5747,6 +5759,18 @@ or roles are updated.</p>
           
         </li>
       
+        <li>
+          <span class="name">:server</span>
+          <span class="type">(<tt><span class='object_link'><a href="Server.html" title="Discordrb::Server (class)">Server</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>Matches the server the message was deleted in.</p>
+</div>
+          
+        </li>
+      
     </ul>
   
 
@@ -5810,12 +5834,12 @@ or roles are updated.</p>
       <pre class="lines">
 
 
-112
-113
-114</pre>
+115
+116
+117</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 112</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 115</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_message_delete'>message_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/MessageDeleteEvent.html" title="Discordrb::Events::MessageDeleteEvent (class)">MessageDeleteEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -5906,6 +5930,18 @@ or roles are updated.</p>
           
         </li>
       
+        <li>
+          <span class="name">:server</span>
+          <span class="type">(<tt><span class='object_link'><a href="Server.html" title="Discordrb::Server (class)">Server</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>Matches the server the message was edited in.</p>
+</div>
+          
+        </li>
+      
     </ul>
   
 
@@ -5969,12 +6005,12 @@ or roles are updated.</p>
       <pre class="lines">
 
 
-101
-102
-103</pre>
+103
+104
+105</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 101</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 103</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_message_edit'>message_edit</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/MessageEditEvent.html" title="Discordrb::Events::MessageEditEvent (class)">MessageEditEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -6068,6 +6104,18 @@ for users editing their own messages, use the <span class='object_link'><a href=
           
         </li>
       
+        <li>
+          <span class="name">:server</span>
+          <span class="type">(<tt><span class='object_link'><a href="Server.html" title="Discordrb::Server (class)">Server</a></span></tt>, <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'><p>Matches the server the message was updated in.</p>
+</div>
+          
+        </li>
+      
     </ul>
   
 
@@ -6131,12 +6179,12 @@ for users editing their own messages, use the <span class='object_link'><a href=
       <pre class="lines">
 
 
-127
-128
-129</pre>
+131
+132
+133</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 127</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 131</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_message_update'>message_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/MessageUpdateEvent.html" title="Discordrb::Events::MessageUpdateEvent (class)">MessageUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -6297,12 +6345,12 @@ for users editing their own messages, use the <span class='object_link'><a href=
       <pre class="lines">
 
 
-594
-595
-596</pre>
+598
+599
+600</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 594</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 598</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_modal_submit'>modal_submit</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ModalSubmitEvent.html" title="Discordrb::Events::ModalSubmitEvent (class)">ModalSubmitEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -6456,12 +6504,12 @@ for users editing their own messages, use the <span class='object_link'><a href=
       <pre class="lines">
 
 
-191
-192
-193</pre>
+195
+196
+197</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 191</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 195</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_playing'>playing</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/PlayingEvent.html" title="Discordrb::Events::PlayingEvent (class)">PlayingEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -6691,12 +6739,12 @@ for users editing their own messages, use the <span class='object_link'><a href=
       <pre class="lines">
 
 
-498
-499
-500</pre>
+502
+503
+504</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 498</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 502</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_pm'>pm</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/PrivateMessageEvent.html" title="Discordrb::Events::PrivateMessageEvent (class)">PrivateMessageEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -6851,12 +6899,12 @@ on various device types (<code>:desktop</code>, <code>:mobile</code>, or <code>:
       <pre class="lines">
 
 
-179
-180
-181</pre>
+183
+184
+185</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 179</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 183</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_presence'>presence</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/PresenceEvent.html" title="Discordrb::Events::PresenceEvent (class)">PresenceEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -6986,12 +7034,12 @@ on various device types (<code>:desktop</code>, <code>:mobile</code>, or <code>:
       <pre class="lines">
 
 
-686
-687
-688</pre>
+690
+691
+692</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 686</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 690</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_raw'>raw</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/RawEvent.html" title="Discordrb::Events::RawEvent (class)">RawEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -7157,12 +7205,12 @@ on various device types (<code>:desktop</code>, <code>:mobile</code>, or <code>:
       <pre class="lines">
 
 
-140
-141
-142</pre>
+144
+145
+146</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 140</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 144</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reaction_add'>reaction_add</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ReactionAddEvent.html" title="Discordrb::Events::ReactionAddEvent (class)">ReactionAddEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -7329,12 +7377,12 @@ its name.</p>
       <pre class="lines">
 
 
-154
-155
-156</pre>
+158
+159
+160</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 154</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 158</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reaction_remove'>reaction_remove</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ReactionRemoveEvent.html" title="Discordrb::Events::ReactionRemoveEvent (class)">ReactionRemoveEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -7488,12 +7536,12 @@ its name.</p>
       <pre class="lines">
 
 
-166
-167
-168</pre>
+170
+171
+172</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 166</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 170</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reaction_remove_all'>reaction_remove_all</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ReactionRemoveAllEvent.html" title="Discordrb::Events::ReactionRemoveAllEvent (class)">ReactionRemoveAllEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -7603,12 +7651,12 @@ initialization. It&#39;s the recommended way to do things when the bot has finis
       <pre class="lines">
 
 
-49
 50
-51</pre>
+51
+52</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 50</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ready'>ready</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ReadyEvent.html" title="Discordrb::Events::ReadyEvent (class)">ReadyEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -7662,12 +7710,12 @@ initialization. It&#39;s the recommended way to do things when the bot has finis
       <pre class="lines">
 
 
-712
-713
-714</pre>
+716
+717
+718</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 712</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 716</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_application_command_handler'>remove_application_command_handler</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
   <span class='ivar'>@application_commands</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
@@ -7722,14 +7770,14 @@ initialization. It&#39;s the recommended way to do things when the bot has finis
       <pre class="lines">
 
 
-704
-705
-706
-707
-708</pre>
+708
+709
+710
+711
+712</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 704</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 708</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_handler'>remove_handler</span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_clazz'>clazz</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::EventContainer (module)">EventContainer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_event_class'><span class='object_link'><a href="#event_class-class_method" title="Discordrb::EventContainer.event_class (method)">event_class</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_handler'>handler</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span>
@@ -7873,12 +7921,12 @@ initialization. It&#39;s the recommended way to do things when the bot has finis
       <pre class="lines">
 
 
-616
-617
-618</pre>
+620
+621
+622</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 616</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 620</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_role_select'>role_select</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/RoleSelectEvent.html" title="Discordrb::Events::RoleSelectEvent (class)">RoleSelectEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -8009,12 +8057,12 @@ a new one itself.</p>
       <pre class="lines">
 
 
-358
-359
-360</pre>
+362
+363
+364</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 358</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 362</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_create'>server_create</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerCreateEvent.html" title="Discordrb::Events::ServerCreateEvent (class)">ServerCreateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -8145,12 +8193,12 @@ to Discord.)</p>
       <pre class="lines">
 
 
-379
-380
-381</pre>
+383
+384
+385</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 379</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 383</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_delete'>server_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerDeleteEvent.html" title="Discordrb::Events::ServerDeleteEvent (class)">ServerDeleteEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -8280,12 +8328,12 @@ to Discord.)</p>
       <pre class="lines">
 
 
-389
-390
-391</pre>
+393
+394
+395</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 389</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 393</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_emoji'>server_emoji</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerEmojiChangeEvent.html" title="Discordrb::Events::ServerEmojiChangeEvent (class)">ServerEmojiChangeEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -8439,12 +8487,12 @@ to Discord.)</p>
       <pre class="lines">
 
 
-401
-402
-403</pre>
+405
+406
+407</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 401</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 405</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_emoji_create'>server_emoji_create</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerEmojiCreateEvent.html" title="Discordrb::Events::ServerEmojiCreateEvent (class)">ServerEmojiCreateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -8598,12 +8646,12 @@ to Discord.)</p>
       <pre class="lines">
 
 
-413
-414
-415</pre>
+417
+418
+419</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 413</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 417</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_emoji_delete'>server_emoji_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerEmojiDeleteEvent.html" title="Discordrb::Events::ServerEmojiDeleteEvent (class)">ServerEmojiDeleteEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -8769,12 +8817,12 @@ to Discord.)</p>
       <pre class="lines">
 
 
-426
-427
-428</pre>
+430
+431
+432</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 426</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 430</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_emoji_update'>server_emoji_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerEmojiUpdateEvent.html" title="Discordrb::Events::ServerEmojiUpdateEvent (class)">ServerEmojiUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -8904,12 +8952,12 @@ to Discord.)</p>
       <pre class="lines">
 
 
-436
-437
-438</pre>
+440
+441
+442</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 436</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 440</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_role_create'>server_role_create</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerRoleCreateEvent.html" title="Discordrb::Events::ServerRoleCreateEvent (class)">ServerRoleCreateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -9039,12 +9087,12 @@ to Discord.)</p>
       <pre class="lines">
 
 
-446
-447
-448</pre>
+450
+451
+452</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 446</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 450</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_role_delete'>server_role_delete</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerRoleDeleteEvent.html" title="Discordrb::Events::ServerRoleDeleteEvent (class)">ServerRoleDeleteEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -9174,12 +9222,12 @@ to Discord.)</p>
       <pre class="lines">
 
 
-456
-457
-458</pre>
+460
+461
+462</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 456</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 460</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_role_update'>server_role_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerRoleUpdateEvent.html" title="Discordrb::Events::ServerRoleUpdateEvent (class)">ServerRoleUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -9309,12 +9357,12 @@ to Discord.)</p>
       <pre class="lines">
 
 
-368
-369
-370</pre>
+372
+373
+374</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 368</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 372</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_update'>server_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/ServerUpdateEvent.html" title="Discordrb::Events::ServerUpdateEvent (class)">ServerUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -9460,12 +9508,12 @@ to Discord.)</p>
       <pre class="lines">
 
 
-579
-580
-581</pre>
+583
+584
+585</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 579</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 583</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_string_select'>string_select</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/StringSelectEvent.html" title="Discordrb::Events::StringSelectEvent (class)">StringSelectEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -9633,12 +9681,12 @@ typing after five seconds, the event will be re-raised.</p>
       <pre class="lines">
 
 
-89
 90
-91</pre>
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 89</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_typing'>typing</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/TypingEvent.html" title="Discordrb::Events::TypingEvent (class)">TypingEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -9769,12 +9817,12 @@ discordrb.</p>
       <pre class="lines">
 
 
-697
-698
-699</pre>
+701
+702
+703</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 697</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 701</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unknown'>unknown</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/UnknownEvent.html" title="Discordrb::Events::UnknownEvent (class)">UnknownEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -9916,12 +9964,12 @@ discordrb.</p>
       <pre class="lines">
 
 
-336
-337
-338</pre>
+340
+341
+342</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 336</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 340</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user_ban'>user_ban</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/UserBanEvent.html" title="Discordrb::Events::UserBanEvent (class)">UserBanEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -10063,12 +10111,12 @@ discordrb.</p>
       <pre class="lines">
 
 
-605
-606
-607</pre>
+609
+610
+611</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 605</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 609</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user_select'>user_select</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/UserSelectEvent.html" title="Discordrb::Events::UserSelectEvent (class)">UserSelectEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -10210,12 +10258,12 @@ discordrb.</p>
       <pre class="lines">
 
 
-347
-348
-349</pre>
+351
+352
+353</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 347</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 351</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user_unban'>user_unban</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/UserUnbanEvent.html" title="Discordrb::Events::UserUnbanEvent (class)">UserUnbanEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -10345,12 +10393,12 @@ discordrb.</p>
       <pre class="lines">
 
 
-294
-295
-296</pre>
+298
+299
+300</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 294</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 298</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_voice_server_update'>voice_server_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/VoiceServerUpdateEvent.html" title="Discordrb::Events::VoiceServerUpdateEvent (class)">VoiceServerUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -10553,12 +10601,12 @@ moves between voice channels, as well as their mute and deaf status for themselv
       <pre class="lines">
 
 
-284
-285
-286</pre>
+288
+289
+290</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 284</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 288</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_voice_state_update'>voice_state_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/VoiceStateUpdateEvent.html" title="Discordrb::Events::VoiceStateUpdateEvent (class)">VoiceStateUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -10715,12 +10763,12 @@ moves between voice channels, as well as their mute and deaf status for themselv
       <pre class="lines">
 
 
-468
-469
-470</pre>
+472
+473
+474</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 468</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/container.rb', line 472</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_webhook_update'>webhook_update</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_register_event'>register_event</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Events/WebhookUpdateEvent.html" title="Discordrb::Events::WebhookUpdateEvent (class)">WebhookUpdateEvent</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -10735,7 +10783,7 @@ moves between voice channels, as well as their mute and deaf status for themselv
 </div>
 
       <div id="footer">
-  Generated on Fri Oct  3 16:46:55 2025 by
+  Generated on Fri Oct  3 16:54:25 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>

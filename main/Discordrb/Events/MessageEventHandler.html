@@ -225,16 +225,16 @@
       <pre class="lines">
 
 
-280
 281
 282
 283
 284
 285
-286</pre>
+286
+287</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/message.rb', line 280</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/message.rb', line 281</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_after_call'>after_call</span><span class='lparen'>(</span><span class='id identifier rubyid_event'>event</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -360,7 +360,8 @@
 274
 275
 276
-277</pre>
+277
+278</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/events/message.rb', line 202</span>
@@ -438,7 +439,8 @@
     <span class='kw'>end</span><span class='comma'>,</span>
     <span class='id identifier rubyid_matches_all'>matches_all</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:after</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_timestamp'>timestamp</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span> <span class='op'>&gt;</span> <span class='id identifier rubyid_e'>e</span> <span class='rbrace'>}</span><span class='comma'>,</span>
     <span class='id identifier rubyid_matches_all'>matches_all</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:before</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_timestamp'>timestamp</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_e'>e</span> <span class='rbrace'>}</span><span class='comma'>,</span>
-    <span class='id identifier rubyid_matches_all'>matches_all</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:private</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_private?'>private?</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='op'>|</span> <span class='op'>!</span><span class='id identifier rubyid_e'>e</span> <span class='op'>==</span> <span class='op'>!</span><span class='id identifier rubyid_a'>a</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_matches_all'>matches_all</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:private</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_private?'>private?</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='op'>|</span> <span class='op'>!</span><span class='id identifier rubyid_e'>e</span> <span class='op'>==</span> <span class='op'>!</span><span class='id identifier rubyid_a'>a</span> <span class='rbrace'>}</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_matches_all'>matches_all</span><span class='lparen'>(</span><span class='ivar'>@attributes</span><span class='lbracket'>[</span><span class='symbol'>:server</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_server'>server</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='op'>|</span> <span class='id identifier rubyid_a'>a</span><span class='op'>&amp;.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span> <span class='op'>==</span> <span class='id identifier rubyid_e'>e</span><span class='op'>&amp;.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span> <span class='rbrace'>}</span>
   <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_reduce'>reduce</span><span class='lparen'>(</span><span class='kw'>true</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='symbol'>:&amp;</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -451,7 +453,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Oct  3 16:47:00 2025 by
+  Generated on Fri Oct  3 16:54:31 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
