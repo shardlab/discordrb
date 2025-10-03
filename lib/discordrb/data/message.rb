@@ -387,6 +387,17 @@ module Discordrb
       Message.new(JSON.parse(response), @bot)
     end
 
+    # Check if this message mentions a specific user or role.
+    # @param target [Role, User, Member, Integer, String] The mention to match against.
+    # @return [true, false] whether or not this message mentions the target.
+    def mentions?(target)
+      mentions = (@mentions + role_mentions)
+
+      mentions << server if @mention_everyone
+
+      mentions.any?(target.resolve_id)
+    end
+
     # Reacts to a message.
     # @param reaction [String, #to_reaction] the unicode emoji or {Emoji}
     def create_reaction(reaction)
