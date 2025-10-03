@@ -895,6 +895,46 @@ module Discordrb
       API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
     end
 
+    # Fetches all the application emojis that the bot can use.
+    # @return [Array<Emoji>] Returns an array of emoji objects.
+    def application_emojis
+      response = API::Application.list_application_emojis(@token, profile.id)
+      JSON.parse(response)['items'].map { |emoji| Emoji.new(emoji, self) }
+    end
+
+    # Fetches a single application emoji from its ID.
+    # @param emoji_id [Integer, String] ID of the application emoji.
+    # @return [Emoji] The application emoji.
+    def application_emoji(emoji_id)
+      response = API::Application.get_application_emoji(@token, profile.id, emoji_id.resolve_id)
+      Emoji.new(JSON.parse(response), self)
+    end
+
+    # Creates a new custom emoji that can be used by this application.
+    # @param name [String] The name of emoji to create.
+    # @param image [String, #read] Base64 string with the image data, or an object that responds to #read.
+    # @return [Emoji] The emoji that has been created.
+    def create_application_emoji(name:, image:)
+      image = image.respond_to?(:read) ? Discordrb.encode64(image) : image
+      response = API::Application.create_application_emoji(@token, profile.id, name, image)
+      Emoji.new(JSON.parse(response), self)
+    end
+
+    # Edits an existing application emoji.
+    # @param emoji_id [Integer, String, Emoji] ID of the application emoji to edit.
+    # @param name [String] The new name of the emoji.
+    # @return [Emoji] Returns the updated emoji object on success.
+    def edit_application_emoji(emoji_id, name:)
+      response = API::Application.edit_application_emoji(@token, profile.id, emoji_id.resolve_id, name)
+      Emoji.new(JSON.parse(response), self)
+    end
+
+    # Deletes an existing application emoji.
+    # @param emoji_id [Integer, String, Emoji] ID of the application emoji to delete.
+    def delete_application_emoji(emoji_id)
+      API::Application.delete_application_emoji(@token, profile.id, emoji_id.resolve_id)
+    end
+
     private
 
     # Throws a useful exception if there's currently no gateway connection.
@@ -1276,6 +1316,8 @@ module Discordrb
         id = data['guild_id'].to_i
         server = server(id)
         server.process_chunk(data['members'], data['chunk_index'], data['chunk_count'])
+      when :USER_UPDATE
+        @profile = Profile.new(data, self)
       when :INVITE_CREATE
         invite = Invite.new(data, self)
         raise_event(InviteCreateEvent.new(data, invite, self))
@@ -1305,6 +1347,7 @@ module Discordrb
         # Update the existing member if it exists in the cache.
         if data['member']
           member = message.channel.server&.member(data['author']['id'].to_i, false)
+          data['member']['user'] = data['author']
           member&.update_data(data['member'])
         end
 
@@ -1348,6 +1391,7 @@ module Discordrb
         # Update the existing member if it exists in the cache.
         if data['member']
           member = message.channel.server&.member(data['author']['id'].to_i, false)
+          data['member']['user'] = data['author']
           member&.update_data(data['member'])
         end
 
