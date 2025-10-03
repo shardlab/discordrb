@@ -342,20 +342,7 @@ module Discordrb
 
     # @!visibility private
     def update_application(new_data)
-      update_data(JSON.parse(API::Application.update_current_application(@bot.token,
-                                                                         new_data[:custom_install_url] || :undef,
-                                                                         new_data[:description] || :undef,
-                                                                         new_data[:role_connections_verification_url] || :undef,
-                                                                         new_data[:install_params] || :undef,
-                                                                         new_data[:integration_types_config] || :undef,
-                                                                         new_data[:flags] || :undef,
-                                                                         new_data[:interactions_endpoint_url] || :undef,
-                                                                         new_data[:tags] || :undef,
-                                                                         new_data[:event_webhooks_url] || :undef,
-                                                                         new_data[:event_webhooks_status] || :undef,
-                                                                         new_data[:event_webhooks_types] || :undef,
-                                                                         new_data.key?(:icon) ? new_data[:icon] : :undef,
-                                                                         new_data.key?(:cover_image) ? new_data[:cover_image] : :undef)))
+      update_data(JSON.parse(API::Application.update_current_application(@bot.token, **new_data)))
     end
   end
 end
