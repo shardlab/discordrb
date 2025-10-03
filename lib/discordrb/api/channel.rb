@@ -660,5 +660,5 @@ module Discordrb::API::Channel
       nil,
       Authorization: token
     )
-  end  
+  end
 end

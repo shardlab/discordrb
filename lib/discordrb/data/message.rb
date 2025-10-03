@@ -234,7 +234,7 @@ module Discordrb
       @call = data['call'] ? Call.new(data['call'], @bot) : nil
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
-      
+
       @poll = data['poll'] ? Poll.new(data['poll'], self, @bot) : nil
     end
 
