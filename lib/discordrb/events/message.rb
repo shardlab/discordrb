@@ -54,7 +54,7 @@ module Discordrb::Events
       channel.send_temporary_message(content, timeout, tts, embed, attachments, allowed_mentions, components, flags)
     end
 
-    # # Sends a message to the channel this message was sent in, right now.
+    # Sends a message to the channel this message was sent in, right now.
     # @see Channel#send_message!
     def send_message!(...)
       channel.send_message!(...)
@@ -272,7 +272,8 @@ module Discordrb::Events
         end,
         matches_all(@attributes[:after], event.timestamp) { |a, e| a > e },
         matches_all(@attributes[:before], event.timestamp) { |a, e| a < e },
-        matches_all(@attributes[:private], event.channel.private?) { |a, e| !e == !a }
+        matches_all(@attributes[:private], event.channel.private?) { |a, e| !e == !a },
+        matches_all(@attributes[:server], event.server) { |a, e| a&.resolve_id == e&.resolve_id }
       ].reduce(true, &:&)
     end
 
@@ -305,10 +306,14 @@ module Discordrb::Events
     # @return [Integer] the ID associated with this event
     attr_reader :id
 
+    # @return [Server, nil] the server associated with this event
+    attr_reader :server
+
     # @!visibility private
     def initialize(data, bot)
       @id = data['id'].to_i
       @channel = bot.channel(data['channel_id'].to_i)
+      @server = @channel.server
       @saved_message = ''
       @bot = bot
     end
@@ -334,6 +339,9 @@ module Discordrb::Events
           else
             a == e
           end
+        end,
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a&.resolve_id == e&.resolve_id
         end
       ].reduce(true, &:&)
     end
