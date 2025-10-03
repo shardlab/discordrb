@@ -512,11 +512,14 @@ module Discordrb
     # @param hoist [true, false] whether members of this role should be displayed seperately in the members list.
     # @param mentionable [true, false] whether this role can mentioned by anyone in the server.
     # @param permissions [Integer, Array<Symbol>, Permissions, #bits] The permissions to write to the new role.
+    # @param icon [String, #read, nil] The base64 encoded image data, or a file like object that responds to #read.
+    # @param unicode_emoji [String, nil] The unicode emoji of the role to create, or nil.
+    # @param display_icon [String, File, #read, nil] The icon to display for the role. Overrides the **icon** and **unicode_emoji** parameters if passed.
     # @param reason [String] The reason the for the creation of this role.
     # @param secondary_colour [Integer, ColourRGB, nil] The secondary colour of the role to create.
     # @param tertiary_colour [Integer, ColourRGB, nil] The tertiary colour of the role to create.
     # @return [Role] the created role.
-    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, secondary_colour: nil, tertiary_colour: nil, reason: nil)
+    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, secondary_colour: nil, tertiary_colour: nil, icon: nil, unicode_emoji: nil, display_icon: nil, reason: nil)
       colour = colour.respond_to?(:combined) ? colour.combined : colour
 
       permissions = if permissions.is_a?(Array)
@@ -527,13 +530,21 @@ module Discordrb
                       permissions
                     end
 
+      icon = icon.respond_to?(:read) ? Discordrb.encode64(icon) : icon
+
       colours = {
         primary_color: colour&.to_i,
         tertiary_color: tertiary_colour&.to_i,
         secondary_color: secondary_colour&.to_i
       }
 
-      response = API::Server.create_role(@bot.token, @id, name, nil, hoist, mentionable, permissions&.to_s, reason, colours)
+      if display_icon.is_a?(String)
+        unicode_emoji = display_icon
+      elsif display_icon.respond_to?(:read)
+        icon = Discordrb.encode64(display_icon)
+      end
+
+      response = API::Server.create_role(@bot.token, @id, name, nil, hoist, mentionable, permissions&.to_s, reason, colours, icon, unicode_emoji)
 
       role = Role.new(JSON.parse(response), @bot, self)
       @roles << role
