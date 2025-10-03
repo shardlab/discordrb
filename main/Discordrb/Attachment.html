@@ -322,34 +322,6 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#message-instance_method" title="#message (instance method)">#<strong>message</strong>  &#x21d2; Message </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>The message this attachment belongs to.</p>
-</div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#proxy_url-instance_method" title="#proxy_url (instance method)">#<strong>proxy_url</strong>  &#x21d2; String </a>
     
 
@@ -531,6 +503,52 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#message-instance_method" title="#message (instance method)">#<strong>message</strong>  &#x21d2; Message<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The message this attachment object belongs to.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#snapshot-instance_method" title="#snapshot (instance method)">#<strong>snapshot</strong>  &#x21d2; Snapshot<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The message snapshot this attachment object belongs to.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#spoiler%3F-instance_method" title="#spoiler? (instance method)">#<strong>spoiler?</strong>  &#x21d2; true, false </a>
     
 
@@ -613,12 +631,12 @@
       <pre class="lines">
 
 
-34
-35
-36</pre>
+31
+32
+33</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 34</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_content_type'>content_type</span>
   <span class='ivar'>@content_type</span>
@@ -672,12 +690,12 @@
       <pre class="lines">
 
 
-31
-32
-33</pre>
+28
+29
+30</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 28</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_description'>description</span>
   <span class='ivar'>@description</span>
@@ -731,12 +749,12 @@
       <pre class="lines">
 
 
-41
-42
-43</pre>
+38
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 38</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_duration_seconds'>duration_seconds</span>
   <span class='ivar'>@duration_seconds</span>
@@ -794,12 +812,12 @@
       <pre class="lines">
 
 
-37
-38
-39</pre>
+34
+35
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 34</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ephemeral'>ephemeral</span>
   <span class='ivar'>@ephemeral</span>
@@ -853,12 +871,12 @@
       <pre class="lines">
 
 
-19
-20
-21</pre>
+16
+17
+18</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 16</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_filename'>filename</span>
   <span class='ivar'>@filename</span>
@@ -912,12 +930,12 @@
       <pre class="lines">
 
 
-47
-48
-49</pre>
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_flags'>flags</span>
   <span class='ivar'>@flags</span>
@@ -971,74 +989,15 @@
       <pre class="lines">
 
 
-28
-29
-30</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 28</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_height'>height</span>
   <span class='ivar'>@height</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="message-instance_method">
-  
-    #<strong>message</strong>  &#x21d2; <tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns the message this attachment belongs to.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the message this attachment belongs to.</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-9
-10
-11</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 9</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_message'>message</span>
-  <span class='ivar'>@message</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1091,12 +1050,12 @@ do with CDNs.</p>
       <pre class="lines">
 
 
-16
-17
-18</pre>
+13
+14
+15</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 16</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 13</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_proxy_url'>proxy_url</span>
   <span class='ivar'>@proxy_url</span>
@@ -1150,12 +1109,12 @@ do with CDNs.</p>
       <pre class="lines">
 
 
-22
-23
-24</pre>
+19
+20
+21</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 22</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 19</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_size'>size</span>
   <span class='ivar'>@size</span>
@@ -1209,12 +1168,12 @@ do with CDNs.</p>
       <pre class="lines">
 
 
-12
-13
-14</pre>
+9
+10
+11</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 12</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 9</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_url'>url</span>
   <span class='ivar'>@url</span>
@@ -1268,12 +1227,12 @@ do with CDNs.</p>
       <pre class="lines">
 
 
-44
-45
-46</pre>
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 41</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_waveform'>waveform</span>
   <span class='ivar'>@waveform</span>
@@ -1327,12 +1286,12 @@ do with CDNs.</p>
       <pre class="lines">
 
 
-25
-26
-27</pre>
+22
+23
+24</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 22</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_width'>width</span>
   <span class='ivar'>@width</span>
@@ -1391,15 +1350,129 @@ do with CDNs.</p>
       <pre class="lines">
 
 
-75
-76
-77</pre>
+72
+73
+74</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 75</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 72</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_image?'>image?</span>
   <span class='op'>!</span><span class='lparen'>(</span><span class='ivar'>@width</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='ivar'>@height</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="message-instance_method">
+  
+    #<strong>message</strong>  &#x21d2; <tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the message this attachment object belongs to.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message this attachment object belongs to.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+82
+83
+84</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 82</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_message'>message</span>
+  <span class='ivar'>@message</span> <span class='kw'>unless</span> <span class='ivar'>@message</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Snapshot.html" title="Discordrb::Snapshot (class)">Snapshot</a></span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="snapshot-instance_method">
+  
+    #<strong>snapshot</strong>  &#x21d2; <tt><span class='object_link'><a href="Snapshot.html" title="Discordrb::Snapshot (class)">Snapshot</a></span></tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the message snapshot this attachment object belongs to.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Snapshot.html" title="Discordrb::Snapshot (class)">Snapshot</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the message snapshot this attachment object belongs to.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+87
+88
+89</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 87</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_snapshot'>snapshot</span>
+  <span class='ivar'>@message</span> <span class='kw'>unless</span> <span class='ivar'>@message</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1448,12 +1521,12 @@ do with CDNs.</p>
       <pre class="lines">
 
 
-80
-81
-82</pre>
+77
+78
+79</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 80</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/attachment.rb', line 77</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_spoiler?'>spoiler?</span>
   <span class='ivar'>@filename</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SPOILER_</span><span class='tstring_end'>&#39;</span></span>
@@ -1468,7 +1541,7 @@ do with CDNs.</p>
 </div>
 
       <div id="footer">
-  Generated on Fri Oct  3 20:38:34 2025 by
+  Generated on Fri Oct  3 20:41:49 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
