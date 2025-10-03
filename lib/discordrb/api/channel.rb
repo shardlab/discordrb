@@ -123,7 +123,7 @@ module Discordrb::API::Channel
       channel_id,
       :patch,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}",
-      { content: message, mentions: mentions, embeds: embeds, components: components, flags: flags }.reject { |_, v| v == :undef }.to_json,
+      { content: message, allowed_mentions: mentions, embeds: embeds, components: components, flags: flags }.reject { |_, v| v == :undef }.to_json,
       Authorization: token,
       content_type: :json
     )
