@@ -56,8 +56,26 @@ module Discordrb
     # @return [Hash] The interaction data.
     attr_reader :data
 
-    # @return [Array<ActionRow>]
+    # @return [Array<ActionRow>] The modal components associated with this interaction.
     attr_reader :components
+
+    # @return [Permissions] The permissions the application has where this interaction originates from.
+    attr_reader :application_permissions
+
+    # @return [String] The selected language of the user that initiated this interaction.
+    attr_reader :user_locale
+
+    # @return [String, nil] The selected language of the server this interaction originates from.
+    attr_reader :server_locale
+
+    # @return [Integer] The context of where this interaction was initiated from.
+    attr_reader :context
+
+    # @return [Integer] The maximum number of bytes an attachment can have when responding to this interaction.
+    attr_reader :max_attachment_size
+
+    # @return [Array<Symbol>] the features of the server where the interaction was initiated from.
+    attr_reader :server_features
 
     # @!visibility private
     def initialize(data, bot)
@@ -79,6 +97,13 @@ module Discordrb
       @token = data['token']
       @version = data['version']
       @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
+      @application_permissions = Permissions.new(data['app_permissions']) if data['app_permissions']
+      @user_locale = data['locale']
+      @server_locale = data['guild_locale']
+      @context = data['context']
+      @max_attachment_size = data['attachment_size_limit']
+      @integration_owners = data['authorizing_integration_owners'].to_h { |key, value| [key.to_i, value.to_i] }
+      @server_features = data['guild'] ? data['guild']['features']&.map { |feature| feature.downcase.to_sym } : []
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
@@ -307,6 +332,16 @@ module Discordrb
       message_level = (@message.instance_of?(Hash) ? Message.new(@message, @bot) : @message)&.components&.flat_map(&:components) || []
       components = top_level.concat(message_level)
       components.find { |component| component.custom_id == custom_id }
+    end
+
+    # @return [true, false] whether the application was installed by the user who initiated this interaction.
+    def user_integration?
+      @integration_owners[1] == @user_id
+    end
+
+    # @return [true, false] whether the application was installed by the server where this interaction originates from.
+    def server_integration?
+      @server_id ? @integration_owners[0] == @server_id : false
     end
 
     private
