@@ -425,6 +425,52 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#application_emoji-instance_method" title="#application_emoji (instance method)">#<strong>application_emoji</strong>(emoji_id)  &#x21d2; Emoji </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Fetches a single application emoji from its ID.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#application_emojis-instance_method" title="#application_emojis (instance method)">#<strong>application_emojis</strong>  &#x21d2; Array&lt;Emoji&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Fetches all the application emojis that the bot can use.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#bot_application-instance_method" title="#bot_application (instance method)">#<strong>bot_application</strong>  &#x21d2; Application<sup>?</sup> </a>
     
 
@@ -488,6 +534,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Whether or not the bot is currently connected to Discord.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#create_application_emoji-instance_method" title="#create_application_emoji (instance method)">#<strong>create_application_emoji</strong>(name:, image:)  &#x21d2; Emoji </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Creates a new custom emoji that can be used by this application.</p>
 </div></span>
   
 </li>
@@ -579,6 +648,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Remove an application command from the commands registered with discord.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#delete_application_emoji-instance_method" title="#delete_application_emoji (instance method)">#<strong>delete_application_emoji</strong>(emoji_id)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Deletes an existing application emoji.</p>
 </div></span>
   
 </li>
@@ -693,6 +785,29 @@
 
   
     <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#edit_application_emoji-instance_method" title="#edit_application_emoji (instance method)">#<strong>edit_application_emoji</strong>(emoji_id, name:)  &#x21d2; Emoji </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Edits an existing application emoji.</p>
+</div></span>
   
 </li>
 
@@ -3145,6 +3260,143 @@ same codebase. Not required but I recommend setting it anyway.</p>
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="application_emoji-instance_method">
+  
+    #<strong>application_emoji</strong>(emoji_id)  &#x21d2; <tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Fetches a single application emoji from its ID.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>emoji_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>ID of the application emoji.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The application emoji.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+908
+909
+910
+911</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 908</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_application_emoji'>application_emoji</span><span class='lparen'>(</span><span class='id identifier rubyid_emoji_id'>emoji_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Application.html" title="Discordrb::API::Application (module)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_get_application_emoji'><span class='object_link'><a href="API/Application.html#get_application_emoji-class_method" title="Discordrb::API::Application.get_application_emoji (method)">get_application_emoji</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_emoji_id'>emoji_id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="application_emojis-instance_method">
+  
+    #<strong>application_emojis</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Fetches all the application emojis that the bot can use.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Returns an array of emoji objects.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+900
+901
+902
+903</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 900</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_application_emojis'>application_emojis</span>
+  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Application.html" title="Discordrb::API::Application (module)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_list_application_emojis'><span class='object_link'><a href="API/Application.html#list_application_emojis-class_method" title="Discordrb::API::Application.list_application_emojis (method)">list_application_emojis</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
+  <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>items</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_emoji'>emoji</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_emoji'>emoji</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="bot_application-instance_method">
   
     #<strong>bot_application</strong>  &#x21d2; <tt><span class='object_link'><a href="Application.html" title="Discordrb::Application (class)">Application</a></span></tt><sup>?</sup> 
@@ -3340,6 +3592,101 @@ same codebase. Not required but I recommend setting it anyway.</p>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connected?'>connected?</span>
   <span class='ivar'>@gateway</span><span class='period'>.</span><span class='id identifier rubyid_open?'>open?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="create_application_emoji-instance_method">
+  
+    #<strong>create_application_emoji</strong>(name:, image:)  &#x21d2; <tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Creates a new custom emoji that can be used by this application.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>name</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The name of emoji to create.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>image</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>#read</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Base64 string with the image data, or an object that responds to #read.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The emoji that has been created.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+917
+918
+919
+920
+921</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 917</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_create_application_emoji'>create_application_emoji</span><span class='lparen'>(</span><span class='label'>name:</span><span class='comma'>,</span> <span class='label'>image:</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_image'>image</span> <span class='op'>=</span> <span class='id identifier rubyid_image'>image</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:read</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='period'>.</span><span class='id identifier rubyid_encode64'><span class='object_link'><a href="../Discordrb.html#encode64-class_method" title="Discordrb.encode64 (method)">encode64</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_image'>image</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_image'>image</span>
+  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Application.html" title="Discordrb::API::Application (module)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create_application_emoji'><span class='object_link'><a href="API/Application.html#create_application_emoji-class_method" title="Discordrb::API::Application.create_application_emoji (method)">create_application_emoji</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_image'>image</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -3604,6 +3951,65 @@ Discord. For information how to use this, see the docs: <a href="https://discord
   <span class='kw'>else</span>
     <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Application.html" title="Discordrb::API::Application (module)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_global_command'><span class='object_link'><a href="API/Application.html#delete_global_command-class_method" title="Discordrb::API::Application.delete_global_command (method)">delete_global_command</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_command_id'>command_id</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="delete_application_emoji-instance_method">
+  
+    #<strong>delete_application_emoji</strong>(emoji_id)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Deletes an existing application emoji.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>emoji_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>ID of the application emoji to delete.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+934
+935
+936</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 934</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_delete_application_emoji'>delete_application_emoji</span><span class='lparen'>(</span><span class='id identifier rubyid_emoji_id'>emoji_id</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Application.html" title="Discordrb::API::Application (module)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_application_emoji'><span class='object_link'><a href="API/Application.html#delete_application_emoji-class_method" title="Discordrb::API::Application.delete_application_emoji (method)">delete_application_emoji</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_emoji_id'>emoji_id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -3956,6 +4362,99 @@ It is recommended that you use <span class='object_link'><a href="Invite.html#de
 
   <span class='id identifier rubyid_permissions'>permissions</span> <span class='op'>+=</span> <span class='id identifier rubyid_builder'>builder</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Application.html" title="Discordrb::API::Application (module)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_edit_guild_command_permissions'><span class='object_link'><a href="API/Application.html#edit_guild_command_permissions-class_method" title="Discordrb::API::Application.edit_guild_command_permissions (method)">edit_guild_command_permissions</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_server_id'>server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_command_id'>command_id</span><span class='comma'>,</span> <span class='id identifier rubyid_permissions'>permissions</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="edit_application_emoji-instance_method">
+  
+    #<strong>edit_application_emoji</strong>(emoji_id, name:)  &#x21d2; <tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Edits an existing application emoji.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>emoji_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>ID of the application emoji to edit.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>name</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The new name of the emoji.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Returns the updated emoji object on success.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+927
+928
+929
+930</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/bot.rb', line 927</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_edit_application_emoji'>edit_application_emoji</span><span class='lparen'>(</span><span class='id identifier rubyid_emoji_id'>emoji_id</span><span class='comma'>,</span> <span class='label'>name:</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Application.html" title="Discordrb::API::Application (module)">Application</a></span></span><span class='period'>.</span><span class='id identifier rubyid_edit_application_emoji'><span class='object_link'><a href="API/Application.html#edit_application_emoji-class_method" title="Discordrb::API::Application.edit_application_emoji (method)">edit_application_emoji</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_emoji_id'>emoji_id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -7785,7 +8284,7 @@ directly, you should leave it as true.</p>
 </div>
 
       <div id="footer">
-  Generated on Fri Oct  3 16:57:37 2025 by
+  Generated on Fri Oct  3 20:38:30 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
