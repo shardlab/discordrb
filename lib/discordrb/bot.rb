@@ -1276,6 +1276,8 @@ module Discordrb
         id = data['guild_id'].to_i
         server = server(id)
         server.process_chunk(data['members'], data['chunk_index'], data['chunk_count'])
+      when :USER_UPDATE
+        @profile = Profile.new(data, self)
       when :INVITE_CREATE
         invite = Invite.new(data, self)
         raise_event(InviteCreateEvent.new(data, invite, self))
@@ -1305,6 +1307,7 @@ module Discordrb
         # Update the existing member if it exists in the cache.
         if data['member']
           member = message.channel.server&.member(data['author']['id'].to_i, false)
+          data['member']['user'] = data['author']
           member&.update_data(data['member'])
         end
 
@@ -1348,6 +1351,7 @@ module Discordrb
         # Update the existing member if it exists in the cache.
         if data['member']
           member = message.channel.server&.member(data['author']['id'].to_i, false)
+          data['member']['user'] = data['author']
           member&.update_data(data['member'])
         end
 
