@@ -853,6 +853,24 @@ module Discordrb
       @bot.channel(@system_channel_id) if @system_channel_id
     end
 
+    # Get the onboarding flow for this server.
+    # @return [Onboarding, nil] The onboarding flow for members in this server, or `nil` if the bot cannot access the onboarding flow.
+    def onboarding
+      response = API::Server.onboarding(@bot.token, @id)
+      Onboarding.new(JSON.parse(response), self, @bot)
+    rescue StandardError
+      nil
+    end
+
+    # Get the welcome screen shown to new server members.
+    # @return [WelcomeScreen, nil] The welcome screen for this server, or `nil` if the bot cannot access the welcome screen.
+    def welcome_screen
+      response = API::Server.welcome_screen(@bot.token, @id)
+      WelcomeScreen.new(JSON.parse(response), self, @bot)
+    rescue StandardError
+      nil
+    end
+
     # Updates the cached data with new data
     # @note For internal use only
     # @!visibility private
