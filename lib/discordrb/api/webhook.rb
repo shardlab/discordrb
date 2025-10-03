@@ -29,8 +29,8 @@ module Discordrb::API::Webhook
 
   # Execute a webhook via token.
   # https://discord.com/developers/docs/resources/webhook#execute-webhook
-  def token_execute_webhook(webhook_token, webhook_id, wait = false, content = nil, username = nil, avatar_url = nil, tts = nil, file = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil, attachments = nil)
-    body = { content: content, username: username, avatar_url: avatar_url, tts: tts, embeds: embeds&.map(&:to_hash),  allowed_mentions: allowed_mentions, flags: flags, components: components }
+  def token_execute_webhook(webhook_token, webhook_id, wait = false, content = nil, username = nil, avatar_url = nil, tts = nil, file = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil, attachments = nil, poll = nil)
+    body = { content: content, username: username, avatar_url: avatar_url, tts: tts, embeds: embeds&.map(&:to_hash),  allowed_mentions: allowed_mentions, flags: flags, components: components, poll: poll }
 
     body = if file
              { file: file, payload_json: body.to_json }
@@ -120,8 +120,8 @@ module Discordrb::API::Webhook
 
   # Edit a webhook message via webhook token
   # https://discord.com/developers/docs/resources/webhook#edit-webhook-message
-  def token_edit_message(webhook_token, webhook_id, message_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil, attachments = nil)
-    body = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components }
+  def token_edit_message(webhook_token, webhook_id, message_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil, attachments = nil, poll = nil)
+    body = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, poll: poll }
 
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h

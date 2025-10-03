@@ -75,8 +75,8 @@ module Discordrb::API::Channel
   # https://discord.com/developers/docs/resources/channel#create-message
   # @param attachments [Array<File>, nil] Attachments to use with `attachment://` in embeds. See
   #   https://discord.com/developers/docs/resources/channel#create-message-using-attachments-within-embeds
-  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil, enforce_nonce = false)
-    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags, enforce_nonce: enforce_nonce }
+  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil, enforce_nonce = false, poll = nil)
+    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags, enforce_nonce: enforce_nonce, poll: poll }
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h
              { **files, payload_json: body.to_json }
@@ -632,6 +632,33 @@ module Discordrb::API::Channel
       "#{Discordrb::API.api_base}/channels/#{channel_id}/threads",
       body,
       headers
+    )
+  end
+
+  # Get a list of users that have voted for a poll answer.
+  # https://discord.com/developers/docs/resources/poll#get-answer-voters
+  def get_poll_answer_voters(token, channel_id, message_id, answer_id, limit = 100, after = nil, before = nil)
+    query = URI.encode_www_form({ limit: limit, after: after, before: before }.compact)
+
+    Discordrb::API.request(
+      :channels_cid_polls_mid_answers_aid,
+      channel_id,
+      :get,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/polls/#{message_id}/answers/#{answer_id}?#{query}",
+      Authorization: token
+    )
+  end
+
+  # End a poll created by the current user.
+  # https://discord.com/developers/docs/resources/poll#end-poll
+  def end_poll(token, channel_id, message_id)
+    Discordrb::API.request(
+      :channels_cid_polls_mid_expire,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/polls/#{message_id}/expire",
+      nil,
+      Authorization: token
     )
   end
 end
