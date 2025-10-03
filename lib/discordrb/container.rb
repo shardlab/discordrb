@@ -138,6 +138,7 @@ module Discordrb
     # @option attributes [String, Integer, User] :from Matches the user who added the reaction.
     # @option attributes [String, Integer, Message] :message Matches the message to which the reaction was added.
     # @option attributes [String, Integer, Channel] :in Matches the channel the reaction was added in.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of reaction (`:normal` or `:burst`) that was added.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ReactionAddEvent] The event that was raised.
     # @return [ReactionAddEventHandler] The event handler that was registered.
@@ -152,6 +153,7 @@ module Discordrb
     # @option attributes [String, Integer, User] :from Matches the user who removed the reaction.
     # @option attributes [String, Integer, Message] :message Matches the message to which the reaction was removed.
     # @option attributes [String, Integer, Channel] :in Matches the channel the reaction was removed in.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of reaction (`:normal` or `:burst`) that was added.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ReactionRemoveEvent] The event that was raised.
     # @return [ReactionRemoveEventHandler] The event handler that was registered.
@@ -169,6 +171,18 @@ module Discordrb
     # @return [ReactionRemoveAllEventHandler] The event handler that was registered.
     def reaction_remove_all(attributes = {}, &block)
       register_event(ReactionRemoveAllEvent, attributes, block)
+    end
+
+    # This **event** is raised when somebody removes all instances of a single reaction from a message.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Message] :message Matches the message where the reaction was removed.
+    # @option attributes [String, Integer, Channel] :in Matches the channel where the reaction was removed.
+    # @option attributes [String, Integer] :emoji Matches the ID of the emoji that was removed, or its name.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ReactionRemoveEmojiEvent] The event that was raised.
+    # @return [ReactionRemoveEmojiEventHandler] The event handler that was registered.
+    def reaction_remove_emoji(attributes = {}, &block)
+      register_event(ReactionRemoveEmojiEvent, attributes, block)
     end
 
     # This **event** is raised when a user's status (online/offline/idle) changes.
