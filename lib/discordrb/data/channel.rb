@@ -998,7 +998,7 @@ module Discordrb
     # @note For internal use only
     # @!visibility private
     def process_last_pin_timestamp(time)
-      @last_pin_timestamp = time.is_a?(String) ? Time.parse(time) : time
+      @last_pin_timestamp = time ? Time.parse(time) : time
     end
 
     # Updates the cached data with new data
@@ -1016,7 +1016,6 @@ module Discordrb
       @parent_id = new_data[:parent_id] || new_data['parent_id'] || @parent_id
       process_permission_overwrites(new_data[:permission_overwrites] || new_data['permission_overwrites'])
       @rate_limit_per_user = new_data[:rate_limit_per_user] || new_data['rate_limit_per_user'] || @rate_limit_per_user
-      process_last_pin_timestamp(new_data['last_pin_timestamp']) if new_data['last_pin_timestamp']
     end
 
     # @return [String] a URL that a user can use to navigate to this channel in the client
