@@ -64,25 +64,20 @@ module Discordrb
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-      @owner_id = data['owner_id'].to_i
       @id = data['id'].to_i
       @members = {}
       @voice_states = {}
       @emoji = {}
 
-      process_channels(data['channels'])
       update_data(data)
 
       # Whether this server's members have been chunked (resolved using op 8 and GUILD_MEMBERS_CHUNK) yet
       @chunked = false
-
-      @booster_count = data['premium_subscription_count'] || 0
-      @boost_level = data['premium_tier']
     end
 
     # @return [Member] The server owner.
     def owner
-      @owner ||= member(@owner_id)
+      member(@owner_id)
     end
 
     # The default channel is the text channel on this server with the highest position
@@ -876,6 +871,9 @@ module Discordrb
       @splash_id = new_data['splash'] || @splash_id
       @banner_id = new_data['banner'] || @banner_id
       @features = new_data['features'] ? new_data['features'].map { |element| element.downcase.to_sym } : @features || []
+      @booster_count = new_data['premium_subscription_count'] || @booster_count || 0
+      @boost_level = new_data['premium_tier'] || @boost_level
+      @owner_id = new_data['owner_id'].to_i
 
       process_channels(new_data['channels']) if new_data['channels']
       process_roles(new_data['roles']) if new_data['roles']
