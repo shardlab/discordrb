@@ -5,6 +5,19 @@ module Discordrb
   class Sticker
     include IDObject
 
+    FORMATS = {
+      png: 1,
+      apng: 2,
+      lottie: 3,
+      gif: 4
+    }.freeze
+
+    FORMATS.each do |name, value|
+      define_method("#{name}?") do
+        @format_type == value
+      end
+    end
+
     # @return [Message] the message this sticker belongs to.
     attr_reader :message
 
@@ -39,15 +52,5 @@ module Discordrb
         @extension = 'gif'
       end
     end
-
-    # ID or name based comparison
-    def ==(other)
-      return false unless other.is_a? Sticker
-      return Discordrb.id_compare(@id, other) if @id
-
-      name == other.name
-    end
-
-    alias_method :eql?, :==
   end
 end
