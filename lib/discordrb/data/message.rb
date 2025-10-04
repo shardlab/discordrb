@@ -151,6 +151,9 @@ module Discordrb
     # @return [Array<Snapshot>] the message snapshots included in this message.
     attr_reader :snapshots
 
+    # @return [Poll, nil] the poll that was sent with this message, or nil.
+    attr_reader :poll
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -231,6 +234,8 @@ module Discordrb
       @call = data['call'] ? Call.new(data['call'], @bot) : nil
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
+
+      @poll = data['poll'] ? Poll.new(data['poll'], self, @bot) : nil
     end
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
