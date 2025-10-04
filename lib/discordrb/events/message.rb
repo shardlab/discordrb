@@ -54,6 +54,12 @@ module Discordrb::Events
       channel.send_temporary_message(content, timeout, tts, embed, attachments, allowed_mentions, components, flags)
     end
 
+    # Sends a message to the channel this message was sent in, right now.
+    # @see Channel#send_message!
+    def send_message!(...)
+      channel.send_message!(...)
+    end
+
     # Adds a string to be sent after the event has finished execution. Avoids problems with rate limiting because only
     # one message is ever sent. If it is used multiple times, the strings will bunch up into one message (separated by
     # newlines)
@@ -87,6 +93,9 @@ module Discordrb::Events
     alias_method :send, :send_message
     alias_method :respond, :send_message
     alias_method :send_temp, :send_temporary_message
+
+    alias_method :send!, :send_message!
+    alias_method :respond!, :send_message!
   end
 
   # Event raised when a text message is sent to a channel
@@ -127,6 +136,7 @@ module Discordrb::Events
     #   @see Channel#server
     delegate :server, to: :channel
 
+    # @!visibility private
     def initialize(message, bot)
       @bot = bot
       @message = message
@@ -252,9 +262,18 @@ module Discordrb::Events
             match ? (e == match[0]) : false
           end
         end,
+        matches_all(@attributes[:type] || @attributes[:message_type], event.message.type) do |a, e|
+          case a
+          when String, Symbol
+            Discordrb::Message::TYPES[a.to_sym] == e
+          when Integer
+            a == e
+          end
+        end,
         matches_all(@attributes[:after], event.timestamp) { |a, e| a > e },
         matches_all(@attributes[:before], event.timestamp) { |a, e| a < e },
-        matches_all(@attributes[:private], event.channel.private?) { |a, e| !e == !a }
+        matches_all(@attributes[:private], event.channel.private?) { |a, e| !e == !a },
+        matches_all(@attributes[:server], event.server) { |a, e| a&.resolve_id == e&.resolve_id }
       ].reduce(true, &:&)
     end
 
@@ -287,10 +306,14 @@ module Discordrb::Events
     # @return [Integer] the ID associated with this event
     attr_reader :id
 
+    # @return [Server, nil] the server associated with this event
+    attr_reader :server
+
     # @!visibility private
     def initialize(data, bot)
       @id = data['id'].to_i
       @channel = bot.channel(data['channel_id'].to_i)
+      @server = @channel.server
       @saved_message = ''
       @bot = bot
     end
@@ -316,6 +339,9 @@ module Discordrb::Events
           else
             a == e
           end
+        end,
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a&.resolve_id == e&.resolve_id
         end
       ].reduce(true, &:&)
     end

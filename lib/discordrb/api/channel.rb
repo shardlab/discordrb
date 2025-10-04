@@ -18,8 +18,8 @@ module Discordrb::API::Channel
 
   # Update a channel's data
   # https://discord.com/developers/docs/resources/channel#modify-channel
-  def update(token, channel_id, name, topic, position, bitrate, user_limit, nsfw, permission_overwrites = nil, parent_id = nil, rate_limit_per_user = nil, reason = nil)
-    data = { name: name, position: position, topic: topic, bitrate: bitrate, user_limit: user_limit, nsfw: nsfw, parent_id: parent_id, rate_limit_per_user: rate_limit_per_user }
+  def update(token, channel_id, name, topic, position, bitrate, user_limit, nsfw, permission_overwrites = nil, parent_id = nil, rate_limit_per_user = nil, reason = nil, archived = nil, auto_archive_duration = nil, locked = nil, invitable = nil, flags = nil, applied_tags = nil)
+    data = { name: name, position: position, topic: topic, bitrate: bitrate, user_limit: user_limit, nsfw: nsfw, parent_id: parent_id, rate_limit_per_user: rate_limit_per_user, archived: archived, auto_archive_duration: auto_archive_duration, locked: locked, invitable: invitable, flags: flags, applied_tags: applied_tags }
     data[:permission_overwrites] = permission_overwrites unless permission_overwrites.nil?
     Discordrb::API.request(
       :channels_cid,
@@ -75,8 +75,8 @@ module Discordrb::API::Channel
   # https://discord.com/developers/docs/resources/channel#create-message
   # @param attachments [Array<File>, nil] Attachments to use with `attachment://` in embeds. See
   #   https://discord.com/developers/docs/resources/channel#create-message-using-attachments-within-embeds
-  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil)
-    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags }
+  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil, enforce_nonce = false)
+    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags, enforce_nonce: enforce_nonce }
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h
              { **files, payload_json: body.to_json }
@@ -123,7 +123,7 @@ module Discordrb::API::Channel
       channel_id,
       :patch,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}",
-      { content: message, mentions: mentions, embeds: embeds, components: components, flags: flags }.reject { |_, v| v == :undef }.to_json,
+      { content: message, allowed_mentions: mentions, embeds: embeds, components: components, flags: flags }.reject { |_, v| v == :undef }.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -464,6 +464,21 @@ module Discordrb::API::Channel
     )
   end
 
+  # Follow an annoucement channel.
+  # https://discord.com/developers/docs/resources/channel#follow-announcement-channel
+  def follow_channel(token, channel_id, webhook_channel_id, reason = nil)
+    Discordrb::API.request(
+      :channels_cid_followers,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/followers",
+      { webhook_channel_id: webhook_channel_id }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Start a thread based off a channel message.
   # https://discord.com/developers/docs/resources/channel#start-thread-with-message
   def start_thread_with_message(token, channel_id, message_id, name, auto_archive_duration)
@@ -610,18 +625,28 @@ module Discordrb::API::Channel
     )
   end
 
-  # Follow an annoucement channel.
-  # https://discord.com/developers/docs/resources/channel#follow-announcement-channel
-  def follow_channel(token, channel_id, webhook_channel_id, reason = nil)
+  # Start a thread in a forum or media channel.
+  # https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
+  def start_thread_in_forum_or_media_channel(token, channel_id, name, message, attachments = nil, rate_limit_per_user = nil, auto_archive_duration = nil, applied_tags = [], reason = nil)
+    body = { name: name, message: message, rate_limit_per_user: rate_limit_per_user, auto_archive_duration: auto_archive_duration, applied_tags: applied_tags }.compact
+
+    body = if attachments
+             files = [*0...attachments.size].zip(attachments).to_h
+             { **files, payload_json: body.to_json }
+           else
+             body.to_json
+           end
+
+    headers = { Authorization: token, 'X-Audit-Log-Reason': reason }
+    headers[:content_type] = :json unless attachments
+
     Discordrb::API.request(
-      :channels_cid_followers,
+      :channels_cid_threads,
       channel_id,
       :post,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/followers",
-      { webhook_channel_id: webhook_channel_id }.to_json,
-      Authorization: token,
-      content_type: :json,
-      'X-Audit-Log-Reason': reason
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/threads",
+      body,
+      headers
     )
   end
 end
