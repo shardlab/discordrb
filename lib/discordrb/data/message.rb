@@ -101,6 +101,10 @@ module Discordrb
     # @return [Array<Embed>] the embed objects contained in this message.
     attr_reader :embeds
 
+    # @return [Array<Sticker>] the sticker objects contained in this message.
+    attr_reader :sticker_items
+    alias_method :stickers, :sticker_items
+
     # @return [Array<Reaction>] the reaction objects contained in this message.
     attr_reader :reactions
 
@@ -227,6 +231,9 @@ module Discordrb
       @thread = data['thread'] ? @bot.ensure_channel(data['thread'], @server) : nil
 
       @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
+
+      @sticker_items = []
+      @sticker_items = data['sticker_items'].map { |e| Sticker.new(e, self, @bot) } if data['sticker_items']
 
       @call = data['call'] ? Call.new(data['call'], @bot) : nil
 
