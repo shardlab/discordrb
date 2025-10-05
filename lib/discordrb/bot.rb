@@ -20,6 +20,7 @@ require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
+require 'discordrb/events/auto_moderation'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -1207,6 +1208,18 @@ module Discordrb
       server.update_emoji_data(data)
     end
 
+    # Internal handler for AUTO_MODERATION_RULE_UPDATE and AUTO_MODERATION_RULE_CREATE
+    def update_guild_automod_rule(data)
+      server = self.server(data['guild_id'].to_i)
+      rule = server&.automod_rule(data['id'].to_i, request: false)
+
+      if rule
+        rule.from_other(data)
+      else
+        server&.cache_automod_rule(AutoModRule.new(data, server, self))
+      end
+    end
+
     # Internal handler for MESSAGE_CREATE
     def create_message(data); end
 
@@ -1712,6 +1725,24 @@ module Discordrb
         end
 
         event = ThreadMembersUpdateEvent.new(data, self)
+        raise_event(event)
+      when :AUTO_MODERATION_RULE_CREATE
+        update_guild_automod_rule(data)
+
+        event = AutoModRuleCreateEvent.new(data, self)
+        raise_event(event)
+      when :AUTO_MODERATION_RULE_UPDATE
+        update_guild_automod_rule(data)
+
+        event = AutoModRuleUpdateEvent.new(data, self)
+        raise_event(event)
+      when :AUTO_MODERATION_RULE_DELETE
+        self.server(data['guild_id'].to_i).delete_automod_rule(data['id'].to_i)
+
+        event = AutoModRuleDeleteEvent.new(data, self)
+        raise_event(event)
+      when :AUTO_MODERATION_ACTION_EXECUTION
+        event = AutoModActionEvent.new(data, self)
         raise_event(event)
       else
         # another event that we don't support yet
