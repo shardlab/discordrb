@@ -1,17 +1,26 @@
 # frozen_string_literal: true
 
 require 'faraday'
-require 'faraday_middleware'
+require 'faraday/multipart'
 require 'discordrb/api/endpoints/application_command'
+require 'discordrb/api/endpoints/application'
 require 'discordrb/api/endpoints/audit_log'
+require 'discordrb/api/endpoints/auto_moderation'
 require 'discordrb/api/endpoints/channel'
 require 'discordrb/api/endpoints/emoji'
+require 'discordrb/api/endpoints/entitlement'
+require 'discordrb/api/endpoints/guild_scheduled_event'
 require 'discordrb/api/endpoints/guild'
 require 'discordrb/api/endpoints/guild_template'
 require 'discordrb/api/endpoints/interaction'
 require 'discordrb/api/endpoints/invite'
+require 'discordrb/api/endpoints/message'
+require 'discordrb/api/endpoints/poll'
+require 'discordrb/api/endpoints/sku'
+require 'discordrb/api/endpoints/soundboard'
 require 'discordrb/api/endpoints/stage_instance'
 require 'discordrb/api/endpoints/sticker'
+require 'discordrb/api/endpoints/subscription'
 require 'discordrb/api/endpoints/user'
 require 'discordrb/api/endpoints/voice'
 require 'discordrb/api/endpoints/webhook'
@@ -99,15 +108,24 @@ module Discordrb
     # Client for making HTTP requests to the Discord API.
     class Client
       include ApplicationCommandEndpoints
+      include ApplicationEndpoints
       include AuditLogEndpoints
+      include AutoModerationEndpoints
       include ChannelEndpoints
       include EmojiEndpoints
+      include EntitlementEndpoints
+      include GuildScheduledEventEndpoints
       include GuildEndpoints
       include GuildTemplateEndpoints
       include InteractionEndpoints
       include InviteEndpoints
+      include MessageEndpoints
+      include PollEndpoints
+      include SkuEndpoints
+      include SoundboardEndpoints
       include StageInstanceEndpoints
       include StickerEndpoints
+      include SubscriptionEndpoints
       include UserEndpoints
       include VoiceEndpoints
       include WebhookEndpoints
