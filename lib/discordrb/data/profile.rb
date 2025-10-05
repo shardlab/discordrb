@@ -22,13 +22,8 @@ module Discordrb
     # @param avatar [String, #read] A JPG file to be used as the avatar, either
     #  something readable (e.g. File Object) or as a data URL.
     def avatar=(avatar)
-      if avatar.respond_to? :read
-        # Set the file to binary mode if supported, so we don't get problems with Windows
-        avatar.binmode if avatar.respond_to?(:binmode)
-
-        avatar_string = 'data:image/jpg;base64,'
-        avatar_string += Base64.strict_encode64(avatar.read)
-        update_profile_data(avatar: avatar_string)
+      if avatar.respond_to?(:read)
+        update_profile_data(avatar: Discordrb.encode64(avatar))
       else
         update_profile_data(avatar: avatar)
       end

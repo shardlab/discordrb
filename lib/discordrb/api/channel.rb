@@ -18,8 +18,8 @@ module Discordrb::API::Channel
 
   # Update a channel's data
   # https://discord.com/developers/docs/resources/channel#modify-channel
-  def update(token, channel_id, name, topic, position, bitrate, user_limit, nsfw, permission_overwrites = nil, parent_id = nil, rate_limit_per_user = nil, reason = nil)
-    data = { name: name, position: position, topic: topic, bitrate: bitrate, user_limit: user_limit, nsfw: nsfw, parent_id: parent_id, rate_limit_per_user: rate_limit_per_user }
+  def update(token, channel_id, name, topic, position, bitrate, user_limit, nsfw, permission_overwrites = nil, parent_id = nil, rate_limit_per_user = nil, reason = nil, archived = nil, auto_archive_duration = nil, locked = nil, invitable = nil, flags = nil, applied_tags = nil)
+    data = { name: name, position: position, topic: topic, bitrate: bitrate, user_limit: user_limit, nsfw: nsfw, parent_id: parent_id, rate_limit_per_user: rate_limit_per_user, archived: archived, auto_archive_duration: auto_archive_duration, locked: locked, invitable: invitable, flags: flags, applied_tags: applied_tags }
     data[:permission_overwrites] = permission_overwrites unless permission_overwrites.nil?
     Discordrb::API.request(
       :channels_cid,
@@ -123,7 +123,7 @@ module Discordrb::API::Channel
       channel_id,
       :patch,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}",
-      { content: message, mentions: mentions, embeds: embeds, components: components, flags: flags }.reject { |_, v| v == :undef }.to_json,
+      { content: message, allowed_mentions: mentions, embeds: embeds, components: components, flags: flags }.reject { |_, v| v == :undef }.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -607,6 +607,31 @@ module Discordrb::API::Channel
       :get,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/users/@me/threads/archived/private?#{query}",
       Authorization: token
+    )
+  end
+
+  # Start a thread in a forum or media channel.
+  # https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
+  def start_thread_in_forum_or_media_channel(token, channel_id, name, message, attachments = nil, rate_limit_per_user = nil, auto_archive_duration = nil, applied_tags = [], reason = nil)
+    body = { name: name, message: message, rate_limit_per_user: rate_limit_per_user, auto_archive_duration: auto_archive_duration, applied_tags: applied_tags }.compact
+
+    body = if attachments
+             files = [*0...attachments.size].zip(attachments).to_h
+             { **files, payload_json: body.to_json }
+           else
+             body.to_json
+           end
+
+    headers = { Authorization: token, 'X-Audit-Log-Reason': reason }
+    headers[:content_type] = :json unless attachments
+
+    Discordrb::API.request(
+      :channels_cid_threads,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/threads",
+      body,
+      headers
     )
   end
 end
