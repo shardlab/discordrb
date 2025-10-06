@@ -1515,8 +1515,10 @@ module Discordrb
         raise_event(event)
       when :CHANNEL_PINS_UPDATE
         event = ChannelPinsUpdateEvent.new(data, self)
-        raise_event(event)
 
+        event.channel.process_last_pin_timestamp(data['last_pin_timestamp']) if data.key?('last_pin_timestamp')
+
+        raise_event(event)
       when :GUILD_MEMBER_ADD
         add_guild_member(data)
 
