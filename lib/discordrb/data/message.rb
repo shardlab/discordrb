@@ -502,16 +502,18 @@ module Discordrb
 
     # @return [Array<Components::Button>]
     def buttons
-      results = @components.collect do |component|
+      buttons = @components.flat_map do |component|
         case component
         when Components::Button
           component
-        when Components::ActionRow
+        when Components::Section
+          component.button
+        when Components::ActionRow, Components::Container
           component.buttons
         end
       end
 
-      results.flatten.compact
+      buttons.compact
     end
 
     # to_message -> self or message
