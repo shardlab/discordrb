@@ -221,6 +221,83 @@ module Discordrb::API::Server
     )
   end
 
+  # Get a list of the templates in a server.
+  # https://discord.com/developers/docs/resources/guild-template#get-guild-templates
+  def list_templates(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_templates,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/templates",
+      Authorization: token
+    )
+  end
+
+  # Get a single template in a server by its code.
+  # https://discord.com/developers/docs/resources/guild-template#get-guild-template
+  def get_template(token, template_code)
+    Discordrb::API.request(
+      :guilds_templates_template_code,
+      template_code,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/templates/#{template_code}",
+      Authorization: token
+    )
+  end
+
+  # Create a new template in a server.
+  # https://discord.com/developers/docs/resources/guild-template#create-guild-template
+  def create_template(token, server_id, name, description = nil)
+    Discordrb::API.request(
+      :guilds_sid_templates,
+      server_id,
+      :post,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/templates",
+      { name: name, description: description }.compact.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
+  # Update an existing template in a server.
+  # https://discord.com/developers/docs/resources/guild-template#modify-guild-template
+  def update_template(token, server_id, template_code, name: :undef, description: :undef)
+    Discordrb::API.request(
+      :guilds_sid_templates,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/templates/#{template_code}",
+      { name: name, description: description }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
+  # Synchronize a template to its source server.
+  # https://discord.com/developers/docs/resources/guild-template#sync-guild-template
+  def sync_template(token, server_id, template_code)
+    Discordrb::API.request(
+      :guilds_sid_templates_template_code,
+      server_id,
+      :put,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/templates/#{template_code}",
+      nil,
+      Authorization: token
+    )
+  end
+
+  # Delete a template in a server.
+  # https://discord.com/developers/docs/resources/guild-template#delete-guild-template
+  def delete_template(token, server_id, template_code)
+    Discordrb::API.request(
+      :guilds_sid_templates_template_code,
+      server_id,
+      :delete,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/templates/#{template_code}",
+      Authorization: token
+    )
+  end
+
   # Get server roles
   # https://discord.com/developers/docs/resources/guild#get-guild-roles
   def roles(token, server_id)

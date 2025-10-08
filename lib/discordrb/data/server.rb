@@ -68,6 +68,8 @@ module Discordrb
       @members = {}
       @voice_states = {}
       @emoji = {}
+      @channels_by_id = {}
+      @channels = []
 
       update_data(data)
 
@@ -323,6 +325,29 @@ module Discordrb
     # @return [ServerPreview] the preview of this server shown in the discovery page.
     def preview
       @bot.server_preview(@id)
+    end
+
+    # Get the templates for this server. Requires the manage server permission.
+    # @return [Array<ServerTemplate>] the templates for this server.
+    def templates
+      templates = JSON.parse(API::Server.list_templates(@bot.token, @id))
+      templates.map { |template_data| ServerTemplate.new(template_data, @bot) }
+    end
+
+    # Get a single template by its code.
+    # @param code [String, ServerTemplate] The code of the server template to resolve.
+    # @return [ServerTemplate] The server template for the provided template code.
+    def template(code)
+      @bot.server_template(code)
+    end
+
+    # Create a template in this server. Requires the manage server permission.
+    # @param name [String] The 1-100 character name of the template to create.
+    # @param description [String, nil] The 0-20 character description of the template to create.
+    # @return [ServerTemplate] the template that was created.
+    def create_template(name:, description: nil)
+      response = API::Server.create_template(@bot.token, @id, name, description)
+      ServerTemplate.new(JSON.parse(response), @bot)
     end
 
     # @return [String, nil] the widget URL to the server that displays the amount of online members in a
