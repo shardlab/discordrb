@@ -10,6 +10,9 @@ module Discordrb
     # @return [String] the name of the template.
     attr_reader :name
 
+    # @return [String] the link to the template.
+    attr_reader :link
+
     # @return [User] the user who created the template.
     attr_reader :creator
 
@@ -32,6 +35,7 @@ module Discordrb
     def initialize(data, bot)
       @bot = bot
       @code = data['code']
+      @link = "https://discord.new/#{@code}"
       @server_id = data['source_guild_id'].to_i
       @creator = bot.ensure_user(data['creator'])
       @created_at = Time.parse(data['created_at'])
@@ -42,12 +46,6 @@ module Discordrb
     #   doesn't have any unsynced changes with the source server.
     def synced?
       @unsynced == false
-    end
-
-    # @return [String] A link that can be used to create a new
-    #   server based off of this template.
-    def link
-      "https://discord.new/#{@code}"
     end
 
     # Set the name of this template to something new.

@@ -346,7 +346,7 @@ module Discordrb
     # @param description [String, nil] The 0-20 character description of the template to create.
     # @return [ServerTemplate] the template that was created.
     def create_template(name:, description: nil)
-      response = API::Server.create_template(@bot.token, @id, name, description)
+      response = API::Server.create_template(@bot.token, @id, name:, description:)
       ServerTemplate.new(JSON.parse(response), @bot)
     end
 
