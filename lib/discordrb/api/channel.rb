@@ -612,7 +612,7 @@ module Discordrb::API::Channel
 
   # Start a thread in a forum or media channel.
   # https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
-  def start_thread_in_forum_or_media_channel(token, channel_id, name, message, attachments = nil, rate_limit_per_user = nil, auto_archive_duration = nil, applied_tags = [], reason = nil)
+  def start_thread_in_forum_or_media_channel(token, channel_id, name, message, attachments = nil, rate_limit_per_user = nil, auto_archive_duration = nil, applied_tags = nil, reason = nil)
     body = { name: name, message: message, rate_limit_per_user: rate_limit_per_user, auto_archive_duration: auto_archive_duration, applied_tags: applied_tags }.compact
 
     body = if attachments
@@ -637,8 +637,8 @@ module Discordrb::API::Channel
 
   # Get a list of users that have voted for a poll answer.
   # https://discord.com/developers/docs/resources/poll#get-answer-voters
-  def get_poll_answer_voters(token, channel_id, message_id, answer_id, limit = 100, after = nil, before = nil)
-    query = URI.encode_www_form({ limit: limit, after: after, before: before }.compact)
+  def get_poll_answer_voters(token, channel_id, message_id, answer_id, limit: 100, after: nil, before: nil)
+    query = URI.encode_www_form({ limit:, after:, before: }.compact)
 
     Discordrb::API.request(
       :channels_cid_polls_mid_answers_aid,

@@ -124,7 +124,7 @@ module Discordrb
       # @return [Array<User>] the users that voted for this poll answer.
       def voters(limit: 100)
         get_voters = proc do |fetch_limit, after = nil|
-          response = API::Channel.get_poll_answer_voters(@bot.token, @message.channel.id, @message.id, @id, fetch_limit, after)
+          response = API::Channel.get_poll_answer_voters(@bot.token, @message.channel.id, @message.id, @id, limit: fetch_limit, after: after)
           JSON.parse(response)['users'].map { |user_data| User.new(user_data, @bot) }
         end
 
