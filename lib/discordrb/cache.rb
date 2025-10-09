@@ -225,6 +225,16 @@ module Discordrb
       Invite.new(JSON.parse(API::Invite.resolve(token, code)), self)
     end
 
+    # Gets information about a template.
+    # @param code [String, ServerTemplate] The code of the template to resolve.
+    # @return [ServerTemplate, nil] The server template for the code, or `nil` if it cannot be accessed.
+    def server_template(code)
+      template = JSON.parse(API::Server.get_template(token, code.to_s))
+      ServerTemplate.new(template, self)
+    rescue StandardError
+      nil
+    end
+
     # Finds a channel given its name and optionally the name of the server it is in.
     # @param channel_name [String] The channel to search for.
     # @param server_name [String] The server to search for, or `nil` if only the channel should be searched for.
