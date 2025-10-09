@@ -61,7 +61,7 @@ module Discordrb
     # Set the default channels for this onboarding flow.
     # @param channels [Array<Channel, Integer, String>] the new default channels.
     def default_channels=(channels)
-      update_data(default_channels: channels.map(&:resolve_id))
+      update_data(default_channel_ids: channels.map(&:resolve_id))
     end
 
     # Set whether onboarding is enabled or not.
@@ -84,24 +84,28 @@ module Discordrb
 
     # Remove one or more prompts from this onboarding flow.
     # @param ids [Integer, String, Prompt] the IDs of the prompts to remove.
+    # @param reason [String, nil] The audit log reason for deleting these prompts.
     # @return [void]
-    def delete_prompts(*ids)
-      new_prompts = @prompts.reject do |prompt|
-        [*ids].map(&:resolve_id).any?(prompt.id)
+    def delete_prompts(*ids, reason: nil)
+      new_ids = ids.flatten.map(&:resolve_id)
+
+      prompts = @prompts.reject do |prompt|
+        new_ids.include?(prompt.resolve_id)
       end
 
-      update_data(prompts: new_prompts.map(&:to_h))
+      update_data(prompts: prompts.map(&:to_h), reason: reason)
     end
 
     alias_method :delete_prompt, :delete_prompts
 
     # Add one or more prompts to this onboarding flow.
+    # @param reason [String, nil] The audit log reason for creating these prompts.
     # @yieldparam builder [PromptBuilder] The prompt builder.
     # @return [void]
-    def create_prompts
+    def create_prompts(reason: nil)
       yield (builder = PromptBuilder.new)
 
-      update_data(prompts: @prompts.map(&:to_h) + builder.to_a)
+      update_data(prompts: @prompts.map(&:to_h) + builder.to_a, reason: reason)
     end
 
     alias_method :create_prompt, :create_prompts
@@ -116,11 +120,7 @@ module Discordrb
 
     # @!visibility private
     def update_data(new_data)
-      from_other(JSON.parse(API::Server.modify_onboarding(@bot.token, server.id,
-                                                          new_data[:mode] || :undef,
-                                                          new_data[:prompts]&.to_a || :undef,
-                                                          new_data[:default_channels] || :undef,
-                                                          new_data.key?(:enabled) ? new_data[:enabled] : :undef)))
+      from_other(JSON.parse(API::Server.update_onboarding(@bot.token, server.id, **new_data)))
     end
 
     # A prompt that can be shown during the inital onboarding flow.

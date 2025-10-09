@@ -828,6 +828,24 @@ module Discordrb
       invites.map { |invite| Invite.new(invite, @bot) }
     end
 
+    # Get the onboarding flow for this server.
+    # @return [Onboarding, nil] The onboarding flow for members in this server, or `nil` if the bot cannot access the onboarding flow.
+    def onboarding
+      response = API::Server.get_onboarding(@bot.token, @id)
+      Onboarding.new(JSON.parse(response), self, @bot)
+    rescue StandardError
+      nil
+    end
+
+    # Get the welcome screen shown to new server members.
+    # @return [WelcomeScreen, nil] The welcome screen for this server, or `nil` if the bot cannot access the welcome screen.
+    def welcome_screen
+      response = API::Server.get_welcome_screen(@bot.token, @id)
+      WelcomeScreen.new(JSON.parse(response), self, @bot)
+    rescue StandardError
+      nil
+    end
+
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
     # @note For internal use only
     # @!visibility private
@@ -851,24 +869,6 @@ module Discordrb
     # @return [Channel, nil] the system channel (used for automatic welcome messages) of a server, or `nil` if none is set.
     def system_channel
       @bot.channel(@system_channel_id) if @system_channel_id
-    end
-
-    # Get the onboarding flow for this server.
-    # @return [Onboarding, nil] The onboarding flow for members in this server, or `nil` if the bot cannot access the onboarding flow.
-    def onboarding
-      response = API::Server.onboarding(@bot.token, @id)
-      Onboarding.new(JSON.parse(response), self, @bot)
-    rescue StandardError
-      nil
-    end
-
-    # Get the welcome screen shown to new server members.
-    # @return [WelcomeScreen, nil] The welcome screen for this server, or `nil` if the bot cannot access the welcome screen.
-    def welcome_screen
-      response = API::Server.welcome_screen(@bot.token, @id)
-      WelcomeScreen.new(JSON.parse(response), self, @bot)
-    rescue StandardError
-      nil
     end
 
     # Updates the cached data with new data

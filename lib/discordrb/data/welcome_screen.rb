@@ -34,17 +34,20 @@ module Discordrb
     # Set the channels of the welcome screen.
     # @param channels [Array<Hash>] the new welcome channels to set.
     def channels=(channels)
-      update_data(channels: channels.to_a.map(&:to_h))
+      update_data(welcome_channels: channels.to_a.map(&:to_h))
     end
 
     # Remove one or more prompts from the welcome screen.
     # @param ids [Integer, String] the IDs of the welcome channels to remove.
-    def delete_channels(*ids)
+    # @param reason [String, nil] the audit log reason for deleting these channels.
+    def delete_channels(*ids, reason: nil)
+      new_ids = ids.flatten.map(&:resolve_id)
+
       channels = @channels.reject do |channel|
-        [*ids].map(&:resolve_id).any?(channel.id)
+        new_ids.include?(channel.resolve_id)
       end
 
-      update_data(channels: channels.map(&:to_h))
+      update_data(welcome_channels: channels.map(&:to_h), reason: reason)
     end
 
     alias_method :delete_channel, :delete_channels
@@ -60,7 +63,9 @@ module Discordrb
     # @param channel [Channel, Integer, String] the channel the welcome channel references.
     # @param description [String] the description to show for the welcome channel.
     # @param emoji [Emoji, String, Integer, Hash, nil] An emoji, its ID, or a unicode emoji to display alongside the channel.
-    def create_channel(channel, description:, emoji: nil)
+    # @param reason [String, nil] the audit log reason for adding this channel.
+    # @return [WelcomeChannel] the welcome channel that was added.
+    def add_channel(channel, description:, emoji: nil, reason: nil)
       emoji = case emoji
               when Integer, String
                 emoji.to_i.positive? ? { emoji_id: emoji } : { emoji_name: emoji }
@@ -68,8 +73,14 @@ module Discordrb
                 emoji.id.nil? ? { emoji_name: emoji.name } : { emoji_id: emoji.id }
               end
 
-      update_data(channels: (@channels.map(&:to_h) << { channel_id: channel.resolve_id,
-                                                        description: description, **emoji }))
+      data = {
+        **emoji,
+        description: description,
+        channel_id: channel.resolve_id
+      }
+
+      update_data(welcome_channels: (@channels << data), reason: reason)
+      self.channel(channel)
     end
 
     # @!visibility private
@@ -80,10 +91,7 @@ module Discordrb
 
     # @!visibility private
     def update_data(new_data)
-      from_other(JSON.parse(API::Server.modify_welcome_screen(@bot.token, server.id,
-                                                              new_data.key?(:enabled) ? new_data[:enabled] : :undef,
-                                                              new_data.key?(:channels) ? new_data[:channels]&.to_a : :undef,
-                                                              new_data.key?(:description) ? new_data[:description] : :undef)))
+      from_other(JSON.parse(API::Server.update_welcome_screen(@bot.token, server.id, **new_data)))
     end
 
     # A welcome channel and its display options within a welcome screen.

@@ -595,7 +595,7 @@ module Discordrb::API::Server
 
   # Get the onboarding configuration for a server.
   # https://discord.com/developers/docs/resources/webhook#get-guild-onboarding
-  def onboarding(token, server_id)
+  def get_onboarding(token, server_id)
     Discordrb::API.request(
       :guilds_sid_onboarding,
       server_id,
@@ -605,15 +605,15 @@ module Discordrb::API::Server
     )
   end
 
-  # Modify the onboarding configuration for a server.
+  # Update the onboarding configuration for a server.
   # https://discord.com/developers/docs/resources/guild#modify-guild-onboarding
-  def modify_onboarding(token, server_id, mode = :undef, prompts = :undef, default_channels = :undef, enabled = :undef, reason = nil)
+  def update_onboarding(token, server_id, mode: :undef, prompts: :undef, default_channel_ids: :undef, enabled: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid_onboarding,
       server_id,
       :put,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/onboarding",
-      { mode: mode, prompts: prompts, default_channel_ids: default_channels, enabled: enabled }.reject { |_, v| v == :undef }.to_json,
+      { mode:, prompts:, default_channel_ids:, enabled: }.reject { |_, value| value == :undef }.to_json,
       content_type: :json,
       Authorization: token,
       'X-Audit-Log-Reason': reason
@@ -622,7 +622,7 @@ module Discordrb::API::Server
 
   # Get the welcome screen object for a server.
   # https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen
-  def welcome_screen(token, server_id)
+  def get_welcome_screen(token, server_id)
     Discordrb::API.request(
       :guilds_sid_welcome_screen,
       server_id,
@@ -632,15 +632,15 @@ module Discordrb::API::Server
     )
   end
 
-  # Modify the welcome screen object for a server.
+  # Update the welcome screen object for a server.
   # https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen
-  def modify_welcome_screen(token, server_id, enabled = :undef, welcome_channels = :undef, description = :undef)
+  def update_welcome_screen(token, server_id, enabled: :undef, welcome_channels: :undef, description: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid_welcome_screen,
       server_id,
       :patch,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/welcome-screen",
-      { enabled: enabled, welcome_channels: welcome_channels, description: description }.reject { |_, v| v == :undef }.to_json,
+      { enabled:, welcome_channels:, description: }.reject { |_, value| value == :undef }.to_json,
       content_type: :json,
       Authorization: token,
       'X-Audit-Log-Reason': reason
