@@ -202,7 +202,7 @@ module Discordrb
     # @param reason [String, nil] the audit log reason for deleting the scheduled event.
     # @return [void]
     def delete(reason: nil)
-      API::Server.delete_scheduled_event(@bot.token, @server.id, @id, reason)
+      API::Server.delete_scheduled_event(@bot.token, @server.id, @id, reason: reason)
       @server.scheduled_events.delete(@id)
     end
 
@@ -251,20 +251,35 @@ module Discordrb
       update_data(recurrence_rule: builder.to_h, reason: reason)
     end
 
-    # Set the entity type of the scheduled event. You must use this method
-    #   instead of {#entity_type=} when setting the entity type to `:external`.
-    # @param type [Symbol, Integer] the new entity type of the scheduled event.
-    # @param location [String, nil] the new location of the scheduled event, or `nil`.
-    # @param ends_at [Time, Date] the new time at when the scheduled event should end.
-    # @param channel [Channel, Integer, String, nil] the new channel of the scheduled event.
-    # @param reason [String, nil] the reason that will show up for modifying the scheduled event.
-    def update_entity_type(type:, channel: :undef, location: :undef, ends_at: :undef, reason: nil)
+    # Update multiple properties of the scheduled event in a single API call.
+    # @param name [String] The new 1-100 character name of the scheduled event.
+    # @param channel [Integer, Channel, String, nil] The new channel of the scheduled event.
+    # @param location [String, nil] The new location of the scheduled event.
+    # @param starts_at [Time] The new start time of the scheduled event.
+    # @param ends_at [Time] The new end time of the scheduled event.
+    # @param description [String, nil] The new 1-100 character description of the scheduled event.
+    # @param entity_type [Integer, Symbol] The new entity type of the scheduled event.
+    # @param status [Integer, Symbol] The new status of the scheduled event.
+    # @param cover [File, #read] The new cover image of the scheduled event.
+    # @param recurrence_rule [#to_h, nil] The new recurrence rule of the scheduled event.
+    # @param reason [String, nil] The audit log reason for updating the scheduled event.
+    def update(
+      name: :undef, channel: :undef, location: :undef, starts_at: :undef, ends_at: :undef,
+      description: :undef, entity_type: :undef, status: :undef, cover: :undef,
+      recurrence_rule: :undef, reason: nil
+    )
       new_data = {
-        reason: reason,
-        entity_type: ENTITY_TYPES[type] || type,
+        name: name == :undef ? :undef : name,
         channel_id: channel == :undef ? :undef : channel&.resolve_id,
         entity_metadata: location == :undef ? :undef : { location: },
-        scheduled_end_time: ends_at == :undef ? :undef : ends_at.iso8601
+        scheduled_end_time: ends_at == :undef ? :undef : ends_at&.iso8601,
+        scheduled_start_time: starts_at == :undef ? :undef : starts_at&.iso8601,
+        description: description == :undef ? :undef : description,
+        entity_type: entity_type == :undef ? :undef : ENTITY_TYPES[type] || type,
+        status: status == :undef ? :undef : STATUSES[status] || status,
+        image: cover.respond_to?(:read) ? Discordrb.encode64(cover) : cover,
+        recurrence_rule: recurrence_rule == :undef ? :undef : recurrence_rule&.to_h,
+        reason: reason
       }
 
       update_data(new_data)
@@ -274,7 +289,7 @@ module Discordrb
     # @return [Integer] the total number of users who're currently subscribed to the scheduled event.
     # @note This method caches results for an unspecificed period of time. This means the count may **not** be accurate.
     def subscriber_count
-      @subscriber_count ||= JSON.parse(API::Server.get_scheduled_event(@bot.token, @server.id, @id, true))['user_count']
+      @subscriber_count ||= JSON.parse(API::Server.get_scheduled_event(@bot.token, @server.id, @id, with_user_count: true))['user_count']
     end
 
     alias_method :user_count, :subscriber_count
@@ -284,8 +299,8 @@ module Discordrb
     # @param member [true, false] whether to return subscribers as server members, where applicable.
     # @return [Array<User, Member>] the users or members that have subscribed to the scheduled event.
     def subscribers(limit: 100, member: false)
-      get_users = proc do |limit_, after = nil|
-        response = JSON.parse(API::Server.get_scheduled_event_users(@bot.token, @server.id, @id, limit_, member, nil, after))
+      get_users = proc do |fetch_limit, after_id = nil|
+        response = JSON.parse(API::Server.get_scheduled_event_users(@bot.token, @server.id, @id, limit: fetch_limit, with_member: member, after: after_id))
         response.map { |data| data['member'] ? Member.new(data['member'], @server, @bot).tap { |m| @server&.cache_member(m) } : User.new(data['user'], @bot) }
       end
 
@@ -327,20 +342,7 @@ module Discordrb
 
     # @!visibility private
     def update_data(new_data)
-      from_other(JSON.parse(API::Server.update_scheduled_event(@bot.token,
-                                                               @server.id, @id,
-                                                               new_data[:name] || :undef,
-                                                               new_data[:image] || :undef,
-                                                               new_data[:status] || :undef,
-                                                               new_data[:entity_type] || :undef,
-                                                               new_data[:privacy_level] || :undef,
-                                                               new_data[:scheduled_end_time] || :undef,
-                                                               new_data[:scheduled_start_time] || :undef,
-                                                               new_data.key?(:channel_id) ? new_data[:channel_id] : :undef,
-                                                               new_data.key?(:description) ? new_data[:description] : :undef,
-                                                               new_data.key?(:entity_metadata) ? new_data[:entity_metadata] : :undef,
-                                                               new_data.key?(:recurrence_rule) ? new_data[:recurrence_rule] : :undef,
-                                                               new_data[:reason])))
+      from_other(JSON.parse(API::Server.update_scheduled_event(@bot.token, @server.id, @id, **new_data)))
     end
 
     # Represents how frequently a scheduled event will repeat.
