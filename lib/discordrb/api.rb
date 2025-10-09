@@ -251,6 +251,11 @@ module Discordrb::API
     "#{cdn_url}/guild-tag-badges/#{server_id}/#{badge_id}.#{format}"
   end
 
+  # make a scheduled event cover URL from a scheduled event ID and a cover ID.
+  def scheduled_event_cover_url(scheduled_event_id, cover_id, format = 'webp')
+    "#{cdn_url}/guild-events/#{scheduled_event_id}/#{cover_id}.#{format}"
+  end
+
   # Create an OAuth application
   def create_oauth_application(token, name, redirect_uris)
     request(
