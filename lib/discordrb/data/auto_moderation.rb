@@ -113,7 +113,7 @@ module Discordrb
     # @param reason [String, nil] the reason for deleting this automod rule.
     # @return [void]
     def delete(reason: nil)
-      API::Server.delete_automod_rule(@bot.token, @server.id, @id, reason)
+      API::Server.delete_automod_rule(@bot.token, @server.id, @id, reason: reason)
       server.delete_automod_rule(@id)
     end
 
@@ -166,11 +166,7 @@ module Discordrb
 
     # @!visibility private
     def update_data(new_data)
-      from_other(JSON.parse(API::Server.update_automod_rule(@bot.token, @server.id, @id,
-                                                            new_data[:name], new_data[:event_type],
-                                                            new_data[:trigger], new_data[:actions],
-                                                            new_data[:enabled], new_data[:exempt_roles],
-                                                            new_data[:exempt_channels], new_data[:reason])))
+      from_other(JSON.parse(API::Server.update_automod_rule(@bot.token, @server.id, @id, **new_data)))
     end
 
     # Information used to determine when an automod rule should be triggered.
@@ -235,7 +231,7 @@ module Discordrb
       def exempt_keywords=(exempt_keywords)
         validate_trigger(field: :exempt_keywords)
 
-        @rule.update_data(trigger: to_h.merge({ allow_list: exempt_keywords }))
+        @rule.update_data(trigger_metadata: to_h.merge({ allow_list: exempt_keywords }))
       end
 
       # Set the regex patterns that can trigger the automod rule.
@@ -243,7 +239,7 @@ module Discordrb
       def regex_patterns=(regex_patterns)
         validate_trigger(field: :regex_patterns)
 
-        @rule.update_data(trigger: to_h.merge({ regex_patterns: regex_patterns }))
+        @rule.update_data(trigger_metadata: to_h.merge({ regex_patterns: regex_patterns }))
       end
 
       # Set the substrings that can trigger the automod rule.
@@ -251,7 +247,7 @@ module Discordrb
       def keyword_filter=(keyword_filter)
         validate_trigger(field: :keyword_filter)
 
-        @rule.update_data(trigger: to_h.merge({ keyword_filter: keyword_filter }))
+        @rule.update_data(trigger_metadata: to_h.merge({ keyword_filter: keyword_filter }))
       end
 
       # Set the maximum amount of unique mentions allowed for the rule.
@@ -259,7 +255,7 @@ module Discordrb
       def total_mention_limit=(mention_limit)
         validate_trigger(field: :total_mention_limit)
 
-        @rule.update_data(trigger: to_h.merge({ mention_total_limit: mention_limit }))
+        @rule.update_data(trigger_metadata: to_h.merge({ mention_total_limit: mention_limit }))
       end
 
       # Set whether mention raid protection is enabled for the rule or not.
@@ -267,7 +263,7 @@ module Discordrb
       def mention_raid_protection=(raid_protection)
         validate_trigger(field: :mention_raid_protection)
 
-        @rule.update_data(trigger: to_h.merge({ mention_raid_protection_enabled: raid_protection }))
+        @rule.update_data(trigger_metadata: to_h.merge({ mention_raid_protection_enabled: raid_protection }))
       end
 
       # Set the keyword presets for this rule.
@@ -277,7 +273,7 @@ module Discordrb
 
         presets.map! { |type| PRESET_TYPES[type] || type }
 
-        @rule.update_data(trigger: to_h.merge({ presets: presets }))
+        @rule.update_data(trigger_metadata: to_h.merge({ presets: presets }))
       end
 
       # @!method keyword?
@@ -300,7 +296,7 @@ module Discordrb
 
       # @!visibility private
       def validate_trigger(field:)
-        value = case field
+        state = case field
                 when :total_mention_limit, :mention_raid_protection
                   mention_spam?
                 when :keyword_presets
@@ -311,7 +307,7 @@ module Discordrb
                   keyword? || keyword_preset? || member_profile?
                 end
 
-        raise "Cannot set #{field} for trigger type #{TYPES.key(@type)}" unless value
+        raise "Cannot set #{field} for trigger type #{TYPES.key(@type)}" unless state
       end
 
       # @!visibility private

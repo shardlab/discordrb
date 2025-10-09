@@ -619,13 +619,13 @@ module Discordrb::API::Server
 
   # Create an auto-moderation rule in the server.
   # https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule
-  def create_automod_rule(token, server_id, name, event_type, trigger_type, trigger_metadata, actions, enabled, exempt_roles, exempt_channels, reason = nil)
+  def create_automod_rule(token, server_id, name:, event_type:, trigger_type:, actions:, trigger_metadata: nil, enabled: nil, exempt_roles: nil, exempt_channels: nil, reason: nil)
     Discordrb::API.request(
       :guilds_sid_auto_moderation_rules,
       server_id,
       :post,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules",
-      { name: name, event_type: event_type, trigger_type: trigger_type, trigger_metadata: trigger_metadata, actions: actions, enabled: enabled, exempt_roles: exempt_roles, exempt_channels: exempt_channels }.to_json,
+      { name:, event_type:, trigger_type:, trigger_metadata:, actions:, enabled:, exempt_roles:, exempt_channels: }.compact.to_json,
       content_type: :json,
       Authorization: token,
       'X-Audit-Log-Reason': reason
@@ -634,13 +634,13 @@ module Discordrb::API::Server
 
   # Update an auto-moderation rule in the server.
   # https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule
-  def update_automod_rule(token, server_id, rule_id, name = nil, event_type = nil, trigger_metadata = nil, actions = nil, enabled = nil, exempt_roles = nil, exempt_channels = nil, reason = nil)
+  def update_automod_rule(token, server_id, rule_id, name: nil, event_type: nil, actions: nil, trigger_metadata: nil, enabled: nil, exempt_roles: nil, exempt_channels: nil, reason: nil)
     Discordrb::API.request(
       :guilds_sid_auto_moderation_rules_rid,
       server_id,
       :patch,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules/#{rule_id}",
-      { name: name, event_type: event_type, trigger_metadata: trigger_metadata, actions: actions, enabled: enabled, exempt_roles: exempt_roles, exempt_channels: exempt_channels }.compact.to_json,
+      { name:, event_type:, trigger_metadata:, actions:, enabled:, exempt_roles:, exempt_channels: }.compact.to_json,
       content_type: :json,
       Authorization: token,
       'X-Audit-Log-Reason': reason
@@ -649,7 +649,7 @@ module Discordrb::API::Server
 
   # Delete an auto-moderation rule in the server.
   # https://discord.com/developers/docs/resources/auto-moderation#delete-auto-moderation-rule
-  def delete_automod_rule(token, server_id, rule_id, reason = nil)
+  def delete_automod_rule(token, server_id, rule_id, reason: nil)
     Discordrb::API.request(
       :guilds_sid_auto_moderation_rules_rid,
       server_id,
