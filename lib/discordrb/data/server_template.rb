@@ -10,28 +10,35 @@ module Discordrb
     # @return [String] the name of the template.
     attr_reader :name
 
+    # @return [String] the link to the template.
+    attr_reader :link
+
     # @return [User] the user who created the template.
     attr_reader :creator
 
-    # @return [Time] the time at when the snapshot was last synced.
+    # @return [Integer] the ID of the server the template is for.
+    attr_reader :server_id
+
+    # @return [Time] the time at when the source server was last synced.
     attr_reader :synced_at
 
-    # @return [Time] the time at when the template's source was created.
+    # @return [Time] the time at when the template's source server was created.
     attr_reader :created_at
 
-    # @return [Integer] the total amount of times the template has been used.
+    # @return [Integer] the total amount of times that the template has been used.
     attr_reader :usage_count
 
-    # @return [String, nil] the description of the template (0-120 characters).
+    # @return [String, nil] the description of the server template 0-120 characters.
     attr_reader :description
 
-    # @return [SourceServer] a partial copy of the server object the template is for.
+    # @return [SourceServer] the snapshot of the server object this template is for.
     attr_reader :source_server
 
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
       @code = data['code']
+      @link = "https://discord.new/#{@code}"
       @server_id = data['source_guild_id'].to_i
       @creator = bot.ensure_user(data['creator'])
       @created_at = Time.parse(data['created_at'])
@@ -42,12 +49,6 @@ module Discordrb
     #   doesn't have any unsynced changes with the source server.
     def synced?
       @unsynced == false
-    end
-
-    # @return [String] A link that can be used to create a new
-    #   server based off of this template.
-    def link
-      "https://discord.new/#{@code}"
     end
 
     # Set the name of this template to something new.

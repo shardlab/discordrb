@@ -247,7 +247,7 @@ module Discordrb::API::Server
 
   # Create a new template in a server.
   # https://discord.com/developers/docs/resources/guild-template#create-guild-template
-  def create_template(token, server_id, name, description = nil)
+  def create_template(token, server_id, name:, description: nil)
     Discordrb::API.request(
       :guilds_sid_templates,
       server_id,
