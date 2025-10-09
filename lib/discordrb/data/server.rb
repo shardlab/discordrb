@@ -870,10 +870,11 @@ module Discordrb
 
     # Create a scheduled event on this server.
     # @param name [String] The 1-100 character name of the scheduled event to create.
-    # @param starts_at [Time] The start time of the scheduled event to create.
+    # @param start_time [Time] The start time of the scheduled event to create.
     # @param entity_type [Integer, Symbol] The entity type of the scheduled event to create.
-    # @param ends_at [Time, nil] The end time of the scheduled event to create.
-    # @param channel [Integer, Channel, nil] The channel where the scheduled event to create will take place.
+    # @param privacy_level [Integer] The privacy level of the scheduled event to create.
+    # @param end_time [Time, nil] The end time of the scheduled event to create.
+    # @param channel [Integer, Channel, String, nil] The channel where the scheduled event will take place.
     # @param location [String, nil] The external location of the scheduled event to create.
     # @param description [String, nil] The 1-100 character description of the scheduled event to create.
     # @param cover [File, #read, nil] The cover image of the scheduled event to create.
@@ -881,17 +882,24 @@ module Discordrb
     # @param reason [String, nil] The audit log reason for creating the scheduled event.
     # @yieldparam builder [ScheduledEvent::RecurrenceRule::Builder] An optional reccurence rule builder.
     # @return [ScheduledEvent] the scheduled event that was created.
-    def create_scheduled_event(name:, starts_at:, entity_type:, ends_at: nil, channel: nil, location: nil, description: nil, cover: nil, recurrence_rule: nil, reason: nil)
-      builder = ScheduledEvent::RecurrenceRule::Builder.new
-      entity_metadata = location ? { location: location } : nil
-      cover = Discordrb.encode64(cover) if cover.respond_to?(:read)
-      entity_type = ScheduledEvent::ENTITY_TYPES[entity_type] || entity_type
+    def create_scheduled_event(name:, start_time:, entity_type:, privacy_level: 2, end_time: nil, channel: nil, location: nil, description: nil, cover: nil, recurrence_rule: nil, reason: nil)
+      yield((builder = ScheduledEvent::RecurrenceRule::Builder.new)) if block_given?
 
-      yield builder if block_given?
-      recurrence_rule = recurrence_rule&.to_h || (builder.to_h if block_given?)
+      options = {
+        name: name,
+        privacy_level: privacy_level,
+        scheduled_start_time: start_time&.iso8601,
+        entity_type: ScheduledEvent::ENTITY_TYPES[entity_type] || entity_type,
+        channel_id: channel&.resolve_id,
+        entity_metadata: location ? { location: location } : nil,
+        scheduled_end_time: end_time&.iso8601,
+        description: description,
+        image: cover.respond_to?(:read) ? Discordrb.encode64(cover) : cover,
+        recurrence_rule: block_given? ? builder.to_h : recurrence_rule&.to_h
+      }
 
-      data = JSON.parse(API::Server.create_scheduled_event(@bot.token, @id, name, 2, starts_at.iso8601, entity_type, channel&.resolve_id, entity_metadata, ends_at&.iso8601, description, cover, recurrence_rule, reason))
-      scheduled_event = ScheduledEvent.new(data, self, @bot)
+      event = JSON.parse(API::Server.create_scheduled_event(@bot.token, @id, **options, reason: reason))
+      scheduled_event = ScheduledEvent.new(event, self, @bot)
       @scheduled_events[scheduled_event.id] = scheduled_event
     end
 

@@ -30,10 +30,7 @@ module Discordrb
     attr_reader :server
 
     # @return [Time, nil] the time at when the scheduled event will end.
-    attr_reader :ends_at
-
-    # @return [Time] the time at when the scheduled event will start.
-    attr_reader :starts_at
+    attr_reader :end_time
 
     # @return [String, nil] the external location of the scheduled event.
     attr_reader :location
@@ -43,6 +40,9 @@ module Discordrb
 
     # @return [Integer, nil] the ID of an entity associated with the scheduled event.
     attr_reader :entity_id
+
+    # @return [Time] the time at when the scheduled event has been scheduled to start.
+    attr_reader :start_time
 
     # @return [Integer] the type of the entity that is assoicated with the scheduled event.
     attr_reader :entity_type
@@ -155,7 +155,7 @@ module Discordrb
 
     # Set the time at when the scheduled event will end to something new.
     # @param end_time [Time] the new end time of the scheduled event.
-    def ends_at=(end_time)
+    def end_time=(end_time)
       update_data(scheduled_end_time: end_time.iso8601)
     end
 
@@ -167,7 +167,7 @@ module Discordrb
 
     # Set the time at when the scheduled event will start to something new.
     # @param start_time [Time] the new start time of the scheduled event.
-    def starts_at=(start_time)
+    def start_time=(start_time)
       update_data(scheduled_start_time: start_time.iso8601)
     end
 
@@ -202,7 +202,7 @@ module Discordrb
     # @param reason [String, nil] the audit log reason for deleting the scheduled event.
     # @return [void]
     def delete(reason: nil)
-      API::Server.delete_scheduled_event(@bot.token, @server.id, @id, reason)
+      API::Server.delete_scheduled_event(@bot.token, @server.id, @id, reason: reason)
       @server.scheduled_events.delete(@id)
     end
 
@@ -213,28 +213,28 @@ module Discordrb
     #     builder.by_month_day = 25
     #     builder.by_month = :december
     #     builder.frequency = :yearly
-    #     builder.starts_at = :replace_with_time
+    #     builder.start_time = :replace_with_time
     #   end
     # @example This event will occur on every weekday.
     #   scheduled_event.set_recurrence_rule do |builder|
     #     builder.interval = 1
     #     builder.frequency = :daily
     #     builder.by_weekday = (0..4).to_a
-    #     builder.starts_at = :replace_with_time
+    #     builder.start_time = :replace_with_time
     #   end
     # @example This event will occur on every other tuesday.
     #   scheduled_event.set_recurrence_rule do |builder|
     #     builder.interval = 2
     #     builder.frequency = :weekly
     #     builder.by_weekday = :wednesday
-    #     builder.starts_at = :replace_with_time
+    #     builder.start_time = :replace_with_time
     #   end
     # @example This event will occur monthly on the fourth wednesday.
     #   scheduled_event.set_recurrence_rule do |builder|
     #     builder.interval = 1
     #     builder.frequency = :monthly
     #     builder.by_n_weekday(week: 4, day: :wednesday)
-    #     builder.starts_at = :replace_with_time
+    #     builder.start_time = :replace_with_time
     #   end
     # @yieldparam builder [RecurrenceRule::Builder] the builder for the reccurence rule to add or update.
     # @param reason [String, nil] the reason that will show up for modifying the event's reccurence rule.
@@ -244,27 +244,42 @@ module Discordrb
 
       raise 'interval cannot be nil' unless builder.interval?
 
-      raise 'starts_at cannot be nil' unless builder.starts_at?
-
       raise 'frequency cannot be nil' unless builder.frequency?
+
+      raise 'start_time cannot be nil' unless builder.start_time?
 
       update_data(recurrence_rule: builder.to_h, reason: reason)
     end
 
-    # Set the entity type of the scheduled event. You must use this method
-    #   instead of {#entity_type=} when setting the entity type to `:external`.
-    # @param type [Symbol, Integer] the new entity type of the scheduled event.
-    # @param location [String, nil] the new location of the scheduled event, or `nil`.
-    # @param ends_at [Time, Date] the new time at when the scheduled event should end.
-    # @param channel [Channel, Integer, String, nil] the new channel of the scheduled event.
-    # @param reason [String, nil] the reason that will show up for modifying the scheduled event.
-    def update_entity_type(type:, channel: :undef, location: :undef, ends_at: :undef, reason: nil)
+    # Update multiple properties of the scheduled event in a single API call.
+    # @param name [String] The new 1-100 character name of the scheduled event.
+    # @param channel [Integer, Channel, String, nil] The new channel of the scheduled event.
+    # @param location [String, nil] The new location of the scheduled event.
+    # @param start_time [Time] The new start time of the scheduled event.
+    # @param end_time [Time] The new end time of the scheduled event.
+    # @param description [String, nil] The new 1-100 character description of the scheduled event.
+    # @param entity_type [Integer, Symbol] The new entity type of the scheduled event.
+    # @param status [Integer, Symbol] The new status of the scheduled event.
+    # @param cover [File, #read] The new cover image of the scheduled event.
+    # @param recurrence_rule [#to_h, nil] The new recurrence rule of the scheduled event.
+    # @param reason [String, nil] The audit log reason for updating the scheduled event.
+    def update(
+      name: :undef, channel: :undef, location: :undef, start_time: :undef, end_time: :undef,
+      description: :undef, entity_type: :undef, status: :undef, cover: :undef,
+      recurrence_rule: :undef, reason: nil
+    )
       new_data = {
-        reason: reason,
-        entity_type: ENTITY_TYPES[type] || type,
+        name: name == :undef ? :undef : name,
         channel_id: channel == :undef ? :undef : channel&.resolve_id,
         entity_metadata: location == :undef ? :undef : { location: },
-        scheduled_end_time: ends_at == :undef ? :undef : ends_at.iso8601
+        scheduled_end_time: end_time == :undef ? :undef : end_time&.iso8601,
+        scheduled_start_time: start_time == :undef ? :undef : start_time&.iso8601,
+        description: description == :undef ? :undef : description,
+        entity_type: entity_type == :undef ? :undef : ENTITY_TYPES[type] || type,
+        status: status == :undef ? :undef : STATUSES[status] || status,
+        image: cover.respond_to?(:read) ? Discordrb.encode64(cover) : cover,
+        recurrence_rule: recurrence_rule == :undef ? :undef : recurrence_rule&.to_h,
+        reason: reason
       }
 
       update_data(new_data)
@@ -274,7 +289,7 @@ module Discordrb
     # @return [Integer] the total number of users who're currently subscribed to the scheduled event.
     # @note This method caches results for an unspecificed period of time. This means the count may **not** be accurate.
     def subscriber_count
-      @subscriber_count ||= JSON.parse(API::Server.get_scheduled_event(@bot.token, @server.id, @id, true))['user_count']
+      @subscriber_count ||= JSON.parse(API::Server.get_scheduled_event(@bot.token, @server.id, @id, with_user_count: true))['user_count']
     end
 
     alias_method :user_count, :subscriber_count
@@ -284,8 +299,8 @@ module Discordrb
     # @param member [true, false] whether to return subscribers as server members, where applicable.
     # @return [Array<User, Member>] the users or members that have subscribed to the scheduled event.
     def subscribers(limit: 100, member: false)
-      get_users = proc do |limit_, after = nil|
-        response = JSON.parse(API::Server.get_scheduled_event_users(@bot.token, @server.id, @id, limit_, member, nil, after))
+      get_users = proc do |fetch_limit, after_id = nil|
+        response = JSON.parse(API::Server.get_scheduled_event_users(@bot.token, @server.id, @id, limit: fetch_limit, with_member: member, after: after_id))
         response.map { |data| data['member'] ? Member.new(data['member'], @server, @bot).tap { |m| @server&.cache_member(m) } : User.new(data['user'], @bot) }
       end
 
@@ -307,7 +322,7 @@ module Discordrb
 
     # @!visibility private
     def inspect
-      "<ScheduledEvent id=#{@id} server=#{@server} name=\"#{@name}\" creator_id=#{@creator_id} status=#{@status} starts_at=#{@starts_at} ends_at=#{@ends_at}>"
+      "<ScheduledEvent id=#{@id} name=\"#{@name}\" status=#{@status} start_time=#{@start_time} end_time=#{@end_time}>"
     end
 
     # @!visibility private
@@ -319,28 +334,15 @@ module Discordrb
       @description = new_data['description']
       @entity_id = new_data['entity_id']&.to_i
       @channel_id = new_data['channel_id']&.to_i
-      @starts_at = Time.iso8601(new_data['scheduled_start_time'])
-      @location = new_data['entity_metadata']['location'] if new_data['entity_metadata']
-      @ends_at = Time.iso8601(new_data['scheduled_end_time']) if new_data['scheduled_end_time']
-      @recurrence_rule = RecurrenceRule.new(new_data['recurrence_rule'], @bot) if new_data['recurrence_rule']
+      @start_time = Time.iso8601(new_data['scheduled_start_time'])
+      @location = new_data['entity_metadata'] ? new_data['entity_metadata']['location'] : nil
+      @end_time = Time.iso8601(new_data['scheduled_end_time']) if new_data['scheduled_end_time']
+      @recurrence_rule = new_data['recurrence_rule'] ? RecurrenceRule.new(new_data['recurrence_rule'], @bot) : nil
     end
 
     # @!visibility private
     def update_data(new_data)
-      from_other(JSON.parse(API::Server.update_scheduled_event(@bot.token,
-                                                               @server.id, @id,
-                                                               new_data[:name] || :undef,
-                                                               new_data[:image] || :undef,
-                                                               new_data[:status] || :undef,
-                                                               new_data[:entity_type] || :undef,
-                                                               new_data[:privacy_level] || :undef,
-                                                               new_data[:scheduled_end_time] || :undef,
-                                                               new_data[:scheduled_start_time] || :undef,
-                                                               new_data.key?(:channel_id) ? new_data[:channel_id] : :undef,
-                                                               new_data.key?(:description) ? new_data[:description] : :undef,
-                                                               new_data.key?(:entity_metadata) ? new_data[:entity_metadata] : :undef,
-                                                               new_data.key?(:recurrence_rule) ? new_data[:recurrence_rule] : :undef,
-                                                               new_data[:reason])))
+      from_other(JSON.parse(API::Server.update_scheduled_event(@bot.token, @server.id, @id, **new_data)))
     end
 
     # Represents how frequently a scheduled event will repeat.
@@ -380,13 +382,6 @@ module Discordrb
         december: 12
       }.freeze
 
-      # The days of the week on a specific week to recur on.
-      # @!attribute week
-      #   @return [Integer] The week (1-5) to recur on.
-      # @!attribute day
-      #   @return [Integer] The day (0-6) of the week to recur on.
-      WeeklyDay = Struct.new('WeeklyDay', :week, :day)
-
       # @return [Integer, nil] the amount of times that the event can recur before stopping.
       attr_reader :count
 
@@ -394,10 +389,10 @@ module Discordrb
       attr_reader :by_month
 
       # @return [Time, nil] the time at when the reccurence interval will end.
-      attr_reader :ends_at
+      attr_reader :end_time
 
       # @return [Time] the time at when the reccurence interval will start.
-      attr_reader :starts_at
+      attr_reader :start_time
 
       # @return [Array<Integer>] the specific days of the week the event can recur on.
       attr_reader :by_weekday
@@ -422,13 +417,13 @@ module Discordrb
         @bot = bot
         @count = data['count']
         @by_month = data['by_month'] || []
-        @ends_at = Time.iso8601(data['end']) if data['end']
-        @starts_at = Time.iso8601(data['start'])
+        @end_time = Time.iso8601(data['end']) if data['end']
+        @start_time = Time.iso8601(data['start']) if data['start']
         @by_weekday = data['by_weekday'] || []
         @interval = data['interval']
         @frequency = data['frequency']
         @by_year_day = data['by_year_day'] || []
-        @by_n_weekday = data['by_n_weekday']&.map { |by| WeeklyDay.new(by['n'], by['day']) } || []
+        @by_n_weekday = data['by_n_weekday']&.map { |day| WeeklyDay.new(day, bot) } || []
         @by_month_day = data['by_month_day'] || []
       end
 
@@ -438,13 +433,13 @@ module Discordrb
           count: @count,
           interval: @interval,
           frequency: @frequency,
-          end: @ends_at&.iso8601,
-          start: @starts_at&.iso8601,
+          end: @end_time&.iso8601,
+          start: @start_time&.iso8601,
           by_month: @by_month.any? ? @by_month : nil,
           by_weekday: @by_weekday.any? ? @by_weekday : nil,
           by_year_day: @by_year_day.any? ? @by_year_day : nil,
           by_month_day: @by_month_day.any? ? @by_month_day : nil,
-          by_n_weekday: @by_n_weekday.any? ? @by_n_weekday.map { |by| { n: by.week, day: by.day } } : nil
+          by_n_weekday: @by_n_weekday.any? ? @by_n_weekday.map(&:to_h) : nil
         }
       end
 
@@ -462,6 +457,47 @@ module Discordrb
         end
       end
 
+      # The specific day within a specific week to recur on.
+      class WeeklyDay
+        # @return [Integer] the day (0-6) of the week to recur on.
+        attr_reader :day
+
+        # @return [Integer] the week (1-5) to recur on in the month.
+        attr_reader :week
+
+        # @!visibility private
+        def initialize(data, bot)
+          @bot = bot
+          @week = data['n']
+          @day = data['day']
+        end
+
+        # @!visibility private
+        def to_h
+          { n: @week, day: @day }
+        end
+
+        # @!method monday?
+        #   @return [true, false] whether the day within the week is a monday.
+        # @!method tuesday?
+        #   @return [true, false] whether the day within the week is a tuesday.
+        # @!method wednesday?
+        #   @return [true, false] whether the day within the week is a wednesday.
+        # @!method thursday?
+        #   @return [true, false] whether the day within the week is a thursday.
+        # @!method friday?
+        #   @return [true, false] whether the day within the week is a friday.
+        # @!method saturday?
+        #   @return [true, false] whether the day within the week is a saturday.
+        # @!method sunday?
+        #   @return [true, false] whether the day within the week is a sunday.
+        WEEKDAYS.each do |name, value|
+          define_method("#{name}?") do
+            @day == value
+          end
+        end
+      end
+
       # Builder for the reccurence rule.
       class Builder
         # @overload interval=(value)
@@ -474,16 +510,16 @@ module Discordrb
         #   @return [void]
         attr_writer :frequency
 
-        # @overload starts_at=(value)
+        # @overload start_time=(value)
         #   @param value [Time, #iso8601] the time at when the reccurence interval will begin.
         #   @return [void]
-        attr_writer :starts_at
+        attr_writer :start_time
 
         # @!visibility private
         def initialize
           @interval = nil
           @frequency = nil
-          @starts_at = nil
+          @start_time = nil
         end
 
         # Set the the specific days within the month to recur on.
@@ -532,8 +568,8 @@ module Discordrb
 
         # @!visibility private
         # @return [true, false]
-        def starts_at?
-          !@starts_at.nil?
+        def start_time?
+          !@start_time.nil?
         end
 
         # @!visibility private
@@ -544,7 +580,7 @@ module Discordrb
             interval: @interval.to_i,
             by_n_weekday: @by_n_weekday,
             by_month_day: @by_month_day,
-            start: @starts_at.utc.iso8601,
+            start: @start_time.utc.iso8601,
             frequency: FREQUENCIES[@frequency] || @frequency
           }
         end
