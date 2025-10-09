@@ -202,7 +202,7 @@ module Discordrb
     # @param reason [String, nil] the audit log reason for deleting the scheduled event.
     # @return [void]
     def delete(reason: nil)
-      API::Server.delete_scheduled_event(@bot.token, @server.id, @id, reason)
+      API::Server.delete_scheduled_event(@bot.token, @server.id, @id, reason: reason)
       @server.scheduled_events.delete(@id)
     end
 
@@ -274,7 +274,7 @@ module Discordrb
     # @return [Integer] the total number of users who're currently subscribed to the scheduled event.
     # @note This method caches results for an unspecificed period of time. This means the count may **not** be accurate.
     def subscriber_count
-      @subscriber_count ||= JSON.parse(API::Server.get_scheduled_event(@bot.token, @server.id, @id, true))['user_count']
+      @subscriber_count ||= JSON.parse(API::Server.get_scheduled_event(@bot.token, @server.id, @id, with_user_count: true))['user_count']
     end
 
     alias_method :user_count, :subscriber_count
@@ -284,8 +284,8 @@ module Discordrb
     # @param member [true, false] whether to return subscribers as server members, where applicable.
     # @return [Array<User, Member>] the users or members that have subscribed to the scheduled event.
     def subscribers(limit: 100, member: false)
-      get_users = proc do |limit_, after = nil|
-        response = JSON.parse(API::Server.get_scheduled_event_users(@bot.token, @server.id, @id, limit_, member, nil, after))
+      get_users = proc do |fetch_limit, after_id = nil|
+        response = JSON.parse(API::Server.get_scheduled_event_users(@bot.token, @server.id, @id, limit: fetch_limit, with_member: member, after: after_id))
         response.map { |data| data['member'] ? Member.new(data['member'], @server, @bot).tap { |m| @server&.cache_member(m) } : User.new(data['user'], @bot) }
       end
 
@@ -327,20 +327,7 @@ module Discordrb
 
     # @!visibility private
     def update_data(new_data)
-      from_other(JSON.parse(API::Server.update_scheduled_event(@bot.token,
-                                                               @server.id, @id,
-                                                               new_data[:name] || :undef,
-                                                               new_data[:image] || :undef,
-                                                               new_data[:status] || :undef,
-                                                               new_data[:entity_type] || :undef,
-                                                               new_data[:privacy_level] || :undef,
-                                                               new_data[:scheduled_end_time] || :undef,
-                                                               new_data[:scheduled_start_time] || :undef,
-                                                               new_data.key?(:channel_id) ? new_data[:channel_id] : :undef,
-                                                               new_data.key?(:description) ? new_data[:description] : :undef,
-                                                               new_data.key?(:entity_metadata) ? new_data[:entity_metadata] : :undef,
-                                                               new_data.key?(:recurrence_rule) ? new_data[:recurrence_rule] : :undef,
-                                                               new_data[:reason])))
+      from_other(JSON.parse(API::Server.update_scheduled_event(@bot.token, @server.id, @id, **new_data)))
     end
 
     # Represents how frequently a scheduled event will repeat.
