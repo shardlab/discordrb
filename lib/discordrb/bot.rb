@@ -1059,6 +1059,9 @@ module Discordrb
       channel = data.is_a?(Discordrb::Channel) ? data : Channel.new(data, self)
       server = channel.server
 
+      # The last message ID of a forum channel is the most recent post
+      channel.parent.process_last_message_id(channel.id) if channel.parent&.forum? || channel.parent&.media?
+
       # Handle normal and private channels separately
       if server
         server.add_channel(channel)
@@ -1357,6 +1360,11 @@ module Discordrb
 
           raise_event(ChannelCreateEvent.new(message.channel, self))
         end
+
+        # Only thread channels have a count, so don't do anything for other types.
+        message.channel.increment_total_message_count if message.channel.thread?
+
+        message.channel.process_last_message_id(message.id)
 
         event = MessageEvent.new(message, self)
         raise_event(event)

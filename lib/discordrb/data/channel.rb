@@ -22,7 +22,8 @@ module Discordrb
       private_thread: 12,
       stage_voice: 13,
       directory: 14,
-      forum: 15
+      forum: 15,
+      media: 16
     }.freeze
 
     # @return [String] this channel's name.
@@ -98,6 +99,22 @@ module Discordrb
     # @return [Time, nil] The time at when the last pinned message was pinned in this channel.
     attr_reader :last_pin_timestamp
 
+    # @return [Integer, nil] The ID of the last message sent in this channel. This may not point to a valid message.
+    attr_reader :last_message_id
+
+    # @return [Integer] An approximate count of messages sent in this thread, including deleted messages.
+    attr_reader :total_message_count
+
+    # @return [Integer] The flags set on this channel combined as a bitfield.
+    attr_reader :flags
+
+    # @return [String, nil] The ID of the RTC voice region for this voice or stage channel. A region of `nil` means the
+    #   the voice region will automatically be determined by Discord.
+    attr_reader :voice_region
+
+    # @return [Integer, nil] The video quality mode of this voice or stage channel.
+    attr_reader :video_quality_mode
+
     # @return [true, false] whether or not this channel is a PM or group channel.
     def private?
       pm? || group?
@@ -149,6 +166,7 @@ module Discordrb
       @rate_limit_per_user = data['rate_limit_per_user'] || 0
       @message_count = data['message_count']
       @member_count = data['member_count']
+      @total_message_count = data['total_message_sent'] || 0
 
       if (metadata = data['thread_metadata'])
         @archived = metadata['archived']
@@ -162,6 +180,11 @@ module Discordrb
         @member_join = Time.iso8601(member['join_timestamp'])
         @member_flags = member['flags']
       end
+
+      @flags = data['flags'] || 0
+      @voice_region = data['rtc_region']
+      @video_quality_mode = data['video_quality_mode']
+      @last_message_id = data['last_message_id']&.to_i
 
       process_last_pin_timestamp(data['last_pin_timestamp'])
       process_permission_overwrites(data['permission_overwrites'])
@@ -233,6 +256,26 @@ module Discordrb
     # @return [true, false] whether or not this channel is a thread.
     def thread?
       news_thread? || public_thread? || private_thread?
+    end
+
+    # @return [true, false] whether or not this channel is a stage channel.
+    def stage?
+      @type == 13
+    end
+
+    # @return [true, false] whether or not this channel is a directory channel.
+    def directory?
+      @type == 14
+    end
+
+    # @return [true, false] whether or not this channel is a forum channel.
+    def forum?
+      @type == 15
+    end
+
+    # @return [true, false] whether or not this channel is a media channel.
+    def media?
+      @type == 16
     end
 
     # @return [Channel, nil] the category channel, if this channel is in a category
@@ -665,6 +708,11 @@ module Discordrb
       @invitable = other.invitable?
       @message_count = other.message_count
       @last_pin_timestamp = other.last_pin_timestamp
+      @last_message_id = other.last_message_id
+      @total_message_count = other.total_message_count
+      @flags = other.flags
+      @voice_region = other.voice_region
+      @video_quality_mode = other.video_quality_mode
     end
 
     # The list of users currently in this channel. For a voice channel, it will return all the members currently
@@ -914,6 +962,12 @@ module Discordrb
       invites.map { |invite_data| Invite.new(invite_data, @bot) }
     end
 
+    # Returns the last message sent in this channel.
+    # @return [Message, nil] the last message sent in this channel,  or `nil` if it couldn't be found.
+    def last_message
+      load_message(@last_message_id) if @last_message_id
+    end
+
     # Start a thread.
     # @param name [String] The name of the thread.
     # @param auto_archive_duration [60, 1440, 4320, 10080] How long before a thread is automatically
@@ -1036,6 +1090,21 @@ module Discordrb
     # @!visibility private
     def process_last_pin_timestamp(time)
       @last_pin_timestamp = time ? Time.parse(time) : time
+    end
+
+    # Set the last message ID of a channel.
+    # @param id [Integer, nil] the ID of the last message in a channel
+    # @note For internal use only
+    # @!visibility private
+    def process_last_message_id(id)
+      @last_message_id = id
+    end
+
+    # Increment the total message count of a thread channel.
+    # @note For internal use only
+    # @!visibility private
+    def increment_total_message_count
+      @total_message_count += 1
     end
 
     # Updates the cached data with new data
