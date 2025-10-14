@@ -962,10 +962,17 @@ module Discordrb
       invites.map { |invite_data| Invite.new(invite_data, @bot) }
     end
 
-    # Returns the last message sent in this channel.
-    # @return [Message, nil] the last message sent in this channel,  or `nil` if it couldn't be found.
+    # Returns the last message or forum post created in this channel.
+    # @return [Message, Channel, nil] the last message sent in this channel,
+    #   the most recent forum post if this is a forum or media channel, or `nil`.
     def last_message
-      load_message(@last_message_id) if @last_message_id
+      return unless @last_message_id
+
+      if forum? || media?
+        @bot.channel(@last_message_id)
+      else
+        load_message(@last_message_id)
+      end
     end
 
     # Start a thread.
