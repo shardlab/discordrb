@@ -287,11 +287,40 @@ module Discordrb::Events
     end
   end
 
-  # @see Discordrb::EventContainer#mention
-  class MentionEvent < MessageEvent; end
+  # Event raised when the current bot is mentioned in a message.
+  class MentionEvent < MessageEvent
+    # @return [true, false] whether this mention event was raised
+    #   due to a mention of the bot's auto-generated server role.
+    attr_reader :role_mention
+    alias_method :role_mention?, :role_mention
+
+    # @!visibility private
+    def initialize(message, bot, role_mention)
+      super(message, bot)
+
+      @role_mention = role_mention
+    end
+  end
 
   # Event handler for {MentionEvent}
-  class MentionEventHandler < MessageEventHandler; end
+  class MentionEventHandler < MessageEventHandler
+    # @!visibility private
+    def matches?(event)
+      return false unless super
+      return false unless event.is_a?(MentionEvent)
+
+      [
+        matches_all(@attributes[:role_mention], event.role_mention) do |a, e|
+          case a
+          when TrueClass
+            e == true
+          when FalseClass
+            e == false
+          end
+        end
+      ].reduce(true, &:&)
+    end
+  end
 
   # @see Discordrb::EventContainer#pm
   class PrivateMessageEvent < MessageEvent; end

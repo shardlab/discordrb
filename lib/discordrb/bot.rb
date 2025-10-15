@@ -1361,8 +1361,15 @@ module Discordrb
         event = MessageEvent.new(message, self)
         raise_event(event)
 
-        if message.mentions.any? { |user| user.id == @profile.id }
-          event = MentionEvent.new(message, self)
+        # Raise a mention event for any direct mentions.
+        if message.mentions.any? { |user| user.id == profile.id }
+          event = MentionEvent.new(message, self, false)
+          raise_event(event)
+        end
+
+        # Raise a mention event for the current bot's auto-generated role.
+        if message.role_mentions.any? { |role| role.tags&.bot_id == profile.id }
+          event = MentionEvent.new(message, self, true)
           raise_event(event)
         end
 
