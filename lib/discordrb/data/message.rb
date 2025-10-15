@@ -233,7 +233,7 @@ module Discordrb
       @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
 
       @sticker_items = []
-      @sticker_items = data['sticker_items'].map { |e| Sticker.new(e, self, @bot) } if data['sticker_items']
+      @sticker_items = data['sticker_items'].map { |e| Sticker::Item.new(e, self, @bot) } if data['sticker_items']
 
       @call = data['call'] ? Call.new(data['call'], @bot) : nil
 
