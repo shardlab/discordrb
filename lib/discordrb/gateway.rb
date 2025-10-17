@@ -152,6 +152,11 @@ module Discordrb
     # - 4014: Use of disabled privileged intents.
     FATAL_CLOSE_CODES = [4003, 4004, 4011, 4014].freeze
 
+    # The timeout in seconds for responses from Discord when expecting one.
+    # This is used when expecting a hello message after the initial connection
+    # and when expecting a heartbeat ack after sending a heartbeat (if {#check_heartbeat_acks} is true).
+    RESPONSE_TIMEOUT = 2
+
     # Heartbeat ACKs are Discord's way of verifying on the client side whether the connection is still alive. If this is
     # set to true (default value) the gateway client will use that functionality to detect zombie connections and
     # reconnect in such a case; however it may lead to instability if there's some problem with the ACKs. If this occurs
@@ -267,6 +272,9 @@ module Discordrb
     # @see #send_heartbeat
     def heartbeat
       if check_heartbeat_acks
+        # This check is still needed even though we have socket_timeout
+        # because the Ruby version may be too old to support setting timeout on a socket
+        # and because RESPONSE_TIMEOUT may be larger than the heartbeat interval.
         unless @last_heartbeat_acked
           # We're in a bad situation - apparently the last heartbeat wasn't ACK'd, which means the connection is likely
           # a zombie. Reconnect
@@ -279,6 +287,7 @@ module Discordrb
         end
 
         @last_heartbeat_acked = false
+        socket_timeout(RESPONSE_TIMEOUT)
       end
 
       send_heartbeat(@session ? @session.sequence : 0)
@@ -453,9 +462,21 @@ module Discordrb
 
     private
 
+    def socket_timeout(duration)
+      if @socket.respond_to?(:timeout=)
+        @socket.timeout = duration
+        LOGGER.debug("Set socket timeout to #{duration}")
+      else # Ruby version < 3.4
+        LOGGER.debug('Cannot set socket timeout because Ruby is too old')
+      end
+    end
+
     def setup_heartbeats(interval)
       # Make sure to reset ACK handling, so we don't keep reconnecting
       @last_heartbeat_acked = true
+
+      # Socket timeout needs to be larger than heartbeat interval
+      socket_timeout(interval + 1)
 
       # We don't want to have redundant heartbeat threads, so if one already exists, don't start a new one
       return if @heartbeat_thread
@@ -590,6 +611,9 @@ module Discordrb
       @socket = obtain_socket(gateway_uri)
       LOGGER.debug('Obtained socket')
 
+      # A hello message should be received quickly after it is connected
+      socket_timeout(RESPONSE_TIMEOUT)
+
       # Initialise some properties
       @handshake = ::WebSocket::Handshake::Client.new(url: url) # Represents the handshake between us and the server
       @handshaked = false # Whether the handshake has finished yet
@@ -624,6 +648,10 @@ module Discordrb
           rescue EOFError
             @pipe_broken = true
             handle_internal_close('Socket EOF in websocket_loop')
+            next
+          rescue IO::TimeoutError
+            @pipe_broken = true
+            handle_internal_close('Socket did not receive a response in time')
             next
           end
 
@@ -803,7 +831,10 @@ module Discordrb
     # Op 11
     def handle_heartbeat_ack(packet)
       LOGGER.debug("Received heartbeat ack for packet: #{packet.inspect}")
-      @last_heartbeat_acked = true if @check_heartbeat_acks
+      return unless @check_heartbeat_acks
+
+      @last_heartbeat_acked = true
+      socket_timeout(@heartbeat_interval + 1)
     end
 
     # Called when the websocket has been disconnected in some way - say due to a pipe error while sending
