@@ -284,6 +284,12 @@ module Discordrb
 
     alias_method :color, :colour
 
+    # Get the member's roles sorted by their order in the hierarchy.
+    # @return [Array<Role>] the roles the member has, ordered by hierarchy.
+    def sort_roles
+      roles.sort_by { |role| [role.position, role.id] }
+    end
+
     # Server deafens this member.
     # @param reason [String, nil] The reason for defeaning this member.
     def server_deafen(reason: nil)
