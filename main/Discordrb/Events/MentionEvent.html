@@ -105,27 +105,56 @@
 
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
-    
+    <p>Event raised when the current bot is mentioned in a message.</p>
+
 
   </div>
 </div>
 <div class="tags">
   
 
-  <p class="tag_title">See Also:</p>
-  <ul class="see">
-    
-      <li><span class='object_link'><a href="../EventContainer.html#mention-instance_method" title="Discordrb::EventContainer#mention (method)">Discordrb::EventContainer#mention</a></span></li>
-    
-  </ul>
-
 </div>
 
 
 
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#role_mention-instance_method" title="#role_mention (instance method)">#<strong>role_mention</strong>  &#x21d2; true, false </a>
+    
+
+    
+      (also: #role_mention?)
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether this mention event was raised due to a mention of the bot&#39;s auto-generated server role.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
 
 
-  <h2>Instance Attribute Summary</h2>
+
+  
   
   <h3 class="inherited">Attributes inherited from <span class='object_link'><a href="MessageEvent.html" title="Discordrb::Events::MessageEvent (class)">MessageEvent</a></span></h3>
   <p class="inherited"><span class='object_link'><a href="MessageEvent.html#author-instance_method" title="Discordrb::Events::MessageEvent#author (method)">#author</a></span>, <span class='object_link'><a href="MessageEvent.html#channel-instance_method" title="Discordrb::Events::MessageEvent#channel (method)">#channel</a></span>, <span class='object_link'><a href="MessageEvent.html#content-instance_method" title="Discordrb::Events::MessageEvent#content (method)">#content</a></span>, <span class='object_link'><a href="MessageEvent.html#file-instance_method" title="Discordrb::Events::MessageEvent#file (method)">#file</a></span>, <span class='object_link'><a href="MessageEvent.html#file_spoiler-instance_method" title="Discordrb::Events::MessageEvent#file_spoiler (method)">#file_spoiler</a></span>, <span class='object_link'><a href="MessageEvent.html#filename-instance_method" title="Discordrb::Events::MessageEvent#filename (method)">#filename</a></span>, <span class='object_link'><a href="MessageEvent.html#message-instance_method" title="Discordrb::Events::MessageEvent#message (method)">#message</a></span>, <span class='object_link'><a href="MessageEvent.html#saved_message-instance_method" title="Discordrb::Events::MessageEvent#saved_message (method)">#saved_message</a></span>, <span class='object_link'><a href="MessageEvent.html#server-instance_method" title="Discordrb::Events::MessageEvent#server (method)">#server</a></span>, <span class='object_link'><a href="MessageEvent.html#timestamp-instance_method" title="Discordrb::Events::MessageEvent#timestamp (method)">#timestamp</a></span></p>
@@ -170,11 +199,81 @@
   
   
   
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="role_mention-instance_method">
+  
+    #<strong>role_mention</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='role_mention?-instance_method'>role_mention?</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns whether this mention event was raised
+due to a mention of the bot&#39;s auto-generated server role.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>whether this mention event was raised
+due to a mention of the bot&#39;s auto-generated server role.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+294
+295
+296</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/message.rb', line 294</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_role_mention'>role_mention</span>
+  <span class='ivar'>@role_mention</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
 
 </div>
 
       <div id="footer">
-  Generated on Wed Oct 22 16:29:13 2025 by
+  Generated on Wed Oct 22 21:50:44 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
