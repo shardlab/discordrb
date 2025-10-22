@@ -117,7 +117,7 @@ module Discordrb::API::Channel
 
   # Edit a message
   # https://discord.com/developers/docs/resources/channel#edit-message
-  def edit_message(token, channel_id, message_id, message, mentions = [], embeds = nil, components = nil, flags = nil)
+  def edit_message(token, channel_id, message_id, message, mentions = nil, embeds = nil, components = nil, flags = nil)
     Discordrb::API.request(
       :channels_cid_messages_mid,
       channel_id,
