@@ -5,7 +5,102 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2025-10-22
+
+[3.5.0]: https://github.com/shardlab/discordrb/releases/tag/v3.6.0
+
+[View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.5.0..v3.6.0)
+
+### Summary
+
+## What's Changed
+
+- feat: Bot#invite_url - scope & redirect_uri params by @Birdie0 in https://github.com/shardlab/discordrb/pull/241
+- Update ping.rb by @gustavomgama in https://github.com/shardlab/discordrb/pull/243
+- Fix buttons and string selects without emojis breaking due to API change by @wouterdedroog in https://github.com/shardlab/discordrb/pull/249
+- Update webhook URLs to v9 by @advaith1 in https://github.com/shardlab/discordrb/pull/264
+- Update Version Requirements to resolve CircleCI failures by @joshbuker in https://github.com/shardlab/discordrb/pull/265
+- Add default_member_permissions and contexts fields to application commands by @wouterdedroog in https://github.com/shardlab/discordrb/pull/254
+- add min/max_length support for string option and min/max_value for integer by @Birdie0 in https://github.com/shardlab/discordrb/pull/252
+- Feat: search guild members by @Droid00000 in https://github.com/shardlab/discordrb/pull/277
+- Add crossposts. by @Droid00000 in https://github.com/shardlab/discordrb/pull/280
+- Message Flags by @Droid00000 in https://github.com/shardlab/discordrb/pull/292
+- Allow supressing embeds on Message by @Quintasan in https://github.com/shardlab/discordrb/pull/240
+- feat: message threads by @Droid00000 in https://github.com/shardlab/discordrb/pull/295
+- feat: attachments in interaction responses by @Droid00000 in https://github.com/shardlab/discordrb/pull/296
+- Remove User Login. by @Droid00000 in https://github.com/shardlab/discordrb/pull/273
+- Custom Intents by @Droid00000 in https://github.com/shardlab/discordrb/pull/283
+- feature: channel pins update event by @Droid00000 in https://github.com/shardlab/discordrb/pull/294
+- Ruby 3.1 EOL & Workflows by @Droid00000 in https://github.com/shardlab/discordrb/pull/304
+- Update link of Documentation in README.md by @soukouki in https://github.com/shardlab/discordrb/pull/287
+- chore: rubocop Style/BitwisePredicate by @Daniel-Worrall in https://github.com/shardlab/discordrb/pull/289
+- feat: resume gateway URL by @Droid00000 in https://github.com/shardlab/discordrb/pull/308
+- fix: don't send heartbeats unless we're connected by @Droid00000 in https://github.com/shardlab/discordrb/pull/309
+- Ruby Webhooks EOL Version Bump by @Droid00000 in https://github.com/shardlab/discordrb/pull/306
+- bugfixes: emoji parsing & removing timeouts by @Droid00000 in https://github.com/shardlab/discordrb/pull/305
+- Bugfix - Discordrb::Message#reacted_with by @y-bonfire in https://github.com/shardlab/discordrb/pull/288
+- Fix permission overwrites mapping by @ceud in https://github.com/shardlab/discordrb/pull/267
+- feat: missing member & user attributes by @Droid00000 in https://github.com/shardlab/discordrb/pull/313
+- feat: add server avatar by @swarley in https://github.com/shardlab/discordrb/pull/146
+- feat: autocomplete interactions by @Droid00000 in https://github.com/shardlab/discordrb/pull/299
+- fix: broken members on MESSAGE_CREATE due to recent changes by @Droid00000 in https://github.com/shardlab/discordrb/pull/315
+- cache active threads on GUILD_CREATE events by @Droid00000 in https://github.com/shardlab/discordrb/pull/316
+- fix: allow raw and application command event handlers to co-exist by @Droid00000 in https://github.com/shardlab/discordrb/pull/310
+- Fix Guild Bans by @Droid00000 in https://github.com/shardlab/discordrb/pull/279
+- fix: remove WSCS's monkey patch by @Droid00000 in https://github.com/shardlab/discordrb/pull/325
+- feat: server tags by @Droid00000 in https://github.com/shardlab/discordrb/pull/323
+- fix: lazily cache un-cached members by @Droid00000 in https://github.com/shardlab/discordrb/pull/322
+- fix: lazily request author for messages by @swarley in https://github.com/shardlab/discordrb/pull/130
+- feat: increased pinned message limits by @Droid00000 in https://github.com/shardlab/discordrb/pull/324
+- Fix CI by @Daniel-Worrall in https://github.com/shardlab/discordrb/pull/312
+- feat: application command permission overwrites by @Droid00000 in https://github.com/shardlab/discordrb/pull/326
+- feat: missing role attributes by @Droid00000 in https://github.com/shardlab/discordrb/pull/303
+- feat: server previews by @Droid00000 in https://github.com/shardlab/discordrb/pull/332
+- feat: gradient roles by @Droid00000 in https://github.com/shardlab/discordrb/pull/337
+- feat: missing attachment attributes by @Droid00000 in https://github.com/shardlab/discordrb/pull/338
+- feat: NSFW by @Droid00000 in https://github.com/shardlab/discordrb/pull/336
+- feat: Channel#send_message! by @Droid00000 in https://github.com/shardlab/discordrb/pull/335
+- docs: hide all initializers by @Droid00000 in https://github.com/shardlab/discordrb/pull/345
+- feat: base64 encoder by @Droid00000 in https://github.com/shardlab/discordrb/pull/346
+- fix: actually set the icon by @Droid00000 in https://github.com/shardlab/discordrb/pull/347
+- feat: message types by @Droid00000 in https://github.com/shardlab/discordrb/pull/349
+- feat: Add message type methods by @swarley in https://github.com/shardlab/discordrb/pull/85
+- style: use (...) syntax to forward arguments by @Droid00000 in https://github.com/shardlab/discordrb/pull/348
+- fix: return raw error codes by @Droid00000 in https://github.com/shardlab/discordrb/pull/317
+- add thread channel parmaeters to Channel#update by @mrhappyma in https://github.com/shardlab/discordrb/pull/344
+- fix: forward &block on send_message! by @Droid00000 in https://github.com/shardlab/discordrb/pull/342
+- feat: missing permissions by @Droid00000 in https://github.com/shardlab/discordrb/pull/341
+- Fix - Allow mixing groups and subcommands by @itsthedevman in https://github.com/shardlab/discordrb/pull/244
+- fix: use response-data to update server members by @Droid00000 in https://github.com/shardlab/discordrb/pull/362
+- feat: allow creation of forum posts by @Droid00000 in https://github.com/shardlab/discordrb/pull/360
+- feat: Message#mentions? by @Droid00000 in https://github.com/shardlab/discordrb/pull/356
+- fix: include names on server previews by @Droid00000 in https://github.com/shardlab/discordrb/pull/355
+- feat: add server attribute to MESSAGE_DELETE by @Droid00000 in https://github.com/shardlab/discordrb/pull/358
+- feat: handle USER_UPDATE events by @Droid00000 in https://github.com/shardlab/discordrb/pull/357
+- fix: server boost caching by @Droid00000 in https://github.com/shardlab/discordrb/pull/359
+- feat: application emojis by @Droid00000 in https://github.com/shardlab/discordrb/pull/314
+- feat: message forwards by @Droid00000 in https://github.com/shardlab/discordrb/pull/340
+- feat: fix thread caching by @Droid00000 in https://github.com/shardlab/discordrb/pull/363
+- feat: gh actions by @swarley in https://github.com/shardlab/discordrb/pull/371
+
+## New Contributors
+
+- @gustavomgama made their first contribution in https://github.com/shardlab/discordrb/pull/243
+- @wouterdedroog made their first contribution in https://github.com/shardlab/discordrb/pull/249
+- @advaith1 made their first contribution in https://github.com/shardlab/discordrb/pull/264
+- @joshbuker made their first contribution in https://github.com/shardlab/discordrb/pull/265
+- @Droid00000 made their first contribution in https://github.com/shardlab/discordrb/pull/277
+- @Quintasan made their first contribution in https://github.com/shardlab/discordrb/pull/240
+- @soukouki made their first contribution in https://github.com/shardlab/discordrb/pull/287
+- @y-bonfire made their first contribution in https://github.com/shardlab/discordrb/pull/288
+- @ceud made their first contribution in https://github.com/shardlab/discordrb/pull/267
+- @mrhappyma made their first contribution in https://github.com/shardlab/discordrb/pull/344
+- @itsthedevman made their first contribution in https://github.com/shardlab/discordrb/pull/244
+
+**Full Changelog**: https://github.com/shardlab/discordrb/compare/v3.5.0...v3.6.0
+
 ## [3.5.0] - 2023-07-05
+
 [3.5.0]: https://github.com/shardlab/discordrb/releases/tag/v3.5.0
 
 [View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.4.2..v3.5.0)
