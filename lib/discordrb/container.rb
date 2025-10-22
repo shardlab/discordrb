@@ -208,6 +208,7 @@ module Discordrb
     # @option attributes [Time] :before Matches a time before the time the message was sent at.
     # @option attributes [Boolean] :private Matches whether or not the channel is private.
     # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was sent.
+    # @option attributes [true, false] :role_mention If the event should trigger when the bot's managed role is mentioned.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MentionEvent] The event that was raised.
     # @return [MentionEventHandler] the event handler that was registered.
