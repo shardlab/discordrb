@@ -1361,9 +1361,6 @@ module Discordrb
           raise_event(ChannelCreateEvent.new(message.channel, self))
         end
 
-        # Only thread channels have a count, so don't do anything for other types.
-        message.channel.increment_total_message_count if message.channel.thread?
-
         message.channel.process_last_message_id(message.id)
 
         event = MessageEvent.new(message, self)

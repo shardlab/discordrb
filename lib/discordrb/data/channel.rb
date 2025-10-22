@@ -103,7 +103,8 @@ module Discordrb
     attr_reader :last_message_id
 
     # @return [Integer] An approximate count of messages sent in this thread, including deleted messages.
-    attr_reader :total_message_count
+    attr_reader :total_message_sent
+    alias_method :total_messages_sent, :total_message_sent
 
     # @return [Integer] The flags set on this channel combined as a bitfield.
     attr_reader :flags
@@ -166,7 +167,7 @@ module Discordrb
       @rate_limit_per_user = data['rate_limit_per_user'] || 0
       @message_count = data['message_count']
       @member_count = data['member_count']
-      @total_message_count = data['total_message_sent'] || 0
+      @total_message_sent = data['total_message_sent'] || 0
 
       if (metadata = data['thread_metadata'])
         @archived = metadata['archived']
@@ -709,7 +710,7 @@ module Discordrb
       @message_count = other.message_count
       @last_pin_timestamp = other.last_pin_timestamp
       @last_message_id = other.last_message_id
-      @total_message_count = other.total_message_count
+      @total_message_sent = other.total_message_sent
       @flags = other.flags
       @voice_region = other.voice_region
       @video_quality_mode = other.video_quality_mode
@@ -1107,13 +1108,6 @@ module Discordrb
       @last_message_id = id
     end
 
-    # Increment the total message count of a thread channel.
-    # @note For internal use only
-    # @!visibility private
-    def increment_total_message_count
-      @total_message_count += 1
-    end
-
     # Updates the cached data with new data
     # @note For internal use only
     # @!visibility private
@@ -1133,7 +1127,7 @@ module Discordrb
 
     # @return [String] a URL that a user can use to navigate to this channel in the client
     def link
-      "https://discord.com/channels/#{@server_id || '@me'}/#{@channel.id}"
+      "https://discord.com/channels/#{@server_id || '@me'}/#{@id}"
     end
 
     alias_method :jump_link, :link
