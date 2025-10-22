@@ -1400,7 +1400,6 @@
       <pre class="lines">
 
 
-289
 290
 291
 292
@@ -1408,10 +1407,11 @@
 294
 295
 296
-297</pre>
+297
+298</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 289</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 290</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_button'>button</span>
   <span class='kw'>return</span> <span class='kw'>unless</span> <span class='ivar'>@type</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="#TYPES-constant" title="Discordrb::Interaction::TYPES (constant)">TYPES</a></span></span><span class='lbracket'>[</span><span class='symbol'>:component</span><span class='rbracket'>]</span>
@@ -1481,12 +1481,12 @@
       <pre class="lines">
 
 
-284
 285
-286</pre>
+286
+287</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 284</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 285</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_channel'>channel</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_channel'>channel</span><span class='lparen'>(</span><span class='ivar'>@channel_id</span><span class='rparen'>)</span>
@@ -1561,15 +1561,15 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-124
 125
 126
 127
 128
-129</pre>
+129
+130</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 124</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 125</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_defer'>defer</span><span class='lparen'>(</span><span class='label'>flags:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>ephemeral:</span> <span class='kw'>true</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_flags'>flags</span> <span class='op'>|=</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>6</span> <span class='kw'>if</span> <span class='id identifier rubyid_ephemeral'>ephemeral</span>
@@ -1607,12 +1607,12 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-132
 133
-134</pre>
+134
+135</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 132</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 133</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_defer_update'>defer_update</span>
   <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Interaction.html" title="Discordrb::API::Interaction (module)">Interaction</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create_interaction_response'><span class='object_link'><a href="API/Interaction.html#create_interaction_response-class_method" title="Discordrb::API::Interaction.create_interaction_response (method)">create_interaction_response</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#CALLBACK_TYPES-constant" title="Discordrb::Interaction::CALLBACK_TYPES (constant)">CALLBACK_TYPES</a></span></span><span class='lbracket'>[</span><span class='symbol'>:deferred_update</span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -1665,13 +1665,13 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-263
 264
 265
-266</pre>
+266
+267</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 263</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 264</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_message'>delete_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Webhook.html" title="Discordrb::API::Webhook (module)">Webhook</a></span></span><span class='period'>.</span><span class='id identifier rubyid_token_delete_message'><span class='object_link'><a href="API/Webhook.html#token_delete_message-class_method" title="Discordrb::API::Webhook.token_delete_message (method)">token_delete_message</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='ivar'>@application_id</span><span class='comma'>,</span> <span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='rparen'>)</span>
@@ -1707,12 +1707,12 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-210
 211
-212</pre>
+212
+213</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 210</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 211</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_response'>delete_response</span>
   <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Interaction.html" title="Discordrb::API::Interaction (module)">Interaction</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_original_interaction_response'><span class='object_link'><a href="API/Interaction.html#delete_original_interaction_response-class_method" title="Discordrb::API::Interaction.delete_original_interaction_response (method)">delete_original_interaction_response</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='ivar'>@application_id</span><span class='rparen'>)</span>
@@ -1852,7 +1852,6 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-246
 247
 248
 249
@@ -1866,10 +1865,11 @@ an interaction so an error is not displayed.</p>
 257
 258
 259
-260</pre>
+260
+261</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 246</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 247</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_message'>edit_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>attachments:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_builder'>builder</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/Builder.html" title="Discordrb::Webhooks::Builder (class)">Builder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Webhooks/Builder.html#initialize-instance_method" title="Discordrb::Webhooks::Builder#initialize (method)">new</a></span></span>
@@ -2041,7 +2041,6 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-195
 196
 197
 198
@@ -2053,10 +2052,11 @@ an interaction so an error is not displayed.</p>
 204
 205
 206
-207</pre>
+207
+208</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 195</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 196</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_response'>edit_response</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>attachments:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_builder'>builder</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/Builder.html" title="Discordrb::Webhooks::Builder (class)">Builder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Webhooks/Builder.html#initialize-instance_method" title="Discordrb::Webhooks::Builder#initialize (method)">new</a></span></span>
@@ -2113,15 +2113,15 @@ an interaction so an error is not displayed.</p>
       <pre class="lines">
 
 
-305
 306
 307
 308
 309
-310</pre>
+310
+311</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 305</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 306</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_component'>get_component</span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_top_level'>top_level</span> <span class='op'>=</span> <span class='ivar'>@components</span><span class='period'>.</span><span class='id identifier rubyid_flat_map'>flat_map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:components</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -2348,7 +2348,6 @@ Further messages can be sent with <span class='object_link'><a href="#send_messa
       <pre class="lines">
 
 
-98
 99
 100
 101
@@ -2367,10 +2366,11 @@ Further messages can be sent with <span class='object_link'><a href="#send_messa
 114
 115
 116
-117</pre>
+117
+118</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 98</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 99</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_respond'>respond</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>flags:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>ephemeral:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>wait:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>attachments:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_flags'>flags</span> <span class='op'>|=</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>6</span> <span class='kw'>if</span> <span class='id identifier rubyid_ephemeral'>ephemeral</span>
@@ -2559,7 +2559,6 @@ Further messages can be sent with <span class='object_link'><a href="#send_messa
       <pre class="lines">
 
 
-222
 223
 224
 225
@@ -2575,10 +2574,11 @@ Further messages can be sent with <span class='object_link'><a href="#send_messa
 235
 236
 237
-238</pre>
+238
+239</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 222</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 223</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>flags:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>ephemeral:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>attachments:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_flags'>flags</span> <span class='op'>|=</span> <span class='int'>64</span> <span class='kw'>if</span> <span class='id identifier rubyid_ephemeral'>ephemeral</span>
@@ -2646,12 +2646,12 @@ does not have the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-278
 279
-280</pre>
+280
+281</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 278</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 279</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server'>server</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_server'>server</span><span class='lparen'>(</span><span class='ivar'>@server_id</span><span class='rparen'>)</span>
@@ -2705,14 +2705,14 @@ does not have the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-270
 271
 272
 273
-274</pre>
+274
+275</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 270</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 271</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_show_autocomplete_choices'>show_autocomplete_choices</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_choices'>choices</span> <span class='op'>=</span> <span class='id identifier rubyid_choices'>choices</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='id identifier rubyid_value'>value</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span> <span class='kw'>unless</span> <span class='id identifier rubyid_choices'>choices</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
@@ -2819,7 +2819,6 @@ does not have the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-141
 142
 143
 144
@@ -2829,10 +2828,11 @@ does not have the <code>bot</code> scope.</p>
 148
 149
 150
-151</pre>
+151
+152</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 141</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 142</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_show_modal'>show_modal</span><span class='lparen'>(</span><span class='label'>title:</span><span class='comma'>,</span> <span class='label'>custom_id:</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
@@ -2887,12 +2887,12 @@ does not have the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-300
 301
-302</pre>
+302
+303</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 300</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 301</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_text_inputs'>text_inputs</span>
   <span class='ivar'>@components</span><span class='op'>&amp;.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_component'>component</span><span class='op'>|</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>TextInput</span> <span class='rbrace'>}</span> <span class='op'>|</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -3116,7 +3116,6 @@ Further messages can be sent with <span class='object_link'><a href="#send_messa
       <pre class="lines">
 
 
-167
 168
 169
 170
@@ -3134,10 +3133,11 @@ Further messages can be sent with <span class='object_link'><a href="#send_messa
 182
 183
 184
-185</pre>
+185
+186</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 167</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 168</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_message'>update_message</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>flags:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>ephemeral:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>wait:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>attachments:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_flags'>flags</span> <span class='op'>|=</span> <span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>6</span> <span class='kw'>if</span> <span class='id identifier rubyid_ephemeral'>ephemeral</span>
@@ -3168,7 +3168,7 @@ Further messages can be sent with <span class='object_link'><a href="#send_messa
 </div>
 
       <div id="footer">
-  Generated on Wed Oct 22 21:51:14 2025 by
+  Generated on Wed Oct 22 21:52:32 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
