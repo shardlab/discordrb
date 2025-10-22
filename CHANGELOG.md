@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2025-10-22
+
+[3.5.0]: https://github.com/shardlab/discordrb/releases/tag/v3.6.0
+
+[View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.5.0..v3.6.0)
+
+### Summary
+
+Honestly too large to give credit out in this file, but shout out to @Droid00000. Will be continuing to try to get
+the rest of the stuff updated and more regular releases this year
+
 ## [3.5.0] - 2023-07-05
+
 [3.5.0]: https://github.com/shardlab/discordrb/releases/tag/v3.5.0
 
 [View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.4.2..v3.5.0)
