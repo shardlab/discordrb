@@ -8014,8 +8014,8 @@ server icon and server name in a stylish way. <code>nil</code> if the widget is 
       <pre class="code"><span class="info file"># File 'lib/discordrb/data/server.rb', line 345</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_widget_banner_url'>widget_banner_url</span><span class='lparen'>(</span><span class='id identifier rubyid_style'>style</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_update_data'>update_data</span> <span class='kw'>if</span> <span class='ivar'>@embed_enabled</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='ivar'>@embed_enabled</span>
+  <span class='id identifier rubyid_update_data'>update_data</span> <span class='kw'>if</span> <span class='ivar'>@widget_enabled</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='ivar'>@widget_enabled</span>
 
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_widget_url'><span class='object_link'><a href="API.html#widget_url-class_method" title="Discordrb::API.widget_url (method)">widget_url</a></span></span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_style'>style</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -8327,8 +8327,8 @@ stylish way. <code>nil</code> if the widget is not enabled.</p>
       <pre class="code"><span class="info file"># File 'lib/discordrb/data/server.rb', line 330</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_widget_url'>widget_url</span>
-  <span class='id identifier rubyid_update_data'>update_data</span> <span class='kw'>if</span> <span class='ivar'>@embed_enabled</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='ivar'>@embed_enabled</span>
+  <span class='id identifier rubyid_update_data'>update_data</span> <span class='kw'>if</span> <span class='ivar'>@widget_enabled</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='ivar'>@widget_enabled</span>
 
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_widget_url'><span class='object_link'><a href="API.html#widget_url-class_method" title="Discordrb::API.widget_url (method)">widget_url</a></span></span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -8342,7 +8342,7 @@ stylish way. <code>nil</code> if the widget is not enabled.</p>
 </div>
 
       <div id="footer">
-  Generated on Wed Oct 22 21:52:29 2025 by
+  Generated on Wed Oct 22 21:55:58 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.9).
 </div>
