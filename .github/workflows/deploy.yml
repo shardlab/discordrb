@@ -1,0 +1,41 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches: [main] # only deploy on merges to main
+    tags:
+      - "v*" # deploy when a release tag (e.g., v1.0.0) is created
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download YARD docs
+        uses: actions/download-artifact@v4
+        with:
+          name: docs
+          path: docs
+
+      - name: Determine deploy folder
+        id: set_folder
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "folder=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "folder=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          fi
+          echo "Deploying to folder: ${{ steps.set_folder.outputs.folder }}"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs
+          publish_branch: gh-pages
+          destination_dir: ${{ steps.set_folder.outputs.folder }}
+          keep_files: true
+          user_name: "GitHub Actions"
+          user_email: "ci-build@shardlab.dev"

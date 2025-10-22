@@ -18,9 +18,10 @@ module Discordrb::Events
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>, nil] A collection of components to attach to the message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @return [Discordrb::Message] the message that was sent
-    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components)
+    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+      channel.send_message(content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
     # The same as {#send_message}, but yields a {Webhooks::Embed} for easy building of embedded content inside a block.
@@ -32,11 +33,12 @@ module Discordrb::Events
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>, nil] A collection of components to attach to the message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @yield [embed] Yields the embed to allow for easy building inside a block.
     # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
     # @return [Message] The resulting message.
-    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, &block)
-      channel.send_embed(message, embed, attachments, tts, allowed_mentions, message_reference, components, &block)
+    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0, &block)
+      channel.send_embed(message, embed, attachments, tts, allowed_mentions, message_reference, components, flags, &block)
     end
 
     # Sends a temporary message to the channel this message was sent in, right now.
@@ -47,8 +49,15 @@ module Discordrb::Events
     # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param components [View, Array<Hash>, nil] A collection of components to attach to the message.
-    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, components = nil)
-      channel.send_temporary_message(content, timeout, tts, embed, attachments, allowed_mentions, components)
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, components = nil, flags = 0)
+      channel.send_temporary_message(content, timeout, tts, embed, attachments, allowed_mentions, components, flags)
+    end
+
+    # Sends a message to the channel this message was sent in, right now.
+    # @see Channel#send_message!
+    def send_message!(...)
+      channel.send_message!(...)
     end
 
     # Adds a string to be sent after the event has finished execution. Avoids problems with rate limiting because only
@@ -84,6 +93,9 @@ module Discordrb::Events
     alias_method :send, :send_message
     alias_method :respond, :send_message
     alias_method :send_temp, :send_temporary_message
+
+    alias_method :send!, :send_message!
+    alias_method :respond!, :send_message!
   end
 
   # Event raised when a text message is sent to a channel
@@ -124,6 +136,7 @@ module Discordrb::Events
     #   @see Channel#server
     delegate :server, to: :channel
 
+    # @!visibility private
     def initialize(message, bot)
       @bot = bot
       @message = message
@@ -226,7 +239,9 @@ module Discordrb::Events
             a == e
           end
         end,
-        matches_all(@attributes[:from], event.author) do |a, e|
+        matches_all(@attributes[:from], event.message) do |a, e|
+          # Resolve the author in the block in order to prevent resolving the author even when the attribute is `nil`
+          e = e.author
           case a
           when String
             a == e.name
@@ -247,9 +262,18 @@ module Discordrb::Events
             match ? (e == match[0]) : false
           end
         end,
+        matches_all(@attributes[:type] || @attributes[:message_type], event.message.type) do |a, e|
+          case a
+          when String, Symbol
+            Discordrb::Message::TYPES[a.to_sym] == e
+          when Integer
+            a == e
+          end
+        end,
         matches_all(@attributes[:after], event.timestamp) { |a, e| a > e },
         matches_all(@attributes[:before], event.timestamp) { |a, e| a < e },
-        matches_all(@attributes[:private], event.channel.private?) { |a, e| !e == !a }
+        matches_all(@attributes[:private], event.channel.private?) { |a, e| !e == !a },
+        matches_all(@attributes[:server], event.server) { |a, e| a&.resolve_id == e&.resolve_id }
       ].reduce(true, &:&)
     end
 
@@ -282,10 +306,14 @@ module Discordrb::Events
     # @return [Integer] the ID associated with this event
     attr_reader :id
 
+    # @return [Server, nil] the server associated with this event
+    attr_reader :server
+
     # @!visibility private
     def initialize(data, bot)
       @id = data['id'].to_i
       @channel = bot.channel(data['channel_id'].to_i)
+      @server = @channel.server
       @saved_message = ''
       @bot = bot
     end
@@ -311,6 +339,9 @@ module Discordrb::Events
           else
             a == e
           end
+        end,
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a&.resolve_id == e&.resolve_id
         end
       ].reduce(true, &:&)
     end

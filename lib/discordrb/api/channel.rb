@@ -18,8 +18,8 @@ module Discordrb::API::Channel
 
   # Update a channel's data
   # https://discord.com/developers/docs/resources/channel#modify-channel
-  def update(token, channel_id, name, topic, position, bitrate, user_limit, nsfw, permission_overwrites = nil, parent_id = nil, rate_limit_per_user = nil, reason = nil)
-    data = { name: name, position: position, topic: topic, bitrate: bitrate, user_limit: user_limit, nsfw: nsfw, parent_id: parent_id, rate_limit_per_user: rate_limit_per_user }
+  def update(token, channel_id, name, topic, position, bitrate, user_limit, nsfw, permission_overwrites = nil, parent_id = nil, rate_limit_per_user = nil, reason = nil, archived = nil, auto_archive_duration = nil, locked = nil, invitable = nil, flags = nil, applied_tags = nil)
+    data = { name: name, position: position, topic: topic, bitrate: bitrate, user_limit: user_limit, nsfw: nsfw, parent_id: parent_id, rate_limit_per_user: rate_limit_per_user, archived: archived, auto_archive_duration: auto_archive_duration, locked: locked, invitable: invitable, flags: flags, applied_tags: applied_tags }
     data[:permission_overwrites] = permission_overwrites unless permission_overwrites.nil?
     Discordrb::API.request(
       :channels_cid,
@@ -75,8 +75,8 @@ module Discordrb::API::Channel
   # https://discord.com/developers/docs/resources/channel#create-message
   # @param attachments [Array<File>, nil] Attachments to use with `attachment://` in embeds. See
   #   https://discord.com/developers/docs/resources/channel#create-message-using-attachments-within-embeds
-  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a }
+  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil, enforce_nonce = false)
+    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags, enforce_nonce: enforce_nonce }
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h
              { **files, payload_json: body.to_json }
@@ -117,13 +117,13 @@ module Discordrb::API::Channel
 
   # Edit a message
   # https://discord.com/developers/docs/resources/channel#edit-message
-  def edit_message(token, channel_id, message_id, message, mentions = [], embeds = nil, components = nil)
+  def edit_message(token, channel_id, message_id, message, mentions = [], embeds = nil, components = nil, flags = nil)
     Discordrb::API.request(
       :channels_cid_messages_mid,
       channel_id,
       :patch,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}",
-      { content: message, mentions: mentions, embeds: embeds, components: components }.to_json,
+      { content: message, allowed_mentions: mentions, embeds: embeds, components: components, flags: flags }.reject { |_, v| v == :undef }.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -139,6 +139,18 @@ module Discordrb::API::Channel
       "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}",
       Authorization: token,
       'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Crosspost a message
+  # https://discord.com/developers/docs/resources/message#crosspost-message
+  def crosspost_message(token, channel_id, message_id)
+    Discordrb::API.request(
+      :channels_cid_messages_mid,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/#{message_id}/crosspost",
+      Authorization: token
     )
   end
 
@@ -307,25 +319,26 @@ module Discordrb::API::Channel
   end
 
   # Get a list of pinned messages in a channel
-  # https://discord.com/developers/docs/resources/channel#get-pinned-messages
-  def pinned_messages(token, channel_id)
+  # https://discord.com/developers/docs/resources/message#get-channel-pins
+  def pinned_messages(token, channel_id, limit = 50, before = nil)
+    query = URI.encode_www_form({ limit: limit, before: before }.compact)
     Discordrb::API.request(
       :channels_cid_pins,
       channel_id,
       :get,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/pins",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/pins?#{query}",
       Authorization: token
     )
   end
 
   # Pin a message
-  # https://discord.com/developers/docs/resources/channel#add-pinned-channel-message
+  # https://discord.com/developers/docs/resources/message#pin-message
   def pin_message(token, channel_id, message_id, reason = nil)
     Discordrb::API.request(
       :channels_cid_pins_mid,
       channel_id,
       :put,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/pins/#{message_id}",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/pins/#{message_id}",
       nil,
       Authorization: token,
       'X-Audit-Log-Reason': reason
@@ -333,13 +346,13 @@ module Discordrb::API::Channel
   end
 
   # Unpin a message
-  # https://discord.com/developers/docs/resources/channel#delete-pinned-channel-message
+  # https://discord.com/developers/docs/resources/message#unpin-message
   def unpin_message(token, channel_id, message_id, reason = nil)
     Discordrb::API.request(
       :channels_cid_pins_mid,
       channel_id,
       :delete,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/pins/#{message_id}",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages/pins/#{message_id}",
       Authorization: token,
       'X-Audit-Log-Reason': reason
     )
@@ -594,6 +607,31 @@ module Discordrb::API::Channel
       :get,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/users/@me/threads/archived/private?#{query}",
       Authorization: token
+    )
+  end
+
+  # Start a thread in a forum or media channel.
+  # https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
+  def start_thread_in_forum_or_media_channel(token, channel_id, name, message, attachments = nil, rate_limit_per_user = nil, auto_archive_duration = nil, applied_tags = [], reason = nil)
+    body = { name: name, message: message, rate_limit_per_user: rate_limit_per_user, auto_archive_duration: auto_archive_duration, applied_tags: applied_tags }.compact
+
+    body = if attachments
+             files = [*0...attachments.size].zip(attachments).to_h
+             { **files, payload_json: body.to_json }
+           else
+             body.to_json
+           end
+
+    headers = { Authorization: token, 'X-Audit-Log-Reason': reason }
+    headers[:content_type] = :json unless attachments
+
+    Discordrb::API.request(
+      :channels_cid_threads,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/threads",
+      body,
+      headers
     )
   end
 end

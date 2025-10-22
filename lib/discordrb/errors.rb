@@ -73,7 +73,7 @@ module Discordrb
           if (errs = sub_err['_errors'])
             "#{key}: #{errs.map { |e| e['message'] }.join(' ')}"
           elsif sub_err['message'] || sub_err['code']
-            "#{sub_err['code'] ? "#{sub_err['code']}: " : nil}#{err_msg}"
+            "#{"#{sub_err['code']}: " if sub_err['code']}#{err_msg}"
           elsif sub_err.is_a? String
             sub_err
           else
@@ -99,7 +99,7 @@ module Discordrb
     # @param code [Integer] The code to check
     # @return [Class] the error class for the given code
     def self.error_class_for(code)
-      @code_classes[code] || UnknownError
+      @code_classes[code] || Code(code)
     end
 
     # Used when Discord doesn't provide a more specific code
@@ -173,6 +173,9 @@ module Discordrb
 
     # Unauthorized
     Unauthorized = Unauthorised = Code(40_001)
+
+    # Unable to bulk ban any users
+    UnableToBulkBanUsers = Code(500_000)
 
     # Missing Access
     MissingAccess = Code(50_001)

@@ -64,7 +64,7 @@ module Discordrb
     attr_reader :rate_limit_per_user
     alias_method :slowmode_rate, :rate_limit_per_user
 
-    # @return [Integer, nil] An approximate count of messages sent in a thread. Stops counting at 50.
+    # @return [Integer, nil] An approximate count of messages sent in a thread, excluding deleted messages.
     attr_reader :message_count
 
     # @return [Integer, nil] An approximate count of members in a thread. Stops counting at 50.
@@ -72,6 +72,7 @@ module Discordrb
 
     # @return [true, false, nil] Whether or not this thread is archived.
     attr_reader :archived
+    alias_method :archived?, :archived
 
     # @return [Integer, nil] How long after the last message before a thread is automatically archived.
     attr_reader :auto_archive_duration
@@ -89,9 +90,13 @@ module Discordrb
     # @return [Integer, nil] Member flags for this thread, used for notifications.
     attr_reader :member_flags
 
-    # @return [true, false] For private threads, determines whether non-moderators can add other non-moderators to
+    # @return [true, false, nil] For private threads, determines whether non-moderators can add other non-moderators to
     #   a thread.
     attr_reader :invitable
+    alias_method :invitable?, :invitable
+
+    # @return [Time, nil] The time at when the last pinned message was pinned in this channel.
+    attr_reader :last_pin_timestamp
 
     # @return [true, false] whether or not this channel is a PM or group channel.
     def private?
@@ -158,6 +163,7 @@ module Discordrb
         @member_flags = member['flags']
       end
 
+      process_last_pin_timestamp(data['last_pin_timestamp'])
       process_permission_overwrites(data['permission_overwrites'])
     end
 
@@ -428,9 +434,10 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @return [Message] the message that was sent.
-    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference, components)
+    def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+      @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
     alias_method :send, :send_message
@@ -444,8 +451,9 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil)
-      @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference, components)
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+      @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
 
     # Convenience method to send a message with an embed.
@@ -461,22 +469,68 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
     # @yield [embed] Yields the embed to allow for easy building inside a block.
     # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
     # @return [Message] The resulting message.
-    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil)
+    def send_embed(message = '', embed = nil, attachments = nil, tts = false, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       embed ||= Discordrb::Webhooks::Embed.new
       view = Discordrb::Webhooks::View.new
 
       yield(embed, view) if block_given?
 
-      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a)
+      send_message(message, tts, embed, attachments, allowed_mentions, message_reference, components || view.to_a, flags)
+    end
+
+    # Send a message to this channel.
+    # @example This sends a silent message with an embed.
+    #   channel.send_message!(content: 'Hi <@171764626755813376>', flags: :suppress_notifications) do |builder|
+    #     builder.add_embed do |embed|
+    #       embed.title = 'The Ruby logo'
+    #       embed.image = Discordrb::Webhooks::EmbedImage.new(url: 'https://www.ruby-lang.org/images/header-ruby-logo.png')
+    #     end
+    #   end
+    # @param content [String] The content of the message. Should not be longer than 2000 characters or it will result in an error.
+    # @param timeout [Float, nil] The amount of time in seconds after which the message sent will be deleted, or `nil` if the message should not be deleted.
+    # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
+    # @param embeds [Array<Hash, Webhooks::Embed>] The embeds that should be attached to the message.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, nil] Mentions that are allowed to ping on this message.
+    # @param reference [Message, String, Integer, Hash, nil] The optional message, or message ID, to reply to or forward.
+    # @param components [View, Array<#to_h>] Interaction components to associate with this message.
+    # @param flags [Integer, Symbol, Array<Symbol, Integer>] Flags for this message. Currently only `:suppress_embeds` (1 << 2), `:suppress_notifications` (1 << 12), and `:uikit_components` (1 << 15) can be set.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables sending content and embeds.
+    # @param nonce [nil, String, Integer, false] The 25 character nonce that should be used when sending this message.
+    # @param enforce_nonce [true, false] Whether the provided nonce should be enforced and used for message de-duplication.
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the builder overwrite method data.
+    # @yieldparam view [Webhooks::View] An optional component builder. Arguments passed to the builder overwrite method data.
+    # @return [Message, nil] The resulting message that was created, or `nil` if the `timeout` parameter was set to a non `nil` value.
+    def send_message!(content: '', timeout: nil, tts: false, embeds: [], attachments: nil, allowed_mentions: nil, reference: nil, components: nil, flags: 0, has_components: false, nonce: nil, enforce_nonce: false)
+      builder = Discordrb::Webhooks::Builder.new
+      view = Discordrb::Webhooks::View.new
+
+      builder.tts = tts
+      builder.content = content
+      embeds&.each { |embed| builder << embed }
+      builder.allowed_mentions = allowed_mentions
+
+      yield(builder, view) if block_given?
+
+      flags = Array(flags).map { |flag| Discordrb::Message::FLAGS[flag] || flag }.reduce(&:|)
+      flags |= (1 << 15) if has_components
+      builder = builder.to_json_hash
+
+      if timeout
+        @bot.send_temporary_message(@id, builder[:content], timeout, builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce)
+      else
+        @bot.send_message(@id, builder[:content], builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce)
+      end
     end
 
     # Sends multiple messages to a channel
     # @param content [Array<String>] The messages to send.
     def send_multiple(content)
-      content.each { |e| send_message(e) }
+      content.each { |text| send_message!(content: text) }
     end
 
     # Splits a message into chunks whose length is at most the Discord character limit, then sends them individually.
@@ -594,6 +648,7 @@ module Discordrb
     # @!visibility private
     def update_from(other)
       @name = other.name
+      @type = other.type
       @position = other.position
       @topic = other.topic
       @recipients = other.recipients
@@ -603,6 +658,13 @@ module Discordrb
       @nsfw = other.nsfw
       @parent_id = other.parent_id
       @rate_limit_per_user = other.rate_limit_per_user
+      @archived = other.archived?
+      @auto_archive_duration = other.auto_archive_duration
+      @archive_timestamp = other.archive_timestamp
+      @locked = other.locked?
+      @invitable = other.invitable?
+      @message_count = other.message_count
+      @last_pin_timestamp = other.last_pin_timestamp
     end
 
     # The list of users currently in this channel. For a voice channel, it will return all the members currently
@@ -656,11 +718,27 @@ module Discordrb
 
     alias_method :message, :load_message
 
-    # Requests all pinned messages in a channel.
-    # @return [Array<Message>] the received messages.
-    def pins
-      msgs = API::Channel.pinned_messages(@bot.token, @id)
-      JSON.parse(msgs).map { |msg| Message.new(msg, @bot) }
+    # Requests the pinned messages in a channel.
+    # @param limit [Integer, nil] the limit of how many pinned messages to retrieve. `nil` will return all the pinned messages.
+    # @return [Array<Message>] the messages pinned in the channel.
+    def pins(limit: 50)
+      get_pins = proc do |fetch_limit, before = nil|
+        resp = API::Channel.pinned_messages(@bot.token, @id, fetch_limit, before&.iso8601)
+        JSON.parse(resp)['items'].map { |pin| Message.new(pin['message'].merge({ 'pinned_at' => pin['pinned_at'] }), @bot) }
+      end
+
+      # Can be done without pagination.
+      return get_pins.call(limit) if limit && limit <= 50
+
+      paginator = Paginator.new(limit, :down) do |last_page|
+        if last_page && last_page.count < 50
+          []
+        else
+          get_pins.call(50, last_page&.last&.pinned_at)
+        end
+      end
+
+      paginator.to_a
     end
 
     # Delete the last N messages on this channel.
@@ -856,6 +934,43 @@ module Discordrb
       Channel.new(JSON.parse(data), @bot, @server)
     end
 
+    # Start a thread in a forum or media channel.
+    # @param name [String] The name of the forum post to create.
+    # @param auto_archive_duration [Integer, nil] How long before the post is automatically archived.
+    # @param rate_limit_per_user [Integer, nil] The slowmode rate of the forum post to create.
+    # @param tags [Array<#resolve_id>, nil] The tags of the forum channel to apply onto the forum post.
+    # @param content [String, nil] The content of the forum post's starter message.
+    # @param embeds [Array<Hash, Webhooks::Embed>, nil] The embeds that should be attached to the forum post's starter message.
+    # @param allowed_mentions [Hash, Discordrb::AllowedMentions, nil] Mentions that are allowed to ping on this forum post's starter message.
+    # @param components [Webhooks::View, Array<#to_h>, nil] The interaction components to associate with this forum post's starter message.
+    # @param stickers [Array<#resolve_id>, nil] The stickers to include in the forum post's starter message.
+    # @param attachments [Array<File>, nil] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param flags [Integer, Symbol, Array<Symbol, Integer>, nil] The flags to set on the forum post's starter message. Currently only `:suppress_embeds` (1 << 2), `:suppress_notifications` (1 << 12), and `:uikit_components` (1 << 15) can be set.
+    # @param has_components [true, false] Whether the starter message for this forum post includes any V2 components. Enabling this disables sending content and embeds.
+    # @param reason [String, nil] The reason for creating this forum post.
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the builder overwrite method data.
+    # @yieldparam view [Webhooks::View] An optional component builder. Arguments passed to the builder overwrite method data.
+    # @return [Message] the starter message of the forum post. The forum post that was created can be accessed via {Message#thread}.
+    def start_forum_thread(name:, auto_archive_duration: nil, rate_limit_per_user: nil, tags: nil, content: nil, embeds: nil, allowed_mentions: nil, components: nil, stickers: nil, attachments: nil, flags: nil, has_components: false, reason: nil)
+      builder = Discordrb::Webhooks::Builder.new
+      view = Discordrb::Webhooks::View.new
+
+      builder.content = content
+      embeds&.each { |embed| builder << embed }
+      builder.allowed_mentions = allowed_mentions
+
+      yield(builder, view) if block_given?
+
+      flags = Array(flags).map { |flag| Discordrb::Message::FLAGS[flag] || flag }.reduce(&:|)
+      flags |= (1 << 15) if has_components
+      builder = builder.to_json_hash
+
+      message = { content: builder[:content], embeds: builder[:embeds], allowed_mentions: builder[:allowed_mentions], components: components&.to_a || view.to_a, sticker_ids: stickers&.map(&:resolve_id), flags: flags }
+      response = JSON.parse(API::Channel.start_thread_in_forum_or_media_channel(@bot.token, @id, name, message.compact, attachments, rate_limit_per_user, auto_archive_duration, tags&.map(&:resolve_id), reason))
+
+      Message.new(response['message'].merge!('channel_id' => response['id'], 'thread' => response), @bot)
+    end
+
     # @!group Threads
 
     # Join this thread.
@@ -915,6 +1030,14 @@ module Discordrb
       @recipients.delete(recipient)
     end
 
+    # Set the last pin timestamp of a channel.
+    # @param time [String, nil] the time of the last pinned message in the channel
+    # @note For internal use only
+    # @!visibility private
+    def process_last_pin_timestamp(time)
+      @last_pin_timestamp = time ? Time.parse(time) : time
+    end
+
     # Updates the cached data with new data
     # @note For internal use only
     # @!visibility private
@@ -941,8 +1064,10 @@ module Discordrb
 
     private
 
+    # rubocop:disable Lint/UselessConstantScoping
     # For bulk_delete checking
     TWO_WEEKS = 86_400 * 14
+    # rubocop:enable Lint/UselessConstantScoping
 
     # Deletes a list of messages on this channel using bulk delete.
     def bulk_delete(ids, strict = false, reason = nil)
@@ -965,7 +1090,7 @@ module Discordrb
     def update_channel_data(new_data)
       new_nsfw = new_data[:nsfw].is_a?(TrueClass) || new_data[:nsfw].is_a?(FalseClass) ? new_data[:nsfw] : @nsfw
       # send permission_overwrite only when explicitly set
-      overwrites = new_data[:permission_overwrites] ? new_data[:permission_overwrites].map { |_, v| v.to_hash } : nil
+      overwrites = new_data[:permission_overwrites] ? new_data[:permission_overwrites].map(&:to_hash) : nil
       response = JSON.parse(API::Channel.update(@bot.token, @id,
                                                 new_data[:name] || @name,
                                                 new_data[:topic] || @topic,
