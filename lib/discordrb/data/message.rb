@@ -292,7 +292,7 @@ module Discordrb
       new_embeds = (new_embeds.instance_of?(Array) ? new_embeds.map(&:to_hash) : [new_embeds&.to_hash]).compact
       new_components = new_components.to_a
 
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embeds, new_components, flags)
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, :undef, new_embeds, new_components, flags)
       Message.new(JSON.parse(response), @bot)
     end
 
