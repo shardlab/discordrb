@@ -13,7 +13,14 @@ jobs:
       contents: write # IMPORTANT: this permission is required for `rake release` to push the release tag
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: ruby
 
       - name: Validate tag matches gemspecs
         run: |
