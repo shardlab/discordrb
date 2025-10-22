@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Discordrb::Events::ChannelSelectEvent
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Discordrb::Events::ChannelSelectEvent";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Events.html" title="Discordrb::Events (module)">Events</a></span></span>
+     &raquo; 
+    <span class="title">ChannelSelectEvent</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Discordrb::Events::ChannelSelectEvent
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName"><span class='object_link'><a href="ComponentEvent.html" title="Discordrb::Events::ComponentEvent (class)">ComponentEvent</a></span></span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next"><span class='object_link'><a href="Event.html" title="Discordrb::Events::Event (class)">Event</a></span></li>
+          
+            <li class="next"><span class='object_link'><a href="InteractionCreateEvent.html" title="Discordrb::Events::InteractionCreateEvent (class)">InteractionCreateEvent</a></span></li>
+          
+            <li class="next"><span class='object_link'><a href="ComponentEvent.html" title="Discordrb::Events::ComponentEvent (class)">ComponentEvent</a></span></li>
+          
+            <li class="next">Discordrb::Events::ChannelSelectEvent</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/discordrb/events/interactions.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>Event for when a user interacts with a select channel component.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#values-instance_method" title="#values (instance method)">#<strong>values</strong>  &#x21d2; Array&lt;Channel&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Selected values.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+  
+  
+  <h3 class="inherited">Attributes inherited from <span class='object_link'><a href="ComponentEvent.html" title="Discordrb::Events::ComponentEvent (class)">ComponentEvent</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ComponentEvent.html#custom_id-instance_method" title="Discordrb::Events::ComponentEvent#custom_id (method)">#custom_id</a></span>, <span class='object_link'><a href="ComponentEvent.html#message-instance_method" title="Discordrb::Events::ComponentEvent#message (method)">#message</a></span></p>
+
+  
+  
+  <h3 class="inherited">Attributes inherited from <span class='object_link'><a href="InteractionCreateEvent.html" title="Discordrb::Events::InteractionCreateEvent (class)">InteractionCreateEvent</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="InteractionCreateEvent.html#channel-instance_method" title="Discordrb::Events::InteractionCreateEvent#channel (method)">#channel</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#channel_id-instance_method" title="Discordrb::Events::InteractionCreateEvent#channel_id (method)">#channel_id</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#interaction-instance_method" title="Discordrb::Events::InteractionCreateEvent#interaction (method)">#interaction</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#server-instance_method" title="Discordrb::Events::InteractionCreateEvent#server (method)">#server</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#server_id-instance_method" title="Discordrb::Events::InteractionCreateEvent#server_id (method)">#server_id</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#type-instance_method" title="Discordrb::Events::InteractionCreateEvent#type (method)">#type</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#user-instance_method" title="Discordrb::Events::InteractionCreateEvent#user (method)">#user</a></span></p>
+
+  
+  
+  <h3 class="inherited">Attributes inherited from <span class='object_link'><a href="Event.html" title="Discordrb::Events::Event (class)">Event</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Event.html#bot-instance_method" title="Discordrb::Events::Event#bot (method)">#bot</a></span></p>
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h2>Method Summary</h2>
+  
+  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="InteractionCreateEvent.html" title="Discordrb::Events::InteractionCreateEvent (class)">InteractionCreateEvent</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="InteractionCreateEvent.html#defer-instance_method" title="Discordrb::Events::InteractionCreateEvent#defer (method)">#defer</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#defer_update-instance_method" title="Discordrb::Events::InteractionCreateEvent#defer_update (method)">#defer_update</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#delete_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#delete_message (method)">#delete_message</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#delete_response-instance_method" title="Discordrb::Events::InteractionCreateEvent#delete_response (method)">#delete_response</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#edit_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#edit_message (method)">#edit_message</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#edit_response-instance_method" title="Discordrb::Events::InteractionCreateEvent#edit_response (method)">#edit_response</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#get_component-instance_method" title="Discordrb::Events::InteractionCreateEvent#get_component (method)">#get_component</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#respond-instance_method" title="Discordrb::Events::InteractionCreateEvent#respond (method)">#respond</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#send_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#send_message (method)">#send_message</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#show_modal-instance_method" title="Discordrb::Events::InteractionCreateEvent#show_modal (method)">#show_modal</a></span>, <span class='object_link'><a href="InteractionCreateEvent.html#update_message-instance_method" title="Discordrb::Events::InteractionCreateEvent#update_message (method)">#update_message</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="values-instance_method">
+  
+    #<strong>values</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="../Channel.html" title="Discordrb::Channel (class)">Channel</a></span>&gt;</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns Selected values.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../Channel.html" title="Discordrb::Channel (class)">Channel</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Selected values.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+465
+466
+467</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 465</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_values'>values</span>
+  <span class='ivar'>@values</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+</div>
+
+      <div id="footer">
+  Generated on Wed Oct 22 14:04:28 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.9).
+</div>
+
+    </div>
+  </body>
+</html>
