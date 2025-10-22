@@ -3,6 +3,7 @@
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'discordrb/version'
+require 'discordrb/webhooks/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'discordrb'
@@ -33,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rest-client', '>= 2.0.0'
   spec.add_dependency 'websocket-client-simple', '>= 0.9.0'
 
-  spec.add_dependency 'discordrb-webhooks', '~> 3.5.0'
+  spec.add_dependency 'discordrb-webhooks', "~> #{Discordrb::Webhooks::VERSION}"
 
   spec.required_ruby_version = '>= 3.2'
 

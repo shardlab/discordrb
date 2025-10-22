@@ -1,0 +1,45 @@
+name: Publish RubyGems + GitHub Packages
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate tag matches gemspecs
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          for gemspec in *.gemspec; do
+            GEM_VERSION=$(ruby -e "puts Gem::Specification.load('$gemspec').version")
+            if [ "$TAG_VERSION" != "$GEM_VERSION" ]; then
+              echo "::error::$gemspec version ($GEM_VERSION) does not match tag ($TAG_VERSION)"
+              exit 1
+            fi
+          done
+
+      - uses: rubygems/release-gem@v1
+        with:
+          api_key: ${{ secrets.RUBYGEMS_API_KEY }}
+
+      - name: Publish to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OWNER=$(echo "${GITHUB_REPOSITORY}" | cut -d'/' -f1)
+          for gemspec in *.gemspec; do
+            gem build "$gemspec"
+          done
+          for gem_file in *.gem; do
+            echo "Publishing $gem_file to GitHub Packages..."
+            gem push "$gem_file" \
+              --key github \
+              --host "https://rubygems.pkg.github.com/${OWNER}" || true
+          done
