@@ -76,8 +76,3 @@ jobs:
         run: |
           mkdir -p docs
           bundle exec yard --output-dir docs
-      - name: Upload documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: docs
-          path: docs
