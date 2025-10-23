@@ -22,7 +22,7 @@ module Discordrb
     # @return [String] the application's name.
     attr_reader :name
 
-    # @return [String] the application's description.
+    # @return [String] the application's description, or an empty string if the application doesn't have a description.
     attr_reader :description
 
     # @return [Array<String>] the application's origins permitted to use RPC.
@@ -41,10 +41,6 @@ module Discordrb
     # @return [true, false] if users other than the bot owner can add the bot to servers.
     attr_reader :public
     alias_method :public?, :public
-
-    # @return [Profile] the user object of the associated bot for this application.
-    attr_reader :profile
-    alias_method :bot, :profile
 
     # @return [true, false] whether the bot requires the full OAuth2 code grant in order to join servers.
     attr_reader :requires_code_grant
@@ -145,6 +141,13 @@ module Discordrb
       API.app_cover_url(@id, @cover_image_id, format) if @cover_image_id
     end
 
+    # Get the role connection metadata records associated with this application.
+    # @return [Array<RoleConnectionMetadata>] the role connection metadata records associated with this application.
+    def role_connection_metadata_records
+      response = API::Application.get_application_role_connection_metadata_records(@bot.token, @id)
+      JSON.parse(response).map { |role_connection| RoleConnectionMetadata.new(role_connection, @bot) }
+    end
+
     # Delete an integration types config for the application.
     # @param type [Integer, String] the type of the integration type to remove.
     def delete_integration_type(type)
@@ -170,7 +173,7 @@ module Discordrb
     # Update the flags of this application. I recommend using this instead of {#flags=}.
     # @param add [Array<Integer, Symbol> Integer, Symbol] The flags to add to the application.
     # @param remove [Array<Integer, Symbol> Integer, Symbol] The flags to remove from the application.
-    # @note The flags will be removed first, then added. Only limited intent flags can be updated.
+    # @note The flags will be removed first, and then added. Only limited intent flags can be updated.
     def update_flags(add: 0, remove: 0)
       flags = lambda do |value|
         [*value].map { |flag_bit| FLAGS[flag_bit] || flag_bit.to_i }.reduce(&:|)
@@ -217,45 +220,45 @@ module Discordrb
     end
 
     # Set the description for the application.
-    # @param description [String] The new description for the application.
+    # @param description [String, nil] The new description for the application.
     def description=(description)
-      update_application(description: description)
-    end
-
-    # Set the URL that webhook events will be sent to for the application.
-    # @param events_url [String] The new URL that webhook events will be sent to.
-    def webhook_events_url=(events_url)
-      update_application(event_webhooks_url: events_url)
-    end
-
-    # Set the custom installation URL for the application.
-    # @param install_url [String] The new default custom authorization URL for the application.
-    def custom_install_url=(install_url)
-      update_application(custom_install_url: install_url)
+      update_application(description: description || '')
     end
 
     # Set the webhook events that the applicaton is subscribed to.
-    # @param event_types [Array<String>] The new webhook event types to subscribe to for the application.
+    # @param event_types [Array<String>] The new webhook event types to subscribe to.
     def webhook_event_types=(event_types)
       update_application(event_webhooks_types: event_types)
     end
 
     # Set the status of webhook events for the application.
-    # @param events_status [Integer] The new status of webhook events. `1` for disabled, `2` for enabled.
+    # @param events_status [Integer] The new webhook events status for the application.
     def webhook_events_status=(events_status)
       update_application(event_webhooks_status: events_status)
     end
 
+    # Set the URL that webhook events will be sent to for the application.
+    # @param events_url [String, nil] The new URL that webhook events will be sent to.
+    def webhook_events_url=(events_url)
+      update_application(event_webhooks_url: events_url || '')
+    end
+
+    # Set the custom installation URL for the application.
+    # @param install_url [String, nil] The new default custom authorization URL for the application.
+    def custom_install_url=(install_url)
+      update_application(custom_install_url: install_url || '')
+    end
+
     # Set the endpoint that will reccieve interaction over HTTP POST for the application.
-    # @param endpoint_url [String] The new endpoint. Must pass security validation or the request will fail.
+    # @param endpoint_url [String, nil] The new interactions endpoint. Must pass security validation.
     def interactions_endpoint_url=(endpoint_url)
-      update_application(interactions_endpoint_url: endpoint_url)
+      update_application(interactions_endpoint_url: endpoint_url || '')
     end
 
     # Set the role connection verification URL for the application.
-    # @param verification_url [String] The new role connections verification URL for the application.
+    # @param verification_url [String, nil] The new role connections verification URL for the application.
     def role_connections_verification_url=(verification_url)
-      update_application(role_connections_verification_url: verification_url)
+      update_application(role_connections_verification_url: verification_url || '')
     end
 
     # The inspect method is overwritten to give more useful output.
@@ -301,7 +304,6 @@ module Discordrb
       @owner = new_data['owner'] ? @bot.ensure_user(new_data['owner']) : nil
 
       @public = new_data['bot_public']
-      @profile = new_data['bot'] ? Profile.new(new_data['bot'], @bot) : nil
       @requires_code_grant = new_data['bot_require_code_grant']
       @terms_of_service_url = new_data['terms_of_service_url']
       @privacy_policy_url = new_data['privacy_policy_url']
