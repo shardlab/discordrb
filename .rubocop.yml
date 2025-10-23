@@ -109,6 +109,10 @@ Style/RedundantReturn:
 Style/RedundantParentheses:
   Enabled: false
 
+Style:/EndOfLine:
+  Enabled: true
+  EnforcedStyle: lf
+
 # This will probably be a breaking change, but should happen
 Style/ReturnNilInPredicateMethodDefinition:
   Enabled: false
@@ -116,3 +120,11 @@ Style/ReturnNilInPredicateMethodDefinition:
 # FIXME: Disabled due to breaking tests, should probably refactor the code instead
 Style/SafeNavigation:
   Enabled: false
+
+Style/Documentation:
+  Enabled: true
+
+Naming/PredicateMethod:
+  Enabled: true
+  AllowedMethods:
+    - id_compare
