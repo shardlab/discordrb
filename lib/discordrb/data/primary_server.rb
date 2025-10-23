@@ -52,7 +52,7 @@ module Discordrb
     def ==(other)
       return false unless other.is_a?(PrimaryServer)
 
-      Discordrb.id_compare(other.server_id, @server_id)
+      Discordrb.id_compare?(other.server_id, @server_id)
     end
 
     alias_method :eql?, :==
