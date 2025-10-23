@@ -424,15 +424,17 @@ module Discordrb
     # Returns the list of users who reacted with a certain reaction.
     # @param reaction [String, #to_reaction] the unicode emoji or {Emoji}
     # @param limit [Integer] the limit of how many users to retrieve. `nil` will return all users
+    # @param type [Integer, Symbol] the type of reaction to get. See {Reaction::TYPES}
     # @example Get all the users that reacted with a thumbs up.
     #   thumbs_up_reactions = message.reacted_with("\u{1F44D}")
     # @return [Array<User>] the users who used this reaction
-    def reacted_with(reaction, limit: 100)
+    def reacted_with(reaction, limit: 100, type: :normal)
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
       reaction = reaction.to_s if reaction.respond_to?(:to_s)
+      type = Reaction::TYPES[type] || type
 
       get_reactions = proc do |fetch_limit, after_id = nil|
-        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit)
+        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit, type)
         JSON.parse(resp).map { |d| User.new(d, @bot) }
       end
 
@@ -479,6 +481,13 @@ module Discordrb
     # Removes all reactions from this message.
     def delete_all_reactions
       API::Channel.delete_all_reactions(@bot.token, @channel.id, @id)
+    end
+
+    # Removes all reactions for a single emoji.
+    # @param reaction [String, #to_reaction] the reaction to remove.
+    def delete_all_reactions_for_emoji(reaction)
+      reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
+      API::Channel.delete_all_emoji_reactions(@bot.token, @channel.id, @id, reaction.to_s)
     end
 
     # The inspect method is overwritten to give more useful output
