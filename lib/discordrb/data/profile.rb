@@ -19,8 +19,8 @@ module Discordrb
     alias_method :name=, :username=
 
     # Changes the bot's avatar.
-    # @param avatar [String, #read] A JPG file to be used as the avatar, either
-    #  something readable (e.g. File Object) or as a data URL.
+    # @param avatar [String, File, #read, nil] A file to be used as the avatar, either
+    #  something readable (e.g. File Object) or a data URI.
     def avatar=(avatar)
       if avatar.respond_to?(:read)
         update_profile_data(avatar: Discordrb.encode64(avatar))
@@ -29,12 +29,24 @@ module Discordrb
       end
     end
 
+    # Changes the bot's banner.
+    # @param banner [String, File, #read, nil] A file to be used as the banner, either
+    #  something readable (e.g. File Object) or a data URI.
+    def banner=(banner)
+      if banner.respond_to?(:read)
+        update_profile_data(banner: Discordrb.encode64(banner))
+      else
+        update_profile_data(banner: banner)
+      end
+    end
+
     # Updates the cached profile data with the new one.
     # @note For internal use only.
     # @!visibility private
     def update_data(new_data)
-      @username = new_data[:username] || @username
-      @avatar_id = new_data[:avatar_id] || @avatar_id
+      @username = new_data['username']
+      @avatar_id = new_data['avatar']
+      @banner_id = new_data['banner']
     end
 
     # The inspect method is overwritten to give more useful output
@@ -44,12 +56,12 @@ module Discordrb
 
     private
 
+    # @!visibility private
     def update_profile_data(new_data)
-      API::User.update_profile(@bot.token,
-                               nil, nil,
-                               new_data[:username] || @username,
-                               new_data.key?(:avatar) ? new_data[:avatar] : @avatar_id)
-      update_data(new_data)
+      update_data(JSON.parse(API::User.update_current_user(@bot.token,
+                                                           new_data[:username] || :undef,
+                                                           new_data.key?(:avatar) ? new_data[:avatar] : :undef,
+                                                           new_data.key?(:banner) ? new_data[:banner] : :undef)))
     end
   end
 end
