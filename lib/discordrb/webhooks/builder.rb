@@ -5,7 +5,7 @@ require 'discordrb/webhooks/embeds'
 module Discordrb::Webhooks
   # A class that acts as a builder for a webhook message object.
   class Builder
-    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil)
+    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil, poll: nil)
       @content = content
       @username = username
       @avatar_url = avatar_url
@@ -13,6 +13,7 @@ module Discordrb::Webhooks
       @file = file
       @embeds = embeds
       @allowed_mentions = allowed_mentions
+      @poll = poll
     end
 
     # The content of the message. May be 2000 characters long at most.
@@ -65,6 +66,25 @@ module Discordrb::Webhooks
       embed
     end
 
+    # Convenience method to add a poll using a block-style builder pattern
+    # @example Add a poll to a message
+    #   builder.add_poll do |poll|
+    #     poll.question = 'Best Fruit?'
+    #     poll.multiselect = false
+    #     poll.duration = Time.now + (86_400 * 3)
+    #     poll.answer(name: "Apple", emoji: "🍎")
+    #     poll.answer(name: "Orange", emoji: "🍊")
+    #     poll.answer(name: "Pomelo", emoji: "🍈")
+    #   end
+    # @param poll [Poll::Builder, Poll, Hash, nil] The poll to start the building process with, or nil if one should be created anew.
+    # @return [Poll::Builder, Poll] The created poll.
+    def add_poll(poll = nil)
+      poll ||= Discordrb::Poll::Builder.new
+      yield(poll) if block_given?
+      @poll = poll
+      poll
+    end
+
     # @return [File, nil] the file attached to this message.
     attr_reader :file
 
@@ -75,6 +95,10 @@ module Discordrb::Webhooks
     # @see https://discord.com/developers/docs/resources/channel#allowed-mentions-object
     attr_accessor :allowed_mentions
 
+    # @return [Poll, Poll::Builder, Hash, nil] The poll attached to this message.
+    # @see https://discord.com/developers/docs/resources/poll#poll-create-request-object
+    attr_accessor :poll
+
     # @return [Hash] a hash representation of the created message, for JSON format.
     def to_json_hash
       {
@@ -83,7 +107,8 @@ module Discordrb::Webhooks
         avatar_url: @avatar_url,
         tts: @tts,
         embeds: @embeds.map(&:to_hash),
-        allowed_mentions: @allowed_mentions&.to_hash
+        allowed_mentions: @allowed_mentions&.to_hash,
+        poll: @poll&.to_h
       }
     end
 
