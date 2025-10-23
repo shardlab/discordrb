@@ -284,7 +284,7 @@ module Discordrb::API::Application
       nil,
       :patch,
       "#{Discordrb::API.api_base}/applications/@me",
-      { custom_install_url: custom_install_url, description: description, role_connections_verification_url: role_connections_verification_url, install_params: install_params, integration_types_config: integration_types_config, flags: flags, interactions_endpoint_url: interactions_endpoint_url, tags: tags, event_webhooks_url: event_webhooks_url, event_webhooks_status: event_webhooks_status, event_webhooks_types: event_webhooks_types, icon: icon, cover_image: cover_image }.reject { |_, value| value == :undef }.to_json,
+      { custom_install_url:, description:, role_connections_verification_url:, install_params:, integration_types_config:, flags:, interactions_endpoint_url:, tags:, event_webhooks_url:, event_webhooks_status:, event_webhooks_types:, icon:, cover_image: }.reject { |_, value| value == :undef }.to_json,
       Authorization: token,
       content_type: :json
     )
