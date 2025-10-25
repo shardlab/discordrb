@@ -85,7 +85,9 @@ module Discordrb
         case component
         when Components::Button
           component
-        when Components::ActionRow
+        when Components::Section
+          component.button
+        when Components::ActionRow, Components::Container
           component.buttons
         end
       end
