@@ -38,6 +38,9 @@ module Discordrb
     # @return [Integer] The ID of the channel this interaction originates from.
     attr_reader :channel_id
 
+    # @return [Channel] The channel where this interaction originates from.
+    attr_reader :channel
+
     # @return [Integer] The ID of the application associated with this interaction.
     attr_reader :application_id
 
@@ -87,7 +90,7 @@ module Discordrb
       @data = data['data']
       @server_id = data['guild_id']&.to_i
       @channel_id = data['channel_id']&.to_i
-      bot.ensure_channel(data['channel']) if data['channel']
+      @channel = bot.ensure_channel(data['channel']) if data['channel']
       @user = if data['member']
                 data['member']['guild_id'] = @server_id
                 Discordrb::Member.new(data['member'], bot.servers[@server_id], bot)
@@ -302,12 +305,6 @@ module Discordrb
     #   does not have the `bot` scope.
     def server
       @bot.server(@server_id)
-    end
-
-    # @return [Channel, nil]
-    # @raise [Errors::NoPermission] When the bot is not in the server associated with this interaction.
-    def channel
-      @bot.channel(@channel_id)
     end
 
     # @return [Hash, nil] Returns the button that triggered this interaction if applicable, otherwise nil
