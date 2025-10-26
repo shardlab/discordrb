@@ -5,6 +5,8 @@ require 'discordrb/webhooks'
 module Discordrb
   # Base class for interaction objects.
   class Interaction
+    include IDObject
+
     # Interaction types.
     # @see https://discord.com/developers/docs/interactions/slash-commands#interaction-interactiontype
     TYPES = {
@@ -35,9 +37,6 @@ module Discordrb
 
     # @return [Integer] The ID of the channel this interaction originates from.
     attr_reader :channel_id
-
-    # @return [Integer] The ID of this interaction.
-    attr_reader :id
 
     # @return [Integer] The ID of the application associated with this interaction.
     attr_reader :application_id
@@ -102,7 +101,7 @@ module Discordrb
       @server_locale = data['guild_locale']
       @context = data['context']
       @max_attachment_size = data['attachment_size_limit']
-      @integration_owners = data['authorizing_integration_owners'].to_h { |key, value| [key.to_i, value.to_i] }
+      @integration_owners = data['authorizing_integration_owners']&.to_h { |key, value| [key.to_i, value.to_i] }
       @server_features = data['guild'] ? data['guild']['features']&.map { |feature| feature.downcase.to_sym } : []
     end
 
