@@ -10,7 +10,7 @@ bot = Discordrb::Bot.new(token: ENV.fetch('DISCORDRB_TOKEN'))
 
 bot.message do |event|
   if event.message.content == 'CREATE'
-    event.channel.send_message('Create webhook in this channel')
+    event.channel.send_message!(content: 'Create webhook in this channel')
 
     wh = event.channel.create_webhook('Test', nil, 'Creation webhook')
     wh.execute(content: '[CREATE]')

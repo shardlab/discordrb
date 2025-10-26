@@ -9,6 +9,7 @@ module Discordrb::Events
 
     delegate :name, :server, :owner, :parent_channel, :thread_metadata, to: :thread
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
       @thread = data.is_a?(Discordrb::Channel) ? data : bot.channel(data['id'].to_i)
@@ -71,6 +72,7 @@ module Discordrb::Events
 
     delegate :name, :server, :owner, :parent_channel, :thread_metadata, to: :thread
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
       @server = bot.server(data['guild_id'].to_i) if data['guild_id']
