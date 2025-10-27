@@ -165,6 +165,8 @@ module Discordrb
       @unicode_emoji = other.unicode_emoji
       @secondary_colour = other.secondary_colour
       @tertiary_colour = other.tertiary_colour
+      @mentionable = other.mentionable?
+      @tags = other.tags
     end
 
     # Updates the data cache from a hash containing data
@@ -179,14 +181,16 @@ module Discordrb
       @mentionable = new_data['mentionable']
       @flags = new_data['flags']
       colours = new_data['colors']
+      @managed = new_data['managed']
       @permissions.bits = new_data['permissions'].to_i
       @colour = ColourRGB.new(colours['primary_color'])
+      @tags = Tags.new(new_data['tags']) if new_data['tags']
       @secondary_color = ColourRGB.new(colours['secondary_color']) if colours['secondary_color']
       @tertiary_colour = ColourRGB.new(colours['tertiary_color']) if colours['tertiary_color']
     end
 
     # Sets the role name to something new
-    # @param name [String] The name that should be set
+    # @param name [String, nil] The name that should be set.
     def name=(name)
       update_role_data(name: name)
     end
@@ -206,7 +210,7 @@ module Discordrb
     # Sets the primary role colour to something new.
     # @param colour [ColourRGB, Integer, nil] The new colour.
     def colour=(colour)
-      update_colors(primary: colour)
+      update_colours(primary: colour)
     end
 
     # Sets the secondary role colour to something new.
@@ -293,7 +297,7 @@ module Discordrb
     # https://discord.com/developers/docs/topics/permissions.
     # @example Remove all permissions from a role
     #   role.packed = 0
-    # @param packed [Integer] A bitfield with the desired permissions value.
+    # @param packed [Integer, nil] A bitfield with the desired permissions value.
     # @param update_perms [true, false] Whether the internal data should also be updated. This should always be true
     #   when calling externally.
     def packed=(packed, update_perms = true)
@@ -327,13 +331,72 @@ module Discordrb
       @server.delete_role(@id)
     end
 
+    # Move the position of this role in the roles list.
+    # @example This will move the role 2 places above the `@everyone` role.
+    #   role.move(bottom: true, offset: 2)
+    # @example This will move the role above the `@muted` role.
+    #   role.move(above: 257017090932867072)
+    # @example This will move the role 3 spots below the `No Images` role.
+    #   roles.move(below: 254077236989132800, offset: -3)
+    # @param bottom [true, false, nil] Whether to move the roles to the bottom of the role list.
+    # @param top [true, false, nil] Whether to move this role to the highest possible position.
+    # @param above [Integer, String, Role, nil] The role that this role should be moved above.
+    # @param below [Integer, String, Role, nil] The role that this role should be moved below.
+    # @param offset [Integer, nil] The number of roles to offset the new position by. A positive number will
+    #   move the role above, and a negative number will move the role below. This parameter is relative and
+    #   calculated after the `bottom`, `top`, `above`, and `below` parameters.
+    # @param reason [String, nil] The audit log reason to show for moving the role.
+    # @return [Integer] the new position of the role.
+    def move(bottom: nil, top: nil, above: nil, below: nil, offset: 0, reason: nil)
+      # rubocop:disable Style/IfUnlessModifier
+      if [bottom, top, above, below].count(&:itself) > 1
+        raise ArgumentError, "'bottom', 'top', 'above', and 'below' are mutually exclusive"
+      end
+
+      if (above || below) && !(target = @server.role(above || below))
+        raise ArgumentError, "The provided 'above' or 'below' options are not valid'"
+      end
+
+      if (below && target&.id == @server.id) || (@id == target&.id)
+        raise ArgumentError, 'The target role that was provded is not valid'
+      end
+
+      # rubocop:enable Style/IfUnlessModifier
+      roles = @server.roles.uniq.sort_by { |role| [role.position, role.id] }
+
+      # Make sure we remove the current role.
+      myself = roles.rindex(self).tap { |index| roles.delete_at(index) }
+
+      index = if bottom
+                1
+              elsif below
+                roles.rindex(target)
+              elsif above
+                roles.rindex(target) + 1
+              elsif top
+                roles.rindex(@server.bot.sort_roles.last)
+              else
+                myself
+              end
+
+      roles.insert([index + (offset || 0), 1].max, self)
+
+      roles = roles.map.with_index do |role, new_position|
+        { id: role.resolve_id, position: new_position }
+      end
+
+      @server.update_role_positions(roles, reason: reason)
+      @position
+    end
+
     # A rich interface designed to make working with role colours simple.
     # @param primary [ColourRGB, Integer, nil] The new primary/base colour of this role, or nil to clear the primary colour.
     # @param secondary [ColourRGB, Integer, nil] The new secondary colour of this role, or nil to clear the secondary colour.
     # @param tertiary [ColourRGB, Integer,nil] The new tertiary colour of this role, or nil to clear the tertiary colour.
     # @param holographic [true, false] Whether to apply or remove the holographic style to the role colour, overriding any other
     #   arguments that were passed. Using this argument is recommended over passing individual colours.
-    def update_colours(primary: :undef, secondary: :undef, tertiary: :undef, holographic: :undef)
+    # @param reason [String, nil] The audit log reason to show for updating the role's colours.
+    def update_colours(primary: :undef, secondary: :undef, tertiary: :undef, holographic: :undef, reason: nil)
       colours = {
         primary_color: (primary == :undef ? @colour : primary)&.to_i,
         tertiary_color: (tertiary == :undef ? @tertiary_colour : tertiary)&.to_i,
@@ -349,7 +412,7 @@ module Discordrb
       # Only set the tertiary_color to `nil` if holographic is explicitly set to false.
       colours[:tertiary_color] = nil if holographic.is_a?(FalseClass) && holographic?
 
-      update_role_data(colours: holographic == true ? holographic_colours : colours)
+      update_role_data(colours: holographic == true ? holographic_colours : colours, reason: reason)
     end
 
     alias_method :update_colors, :update_colours
@@ -361,14 +424,15 @@ module Discordrb
 
     private
 
+    # @!visibility private
     def update_role_data(new_data)
       update_data(JSON.parse(API::Server.update_role(@bot.token, @server.id, @id,
-                                                     new_data[:name] || @name,
+                                                     new_data.key?(:name) ? new_data[:name] : :undef,
                                                      :undef,
                                                      new_data.key?(:hoist) ? new_data[:hoist] : :undef,
                                                      new_data.key?(:mentionable) ? new_data[:mentionable] : :undef,
-                                                     new_data[:permissions] || @permissions.bits,
-                                                     nil,
+                                                     new_data.key?(:permissions) ? new_data[:permissions] : :undef,
+                                                     new_data[:reason],
                                                      new_data.key?(:icon) ? new_data[:icon] : :undef,
                                                      new_data.key?(:unicode_emoji) ? new_data[:unicode_emoji] : :undef,
                                                      new_data.key?(:colours) ? new_data[:colours] : :undef)))

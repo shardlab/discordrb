@@ -410,11 +410,11 @@ module Discordrb
     # Updates the positions of all roles on the server
     # @note For internal use only
     # @!visibility private
-    def update_role_positions(role_positions)
-      response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions))
+    def update_role_positions(role_positions, reason: nil)
+      response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions, reason))
       response.each do |data|
         updated_role = Role.new(data, @bot, self)
-        role(updated_role.id).update_from(updated_role)
+        role(updated_role.id)&.update_from(updated_role)
       end
     end
 
