@@ -666,17 +666,15 @@ of instancing a new Permissions object.</p>
 148
 149
 150
-151
-152</pre>
+151</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 147</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
-  <span class='comment'># rubocop:disable Lint/Void
-</span>  <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span>
-  <span class='comment'># rubocop:enable Lint/Void
-</span>  <span class='id identifier rubyid_bits'>bits</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_bits'>bits</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_bits'>bits</span> <span class='op'>==</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_bits'>bits</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -803,9 +801,9 @@ of instancing a new Permissions object.</p>
 </div>
 
       <div id="footer">
-  Generated on Thu Oct 23 15:13:38 2025 by
+  Generated on Tue Oct 28 14:29:49 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.37 (ruby-3.3.9).
+  0.9.37 (ruby-3.3.10).
 </div>
 
     </div>
