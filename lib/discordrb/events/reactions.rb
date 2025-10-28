@@ -14,6 +14,7 @@ module Discordrb::Events
     # @!visibility private
     attr_reader :message_id
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -113,6 +114,7 @@ module Discordrb::Events
     # @!visibility private
     attr_reader :message_id
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 

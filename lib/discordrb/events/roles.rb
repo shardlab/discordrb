@@ -17,6 +17,7 @@ module Discordrb::Events
     #   @see Role#name
     delegate :name, to: :role
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -54,6 +55,7 @@ module Discordrb::Events
     # @return [Server] the server on which a role got deleted.
     attr_reader :server
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
