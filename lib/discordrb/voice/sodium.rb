@@ -129,7 +129,7 @@ module Discordrb::Voice
     # @param nonce [String] 24-byte nonce
     # @param add [String] optional associated data
     # @return [String] decrypted plaintext
-    def self.decrypt(ciphertext, nonce, add, key)
+    def self.decrypt(ciphertext, add, nonce, key)
       raise ArgumentError, 'Invalid key size' unless key.bytesize == KEY_BYTES
       raise ArgumentError, 'Invalid nonce size' unless nonce.bytesize == NONCE_BYTES
 
@@ -143,7 +143,7 @@ module Discordrb::Voice
         m_ptr, mlen_p,
         nil,
         c_ptr, ciphertext.bytesize,
-        ad_ptr, ad.bytesize,
+        ad_ptr, add.bytesize,
         FFI::MemoryPointer.from_string(nonce),
         FFI::MemoryPointer.from_string(key)
       )
