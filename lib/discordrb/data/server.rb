@@ -910,6 +910,19 @@ module Discordrb
       process_emoji(new_data['emojis'])
     end
 
+    # Updates the threads for this server's cache
+    # @note For internal use only
+    # @!visibility private
+    def clear_threads(ids = nil)
+      if ids.nil?
+        @channels.reject!(&:thread?)
+        @channels_by_id.delete_if { |_, channel| channel.thread? }
+      else
+        @channels.reject! { |channel| channel.thread? && ids.any?(channel.parent&.id) }
+        @channels_by_id.delete_if { |_, channel| channel.thread? && ids.any?(channel.parent&.id) }
+      end
+    end
+
     # The inspect method is overwritten to give more useful output
     def inspect
       "<Server name=#{@name} id=#{@id} large=#{@large} region=#{@region} owner=#{@owner} afk_channel_id=#{@afk_channel_id} system_channel_id=#{@system_channel_id} afk_timeout=#{@afk_timeout}>"

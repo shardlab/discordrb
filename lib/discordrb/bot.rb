@@ -1654,8 +1654,22 @@ module Discordrb
       when :THREAD_LIST_SYNC
         server = self.server(data['guild_id'].to_i)
 
-        data['members'].map { |member| ensure_thread_member(member) }
-        data['threads'].map { |channel| ensure_channel(channel, server) }
+        # The `channel_ids` field has two meanings:
+        #
+        # 1. If the field is not present, the thread list is being synced for the whole server.
+        #
+        # 2. We are syncing the threads for a specific channel. This can happen when gaining access
+        #    to a channel.
+        if (ids = data['channel_ids']&.map(&:to_i))
+          @channels.delete_if { |_, channel| channel.thread? && ids.any?(channel.parent&.id) }
+          server&.clear_threads(ids)
+        else
+          @channels.delete_if { |_, channel| channel.server == server && channel.thread? }
+          server&.clear_threads
+        end
+
+        data['members'].each { |member| ensure_thread_member(member) }
+        data['threads'].each { |channel| ensure_channel(channel, server) }
 
         # raise ThreadListSyncEvent?
       when :THREAD_MEMBER_UPDATE
