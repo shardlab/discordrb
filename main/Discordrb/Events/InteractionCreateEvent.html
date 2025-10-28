@@ -179,6 +179,33 @@
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#context-instance_method" title="#context (instance method)">#<strong>context</strong>  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#interaction-instance_method" title="#interaction (instance method)">#<strong>interaction</strong>  &#x21d2; Interaction </a>
     
 
@@ -289,6 +316,33 @@
   <span class="summary_signature">
     
       <a href="#user-instance_method" title="#user (instance method)">#<strong>user</strong>  &#x21d2; User </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#user_locale-instance_method" title="#user_locale (instance method)">#<strong>user_locale</strong>  &#x21d2; String </a>
     
 
     
@@ -631,12 +685,12 @@
       <pre class="lines">
 
 
-30</pre>
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 36</span>
 
-<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
+<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='symbol'>:user_locale</span><span class='comma'>,</span> <span class='symbol'>:context</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
     </td>
   </tr>
 </table>
@@ -688,12 +742,69 @@
       <pre class="lines">
 
 
-30</pre>
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 36</span>
 
-<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
+<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='symbol'>:user_locale</span><span class='comma'>,</span> <span class='symbol'>:context</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="context-instance_method">
+  
+    #<strong>context</strong>  &#x21d2; <tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="../Interaction.html#context-instance_method" title="Discordrb::Interaction#context (method)">Interaction#context</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+36</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 36</span>
+
+<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='symbol'>:user_locale</span><span class='comma'>,</span> <span class='symbol'>:context</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
     </td>
   </tr>
 </table>
@@ -804,12 +915,12 @@
       <pre class="lines">
 
 
-30</pre>
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 36</span>
 
-<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
+<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='symbol'>:user_locale</span><span class='comma'>,</span> <span class='symbol'>:context</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
     </td>
   </tr>
 </table>
@@ -861,12 +972,12 @@
       <pre class="lines">
 
 
-30</pre>
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 36</span>
 
-<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
+<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='symbol'>:user_locale</span><span class='comma'>,</span> <span class='symbol'>:context</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
     </td>
   </tr>
 </table>
@@ -918,12 +1029,12 @@
       <pre class="lines">
 
 
-30</pre>
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 36</span>
 
-<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
+<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='symbol'>:user_locale</span><span class='comma'>,</span> <span class='symbol'>:context</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
     </td>
   </tr>
 </table>
@@ -975,12 +1086,69 @@
       <pre class="lines">
 
 
-30</pre>
+36</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 36</span>
 
-<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
+<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='symbol'>:user_locale</span><span class='comma'>,</span> <span class='symbol'>:context</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="user_locale-instance_method">
+  
+    #<strong>user_locale</strong>  &#x21d2; <tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="../Interaction.html#user_locale-instance_method" title="Discordrb::Interaction#user_locale (method)">Interaction#user_locale</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+36</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 36</span>
+
+<span class='id identifier rubyid_delegate'>delegate</span> <span class='symbol'>:type</span><span class='comma'>,</span> <span class='symbol'>:server</span><span class='comma'>,</span> <span class='symbol'>:server_id</span><span class='comma'>,</span> <span class='symbol'>:channel</span><span class='comma'>,</span> <span class='symbol'>:channel_id</span><span class='comma'>,</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='symbol'>:user_locale</span><span class='comma'>,</span> <span class='symbol'>:context</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='symbol'>:interaction</span></pre>
     </td>
   </tr>
 </table>
@@ -1024,12 +1192,12 @@
       <pre class="lines">
 
 
-44
-45
-46</pre>
+50
+51
+52</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 50</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_defer'>defer</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_defer'>defer</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
@@ -1070,12 +1238,12 @@
       <pre class="lines">
 
 
-84
-85
-86</pre>
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 84</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_defer_update'>defer_update</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_defer_update'>defer_update</span>
@@ -1116,12 +1284,12 @@
       <pre class="lines">
 
 
-79
-80
-81</pre>
+85
+86
+87</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 79</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 85</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_message'>delete_message</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_delete_message'>delete_message</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
@@ -1162,12 +1330,12 @@
       <pre class="lines">
 
 
-64
-65
-66</pre>
+70
+71
+72</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 70</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_response'>delete_response</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_delete_response'>delete_response</span>
@@ -1208,12 +1376,12 @@
       <pre class="lines">
 
 
-74
-75
-76</pre>
+80
+81
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 80</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_message'>edit_message</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_edit_message'>edit_message</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
@@ -1254,12 +1422,12 @@
       <pre class="lines">
 
 
-59
-60
-61</pre>
+65
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_response'>edit_response</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_edit_response'>edit_response</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
@@ -1300,12 +1468,12 @@
       <pre class="lines">
 
 
-89
-90
-91</pre>
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 89</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 95</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_component'>get_component</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_get_component'>get_component</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
@@ -1346,12 +1514,12 @@
       <pre class="lines">
 
 
-39
-40
-41</pre>
+45
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_respond'>respond</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_respond'>respond</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
@@ -1392,12 +1560,12 @@
       <pre class="lines">
 
 
-69
-70
-71</pre>
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 69</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
@@ -1438,12 +1606,12 @@
       <pre class="lines">
 
 
-54
-55
-56</pre>
+60
+61
+62</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 54</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 60</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_show_modal'>show_modal</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_show_modal'>show_modal</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
@@ -1484,12 +1652,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+55
+56
+57</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 55</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_message'>update_message</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
   <span class='ivar'>@interaction</span><span class='period'>.</span><span class='id identifier rubyid_update_message'>update_message</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
@@ -1504,7 +1672,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Oct 28 14:29:53 2025 by
+  Generated on Tue Oct 28 14:32:02 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.10).
 </div>
