@@ -1245,7 +1245,7 @@ that.</p>
 <span class='kw'>def</span> <span class='id identifier rubyid_add_role'>add_role</span><span class='lparen'>(</span><span class='id identifier rubyid_role'>role</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_role_ids'>role_ids</span> <span class='op'>=</span> <span class='id identifier rubyid_role_id_array'>role_id_array</span><span class='lparen'>(</span><span class='id identifier rubyid_role'>role</span><span class='rparen'>)</span>
 
-  <span class='kw'>if</span> <span class='id identifier rubyid_role_ids'>role_ids</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span><span class='period'>.</span><span class='id identifier rubyid_one?'>one?</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_role_ids'>role_ids</span><span class='period'>.</span><span class='id identifier rubyid_one?'>one?</span>
     <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Server.html" title="Discordrb::API::Server (module)">Server</a></span></span><span class='period'>.</span><span class='id identifier rubyid_add_member_role'><span class='object_link'><a href="API/Server.html#add_member_role-class_method" title="Discordrb::API::Server.add_member_role (method)">add_member_role</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='ivar'>@user</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_role_ids'>role_ids</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span><span class='rparen'>)</span>
   <span class='kw'>else</span>
     <span class='id identifier rubyid_old_role_ids'>old_role_ids</span> <span class='op'>=</span> <span class='id identifier rubyid_resolve_role_ids'>resolve_role_ids</span>
@@ -2651,7 +2651,7 @@ that.</p>
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_role'>remove_role</span><span class='lparen'>(</span><span class='id identifier rubyid_role'>role</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_role_ids'>role_ids</span> <span class='op'>=</span> <span class='id identifier rubyid_role_id_array'>role_id_array</span><span class='lparen'>(</span><span class='id identifier rubyid_role'>role</span><span class='rparen'>)</span>
 
-  <span class='kw'>if</span> <span class='id identifier rubyid_role_ids'>role_ids</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span><span class='period'>.</span><span class='id identifier rubyid_one?'>one?</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_role_ids'>role_ids</span><span class='period'>.</span><span class='id identifier rubyid_one?'>one?</span>
     <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Server.html" title="Discordrb::API::Server (module)">Server</a></span></span><span class='period'>.</span><span class='id identifier rubyid_remove_member_role'><span class='object_link'><a href="API/Server.html#remove_member_role-class_method" title="Discordrb::API::Server.remove_member_role (method)">remove_member_role</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='ivar'>@user</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_role_ids'>role_ids</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span><span class='rparen'>)</span>
   <span class='kw'>else</span>
     <span class='id identifier rubyid_old_role_ids'>old_role_ids</span> <span class='op'>=</span> <span class='id identifier rubyid_resolve_role_ids'>resolve_role_ids</span>
@@ -3856,7 +3856,7 @@ Nicknames for other users.</p>
 </div>
 
       <div id="footer">
-  Generated on Tue Oct 28 14:31:58 2025 by
+  Generated on Tue Oct 28 19:09:44 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.10).
 </div>
