@@ -158,8 +158,12 @@ module Discordrb
       @mention_everyone = data['mention_everyone']
       @webhook_id = data['webhook_id']&.to_i
 
-      @referenced_message = Message.new(data['referenced_message'], bot) if data['referenced_message']
+      @referenced_message = Message.new(data['referenced_message'], @bot) if data['referenced_message']
       @message_reference = data['message_reference']
+
+      @timestamp = Time.parse(data['timestamp']) if data['timestamp']
+      @edited_timestamp = Time.parse(data['edited_timestamp']) if data['edited_timestamp']
+      @edited = !@edited_timestamp.nil?
 
       if data['author']
         if @webhook_id
@@ -171,48 +175,31 @@ module Discordrb
 
           # Turn the message user into a recipient - we can't use the channel recipient
           # directly because the bot may also send messages to the channel
-          @author = Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
+          @author = Recipient.new(bot.user(data['author']['id'].to_i), @channel, @bot)
         else
           @author_id = data['author']['id'].to_i
         end
       end
 
-      @timestamp = Time.parse(data['timestamp']) if data['timestamp']
-      @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
-      @edited = !@edited_timestamp.nil?
+      @reactions = data['reactions']&.map { |reaction| Reaction.new(reaction) } || []
 
-      @emoji = []
-
-      @reactions = []
-
-      data['reactions']&.each do |element|
-        @reactions << Reaction.new(element)
-      end
-
-      @mentions = []
-
-      data['mentions']&.each do |element|
-        @mentions << bot.ensure_user(element)
-      end
+      @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention) } || []
 
       @mention_roles = data['mention_roles']&.map(&:to_i) || []
 
-      @attachments = []
-      @attachments = data['attachments'].map { |e| Attachment.new(e, self, @bot) } if data['attachments']
+      @attachments = data['attachments']&.map { |attachment| Attachment.new(attachment, self, @bot) } || []
 
-      @embeds = []
-      @embeds = data['embeds'].map { |e| Embed.new(e, self) } if data['embeds']
+      @embeds = data['embeds']&.map { |embed| Embed.new(embed, self) } || []
 
-      @components = []
-      @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+      @components = data['components']&.map { |component_data| Components.from_data(component_data, @bot) } || []
 
       @flags = data['flags'] || 0
 
-      @thread = data['thread'] ? @bot.ensure_channel(data['thread']) : nil
+      @thread = @bot.ensure_channel(data['thread']) if data['thread']
 
-      @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
+      @pinned_at = Time.parse(data['pinned_at']) if data['pinned_at']
 
-      @call = data['call'] ? Call.new(data['call'], @bot) : nil
+      @call = Call.new(data['call'], @bot) if data['call']
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
     end
@@ -367,17 +354,20 @@ module Discordrb
 
     # @return [Array<Emoji>] the emotes that were used/mentioned in this message.
     def emoji
-      return if @content.nil?
-      return @emoji unless @emoji.empty?
+      return [] if @content.empty? || @content.nil?
 
-      @emoji = @bot.parse_mentions(@content).select { |el| el.is_a? Discordrb::Emoji }
+      @emoji ||= @bot.parse_mentions(@content).select { |mention| mention.is_a?(Discordrb::Emoji) }
     end
+
+    alias_method :emojis, :emoji
 
     # Check if any emoji were used in this message.
     # @return [true, false] whether or not any emoji were used
     def emoji?
-      emoji&.empty?
+      emoji.any?
     end
+
+    alias_method :emojis?, :emoji?
 
     # Check if any reactions were used in this message.
     # @return [true, false] whether or not this message has reactions
