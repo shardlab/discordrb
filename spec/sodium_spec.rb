@@ -9,7 +9,6 @@ describe Discordrb::Voice::Sodium do
   end
 
   describe Discordrb::Voice::XChaCha20AEAD do
-
     it 'encrypts round trip' do
       key = rand_bytes(Discordrb::Voice::XChaCha20AEAD::KEY_BYTES)
       nonce = rand_bytes(Discordrb::Voice::XChaCha20AEAD::NONCE_BYTES)
@@ -22,7 +21,7 @@ describe Discordrb::Voice::Sodium do
 
     describe '#decrypt' do
       it 'raises on invalid nonce length' do
-        key = rand_bytes(Discordrb::Voice::XChaCha20AEAD::KEY_BYTES)
+        rand_bytes(Discordrb::Voice::XChaCha20AEAD::KEY_BYTES)
         nonce = rand_bytes(Discordrb::Voice::XChaCha20AEAD::NONCE_BYTES - 1)
         expect { Discordrb::Voice::XChaCha20AEAD.decrypt(nonce, '') }.to raise_error(ArgumentError)
       end
