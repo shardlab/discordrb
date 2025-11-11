@@ -34,6 +34,7 @@ module Discordrb::Voice
 
     # Performs authenticated encryption using XChaCha20-Poly1305
     #
+    # @!macro [attach] crypto_aead_xchacha20poly1305_ietf_encrypt
     # @param c [FFI::Pointer] output buffer for ciphertext
     # @param clen_p [FFI::Pointer] output pointer for ciphertext length
     # @param m [FFI::Pointer] input message pointer
@@ -51,7 +52,7 @@ module Discordrb::Voice
     ], :int
 
     # Decrypts XChaCha20-Poly1305 AEAD-encrypted data
-    #
+    # @!macro [attach] crypto_aead_xchacha20poly1305_ietf_decrypt
     # @param m [FFI::Pointer] output buffer for decrypted message
     # @param mlen_p [FFI::Pointer] output pointer for decrypted length
     # @param nsec [FFI::Pointer, nil] (not used, must be nil)
