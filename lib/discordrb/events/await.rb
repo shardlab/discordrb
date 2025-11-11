@@ -25,7 +25,7 @@ module Discordrb::Events
     #   @see Await#attributes
     delegate :key, :type, :attributes, to: :await
 
-    # For internal use only
+    # @!visibility private
     def initialize(await, event, bot)
       @await = await
       @event = event

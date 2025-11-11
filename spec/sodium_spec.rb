@@ -2,41 +2,30 @@
 
 require 'discordrb/voice/sodium'
 
-describe Discordrb::Voice::SecretBox do
+describe Discordrb::Voice::Sodium do
   def rand_bytes(size)
     bytes = Array.new(size) { rand(256) }
     bytes.pack('C*')
   end
 
-  it 'encrypts round trip' do
-    key = rand_bytes(Discordrb::Voice::SecretBox::KEY_LENGTH)
-    nonce = rand_bytes(Discordrb::Voice::SecretBox::NONCE_BYTES)
-    message = rand_bytes(20)
+  describe Discordrb::Voice::XChaCha20AEAD do
 
-    secret_box = Discordrb::Voice::SecretBox.new(key)
-    ct = secret_box.box(nonce, message)
-    pt = secret_box.open(nonce, ct)
-    expect(pt).to eq message
-  end
+    it 'encrypts round trip' do
+      key = rand_bytes(Discordrb::Voice::XChaCha20AEAD::KEY_BYTES)
+      nonce = rand_bytes(Discordrb::Voice::XChaCha20AEAD::NONCE_BYTES)
+      message = rand_bytes(20)
 
-  it 'raises on invalid key length' do
-    key = rand_bytes(Discordrb::Voice::SecretBox::KEY_LENGTH - 1)
-    expect { Discordrb::Voice::SecretBox.new(key) }.to raise_error(Discordrb::Voice::SecretBox::LengthError)
-  end
-
-  describe '#box' do
-    it 'raises on invalid nonce length' do
-      key = rand_bytes(Discordrb::Voice::SecretBox::KEY_LENGTH)
-      nonce = rand_bytes(Discordrb::Voice::SecretBox::NONCE_BYTES - 1)
-      expect { Discordrb::Voice::SecretBox.new(key).box(nonce, '') }.to raise_error(Discordrb::Voice::SecretBox::LengthError)
+      ct = Discordrb::Voice::XChaCha20AEAD.encrypt(message, '', nonce, key)
+      pt = Discordrb::Voice::XChaCha20AEAD.decrypt(ct, '', nonce, key)
+      expect(pt).to eq message
     end
-  end
 
-  describe '#open' do
-    it 'raises on invalid nonce length' do
-      key = rand_bytes(Discordrb::Voice::SecretBox::KEY_LENGTH)
-      nonce = rand_bytes(Discordrb::Voice::SecretBox::NONCE_BYTES - 1)
-      expect { Discordrb::Voice::SecretBox.new(key).open(nonce, '') }.to raise_error(Discordrb::Voice::SecretBox::LengthError)
+    describe '#decrypt' do
+      it 'raises on invalid nonce length' do
+        key = rand_bytes(Discordrb::Voice::XChaCha20AEAD::KEY_BYTES)
+        nonce = rand_bytes(Discordrb::Voice::XChaCha20AEAD::NONCE_BYTES - 1)
+        expect { Discordrb::Voice::XChaCha20AEAD.decrypt(nonce, '') }.to raise_error(ArgumentError)
+      end
     end
   end
 end

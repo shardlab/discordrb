@@ -16,6 +16,7 @@ module Discordrb::Events
     # @return [Server] the server on which the event happened.
     attr_reader :server
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -28,11 +29,13 @@ module Discordrb::Events
 
     private
 
+    # @!visibility private
     def init_user(data, _)
       user_id = data['user']['id'].to_i
       @user = @server.member(user_id)
     end
 
+    # @!visibility private
     def init_roles(data, _)
       @roles = [@server.role(@server.id)]
       return unless data['roles']
@@ -72,7 +75,8 @@ module Discordrb::Events
   # Member is updated (roles added or deleted)
   # @see Discordrb::EventContainer#member_update
   class ServerMemberUpdateEvent < ServerMemberEvent
-    # Override init_user so we don't make requests all the time on large servers
+    # @!visibility private
+    # @note Override init_user so we don't make requests all the time on large servers
     def init_user(data, _)
       @user_id = data['user']['id']
     end
@@ -91,7 +95,8 @@ module Discordrb::Events
   # Member leaves
   # @see Discordrb::EventContainer#member_leave
   class ServerMemberDeleteEvent < ServerMemberEvent
-    # Override init_user to account for the deleted user on the server
+    # @!visibility private
+    # @note Override init_user to account for the deleted user on the server
     def init_user(data, bot)
       @user = Discordrb::User.new(data['user'], bot)
     end

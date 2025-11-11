@@ -14,7 +14,7 @@ bot.command(:exit, help_available: false) do |event|
   # able to shut your bot down whenever they wanted.
   break unless event.user.id == 66237334693085184 # Replace number with your ID
 
-  bot.send_message(event.channel.id, 'Bot is shutting down')
+  event.channel.send_message!(content: 'Bot is shutting down')
   exit
 end
 
