@@ -244,7 +244,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#url-instance_method" title="#url (instance method)">#<strong>url</strong>  &#x21d2; String </a>
+      <a href="#url-instance_method" title="#url (instance method)">#<strong>url</strong>(static: false)  &#x21d2; String </a>
     
 
     
@@ -517,7 +517,7 @@
       <div class="method_details first">
   <h3 class="signature first" id="url-instance_method">
   
-    #<strong>url</strong>  &#x21d2; <tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt> 
+    #<strong>url</strong>(static: false)  &#x21d2; <tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt> 
   
 
   
@@ -531,7 +531,29 @@
   </div>
 </div>
 <div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
   
+    <li>
+      
+        <span class='name'>static</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether to return the static URL of this
+nameplate instead of the animated URL.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
@@ -543,7 +565,7 @@
       
       
         &mdash;
-        <div class='inline'><p>CDN url of this nameplate.</p>
+        <div class='inline'><p>The CDN url of this nameplate.</p>
 </div>
       
     </li>
@@ -556,15 +578,15 @@
       <pre class="lines">
 
 
-40
-41
-42</pre>
+42
+43
+44</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/collectibles.rb', line 40</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/collectibles.rb', line 42</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_url'>url</span>
-  <span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_nameplate_url'><span class='object_link'><a href="../API.html#nameplate_url-class_method" title="Discordrb::API.nameplate_url (method)">nameplate_url</a></span></span><span class='lparen'>(</span><span class='ivar'>@asset</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_url'>url</span><span class='lparen'>(</span><span class='label'>static:</span> <span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_static'>static</span> <span class='op'>?</span> <span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_static_nameplate_url'><span class='object_link'><a href="../API.html#static_nameplate_url-class_method" title="Discordrb::API.static_nameplate_url (method)">static_nameplate_url</a></span></span><span class='lparen'>(</span><span class='ivar'>@asset</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_nameplate_url'><span class='object_link'><a href="../API.html#nameplate_url-class_method" title="Discordrb::API.nameplate_url (method)">nameplate_url</a></span></span><span class='lparen'>(</span><span class='ivar'>@asset</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -576,7 +598,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Nov 12 15:06:09 2025 by
+  Generated on Wed Nov 12 15:07:37 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.10).
 </div>
