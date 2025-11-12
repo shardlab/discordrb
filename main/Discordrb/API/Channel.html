@@ -525,7 +525,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#get_reactions-class_method" title="get_reactions (class method)">.<strong>get_reactions</strong>(token, channel_id, message_id, emoji, before_id, after_id, limit = 100)  &#x21d2; Object </a>
+      <a href="#get_reactions-class_method" title="get_reactions (class method)">.<strong>get_reactions</strong>(token, channel_id, message_id, emoji, before_id, after_id, limit = 100, type = 0)  &#x21d2; Object </a>
     
 
     
@@ -2216,7 +2216,7 @@
       <div class="method_details ">
   <h3 class="signature " id="get_reactions-class_method">
   
-    .<strong>get_reactions</strong>(token, channel_id, message_id, emoji, before_id, after_id, limit = 100)  &#x21d2; <tt>Object</tt> 
+    .<strong>get_reactions</strong>(token, channel_id, message_id, emoji, before_id, after_id, limit = 100, type = 0)  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -2254,9 +2254,9 @@
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/api/channel.rb', line 215</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_get_reactions'>get_reactions</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_channel_id'>channel_id</span><span class='comma'>,</span> <span class='id identifier rubyid_message_id'>message_id</span><span class='comma'>,</span> <span class='id identifier rubyid_emoji'>emoji</span><span class='comma'>,</span> <span class='id identifier rubyid_before_id'>before_id</span><span class='comma'>,</span> <span class='id identifier rubyid_after_id'>after_id</span><span class='comma'>,</span> <span class='id identifier rubyid_limit'>limit</span> <span class='op'>=</span> <span class='int'>100</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_get_reactions'>get_reactions</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='id identifier rubyid_channel_id'>channel_id</span><span class='comma'>,</span> <span class='id identifier rubyid_message_id'>message_id</span><span class='comma'>,</span> <span class='id identifier rubyid_emoji'>emoji</span><span class='comma'>,</span> <span class='id identifier rubyid_before_id'>before_id</span><span class='comma'>,</span> <span class='id identifier rubyid_after_id'>after_id</span><span class='comma'>,</span> <span class='id identifier rubyid_limit'>limit</span> <span class='op'>=</span> <span class='int'>100</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='int'>0</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_emoji'>emoji</span> <span class='op'>=</span> <span class='const'>URI</span><span class='period'>.</span><span class='id identifier rubyid_encode_www_form_component'>encode_www_form_component</span><span class='lparen'>(</span><span class='id identifier rubyid_emoji'>emoji</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_emoji'>emoji</span><span class='period'>.</span><span class='id identifier rubyid_ascii_only?'>ascii_only?</span>
-  <span class='id identifier rubyid_query_string'>query_string</span> <span class='op'>=</span> <span class='const'>URI</span><span class='period'>.</span><span class='id identifier rubyid_encode_www_form'>encode_www_form</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='label'>limit:</span> <span class='id identifier rubyid_limit'>limit</span> <span class='op'>||</span> <span class='int'>100</span><span class='comma'>,</span> <span class='label'>before:</span> <span class='id identifier rubyid_before_id'>before_id</span><span class='comma'>,</span> <span class='label'>after:</span> <span class='id identifier rubyid_after_id'>after_id</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_query_string'>query_string</span> <span class='op'>=</span> <span class='const'>URI</span><span class='period'>.</span><span class='id identifier rubyid_encode_www_form'>encode_www_form</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='label'>limit:</span> <span class='id identifier rubyid_limit'>limit</span> <span class='op'>||</span> <span class='int'>100</span><span class='comma'>,</span> <span class='label'>before:</span> <span class='id identifier rubyid_before_id'>before_id</span><span class='comma'>,</span> <span class='label'>after:</span> <span class='id identifier rubyid_after_id'>after_id</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='id identifier rubyid_type'>type</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../API.html" title="Discordrb::API (module)">API</a></span></span><span class='period'>.</span><span class='id identifier rubyid_request'><span class='object_link'><a href="../API.html#request-class_method" title="Discordrb::API.request (method)">request</a></span></span><span class='lparen'>(</span>
     <span class='symbol'>:channels_cid_messages_mid_reactions_emoji</span><span class='comma'>,</span>
     <span class='id identifier rubyid_channel_id'>channel_id</span><span class='comma'>,</span>
@@ -3690,7 +3690,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Nov 12 15:18:41 2025 by
+  Generated on Wed Nov 12 15:32:39 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.10).
 </div>
