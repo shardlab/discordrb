@@ -96,7 +96,7 @@ module Discordrb::Webhooks
 
       yield builder if block_given?
 
-      query = URI.encode_www_form({thread_id: }.compact)
+      query = URI.encode_www_form({ thread_id: }.compact)
       data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
       RestClient.patch(
         "#{@url}/messages/#{message_id}#{(query.empty? ? '' : "?#{query}")}",
