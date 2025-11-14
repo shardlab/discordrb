@@ -173,6 +173,11 @@ module Discordrb
           # directly because the bot may also send messages to the channel
           @author = Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
         else
+          # Cache the user-data to avoid making a network request in {Channel#history} contexts where the
+          # author has left the server. If the message was sent via the gateway in a guild channel, don't
+          # do anything because we already handle caching for gateway messages at the dispatch level.
+          @bot.ensure_user(data['author'], true) unless data['guild_id']
+
           @author_id = data['author']['id'].to_i
         end
       end
@@ -192,7 +197,7 @@ module Discordrb
       @mentions = []
 
       data['mentions']&.each do |element|
-        @mentions << bot.ensure_user(element)
+        @mentions << @bot.ensure_user(element, true)
       end
 
       @mention_roles = data['mention_roles']&.map(&:to_i) || []
@@ -435,7 +440,7 @@ module Discordrb
 
       get_reactions = proc do |fetch_limit, after_id = nil|
         resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit, type)
-        JSON.parse(resp).map { |d| User.new(d, @bot) }
+        JSON.parse(resp).map { |user_data| @bot.ensure_user(user_data, true) }
       end
 
       # Can be done without pagination

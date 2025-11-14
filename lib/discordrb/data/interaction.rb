@@ -76,7 +76,7 @@ module Discordrb
     # @return [Integer] The maximum number of bytes an attachment can have when responding to this interaction.
     attr_reader :max_attachment_size
 
-    # @return [Array<Symbol>] the features of the server where the interaction was initiated from.
+    # @return [Array<Symbol>] The features of the server where this interaction was initiated from.
     attr_reader :server_features
 
     # @!visibility private
@@ -95,7 +95,7 @@ module Discordrb
                 data['member']['guild_id'] = @server_id
                 Discordrb::Member.new(data['member'], bot.servers[@server_id], bot)
               else
-                bot.ensure_user(data['user'])
+                bot.ensure_user(data['user'], true)
               end
       @token = data['token']
       @version = data['version']

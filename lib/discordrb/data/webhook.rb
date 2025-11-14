@@ -50,7 +50,7 @@ module Discordrb
       return if @owner
 
       Discordrb::LOGGER.debug("Member with ID #{data['user']['id']} not cached (possibly left the server).")
-      @owner = @bot.ensure_user(data['user'])
+      @owner = @bot.ensure_user(data['user'], true)
     end
 
     # Sets the webhook's avatar.
