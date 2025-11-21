@@ -123,8 +123,3 @@ Style/SafeNavigation:
 
 Style/Documentation:
   Enabled: true
-
-Naming/PredicateMethod:
-  Enabled: true
-  AllowedMethods:
-    - id_compare

@@ -274,7 +274,7 @@ module Discordrb::Voice
       @seq = packet['seq'] if packet['seq']
 
       case packet['op']
-      when 2
+      when Discordrb::Voice::Opcodes::READY
         # Opcode 2 contains data to initialize the UDP connection
         @ws_data = packet['d']
 
@@ -285,15 +285,17 @@ module Discordrb::Voice
 
         @udp.connect(@ws_data['ip'], @port, @ssrc)
         @udp.send_discovery
-      when 4
+      when Discordrb::Voice::Opcodes::SESSION_DESCRIPTION
         # Opcode 4 sends the secret key used for encryption
         @ws_data = packet['d']
+
+        # Reset the sequence when starting a new session
         @seq = 0
 
         @ready = true
         @udp.secret_key = @ws_data['secret_key'].pack('C*')
         @udp.mode = @ws_data['mode']
-      when 8
+      when Discordrb::Voice::Opcodes::HELLO
         # Opcode 8 contains the heartbeat interval.
         @heartbeat_interval = packet['d']['heartbeat_interval']
         send_heartbeat
