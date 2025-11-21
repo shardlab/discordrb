@@ -92,9 +92,6 @@ module Discordrb
     # @return [Array<User>] the users that were mentioned in this message.
     attr_reader :mentions
 
-    # @return [Array<Role>] the roles that were mentioned in this message.
-    attr_reader :role_mentions
-
     # @return [Array<Attachment>] the files attached to this message.
     attr_reader :attachments
 
@@ -127,9 +124,6 @@ module Discordrb
     # @return [Integer] what the type of the message is
     attr_reader :type
 
-    # @return [Server, nil] the server in which this message was sent.
-    attr_reader :server
-
     # @return [Integer, nil] the webhook ID that sent this message, or `nil` if it wasn't sent through a webhook.
     attr_reader :webhook_id
 
@@ -151,9 +145,16 @@ module Discordrb
     # @return [Array<Snapshot>] the message snapshots included in this message.
     attr_reader :snapshots
 
+    # @return [RoleSubscriptionData, nil] the role subscription purchase or renewal that prompted this message.
+    attr_reader :role_subscription
+
+    # @return [Integer] a generally increasing integer that can be used to determine this message's position in a thread.
+    attr_reader :position
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
+      @id = data['id'].to_i
       @content = data['content']
       @channel = bot.channel(data['channel_id'].to_i)
       @pinned = data['pinned']
@@ -161,13 +162,10 @@ module Discordrb
       @tts = data['tts']
       @nonce = data['nonce']
       @mention_everyone = data['mention_everyone']
+      @webhook_id = data['webhook_id']&.to_i
 
       @referenced_message = Message.new(data['referenced_message'], bot) if data['referenced_message']
       @message_reference = data['message_reference']
-
-      @server = @channel.server
-
-      @webhook_id = data['webhook_id']&.to_i
 
       if data['author']
         if @webhook_id
@@ -188,7 +186,6 @@ module Discordrb
       @timestamp = Time.parse(data['timestamp']) if data['timestamp']
       @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
       @edited = !@edited_timestamp.nil?
-      @id = data['id'].to_i
 
       @emoji = []
 
@@ -204,14 +201,7 @@ module Discordrb
         @mentions << bot.ensure_user(element)
       end
 
-      @role_mentions = []
-
-      # Role mentions can only happen on public servers so make sure we only parse them there
-      if @channel.text?
-        data['mention_roles']&.each do |element|
-          @role_mentions << @channel.server.role(element.to_i)
-        end
-      end
+      @mention_roles = data['mention_roles']&.map(&:to_i) || []
 
       @attachments = []
       @attachments = data['attachments'].map { |e| Attachment.new(e, self, @bot) } if data['attachments']
@@ -224,13 +214,17 @@ module Discordrb
 
       @flags = data['flags'] || 0
 
-      @thread = data['thread'] ? @bot.ensure_channel(data['thread'], @server) : nil
+      @thread = data['thread'] ? @bot.ensure_channel(data['thread']) : nil
 
       @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
 
       @call = data['call'] ? Call.new(data['call'], @bot) : nil
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
+
+      @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
+
+      @position = data['position'] || 0
     end
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
@@ -238,7 +232,7 @@ module Discordrb
     def author
       return @author if @author
 
-      if @channel.server
+      unless @channel.private?
         @author = @channel.server.member(@author_id)
         Discordrb::LOGGER.debug("Member with ID #{@author_id} not cached (possibly left the server).") if @author.nil?
       end
@@ -248,6 +242,25 @@ module Discordrb
 
     alias_method :user, :author
     alias_method :writer, :author
+
+    # @return [Server, nil] the server this message was sent in. If this message was sent in a PM channel, it will be nil.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    #   authorized with the `bot` scope.
+    def server
+      return if @channel.private?
+
+      @server ||= @channel.server
+    end
+
+    # Get the roles that were mentioned in this message.
+    # @return [Array<Role>] the roles that were mentioned in this message.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when receiving interactions for servers in which the bot is not
+    #   authorized with the `bot` scope.
+    def role_mentions
+      return [] if @channel.private? || @mention_roles.empty?
+
+      @role_mentions ||= @mention_roles.map { |id| server.role(id) }
+    end
 
     # Replies to this message with the specified content.
     # @deprecated Please use {#respond}.
@@ -292,17 +305,19 @@ module Discordrb
       new_embeds = (new_embeds.instance_of?(Array) ? new_embeds.map(&:to_hash) : [new_embeds&.to_hash]).compact
       new_components = new_components.to_a
 
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, [], new_embeds, new_components, flags)
+      response = API::Channel.edit_message(@bot.token, @channel.id, @id, new_content, :undef, new_embeds, new_components, flags)
       Message.new(JSON.parse(response), @bot)
     end
 
     # Deletes this message.
+    # @return [nil]
     def delete(reason = nil)
       API::Channel.delete_message(@bot.token, @channel.id, @id, reason)
       nil
     end
 
     # Pins this message
+    # @return [nil]
     def pin(reason = nil)
       API::Channel.pin_message(@bot.token, @channel.id, @id, reason)
       @pinned = true
@@ -310,6 +325,7 @@ module Discordrb
     end
 
     # Unpins this message
+    # @return [nil]
     def unpin(reason = nil)
       API::Channel.unpin_message(@bot.token, @channel.id, @id, reason)
       @pinned = false
@@ -317,6 +333,7 @@ module Discordrb
     end
 
     # Crossposts a message in a news channel.
+    # @return [Message] the updated message object.
     def crosspost
       response = API::Channel.crosspost_message(@bot.token, @channel.id, @id)
       Message.new(JSON.parse(response), @bot)
@@ -405,6 +422,7 @@ module Discordrb
 
     # Reacts to a message.
     # @param reaction [String, #to_reaction] the unicode emoji or {Emoji}
+    # @return [nil]
     def create_reaction(reaction)
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
       API::Channel.create_reaction(@bot.token, @channel.id, @id, reaction)
@@ -416,15 +434,17 @@ module Discordrb
     # Returns the list of users who reacted with a certain reaction.
     # @param reaction [String, #to_reaction] the unicode emoji or {Emoji}
     # @param limit [Integer] the limit of how many users to retrieve. `nil` will return all users
+    # @param type [Integer, Symbol] the type of reaction to get. See {Reaction::TYPES}
     # @example Get all the users that reacted with a thumbs up.
     #   thumbs_up_reactions = message.reacted_with("\u{1F44D}")
     # @return [Array<User>] the users who used this reaction
-    def reacted_with(reaction, limit: 100)
+    def reacted_with(reaction, limit: 100, type: :normal)
       reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
       reaction = reaction.to_s if reaction.respond_to?(:to_s)
+      type = Reaction::TYPES[type] || type
 
       get_reactions = proc do |fetch_limit, after_id = nil|
-        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit)
+        resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit, type)
         JSON.parse(resp).map { |d| User.new(d, @bot) }
       end
 
@@ -473,6 +493,13 @@ module Discordrb
       API::Channel.delete_all_reactions(@bot.token, @channel.id, @id)
     end
 
+    # Removes all reactions for a single emoji.
+    # @param reaction [String, #to_reaction] the reaction to remove.
+    def delete_all_reactions_for_emoji(reaction)
+      reaction = reaction.to_reaction if reaction.respond_to?(:to_reaction)
+      API::Channel.delete_all_emoji_reactions(@bot.token, @channel.id, @id, reaction.to_s)
+    end
+
     # The inspect method is overwritten to give more useful output
     def inspect
       "<Message content=\"#{@content}\" id=#{@id} timestamp=#{@timestamp} author=#{@author} channel=#{@channel}>"
@@ -480,7 +507,7 @@ module Discordrb
 
     # @return [String] a URL that a user can use to navigate to this message in the client
     def link
-      "https://discord.com/channels/#{@server&.id || '@me'}/#{@channel.id}/#{@id}"
+      "https://discord.com/channels/#{server&.id || '@me'}/#{@channel.id}/#{@id}"
     end
 
     alias_method :jump_link, :link
