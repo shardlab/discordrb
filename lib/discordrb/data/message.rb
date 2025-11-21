@@ -145,6 +145,12 @@ module Discordrb
     # @return [Array<Snapshot>] the message snapshots included in this message.
     attr_reader :snapshots
 
+    # @return [RoleSubscriptionData, nil] the role subscription purchase or renewal that prompted this message.
+    attr_reader :role_subscription
+
+    # @return [Integer] a generally increasing integer that can be used to determine this message's position in a thread.
+    attr_reader :position
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -215,6 +221,10 @@ module Discordrb
       @call = data['call'] ? Call.new(data['call'], @bot) : nil
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
+
+      @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
+
+      @position = data['position'] || 0
     end
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
