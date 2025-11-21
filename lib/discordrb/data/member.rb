@@ -229,7 +229,7 @@ module Discordrb
     def add_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.count.one?
+      if role_ids.one?
         API::Server.add_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
         old_role_ids = resolve_role_ids
@@ -244,7 +244,7 @@ module Discordrb
     def remove_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.count.one?
+      if role_ids.one?
         API::Server.remove_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
         old_role_ids = resolve_role_ids
@@ -461,7 +461,7 @@ module Discordrb
         @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
       end
 
-      if data.key('premium_since')
+      if data.key?('premium_since')
         @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
       end
 

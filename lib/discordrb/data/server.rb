@@ -101,8 +101,8 @@ module Discordrb
       @members = {}
       @voice_states = {}
       @emoji = {}
-      @channels_by_id = {}
       @channels = []
+      @channels_by_id = {}
 
       update_data(data)
 
