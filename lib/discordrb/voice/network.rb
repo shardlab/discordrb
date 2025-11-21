@@ -5,6 +5,7 @@ require 'socket'
 require 'json'
 
 require 'discordrb/websocket'
+require 'discordrb/voice/opcodes'
 
 begin
   LIBSODIUM_AVAILABLE = if ENV['DISCORDRB_NONACL']
@@ -22,14 +23,14 @@ module Discordrb::Voice
   # Signifies to Discord that encryption should be used
   # @deprecated Discord now supports multiple encryption options.
   # TODO: Resolve replacement for this constant.
-  ENCRYPTED_MODE = 'xsalsa20_poly1305'
+  ENCRYPTED_MODE = 'aead_xchacha20_poly1305_rtpsize'
 
   # Signifies to Discord that no encryption should be used
   # @deprecated Discord no longer supports unencrypted voice communication.
   PLAIN_MODE = 'plain'
 
   # Encryption modes supported by Discord
-  ENCRYPTION_MODES = %w[xsalsa20_poly1305_lite xsalsa20_poly1305_suffix xsalsa20_poly1305].freeze
+  ENCRYPTION_MODES = %w[aead_xchacha20_poly1305_rtpsize].freeze
 
   # Represents a UDP connection to a voice server. This connection is used to send the actual audio data.
   class VoiceUDP
@@ -82,15 +83,11 @@ module Discordrb::Voice
     #   sequence number multiplied by 960)
     def send_audio(buf, sequence, time)
       # Header of the audio packet
-      header = [0x80, 0x78, sequence, time, @ssrc].pack('CCnNN')
+      header = generate_header(sequence, time)
 
-      nonce = generate_nonce(header)
-      buf = encrypt_audio(buf, nonce)
-
-      data = header + buf
-
-      # xsalsa20_poly1305 does not require an appended nonce
-      data += nonce unless @mode == 'xsalsa20_poly1305'
+      nonce = generate_nonce
+      buf = encrypt_audio(buf, header, nonce)
+      data = header + buf + nonce.byteslice(0, 4)
 
       send_packet(data)
     end
@@ -120,45 +117,43 @@ module Discordrb::Voice
 
     # Encrypts audio data using libsodium
     # @param buf [String] The encoded audio data to be encrypted
+    # @param header [String] The RTP header of the packet, used as associated data
     # @param nonce [String] The nonce to be used to encrypt the data
     # @return [String] the audio data, encrypted
-    def encrypt_audio(buf, nonce)
+    def encrypt_audio(buf, header, nonce)
       raise 'No secret key found, despite encryption being enabled!' unless @secret_key
 
-      secret_box = Discordrb::Voice::SecretBox.new(@secret_key)
-
-      # Nonces must be 24 bytes in length. We right pad with null bytes for poly1305 and poly1305_lite
-      secret_box.box(nonce.ljust(24, "\0"), buf)
+      case @mode
+      when 'aead_xchacha20_poly1305_rtpsize'
+        Discordrb::Voice::XChaCha20AEAD.encrypt(buf, header, nonce, @secret_key)
+      else
+        raise "`#{@mode}' is not a supported encryption mode"
+      end
     end
 
     def send_packet(packet)
       @socket.send(packet, 0, @ip, @port)
     end
 
-    # @param header [String] The header of the packet, to be used as the nonce
     # @return [String]
-    # @note
-    #   The nonce generated depends on the encryption mode.
-    #   In xsalsa20_poly1305 the nonce is the header plus twelve null bytes for padding.
-    #   In xsalsa20_poly1305_suffix, the nonce is 24 random bytes
-    #   In xsalsa20_poly1305_lite, the nonce is an incremental 4 byte int.
-    def generate_nonce(header)
+    def generate_nonce
       case @mode
-      when 'xsalsa20_poly1305'
-        header
-      when 'xsalsa20_poly1305_suffix'
-        Random.urandom(24)
-      when 'xsalsa20_poly1305_lite'
-        case @lite_nonce
+      when 'aead_xchacha20_poly1305_rtpsize'
+        case @incremental_nonce
         when nil, 0xff_ff_ff_ff
-          @lite_nonce = 0
+          @incremental_nonce = 0
         else
-          @lite_nonce += 1
+          @incremental_nonce += 1
         end
-        [@lite_nonce].pack('N')
+        [@incremental_nonce].pack('N').ljust(24, "\0")
       else
         raise "`#{@mode}' is not a supported encryption mode"
       end
+    end
+
+    # @return [String]
+    def generate_header(sequence, time)
+      [0x80, 0x78, sequence, time, @ssrc].pack('CCnNN')
     end
   end
 
@@ -167,7 +162,7 @@ module Discordrb::Voice
   # circle around users on Discord, and obtaining UDP connection info.
   class VoiceWS
     # The version of the voice gateway that's supposed to be used.
-    VOICE_GATEWAY_VERSION = 4
+    VOICE_GATEWAY_VERSION = 8
 
     # @return [VoiceUDP] the UDP voice connection over which the actual audio data is sent.
     attr_reader :udp
@@ -186,7 +181,7 @@ module Discordrb::Voice
       @token = token
       @session = session
 
-      @endpoint = endpoint.split(':').first
+      @endpoint = endpoint
 
       @udp = VoiceUDP.new
     end
@@ -197,15 +192,15 @@ module Discordrb::Voice
     # @param session_id [String] The voice session ID
     # @param token [String] The Discord authentication token
     def send_init(server_id, bot_user_id, session_id, token)
-      @client.send({
-        op: 0,
-        d: {
+      send_opcode(
+        Opcodes::IDENTIFY,
+        {
           server_id: server_id,
           user_id: bot_user_id,
           session_id: session_id,
           token: token
         }
-      }.to_json)
+      )
     end
 
     # Sends the UDP connection packet (op 1)
@@ -213,9 +208,9 @@ module Discordrb::Voice
     # @param port [Integer] The port to bind UDP to
     # @param mode [Object] Which mode to use for the voice connection
     def send_udp_connection(ip, port, mode)
-      @client.send({
-        op: 1,
-        d: {
+      send_opcode(
+        Opcodes::SELECT_PROTOCOL,
+        {
           protocol: 'udp',
           data: {
             address: ip,
@@ -223,7 +218,7 @@ module Discordrb::Voice
             mode: mode
           }
         }
-      }.to_json)
+      )
     end
 
     # Send a heartbeat (op 3), has to be done every @heartbeat_interval seconds or the connection will terminate
@@ -231,22 +226,33 @@ module Discordrb::Voice
       millis = Time.now.strftime('%s%L').to_i
       @bot.debug("Sending voice heartbeat at #{millis}")
 
-      @client.send({
-        op: 3,
-        d: millis
-      }.to_json)
+      send_opcode(
+        Opcodes::HEARTBEAT,
+        {
+          t: millis,
+          seq_ack: @seq
+        }
+      )
     end
 
     # Send a speaking packet (op 5). This determines the green circle around the avatar in the voice channel
     # @param value [true, false, Integer] Whether or not the bot should be speaking, can also be a bitmask denoting audio type.
     def send_speaking(value)
       @bot.debug("Speaking: #{value}")
-      @client.send({
-        op: 5,
-        d: {
+      send_opcode(
+        Opcodes::SPEAKING,
+        {
           speaking: value,
           delay: 0
         }
+      )
+    end
+
+    def send_opcode(opcode, data)
+      @bot.debug("Sending voice opcode #{opcode} with data: #{data}")
+      @client.send({
+        op: opcode,
+        d: data
       }.to_json)
     end
 
@@ -265,8 +271,10 @@ module Discordrb::Voice
       @bot.debug("Received VWS message! #{msg}")
       packet = JSON.parse(msg)
 
+      @seq = packet['seq'] if packet['seq']
+
       case packet['op']
-      when 2
+      when Discordrb::Voice::Opcodes::READY
         # Opcode 2 contains data to initialize the UDP connection
         @ws_data = packet['d']
 
@@ -277,16 +285,20 @@ module Discordrb::Voice
 
         @udp.connect(@ws_data['ip'], @port, @ssrc)
         @udp.send_discovery
-      when 4
+      when Discordrb::Voice::Opcodes::SESSION_DESCRIPTION
         # Opcode 4 sends the secret key used for encryption
         @ws_data = packet['d']
+
+        # Reset the sequence when starting a new session
+        @seq = 0
 
         @ready = true
         @udp.secret_key = @ws_data['secret_key'].pack('C*')
         @udp.mode = @ws_data['mode']
-      when 8
+      when Discordrb::Voice::Opcodes::HELLO
         # Opcode 8 contains the heartbeat interval.
         @heartbeat_interval = packet['d']['heartbeat_interval']
+        send_heartbeat
       end
     end
 
@@ -347,7 +359,7 @@ module Discordrb::Voice
     end
 
     def init_ws
-      host = "wss://#{@endpoint}:443/?v=#{VOICE_GATEWAY_VERSION}"
+      host = "wss://#{@endpoint}/?v=#{VOICE_GATEWAY_VERSION}"
       @bot.debug("Connecting VWS to host: #{host}")
 
       # Connect the WS
