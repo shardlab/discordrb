@@ -339,22 +339,21 @@ module Discordrb
     # @example This will move the role 3 spots below the `No Images` role.
     #   roles.move(below: 254077236989132800, offset: -3)
     # @param bottom [true, false, nil] Whether to move the roles to the bottom of the role list.
-    # @param top [true, false, nil] Whether to move this role to the highest possible position.
     # @param above [Integer, String, Role, nil] The role that this role should be moved above.
     # @param below [Integer, String, Role, nil] The role that this role should be moved below.
     # @param offset [Integer, nil] The number of roles to offset the new position by. A positive number will
     #   move the role above, and a negative number will move the role below. This parameter is relative and
-    #   calculated after the `bottom`, `top`, `above`, and `below` parameters.
+    #   calculated after the `bottom`, `above`, and `below` parameters.
     # @param reason [String, nil] The audit log reason to show for moving the role.
     # @return [Integer] the new position of the role.
-    def move(bottom: nil, top: nil, above: nil, below: nil, offset: 0, reason: nil)
+    def move(bottom: nil, above: nil, below: nil, offset: 0, reason: nil)
       # rubocop:disable Style/IfUnlessModifier
-      if [bottom, top, above, below].count(&:itself) > 1
-        raise ArgumentError, "'bottom', 'top', 'above', and 'below' are mutually exclusive"
+      if [bottom, above, below].count(&:itself) > 1
+        raise ArgumentError, "'bottom', 'above', and 'below' are mutually exclusive"
       end
 
       if (above || below) && !(target = @server.role(above || below))
-        raise ArgumentError, "The provided 'above' or 'below' options are not valid'"
+        raise ArgumentError, "The given 'above' or 'below' options are not valid'"
       end
 
       if (below && target&.id == @server.id) || (@id == target&.id)
@@ -373,8 +372,6 @@ module Discordrb
                 roles.rindex(target)
               elsif above
                 roles.rindex(target) + 1
-              elsif top
-                roles.rindex(@server.bot.sort_roles.last)
               else
                 myself
               end
@@ -410,7 +407,7 @@ module Discordrb
       }
 
       # Only set the tertiary_color to `nil` if holographic is explicitly set to false.
-      colours[:tertiary_color] = nil if holographic.is_a?(FalseClass) && holographic?
+      (colours[:tertiary_color] = nil) if holographic.is_a?(FalseClass)
 
       update_role_data(colours: holographic == true ? holographic_colours : colours, reason: reason)
     end
