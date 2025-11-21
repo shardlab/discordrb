@@ -278,7 +278,9 @@
 </span>  <span class='label'>long_date:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>D</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># 20 April 2021
 </span>  <span class='label'>short_datetime:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>f</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># 20 April 2021 16:20
 </span>  <span class='label'>long_datetime:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>F</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># Tuesday, 20 April 2021 16:20
-</span>  <span class='label'>relative:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>R</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># 2 months ago
+</span>  <span class='label'>relative:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>R</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># 2 months ago
+</span>  <span class='label'>simple_datetime:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>s</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='comment'># 20/04/2021, 16:20
+</span>  <span class='label'>medium_datetime:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>S</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># 20/04/2021, 16:20:30
 </span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
         <dt id="LOG_TIMESTAMP_FORMAT-constant" class="">LOG_TIMESTAMP_FORMAT =
@@ -517,18 +519,18 @@
       <pre class="lines">
 
 
-127
-128
 129
 130
 131
 132
 133
 134
-135</pre>
+135
+136
+137</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb.rb', line 127</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb.rb', line 129</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_encode64'>encode64</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_path_method'>path_method</span> <span class='op'>=</span> <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>original_filename</span><span class='words_sep'> </span><span class='tstring_content'>path</span><span class='words_sep'> </span><span class='tstring_content'>local_path</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_method'>method</span><span class='op'>|</span> <span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='id identifier rubyid_method'>method</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -658,8 +660,6 @@
       <pre class="lines">
 
 
-74
-75
 76
 77
 78
@@ -692,10 +692,12 @@
 105
 106
 107
-108</pre>
+108
+109
+110</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb.rb', line 76</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_split_message'>split_message</span><span class='lparen'>(</span><span class='id identifier rubyid_msg'>msg</span><span class='rparen'>)</span>
   <span class='comment'># If the messages is empty, return an empty array
@@ -819,16 +821,16 @@
       <pre class="lines">
 
 
-116
-117
 118
 119
 120
 121
-122</pre>
+122
+123
+124</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb.rb', line 116</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb.rb', line 118</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_timestamp'>timestamp</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='comma'>,</span> <span class='id identifier rubyid_style'>style</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_style'>style</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -847,7 +849,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Nov 21 13:57:45 2025 by
+  Generated on Fri Nov 21 13:58:21 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.3.10).
 </div>
