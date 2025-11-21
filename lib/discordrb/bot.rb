@@ -888,12 +888,16 @@ module Discordrb
     # @param command_id [Integer, String]
     # @param server_id [Integer, String]
     # @param permissions [Array<Hash>] An array of objects formatted as `{ id: ENTITY_ID, type: 1 or 2, permission: true or false }`
-    def edit_application_command_permissions(command_id, server_id, permissions = [])
+    # @param bearer_token [String] A valid bearer token that has permission to manage the server and its roles.
+    def edit_application_command_permissions(command_id, server_id, permissions = [], bearer_token = nil)
       builder = Interactions::PermissionBuilder.new
       yield builder if block_given?
 
+      raise ArgumentError, 'This method requires a valid bearer token to be provided' unless bearer_token
+
       permissions += builder.to_a
-      API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
+      bearer_token = "Bearer #{bearer_token.delete_prefix('Bearer ')}"
+      API::Application.edit_guild_command_permissions(bearer_token, profile.id, server_id, command_id, permissions)
     end
 
     # Fetches all the application emojis that the bot can use.
@@ -1059,6 +1063,9 @@ module Discordrb
     def create_channel(data)
       channel = data.is_a?(Discordrb::Channel) ? data : Channel.new(data, self)
       server = channel.server
+
+      # The last message ID of a forum channel is the most recent post
+      channel.parent.process_last_message_id(channel.id) if channel.parent&.forum? || channel.parent&.media?
 
       # Handle normal and private channels separately
       if server
@@ -1371,11 +1378,20 @@ module Discordrb
           raise_event(ChannelCreateEvent.new(message.channel, self))
         end
 
+        message.channel.process_last_message_id(message.id)
+
         event = MessageEvent.new(message, self)
         raise_event(event)
 
-        if message.mentions.any? { |user| user.id == @profile.id }
-          event = MentionEvent.new(message, self)
+        # Raise a mention event for any direct mentions.
+        if message.mentions.any? { |user| user.id == profile.id }
+          event = MentionEvent.new(message, self, false)
+          raise_event(event)
+        end
+
+        # Raise a mention event for the current bot's auto-generated role.
+        if message.role_mentions.any? { |role| role.tags&.bot_id == profile.id }
+          event = MentionEvent.new(message, self, true)
           raise_event(event)
         end
 
@@ -1465,6 +1481,10 @@ module Discordrb
 
         event = ReactionRemoveAllEvent.new(data, self)
         raise_event(event)
+      when :MESSAGE_REACTION_REMOVE_EMOJI
+
+        event = ReactionRemoveEmojiEvent.new(data, self)
+        raise_event(event)
       when :PRESENCE_UPDATE
         # Ignore friends list presences
         return unless data['guild_id']
@@ -1528,8 +1548,10 @@ module Discordrb
         raise_event(event)
       when :CHANNEL_PINS_UPDATE
         event = ChannelPinsUpdateEvent.new(data, self)
-        raise_event(event)
 
+        event.channel.process_last_pin_timestamp(data['last_pin_timestamp']) if data.key?('last_pin_timestamp')
+
+        raise_event(event)
       when :GUILD_MEMBER_ADD
         add_guild_member(data)
 

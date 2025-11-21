@@ -22,7 +22,8 @@ module Discordrb
       private_thread: 12,
       stage_voice: 13,
       directory: 14,
-      forum: 15
+      forum: 15,
+      media: 16
     }.freeze
 
     # @return [String] this channel's name.
@@ -64,7 +65,7 @@ module Discordrb
     attr_reader :rate_limit_per_user
     alias_method :slowmode_rate, :rate_limit_per_user
 
-    # @return [Integer, nil] An approximate count of messages sent in a thread. Stops counting at 50.
+    # @return [Integer, nil] An approximate count of messages sent in a thread, excluding deleted messages.
     attr_reader :message_count
 
     # @return [Integer, nil] An approximate count of members in a thread. Stops counting at 50.
@@ -72,6 +73,7 @@ module Discordrb
 
     # @return [true, false, nil] Whether or not this thread is archived.
     attr_reader :archived
+    alias_method :archived?, :archived
 
     # @return [Integer, nil] How long after the last message before a thread is automatically archived.
     attr_reader :auto_archive_duration
@@ -89,9 +91,30 @@ module Discordrb
     # @return [Integer, nil] Member flags for this thread, used for notifications.
     attr_reader :member_flags
 
-    # @return [true, false] For private threads, determines whether non-moderators can add other non-moderators to
+    # @return [true, false, nil] For private threads, determines whether non-moderators can add other non-moderators to
     #   a thread.
     attr_reader :invitable
+    alias_method :invitable?, :invitable
+
+    # @return [Time, nil] The time at when the last pinned message was pinned in this channel.
+    attr_reader :last_pin_timestamp
+
+    # @return [Integer, nil] The ID of the last message sent in this channel. This may not point to a valid message.
+    attr_reader :last_message_id
+
+    # @return [Integer] An approximate count of messages sent in this thread, including deleted messages.
+    attr_reader :total_message_sent
+    alias_method :total_messages_sent, :total_message_sent
+
+    # @return [Integer] The flags set on this channel combined as a bitfield.
+    attr_reader :flags
+
+    # @return [String, nil] The ID of the RTC voice region for this voice or stage channel. A region of `nil` means the
+    #   the voice region will automatically be determined by Discord.
+    attr_reader :voice_region
+
+    # @return [Integer, nil] The video quality mode of this voice or stage channel.
+    attr_reader :video_quality_mode
 
     # @return [true, false] whether or not this channel is a PM or group channel.
     def private?
@@ -144,6 +167,7 @@ module Discordrb
       @rate_limit_per_user = data['rate_limit_per_user'] || 0
       @message_count = data['message_count']
       @member_count = data['member_count']
+      @total_message_sent = data['total_message_sent'] || 0
 
       if (metadata = data['thread_metadata'])
         @archived = metadata['archived']
@@ -158,6 +182,12 @@ module Discordrb
         @member_flags = member['flags']
       end
 
+      @flags = data['flags'] || 0
+      @voice_region = data['rtc_region']
+      @video_quality_mode = data['video_quality_mode']
+      @last_message_id = data['last_message_id']&.to_i
+
+      process_last_pin_timestamp(data['last_pin_timestamp'])
       process_permission_overwrites(data['permission_overwrites'])
     end
 
@@ -227,6 +257,26 @@ module Discordrb
     # @return [true, false] whether or not this channel is a thread.
     def thread?
       news_thread? || public_thread? || private_thread?
+    end
+
+    # @return [true, false] whether or not this channel is a stage channel.
+    def stage?
+      @type == 13
+    end
+
+    # @return [true, false] whether or not this channel is a directory channel.
+    def directory?
+      @type == 14
+    end
+
+    # @return [true, false] whether or not this channel is a forum channel.
+    def forum?
+      @type == 15
+    end
+
+    # @return [true, false] whether or not this channel is a media channel.
+    def media?
+      @type == 16
     end
 
     # @return [Channel, nil] the category channel, if this channel is in a category
@@ -642,6 +692,7 @@ module Discordrb
     # @!visibility private
     def update_from(other)
       @name = other.name
+      @type = other.type
       @position = other.position
       @topic = other.topic
       @recipients = other.recipients
@@ -651,6 +702,18 @@ module Discordrb
       @nsfw = other.nsfw
       @parent_id = other.parent_id
       @rate_limit_per_user = other.rate_limit_per_user
+      @archived = other.archived?
+      @auto_archive_duration = other.auto_archive_duration
+      @archive_timestamp = other.archive_timestamp
+      @locked = other.locked?
+      @invitable = other.invitable?
+      @message_count = other.message_count
+      @last_pin_timestamp = other.last_pin_timestamp
+      @last_message_id = other.last_message_id
+      @total_message_sent = other.total_message_sent
+      @flags = other.flags
+      @voice_region = other.voice_region
+      @video_quality_mode = other.video_quality_mode
     end
 
     # The list of users currently in this channel. For a voice channel, it will return all the members currently
@@ -900,6 +963,19 @@ module Discordrb
       invites.map { |invite_data| Invite.new(invite_data, @bot) }
     end
 
+    # Returns the last message or forum post created in this channel.
+    # @return [Message, Channel, nil] the last message sent in this channel,
+    #   the most recent forum post if this is a forum or media channel, or `nil`.
+    def last_message
+      return unless @last_message_id
+
+      if forum? || media?
+        @bot.channel(@last_message_id)
+      else
+        load_message(@last_message_id)
+      end
+    end
+
     # Start a thread.
     # @param name [String] The name of the thread.
     # @param auto_archive_duration [60, 1440, 4320, 10080] How long before a thread is automatically
@@ -1016,6 +1092,22 @@ module Discordrb
       @recipients.delete(recipient)
     end
 
+    # Set the last pin timestamp of a channel.
+    # @param time [String, nil] the time of the last pinned message in the channel
+    # @note For internal use only
+    # @!visibility private
+    def process_last_pin_timestamp(time)
+      @last_pin_timestamp = time ? Time.parse(time) : time
+    end
+
+    # Set the last message ID of a channel.
+    # @param id [Integer, nil] the ID of the last message in a channel
+    # @note For internal use only
+    # @!visibility private
+    def process_last_message_id(id)
+      @last_message_id = id
+    end
+
     # Updates the cached data with new data
     # @note For internal use only
     # @!visibility private
@@ -1035,7 +1127,7 @@ module Discordrb
 
     # @return [String] a URL that a user can use to navigate to this channel in the client
     def link
-      "https://discord.com/channels/#{@server_id || '@me'}/#{@channel.id}"
+      "https://discord.com/channels/#{@server_id || '@me'}/#{@id}"
     end
 
     alias_method :jump_link, :link

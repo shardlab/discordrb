@@ -66,7 +66,9 @@ module Discordrb
     long_date: 'D', # 20 April 2021
     short_datetime: 'f', # 20 April 2021 16:20
     long_datetime: 'F', # Tuesday, 20 April 2021 16:20
-    relative: 'R' # 2 months ago
+    relative: 'R', # 2 months ago
+    simple_datetime: 's', # 20/04/2021, 16:20
+    medium_datetime: 'S' # 20/04/2021, 16:20:30
   }.freeze
 
   # Splits a message into chunks of 2000 characters. Attempts to split by lines if possible.
