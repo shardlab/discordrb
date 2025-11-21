@@ -36,9 +36,11 @@ module Discordrb
       end
 
       # Utility method to get the URL of this nameplate.
-      # @return [String] CDN url of this nameplate.
-      def url
-        API.nameplate_url(@asset)
+      # @param static [true, false] Whether to return the static URL of this
+      #   nameplate instead of the animated URL.
+      # @return [String] The CDN url of this nameplate.
+      def url(static: false)
+        static ? API.static_nameplate_url(@asset) : API.nameplate_url(@asset)
       end
     end
   end

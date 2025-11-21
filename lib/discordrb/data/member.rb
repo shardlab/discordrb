@@ -13,7 +13,8 @@ module Discordrb
       started_home_actions: 1 << 5,
       completed_home_actions: 1 << 6,
       automod_quarantined_username: 1 << 7,
-      dm_settings_upsell_acknowledged: 1 << 9
+      dm_settings_upsell_acknowledged: 1 << 9,
+      automod_quarantined_server_tag: 1 << 10
     }.freeze
 
     # @return [Time] when this member joined the server.
@@ -228,7 +229,7 @@ module Discordrb
     def add_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.count.one?
+      if role_ids.one?
         API::Server.add_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
         old_role_ids = resolve_role_ids
@@ -243,7 +244,7 @@ module Discordrb
     def remove_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.count.one?
+      if role_ids.one?
         API::Server.remove_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
         old_role_ids = resolve_role_ids
@@ -283,6 +284,12 @@ module Discordrb
     end
 
     alias_method :color, :colour
+
+    # Get the member's roles sorted by their order in the hierarchy.
+    # @return [Array<Role>] the roles the member has, ordered by hierarchy.
+    def sort_roles
+      roles.sort_by { |role| [role.position, role.id] }
+    end
 
     # Server deafens this member.
     # @param reason [String, nil] The reason for defeaning this member.
@@ -377,6 +384,30 @@ module Discordrb
       update_member_data(flags: flags)
     end
 
+    # Set the server banner for the current bot.
+    # @param banner [File, nil] A file like object that responds to read, or `nil`.
+    def server_banner=(banner)
+      raise 'Can only set a banner for the current bot' unless current_bot?
+
+      update_current_member_data(banner: banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner)
+    end
+
+    # Set the server avatar for the current bot.
+    # @param avatar [File, nil] A file like object that responds to read, or `nil`.
+    def server_avatar=(avatar)
+      raise 'Can only set an avatar for the current bot' unless current_bot?
+
+      update_current_member_data(avatar: avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar)
+    end
+
+    # Set the server bio for the current bot.
+    # @param bio [String, nil] The new server bio for the bot, or nil.
+    def server_bio=(bio)
+      raise 'Can only set a bio for the current bot' unless current_bot?
+
+      update_current_member_data(bio: bio)
+    end
+
     # Update this member's roles
     # @note For internal use only.
     # @!visibility private
@@ -430,7 +461,7 @@ module Discordrb
         @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
       end
 
-      if data.key('premium_since')
+      if data.key?('premium_since')
         @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
       end
 
@@ -483,7 +514,10 @@ module Discordrb
     def update_current_member_data(new_data)
       update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id,
                                                                new_data.key?(:nick) ? new_data[:nick] : :undef,
-                                                               new_data[:reason])))
+                                                               new_data[:reason],
+                                                               new_data.key?(:bio) ? new_data[:bio] : :undef,
+                                                               new_data.key?(:banner) ? new_data[:banner] : :undef,
+                                                               new_data.key?(:avatar) ? new_data[:avatar] : :undef)))
     end
   end
 end

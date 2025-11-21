@@ -241,6 +241,11 @@ module Discordrb::API
     "#{cdn_url}/avatar-decoration-presets/#{avatar_decoration_id}.#{format}"
   end
 
+  # make a static nameplate URL from the nameplate asset.
+  def static_nameplate_url(nameplate_asset, format = 'png')
+    "#{cdn_url}/assets/collectibles/#{nameplate_asset.delete_suffix('/')}/static.#{format}"
+  end
+
   # make a nameplate URL from the nameplate asset.
   def nameplate_url(nameplate_asset, format = 'webm')
     "#{cdn_url}/assets/collectibles/#{nameplate_asset.delete_suffix('/')}/asset.#{format}"
