@@ -68,6 +68,8 @@ module Discordrb
       @members = {}
       @voice_states = {}
       @emoji = {}
+      @channels = []
+      @channels_by_id = {}
       @automod_rules = {}
 
       update_data(data)

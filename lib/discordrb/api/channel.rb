@@ -212,9 +212,9 @@ module Discordrb::API::Channel
 
   # Get a list of clients who reacted with a specific reaction on a message
   # https://discord.com/developers/docs/resources/channel#get-reactions
-  def get_reactions(token, channel_id, message_id, emoji, before_id, after_id, limit = 100)
+  def get_reactions(token, channel_id, message_id, emoji, before_id, after_id, limit = 100, type = 0)
     emoji = URI.encode_www_form_component(emoji) unless emoji.ascii_only?
-    query_string = URI.encode_www_form({ limit: limit || 100, before: before_id, after: after_id }.compact)
+    query_string = URI.encode_www_form({ limit: limit || 100, before: before_id, after: after_id, type: type }.compact)
     Discordrb::API.request(
       :channels_cid_messages_mid_reactions_emoji,
       channel_id,

@@ -888,12 +888,16 @@ module Discordrb
     # @param command_id [Integer, String]
     # @param server_id [Integer, String]
     # @param permissions [Array<Hash>] An array of objects formatted as `{ id: ENTITY_ID, type: 1 or 2, permission: true or false }`
-    def edit_application_command_permissions(command_id, server_id, permissions = [])
+    # @param bearer_token [String] A valid bearer token that has permission to manage the server and its roles.
+    def edit_application_command_permissions(command_id, server_id, permissions = [], bearer_token = nil)
       builder = Interactions::PermissionBuilder.new
       yield builder if block_given?
 
+      raise ArgumentError, 'This method requires a valid bearer token to be provided' unless bearer_token
+
       permissions += builder.to_a
-      API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
+      bearer_token = "Bearer #{bearer_token.delete_prefix('Bearer ')}"
+      API::Application.edit_guild_command_permissions(bearer_token, profile.id, server_id, command_id, permissions)
     end
 
     # Fetches all the application emojis that the bot can use.
@@ -1476,6 +1480,10 @@ module Discordrb
         remove_all_message_reactions(data)
 
         event = ReactionRemoveAllEvent.new(data, self)
+        raise_event(event)
+      when :MESSAGE_REACTION_REMOVE_EMOJI
+
+        event = ReactionRemoveEmojiEvent.new(data, self)
         raise_event(event)
       when :PRESENCE_UPDATE
         # Ignore friends list presences
