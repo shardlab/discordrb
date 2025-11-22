@@ -353,7 +353,7 @@ module Discordrb
       end
 
       if (above || below) && !(target = @server.role(above || below))
-        raise ArgumentError, "The given 'above' or 'below' options are not valid'"
+        raise ArgumentError, "The given 'above' or 'below' options are not valid"
       end
 
       if (below && target&.id == @server.id) || (@id == target&.id)
