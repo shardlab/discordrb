@@ -309,17 +309,9 @@ module Discordrb
     # @param other [Role, String, Integer, nil] The role, or its ID, above which this role should be moved. If it is `nil`,
     #   the role will be moved above the @everyone role.
     # @return [Integer] the new position of this role
+    # @deprecated Please migrate to using {#move} with the `above` or `below` KWARGS.
     def sort_above(other = nil)
-      other = @server.role(other.resolve_id) if other
-      roles = @server.roles.sort_by(&:position)
-      roles.delete_at(@position)
-
-      index = other ? roles.index { |role| role.id == other.id } + 1 : 1
-      roles.insert(index, self)
-
-      updated_roles = roles.map.with_index { |role, position| { id: role.id, position: position } }
-      @server.update_role_positions(updated_roles)
-      index
+      other ? move(above: other) : move(bottom: true)
     end
 
     alias_method :move_above, :sort_above
