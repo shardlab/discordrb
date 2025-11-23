@@ -131,8 +131,9 @@ module Discordrb::Webhooks
 
     def post_multipart(builder, components, wait, thread_id)
       query = URI.encode_www_form({ wait:, thread_id: }.compact)
-      data = builder.to_multipart_hash.merge({ components: components.to_a })
-      RestClient.post(@url + (query.empty? ? '' : "?#{query}"), data)
+      data = builder.to_multipart_hash
+      data[:components] = components.to_a if components&.to_a&.any?
+      RestClient.post(@url + (query.empty? ? '' : "?#{query}"), data.compact)
     end
 
     def generate_url(id, token)

@@ -247,7 +247,8 @@ describe Discordrb::Webhooks do
       before do
         allow(RestClient).to receive(:post).with(any_args)
         allow(provided_url).to receive(:+).with(anything).and_return(provided_url)
-        allow(multipart_hash).to receive(:merge).with(instance_of(Hash)).and_return(post_data)
+        allow(multipart_hash).to receive(:[]=).and_return(instance_of(Array))
+        allow(multipart_hash).to receive(:compact).and_return(post_data)
       end
 
       it 'makes a POST request with multipart data' do
