@@ -14,7 +14,7 @@ module Discordrb
         ActionRow.new(data, bot)
       when Webhooks::View::COMPONENT_TYPES[:button]
         Button.new(data, bot)
-      when 3, 5, 6, 7, 8 # Select Menu Types
+      when Webhooks::View::COMPONENT_TYPES[:string_select], Webhooks::View::COMPONENT_TYPES[:user_select], Webhooks::View::COMPONENT_TYPES[:role_select], Webhooks::View::COMPONENT_TYPES[:mentionable_select], Webhooks::View::COMPONENT_TYPES[:channel_select]
         SelectMenu.new(data, bot)
       when Webhooks::Modal::COMPONENT_TYPES[:text_input]
         TextInput.new(data, bot)
