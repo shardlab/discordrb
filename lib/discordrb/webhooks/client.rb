@@ -124,7 +124,10 @@ module Discordrb::Webhooks
     end
 
     def post_json(builder, components, wait, thread_id)
-      query = URI.encode_www_form({ wait:, thread_id: }.compact)
+      uri = URI.parse(@url)
+      query_data = URI.decode_www_form(uri.query || '').to_h
+      query = URI.encode_www_form({ wait:, thread_id:, **query_data }.compact)
+
       data = builder.to_json_hash.merge({ components: components.to_a })
       RestClient.post(@url + (query.empty? ? '' : "?#{query}"), data.to_json, content_type: :json)
     end
