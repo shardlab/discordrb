@@ -55,7 +55,8 @@ module Discordrb
       46 => :send_voice_messages,         # 70368744177664
       49 => :send_polls,                  # 562949953421312
       50 => :use_external_apps,           # 1125899906842624
-      51 => :pin_messages                 # 2251799813685248
+      51 => :pin_messages,                # 2251799813685248
+      52 => :bypass_slowmode              # 4503599627370496
     }.freeze
 
     FLAGS.each do |position, flag|
