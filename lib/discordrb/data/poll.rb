@@ -3,6 +3,9 @@
 module Discordrb
   # A surface with selectable answers that can be voted for.
   class Poll
+    # @return [Message] the message this poll is attached to.
+    attr_reader :message
+
     # @return [String] the question of this poll.
     attr_reader :question
 
@@ -34,7 +37,7 @@ module Discordrb
       @ends_at = data['expiry'] ? Time.parse(data['expiry']) : nil
       @finished = data['results'] ? data['results']['is_finalized'] : false
       @results = data['results'] ? data['results']['answer_counts']&.to_h { |opt| [opt['id'], opt['count']] } : {}
-      @answers = data['answers'].map { |answer| Answer.new(answer.merge({ 'results' => @results }), message, bot) }
+      @answers = data['answers'].map { |answer| Answer.new(answer.tap { |awe| awe['results'] = @results }, self, @bot) }
     end
 
     # Get the total amount of users that voted on this poll.
@@ -79,10 +82,19 @@ module Discordrb
     # Immediately ends this poll. This can only be done if the author of the poll is the current bot.
     # @return [Message] the updated message object with the newly ended poll.
     def end
-      raise 'The bot cannot end a poll that was sent by a different user.' unless @message.from_bot?
+      raise 'The bot cannot end a poll that was created by a different user.' unless @message.from_bot?
 
       Message.new(JSON.parse(API::Channel.end_poll(@bot.token, @message.channel.id, @message.id)), @bot)
     end
+
+    # Check if this poll is equal to another object.
+    # @param other [Object] the object to check for equality.
+    # @return [true, false] whether or not the two objects are equal.
+    def ==(other)
+      other.is_a?(Poll) ? @message == other.message : false
+    end
+
+    alias_method :eql?, :==
 
     # @!visibility private
     def to_h
@@ -100,6 +112,9 @@ module Discordrb
       # @return [Integer] the ID of this poll answer.
       attr_reader :id
 
+      # @return [Poll] the poll that this answer is from.
+      attr_reader :poll
+
       # @return [String, nil] the text of this poll answer.
       attr_reader :name
 
@@ -110,9 +125,9 @@ module Discordrb
       attr_reader :emoji
 
       # @!visibility private
-      def initialize(data, message, bot)
+      def initialize(data, poll, bot)
         @bot = bot
-        @message = message
+        @poll = poll
         @id = data['answer_id']
         @name = data['poll_media']['text']
         @votes = data['results'][@id] || 0
@@ -124,7 +139,7 @@ module Discordrb
       # @return [Array<User>] the users that voted for this poll answer.
       def voters(limit: 100)
         get_voters = proc do |fetch_limit, after = nil|
-          response = API::Channel.get_poll_answer_voters(@bot.token, @message.channel.id, @message.id, @id, limit: fetch_limit, after: after)
+          response = API::Channel.get_poll_answer_voters(@bot.token, @poll.message.channel.id, @poll.message.id, @id, limit: fetch_limit, after: after)
           JSON.parse(response)['users'].map { |user_data| User.new(user_data, @bot) }
         end
 
@@ -148,8 +163,19 @@ module Discordrb
       # @yield The block is executed when the event is raised.
       # @yieldparam event [PollVoteAddEvent] The event that was raised.
       def await_vote!(**attributes, &block)
-        @bot.add_await!(Discordrb::Events::PollVoteAddEvent, { answer: @id, message: @message.id }.merge(attributes), &block)
+        @bot.add_await!(Discordrb::Events::PollVoteAddEvent, { answer: @id, message: @poll.message.id }.merge!(attributes), &block)
       end
+
+      # Check if this poll answer is equal to another object.
+      # @param other [Object] the object to check for equality.
+      # @return [true, false] whether or not the two objects are equal.
+      def ==(other)
+        return false unless other.is_a?(Answer)
+
+        (@poll == other.poll) && (@id == other.id)
+      end
+
+      alias_method :eql?, :==
 
       # @!visibility private
       def to_h
