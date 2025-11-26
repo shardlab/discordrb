@@ -82,9 +82,6 @@ module Discordrb
     # @return [Channel] the channel in which this message was sent.
     attr_reader :channel
 
-    # @return [Time] the timestamp at which this message was sent.
-    attr_reader :timestamp
-
     # @return [Time] the timestamp at which this message was edited. `nil` if the message was never edited.
     attr_reader :edited_timestamp
     alias_method :edit_timestamp, :edited_timestamp
@@ -161,15 +158,16 @@ module Discordrb
       @type = data['type']
       @tts = data['tts']
       @nonce = data['nonce']
+      @flags = data['flags'] || 0
+      @position = data['position'] || 0
       @mention_everyone = data['mention_everyone']
       @webhook_id = data['webhook_id']&.to_i
 
-      @referenced_message = Message.new(data['referenced_message'], @bot) if data['referenced_message']
-      @message_reference = data['message_reference']
-
-      @timestamp = Time.parse(data['timestamp']) if data['timestamp']
       @edited_timestamp = Time.parse(data['edited_timestamp']) if data['edited_timestamp']
       @edited = !@edited_timestamp.nil?
+
+      @message_reference = data['message_reference']
+      @referenced_message = Message.new(data['referenced_message'], @bot) if data['referenced_message']
 
       if data['author']
         if @webhook_id
@@ -181,38 +179,30 @@ module Discordrb
 
           # Turn the message user into a recipient - we can't use the channel recipient
           # directly because the bot may also send messages to the channel
-          @author = Recipient.new(bot.user(data['author']['id'].to_i), @channel, @bot)
+          @author = Recipient.new(@bot.user(data['author']['id'].to_i), @channel, @bot)
         else
           @author_id = data['author']['id'].to_i
         end
       end
 
       @reactions = data['reactions']&.map { |reaction| Reaction.new(reaction) } || []
-
       @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention) } || []
-
       @mention_roles = data['mention_roles']&.map(&:to_i) || []
 
       @attachments = data['attachments']&.map { |attachment| Attachment.new(attachment, self, @bot) } || []
-
       @embeds = data['embeds']&.map { |embed| Embed.new(embed, self) } || []
-
-      @components = data['components']&.map { |component_data| Components.from_data(component_data, @bot) } || []
-
-      @flags = data['flags'] || 0
+      @components = data['components']&.map { |component| Components.from_data(component, @bot) } || []
 
       @thread = @bot.ensure_channel(data['thread']) if data['thread']
-
       @pinned_at = Time.parse(data['pinned_at']) if data['pinned_at']
-
       @call = Call.new(data['call'], @bot) if data['call']
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
-
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
-
-      @position = data['position'] || 0
     end
+
+    # @deprecated Please migrate to using {#creation_time} instead.
+    alias_method :timestamp, :creation_time
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
     #   {User} for old messages when the author has left the server since then)
