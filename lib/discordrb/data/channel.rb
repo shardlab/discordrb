@@ -963,6 +963,16 @@ module Discordrb
       invites.map { |invite_data| Invite.new(invite_data, @bot) }
     end
 
+    # Follow the announcement (news) channel to send crossposted messages to a target channel.
+    # @param target [Channel, Integer, String] The target channel to send crossposted messages to.
+    # @param reason [String, nil] The audit log reason shown for the created webhook in the target channel.
+    # @return [Integer] the ID of the created webhook in the target channel.
+    def follow(target, reason: nil)
+      raise 'Cannot follow a non-announcement channel' unless news?
+
+      JSON.parse(API::Channel.follow_channel(@bot.token, @id, target.resolve_id, reason))['webhook_id'].to_i
+    end
+
     # Returns the last message or forum post created in this channel.
     # @return [Message, Channel, nil] the last message sent in this channel,
     #   the most recent forum post if this is a forum or media channel, or `nil`.
