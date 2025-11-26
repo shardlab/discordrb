@@ -158,7 +158,8 @@ module Discordrb
       member(@bot.profile)
     end
 
-    # @return [Array<Integration>] an array of all the integrations connected to this server.
+    # @return [Array<Integration>] an array of the integrations in this server.
+    # @note If the server has more than 50 integrations, they cannot be accessed.
     def integrations
       integration = JSON.parse(API::Server.integrations(@bot.token, @id))
       integration.map { |element| Integration.new(element, @bot, self) }
