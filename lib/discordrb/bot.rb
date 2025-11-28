@@ -1215,12 +1215,11 @@ module Discordrb
       server.update_emoji_data(data)
     end
 
-    # Internal handler for GUILD_SCHEDULED_EVENT_CREATE and GUILD_SCHEDULED_EVENT_DELETE
+    # Internal handler for GUILD_SCHEDULED_EVENT_CREATE and GUILD_SCHEDULED_EVENT_UPDATE
     def update_guild_scheduled_event(data)
-      server = self.server(data['guild_id'].to_i)
-      event = server&.scheduled_event(data['id'].to_i, request: false)
+      server = @servers[data['guild_id'].to_i]
 
-      if event
+      if (event = server&.scheduled_event(data['id'].to_i, request: false))
         event.from_other(data)
       else
         server&.cache_scheduled_event(ScheduledEvent.new(data, server, self))
@@ -1759,14 +1758,20 @@ module Discordrb
         event = ScheduledEventUpdateEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_DELETE
-        self.server(data['guild_id'].to_i).delete_scheduled_event(data['id'].to_i)
+        @servers[data['guild_id'].to_i]&.delete_scheduled_event(data['id'].to_i)
 
         event = ScheduledEventDeleteEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_USER_ADD
+        server = @servers[data['guild_id'].to_i]
+        server&.scheduled_event(data['guild_scheduled_event_id'], request: false)&.increment_user_count
+
         event = ScheduledEventUserAddEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_USER_REMOVE
+        server = @servers[data['guild_id'].to_i]
+        server&.scheduled_event(data['guild_scheduled_event_id'], request: false)&.deincrement_user_count
+
         event = ScheduledEventUserRemoveEvent.new(data, self)
         raise_event(event)
       else

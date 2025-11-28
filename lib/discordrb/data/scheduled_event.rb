@@ -58,8 +58,8 @@ module Discordrb
       @bot = bot
       @server = server
       @id = data['id'].to_i
-      @creator_id = data['creator_id']
-      @subscriber_count = data['user_count']
+      @user_count = data['user_count']
+      @creator_id = data['creator_id']&.to_i
       bot.ensure_user(data['creator']) if data['creator']
       from_other(data)
     end
@@ -78,9 +78,10 @@ module Discordrb
 
     # Utility method to get a scheduled event's cover image URL.
     # @param format [String] the URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
-    # @return [String, nil] the URL to the scheduled event's cover image, or `nil` if the scheduled event doesn't have a cover image.
-    def cover_url(format = 'webp')
-      API.scheduled_event_cover_url(@id, @cover_id, format) if @cover_id
+    # @param size [Integer] the URL will default to `4096`. You can otherwise specify any number that's a power of two to override this.
+    # @return [String, nil] the URL to the scheduled event's cover image, or `nil` if the scheduled event doesn't have a cover image set.
+    def cover_url(format: 'webp', size: 4096)
+      API.scheduled_event_cover_url(@id, @cover_id, format, size) if @cover_id
     end
 
     # @!method scheduled?
@@ -172,7 +173,7 @@ module Discordrb
     end
 
     # Start the scheduled event.
-    # @param reason [String, nil] the reason for starting this event.
+    # @param reason [String, nil] the reason for starting the event.
     # @return [void]
     def start(reason: nil)
       raise 'cannot start this event' unless scheduled?
@@ -181,7 +182,7 @@ module Discordrb
     end
 
     # Cancel the scheduled event. This cannot be undone.
-    # @param reason [String, nil] the reason for cancelling this event.
+    # @param reason [String, nil] the reason for cancelling the event.
     # @return [void]
     def cancel(reason: nil)
       raise 'cannot cancel this event' unless scheduled?
@@ -190,7 +191,7 @@ module Discordrb
     end
 
     # End the scheduled event. This cannot be undone.
-    # @param reason [String, nil] the reason for ending this event.
+    # @param reason [String, nil] the reason for ending the event.
     # @return [void]
     def end(reason: nil)
       raise 'cannot end this event' unless active?
@@ -287,21 +288,20 @@ module Discordrb
 
     # Get the total amount of users who are subscribed to the scheduled event.
     # @return [Integer] the total number of users who're currently subscribed to the scheduled event.
-    # @note This method caches results for an unspecificed period of time. This means the count may **not** be accurate.
-    def subscriber_count
-      @subscriber_count ||= JSON.parse(API::Server.get_scheduled_event(@bot.token, @server.id, @id, with_user_count: true))['user_count']
+    def user_count
+      @user_count ||= JSON.parse(API::Server.get_scheduled_event(@bot.token, @server.id, @id, with_user_count: true))['user_count']
     end
 
-    alias_method :user_count, :subscriber_count
+    alias_method :subscriber_count, :user_count
 
-    # Get the users that are subscribed to the scheduled event.
+    # Get the users who are subscribed to the scheduled event.
     # @param limit [Integer, nil] the limit (`nil` for no limit) of how many subscribers to return.
     # @param member [true, false] whether to return subscribers as server members, where applicable.
     # @return [Array<User, Member>] the users or members that have subscribed to the scheduled event.
-    def subscribers(limit: 100, member: false)
-      get_users = proc do |fetch_limit, after_id = nil|
-        response = JSON.parse(API::Server.get_scheduled_event_users(@bot.token, @server.id, @id, limit: fetch_limit, with_member: member, after: after_id))
-        response.map { |data| data['member'] ? Member.new(data['member'], @server, @bot).tap { |m| @server&.cache_member(m) } : User.new(data['user'], @bot) }
+    def users(limit: 100, member: false)
+      get_users = proc do |fetch_limit, after = nil|
+        response = JSON.parse(API::Server.get_scheduled_event_users(@bot.token, @server.id, @id, limit: fetch_limit, with_member: member, after: after))
+        response.map { |data| data['member'] ? Member.new(data['member'], @server, @bot).tap { |member| @server&.cache_member(member) } : User.new(data['user'], @bot) }
       end
 
       # Can be done without pagination.
@@ -318,7 +318,7 @@ module Discordrb
       paginator.to_a
     end
 
-    alias_method :users, :subscribers
+    alias_method :subscribers, :users
 
     # @!visibility private
     def inspect
@@ -338,6 +338,16 @@ module Discordrb
       @location = new_data['entity_metadata'] ? new_data['entity_metadata']['location'] : nil
       @end_time = Time.iso8601(new_data['scheduled_end_time']) if new_data['scheduled_end_time']
       @recurrence_rule = new_data['recurrence_rule'] ? RecurrenceRule.new(new_data['recurrence_rule'], @bot) : nil
+    end
+
+    # @!visibility private
+    def increment_user_count
+      @user_count += 1 if @user_count
+    end
+
+    # @!visibility private
+    def deincrement_user_count
+      @user_count -= 1 if @user_count
     end
 
     # @!visibility private

@@ -702,9 +702,10 @@ module Discordrb
     # @option attributes [String, Integer] :server Matches the scheduled event's server.
     # @option attributes [String, Integer, ScheduledEvent] :id Matches the scheduled event.
     # @option attributes [String, Integer, User, Member] :creator Matches the scheduled event's creator.
-    # @option attributes [Integer, Symbol] :status Matches the status of the scheduled event.
+    # @option attributes [String, Integer, Channel] :channel Matches the scheduled event's channel.
+    # @option attributes [Integer, Symbol, String] :status Matches the status of the scheduled event.
     # @option attributes [Integer, String] :entity_id Matches the entity ID of the scheduled event.
-    # @option attributes [Integer, Symbol] :entity_type Matches the entity type of the scheduled event.
+    # @option attributes [Integer, Symbol, String] :entity_type Matches the entity type of the scheduled event.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ScheduledEventCreateEvent] The event that was raised.
     # @return [ScheduledEventCreateEventHandler] the event handler that was registered.
@@ -717,9 +718,10 @@ module Discordrb
     # @option attributes [String, Integer, Server] :server Matches the scheduled event's server.
     # @option attributes [String, Integer, ScheduledEvent] :id Matches the scheduled event.
     # @option attributes [String, Integer, User, Member] :creator Matches the scheduled event's creator.
-    # @option attributes [Integer, Symbol] :status Matches the status of the scheduled event.
+    # @option attributes [String, Integer, Channel] :channel Matches the scheduled event's channel.
+    # @option attributes [Integer, Symbol, String] :status Matches the status of the scheduled event.
     # @option attributes [Integer, String] :entity_id Matches the entity ID of the scheduled event.
-    # @option attributes [Integer, Symbol] :entity_type Matches the entity type of the scheduled event.
+    # @option attributes [Integer, Symbol, String] :entity_type Matches the entity type of the scheduled event.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ScheduledEventUpdateEvent] The event that was raised.
     # @return [ScheduledEventUpdateEventHandler] the event handler that was registered.
@@ -732,9 +734,10 @@ module Discordrb
     # @option attributes [String, Integer, Server] :server Matches the scheduled event's server.
     # @option attributes [String, Integer, ScheduledEvent] :id Matches the scheduled event.
     # @option attributes [String, Integer, User, Member] :creator Matches the scheduled event's creator.
-    # @option attributes [Integer, Symbol] :status Matches the status of the scheduled event.
+    # @option attributes [String, Integer, Channel] :channel Matches the scheduled event's channel.
+    # @option attributes [Integer, Symbol, String] :status Matches the status of the scheduled event.
     # @option attributes [Integer, String] :entity_id Matches the entity ID of the scheduled event.
-    # @option attributes [Integer, Symbol] :entity_type Matches the entity type of the scheduled event.
+    # @option attributes [Integer, Symbol, String] :entity_type Matches the entity type of the scheduled event.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ScheduledEventDeleteEvent] The event that was raised.
     # @return [ScheduledEventDeleteEventHandler] the event handler that was registered.

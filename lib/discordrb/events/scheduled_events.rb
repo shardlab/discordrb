@@ -3,11 +3,11 @@
 module Discordrb::Events
   # Generic subclass for scheduled events (create/update/delete).
   class ScheduledEventEvent < Event
-    # @return [ScheduledEvent] the scheduled event in question.
-    attr_reader :scheduled_event
-
     # @return [Server] the server the scheduled event is from.
     attr_reader :server
+
+    # @return [ScheduledEvent] the scheduled event in question.
+    attr_reader :scheduled_event
 
     # @!visibility private
     def initialize(data, bot)
@@ -89,25 +89,29 @@ module Discordrb::Events
 
       [
         matches_all(@attributes[:server], event.server) do |a, e|
-          a.resolve_id == e.resolve_id
+          a.resolve_id == e&.resolve_id
         end,
 
         matches_all(@attributes[:id], event.scheduled_event) do |a, e|
-          a.resolve_id == e.resolve_id
+          a.resolve_id == e&.resolve_id
         end,
 
         matches_all(@attributes[:creator], event.scheduled_event.creator) do |a, e|
-          a.resolve_id == e.resolve_id
+          a.resolve_id == e&.resolve_id
+        end,
+
+        matches_all(@attributes[:channel], event.scheduled_event.channel) do |a, e|
+          a.resolve_id == e&.resolve_id
         end,
 
         matches_all(@attributes[:entity_id], event.scheduled_event.entity_id) do |a, e|
-          a.resolve_id == e.resolve_id
+          a.resolve_id == e&.resolve_id
         end,
 
         matches_all(@attributes[:entity_type], event.scheduled_event.entity_type) do |a, e|
           case a
-          when Symbol
-            Discordrb::ScheduledEvent::ENTITY_TYPES[a] == e
+          when Symbol, String
+            Discordrb::ScheduledEvent::ENTITY_TYPES[a.to_sym] == e
           else
             a == e
           end
@@ -115,8 +119,8 @@ module Discordrb::Events
 
         matches_all(@attributes[:status], event.scheduled_event.status) do |a, e|
           case a
-          when Symbol
-            Discordrb::ScheduledEvent::STATUSES[a] == e
+          when Symbol, String
+            Discordrb::ScheduledEvent::STATUSES[a.to_sym] == e
           else
             a == e
           end

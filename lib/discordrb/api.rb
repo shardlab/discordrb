@@ -257,8 +257,8 @@ module Discordrb::API
   end
 
   # make a scheduled event cover URL from a scheduled event ID and a cover ID.
-  def scheduled_event_cover_url(scheduled_event_id, cover_id, format = 'webp')
-    "#{cdn_url}/guild-events/#{scheduled_event_id}/#{cover_id}.#{format}"
+  def scheduled_event_cover_url(scheduled_event_id, cover_id, format = 'webp', size = nil)
+    "#{cdn_url}/guild-events/#{scheduled_event_id}/#{cover_id}.#{format}#{"?size=#{size}" if size}"
   end
 
   # Create an OAuth application
