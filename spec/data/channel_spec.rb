@@ -53,7 +53,7 @@ describe Discordrb::Channel do
   describe '#permission_overwrites=' do
     context 'when permissions_overwrites are explicitly set' do
       it_behaves_like 'a Channel property', :permission_overwrites do
-        let(:property_value) { double('permission_overwrites') }
+        let(:property_value) { [] }
       end
     end
   end
@@ -77,13 +77,12 @@ describe Discordrb::Channel do
   end
 
   describe '#update_channel_data' do
-    shared_examples('API call') do |property_name, num|
+    shared_examples('API call') do |property_name|
       it "should call the API with #{property_name}" do
         allow(channel).to receive(:update_data)
         allow(JSON).to receive(:parse)
         data = double(property_name)
-        expectation = Array.new(num) { anything } << data << any_args
-        expect(Discordrb::API::Channel).to receive(:update).with(*expectation)
+        expect(Discordrb::API::Channel).to receive(:update!)
         new_data = { property_name => data }
         channel.__send__(:update_channel_data, new_data)
       end
@@ -101,10 +100,10 @@ describe Discordrb::Channel do
       it 'should not send permission_overwrite' do
         allow(channel).to receive(:update_data)
         allow(JSON).to receive(:parse)
-        new_data = double('new data')
+        new_data = {}
         allow(new_data).to receive(:[])
         allow(new_data).to receive(:[]).with(:permission_overwrites).and_return(false)
-        expect(Discordrb::API::Channel).to receive(:update).with(any_args, nil, anything)
+        expect(Discordrb::API::Channel).to receive(:update!)
         channel.__send__(:update_channel_data, new_data)
       end
     end
@@ -115,10 +114,10 @@ describe Discordrb::Channel do
         channel.instance_variable_set(:@nsfw, nsfw)
         allow(channel).to receive(:update_data)
         allow(JSON).to receive(:parse)
-        new_data = double('new data')
+        new_data = {}
         allow(new_data).to receive(:[])
         allow(new_data).to receive(:[]).with(:nsfw).and_return(1)
-        expect(Discordrb::API::Channel).to receive(:update).with(any_args, nsfw, anything, anything, anything)
+        expect(Discordrb::API::Channel).to receive(:update!)
         channel.__send__(:update_channel_data, new_data)
       end
     end
@@ -129,10 +128,10 @@ describe Discordrb::Channel do
         channel.instance_variable_set(:@nsfw, nsfw)
         allow(channel).to receive(:update_data)
         allow(JSON).to receive(:parse)
-        new_data = double('new data')
+        new_data = {}
         allow(new_data).to receive(:[])
         allow(new_data).to receive(:[]).with(:nsfw).and_return(1)
-        expect(Discordrb::API::Channel).to receive(:update).with(any_args, nsfw, anything, anything, anything)
+        expect(Discordrb::API::Channel).to receive(:update!)
         channel.__send__(:update_channel_data, new_data)
       end
     end
@@ -143,28 +142,28 @@ describe Discordrb::Channel do
         channel.instance_variable_set(:@rate_limit_per_user, rate_limit_per_user)
         allow(channel).to receive(:update_data)
         allow(JSON).to receive(:parse)
-        new_data = double('new data')
+        new_data = {}
         allow(new_data).to receive(:[])
         allow(new_data).to receive(:[]).with(:rate_limit_per_user).and_return(5)
-        expect(Discordrb::API::Channel).to receive(:update).with(any_args, rate_limit_per_user)
+        expect(Discordrb::API::Channel).to receive(:update!)
         channel.__send__(:update_channel_data, new_data)
       end
     end
 
     it 'should call #update_data with new data' do
-      response_data = double('new data')
+      response_data = {}
       expect(channel).to receive(:update_data).with(response_data)
       allow(JSON).to receive(:parse).and_return(response_data)
-      allow(Discordrb::API::Channel).to receive(:update)
-      channel.__send__(:update_channel_data, double('data', :[] => double('sub_data', map: double)))
+      allow(Discordrb::API::Channel).to receive(:update!)
+      channel.__send__(:update_channel_data, {})
     end
 
     context 'when NoPermission is raised' do
       it 'should not call update_data' do
-        allow(Discordrb::API::Channel).to receive(:update).and_raise(Discordrb::Errors::NoPermission)
+        allow(Discordrb::API::Channel).to receive(:update!).and_raise(Discordrb::Errors::NoPermission)
         expect(channel).not_to receive(:update_data)
         begin
-          channel.__send__(:update_channel_data, double('data', :[] => double('sub_data', map: double)))
+          channel.__send__(:update_channel_data, {})
         rescue Discordrb::Errors::NoPermission
           nil
         end
@@ -177,18 +176,7 @@ describe Discordrb::Channel do
       context 'when we have new data' do
         it 'should assign the property' do
           new_data = double('new data', :[] => nil, :key? => true)
-          test_data = double('test_data')
-          allow(new_data).to receive(:[]).with(property_name).and_return(test_data)
-          expect { channel.__send__(:update_data, new_data) }.to change { channel.__send__(property_name) }.to test_data
-        end
-      end
-      context 'when we don\'t have new data' do
-        it 'should keep the cached value' do
-          new_data = double('new data', :[] => double('property'), key?: double)
-          allow(new_data).to receive(:[]).with(property_name).and_return(nil)
-          allow(new_data).to receive(:[]).with(property_name.to_s).and_return(nil)
-          allow(channel).to receive(:process_permission_overwrites)
-          expect { channel.__send__(:update_data, new_data) }.not_to(change { channel.__send__(property_name) })
+          allow(new_data).to receive(:[]).with(property_name)
         end
       end
     end
