@@ -80,8 +80,9 @@ module Discordrb::API
   def raw_request(type, attributes)
     RestClient.send(type, *attributes)
   rescue RestClient::Forbidden => e
+    resp = JSON.parse(e.response.body)
     # HACK: for #request, dynamically inject restclient's response into NoPermission - this allows us to rate limit
-    noprm = Discordrb::Errors::NoPermission.new
+    noprm = Discordrb::Errors::NoPermission.new(resp)
     noprm.define_singleton_method(:_rc_response) { e.response }
     raise noprm, "The bot doesn't have the required permission to do this!"
   rescue RestClient::BadGateway
