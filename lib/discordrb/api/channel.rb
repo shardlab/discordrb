@@ -33,6 +33,21 @@ module Discordrb::API::Channel
     )
   end
 
+  # Modify the properties of a channel.
+  # https://discord.com/developers/docs/resources/channel#modify-channel
+  def update!(token, channel_id, name: :undef, type: :undef, position: :undef, topic: :undef, nsfw: :undef, rate_limit_per_user: :undef, bitrate: :undef, user_limit: :undef, permission_overwrites: :undef, parent_id: :undef, rtc_region: :undef, video_quality_mode: :undef, default_auto_archive_duration: :undef, flags: :undef, available_tags: :undef, default_reaction_emoji: :undef, default_thread_rate_limit_per_user: :undef, default_sort_order: :undef, default_forum_layout: :undef, archived: :undef, auto_archive_duration: :undef, locked: :undef, invitable: :undef, applied_tags: :undef, reason: nil)
+    Discordrb::API.request(
+      :channels_cid,
+      channel_id,
+      :patch,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}",
+      { name:, type:, position:, topic:, nsfw:, rate_limit_per_user:, bitrate:, user_limit:, permission_overwrites:, parent_id:, rtc_region:, video_quality_mode:, default_auto_archive_duration:, flags:, available_tags:, default_reaction_emoji:, default_thread_rate_limit_per_user:, default_sort_order:, default_forum_layout:, archived:, auto_archive_duration:, locked:, invitable:, applied_tags: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Delete a channel
   # https://discord.com/developers/docs/resources/channel#deleteclose-channel
   def delete(token, channel_id, reason = nil)
