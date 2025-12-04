@@ -1652,7 +1652,8 @@ module Discordrb
 
         # raise ThreadDeleteEvent
       when :THREAD_LIST_SYNC
-        server = self.server(data['guild_id'].to_i)
+        server_id = data['guild_id'].to_i
+        server = @servers[server_id]
 
         # The `channel_ids` field has two meanings:
         #
@@ -1664,12 +1665,12 @@ module Discordrb
           @channels.delete_if { |_, channel| channel.thread? && ids.any?(channel.parent&.id) }
           server&.clear_threads(ids)
         else
-          @channels.delete_if { |_, channel| channel.server == server && channel.thread? }
+          @channels.delete_if { |_, channel| channel.server.id == server_id && channel.thread? }
           server&.clear_threads
         end
 
         data['members'].each { |member| ensure_thread_member(member) }
-        data['threads'].each { |channel| ensure_channel(channel, server) }
+        data['threads'].each { |channel| ensure_channel(channel) }
 
         # raise ThreadListSyncEvent?
       when :THREAD_MEMBER_UPDATE
