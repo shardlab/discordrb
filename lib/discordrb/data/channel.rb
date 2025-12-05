@@ -1040,22 +1040,52 @@ module Discordrb
       @bot.join_thread(@id)
     end
 
-    # Leave this thread
+    # Leave this thread.
     def leave_thread
       @bot.leave_thread(@id)
     end
 
-    # Members in the thread.
-    def members
-      @bot.thread_members[@id].collect { |id| @server_id ? @bot.member(@server_id, id) : @bot.user(id) }
+    # Get the members in the thread.
+    # @param limit [Integer, nil] The maximum number of members to retrieve, or `nil` for no limit.
+    # @return [Array<Member>] the members who have joined the thread.
+    def members(limit: nil)
+      return [] if !thread? || @bot.gateway.intents.nobits?(Discordrb::INTENTS[:server_members])
+
+      return (@bot.thread_members[@id]&.keys&.filter_map { |id| @bot.member(@server_id, id) } || []) if @chunked
+
+      get_members = proc do |fetch_limit, before = nil|
+        response = JSON.parse(API::Channel.list_thread_members(@bot.token, @id, before, fetch_limit, true))
+
+        response.collect do |data|
+          @bot.ensure_thread_member(data)
+          Member.new(data['member'], server, @bot).tap { |member| server&.cache_member(member) }
+        end
+      end
+
+      # Can be done without pagination
+      return get_members.call(limit) if limit && limit <= 100
+
+      paginator = Paginator.new(limit, :down) do |last_page|
+        if last_page && last_page.count < 100
+          []
+        else
+          get_members.call(100, last_page&.last&.id)
+        end
+      end
+
+      # Make sure we set this to true.
+      @chunked = true
+
+      paginator.to_a
     end
 
-    # Add a member to the thread
+    # Add a member to the thread.
     # @param member [Member, Integer, String] The member, or ID of the member, to add to this thread.
     def add_member(member)
       @bot.add_thread_member(@id, member)
     end
 
+    # Remove a member from the thread.
     # @param member [Member, Integer, String] The member, or ID of the member, to remove from a thread.
     def remove_member(member)
       @bot.remove_thread_member(@id, member)
