@@ -32,6 +32,15 @@ module Discordrb
       (ms - DISCORD_EPOCH) << 22
     end
 
+    # Estimates the time a snowflake was generated at based on the beginning of the ID. This is fairly accurate but
+    # shouldn't be relied on as Discord might change its algorithm at any time
+    # @return [Time] when this snowflake was generated at
+    def self.timestamp(time)
+      # Milliseconds
+      ms = (time.to_i >> 22) + DISCORD_EPOCH
+      Time.at(ms / 1000.0)
+    end
+
     class << self
       alias_method :synthesize, :synthesise
     end

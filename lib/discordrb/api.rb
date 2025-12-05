@@ -155,6 +155,23 @@ module Discordrb::API
       retry
     end
 
+    # Endpoints that use Elasticsearch can return a 202 when the index isn't ready yet. Wait the
+    # amount of time indicated by the response body, and then recursively retry and return the request.
+    if response&.code == 202 && response&.body
+      body = JSON.parse(response.body)
+
+      if body['code'] == 110_000
+        case body['retry_after']
+        when 0, 1, nil
+          sleep(rand(4.5..5.0))
+        else
+          sleep(body['retry_after'])
+        end
+
+        return request(*key, type, *attributes)
+      end
+    end
+
     response
   end
 
