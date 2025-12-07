@@ -233,6 +233,18 @@ module Discordrb::API::Server
     )
   end
 
+  # Get a single role
+  # https://discord.com/developers/docs/resources/guild#get-guild-role
+  def role(token, server_id, role_id)
+    Discordrb::API.request(
+      :guilds_sid_roles_rid,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/#{role_id}",
+      Authorization: token
+    )
+  end
+
   # Create a role (parameters such as name and colour if not set can be set by update_role afterwards)
   # Permissions are the Discord defaults; allowed: invite creation, reading/sending messages,
   # sending TTS messages, embedding links, sending files, reading the history, mentioning everybody,
@@ -330,6 +342,18 @@ module Discordrb::API::Server
       "#{Discordrb::API.api_base}/guilds/#{server_id}/members/#{user_id}/roles/#{role_id}",
       Authorization: token,
       'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get the amount of members who have a role
+  # https://discord.com/developers/docs/resources/guild#get-guild-roles-members-count
+  def role_member_counts(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_roles_member_counts,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/member-counts",
+      Authorization: token
     )
   end
 

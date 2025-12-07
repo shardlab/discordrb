@@ -112,6 +112,13 @@ module Discordrb
       @roles.find { |e| e.id == id }
     end
 
+    # Get a mapping of roles to the number of members that have the role.
+    # @return [RoleMemberCounts] A object that maps role IDs to their member counts.
+    def role_member_counts
+      response = JSON.parse(API::Server.role_member_counts(@bot.token, @id))
+      RoleMemberCounts.new(response.tap { |hash| hash[@id] = @member_count }, @bot)
+    end
+
     # Gets a member on this server based on user ID
     # @param id [Integer] The user ID to look for
     # @param request [true, false] Whether the member should be requested from Discord if it's not cached
@@ -1027,7 +1034,7 @@ module Discordrb
     end
   end
 
-  # A ban entry on a server
+  # A ban entry on a server.
   class ServerBan
     # @return [String, nil] the reason the user was banned, if provided
     attr_reader :reason
@@ -1055,7 +1062,7 @@ module Discordrb
     alias_method :lift, :remove
   end
 
-  # A bulk ban entry on a server
+  # A bulk ban entry on a server.
   class BulkBan
     # @return [Server] The server this bulk ban belongs to.
     attr_reader :server
@@ -1075,6 +1082,51 @@ module Discordrb
       @reason = reason
       @banned_users = data['banned_users']&.map(&:resolve_id) || []
       @failed_users = data['failed_users']&.map(&:resolve_id) || []
+    end
+  end
+
+  # A mapping of role IDs to their member counts.
+  class RoleMemberCounts
+    include Enumerable
+
+    # @return [Hash] a mapping of role IDs to their member counts.
+    attr_reader :mapping
+
+    # @!visibility private
+    def initialize(data, bot)
+      @bot = bot
+      @mapping = data.transform_keys!(&:to_i)
+    end
+
+    # Convert the mapping to a hash, or transform the hash.
+    def to_h(...)
+      @mapping.to_h(...)
+    end
+
+    # Iterate over each key-value pair that's stored in the mapping.
+    def each(...)
+      @mapping.each(...)
+    end
+
+    # Get the member count for a single role.
+    # @param key [Integer, String, Role] The role to get member counts for.
+    # @return [Integer, nil] the amount of members who have the role, or `nil`.
+    def [](key)
+      @mapping[key&.resolve_id]
+    end
+
+    # Get the member count for a single role.
+    # @param key [Integer, String, Role] The role to get member counts for.
+    # @return [Integer, Object] the amount of members who have the role, or the default value.
+    def fetch(key, ...)
+      @mapping.fetch(key&.resolve_id, ...)
+    end
+
+    # Get the member counts for one or more role.
+    # @param values [Integer, String, Role] The roles to get member counts for.
+    # @return [Array<Integer, Object>] the amount of members who have each role, or the block value.
+    def fetch_values(*values, &block)
+      @mapping.fetch_values(*values.map(&:resolve_id), &block)
     end
   end
 end
