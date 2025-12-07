@@ -29,9 +29,6 @@ module Discordrb
     # @return [Array<Channel>] an array of all the channels (text and voice) on this server.
     attr_reader :channels
 
-    # @return [Array<Role>] an array of all the roles created on this server.
-    attr_reader :roles
-
     # @return [Hash<Integer => Emoji>] a hash of all the emoji available on this server.
     attr_reader :emoji
     alias_method :emojis, :emoji
@@ -101,15 +98,19 @@ module Discordrb
 
     # @return [Role] The @everyone role on this server
     def everyone_role
-      role(@id)
+      @roles[@id]
+    end
+
+    # @return [Array<Role>] an array of all the roles available on this server.
+    def roles
+      @roles.values
     end
 
     # Gets a role on this server based on its ID.
     # @param id [String, Integer] The role ID to look for.
     # @return [Role, nil] The role identified by the ID, or `nil` if it couldn't be found.
     def role(id)
-      id = id.resolve_id
-      @roles.find { |e| e.id == id }
+      @roles[id.resolve_id]
     end
 
     # Gets a member on this server based on user ID
@@ -391,14 +392,14 @@ module Discordrb
     # @note For internal use only
     # @!visibility private
     def add_role(role)
-      @roles << role
+      @roles[role.id] = role
     end
 
     # Removes a role from the role cache
     # @note For internal use only
     # @!visibility private
     def delete_role(role_id)
-      @roles.reject! { |r| r.id == role_id }
+      @roles.delete(role_id.resolve_id)
       @members.each_value do |member|
         new_roles = member.roles.reject { |r| r.id == role_id }
         member.update_roles(new_roles)
@@ -414,10 +415,7 @@ module Discordrb
     # @!visibility private
     def update_role_positions(role_positions, reason: nil)
       response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions, reason))
-      response.each do |data|
-        updated_role = Role.new(data, @bot, self)
-        role(updated_role.id)&.update_from(updated_role)
-      end
+      response.each { |data| role(data['id'].to_i)&.update_data(data) }
     end
 
     # Adds a member to the member cache.
@@ -549,8 +547,7 @@ module Discordrb
       response = API::Server.create_role(@bot.token, @id, name, nil, hoist, mentionable, permissions&.to_s, reason, colours, icon, unicode_emoji)
 
       role = Role.new(JSON.parse(response), @bot, self)
-      @roles << role
-      role
+      @roles[role.id] = role
     end
 
     # Adds a new custom emoji on this server.
@@ -945,15 +942,13 @@ module Discordrb
 
     def process_roles(roles)
       # Create roles
-      @roles = []
-      @roles_by_id = {}
+      @roles = {}
 
       return unless roles
 
       roles.each do |element|
         role = Role.new(element, @bot, self)
-        @roles << role
-        @roles_by_id[role.id] = role
+        @roles[role.id] = role
       end
     end
 
