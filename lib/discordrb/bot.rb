@@ -1215,12 +1215,11 @@ module Discordrb
       server.update_emoji_data(data)
     end
 
-    # Internal handler for AUTO_MODERATION_RULE_UPDATE and AUTO_MODERATION_RULE_CREATE
+    # Internal handler for AUTO_MODERATION_RULE_CREATE and AUTO_MODERATION_RULE_UPDATE
     def update_guild_automod_rule(data)
-      server = self.server(data['guild_id'].to_i)
-      rule = server&.automod_rule(data['id'].to_i, request: false)
+      server = @servers[data['guild_id'].to_i]
 
-      if rule
+      if (rule = server&.automod_rule(data['id'].to_i, request: false))
         rule.from_other(data)
       else
         server&.cache_automod_rule(AutoModRule.new(data, server, self))
