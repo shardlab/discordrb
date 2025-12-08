@@ -1,7 +1,5 @@
 PreCommit:
   RuboCop:
     enabled: true
+    command: ['bundle', 'exec', 'rubocop'] # Invoke within Bundler context (ensures specified version of RuboCop is used)
     on_warn: fail # Treat all warnings as failures
-
-  AuthorName:
-    enabled: false
