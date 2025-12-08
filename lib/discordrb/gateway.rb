@@ -182,7 +182,7 @@ module Discordrb
       @ws_thread = Thread.new do
         Thread.current[:discordrb_name] = 'websocket'
         connect_loop
-        LOGGER.warn('The WS loop exited! Not sure if this is a good thing')
+        LOGGER.debug('The WS loop exited! Not sure if this is a good thing')
       end
 
       LOGGER.debug('WS thread created! Now waiting for confirmation that everything worked')
@@ -572,7 +572,7 @@ module Discordrb
     end
 
     def connect
-      LOGGER.debug('Connecting')
+      LOGGER.info('Connecting to gateway')
 
       # Get the URI we should connect to
       url = process_gateway
@@ -765,13 +765,7 @@ module Discordrb
     # Op 9
     def handle_invalidate_session
       LOGGER.debug('Received op 9, invalidating session and re-identifying.')
-
-      if @session
-        @session.invalidate
-      else
-        LOGGER.warn('Received op 9 without a running session! Not invalidating, we *should* be fine though.')
-      end
-
+      @session&.invalidate
       identify
     end
 
@@ -812,7 +806,8 @@ module Discordrb
     def handle_close(e)
       @bot.__send__(:raise_event, Events::DisconnectEvent.new(@bot))
 
-      if e.respond_to? :code
+      case e
+      when ::WebSocket::Frame::Incoming::Client
         # It is a proper close frame we're dealing with, print reason and message to console
         LOGGER.error('Websocket close frame received!')
         LOGGER.error("Code: #{e.code}")
@@ -820,19 +815,22 @@ module Discordrb
 
         if e.code == 4014
           LOGGER.error(<<~ERROR)
-            You attempted to identify with privileged intents that your bot is not authorized to use
-            Please enable the privileged intents on the bot page of your application on the discord developer page.
-            Read more here https://discord.com/developers/docs/topics/gateway#privileged-intents
+
+            Your bot attempted to identify with privileged intents that it is not authorized to use.
+            You must either enable these for your application on the Discord Developer Portal, or
+            set the intents: parameter of Bot#initialize to request only the intents that you need.
+            Read more here: https://discord.com/developers/docs/topics/gateway#privileged-intents
+                            https://drb.shardlab.dev/main/Discordrb/Bot.html#initialize-instance_method
           ERROR
         end
 
         @should_reconnect = false if FATAL_CLOSE_CODES.include?(e.code)
-      elsif e.is_a? Exception
+      when Exception
         # Log the exception
-        LOGGER.error('The websocket connection has closed due to an error!')
+        LOGGER.error('The gateway connection has closed due to an error!')
         LOGGER.log_exception(e)
       else
-        LOGGER.error("The websocket connection has closed: #{e&.inspect || '(no information)'}")
+        LOGGER.error("The gateway connection has closed: #{e&.inspect}")
       end
     end
 
