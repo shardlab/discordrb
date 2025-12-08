@@ -280,7 +280,7 @@ module Discordrb::API::Server
 
   # Update role positions
   # https://discord.com/developers/docs/resources/guild#modify-guild-role-positions
-  def update_role_positions(token, server_id, roles)
+  def update_role_positions(token, server_id, roles, reason = nil)
     Discordrb::API.request(
       :guilds_sid_roles,
       server_id,
@@ -288,7 +288,8 @@ module Discordrb::API::Server
       "#{Discordrb::API.api_base}/guilds/#{server_id}/roles",
       roles.to_json,
       Authorization: token,
-      content_type: :json
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
     )
   end
 
