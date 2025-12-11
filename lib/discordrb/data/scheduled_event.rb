@@ -76,9 +76,15 @@ module Discordrb
       @bot.channel(@channel_id) if @channel_id
     end
 
+    # Get a URL that will display an embed in the Discord client containing information about the scheduled event.
+    # @return [String] a URL that will display an embed containing a brief overview about the scheduled event's information.
+    def url
+      "https://discord.com/events/#{@server.id}/#{@id}"
+    end
+
     # Utility method to get a scheduled event's cover image URL.
-    # @param format [String] the URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
-    # @param size [Integer] the URL will default to `4096`. You can otherwise specify any number that's a power of two to override this.
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
+    # @param size [Integer] The URL will default to `4096`. You can otherwise specify any number that's a power of two to override this.
     # @return [String, nil] the URL to the scheduled event's cover image, or `nil` if the scheduled event doesn't have a cover image set.
     def cover_url(format: 'webp', size: 4096)
       API.scheduled_event_cover_url(@id, @cover_id, format, size) if @cover_id
@@ -111,37 +117,37 @@ module Discordrb
     end
 
     # Set the name of the scheduled event to something new.
-    # @param name [String] the new name of the scheduled event.
+    # @param name [String] The new name of the scheduled event.
     def name=(name)
       update_data(name: name)
     end
 
     # Set the description of the scheduled event to something new.
-    # @param description [String, nil] the new description of the scheduled event.
+    # @param description [String, nil] The new description of the scheduled event.
     def description=(description)
       update_data(description: description)
     end
 
     # Set the recurrence rule of the scheduled event to something new.
-    # @param rule [#to_h, nil] the new recurrence rule of the scheduled event.
+    # @param rule [#to_h, nil] The new recurrence rule of the scheduled event.
     def recurrence_rule=(rule)
       update_data(recurrence_rule: rule&.to_h)
     end
 
     # Set the cover image of the scheduled event to something new.
-    # @param cover [File, #read] the new cover image of the scheduled event.
+    # @param cover [File, #read] The new cover image of the scheduled event.
     def cover=(cover)
       update_data(image: Discordrb.encode64(cover))
     end
 
     # Set the channel where the scheduled event will occur to something new.
-    # @param channel [Channel, Integer, String, nil] the new channel of the scheduled event.
+    # @param channel [Channel, Integer, String, nil] The new channel of the scheduled event.
     def channel=(channel)
       update_data(channel_id: channel&.resolve_id)
     end
 
     # Set the external location of the scheduled event to something new.
-    # @param location [String, nil] the new location of the scheduled event.
+    # @param location [String, nil] The new location of the scheduled event.
     def location=(location)
       entity_metadata = { location: } if location
 
@@ -149,31 +155,31 @@ module Discordrb
     end
 
     # Set the status of the scheduled event to something new.
-    # @param status [Symbol, Integer] the new status of the scheduled event.
+    # @param status [Symbol, Integer] The new status of the scheduled event.
     def status=(status)
       update_data(status: STATUSES[status] || status)
     end
 
     # Set the time at when the scheduled event will end to something new.
-    # @param end_time [Time] the new end time of the scheduled event.
+    # @param end_time [Time] The new end time of the scheduled event.
     def end_time=(end_time)
       update_data(scheduled_end_time: end_time.iso8601)
     end
 
     # Set the entity type of the scheduled event to something new.
-    # @param type [Symbol, Integer] the new entity type of the scheduled event.
+    # @param type [Symbol, Integer] The new entity type of the scheduled event.
     def entity_type=(type)
       update_data(entity_type: ENTITY_TYPES[type] || type)
     end
 
     # Set the time at when the scheduled event will start to something new.
-    # @param start_time [Time] the new start time of the scheduled event.
+    # @param start_time [Time] The new start time of the scheduled event.
     def start_time=(start_time)
       update_data(scheduled_start_time: start_time.iso8601)
     end
 
     # Start the scheduled event.
-    # @param reason [String, nil] the reason for starting the event.
+    # @param reason [String, nil] The reason for starting the event.
     # @return [void]
     def start(reason: nil)
       raise 'cannot start this event' unless scheduled?
@@ -182,7 +188,7 @@ module Discordrb
     end
 
     # Cancel the scheduled event. This cannot be undone.
-    # @param reason [String, nil] the reason for cancelling the event.
+    # @param reason [String, nil] The reason for cancelling the event.
     # @return [void]
     def cancel(reason: nil)
       raise 'cannot cancel this event' unless scheduled?
@@ -191,7 +197,7 @@ module Discordrb
     end
 
     # End the scheduled event. This cannot be undone.
-    # @param reason [String, nil] the reason for ending the event.
+    # @param reason [String, nil] The reason for ending the event.
     # @return [void]
     def end(reason: nil)
       raise 'cannot end this event' unless active?
@@ -200,11 +206,11 @@ module Discordrb
     end
 
     # Delete the scheduled event. Use this with caution, as it cannot be undone.
-    # @param reason [String, nil] the audit log reason for deleting the scheduled event.
+    # @param reason [String, nil] The audit log reason for deleting the scheduled event.
     # @return [void]
     def delete(reason: nil)
       API::Server.delete_scheduled_event(@bot.token, @server.id, @id, reason: reason)
-      @server.scheduled_events.delete(@id)
+      @server.delete_scheduled_event(@id)
     end
 
     # Overwrite the existing reccurence rule for the scheduled event or add one.
@@ -237,8 +243,8 @@ module Discordrb
     #     builder.by_n_weekday(week: 4, day: :wednesday)
     #     builder.start_time = :replace_with_time
     #   end
-    # @yieldparam builder [RecurrenceRule::Builder] the builder for the reccurence rule to add or update.
-    # @param reason [String, nil] the reason that will show up for modifying the event's reccurence rule.
+    # @yieldparam builder [RecurrenceRule::Builder] The builder for the reccurence rule to add or update.
+    # @param reason [String, nil] The reason that will show up for modifying the event's reccurence rule.
     # @return [void]
     def update_recurrence_rule(reason: nil)
       yield((builder = RecurrenceRule::Builder.new))
@@ -295,8 +301,8 @@ module Discordrb
     alias_method :subscriber_count, :user_count
 
     # Get the users who are subscribed to the scheduled event.
-    # @param limit [Integer, nil] the limit (`nil` for no limit) of how many subscribers to return.
-    # @param member [true, false] whether to return subscribers as server members, where applicable.
+    # @param limit [Integer, nil] The limit (`nil` for no limit) of how many subscribers to return.
+    # @param member [true, false] Whether to return subscribers as server members, when applicable.
     # @return [Array<User, Member>] the users or members that have subscribed to the scheduled event.
     def users(limit: 100, member: false)
       get_users = proc do |fetch_limit, after = nil|
@@ -322,7 +328,7 @@ module Discordrb
 
     # @!visibility private
     def inspect
-      "<ScheduledEvent id=#{@id} name=\"#{@name}\" status=#{@status} start_time=#{@start_time} end_time=#{@end_time}>"
+      "<ScheduledEvent id=#{@id} name=\"#{@name}\" start_time=#{@start_time.inspect} end_time=#{@end_time.inspect}>"
     end
 
     # @!visibility private
@@ -336,7 +342,7 @@ module Discordrb
       @channel_id = new_data['channel_id']&.to_i
       @start_time = Time.iso8601(new_data['scheduled_start_time'])
       @location = new_data['entity_metadata'] ? new_data['entity_metadata']['location'] : nil
-      @end_time = Time.iso8601(new_data['scheduled_end_time']) if new_data['scheduled_end_time']
+      @end_time = new_data['scheduled_end_time'] ? Time.iso8601(new_data['scheduled_end_time']) : nil
       @recurrence_rule = new_data['recurrence_rule'] ? RecurrenceRule.new(new_data['recurrence_rule'], @bot) : nil
     end
 
@@ -433,7 +439,7 @@ module Discordrb
         @interval = data['interval']
         @frequency = data['frequency']
         @by_year_day = data['by_year_day'] || []
-        @by_n_weekday = data['by_n_weekday']&.map { |day| WeeklyDay.new(day, bot) } || []
+        @by_n_weekday = data['by_n_weekday']&.map { |day| WeeklyDay.new(day, @bot) } || []
         @by_month_day = data['by_month_day'] || []
       end
 
@@ -533,7 +539,7 @@ module Discordrb
         end
 
         # Set the the specific days within the month to recur on.
-        # @param monthly_days [Array<Integer>] the speific days within
+        # @param monthly_days [Array<Integer>] The speific days within
         #   the month to recur on.
         # @return [void]
         def by_month_day=(monthly_days)
@@ -541,7 +547,7 @@ module Discordrb
         end
 
         # Set the the specific months of the year to recur on.
-        # @param months [Array<Integer, Symbol>, Integer, Symbol] the specific months
+        # @param months [Array<Integer, Symbol>, Integer, Symbol] The specific months
         #   of the year to recur on,  e.g. `:april`, `:july`, `:june`, etc.
         # @return [void]
         def by_month=(months)
@@ -549,7 +555,7 @@ module Discordrb
         end
 
         # Set the specific days of the week to recur on.
-        # @param weekdays [Array<Symbol, Integer>, Symbol, Integer] the specific days
+        # @param weekdays [Array<Symbol, Integer>, Symbol, Integer] The specific days
         #   of the week to recur on, e.g. `:tuesday`, `:saturday`, etc.
         # @return [void]
         def by_weekday=(weekdays)
@@ -557,8 +563,8 @@ module Discordrb
         end
 
         # Set the specific days for a specific week to recur on.
-        # @param week [Integer] the week of the month (1-5) to recur on.
-        # @param day [Integer, Symbol] the specific day of the week to recur on, e.g. `:april`.
+        # @param week [Integer] The week of the month (1-5) to recur on.
+        # @param day [Integer, Symbol] The specific day of the week to recur on, e.g. `:april`.
         # @return [void]
         def by_n_weekday(week:, day:)
           (@by_n_weekday ||= []) << { n: week, day: WEEKDAYS[day] || day }

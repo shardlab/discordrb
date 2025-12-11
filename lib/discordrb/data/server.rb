@@ -850,7 +850,7 @@ module Discordrb
     #   should be ignored and re-fetched via an HTTP request.
     # @return [Array<ScheduledEvent>] the scheduled events on the server.
     def scheduled_events(bypass_cache: false)
-      process_scheduled_events(JSON.parse(API::Server.list_scheduled_events(@bot.token, @id))) if bypass_cache
+      process_scheduled_events(JSON.parse(API::Server.list_scheduled_events(@bot.token, @id, with_user_count: true))) if bypass_cache
 
       @scheduled_events.values
     end
@@ -864,8 +864,9 @@ module Discordrb
       return @scheduled_events[id] if @scheduled_events[id]
       return nil unless request
 
-      scheduled_event = JSON.parse(API::Server.get_scheduled_event(@bot.token, @id, id))
-      @scheduled_events[scheduled_event['id'].to_i] = ScheduledEvent.new(scheduled_event, self, @bot)
+      event = JSON.parse(API::Server.get_scheduled_event(@bot.token, @id, id, with_user_count: true))
+      scheduled_event = ScheduledEvent.new(event, self, @bot)
+      @scheduled_events[scheduled_event.id] = scheduled_event
     rescue StandardError
       nil
     end

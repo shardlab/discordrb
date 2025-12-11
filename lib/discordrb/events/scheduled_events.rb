@@ -30,7 +30,7 @@ module Discordrb::Events
     def initialize(data, bot)
       @bot = bot
       @server = bot.server(data['guild_id'].to_i)
-      @scheduled_event = Discordrb::ScheduledEvent.new(data, @server, bot)
+      @scheduled_event = Discordrb::ScheduledEvent.new(data, @server, @bot)
     end
   end
 
@@ -89,23 +89,23 @@ module Discordrb::Events
 
       [
         matches_all(@attributes[:server], event.server) do |a, e|
-          a.resolve_id == e&.resolve_id
+          a&.resolve_id == e&.resolve_id
         end,
 
         matches_all(@attributes[:id], event.scheduled_event) do |a, e|
-          a.resolve_id == e&.resolve_id
+          a&.resolve_id == e&.resolve_id
         end,
 
         matches_all(@attributes[:creator], event.scheduled_event.creator) do |a, e|
-          a.resolve_id == e&.resolve_id
+          a&.resolve_id == e&.resolve_id
         end,
 
         matches_all(@attributes[:channel], event.scheduled_event.channel) do |a, e|
-          a.resolve_id == e&.resolve_id
+          a&.resolve_id == e&.resolve_id
         end,
 
         matches_all(@attributes[:entity_id], event.scheduled_event.entity_id) do |a, e|
-          a.resolve_id == e&.resolve_id
+          a&.resolve_id == e&.resolve_id
         end,
 
         matches_all(@attributes[:entity_type], event.scheduled_event.entity_type) do |a, e|
