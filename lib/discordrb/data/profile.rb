@@ -49,7 +49,7 @@ module Discordrb
     # Set the bot's global bio.
     # @param bio [String, nil] The bot's new global bio, or `nil` to remove the current bio.
     def bio=(bio)
-      @bot.application.description = bio
+      @bot.application.modify(description: bio)
     end
 
     # Updates the cached profile data with the new one.

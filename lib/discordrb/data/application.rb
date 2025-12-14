@@ -8,13 +8,13 @@ module Discordrb
     # Map of application flags.
     FLAGS = {
       automod_rule_badge: 1 << 6,
-      presence_intent: 1 << 12,
+      approved_presence_intent: 1 << 12,
       limited_presence_intent: 1 << 13,
-      server_members_intent: 1 << 14,
+      approved_server_members_intent: 1 << 14,
       limited_server_members_intent: 1 << 15,
       pending_server_limit_verification: 1 << 16,
       embedded: 1 << 17,
-      message_content_intent: 1 << 18,
+      approved_message_content_intent: 1 << 18,
       limited_message_content_intent: 1 << 19,
       application_command_badge: 1 << 23
     }.freeze
@@ -101,10 +101,10 @@ module Discordrb
     # @return [Array<String>] the webhook event types that the application is subscribed to.
     attr_reader :webhook_event_types
 
-    # @return [Array<String>] an array of tags describing the content and functionality of the application.
+    # @return [Array<String>] an array of traits describing the content and functionality of the application.
     attr_reader :tags
 
-    # @return [InstallParams] the settings for the application's default in-app authorization link.
+    # @return [InstallParams] the settings for the application's default authorization link.
     attr_reader :install_params
 
     # @return [Hash<Integer => InstallParams>] the default scopes and permissions for each supported installation context.
@@ -129,30 +129,23 @@ module Discordrb
 
     # Utility method to get a application's icon URL.
     # @param format [String] The URL will default to `webp`. You can otherwise specify one of `webp`, `jpg` or `png` to override this.
-    # @return [String, nil] the URL of the icon image (nil if no image is set).
-    def icon_url(format = 'webp')
+    # @return [String, nil] The URL of the icon image (`nil` if no image is set).
+    def icon_url(format: 'webp')
       API.app_icon_url(@id, @icon_id, format) if @icon_id
     end
 
     # Utility method to get a application's cover image URL.
     # @param format [String] The URL will default to `webp`. You can otherwise specify one of `webp`, `jpg` or `png` to override this.
-    # @return [String, nil] the URL of the icon image (nil if no image is set).
-    def cover_image_url(format = 'webp')
+    # @return [String, nil] The URL of the cover image (`nil` if no cover is set).
+    def cover_image_url(format: 'webp')
       API.app_cover_url(@id, @cover_image_id, format) if @cover_image_id
     end
 
-    # Get the role connection metadata records associated with this application.
-    # @return [Array<RoleConnectionMetadata>] the role connection metadata records associated with this application.
-    def role_connection_metadata_records
-      response = API::Application.get_application_role_connection_metadata_records(@bot.token, @id)
-      JSON.parse(response).map { |role_connection| RoleConnectionMetadata.new(role_connection, @bot) }
-    end
-
     # Delete an integration types config for the application.
-    # @param type [Integer, String] the type of the integration type to remove.
+    # @param type [Integer, String] The type of the integration type to remove.
     def delete_integration_type(type)
-      @integration_types.delete(type.to_i)
-      update_application(integration_types_config: collect_integration_types)
+      new_data = @integration_types.dup.tap { |i| i.delete(type.to_i) }
+      modify(integration_types: collect_integration_types(new_data))
     end
 
     # Add an integration types config for the application.
@@ -161,135 +154,137 @@ module Discordrb
     # @param permissions [Permissions, String, Integer, nil] The default permissions for the config.
     def add_integration_type(type:, scopes: nil, permissions: nil)
       permissions = permisisons.bits if permissions.respond_to?(:bits)
+      new_data = @integration_types.dup
 
-      @integration_types[type.to_i] = {
+      new_data[type.to_i] = {
         scopes: scopes&.map(&:to_s),
         permissions: permissions&.to_s
-      }.compact
+      }
 
-      update_application(integration_types_config: collect_integration_types)
+      modify(integration_types: collect_integration_types(new_data.compact))
     end
 
-    # Update the flags of this application. I recommend using this instead of {#flags=}.
-    # @param add [Array<Integer, Symbol> Integer, Symbol] The flags to add to the application.
-    # @param remove [Array<Integer, Symbol> Integer, Symbol] The flags to remove from the application.
-    # @note The flags will be removed first, and then added. Only limited intent flags can be updated.
-    def update_flags(add: 0, remove: 0)
-      flags = lambda do |value|
-        [*value].map { |flag_bit| FLAGS[flag_bit] || flag_bit.to_i }.reduce(&:|)
+    # Get the integration types config for when the application has been installed to a user.
+    # @return [InstallParams, nil] The default install params for when the application's is installed to a user.
+    def user_integration_type
+      @integration_type[1]
+    end
+
+    # Get the integration types config for when the application has been installed in a server.
+    # @return [InstallParams, nil] The defaults install params for when the application's is installed in a server.
+    def server_integration_type
+      @integration_types[0]
+    end
+
+    # Modify the properties of the application.
+    # @param icon [#read, nil] The new icon for the application. Must be a file-like object that response to `#read`.
+    # @param cover_image [#read, nil] The new rich presence cover image for the application. Must be a file-like object that response to `#read`.
+    # @param flags [Integer, Symbol, Array<Symbol, Integer>] The new flags to set for the application. Only limited intent flags can be updated.
+    # @param tags [Array<String, Symbol>, nil] The new tags representing the application's traits.
+    # @param description [String, nil] The new description of the application.
+    # @param custom_install_url [String, nil] The new default custom authorization URL for the application.
+    # @param webhook_events_url [String, nil] The new URL the application will use to receive webhook events via HTTP.
+    # @param webhook_events_status [Integer] The new status of the application's webhook events.
+    # @param webhook_event_types [Array<String, Symbol>, nil] The new types of webhook events that the application wishes to receive.
+    # @param interactions_endpoint_url [String, nil] The new URL the application will use to receive INTERACTION_CREATE events via HTTP.
+    # @param install_scopes [Array<String, Symbol>] The new default scopes to add the application to a server with.
+    # @param install_permissions [Permissions, Integer, String] The new default permissions to add the application to a server with.
+    # @param role_connections_verification_url [String, nil] The new role connections verification URL for the application.
+    # @param add_flags [Integer, Symbol, Array<Symbol, Integer>] The limited intent flags to add to the application.
+    # @param remove_flags [Integer, Symbol, Array<Symbol, Integer>] The limited intent flags to remove from the application.
+    # @param integration_types [#to_h] The new integration types configuration for the application.
+    # @note When using the `add_flags:` and `remove_flags:` parameters, The flags are removed first, and then added.
+    # @return [nil]
+    def modify(
+      icon: :undef, cover_image: :undef, flags: :undef, tags: :undef, description: :undef,
+      custom_install_url: :undef, webhook_events_url: :undef, webhook_events_status: :undef,
+      webhook_event_types: :undef, interactions_endpoint_url: :undef, install_scopes: :undef,
+      install_permissions: :undef, role_connections_verification_url: :undef, add_flags: :undef,
+      remove_flags: :undef, integration_types: :undef
+    )
+      data = {
+        icon: icon.respond_to?(:read) ? Discordrb.encode64(icon) : icon,
+        cover_image: cover_image.respond_to?(:read) ? Discordrb.encode64(cover_image) : cover_image,
+        flags: flags == :undef ? flags : [*flags].map { |bit| FLAGS[bit] || bit.to_i }.reduce(&:|),
+        tags: tags,
+        description: description,
+        custom_install_url: custom_install_url,
+        event_webhooks_url: webhook_events_url || '',
+        event_webhooks_status: webhook_events_status,
+        event_webhooks_types: webhook_event_types || [],
+        interactions_endpoint_url: interactions_endpoint_url,
+        role_connections_verification_url: role_connections_verification_url,
+        integration_types_config: integration_types == :undef ? integration_types : integration_types&.to_h
+      }
+
+      ((data[:install_params] ||= @install_params.to_h)[:scopes] = install_scopes) if install_scopes != :undef
+
+      if install_permissions != :undef
+        install_permissions = install_permissions.bits if install_permissions.respond_to?(:bits)
+        (data[:install_params] ||= @install_params.to_h)[:permissions] = install_permissions.to_s
       end
 
-      update_application(flags: ((@flags & ~flags.call(remove)) | flags.call(add)))
-    end
+      if add_flags != :undef || remove_flags != :undef
+        raise ArgumentError, "'add_flags' and 'remove_flags' are mutually exclusive with 'flags'" if flags != :undef
 
-    # Set the icon for the application.
-    # @param image [File, nil] File like object that respond to #read, or nil.
-    def icon=(image)
-      update_application(icon: image.respond_to?(:read) ? Discordrb.encode64(image) : image)
-    end
+        to_flags = lambda do |value|
+          [*(value == :undef ? 0 : value)].map { |bit| FLAGS[bit] || bit.to_i }.reduce(&:|)
+        end
 
-    # Set the cover image for the application.
-    # @param image [File, nil] File like object that respond to #read, or nil.
-    def cover_image=(image)
-      update_application(cover_image: image.respond_to?(:read) ? Discordrb.encode64(image) : image)
-    end
+        data[:flags] = ((@flags & ~to_flags.call(remove_flags)) | to_flags.call(add_flags))
+      end
 
-    # Set the default Oauth install scopes for the application when joining a server.
-    # @param scopes [Array<String, Symbol>] The new default OAuth scopes for the application.
-    def install_scopes=(scopes)
-      update_application(install_params: @install_params.to_h.merge(scopes: scopes.map(&:to_s)))
-    end
-
-    # Set the default permissions the application requests when joining a server.
-    # @param permissions [Permissions, Integer, String] The new default permissions for the application.
-    def install_permissions=(permissions)
-      permissions = permissions.bits if permissions.respond_to?(:bits)
-      update_application(install_params: @install_params.to_h.merge(permissions: permissions.to_s))
-    end
-
-    # Set the tags descirbing the content and functionality of the application.
-    # @param tags [Array<String>] Maximum of five tags per application, 20 characters per tag.
-    def tags=(tags)
-      update_application(tags: tags)
-    end
-
-    # Set the public flags for the application.
-    # @param flags [Integer] The new flags to set for the application. Only limited intent flags can be updated.
-    def flags=(flags)
-      update_application(flags: flags)
-    end
-
-    # Set the description for the application.
-    # @param description [String, nil] The new description for the application.
-    def description=(description)
-      update_application(description: description || '')
-    end
-
-    # Set the webhook events that the applicaton is subscribed to.
-    # @param event_types [Array<String>] The new webhook event types to subscribe to.
-    def webhook_event_types=(event_types)
-      update_application(event_webhooks_types: event_types)
-    end
-
-    # Set the status of webhook events for the application.
-    # @param events_status [Integer] The new webhook events status for the application.
-    def webhook_events_status=(events_status)
-      update_application(event_webhooks_status: events_status)
-    end
-
-    # Set the URL that webhook events will be sent to for the application.
-    # @param events_url [String, nil] The new URL that webhook events will be sent to.
-    def webhook_events_url=(events_url)
-      update_application(event_webhooks_url: events_url || '')
-    end
-
-    # Set the custom installation URL for the application.
-    # @param install_url [String, nil] The new default custom authorization URL for the application.
-    def custom_install_url=(install_url)
-      update_application(custom_install_url: install_url || '')
-    end
-
-    # Set the endpoint that will reccieve interaction over HTTP POST for the application.
-    # @param endpoint_url [String, nil] The new interactions endpoint. Must pass security validation.
-    def interactions_endpoint_url=(endpoint_url)
-      update_application(interactions_endpoint_url: endpoint_url || '')
-    end
-
-    # Set the role connection verification URL for the application.
-    # @param verification_url [String, nil] The new role connections verification URL for the application.
-    def role_connections_verification_url=(verification_url)
-      update_application(role_connections_verification_url: verification_url || '')
-    end
-
-    # The inspect method is overwritten to give more useful output.
-    def inspect
-      "<Application name=#{@name} id=#{@id} public=#{@public} owner=#{@owner&.id} server_id=#{@server_id} tags=#{@tags} flags=#{@flags}>"
+      update_data(JSON.parse(API::Application.update_current_application(@bot.token, **data)))
+      nil
     end
 
     # @!method automod_rule_badge?
-    #   @return [true, false] if the application has at least 100 automod rules across all of its servers.
-    # @!method presence_intent?
-    #   @return [true, false] if the application is in less than 100 servers and has access to the server presences intent.
+    #   @return [true, false] whether or not the application has at least 100 automod rules across all of its servers.
+    # @!method approved_presence_intent?
+    #   @return [true, false] whether or not the application is in less than 100 servers and has access to the server presences intent.
     # @!method limited_presence_intent?
-    #   @return [true, false] if the application is in more than 100 servers and has access to the server presences intent.
-    # @!method server_members_intent?
-    #   @return [true, false] if the application is in more than 100 servers and has access to the server members intent.
+    #   @return [true, false] whether or not the application is in more than 100 servers and has access to the server presences intent.
+    # @!method approved_server_members_intent?
+    #   @return [true, false] whether or not the application is in more than 100 servers and has access to the server members intent.
     # @!method limited_server_members_intent?
-    #   @return [true, false] if the application is in less than 100 servers and has access to the server members intent.
+    #   @return [true, false] whether or not the application is in less than 100 servers and has access to the server members intent.
     # @!method pending_server_limit_verification?
-    #   @return [true, false] if the application has underwent unusual growth that is preventing it from being verified.
+    #   @return [true, false] whether or not the application has underwent unusual growth that is preventing it from being verified.
     # @!method embedded?
-    #   @return [true, false] if the application is embedded within the Discord application (currently unavailable publicly).
-    # @!method message_content_intent?
-    #   @return [true, false] if the application is in more than 100 servers and has access to the message content intent.
+    #   @return [true, false] whether or not the application is embedded within the Discord application (currently unavailable publicly).
+    # @!method approved_message_content_intent?
+    #   @return [true, false] whether or not the application is in more than 100 servers and has access to the message content intent.
     # @!method limited_message_content_intent?
-    #   @return [true, false] if the application is in less than 100 servers and has access to the message content intent.
+    #   @return [true, false] whether or not the application is in less than 100 servers and has access to the message content intent.
     # @!method application_command_badge?
-    #   @return [true, false] if the application has registered at least one global application command.
+    #   @return [true, false] whether or not the application has registered at least one global application command.
     FLAGS.each do |name, value|
       define_method("#{name}?") do
         @flags.anybits?(value)
       end
+    end
+
+    # Check if the application has the presence intent toggled on its dashboard.
+    # @return [true, false] Whether or not the application has access to the presence intent.
+    def presence_intent?
+      approved_presence_intent? || limited_presence_intent?
+    end
+
+    # Check if the application has the server members intent toggled on its dashboard.
+    # @return [true, false] Whether or not the application has access to the server members intent.
+    def server_members_intent?
+      approved_server_members_intent? || limited_server_members_intent?
+    end
+
+    # Check if the application has the message content intent toggled on its dashboard.
+    # @return [true, false] Whether or not the application has access to the message content intent.
+    def message_content_intent?
+      approved_message_content_intent? || limited_message_content_intent?
+    end
+
+    # @!visibility private
+    def inspect
+      "<Application name=#{@name} id=#{@id} public=#{@public} tags=#{@tags} flags=#{@flags}>"
     end
 
     private
@@ -299,8 +294,8 @@ module Discordrb
       @name = new_data['name']
       @description = new_data['description']
       @icon_id = new_data['icon']
-      @rpc_origins = new_data['rpc_origins']
-      @flags = new_data['flags']
+      @rpc_origins = new_data['rpc_origins'] || []
+      @flags = new_data['flags'] || 0
       @owner = new_data['owner'] ? @bot.ensure_user(new_data['owner']) : nil
 
       @public = new_data['bot_public']
@@ -335,16 +330,10 @@ module Discordrb
     end
 
     # @!visibility private
-    # @note For internal use only.
-    def collect_integration_types
-      @integration_types.each_with_object({}) do |(key, value), result|
+    def collect_integration_types(integration_types)
+      integration_types.each_with_object({}) do |(key, value), result|
         result[key.to_s] = value.to_h.any? ? { oauth2_install_params: value.to_h } : {}
       end
-    end
-
-    # @!visibility private
-    def update_application(new_data)
-      update_data(JSON.parse(API::Application.update_current_application(@bot.token, **new_data)))
     end
   end
 end

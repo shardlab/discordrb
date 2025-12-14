@@ -241,6 +241,13 @@ module Discordrb
     alias_method :bot_app, :bot_application
     alias_method :application, :bot_application
 
+    # Get the role connection metadata records associated with this application.
+    # @return [Array<RoleConnectionMetadata>] the role connection metadata records associated with this application.
+    def role_connection_metadata_records
+      response = API::Application.get_application_role_connection_metadata_records(@bot.token, @id)
+      JSON.parse(response).map { |role_connection| RoleConnectionMetadata.new(role_connection, @bot) }
+    end
+
     # The Discord API token received when logging in. Useful to explicitly call
     # {API} methods.
     # @return [String] The API token.
