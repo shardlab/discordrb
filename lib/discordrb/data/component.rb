@@ -81,27 +81,25 @@ module Discordrb
 
     # An interactable button component.
     class Button
-      # @return [Integer] the ID of this button component.
+      # @return [Integer] the ID of the button.
       attr_reader :id
 
-      # @return [String] the label of this button component.
+      # @return [String] the label of the button.
       attr_reader :label
 
-      # @return [Integer] the style of this button component.
-      # @see Webhooks::View::BUTTON_STYLES
+      # @return [Integer] the style of the button.
       attr_reader :style
 
-      # @return [String] the custom ID of this button component.
+      # @return [String] the custom ID of the button.
       attr_reader :custom_id
 
-      # @return [true, false] whether this button component is disabled.
+      # @return [true, false] whether or not the button is disabled.
       attr_reader :disabled
 
-      # @return [String, nil] the URL of this button component, if the
-      #   button's style is {#link?}.
+      # @return [String, nil] the URL of the button if applicable.
       attr_reader :url
 
-      # @return [Emoji, nil] the custom emoji of this button component.
+      # @return [Emoji, nil] the custom emoji of the button component.
       attr_reader :emoji
 
       # @!visibility private
@@ -135,12 +133,12 @@ module Discordrb
 
       # Await a button click
       def await_click(key, **attributes, &block)
-        @bot.add_await(key, Discordrb::Events::ButtonEvent, { custom_id: @custom_id }.merge(attributes), &block)
+        @bot.add_await(key, Discordrb::Events::ButtonEvent, { custom_id: @custom_id }.merge!(attributes), &block)
       end
 
       # Await a button click, blocking.
       def await_click!(**attributes, &block)
-        @bot.add_await!(Discordrb::Events::ButtonEvent, { custom_id: @custom_id }.merge(attributes), &block)
+        @bot.add_await!(Discordrb::Events::ButtonEvent, { custom_id: @custom_id }.merge!(attributes), &block)
       end
     end
 
@@ -148,16 +146,16 @@ module Discordrb
     class SelectMenu
       # A select menu option.
       class Option
-        # @return [String] the user-facing label of this option.
+        # @return [String] the of the option.
         attr_reader :label
 
-        # @return [String] the value of this option.
+        # @return [String] the value of the option.
         attr_reader :value
 
-        # @return [String, nil] the description of this option.
+        # @return [String, nil] the description of the option.
         attr_reader :description
 
-        # @return [Emoji, nil] the emoji of this option, or `nil` for no emoji.
+        # @return [Emoji, nil] the emoji of the option, or `nil`.
         attr_reader :emoji
 
         # @!visibility hidden
@@ -169,25 +167,25 @@ module Discordrb
         end
       end
 
-      # @return [Integer] the ID of this select menu component.
+      # @return [Integer] the ID of the select menu.
       attr_reader :id
 
-      # @return [Array<String>] the selected values in the modal.
+      # @return [Array<String>] the selected values.
       attr_reader :values
 
-      # @return [String] the custom ID of this select menu component.
+      # @return [String] the custom ID of the select menu.
       attr_reader :custom_id
 
-      # @return [Integer, nil] the minimum amount of options that can be chosen for this select menu component.
+      # @return [Integer, nil] the minimum amount of values that be selected.
       attr_reader :max_values
 
-      # @return [Integer, nil] the minimum amount of options that must be chosen for this select menu component.
+      # @return [Integer, nil] the maximum amount of values that can be selected.
       attr_reader :min_values
 
-      # @return [String, nil] the placeholder text shown on this select menu when no options have been selected.
+      # @return [String, nil] the default placeholder text shown on the select menu.
       attr_reader :placeholder
 
-      # @return [Array<Option>] the options that were selected for this select menu component.
+      # @return [Array<Option>] the options in the select menu, or the selected options.
       attr_reader :options
 
       # @!visibility private
@@ -199,45 +197,44 @@ module Discordrb
         @min_values = data['min_values']
         @placeholder = data['placeholder']
         @custom_id = data['custom_id']
-        @emoji = Emoji.new(data['emoji'], @bot) if data['emoji']
-        @options = data['options']&.map { |opt| Option.new(opt) } || []
+        @options = data['options']&.map { |option| Option.new(option) } || []
         @values = data['values'] || @options&.map(&:value)
       end
     end
 
-    # Text input component for use in modals. Can be either a line (`short`), or a multi line (`paragraph`) block.
+    # A component that can accept user-input in a modal.
     class TextInput
       # Single line text input
       SHORT = 1
       # Multi-line text input
       PARAGRAPH = 2
 
-      # @return [Integer] the ID of this text input componet.
+      # @return [Integer] the ID of the text input.
       attr_reader :id
 
-      # @return [String] the custom ID of this text input component.
-      attr_reader :custom_id
-
-      # @return [Symbol] the style of this component. Will either be (`:short`) or (`:paragraph`).
+      # @return [Symbol] the style of the text input.
       attr_reader :style
 
-      # @return [String] the label shown above this text input component.
+      # @return [String] the custom ID of the text input.
+      attr_reader :custom_id
+
+      # @return [String] the label shown above the text input.
       attr_reader :label
 
-      # @return [Integer, nil] the minimum amount of characters that must be typed into this text input component.
-      attr_reader :min_length
-
-      # @return [Integer, nil] the maximum amount of characters that must be typed into this text input component.
+      # @return [Integer, nil] the maximum amount of text that can be typed.
       attr_reader :max_length
 
-      # @return [true, false] whether something must be typed into this text input component.
+      # @return [Integer, nil] the minimum amount of text that must be typed.
+      attr_reader :min_length
+
+      # @return [true, false] whether a value must be typed into the text input.
       attr_reader :required
       alias_method :required?, :required
 
-      # @return [String, nil] the value the user typed into this text input component.
+      # @return [String, nil] the value the user typed into the text input component.
       attr_reader :value
 
-      # @return [String, nil] the placeholder text shown on this text input component.
+      # @return [String, nil] the placeholder text shown on the text input component.
       attr_reader :placeholder
 
       # @!visibility private
@@ -265,15 +262,15 @@ module Discordrb
       end
     end
 
-    # Sections allow you to group text display components with an accessory.
+    # A grouping of text displays with an accessory.
     class Section
-      # @return [Integer] the ID of this section.
+      # @return [Integer] the ID of the section.
       attr_reader :id
 
-      # @return [Button, Thumbnail] the accessory of this section.
+      # @return [Button, Thumbnail] the accessory of the section.
       attr_reader :accessory
 
-      # @return [Array<TextDisplay>] array of components in this section.
+      # @return [Array<TextDisplay>] the components in the section.
       attr_reader :components
 
       # @!visibility private
@@ -284,92 +281,95 @@ module Discordrb
         @components = data['components'].map { |component| Components.from_data(component, bot) }
       end
 
-      # @return [Button, nil] the button attached to this section.
+      # Check if the accessory is a button.
+      # @return [Button, nil] the button attached to the section.
       def button
         @accessory if @accessory.is_a?(Button)
       end
 
-      # @return [Thumbnail, nil] the thumbnail attached to this section.
+      # Check if the accessory is a thumbnail.
+      # @return [Thumbnail, nil] the thumbnail attached to the section.
       def thumbnail
         @accessory if @accessory.is_a?(Thumbnail)
       end
     end
 
-    # Unfurled media objects allow you to specify an arbitrary url or attachment://<filename> reference.
+    # Metadata about a piece of media.
     class UnfurledMedia
-      # @return [String] the URL this attachment can be downloaded at.
+      # @return [String] the CDN URL of the media.
       attr_reader :url
 
-      # @return [String] the attachment's proxied URL.
-      attr_reader :proxy_url
-
-      # @return [Integer, nil] the width of an image file, in pixels, or `nil` if the file is not an image.
+      # @return [Integer, nil] the width of the media, if it's an image.
       attr_reader :width
 
-      # @return [Integer, nil] the height of an image file, in pixels, or `nil` if the file is not an image.
+      # @return [Integer, nil] the height of the media, if it's an image.
       attr_reader :height
 
-      # @return [String] the media's content type.
+      # @return [String, nil] the CDN URL of the media, if it's an image.
+      attr_reader :proxy_url
+
+      # @return [String] the media's mime content type such as `image/png`.
       attr_reader :content_type
 
-      # @return [Integer, nil] the ID of the uploaded attachment. Only present if the media item was uploaded as an attachment.
+      # @return [Integer, nil] the ID of the uploaded attachment, if applicable.
       attr_reader :attachment_id
 
       # @!visibility private
       def initialize(data, bot)
         @bot = bot
         @url = data['url']
-        @proxy_url = data['proxy_url']
         @width = data['width']
         @height = data['height']
+        @proxy_url = data['proxy_url']
         @content_type = data['content_type']
         @attachment_id = data['attachment_id']&.to_i
       end
     end
 
-    # Seperators allow you to divide other components with a barrier.
+    # A barrier component.
     class Seperator
       # @return [Integer] the ID of this seperator.
       attr_reader :id
 
-      # @return [true, false] if this seperator is a divider or not.
+      # @return [Integer] the size of the seperator's spacing.
+      attr_reader :spacing
+
+      # @return [true, false] whether or not the seperator is a divider.
       attr_reader :divider
       alias_method :divider?, :divider
-
-      # @return [Integer] if this seperator has `small` (1) or `large` (2) spacing.
-      attr_reader :spacing
 
       # @!visibility private
       def initialize(data, bot)
         @bot = bot
         @id = data['id']
-        @divider = data['divider']
         @spacing = data['spacing']
+        @divider = data['divider']
       end
 
+      # Check if the spacing of the seperator is small.
       # @return [true, false] whether the spacing is small.
       def small?
         @spacing == 1
       end
 
+      # Check if the spacing of the seperator is large.
       # @return [true, false] whether the spacing is large.
       def large?
         @spacing == 2
       end
     end
 
-    # A media gallery is a collection of images, videos, or GIFs that can be grouped into a gallery grid.
+    # A Collection of media grouped into a gallery-grid.
     class MediaGallery
       # A media Gallery item.
       class Item
-        # @return [UnfurledMedia] the media of this gallery item.
+        # @return [UnfurledMedia] the media of the item.
         attr_reader :media
 
-        # @return [String, nil] the alternative text of this item.
+        # @return [String, nil] the description of the item.
         attr_reader :description
-        alias_method :alt_text, :description
 
-        # @return [true, false] If this gallery item is spoilered.
+        # @return [true, false] whether or not the media is spoilered.
         attr_reader :spoiler
         alias_method :spoiler?, :spoiler
 
@@ -382,10 +382,10 @@ module Discordrb
         end
       end
 
-      # @return [Integer] the ID of this gallery.
+      # @return [Integer] the ID of the gallery.
       attr_reader :id
 
-      # @return [Array<Item>] array of media gallery items.
+      # @return [Array<Item>] the media in the gallery.
       attr_reader :items
 
       # @!visibility private
@@ -396,19 +396,18 @@ module Discordrb
       end
     end
 
-    # Thumbnails are containers for media. They can have alt text, and be spoilered.
+    # A thumbnail accessory component.
     class Thumbnail
-      # @return [Integer] the ID of this thumbnail.
+      # @return [Integer] the ID of the thumbnail.
       attr_reader :id
 
-      # @return [UnfurledMedia] media item of this thumbnail.
+      # @return [UnfurledMedia] the media of the thumbnail.
       attr_reader :media
 
-      # @return [String, nil] the alternative text of this thumbnail.
+      # @return [String, nil] the description of the thumbnail.
       attr_reader :description
-      alias_method :alt_text, :description
 
-      # @return [true, false] if this thumbnail is spoilered or not.
+      # @return [true, false] whether or not the thumbnail is spoilered.
       attr_reader :spoiler
       alias_method :spoiler?, :spoiler
 
@@ -422,20 +421,20 @@ module Discordrb
       end
     end
 
-    # Containers allow you to group together other components. You can add an accent color and spoiler them.
+    # A grouping of components with an accent colour, similar to an embed.
     class Container
-      # @return [Integer] the ID of this container.
+      # @return [Integer] the ID of the container.
       attr_reader :id
 
-      # @return [ColourRGB, nil] the accent color of this thumbnail, or nil if there isn't one.
+      # @return [ColourRGB, nil] the accent color of the container.
       attr_reader :colour
       alias_method :color, :colour
 
-      # @return [true, false] if this container is spoilered or not.
+      # @return [true, false] whether or not the container is spoilered.
       attr_reader :spoiler
       alias_method :spoiler?, :spoiler
 
-      # @return [Array<Component>] the components included within this container.
+      # @return [Array<Component>] the components contained within the container.
       attr_reader :components
 
       # @!visibility private
@@ -447,8 +446,8 @@ module Discordrb
         @components = data['components'].filter_map { |component| Components.from_data(component, bot) }
       end
 
-      # Get the buttons contained in this container.
-      # @return [Array<Button>] the buttons contained within this container.
+      # Get the buttons contained in the container.
+      # @return [Array<Button>] the buttons contained within the container.
       def buttons
         components = @components.flat_map do |component|
           case component
@@ -465,9 +464,9 @@ module Discordrb
       end
     end
 
-    # File components allow you to send a file. You can spoiler these files as well.
+    # A file component.
     class File
-      # @return [Integer] the ID of this file.
+      # @return [Integer] the ID of the file.
       attr_reader :id
 
       # @return [UnfurledMedia] the attached file.
@@ -476,10 +475,10 @@ module Discordrb
       # @return [String] the name of the attached file.
       attr_reader :name
 
-      # @return [Integer] the size of the attached file in bytes.
+      # @return [Integer] the size of the file in bytes.
       attr_reader :size
 
-      # @return [true, false] if this file is spoilered or not.
+      # @return [true, false] whether or not the file is spoilered.
       attr_reader :spoiler
       alias_method :spoiler?, :spoiler
 
@@ -494,12 +493,12 @@ module Discordrb
       end
     end
 
-    # Text displays are a lightweight container for text.
+    # A lightweight way to display text content.
     class TextDisplay
-      # @return [Integer] the ID of this text display.
+      # @return [Integer] the ID of the text display.
       attr_reader :id
 
-      # @return [String] the content within this text display.
+      # @return [String] the content in the text display.
       attr_reader :content
       alias_method :text, :content
       alias_method :to_s, :content
@@ -512,12 +511,12 @@ module Discordrb
       end
     end
 
-    # Label components are containers for other components within a modal.
+    # A parent component for other modal components.
     class Label
-      # @return [Integer] the ID of this label component.
+      # @return [Integer] the ID of the label component.
       attr_reader :id
 
-      # @return [Component] the interactive component for this label component.
+      # @return [Component] the interactive component in the label.
       attr_reader :component
 
       # @!visibility private
@@ -528,7 +527,7 @@ module Discordrb
       end
     end
 
-    # A surface that a user can use to upload files in a modal.
+    # A surface that can be used to upload files in a modal.
     class FileUpload
       # @return [Integer] the ID of this file upload component.
       attr_reader :id
