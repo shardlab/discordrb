@@ -17,39 +17,38 @@ bot.application_command(:container) do |event|
 
   # The `has_components` flag must be manually set to true to enable uikit components.
   event.respond(has_components: true) do |_, view|
-    # A new container is added to contain other components. We don't have to do this,
-    # since any non-interactive component can be used as top level component.
+    # A new container is added to contain other components. We don't have to necessarily
+    # always do this now, since other components can be used at the top-level as well.
     view.container do |container|
-      # A section must have either a thumbnail or a button. This is currently
-      # the only case where a button can be used without being in an action row.
+      # A section must have either a thumbnail or a button.
       container.section do |section|
         section.thumbnail(url: event.server.icon_url)
-        section.text_display(text: "### Emoji Statistics for #{event.server.name}")
-        section.text_display(text: 'These are the fake emoji statistics for your server.')
+        section.text_display(content: "### Emoji Statistics for #{event.server.name}")
+        section.text_display(content: 'These are the fake emoji statistics for your server.')
       end
 
       # Unlike embeds, if the accent color isn't set, the container simply won't have an accent color.
       container.color = rand(0..0xFFFFFF) if event.options['color']
 
-      # A seperator can appear as a thin, and translucent line when setting `divider` to true. Otherwise,
-      # the seperator can function as an invisible barrier to proivde padding between components.
-      container.seperator(divider: true, spacing: :small)
+      # A separator can appear as a thin, and translucent line when setting `divider` to true. Otherwise,
+      # the separator can function as an invisible barrier to provide padding between components.
+      container.separator(divider: true, spacing: :small)
 
       # A text display is a container for text. Similar to the `content` field, you can use mentions, MDX, etc.
-      container.text_display(text: emojis.empty? ? 'No Emojis!' : emojis.join)
+      container.text_display(content: emojis.empty? ? 'No Emojis!' : emojis.join)
 
       # Try setting the spacing to `:large` to have a bigger gap between the other components.
-      container.seperator(divider: true, spacing: :small)
+      container.separator(divider: true, spacing: :small)
 
-      # We clear the existing emojis array and add a random emoji to the emojis array.
-      emojis.clear && 3.times { emojis << event.server.emojis.values.sample }
+      # Create a new array with three random emojis for our select menu below.
+      emojis = event.server.emojis.values.shuffle.take(3)
 
-      # We can add a select menu inside of our containter as shown here. Since this is an action row, we could've
-      # chosen to add buttons here instead, but for the sake of the example, we'll stick to a select menu.
+      # Since action rows can be added within containers, we can add any component supported by an action row
+      # to the container including buttons and select menus!
       container.row do |row|
-        row.select_menu(custom_id: 'emojis', placeholder: 'Pick a statistic type...', min_values: 1) do |menu|
-          menu.option(label: 'Reaction', value: 'Reaction', description: 'View reaction statistics.', emoji: emojis.pop)
-          menu.option(label: 'Message', value: 'Message', description: 'View message statistics.', emoji: emojis.pop)
+        row.string_select(custom_id: 'emojis', placeholder: 'Pick a statistic type...', min_values: 1) do |menu|
+          menu.option(label: 'Reactions', value: 'Reaction', description: 'View reaction statistics.', emoji: emojis.pop)
+          menu.option(label: 'Messages', value: 'Message', description: 'View message statistics.', emoji: emojis.pop)
           menu.option(label: 'Lowest', value: 'Lowest', description: 'View the boring emojis.', emoji: emojis.pop)
         end
       end
@@ -73,29 +72,29 @@ end
 bot.message(content: '!sample') do |event|
   # Any of the components used below can be used within a container as well.
   event.send_message!(has_components: true) do |_, view|
-    view.text_display(text: <<~CONTENT)
+    view.text_display(content: <<~CONTENT)
       This is a text display component! Any markdown that can be used in the `content` field can also be used here.\n
-      ~~strikethrough~~ **bold text** *italics* ||spoiler|| `code` __underline__ [masked link](https://youtu.be/dQw4w9WgXcQ)\n
+      🧢 ~~strikethrough~~ **bold text** *italics* ||spoiler|| `code` __underline__ [masked link](https://youtu.be/dQw4w9WgXcQ)\n
       ```ruby
       puts("Hello World!")
       ```
     CONTENT
 
     # Just like in the example above, we can set `:divider` to true in order to generate a barrier.
-    view.seperator(divider: true, spacing: :large)
+    view.separator(divider: true, spacing: :large)
 
-    # A media gallery is a container for multiple pieces of media, such as videos, GIFs or staic images.
-    # You can add optionally add alt text via the `description:` argument and spoiler each media item.
+    # A media gallery is a container for multiple pieces of media, such as videos, GIFs or static images.
+    # You can optionally add alt text via the `description:` argument and spoiler each media item.
     view.media_gallery do |gallery|
-      gallery.item(url: 'https://static.wikitide.net/sillycatsbookwiki/f/f7/Apple_Cat.jpg', spoiler: true)
-      gallery.item(url: 'https://media.tenor.com/JNrPF3XuHXIAAAAd/java-duke.gif', description: 'Factory')
+      gallery.item(url: 'https://http.cat/images/202.jpg', spoiler: true)
+      gallery.item(url: 'https://media.tenor.com/JNrPF3XuHXIAAAAd/java-duke.gif', description: 'Abstract Factory')
     end
 
     # A Section allows you to group together text display components and pair them with an accessory.
     # In the emoji stats example above, we had a section with a thumbnail component. At the time of writing,
     # a section must contain either a thumbnail or a button.
     view.section do |section|
-      section.text_display(text: 'This is text from a section. This section has a button instead of a thumbnail.')
+      section.text_display(content: 'This is text from a section. This section has a button instead of a thumbnail.')
 
       section.button(label: 'Delete', style: :danger, custom_id: 'delete_message', emoji: 577658883468689409)
     end
@@ -114,15 +113,15 @@ bot.message(content: '!file') do |event|
   # Any attachments that are provided must be manually exposed via the component system.
   event.send_message!(attachments: [File.open('data/music.mp3', 'rb')], has_components: true) do |_, view|
     view.container do |container|
-      # All components accept an `id:` KWARG. This ID can be any 32-bit integer. This is
-      # not to be confused with the `custom_id:` parameter.
+      # All components accept an `id:` KWARG. This ID can be any 32-bit integer.
+      # This is not to be confused with the `custom_id:` parameter used to pass state between interactions.
       container.section(id: rand(500..600)) do |section|
         section.thumbnail(url: 'https://cdn.discordapp.com/icons/81384788765712384/a363a84e969bcbe1353eb2fdfb2e50e6.webp')
 
-        section.text_display(text: '### Musical File')
+        section.text_display(content: '### Musical File')
 
         # All of the information below can be found if you inspect the audio file's metadata.
-        section.text_display(text: <<~CONTENT)
+        section.text_display(content: <<~CONTENT)
           > **Title:** Discordrb Theme
           > **Composed:** <t:1472839597:R>
           > **Album:** Discord API Music
@@ -130,7 +129,7 @@ bot.message(content: '!file') do |event|
       end
 
       # Try setting `spoiler` to true in order to spoiler the file.
-      container.file(url: 'attachment://music.mp3', spoiler: false)
+      container.file_display(url: 'attachment://music.mp3', spoiler: false)
     end
   end
 end

@@ -28,7 +28,7 @@ bot.application_command :modal_test do |event|
     end
 
     # Text displays are allowed to be used as a top level component.
-    modal.text_display(text: <<~CONTENT)
+    modal.text_display(content: <<~CONTENT)
       This is a text display component in a modal! This is the same as a normal text display component.\n
       ~~strikethrough~~ **bold text** *italics* ||spoiler|| `code` __underline__ [masked link](https://youtu.be/dQw4w9WgXcQ)\n
       ```ruby

@@ -416,7 +416,7 @@ module Discordrb::Events
 
     # Get the value of an input passed to the modal.
     # @param custom_id [String] The custom ID of the component to look for.
-    # @return [String, nil]
+    # @return [String, nil] The selected value for the component.
     def value(custom_id)
       get_component(custom_id)&.value
     end
@@ -483,7 +483,7 @@ module Discordrb::Events
     def initialize(data, bot)
       super
 
-      users = data['data']['resolved']['users'].keys.map { |e| bot.user(e) }
+      users = data['data']['resolved']['users'].map { |_, user| @bot.ensure_user(user) }
       roles = data['data']['resolved']['roles'] ? data['data']['resolved']['roles'].keys.map { |e| bot.server(data['guild_id']).role(e) } : []
       @values = { users: users, roles: roles }
     end

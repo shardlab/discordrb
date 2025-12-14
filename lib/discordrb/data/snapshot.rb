@@ -86,7 +86,7 @@ module Discordrb
         when Components::Button
           component
         when Components::Section
-          component.button
+          component.accessory if component.accessory.is_a?(Components::Button)
         when Components::ActionRow, Components::Container
           component.buttons
         end

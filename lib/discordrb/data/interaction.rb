@@ -86,7 +86,7 @@ module Discordrb
       @id = data['id'].to_i
       @application_id = data['application_id'].to_i
       @type = data['type']
-      @message = data['message']
+      @message = Interactions::Message.new(data['message'], @bot, self) if data['message']
       @data = data['data']
       @server_id = data['guild_id']&.to_i
       @channel_id = data['channel_id']&.to_i
@@ -315,33 +315,33 @@ module Discordrb
       nil
     end
 
+    # Get the server associated with the interaction.
     # @return [Server, nil] This will be nil for interactions that occur in DM channels or servers where the bot
     #   does not have the `bot` scope.
     def server
       @bot.server(@server_id)
     end
 
-    # @return [Hash, nil] Returns the button that triggered this interaction if applicable, otherwise nil
+    # Get the button component that triggered the interaction.
+    # @return [Components::Button, nil] The button that triggered this interaction if applicable, otherwise `nil`.
     def button
       @type == TYPES[:component] ? get_component(@data['custom_id']) : nil
     end
 
+    # Get the text input components associated with the interaction.
     # @return [Array<TextInput>] The text input components associated with this interaction.
     def text_inputs
-      @components&.select do |component|
-        component.is_a?(Components::TextInput) || (component.is_a?(Components::Label) && component.text_input?)
+      @components.filter_map do |entity|
+        entity.component if entity.is_a?(Components::Label) && entity.component.is_a?(Components::TextInput)
       end
     end
 
     # Get a component by its custom ID.
     # @param custom_id [String] the custom ID of the component to find.
-    # @return [TextInput, Button, SelectMenu, nil] The component associated with the custom ID, or `nil` if it can't be found.
+    # @return [TextInput, Button, SelectMenu, Checkbox, ModalActionGroup, nil] The component associated with the custom ID, or `nil`.
     def get_component(custom_id)
-      message_level = @message.instance_of?(Hash) ? Message.new(@message, @bot) : @message
-      message_level = flatten_components(message_level&.components || [])
-
-      components = flatten_components(@components).concat(message_level)
-      components.find { |component| component.respond_to?(:custom_id) ? component.custom_id == custom_id : false }
+      components = flatten_components((@message&.components || []) + @components)
+      components.find { |component| component.respond_to?(:custom_id) && component.custom_id == custom_id }
     end
 
     # @return [true, false] whether the application was installed by the user who initiated this interaction.
@@ -369,18 +369,18 @@ module Discordrb
 
     # @!visibility private
     def flatten_components(components)
-      components = components.flat_map do |component|
-        case component
+      components = components.flat_map do |entity|
+        case entity
         when Components::ActionRow
-          component.components
+          entity.components
         when Components::Label
-          component.component
+          entity.component
         when Components::Section
-          component.button
+          entity.accessory if entity.accessory.respond_to?(:custom_id)
         when Components::Container
-          flatten_components(component.components)
-        when Components::SelectMenu, Components::TextInput, Components::Button
-          component
+          flatten_components(entity.components)
+        else
+          entity if entity.respond_to?(:custom_id)
         end
       end
 
