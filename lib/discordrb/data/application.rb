@@ -8,13 +8,13 @@ module Discordrb
     # Map of application flags.
     FLAGS = {
       automod_rule_badge: 1 << 6,
-      presence_intent: 1 << 12,
+      approved_presence_intent: 1 << 12,
       limited_presence_intent: 1 << 13,
-      server_members_intent: 1 << 14,
+      approved_server_members_intent: 1 << 14,
       limited_server_members_intent: 1 << 15,
       pending_server_limit_verification: 1 << 16,
       embedded: 1 << 17,
-      message_content_intent: 1 << 18,
+      approved_message_content_intent: 1 << 18,
       limited_message_content_intent: 1 << 19,
       application_command_badge: 1 << 23
     }.freeze
@@ -129,15 +129,15 @@ module Discordrb
 
     # Utility method to get a application's icon URL.
     # @param format [String] The URL will default to `webp`. You can otherwise specify one of `webp`, `jpg` or `png` to override this.
-    # @return [String, nil] the URL of the icon image (nil if no image is set).
-    def icon_url(format = 'webp')
+    # @return [String, nil] the URL of the icon image (`nil` if no image is set).
+    def icon_url(format: 'webp')
       API.app_icon_url(@id, @icon_id, format) if @icon_id
     end
 
     # Utility method to get a application's cover image URL.
     # @param format [String] The URL will default to `webp`. You can otherwise specify one of `webp`, `jpg` or `png` to override this.
-    # @return [String, nil] the URL of the icon image (nil if no image is set).
-    def cover_image_url(format = 'webp')
+    # @return [String, nil] the URL of the cover image (`nil` if no cover is set).
+    def cover_image_url(format: 'webp')
       API.app_cover_url(@id, @cover_image_id, format) if @cover_image_id
     end
 
@@ -268,11 +268,11 @@ module Discordrb
 
     # @!method automod_rule_badge?
     #   @return [true, false] if the application has at least 100 automod rules across all of its servers.
-    # @!method presence_intent?
+    # @!method approved_presence_intent?
     #   @return [true, false] if the application is in less than 100 servers and has access to the server presences intent.
     # @!method limited_presence_intent?
     #   @return [true, false] if the application is in more than 100 servers and has access to the server presences intent.
-    # @!method server_members_intent?
+    # @!method approved_server_members_intent?
     #   @return [true, false] if the application is in more than 100 servers and has access to the server members intent.
     # @!method limited_server_members_intent?
     #   @return [true, false] if the application is in less than 100 servers and has access to the server members intent.
@@ -280,7 +280,7 @@ module Discordrb
     #   @return [true, false] if the application has underwent unusual growth that is preventing it from being verified.
     # @!method embedded?
     #   @return [true, false] if the application is embedded within the Discord application (currently unavailable publicly).
-    # @!method message_content_intent?
+    # @!method approved_message_content_intent?
     #   @return [true, false] if the application is in more than 100 servers and has access to the message content intent.
     # @!method limited_message_content_intent?
     #   @return [true, false] if the application is in less than 100 servers and has access to the message content intent.
@@ -292,6 +292,24 @@ module Discordrb
       end
     end
 
+    # Check if the application has the presence intent toggled on its dashboard.
+    # @return [true, false] whether or not the application has access to the presence intent.
+    def presence_intent?
+      approved_presence_intent? || limited_presence_intent?
+    end
+
+    # Check if the application has the server members intent toggled on its dashboard.
+    # @return [true, false] whether or not the application has access to the server members intent.
+    def server_members_intent?
+      approved_server_members_intent? || limited_server_members_intent?
+    end
+
+    # Check if the application has the message content intent toggled on its dashboard.
+    # @return [true, false] whether or not the application has access to the message content intent.
+    def message_content_intent?
+      approved_message_content_intent? || limited_message_content_intent?
+    end
+
     private
 
     # @!visibility private
@@ -299,8 +317,8 @@ module Discordrb
       @name = new_data['name']
       @description = new_data['description']
       @icon_id = new_data['icon']
-      @rpc_origins = new_data['rpc_origins']
-      @flags = new_data['flags']
+      @rpc_origins = new_data['rpc_origins'] || []
+      @flags = new_data['flags'] || 0
       @owner = new_data['owner'] ? @bot.ensure_user(new_data['owner']) : nil
 
       @public = new_data['bot_public']
