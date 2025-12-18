@@ -40,6 +40,18 @@ module Discordrb
       end
     end
 
+    # Get the bot's global bio.
+    # @return [String] The bot's global bio, or an empty string if it doesn't have one set.
+    def bio
+      @bot.application.description
+    end
+
+    # Set the bot's global bio.
+    # @param bio [String, nil] The bot's new global bio, or `nil` to remove the current bio.
+    def bio=(bio)
+      @bot.application.description = bio
+    end
+
     # Updates the cached profile data with the new one.
     # @note For internal use only.
     # @!visibility private
