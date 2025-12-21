@@ -26,9 +26,6 @@ module Discordrb
     # @return [String] the ID of the region the server is on (e.g. `amsterdam`).
     attr_reader :region_id
 
-    # @return [Array<Channel>] an array of all the channels (text and voice) on this server.
-    attr_reader :channels
-
     # @return [Array<Role>] an array of all the roles created on this server.
     attr_reader :roles
 
@@ -75,11 +72,31 @@ module Discordrb
 
       # Whether this server's members have been chunked (resolved using op 8 and GUILD_MEMBERS_CHUNK) yet
       @chunked = false
+
+      # Whether the channels for this server have been cached yet (this is a server sent via GUILD_CREATE)
+      @has_channels = !data['channels'].nil?
     end
 
     # @return [Member] The server owner.
     def owner
       member(@owner_id)
+    end
+
+    # Get the channels on this server.
+    # @return [Array<Channel>] an array of all the channels on this server.
+    def channels
+      return @channels if @has_channels
+
+      data = JSON.parse(API::Server.threads(@bot.token, @id))
+      process_channels(JSON.parse(API::Server.channels(@bot.token, @id)))
+
+      data['threads'].each do |thread|
+        thread['member'] = data['members'].find { |e| e['id'] == thread['id'] }
+      end
+
+      process_active_threads(data['threads'])
+      @has_channels = true
+      @channels
     end
 
     # The default channel is the text channel on this server with the highest position
