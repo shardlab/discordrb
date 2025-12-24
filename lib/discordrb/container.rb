@@ -14,6 +14,7 @@ require 'discordrb/events/await'
 require 'discordrb/events/bans'
 require 'discordrb/events/reactions'
 require 'discordrb/events/interactions'
+require 'discordrb/events/stage_instances'
 
 require 'discordrb/await'
 
@@ -285,6 +286,45 @@ module Discordrb
     # @return [ChannelRecipientRemoveHandler] the event handler that was registered.
     def channel_recipient_remove(attributes = {}, &block)
       register_event(ChannelRecipientRemoveEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a stage instance is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :topic Matches the topic of the stage instance.
+    # @option attributes [Integer, String, Server] :server Matches the server of the stage instance.
+    # @option attributes [Integer, String, Channel] :channel Matches the channel of the stage instance.
+    # @option attributes [Integer, String, ScheduledEvent] :scheduled_event Matches the scheduled event of the stage instance.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [StageInstanceCreateEvent] The event that was raised.
+    # @return [StageInstanceCreateEventHandler] the event handler that was registered.
+    def stage_instance_create(attributes = {}, &block)
+      register_event(StageInstanceCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a stage instance is updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :topic Matches the topic of the stage instance.
+    # @option attributes [Integer, String, Server] :server Matches the server of the stage instance.
+    # @option attributes [Integer, String, Channel] :channel Matches the channel of the stage instance.
+    # @option attributes [Integer, String, ScheduledEvent] :scheduled_event Matches the scheduled event of the stage instance.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [StageInstanceUpdateEvent] The event that was raised.
+    # @return [StageInstanceUpdateEventHandler] the event handler that was registered.
+    def stage_instance_update(attributes = {}, &block)
+      register_event(StageInstanceUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a stage instance is deleted.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :topic Matches the topic of the stage instance.
+    # @option attributes [Integer, String, Server] :server Matches the server of the stage instance.
+    # @option attributes [Integer, String, Channel] :channel Matches the channel of the stage instance.
+    # @option attributes [Integer, String, ScheduledEvent] :scheduled_event Matches the scheduled event of the stage instance.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [StageInstanceDeleteEvent] The event that was raised.
+    # @return [StageInstanceDeleteEventHandler] the event handler that was registered.
+    def stage_instance_delete(attributes = {}, &block)
+      register_event(StageInstanceDeleteEvent, attributes, block)
     end
 
     # This **event** is raised when a user's voice state changes. This includes when a user joins, leaves, or
