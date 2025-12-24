@@ -275,4 +275,16 @@ module Discordrb::API::Application
       Authorization: token
     )
   end
+
+  # Get a list of SKUs.
+  # https://discord.com/developers/docs/resources/sku#list-skus
+  def list_skus(token, application_id)
+    Discordrb::API.request(
+      :applications_aid_skus,
+      application_id,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/skus",
+      Authorization: token
+    )
+  end
 end

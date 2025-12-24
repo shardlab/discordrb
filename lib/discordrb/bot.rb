@@ -939,6 +939,13 @@ module Discordrb
       API::Application.delete_application_emoji(@token, profile.id, emoji_id.resolve_id)
     end
 
+    # Fetches all of the SKUs for the for the current bot.
+    # @return [Array<SKU>] all of the SKUs for the current bot.
+    def skus
+      response = API::Application.list_skus(@token, profile.id)
+      JSON.parse(response).collect { |sku| SKU.new(sku, self) }
+    end
+
     private
 
     # Throws a useful exception if there's currently no gateway connection.
