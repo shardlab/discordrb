@@ -150,25 +150,6 @@ module Discordrb
 
     alias_method :users, :members
 
-    # Updates the data cache from another Role object
-    # @note For internal use only
-    # @!visibility private
-    def update_from(other)
-      @permissions = other.permissions
-      @name = other.name
-      @hoist = other.hoist
-      @colour = other.colour
-      @position = other.position
-      @managed = other.managed
-      @icon = other.icon
-      @flags = other.flags
-      @unicode_emoji = other.unicode_emoji
-      @secondary_colour = other.secondary_colour
-      @tertiary_colour = other.tertiary_colour
-      @mentionable = other.mentionable?
-      @tags = other.tags
-    end
-
     # Updates the data cache from a hash containing data
     # @note For internal use only
     # @!visibility private
@@ -185,8 +166,8 @@ module Discordrb
       @permissions.bits = new_data['permissions'].to_i
       @colour = ColourRGB.new(colours['primary_color'])
       @tags = Tags.new(new_data['tags']) if new_data['tags']
-      @secondary_color = ColourRGB.new(colours['secondary_color']) if colours['secondary_color']
-      @tertiary_colour = ColourRGB.new(colours['tertiary_color']) if colours['tertiary_color']
+      @tertiary_colour = colours['tertiary_color'] ? ColourRGB.new(colours['tertiary_color']) : nil
+      @secondary_colour = colours['secondary_color'] ? ColourRGB.new(colours['secondary_color']) : nil
     end
 
     # Sets the role name to something new
@@ -328,8 +309,8 @@ module Discordrb
     #   role.move(bottom: true, offset: 2)
     # @example This will move the role above the `@muted` role.
     #   role.move(above: 257017090932867072)
-    # @example This will move the role 3 spots below the `No Images` role.
-    #   roles.move(below: 254077236989132800, offset: -3)
+    # @example This will move the role 3 spots below the `@moderator` role.
+    #   role.move(below: 254077236989132800, offset: -3)
     # @param bottom [true, false, nil] Whether to move the roles to the bottom of the role list.
     # @param above [Integer, String, Role, nil] The role that this role should be moved above.
     # @param below [Integer, String, Role, nil] The role that this role should be moved below.
@@ -337,7 +318,7 @@ module Discordrb
     #   move the role above, and a negative number will move the role below. This parameter is relative and
     #   calculated after the `bottom`, `above`, and `below` parameters.
     # @param reason [String, nil] The audit log reason to show for moving the role.
-    # @return [Integer] the new position of the role.
+    # @return [Integer] The new position of the role.
     def move(bottom: nil, above: nil, below: nil, offset: 0, reason: nil)
       # rubocop:disable Style/IfUnlessModifier
       if [bottom, above, below].count(&:itself) > 1
@@ -353,10 +334,10 @@ module Discordrb
       end
 
       # rubocop:enable Style/IfUnlessModifier
-      roles = @server.roles.uniq.sort_by { |role| [role.position, role.id] }
+      roles = @server.roles.sort_by { |role| [role.position, role.id] }
 
       # Make sure we remove the current role.
-      myself = roles.rindex(self).tap { |index| roles.delete_at(index) }
+      myself = roles.rindex(@id).tap { |index| roles.delete_at(index) }
 
       index = if bottom
                 1
