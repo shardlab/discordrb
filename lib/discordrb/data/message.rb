@@ -151,6 +151,15 @@ module Discordrb
     # @return [Integer] a generally increasing integer that can be used to determine this message's position in a thread.
     attr_reader :position
 
+    # @return [Integer, nil] the ID of the application associated with this message.
+    attr_reader :application_id
+
+    # @return [MessageActivity, nil] the rich-presence activity that prompted this message.
+    attr_reader :activity
+
+    # @return [Interactions::Metadata, nil] the metadata about the interaction that prompted this message.
+    attr_reader :interaction_metadata
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -163,6 +172,7 @@ module Discordrb
       @nonce = data['nonce']
       @mention_everyone = data['mention_everyone']
       @webhook_id = data['webhook_id']&.to_i
+      @application_id = data['application_id']&.to_i
 
       @referenced_message = Message.new(data['referenced_message'], bot) if data['referenced_message']
       @message_reference = data['message_reference']
@@ -225,6 +235,10 @@ module Discordrb
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
 
       @position = data['position'] || 0
+
+      @activity = MessageActivity.new(data['activity'], @bot) if data['activity']
+
+      @interaction_metadata = Interactions::Metadata.new(data['interaction_metadata'], self, @bot) if data['interaction_metadata']
     end
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
