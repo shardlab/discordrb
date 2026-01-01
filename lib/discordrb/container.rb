@@ -290,7 +290,7 @@ module Discordrb
     # This **event** is raised when a user's voice state changes. This includes when a user joins, leaves, or
     # moves between voice channels, as well as their mute and deaf status for themselves and on the server.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, User] :from Matches the user that sent the message.
+    # @option attributes [String, Integer, User] :from Matches the user that raised the event.
     # @option attributes [String, Integer, Channel] :channel Matches the voice channel the user has joined.
     # @option attributes [String, Integer, Channel] :old_channel Matches the voice channel the user was in previously.
     # @option attributes [true, false] :mute Matches whether or not the user is muted server-wide.
