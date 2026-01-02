@@ -22,6 +22,7 @@ module Discordrb::Webhooks
     # @param builder [Builder, nil] The builder to start out with, or nil if one should be created anew.
     # @param wait [true, false] Whether Discord should wait for the message to be successfully received by clients, or
     #   whether it should return immediately after sending the message.
+    # @param thread_id [String, Integer, nil] The thread_id of the thread if a thread should be targeted for the webhook execution
     # @yield [builder] Gives the builder to the block to add additional steps, or to do the entire building process.
     # @yieldparam builder [Builder] The builder given as a parameter which is used as the initial step to start from.
     # @example Execute the webhook with an already existing builder
@@ -38,7 +39,7 @@ module Discordrb::Webhooks
     #     end
     #   end
     # @return [RestClient::Response] the response returned by Discord.
-    def execute(builder = nil, wait = false, components = nil)
+    def execute(builder = nil, wait = false, components = nil, thread_id: nil)
       raise TypeError, 'builder needs to be nil or like a Discordrb::Webhooks::Builder!' unless
         (builder.respond_to?(:file) && builder.respond_to?(:to_multipart_hash)) || builder.respond_to?(:to_json_hash) || builder.nil?
 
@@ -50,9 +51,9 @@ module Discordrb::Webhooks
       components ||= view
 
       if builder.file
-        post_multipart(builder, components, wait)
+        post_multipart(builder, components, wait, thread_id)
       else
-        post_json(builder, components, wait)
+        post_json(builder, components, wait, thread_id)
       end
     end
 
@@ -79,6 +80,7 @@ module Discordrb::Webhooks
     # @param content [String] The message content.
     # @param embeds [Array<Embed, Hash>]
     # @param allowed_mentions [Hash]
+    # @param thread_id [String, Integer, nil] The id of the thread in which the message resides
     # @return [RestClient::Response] the response returned by Discord.
     # @example Edit message content
     #   client.edit_message(message_id, content: 'goodbye world!')
@@ -89,13 +91,17 @@ module Discordrb::Webhooks
     #     end
     #   end
     # @note Not all builder options are available when editing.
-    def edit_message(message_id, builder: nil, content: nil, embeds: nil, allowed_mentions: nil)
+    def edit_message(message_id, builder: nil, content: nil, embeds: nil, allowed_mentions: nil, thread_id: nil)
       builder ||= Builder.new
 
       yield builder if block_given?
 
+      query = URI.encode_www_form({ thread_id: }.compact)
       data = builder.to_json_hash.merge({ content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact)
-      RestClient.patch("#{@url}/messages/#{message_id}", data.compact.to_json, content_type: :json)
+      RestClient.patch(
+        "#{@url}/messages/#{message_id}#{(query.empty? ? '' : "?#{query}")}",
+        data.compact.to_json, content_type: :json
+      )
     end
 
     # Delete a message created by this webhook.
@@ -117,18 +123,36 @@ module Discordrb::Webhooks
       end
     end
 
-    def post_json(builder, components, wait)
+    def post_json(builder, components, wait, thread_id)
       data = builder.to_json_hash.merge({ components: components.to_a })
-      RestClient.post(@url + (wait ? '?wait=true' : ''), data.to_json, content_type: :json)
+      RestClient.post(encode_url(wait, thread_id), data.to_json, content_type: :json)
     end
 
-    def post_multipart(builder, components, wait)
-      data = builder.to_multipart_hash.merge({ components: components.to_a })
-      RestClient.post(@url + (wait ? '?wait=true' : ''), data)
+    def post_multipart(builder, components, wait, thread_id)
+      data = builder.to_multipart_hash
+      data[:components] = components.to_a if components&.to_a&.any?
+      RestClient.post(encode_url(wait, thread_id), data.compact)
     end
 
     def generate_url(id, token)
       "https://discord.com/api/v9/webhooks/#{id}/#{token}"
+    end
+
+    def encode_url(wait, thread_id)
+      uri = URI.parse(@url)
+
+      # NOTE: We have to use string keys here, since URI#decode_www_form returns
+      # string keys, and keys with different types are treated as array query params
+      # and appended to the query params twice.
+      query = {
+        'wait' => wait,
+        'thread_id' => thread_id,
+        **URI.decode_www_form(uri.query || '').to_h
+      }
+
+      query = URI.encode_www_form(query.compact)
+      uri.query = query unless query.empty?
+      uri.to_s
     end
   end
 end

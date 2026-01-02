@@ -68,6 +68,8 @@ module Discordrb
       @members = {}
       @voice_states = {}
       @emoji = {}
+      @channels = []
+      @channels_by_id = {}
 
       update_data(data)
 
@@ -328,8 +330,8 @@ module Discordrb
     # @return [String, nil] the widget URL to the server that displays the amount of online members in a
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
-      update_data if @embed_enabled.nil?
-      return unless @embed_enabled
+      update_data if @widget_enabled.nil?
+      return unless @widget_enabled
 
       API.widget_url(@id)
     end
@@ -343,8 +345,8 @@ module Discordrb
     # @return [String, nil] the widget banner URL to the server that displays the amount of online members,
     #   server icon and server name in a stylish way. `nil` if the widget is not enabled.
     def widget_banner_url(style)
-      update_data if @embed_enabled.nil?
-      return unless @embed_enabled
+      update_data if @widget_enabled.nil?
+      return unless @widget_enabled
 
       API.widget_url(@id, style)
     end
@@ -410,11 +412,11 @@ module Discordrb
     # Updates the positions of all roles on the server
     # @note For internal use only
     # @!visibility private
-    def update_role_positions(role_positions)
-      response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions))
+    def update_role_positions(role_positions, reason: nil)
+      response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions, reason))
       response.each do |data|
         updated_role = Role.new(data, @bot, self)
-        role(updated_role.id).update_from(updated_role)
+        role(updated_role.id)&.update_from(updated_role)
       end
     end
 
