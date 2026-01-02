@@ -98,10 +98,6 @@ module Discordrb
     # @return [Array<Embed>] the embed objects contained in this message.
     attr_reader :embeds
 
-    # @return [Array<Sticker>] the sticker objects contained in this message.
-    attr_reader :sticker_items
-    alias_method :stickers, :sticker_items
-
     # @return [Array<Reaction>] the reaction objects contained in this message.
     attr_reader :reactions
 
@@ -154,6 +150,9 @@ module Discordrb
 
     # @return [Integer] a generally increasing integer that can be used to determine this message's position in a thread.
     attr_reader :position
+
+    # @return [Array<Sticker::Item>] the sticker items sent with this message.
+    attr_reader :stickers
 
     # @!visibility private
     def initialize(data, bot)
@@ -222,9 +221,6 @@ module Discordrb
 
       @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
 
-      @sticker_items = []
-      @sticker_items = data['sticker_items'].map { |e| Sticker::Item.new(e, self, @bot) } if data['sticker_items']
-
       @call = data['call'] ? Call.new(data['call'], @bot) : nil
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
@@ -232,6 +228,8 @@ module Discordrb
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
 
       @position = data['position'] || 0
+
+      @stickers = (data['sticker_items'] || data['stickers'])&.map { |sticker| Sticker::Item.new(sticker, @bot) } || []
     end
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a

@@ -1640,6 +1640,11 @@ module Discordrb
           event = ServerEmojiUpdateEvent.new(server, old_emoji_data[e], new_emoji_data[e], self)
           raise_event(event)
         end
+      when :GUILD_STICKERS_UPDATE
+        @servers[data['guild_id'].to_i]&.__send__(:process_stickers, data['stickers'])
+
+        event = ServerStickersUpdateEvent.new(data, self)
+        raise_event(event)
       when :APPLICATION_COMMAND_PERMISSIONS_UPDATE
         event = ApplicationCommandPermissionsUpdateEvent.new(data, self)
 
