@@ -100,7 +100,7 @@ module Discordrb::Events
                  e
                end
         end,
-        matches_all(@attributes[:joined], event.old_channel) do |a, e|
+        matches_all(@attributes[:connected], event.old_channel) do |a, e|
           case a
           when TrueClass
             e.nil?
