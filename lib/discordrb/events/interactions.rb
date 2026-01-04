@@ -33,7 +33,13 @@ module Discordrb::Events
     # @!attribute [r] context
     #   @return [Integer]
     #   @see Interaction#context
-    delegate :type, :server, :server_id, :channel, :channel_id, :user, :user_locale, :context, to: :interaction
+    # @!attribute [r] user_integration?
+    #   @return [true, false]
+    #   @see Interaction#user_integration?
+    # @!attribute [r] server_integration?
+    #   @return [true, false]
+    #   @see Interaction#server_integration?
+    delegate :type, :server, :server_id, :channel, :channel_id, :user, :user_locale, :context, :user_integration?, :server_integration?, to: :interaction
 
     # @!visibility private
     def initialize(data, bot)
