@@ -559,6 +559,95 @@ module Discordrb::API::Server
     )
   end
 
+  # Get a list of all of the stickers in a server.
+  # https://discord.com/developers/docs/resources/sticker#list-guild-stickers
+  def list_stickers(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_stickers,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers",
+      Authorization: token
+    )
+  end
+
+  # Get a single sticker in the server.
+  # https://discord.com/developers/docs/resources/sticker#get-guild-sticker
+  def get_sticker(token, server_id, sticker_id)
+    Discordrb::API.request(
+      :guilds_sid_stickers_sid,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers/#{sticker_id}",
+      Authorization: token
+    )
+  end
+
+  # Create a new sticker in the server.
+  # https://discord.com/developers/docs/resources/sticker#create-guild-sticker
+  def create_sticker(token, server_id, name:, file:, description:, tags:, reason: nil)
+    unless file.respond_to?(:content_type)
+      path_method = %i[original_filename path local_path].find { |method| file.respond_to?(method) }
+      mime_type = MIME::Types.type_for(file.__send__(path_method)).first&.to_s if path_method
+
+      if mime_type
+        file.define_singleton_method(:content_type) { mime_type }
+      else
+        bytes = file.read(16)
+
+        if bytes.start_with?("\x89\x50\x4e\x47\x0d\x0a\x1a\x0a".b)
+          file.define_singleton_method(:content_type) { 'image/png' }
+        elsif bytes.start_with?("\x47\x49\x46\x38\x37\x61".b, "\x47\x49\x46\x38\x39\x61".b)
+          file.define_singleton_method(:content_type) { 'image/gif' }
+        elsif bytes.start_with?('{'.b)
+          file.define_singleton_method(:content_type) { 'application/json' }
+        else
+          raise ArgumentError, "Unable to determine the sticker file's content type."
+        end
+
+        file.rewind
+      end
+    end
+
+    Discordrb::API.request(
+      :guilds_sid_stickers,
+      server_id,
+      :post,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers",
+      { name:, file:, description:, tags: },
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Modify a pre-existing sticker in the server.
+  # https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
+  def update_sticker(token, server_id, sticker_id, name: :undef, description: :undef, tags: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_stickers_sid,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers/#{sticker_id}",
+      { name:, description:, tags: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Delete a pre-existing sticker in the server.
+  # https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
+  def delete_sticker(token, server_id, sticker_id, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_stickers_sid,
+      server_id,
+      :delete,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/stickers/#{sticker_id}",
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Make an member avatar URL from the server, user and avatar IDs
   def avatar_url(server_id, user_id, avatar_id, format = nil)
     format ||= if avatar_id.start_with?('a_')

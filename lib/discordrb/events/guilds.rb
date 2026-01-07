@@ -195,4 +195,34 @@ module Discordrb::Events
       ].reduce(true, &:&)
     end
   end
+
+  # Raised whenever the stickers for a server are updated.
+  class ServerStickersUpdateEvent < Event
+    # @return [Server] the server where the stickers were updated.
+    attr_reader :server
+
+    # @!attribute [r] stickers
+    #   @return [Array<Sticker>] all of the stickers in the server.
+    delegate :stickers, to: :server
+
+    # @!visibility private
+    def initialize(data, bot)
+      @bot = bot
+      @server = bot.server(data['guild_id'].to_i)
+    end
+  end
+
+  # Event handler for the {ServerStickersUpdateEvent}.
+  class ServerStickersUpdateEventHandler < EventHandler
+    def matches?(event)
+      # Check for the proper event type
+      return false unless event.is_a?(ServerStickersUpdateEvent)
+
+      [
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a.resolve_id == e.resolve_id
+        end
+      ].reduce(true, &:&)
+    end
+  end
 end
