@@ -98,7 +98,7 @@ module Discordrb
     # This is a class method that can be used to calculate bits instead
     # of instancing a new Permissions object.
     # @example Get the bits for permissions that could allow/deny read messages, connect, and speak
-    #   Permissions.bits [:read_messages, :connect, :speak] #=> 3146752
+    #   Permissions.bits([:read_messages, :connect, :speak]) #=> 3146752
     # @param list [Array<Symbol>]
     # @return [Integer] the computed permissions integer
     def self.bits(list)
