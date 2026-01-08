@@ -43,6 +43,18 @@ module Discordrb::API::Server
     )
   end
 
+  # Get a server's thread list
+  # https://discord.com/developers/docs/resources/guild#list-active-guild-threads
+  def threads(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_threads_active,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/threads/active",
+      Authorization: token
+    )
+  end
+
   # Create a channel
   # https://discord.com/developers/docs/resources/guild#create-guild-channel
   def create_channel(token, server_id, name, type, topic, bitrate, user_limit, permission_overwrites, parent_id, nsfw, rate_limit_per_user, position, reason = nil)
