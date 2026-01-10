@@ -155,6 +155,31 @@ module Discordrb::API
       retry
     end
 
+    # Some endpoints, particularly those powered by elastic-search can return a 202
+    # status code when the server does not have a response for the client. This usually
+    # happens when the server is either brand new and a search query has never been executed,
+    # or when the server is inactive and the search index doesn't exist. I'm not sure how true the
+    # second statement is, but I've personally seen it happen before. In this case, the JSON body
+    # will contain an 11X error code and an optional `retry_after` field indicating when we should
+    # retry the request. If the field is a value between 0-1 or omitted entirely, then we should retry
+    # the request after a short delay which is typically five seconds.
+    if response&.code == 202 && response&.body
+      body = JSON.parse(response.body)
+
+      if body['code'] == 110_000
+        case body['retry_after']
+        when 0, 1, nil
+          sleep(rand(4.5..5.0))
+        else
+          sleep(body['retry_after'])
+        end
+
+        # Recursively retry the request until it succeds or raises an exception, and then straight up return
+        # the retried request instead of the original 202 response.
+        return request(*key, type, *attributes)
+      end
+    end
+
     response
   end
 
