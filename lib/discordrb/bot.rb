@@ -20,6 +20,7 @@ require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
+require 'discordrb/events/integrations'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -199,12 +200,18 @@ module Discordrb
     #   The list of emoji the bot can use.
     #   @return [Array<Emoji>] the emoji available.
     def emoji(id = nil)
-      emoji_hash = servers.values.map(&:emoji).reduce(&:merge)
-      if id
-        id = id.resolve_id
-        emoji_hash[id]
+      if (id = id&.resolve_id)
+        @servers.each_value do |server|
+          emoji = server.emojis[id]
+          return emoji if emoji
+        end
       else
-        emoji_hash.values
+        hash = {}
+        @servers.each_value do |server|
+          hash.merge!(server.emojis)
+        end
+
+        hash
       end
     end
 
@@ -940,10 +947,23 @@ module Discordrb
     end
 
     # Fetches all of the SKUs for the for the current bot.
-    # @return [Array<SKU>] all of the SKUs for the current bot.
+    # @return [Array<SKU>] All of the SKUs for the current bot.
     def skus
       response = API::Application.list_skus(@token, profile.id)
       JSON.parse(response).collect { |sku| SKU.new(sku, self) }
+    end
+
+    # Get a single SKU by its ID.
+    # @param id [Integer, String, SKU] The ID of the SKU to get.
+    # @return [SKU, nil] The SKU identified by its ID, or `nil`.
+    def sku(id)
+      id = id.resolve_id
+      skus.find { |sku| sku.id == id }
+    end
+
+    # @!visibility private
+    def inspect
+      "<Bot client_id=#{@client_id.inspect} redact_token=#{@redact_token.inspect}>"
     end
 
     private
@@ -1586,6 +1606,15 @@ module Discordrb
 
         event = ServerRoleDeleteEvent.new(data, self)
         raise_event(event)
+      when :INTEGRATION_CREATE
+        event = IntegrationCreateEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_UPDATE
+        event = IntegrationUpdateEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_DELETE
+        event = IntegrationDeleteEvent.new(data, self)
+        raise_event(event)
       when :GUILD_CREATE
         create_guild(data)
 
@@ -1725,8 +1754,25 @@ module Discordrb
 
         # raise ThreadDeleteEvent
       when :THREAD_LIST_SYNC
-        data['members'].map { |member| ensure_thread_member(member) }
-        data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
+        server_id = data['guild_id'].to_i
+        server = @servers[server_id]
+
+        # The `channel_ids` field has two meanings:
+        #
+        # 1. If the field is not present, the thread list is being synced for the whole server.
+        #
+        # 2. We are syncing the threads for a specific channel. This can happen when gaining access
+        #    to a channel.
+        if (ids = data['channel_ids']&.map(&:to_i))
+          @channels.delete_if { |_, channel| channel.thread? && ids.any?(channel.parent&.id) }
+          server&.clear_threads(ids)
+        else
+          @channels.delete_if { |_, channel| channel.server.id == server_id && channel.thread? }
+          server&.clear_threads
+        end
+
+        data['members'].each { |member| ensure_thread_member(member) }
+        data['threads'].each { |channel| ensure_channel(channel) }
 
         # raise ThreadListSyncEvent?
       when :THREAD_MEMBER_UPDATE
