@@ -20,6 +20,7 @@ require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
+require 'discordrb/events/integrations'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -1578,6 +1579,15 @@ module Discordrb
         delete_guild_role(data)
 
         event = ServerRoleDeleteEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_CREATE
+        event = IntegrationCreateEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_UPDATE
+        event = IntegrationUpdateEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_DELETE
+        event = IntegrationDeleteEvent.new(data, self)
         raise_event(event)
       when :GUILD_CREATE
         create_guild(data)
