@@ -82,9 +82,6 @@ module Discordrb
     # @return [Channel] the channel in which this message was sent.
     attr_reader :channel
 
-    # @return [Time] the timestamp at which this message was sent.
-    attr_reader :timestamp
-
     # @return [Time] the timestamp at which this message was edited. `nil` if the message was never edited.
     attr_reader :edited_timestamp
     alias_method :edit_timestamp, :edited_timestamp
@@ -170,12 +167,17 @@ module Discordrb
       @type = data['type']
       @tts = data['tts']
       @nonce = data['nonce']
+      @flags = data['flags'] || 0
+      @position = data['position'] || 0
       @mention_everyone = data['mention_everyone']
       @webhook_id = data['webhook_id']&.to_i
       @application_id = data['application_id']&.to_i
 
-      @referenced_message = Message.new(data['referenced_message'], bot) if data['referenced_message']
+      @edited_timestamp = Time.parse(data['edited_timestamp']) if data['edited_timestamp']
+      @edited = !@edited_timestamp.nil?
+
       @message_reference = data['message_reference']
+      @referenced_message = Message.new(data['referenced_message'], @bot) if data['referenced_message']
 
       if data['author']
         if @webhook_id
@@ -187,59 +189,32 @@ module Discordrb
 
           # Turn the message user into a recipient - we can't use the channel recipient
           # directly because the bot may also send messages to the channel
-          @author = Recipient.new(bot.user(data['author']['id'].to_i), @channel, bot)
+          @author = Recipient.new(@bot.user(data['author']['id'].to_i), @channel, @bot)
         else
           @author_id = data['author']['id'].to_i
         end
       end
 
-      @timestamp = Time.parse(data['timestamp']) if data['timestamp']
-      @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
-      @edited = !@edited_timestamp.nil?
-
-      @emoji = []
-
-      @reactions = []
-
-      data['reactions']&.each do |element|
-        @reactions << Reaction.new(element)
-      end
-
-      @mentions = []
-
-      data['mentions']&.each do |element|
-        @mentions << bot.ensure_user(element)
-      end
-
+      @reactions = data['reactions']&.map { |reaction| Reaction.new(reaction) } || []
+      @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention) } || []
       @mention_roles = data['mention_roles']&.map(&:to_i) || []
 
-      @attachments = []
-      @attachments = data['attachments'].map { |e| Attachment.new(e, self, @bot) } if data['attachments']
+      @attachments = data['attachments']&.map { |attachment| Attachment.new(attachment, self, @bot) } || []
+      @embeds = data['embeds']&.map { |embed| Embed.new(embed, self) } || []
+      @components = data['components']&.map { |component| Components.from_data(component, @bot) } || []
 
-      @embeds = []
-      @embeds = data['embeds'].map { |e| Embed.new(e, self) } if data['embeds']
-
-      @components = []
-      @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
-
-      @flags = data['flags'] || 0
-
-      @thread = data['thread'] ? @bot.ensure_channel(data['thread']) : nil
-
-      @pinned_at = data['pinned_at'] ? Time.parse(data['pinned_at']) : nil
-
-      @call = data['call'] ? Call.new(data['call'], @bot) : nil
+      @thread = @bot.ensure_channel(data['thread']) if data['thread']
+      @pinned_at = Time.parse(data['pinned_at']) if data['pinned_at']
+      @call = Call.new(data['call'], @bot) if data['call']
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
-
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
-
-      @position = data['position'] || 0
-
       @activity = MessageActivity.new(data['activity'], @bot) if data['activity']
-
       @interaction_metadata = Interactions::Metadata.new(data['interaction_metadata'], self, @bot) if data['interaction_metadata']
     end
+
+    # @deprecated Please migrate to using {#creation_time} instead.
+    alias_method :timestamp, :creation_time
 
     # @return [Member, User] the user that sent this message. (Will be a {Member} most of the time, it should only be a
     #   {User} for old messages when the author has left the server since then)
@@ -391,17 +366,20 @@ module Discordrb
 
     # @return [Array<Emoji>] the emotes that were used/mentioned in this message.
     def emoji
-      return if @content.nil?
-      return @emoji unless @emoji.empty?
+      return [] if @content.empty? || @content.nil?
 
-      @emoji = @bot.parse_mentions(@content).select { |el| el.is_a? Discordrb::Emoji }
+      @emoji ||= @bot.parse_mentions(@content).select { |mention| mention.is_a?(Discordrb::Emoji) }
     end
+
+    alias_method :emojis, :emoji
 
     # Check if any emoji were used in this message.
     # @return [true, false] whether or not any emoji were used
     def emoji?
-      emoji&.empty?
+      emoji.any?
     end
+
+    alias_method :emojis?, :emoji?
 
     # Check if any reactions were used in this message.
     # @return [true, false] whether or not this message has reactions
