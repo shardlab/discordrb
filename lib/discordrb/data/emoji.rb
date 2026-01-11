@@ -99,7 +99,7 @@ module Discordrb
     end
 
     # @!visibility private
-    def self.to_h(emoji, prefix: true)
+    def self.build_emoji_hash(emoji, prefix: true)
       data = { id: nil, name: nil }
 
       case emoji
