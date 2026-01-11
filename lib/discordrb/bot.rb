@@ -200,12 +200,18 @@ module Discordrb
     #   The list of emoji the bot can use.
     #   @return [Array<Emoji>] the emoji available.
     def emoji(id = nil)
-      emoji_hash = servers.values.map(&:emoji).reduce(&:merge)
-      if id
-        id = id.resolve_id
-        emoji_hash[id]
+      if (id = id&.resolve_id)
+        @servers.each_value do |server|
+          emoji = server.emojis[id]
+          return emoji if emoji
+        end
       else
-        emoji_hash.values
+        hash = {}
+        @servers.each_value do |server|
+          hash.merge!(server.emojis)
+        end
+
+        hash
       end
     end
 
@@ -938,6 +944,11 @@ module Discordrb
     # @param emoji_id [Integer, String, Emoji] ID of the application emoji to delete.
     def delete_application_emoji(emoji_id)
       API::Application.delete_application_emoji(@token, profile.id, emoji_id.resolve_id)
+    end
+
+    # @!visibility private
+    def inspect
+      "<Bot client_id=#{@client_id.inspect} redact_token=#{@redact_token.inspect}>"
     end
 
     private
