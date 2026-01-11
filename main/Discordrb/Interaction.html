@@ -3774,7 +3774,7 @@ Further messages can be sent with <span class='object_link'><a href="#send_messa
       <pre class="code"><span class="info file"># File 'lib/discordrb/data/interaction.rb', line 335</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user_integration?'>user_integration?</span>
-  <span class='ivar'>@integration_owners</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='ivar'>@user_id</span>
+  <span class='ivar'>@integration_owners</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='ivar'>@user</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -3786,7 +3786,7 @@ Further messages can be sent with <span class='object_link'><a href="#send_messa
 </div>
 
       <div id="footer">
-  Generated on Sun Jan 11 02:20:50 2026 by
+  Generated on Sun Jan 11 02:22:10 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>
