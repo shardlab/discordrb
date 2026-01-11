@@ -159,7 +159,8 @@ module Discordrb
       member(@bot.profile)
     end
 
-    # @return [Array<Integration>] an array of all the integrations connected to this server.
+    # @return [Array<Integration>] an array of the integrations in this server.
+    # @note If the server has more than 50 integrations, they cannot be accessed.
     def integrations
       integration = JSON.parse(API::Server.integrations(@bot.token, @id))
       integration.map { |element| Integration.new(element, @bot, self) }
@@ -414,11 +415,11 @@ module Discordrb
     # Updates the positions of all roles on the server
     # @note For internal use only
     # @!visibility private
-    def update_role_positions(role_positions)
-      response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions))
+    def update_role_positions(role_positions, reason: nil)
+      response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions, reason))
       response.each do |data|
         updated_role = Role.new(data, @bot, self)
-        role(updated_role.id).update_from(updated_role)
+        role(updated_role.id)&.update_from(updated_role)
       end
     end
 
@@ -1016,6 +1017,19 @@ module Discordrb
     def update_emoji_data(new_data)
       @emoji = {}
       process_emoji(new_data['emojis'])
+    end
+
+    # Updates the threads for this server's cache
+    # @note For internal use only
+    # @!visibility private
+    def clear_threads(ids = nil)
+      if ids.nil?
+        @channels.reject!(&:thread?)
+        @channels_by_id.delete_if { |_, channel| channel.thread? }
+      else
+        @channels.reject! { |channel| channel.thread? && ids.any?(channel.parent&.id) }
+        @channels_by_id.delete_if { |_, channel| channel.thread? && ids.any?(channel.parent&.id) }
+      end
     end
 
     # The inspect method is overwritten to give more useful output

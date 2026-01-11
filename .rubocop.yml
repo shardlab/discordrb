@@ -109,7 +109,7 @@ Style/RedundantReturn:
 Style/RedundantParentheses:
   Enabled: false
 
-Style:/EndOfLine:
+Layout/EndOfLine:
   Enabled: true
   EnforcedStyle: lf
 
