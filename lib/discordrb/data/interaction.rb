@@ -5,6 +5,8 @@ require 'discordrb/webhooks'
 module Discordrb
   # Base class for interaction objects.
   class Interaction
+    include IDObject
+
     # Interaction types.
     # @see https://discord.com/developers/docs/interactions/slash-commands#interaction-interactiontype
     TYPES = {
@@ -51,8 +53,8 @@ module Discordrb
     # @return [Integer] The ID of the channel this interaction originates from.
     attr_reader :channel_id
 
-    # @return [Integer] The ID of this interaction.
-    attr_reader :id
+    # @return [Channel] The channel where this interaction originates from.
+    attr_reader :channel
 
     # @return [Integer] The ID of the application associated with this interaction.
     attr_reader :application_id
@@ -71,8 +73,26 @@ module Discordrb
     # @return [Hash] The interaction data.
     attr_reader :data
 
-    # @return [Array<ActionRow>]
+    # @return [Array<ActionRow>] The modal components associated with this interaction.
     attr_reader :components
+
+    # @return [Permissions] The permissions the application has where this interaction originates from.
+    attr_reader :application_permissions
+
+    # @return [String] The selected language of the user that initiated this interaction.
+    attr_reader :user_locale
+
+    # @return [String, nil] The selected language of the server this interaction originates from.
+    attr_reader :server_locale
+
+    # @return [Integer] The context of where this interaction was initiated from.
+    attr_reader :context
+
+    # @return [Integer] The maximum number of bytes an attachment can have when responding to this interaction.
+    attr_reader :max_attachment_size
+
+    # @return [Array<Symbol>] the features of the server where the interaction was initiated from.
+    attr_reader :server_features
 
     # @!visibility private
     def initialize(data, bot)
@@ -85,6 +105,7 @@ module Discordrb
       @data = data['data']
       @server_id = data['guild_id']&.to_i
       @channel_id = data['channel_id']&.to_i
+      @channel = bot.ensure_channel(data['channel']) if data['channel']
       @user = if data['member']
                 data['member']['guild_id'] = @server_id
                 Discordrb::Member.new(data['member'], bot.servers[@server_id], bot)
@@ -94,6 +115,13 @@ module Discordrb
       @token = data['token']
       @version = data['version']
       @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
+      @application_permissions = Permissions.new(data['app_permissions']) if data['app_permissions']
+      @user_locale = data['locale']
+      @server_locale = data['guild_locale']
+      @context = data['context']
+      @max_attachment_size = data['attachment_size_limit']
+      @integration_owners = data['authorizing_integration_owners']&.to_h { |key, value| [key.to_i, value.to_i] }
+      @server_features = data['guild'] ? data['guild']['features']&.map { |feature| feature.downcase.to_sym } : []
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
@@ -294,12 +322,6 @@ module Discordrb
       @bot.server(@server_id)
     end
 
-    # @return [Channel, nil]
-    # @raise [Errors::NoPermission] When the bot is not in the server associated with this interaction.
-    def channel
-      @bot.channel(@channel_id)
-    end
-
     # @return [Hash, nil] Returns the button that triggered this interaction if applicable, otherwise nil
     def button
       return unless @type == TYPES[:component]
@@ -322,6 +344,16 @@ module Discordrb
       message_level = (@message.instance_of?(Hash) ? Message.new(@message, @bot) : @message)&.components&.flat_map(&:components) || []
       components = top_level.concat(message_level)
       components.find { |component| component.custom_id == custom_id }
+    end
+
+    # @return [true, false] whether the application was installed by the user who initiated this interaction.
+    def user_integration?
+      @integration_owners[1] == @user.id
+    end
+
+    # @return [true, false] whether the application was installed by the server where this interaction originates from.
+    def server_integration?
+      @server_id ? @integration_owners[0] == @server_id : false
     end
 
     private

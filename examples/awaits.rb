@@ -35,17 +35,17 @@ bot.message(start_with: '!game') do |event|
     # event handler will persist and continue to handle messages.
     if guess == magic
       # This returns `true`, which will destroy the await so we don't reply anymore
-      guess_event.respond 'you win!'
+      guess_event.respond!(content: 'you win!')
       true
     else
       # Let the user know if they guessed too high or low.
-      guess_event.respond(guess > magic ? 'too high' : 'too low')
+      guess_event.respond!(content: guess > magic ? 'too high' : 'too low')
 
       # Return false so the await is not destroyed, and we continue to listen
       false
     end
   end
-  event.respond "My number was: `#{magic}`."
+  event.respond!(content: "My number was: `#{magic}`.")
 end
 
 # Above we used the provided User#await! method to easily set up
@@ -61,7 +61,7 @@ CROSS_MARK = "\u274c"
 
 bot.message(content: '!time') do |event|
   # Send a message, and store a reference to it that we can add the reaction.
-  message = event.respond "The current time is: #{Time.now.strftime('%F %T %Z')}"
+  message = event.respond!(content: "The current time is: #{Time.now.strftime('%F %T %Z')}")
 
   # React to the message to give a user an easy "button" to press
   message.react CROSS_MARK

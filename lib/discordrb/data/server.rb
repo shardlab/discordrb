@@ -64,25 +64,22 @@ module Discordrb
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-      @owner_id = data['owner_id'].to_i
       @id = data['id'].to_i
       @members = {}
       @voice_states = {}
       @emoji = {}
+      @channels = []
+      @channels_by_id = {}
 
-      process_channels(data['channels'])
       update_data(data)
 
       # Whether this server's members have been chunked (resolved using op 8 and GUILD_MEMBERS_CHUNK) yet
       @chunked = false
-
-      @booster_count = data['premium_subscription_count'] || 0
-      @boost_level = data['premium_tier']
     end
 
     # @return [Member] The server owner.
     def owner
-      @owner ||= member(@owner_id)
+      member(@owner_id)
     end
 
     # The default channel is the text channel on this server with the highest position
@@ -161,7 +158,8 @@ module Discordrb
       member(@bot.profile)
     end
 
-    # @return [Array<Integration>] an array of all the integrations connected to this server.
+    # @return [Array<Integration>] an array of the integrations in this server.
+    # @note If the server has more than 50 integrations, they cannot be accessed.
     def integrations
       integration = JSON.parse(API::Server.integrations(@bot.token, @id))
       integration.map { |element| Integration.new(element, @bot, self) }
@@ -333,8 +331,8 @@ module Discordrb
     # @return [String, nil] the widget URL to the server that displays the amount of online members in a
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
-      update_data if @embed_enabled.nil?
-      return unless @embed_enabled
+      update_data if @widget_enabled.nil?
+      return unless @widget_enabled
 
       API.widget_url(@id)
     end
@@ -348,8 +346,8 @@ module Discordrb
     # @return [String, nil] the widget banner URL to the server that displays the amount of online members,
     #   server icon and server name in a stylish way. `nil` if the widget is not enabled.
     def widget_banner_url(style)
-      update_data if @embed_enabled.nil?
-      return unless @embed_enabled
+      update_data if @widget_enabled.nil?
+      return unless @widget_enabled
 
       API.widget_url(@id, style)
     end
@@ -415,11 +413,11 @@ module Discordrb
     # Updates the positions of all roles on the server
     # @note For internal use only
     # @!visibility private
-    def update_role_positions(role_positions)
-      response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions))
+    def update_role_positions(role_positions, reason: nil)
+      response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions, reason))
       response.each do |data|
         updated_role = Role.new(data, @bot, self)
-        role(updated_role.id).update_from(updated_role)
+        role(updated_role.id)&.update_from(updated_role)
       end
     end
 
@@ -513,15 +511,18 @@ module Discordrb
     # with the regular role defaults the client uses unless specified, i.e. name is "new role",
     # permissions are the default, colour is the default etc.
     # @param name [String] Name of the role to create.
-    # @param colour [Integer, ColourRGB, #combined] The roles  primary colour.
+    # @param colour [Integer, ColourRGB, #combined] The primary colour of the role to create.
     # @param hoist [true, false] whether members of this role should be displayed seperately in the members list.
     # @param mentionable [true, false] whether this role can mentioned by anyone in the server.
     # @param permissions [Integer, Array<Symbol>, Permissions, #bits] The permissions to write to the new role.
+    # @param icon [String, #read, nil] The base64 encoded image data, or a file like object that responds to #read.
+    # @param unicode_emoji [String, nil] The unicode emoji of the role to create, or nil.
+    # @param display_icon [String, File, #read, nil] The icon to display for the role. Overrides the **icon** and **unicode_emoji** parameters if passed.
     # @param reason [String] The reason the for the creation of this role.
     # @param secondary_colour [Integer, ColourRGB, nil] The secondary colour of the role to create.
     # @param tertiary_colour [Integer, ColourRGB, nil] The tertiary colour of the role to create.
     # @return [Role] the created role.
-    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, secondary_colour: nil, tertiary_colour: nil, reason: nil)
+    def create_role(name: 'new role', colour: 0, hoist: false, mentionable: false, permissions: 104_324_161, secondary_colour: nil, tertiary_colour: nil, icon: nil, unicode_emoji: nil, display_icon: nil, reason: nil)
       colour = colour.respond_to?(:combined) ? colour.combined : colour
 
       permissions = if permissions.is_a?(Array)
@@ -532,13 +533,21 @@ module Discordrb
                       permissions
                     end
 
+      icon = icon.respond_to?(:read) ? Discordrb.encode64(icon) : icon
+
       colours = {
         primary_color: colour&.to_i,
         tertiary_color: tertiary_colour&.to_i,
         secondary_color: secondary_colour&.to_i
       }
 
-      response = API::Server.create_role(@bot.token, @id, name, nil, hoist, mentionable, permissions&.to_s, reason, colours)
+      if display_icon.is_a?(String)
+        unicode_emoji = display_icon
+      elsif display_icon.respond_to?(:read)
+        icon = Discordrb.encode64(display_icon)
+      end
+
+      response = API::Server.create_role(@bot.token, @id, name, nil, hoist, mentionable, permissions&.to_s, reason, colours, icon, unicode_emoji)
 
       role = Role.new(JSON.parse(response), @bot, self)
       @roles << role
@@ -552,13 +561,9 @@ module Discordrb
     # @param reason [String] The reason the for the creation of this emoji.
     # @return [Emoji] The emoji that has been added.
     def add_emoji(name, image, roles = [], reason: nil)
-      image_string = image
-      if image.respond_to? :read
-        image_string = 'data:image/jpg;base64,'
-        image_string += Base64.strict_encode64(image.read)
-      end
+      image = image.respond_to?(:read) ? Discordrb.encode64(image) : image
 
-      data = JSON.parse(API::Server.add_emoji(@bot.token, @id, image_string, name, roles.map(&:resolve_id), reason))
+      data = JSON.parse(API::Server.add_emoji(@bot.token, @id, image, name, roles.map(&:resolve_id), reason))
       new_emoji = Emoji.new(data, @bot, self)
       @emoji[new_emoji.id] = new_emoji
     end
@@ -708,10 +713,8 @@ module Discordrb
     # Sets the server's icon.
     # @param icon [String, #read] The new icon, in base64-encoded JPG format.
     def icon=(icon)
-      if icon.respond_to? :read
-        icon_string = 'data:image/jpg;base64,'
-        icon_string += Base64.strict_encode64(icon.read)
-        update_server_data(icon_id: icon_string)
+      if icon.respond_to?(:read)
+        update_server_data(icon_id: Discordrb.encode64(icon))
       else
         update_server_data(icon_id: icon)
       end
@@ -882,6 +885,9 @@ module Discordrb
       @splash_id = new_data['splash'] || @splash_id
       @banner_id = new_data['banner'] || @banner_id
       @features = new_data['features'] ? new_data['features'].map { |element| element.downcase.to_sym } : @features || []
+      @booster_count = new_data['premium_subscription_count'] || @booster_count || 0
+      @boost_level = new_data['premium_tier'] || @boost_level
+      @owner_id = new_data['owner_id'].to_i
 
       process_channels(new_data['channels']) if new_data['channels']
       process_roles(new_data['roles']) if new_data['roles']
@@ -914,6 +920,19 @@ module Discordrb
     def update_emoji_data(new_data)
       @emoji = {}
       process_emoji(new_data['emojis'])
+    end
+
+    # Updates the threads for this server's cache
+    # @note For internal use only
+    # @!visibility private
+    def clear_threads(ids = nil)
+      if ids.nil?
+        @channels.reject!(&:thread?)
+        @channels_by_id.delete_if { |_, channel| channel.thread? }
+      else
+        @channels.reject! { |channel| channel.thread? && ids.any?(channel.parent&.id) }
+        @channels_by_id.delete_if { |_, channel| channel.thread? && ids.any?(channel.parent&.id) }
+      end
     end
 
     # The inspect method is overwritten to give more useful output

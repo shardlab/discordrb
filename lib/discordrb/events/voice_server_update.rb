@@ -19,6 +19,7 @@ module Discordrb::Events
     # @return [String] The voice server host.
     attr_reader :endpoint
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 

@@ -211,4 +211,68 @@ module Discordrb::API::Application
       Authorization: token
     )
   end
+
+  # Get a list of application emojis.
+  # https://discord.com/developers/docs/resources/emoji#list-application-emojis
+  def list_application_emojis(token, application_id)
+    Discordrb::API.request(
+      :applications_aid_emojis,
+      application_id,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/emojis",
+      Authorization: token
+    )
+  end
+
+  # Get an application emoji by ID.
+  # https://discord.com/developers/docs/resources/emoji#get-application-emoji
+  def get_application_emoji(token, application_id, emoji_id)
+    Discordrb::API.request(
+      :applications_aid_emojis_eid,
+      application_id,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/emojis/#{emoji_id}",
+      Authorization: token
+    )
+  end
+
+  # Create an application emoji.
+  # https://discord.com/developers/docs/resources/emoji#create-application-emoji
+  def create_application_emoji(token, application_id, name, image)
+    Discordrb::API.request(
+      :applications_aid_emojis,
+      application_id,
+      :post,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/emojis",
+      { name: name, image: image }.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
+  # Edit an application emoji.
+  # https://discord.com/developers/docs/resources/emoji#modify-application-emoji
+  def edit_application_emoji(token, application_id, emoji_id, name)
+    Discordrb::API.request(
+      :applications_aid_emojis_eid,
+      application_id,
+      :patch,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/emojis/#{emoji_id}",
+      { name: name }.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
+  # Delete an application emoji.
+  # https://discord.com/developers/docs/resources/emoji#delete-application-emoji
+  def delete_application_emoji(token, application_id, emoji_id)
+    Discordrb::API.request(
+      :applications_aid_emojis_eid,
+      application_id,
+      :delete,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/emojis/#{emoji_id}",
+      Authorization: token
+    )
+  end
 end
