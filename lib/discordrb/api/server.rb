@@ -635,13 +635,13 @@ module Discordrb::API::Server
 
   # Update an auto-moderation rule in the server.
   # https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule
-  def update_automod_rule(token, server_id, rule_id, name: nil, event_type: nil, actions: nil, trigger_metadata: nil, enabled: nil, exempt_roles: nil, exempt_channels: nil, reason: nil)
+  def update_automod_rule(token, server_id, rule_id, name: :undef, event_type: :undef, actions: :undef, trigger_metadata: :undef, enabled: :undef, exempt_roles: :undef, exempt_channels: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid_auto_moderation_rules_rid,
       server_id,
       :patch,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules/#{rule_id}",
-      { name:, event_type:, trigger_metadata:, actions:, enabled:, exempt_roles:, exempt_channels: }.compact.to_json,
+      { name:, event_type:, trigger_metadata:, actions:, enabled:, exempt_roles:, exempt_channels: }.reject { |_, value| value == :undef }.to_json,
       content_type: :json,
       Authorization: token,
       'X-Audit-Log-Reason': reason

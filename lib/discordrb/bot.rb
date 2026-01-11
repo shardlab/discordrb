@@ -1228,7 +1228,7 @@ module Discordrb
     end
 
     # Internal handler for AUTO_MODERATION_RULE_CREATE and AUTO_MODERATION_RULE_UPDATE
-    def update_guild_automod_rule(data)
+    def update_automod_rule(data)
       server = @servers[data['guild_id'].to_i]
 
       if (rule = server&.automod_rule(data['id'].to_i, request: false))
@@ -1786,17 +1786,17 @@ module Discordrb
         event = ThreadMembersUpdateEvent.new(data, self)
         raise_event(event)
       when :AUTO_MODERATION_RULE_CREATE
-        update_guild_automod_rule(data)
+        update_automod_rule(data)
 
         event = AutoModRuleCreateEvent.new(data, self)
         raise_event(event)
       when :AUTO_MODERATION_RULE_UPDATE
-        update_guild_automod_rule(data)
+        update_automod_rule(data)
 
         event = AutoModRuleUpdateEvent.new(data, self)
         raise_event(event)
       when :AUTO_MODERATION_RULE_DELETE
-        self.server(data['guild_id'].to_i).delete_automod_rule(data['id'].to_i)
+        @servers[data['guild_id'].to_i]&.delete_automod_rule(data['id'].to_i)
 
         event = AutoModRuleDeleteEvent.new(data, self)
         raise_event(event)
