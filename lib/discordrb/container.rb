@@ -14,6 +14,7 @@ require 'discordrb/events/await'
 require 'discordrb/events/bans'
 require 'discordrb/events/reactions'
 require 'discordrb/events/interactions'
+require 'discordrb/events/integrations'
 
 require 'discordrb/await'
 
@@ -704,6 +705,42 @@ module Discordrb
     # @return [ServerStickersUpdateEventHandler] The event handler that was registered.
     def server_stickers_update(attributes = {}, &block)
       register_event(ServerStickersUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an integration is added to a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Integration] :id An integration to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Application] :application An application to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [IntegrationCreateEvent] The event that was raised.
+    # @return [IntegrationCreateEventHandler] The event handler that was registered.
+    def integration_create(attributes = {}, &block)
+      register_event(IntegrationCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an integration is updated in a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Integration] :id An integration to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Application] :application An application to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [IntegrationUpdateEvent] The event that was raised.
+    # @return [IntegrationUpdateEventHandler] The event handler that was registered.
+    def integration_update(attributes = {}, &block)
+      register_event(IntegrationUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an integration is removed from a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Integration] :id An integration to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Application] :application An application to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [IntegrationDeleteEvent] The event that was raised.
+    # @return [IntegrationDeleteEventHandler] The event handler that was registered.
+    def integration_delete(attributes = {}, &block)
+      register_event(IntegrationDeleteEvent, attributes, block)
     end
 
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.

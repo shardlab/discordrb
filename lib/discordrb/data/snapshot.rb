@@ -41,11 +41,11 @@ module Discordrb
       @content = data['content']
       @mention_roles = data['mention_roles']&.map(&:resolve_id) || []
       @embeds = data['embeds']&.map { |embed| Embed.new(embed, self) } || []
-      @attachments = data['attachments']&.map { |file| Attachment.new(file, self, bot) } || []
+      @attachments = data['attachments']&.map { |file| Attachment.new(file, self, @bot) } || []
       @created_at = data['timestamp'] ? Time.parse(data['timestamp']) : nil
       @edited_at = data['edited_timestamp'] ? Time.parse(data['edited_timestamp']) : nil
-      @mentions = data['mentions']&.map { |mention| bot.ensure_user(mention) } || []
-      @components = data['components']&.map { |component| Components.from_data(component, bot) } || []
+      @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention) } || []
+      @components = data['components']&.map { |component| Components.from_data(component, @bot) } || []
       @stickers = (data['sticker_items'] || data['stickers'])&.map { |sticker| Sticker::Item.new(sticker, @bot) } || []
     end
 
