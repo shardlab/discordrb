@@ -41,7 +41,7 @@ module Discordrb
       @name = data['name']
       @server = server
       @id = data['id']&.to_i
-      @animated = data['animated']
+      @animated = data['animated'] || false
       @managed = data['managed']
       @available = data['available']
       @requires_colons = data['require_colons']
@@ -84,7 +84,7 @@ module Discordrb
 
     # The inspect method is overwritten to give more useful output
     def inspect
-      "<Emoji name=#{name} id=#{id} animated=#{animated}>"
+      "<Emoji name=#{name.inspect} id=#{id.inspect} animated=#{animated}>"
     end
 
     # @!visibility private
@@ -96,6 +96,22 @@ module Discordrb
         role = server.role(role_id)
         @roles << role
       end
+    end
+
+    # @!visibility private
+    def self.build_emoji_hash(emoji, prefix: true)
+      data = { id: nil, name: nil }
+
+      case emoji
+      when Emoji, Reaction
+        emoji.id ? data[:id] = emoji.id : data[:name] = emoji.name
+      when Integer, String
+        emoji.to_i.zero? ? data[:name] = emoji : data[:id] = emoji
+      else
+        raise TypeError, "Invalid emoji type: #{emoji.class}" unless emoji.nil?
+      end
+
+      prefix ? data.transform_keys!({ id: :emoji_id, name: :emoji_name }) : data
     end
   end
 end

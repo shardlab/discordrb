@@ -461,7 +461,7 @@ module Discordrb
         @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
       end
 
-      if data.key('premium_since')
+      if data.key?('premium_since')
         @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
       end
 
