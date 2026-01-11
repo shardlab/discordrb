@@ -115,6 +115,35 @@
   
 
 </div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="EXPIRE_BEHAVIORS-constant" class="">EXPIRE_BEHAVIORS =
+          <div class="docstring">
+  <div class="discussion">
+    <p>Map of expire behaviors.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>remove:</span> <span class='int'>0</span><span class='comma'>,</span>
+  <span class='label'>kick:</span> <span class='int'>1</span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
 
 
 
@@ -152,11 +181,9 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#emoticon-instance_method" title="#emoticon (instance method)">#<strong>emoticon</strong>  &#x21d2; true, false </a>
+      <a href="#application-instance_method" title="#application (instance method)">#<strong>application</strong>  &#x21d2; IntegrationApplication<sup>?</sup> </a>
     
 
-    
-      (also: #emoticon?)
     
   </span>
   
@@ -173,7 +200,37 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Whether emoticons are enabled.</p>
+    <span class="summary_desc"><div class='inline'><p>The application for the integration.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#emoticon-instance_method" title="#emoticon (instance method)">#<strong>emoticon</strong>  &#x21d2; true, false </a>
+    
+
+    
+      (also: #emoticon?, #emoticons?)
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether or not emoticons are enabled.</p>
 </div></span>
   
 </li>
@@ -185,6 +242,8 @@
       <a href="#enabled-instance_method" title="#enabled (instance method)">#<strong>enabled</strong>  &#x21d2; true, false </a>
     
 
+    
+      (also: #enabled?)
     
   </span>
   
@@ -210,7 +269,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#expire_behaviour-instance_method" title="#expire_behaviour (instance method)">#<strong>expire_behaviour</strong>  &#x21d2; Symbol </a>
+      <a href="#expire_behaviour-instance_method" title="#expire_behaviour (instance method)">#<strong>expire_behaviour</strong>  &#x21d2; Symbol<sup>?</sup> </a>
     
 
     
@@ -231,7 +290,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The behaviour of expiring subscribers (:remove = Remove User from role; :kick = Kick User from server).</p>
+    <span class="summary_desc"><div class='inline'><p>The behaviour of expiring subscribers.</p>
 </div></span>
   
 </li>
@@ -300,6 +359,8 @@
     
 
     
+      (also: #revoked?)
+    
   </span>
   
   
@@ -315,7 +376,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Has this integration been revoked.</p>
+    <span class="summary_desc"><div class='inline'><p>Whether or not this integration been revoked.</p>
 </div></span>
   
 </li>
@@ -343,7 +404,35 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The role that this integration uses for &quot;subscribers&quot;.</p>
+    <span class="summary_desc"><div class='inline'><p>The ID of the role that this integration uses for &quot;subscribers&quot;.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#scopes-instance_method" title="#scopes (instance method)">#<strong>scopes</strong>  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The oauth2 scopes the application has been authorized for.</p>
 </div></span>
   
 </li>
@@ -408,7 +497,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#synced_at-instance_method" title="#synced_at (instance method)">#<strong>synced_at</strong>  &#x21d2; Time </a>
+      <a href="#synced_at-instance_method" title="#synced_at (instance method)">#<strong>synced_at</strong>  &#x21d2; Time<sup>?</sup> </a>
     
 
     
@@ -427,7 +516,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The time the integration was synced at.</p>
+    <span class="summary_desc"><div class='inline'><p>The time the integration was last synced at.</p>
 </div></span>
   
 </li>
@@ -440,6 +529,8 @@
     
 
     
+      (also: #syncing?)
+    
   </span>
   
   
@@ -455,7 +546,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Whether the integration is syncing.</p>
+    <span class="summary_desc"><div class='inline'><p>Whether or not the integration is syncing.</p>
 </div></span>
   
 </li>
@@ -483,7 +574,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The integration type (YouTube, Twitch, etc.).</p>
+    <span class="summary_desc"><div class='inline'><p>The integration type (YouTube, Twitch, Discord, etc.).</p>
 </div></span>
   
 </li>
@@ -492,7 +583,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#user-instance_method" title="#user (instance method)">#<strong>user</strong>  &#x21d2; User </a>
+      <a href="#user-instance_method" title="#user (instance method)">#<strong>user</strong>  &#x21d2; User<sup>?</sup> </a>
     
 
     
@@ -511,7 +602,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The user the integration is linked to.</p>
+    <span class="summary_desc"><div class='inline'><p>The user who added the integration to the server.</p>
 </div></span>
   
 </li>
@@ -553,6 +644,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>The inspect method is overwritten to give more useful output.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#subscriber_role-instance_method" title="#subscriber_role (instance method)">#<strong>subscriber_role</strong>  &#x21d2; Role<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Get the role that this integration uses for subscribers.</p>
 </div></span>
   
 </li>
@@ -620,15 +734,74 @@
       <pre class="lines">
 
 
-80
-81
-82</pre>
+84
+85
+86</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 80</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 84</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_account'>account</span>
   <span class='ivar'>@account</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="application-instance_method">
+  
+    #<strong>application</strong>  &#x21d2; <tt><span class='object_link'><a href="IntegrationApplication.html" title="Discordrb::IntegrationApplication (class)">IntegrationApplication</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the application for the integration.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="IntegrationApplication.html" title="Discordrb::IntegrationApplication (class)">IntegrationApplication</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the application for the integration.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+106
+107
+108</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 106</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_application'>application</span>
+  <span class='ivar'>@application</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -645,14 +818,14 @@
 
   
     <span class="aliases">Also known as:
-    <span class="names"><span id='emoticon?-instance_method'>emoticon?</span></span>
+    <span class="names"><span id='emoticon?-instance_method'>emoticon?</span>, <span id='emoticons?-instance_method'>emoticons?</span></span>
     </span>
   
 
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns whether emoticons are enabled.</p>
+    <p>Returns whether or not emoticons are enabled.</p>
 
 
   </div>
@@ -670,7 +843,7 @@
       
       
         &mdash;
-        <div class='inline'><p>whether emoticons are enabled</p>
+        <div class='inline'><p>whether or not emoticons are enabled</p>
 </div>
       
     </li>
@@ -683,12 +856,12 @@
       <pre class="lines">
 
 
-67
 68
-69</pre>
+69
+70</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 67</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 68</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emoticon'>emoticon</span>
   <span class='ivar'>@emoticon</span>
@@ -706,6 +879,10 @@
     #<strong>enabled</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt>  <span class="extras">(readonly)</span>
   
 
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='enabled?-instance_method'>enabled?</span></span>
+    </span>
   
 
   
@@ -742,12 +919,12 @@
       <pre class="lines">
 
 
-74
-75
-76</pre>
+76
+77
+78</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 76</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_enabled'>enabled</span>
   <span class='ivar'>@enabled</span>
@@ -762,7 +939,7 @@
       <div class="method_details ">
   <h3 class="signature " id="expire_behaviour-instance_method">
   
-    #<strong>expire_behaviour</strong>  &#x21d2; <tt>Symbol</tt>  <span class="extras">(readonly)</span>
+    #<strong>expire_behaviour</strong>  &#x21d2; <tt>Symbol</tt><sup>?</sup>  <span class="extras">(readonly)</span>
   
 
   
@@ -774,7 +951,9 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the behaviour of expiring subscribers (:remove = Remove User from role; :kick = Kick User from server).</p>
+    <p>Returns the behaviour of expiring subscribers. When this is <code>:remove</code>, the
+associated role will be removed from the user. When this is <code>:kick</code>, the user will be
+kicked out of the server.</p>
 
 
   </div>
@@ -787,12 +966,14 @@
     <li>
       
       
-        <span class='type'>(<tt>Symbol</tt>)</span>
+        <span class='type'>(<tt>Symbol</tt>, <tt>nil</tt>)</span>
       
       
       
         &mdash;
-        <div class='inline'><p>the behaviour of expiring subscribers (:remove = Remove User from role; :kick = Kick User from server)</p>
+        <div class='inline'><p>the behaviour of expiring subscribers. When this is <code>:remove</code>, the
+associated role will be removed from the user. When this is <code>:kick</code>, the user will be
+kicked out of the server</p>
 </div>
       
     </li>
@@ -805,12 +986,12 @@
       <pre class="lines">
 
 
-86
-87
-88</pre>
+92
+93
+94</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 86</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 92</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_expire_behaviour'>expire_behaviour</span>
   <span class='ivar'>@expire_behaviour</span>
@@ -864,12 +1045,12 @@
       <pre class="lines">
 
 
-90
-91
-92</pre>
+96
+97
+98</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 96</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_expire_grace_period'>expire_grace_period</span>
   <span class='ivar'>@expire_grace_period</span>
@@ -947,11 +1128,15 @@
   
 
   
+    <span class="aliases">Also known as:
+    <span class="names"><span id='revoked?-instance_method'>revoked?</span></span>
+    </span>
+  
 
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns has this integration been revoked.</p>
+    <p>Returns whether or not this integration been revoked.</p>
 
 
   </div>
@@ -969,7 +1154,7 @@
       
       
         &mdash;
-        <div class='inline'><p>has this integration been revoked.</p>
+        <div class='inline'><p>whether or not this integration been revoked.</p>
 </div>
       
     </li>
@@ -982,12 +1167,12 @@
       <pre class="lines">
 
 
-96
-97
-98</pre>
+102
+103
+104</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 96</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 102</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_revoked'>revoked</span>
   <span class='ivar'>@revoked</span>
@@ -1010,7 +1195,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the role that this integration uses for &quot;subscribers&quot;.</p>
+    <p>Returns the ID of the role that this integration uses for &quot;subscribers&quot;.</p>
 
 
   </div>
@@ -1028,7 +1213,7 @@
       
       
         &mdash;
-        <div class='inline'><p>the role that this integration uses for &quot;subscribers&quot;</p>
+        <div class='inline'><p>the ID of the role that this integration uses for &quot;subscribers&quot;</p>
 </div>
       
     </li>
@@ -1041,15 +1226,74 @@
       <pre class="lines">
 
 
-64
 65
-66</pre>
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_role_id'>role_id</span>
   <span class='ivar'>@role_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="scopes-instance_method">
+  
+    #<strong>scopes</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="../String.html" title="String (class)">String</a></span>&gt;</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the oauth2 scopes the application has been authorized for.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../String.html" title="String (class)">String</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the oauth2 scopes the application has been authorized for</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+109
+110
+111</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 109</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_scopes'>scopes</span>
+  <span class='ivar'>@scopes</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1159,12 +1403,12 @@
       <pre class="lines">
 
 
-93
-94
-95</pre>
+99
+100
+101</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 93</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 99</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_subscriber_count'>subscriber_count</span>
   <span class='ivar'>@subscriber_count</span>
@@ -1179,7 +1423,7 @@
       <div class="method_details ">
   <h3 class="signature " id="synced_at-instance_method">
   
-    #<strong>synced_at</strong>  &#x21d2; <tt>Time</tt>  <span class="extras">(readonly)</span>
+    #<strong>synced_at</strong>  &#x21d2; <tt>Time</tt><sup>?</sup>  <span class="extras">(readonly)</span>
   
 
   
@@ -1187,7 +1431,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the time the integration was synced at.</p>
+    <p>Returns the time the integration was last synced at.</p>
 
 
   </div>
@@ -1200,12 +1444,12 @@
     <li>
       
       
-        <span class='type'>(<tt>Time</tt>)</span>
+        <span class='type'>(<tt>Time</tt>, <tt>nil</tt>)</span>
       
       
       
         &mdash;
-        <div class='inline'><p>the time the integration was synced at</p>
+        <div class='inline'><p>the time the integration was last synced at</p>
 </div>
       
     </li>
@@ -1218,12 +1462,12 @@
       <pre class="lines">
 
 
-83
-84
-85</pre>
+87
+88
+89</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_synced_at'>synced_at</span>
   <span class='ivar'>@synced_at</span>
@@ -1242,11 +1486,15 @@
   
 
   
+    <span class="aliases">Also known as:
+    <span class="names"><span id='syncing?-instance_method'>syncing?</span></span>
+    </span>
+  
 
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns whether the integration is syncing.</p>
+    <p>Returns whether or not the integration is syncing.</p>
 
 
   </div>
@@ -1264,7 +1512,7 @@
       
       
         &mdash;
-        <div class='inline'><p>whether the integration is syncing</p>
+        <div class='inline'><p>whether or not the integration is syncing</p>
 </div>
       
     </li>
@@ -1277,12 +1525,12 @@
       <pre class="lines">
 
 
-77
-78
-79</pre>
+80
+81
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 80</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_syncing'>syncing</span>
   <span class='ivar'>@syncing</span>
@@ -1305,7 +1553,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the integration type (YouTube, Twitch, etc.).</p>
+    <p>Returns the integration type (YouTube, Twitch, Discord, etc.).</p>
 
 
   </div>
@@ -1323,7 +1571,7 @@
       
       
         &mdash;
-        <div class='inline'><p>the integration type (YouTube, Twitch, etc.)</p>
+        <div class='inline'><p>the integration type (YouTube, Twitch, Discord, etc.)</p>
 </div>
       
     </li>
@@ -1336,12 +1584,12 @@
       <pre class="lines">
 
 
-71
-72
-73</pre>
+73
+74
+75</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 71</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 73</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_type'>type</span>
   <span class='ivar'>@type</span>
@@ -1356,7 +1604,7 @@
       <div class="method_details ">
   <h3 class="signature " id="user-instance_method">
   
-    #<strong>user</strong>  &#x21d2; <tt><span class='object_link'><a href="User.html" title="Discordrb::User (class)">User</a></span></tt>  <span class="extras">(readonly)</span>
+    #<strong>user</strong>  &#x21d2; <tt><span class='object_link'><a href="User.html" title="Discordrb::User (class)">User</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
   
 
   
@@ -1364,7 +1612,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Returns the user the integration is linked to.</p>
+    <p>Returns the user who added the integration to the server. This will be <code>nil</code>
+for very old integrations, or if the integration was sent via a Gateway event.</p>
 
 
   </div>
@@ -1377,12 +1626,13 @@
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="User.html" title="Discordrb::User (class)">User</a></span></tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="User.html" title="Discordrb::User (class)">User</a></span></tt>, <tt>nil</tt>)</span>
       
       
       
         &mdash;
-        <div class='inline'><p>the user the integration is linked to</p>
+        <div class='inline'><p>the user who added the integration to the server. This will be <code>nil</code>
+for very old integrations, or if the integration was sent via a Gateway event.</p>
 </div>
       
     </li>
@@ -1395,12 +1645,12 @@
       <pre class="lines">
 
 
-61
 62
-63</pre>
+63
+64</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 61</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 62</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user'>user</span>
   <span class='ivar'>@user</span>
@@ -1428,7 +1678,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>The inspect method is overwritten to give more useful output</p>
+    <p>The inspect method is overwritten to give more useful output.</p>
 
 
   </div>
@@ -1442,15 +1692,72 @@
       <pre class="lines">
 
 
-121
-122
-123</pre>
+140
+141
+142</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 121</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 140</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
-  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;Integration name=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@name</span><span class='embexpr_end'>}</span><span class='tstring_content'> id=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_content'> type=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@type</span><span class='embexpr_end'>}</span><span class='tstring_content'> enabled=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@enabled</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;Integration name=\&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@name</span><span class='embexpr_end'>}</span><span class='tstring_content'>\&quot; id=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_content'> type=\&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@type</span><span class='embexpr_end'>}</span><span class='tstring_content'>\&quot; enabled=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@enabled</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="subscriber_role-instance_method">
+  
+    #<strong>subscriber_role</strong>  &#x21d2; <tt><span class='object_link'><a href="Role.html" title="Discordrb::Role (class)">Role</a></span></tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Get the role that this integration uses for subscribers.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Role.html" title="Discordrb::Role (class)">Role</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The role that this integration uses for subscribers.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+135
+136
+137</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/integration.rb', line 135</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_subscriber_role'>subscriber_role</span>
+  <span class='ivar'>@server</span><span class='period'>.</span><span class='id identifier rubyid_role'>role</span><span class='lparen'>(</span><span class='ivar'>@role_id</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@role_id</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1462,7 +1769,7 @@
 </div>
 
       <div id="footer">
-  Generated on Thu Jan  1 18:57:08 2026 by
+  Generated on Sun Jan 11 02:00:53 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>
