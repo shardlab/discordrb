@@ -519,6 +519,21 @@ module Discordrb::API::Channel
     )
   end
 
+  # Follow an annoucement channel.
+  # https://discord.com/developers/docs/resources/channel#follow-announcement-channel
+  def follow_channel(token, channel_id, webhook_channel_id, reason = nil)
+    Discordrb::API.request(
+      :channels_cid_followers,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/followers",
+      { webhook_channel_id: webhook_channel_id }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Start a thread based off a channel message.
   # https://discord.com/developers/docs/resources/channel#start-thread-with-message
   def start_thread_with_message(token, channel_id, message_id, name, auto_archive_duration)
