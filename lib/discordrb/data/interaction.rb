@@ -337,7 +337,7 @@ module Discordrb
 
     # @return [true, false] whether the application was installed by the user who initiated this interaction.
     def user_integration?
-      @integration_owners[1] == @user_id
+      @integration_owners[1] == @user.id
     end
 
     # @return [true, false] whether the application was installed by the server where this interaction originates from.
