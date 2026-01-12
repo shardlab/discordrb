@@ -876,7 +876,6 @@ module Discordrb
     # @param name [String] The 1-100 character name of the scheduled event to create.
     # @param start_time [Time] The start time of the scheduled event to create.
     # @param entity_type [Integer, Symbol] The entity type of the scheduled event to create.
-    # @param privacy_level [Integer] The privacy level of the scheduled event to create.
     # @param end_time [Time, nil] The end time of the scheduled event to create.
     # @param channel [Integer, Channel, String, nil] The channel where the scheduled event will take place.
     # @param location [String, nil] The external location of the scheduled event to create.
@@ -886,12 +885,12 @@ module Discordrb
     # @param reason [String, nil] The audit log reason for creating the scheduled event.
     # @yieldparam builder [ScheduledEvent::RecurrenceRule::Builder] An optional reccurence rule builder.
     # @return [ScheduledEvent] the scheduled event that was created.
-    def create_scheduled_event(name:, start_time:, entity_type:, privacy_level: 2, end_time: nil, channel: nil, location: nil, description: nil, cover: nil, recurrence_rule: nil, reason: nil)
+    def create_scheduled_event(name:, start_time:, entity_type:, end_time: nil, channel: nil, location: nil, description: nil, cover: nil, recurrence_rule: nil, reason: nil)
       yield((builder = ScheduledEvent::RecurrenceRule::Builder.new)) if block_given?
 
       options = {
         name: name,
-        privacy_level: privacy_level,
+        privacy_level: 2,
         scheduled_start_time: start_time&.iso8601,
         entity_type: ScheduledEvent::ENTITY_TYPES[entity_type] || entity_type,
         channel_id: channel&.resolve_id,

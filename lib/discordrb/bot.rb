@@ -1232,7 +1232,7 @@ module Discordrb
       server = @servers[data['guild_id'].to_i]
 
       if (event = server&.scheduled_event(data['id'].to_i, request: false))
-        event.from_other(data)
+        event&.update_data(data)
       else
         server&.cache_scheduled_event(ScheduledEvent.new(data, server, self))
       end
