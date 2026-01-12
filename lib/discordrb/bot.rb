@@ -1232,7 +1232,7 @@ module Discordrb
       server = @servers[data['guild_id'].to_i]
 
       if (rule = server&.automod_rule(data['id'].to_i, request: false))
-        rule.from_other(data)
+        rule&.update_data(data)
       else
         server&.cache_automod_rule(AutoModRule.new(data, server, self))
       end
