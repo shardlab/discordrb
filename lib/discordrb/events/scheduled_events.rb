@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
+require 'discordrb/data'
+require 'discordrb/events/generic'
+
 module Discordrb::Events
-  # Generic subclass for scheduled events (create/update/delete).
+  # Generic superclass for scheduled events.
   class ScheduledEventEvent < Event
-    # @return [Server] the server the scheduled event is from.
+    # @return [Server] the server associated with the event.
     attr_reader :server
 
-    # @return [ScheduledEvent] the scheduled event in question.
+    # @return [ScheduledEvent] the scheduled event associated with the event.
     attr_reader :scheduled_event
 
     # @!visibility private
@@ -17,16 +20,15 @@ module Discordrb::Events
     end
   end
 
-  # Raised when a scheduled event is created.
+  # Raised whenever a scheduled event is created.
   class ScheduledEventCreateEvent < ScheduledEventEvent; end
 
-  # Raised when a scheduled event is updated.
+  # Raised whenever a scheduled event is updated.
   class ScheduledEventUpdateEvent < ScheduledEventEvent; end
 
-  # Raised when a scheduled event is deleted.
+  # Raised whenever a scheduled event is deleted.
   class ScheduledEventDeleteEvent < ScheduledEventEvent
     # @!visibility private
-    # @note Override the initializer to account for the deleted event.
     def initialize(data, bot)
       @bot = bot
       @server = bot.server(data['guild_id'].to_i)
@@ -34,7 +36,7 @@ module Discordrb::Events
     end
   end
 
-  # Generic subclass for whenever a user is added to or removed from a scheduled event.
+  # Generic superclass for scheduled event user events.
   class ScheduledEventUserEvent < Event
     # @!visibility private
     attr_reader :user_id
@@ -75,16 +77,17 @@ module Discordrb::Events
     alias_method :user, :member
   end
 
-  # Raised when a user id added to a scheduled event.
+  # Raised whenever a user is added to a scheduled event.
   class ScheduledEventUserAddEvent < ScheduledEventUserEvent; end
 
-  # Raised when a user id removed from a scheduled event.
+  # Raised whenever a user is removed from a scheduled event.
   class ScheduledEventUserRemoveEvent < ScheduledEventUserEvent; end
 
-  # Event handler for generic scheduled event events.
+  # Generic event handler for scheduled event.
   class ScheduledEventEventHandler < EventHandler
     # @!visibility private
     def matches?(event)
+      # Check for the proper event type.
       return false unless event.is_a?(ScheduledEventEvent)
 
       [
@@ -138,7 +141,7 @@ module Discordrb::Events
   # Event handler for :GUILD_SCHEDULED_EVENT_DELETE events.
   class ScheduledEventDeleteEventHandler < ScheduledEventEventHandler; end
 
-  # Event handler for generic scheduled event user add and remove events.
+  # Generic event handler for scheduled event user events.
   class ScheduledEventUserEventHandler < EventHandler
     # @!visibility private
     def matches?(event)

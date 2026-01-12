@@ -61,7 +61,9 @@ module Discordrb
       @user_count = data['user_count']
       @creator_id = data['creator_id']&.to_i
       bot.ensure_user(data['creator']) if data['creator']
-      from_other(data)
+
+      # Set the rest of the mutable attributes in the method.
+      update_data(data)
     end
 
     # Get the user who was responsible for the creation of the scheduled event.
@@ -84,7 +86,7 @@ module Discordrb
 
     # Utility method to get a scheduled event's cover image URL.
     # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
-    # @param size [Integer] The URL will default to `4096`. You can otherwise specify any number that's a power of two to override this.
+    # @param size [Integer, nil] The URL will default to `4096`. You can otherwise specify any number that's a power of two to override this.
     # @return [String, nil] the URL to the scheduled event's cover image, or `nil` if the scheduled event doesn't have a cover image set.
     def cover_url(format: 'webp', size: 4096)
       API.scheduled_event_cover_url(@id, @cover_id, format, size) if @cover_id
@@ -116,149 +118,34 @@ module Discordrb
       end
     end
 
-    # Set the name of the scheduled event to something new.
-    # @param name [String] The new name of the scheduled event.
-    def name=(name)
-      update_data(name: name)
-    end
-
-    # Set the description of the scheduled event to something new.
-    # @param description [String, nil] The new description of the scheduled event.
-    def description=(description)
-      update_data(description: description)
-    end
-
-    # Set the recurrence rule of the scheduled event to something new.
-    # @param rule [#to_h, nil] The new recurrence rule of the scheduled event.
-    def recurrence_rule=(rule)
-      update_data(recurrence_rule: rule&.to_h)
-    end
-
-    # Set the cover image of the scheduled event to something new.
-    # @param cover [File, #read] The new cover image of the scheduled event.
-    def cover=(cover)
-      update_data(image: Discordrb.encode64(cover))
-    end
-
-    # Set the channel where the scheduled event will occur to something new.
-    # @param channel [Channel, Integer, String, nil] The new channel of the scheduled event.
-    def channel=(channel)
-      update_data(channel_id: channel&.resolve_id)
-    end
-
-    # Set the external location of the scheduled event to something new.
-    # @param location [String, nil] The new location of the scheduled event.
-    def location=(location)
-      entity_metadata = { location: } if location
-
-      update_data(entity_metadata: entity_metadata)
-    end
-
-    # Set the status of the scheduled event to something new.
-    # @param status [Symbol, Integer] The new status of the scheduled event.
-    def status=(status)
-      update_data(status: STATUSES[status] || status)
-    end
-
-    # Set the time at when the scheduled event will end to something new.
-    # @param end_time [Time] The new end time of the scheduled event.
-    def end_time=(end_time)
-      update_data(scheduled_end_time: end_time.iso8601)
-    end
-
-    # Set the entity type of the scheduled event to something new.
-    # @param type [Symbol, Integer] The new entity type of the scheduled event.
-    def entity_type=(type)
-      update_data(entity_type: ENTITY_TYPES[type] || type)
-    end
-
-    # Set the time at when the scheduled event will start to something new.
-    # @param start_time [Time] The new start time of the scheduled event.
-    def start_time=(start_time)
-      update_data(scheduled_start_time: start_time.iso8601)
-    end
-
     # Start the scheduled event.
     # @param reason [String, nil] The reason for starting the event.
-    # @return [void]
+    # @return [nil]
     def start(reason: nil)
       raise 'cannot start this event' unless scheduled?
 
-      update_data(status: STATUSES[:active], reason: reason)
+      modify(status: STATUSES[:active], reason: reason)
     end
 
     # Cancel the scheduled event. This cannot be undone.
     # @param reason [String, nil] The reason for cancelling the event.
-    # @return [void]
+    # @return [nil]
     def cancel(reason: nil)
       raise 'cannot cancel this event' unless scheduled?
 
-      update_data(status: STATUSES[:canceled], reason: reason)
+      modify(status: STATUSES[:canceled], reason: reason)
     end
 
     # End the scheduled event. This cannot be undone.
     # @param reason [String, nil] The reason for ending the event.
-    # @return [void]
+    # @return [nil]
     def end(reason: nil)
       raise 'cannot end this event' unless active?
 
-      update_data(status: STATUSES[:completed], reason: reason)
+      modify(status: STATUSES[:completed], reason: reason)
     end
 
-    # Delete the scheduled event. Use this with caution, as it cannot be undone.
-    # @param reason [String, nil] The audit log reason for deleting the scheduled event.
-    # @return [void]
-    def delete(reason: nil)
-      API::Server.delete_scheduled_event(@bot.token, @server.id, @id, reason: reason)
-      @server.delete_scheduled_event(@id)
-    end
-
-    # Overwrite the existing reccurence rule for the scheduled event or add one.
-    # @example This event will occur annually on December 25th.
-    #   scheduled_event.set_recurrence_rule do |builder|
-    #     builder.interval = 1
-    #     builder.by_month_day = 25
-    #     builder.by_month = :december
-    #     builder.frequency = :yearly
-    #     builder.start_time = :replace_with_time
-    #   end
-    # @example This event will occur on every weekday.
-    #   scheduled_event.set_recurrence_rule do |builder|
-    #     builder.interval = 1
-    #     builder.frequency = :daily
-    #     builder.by_weekday = (0..4).to_a
-    #     builder.start_time = :replace_with_time
-    #   end
-    # @example This event will occur on every other tuesday.
-    #   scheduled_event.set_recurrence_rule do |builder|
-    #     builder.interval = 2
-    #     builder.frequency = :weekly
-    #     builder.by_weekday = :wednesday
-    #     builder.start_time = :replace_with_time
-    #   end
-    # @example This event will occur monthly on the fourth wednesday.
-    #   scheduled_event.set_recurrence_rule do |builder|
-    #     builder.interval = 1
-    #     builder.frequency = :monthly
-    #     builder.by_n_weekday(week: 4, day: :wednesday)
-    #     builder.start_time = :replace_with_time
-    #   end
-    # @yieldparam builder [RecurrenceRule::Builder] The builder for the reccurence rule to add or update.
-    # @param reason [String, nil] The reason that will show up for modifying the event's reccurence rule.
-    # @return [void]
-    def update_recurrence_rule(reason: nil)
-      yield((builder = RecurrenceRule::Builder.new))
-
-      raise 'interval cannot be nil' unless builder.interval?
-
-      raise 'frequency cannot be nil' unless builder.frequency?
-
-      raise 'start_time cannot be nil' unless builder.start_time?
-
-      update_data(recurrence_rule: builder.to_h, reason: reason)
-    end
-
-    # Update multiple properties of the scheduled event in a single API call.
+    # Edit the properties of the scheduled event.
     # @param name [String] The new 1-100 character name of the scheduled event.
     # @param channel [Integer, Channel, String, nil] The new channel of the scheduled event.
     # @param location [String, nil] The new location of the scheduled event.
@@ -270,26 +157,47 @@ module Discordrb
     # @param cover [File, #read] The new cover image of the scheduled event.
     # @param recurrence_rule [#to_h, nil] The new recurrence rule of the scheduled event.
     # @param reason [String, nil] The audit log reason for updating the scheduled event.
-    def update(
+    # @yieldparam builder [RecurrenceRule::Builder] An optional reccurence rule builder.
+    # @return [nil]
+    def modify(
       name: :undef, channel: :undef, location: :undef, start_time: :undef, end_time: :undef,
       description: :undef, entity_type: :undef, status: :undef, cover: :undef,
       recurrence_rule: :undef, reason: nil
     )
-      new_data = {
-        name: name == :undef ? :undef : name,
-        channel_id: channel == :undef ? :undef : channel&.resolve_id,
-        entity_metadata: location == :undef ? :undef : { location: },
-        scheduled_end_time: end_time == :undef ? :undef : end_time&.iso8601,
-        scheduled_start_time: start_time == :undef ? :undef : start_time&.iso8601,
-        description: description == :undef ? :undef : description,
-        entity_type: entity_type == :undef ? :undef : ENTITY_TYPES[type] || type,
-        status: status == :undef ? :undef : STATUSES[status] || status,
+      data = {
+        name: name,
+        channel_id: channel == :undef ? channel : channel&.resolve_id,
+        entity_metadata: location == :undef ? location : { location: },
+        scheduled_end_time: end_time == :undef ? end_time : end_time&.iso8601,
+        scheduled_start_time: start_time == :undef ? start_time : start_time&.iso8601,
+        description: description,
+        entity_type: entity_type == :undef ? entity_type : ENTITY_TYPES[type] || type,
+        status: status == :undef ? status : STATUSES[status] || status,
         image: cover.respond_to?(:read) ? Discordrb.encode64(cover) : cover,
-        recurrence_rule: recurrence_rule == :undef ? :undef : recurrence_rule&.to_h,
+        recurrence_rule: recurrence_rule == :undef ? recurrence_rule : recurrence_rule&.to_h,
         reason: reason
       }
 
-      update_data(new_data)
+      if block_given?
+        yield((builder = RecurrenceRule::Builder.new))
+        raise 'An `interval` must be provided' unless builder.interval?
+        raise 'A `frequency` must be provided' unless builder.frequency?
+        raise 'A `start_time` must be provided' unless builder.start_time?
+
+        builder[:recurrence_rule] = builder.to_h
+      end
+
+      update_data(JSON.parse(API::Server.update_scheduled_event(@bot.token, @server.id, @id, **data)))
+      nil
+    end
+
+    # Delete the scheduled event. Use this with caution, as it cannot be undone.
+    # @param reason [String, nil] The audit log reason for deleting the scheduled event.
+    # @return [nil]
+    def delete(reason: nil)
+      API::Server.delete_scheduled_event(@bot.token, @server.id, @id, reason: reason)
+      @server.delete_scheduled_event(@id)
+      nil
     end
 
     # Get the total amount of users who are subscribed to the scheduled event.
@@ -327,12 +235,22 @@ module Discordrb
     alias_method :subscribers, :users
 
     # @!visibility private
+    def increment_user_count
+      @user_count += 1 if @user_count
+    end
+
+    # @!visibility private
+    def deincrement_user_count
+      @user_count -= 1 if @user_count
+    end
+
+    # @!visibility private
     def inspect
       "<ScheduledEvent id=#{@id} name=\"#{@name}\" start_time=#{@start_time.inspect} end_time=#{@end_time.inspect}>"
     end
 
     # @!visibility private
-    def from_other(new_data)
+    def update_data(new_data)
       @name = new_data['name']
       @status = new_data['status']
       @cover_id = new_data['image']
@@ -344,21 +262,6 @@ module Discordrb
       @location = new_data['entity_metadata'] ? new_data['entity_metadata']['location'] : nil
       @end_time = new_data['scheduled_end_time'] ? Time.iso8601(new_data['scheduled_end_time']) : nil
       @recurrence_rule = new_data['recurrence_rule'] ? RecurrenceRule.new(new_data['recurrence_rule'], @bot) : nil
-    end
-
-    # @!visibility private
-    def increment_user_count
-      @user_count += 1 if @user_count
-    end
-
-    # @!visibility private
-    def deincrement_user_count
-      @user_count -= 1 if @user_count
-    end
-
-    # @!visibility private
-    def update_data(new_data)
-      from_other(JSON.parse(API::Server.update_scheduled_event(@bot.token, @server.id, @id, **new_data)))
     end
 
     # Represents how frequently a scheduled event will repeat.
