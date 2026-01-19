@@ -2,16 +2,6 @@
 
 require 'websocket-client-simple'
 
-# The WSCS module which we're hooking
-# @see Websocket::Client::Simple::Client
-module WebSocket::Client::Simple
-  # Patch to the WSCS class to allow reading the internal thread
-  class Client
-    # @return [Thread] the internal thread this client is using for the event loop.
-    attr_reader :thread
-  end
-end
-
 module Discordrb
   # Utility wrapper class that abstracts an instance of WSCS. Useful should we decide that WSCS isn't good either -
   # in that case we can just switch to something else

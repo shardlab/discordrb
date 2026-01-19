@@ -22,6 +22,7 @@ module Discordrb
       @channels = {}
       @pm_channels = {}
       @thread_members = {}
+      @server_previews = {}
     end
 
     # Returns or caches the available voice regions
@@ -134,6 +135,19 @@ module Discordrb
 
     alias_method :private_channel, :pm_channel
 
+    # Get a server preview. If the bot isn't a member of the server, the server must be discoverable.
+    # @param id [Integer, String, Server] the ID of the server preview to get.
+    # @return [ServerPreview, nil] the server preview, or `nil` if the server isn't accessible.
+    def server_preview(id)
+      id = id.resolve_id
+      return @server_previews[id] if @server_previews[id]
+
+      response = JSON.parse(API::Server.preview(token, id))
+      @server_previews[id] = ServerPreview.new(response, self)
+    rescue StandardError
+      nil
+    end
+
     # Ensures a given user object is cached and if not, cache it from the given data hash.
     # @param data [Hash] A data hash representing a user.
     # @return [User] the user represented by the data hash.
@@ -199,7 +213,7 @@ module Discordrb
     # @return [String] Only the code for the invite.
     def resolve_invite_code(invite)
       invite = invite.code if invite.is_a? Discordrb::Invite
-      invite = invite[invite.rindex('/') + 1..] if invite.start_with?('http', 'discord.gg')
+      invite = invite[(invite.rindex('/') + 1)..] if invite.start_with?('http', 'discord.gg')
       invite
     end
 

@@ -14,6 +14,7 @@ require 'discordrb/events/await'
 require 'discordrb/events/bans'
 require 'discordrb/events/reactions'
 require 'discordrb/events/interactions'
+require 'discordrb/events/integrations'
 
 require 'discordrb/await'
 
@@ -32,6 +33,8 @@ module Discordrb
     # @option attributes [Time] :after Matches a time after the time the message was sent at.
     # @option attributes [Time] :before Matches a time before the time the message was sent at.
     # @option attributes [Boolean] :private Matches whether or not the channel is private.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was sent.
+    # @option attributes [Server, Integer, String] :server Matches the server the message was sent in.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageEvent] The event that was raised.
     # @return [MessageEventHandler] the event handler that was registered.
@@ -93,6 +96,8 @@ module Discordrb
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer] :id Matches the ID of the message that was edited.
     # @option attributes [String, Integer, Channel] :in Matches the channel the message was edited in.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was edited.
+    # @option attributes [Server, Integer, String] :server Matches the server the message was edited in.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageEditEvent] The event that was raised.
     # @return [MessageEditEventHandler] the event handler that was registered.
@@ -104,6 +109,7 @@ module Discordrb
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer] :id Matches the ID of the message that was deleted.
     # @option attributes [String, Integer, Channel] :in Matches the channel the message was deleted in.
+    # @option attributes [Server, Integer, String] :server Matches the server the message was deleted in.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageDeleteEvent] The event that was raised.
     # @return [MessageDeleteEventHandler] the event handler that was registered.
@@ -118,6 +124,8 @@ module Discordrb
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer] :id Matches the ID of the message that was updated.
     # @option attributes [String, Integer, Channel] :in Matches the channel the message was updated in.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was updated.
+    # @option attributes [Server, Integer, String] :server Matches the server the message was updated in.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MessageUpdateEvent] The event that was raised.
     # @return [MessageUpdateEventHandler] the event handler that was registered.
@@ -131,6 +139,7 @@ module Discordrb
     # @option attributes [String, Integer, User] :from Matches the user who added the reaction.
     # @option attributes [String, Integer, Message] :message Matches the message to which the reaction was added.
     # @option attributes [String, Integer, Channel] :in Matches the channel the reaction was added in.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of reaction (`:normal` or `:burst`) that was added.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ReactionAddEvent] The event that was raised.
     # @return [ReactionAddEventHandler] The event handler that was registered.
@@ -145,6 +154,7 @@ module Discordrb
     # @option attributes [String, Integer, User] :from Matches the user who removed the reaction.
     # @option attributes [String, Integer, Message] :message Matches the message to which the reaction was removed.
     # @option attributes [String, Integer, Channel] :in Matches the channel the reaction was removed in.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of reaction (`:normal` or `:burst`) that was added.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ReactionRemoveEvent] The event that was raised.
     # @return [ReactionRemoveEventHandler] The event handler that was registered.
@@ -162,6 +172,18 @@ module Discordrb
     # @return [ReactionRemoveAllEventHandler] The event handler that was registered.
     def reaction_remove_all(attributes = {}, &block)
       register_event(ReactionRemoveAllEvent, attributes, block)
+    end
+
+    # This **event** is raised when somebody removes all instances of a single reaction from a message.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Message] :message Matches the message where the reaction was removed.
+    # @option attributes [String, Integer, Channel] :in Matches the channel where the reaction was removed.
+    # @option attributes [String, Integer] :emoji Matches the ID of the emoji that was removed, or its name.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ReactionRemoveEmojiEvent] The event that was raised.
+    # @return [ReactionRemoveEmojiEventHandler] The event handler that was registered.
+    def reaction_remove_emoji(attributes = {}, &block)
+      register_event(ReactionRemoveEmojiEvent, attributes, block)
     end
 
     # This **event** is raised when a user's status (online/offline/idle) changes.
@@ -200,6 +222,8 @@ module Discordrb
     # @option attributes [Time] :after Matches a time after the time the message was sent at.
     # @option attributes [Time] :before Matches a time before the time the message was sent at.
     # @option attributes [Boolean] :private Matches whether or not the channel is private.
+    # @option attributes [Integer, String, Symbol] :type Matches the type of the message that was sent.
+    # @option attributes [true, false] :role_mention If the event should trigger when the bot's managed role is mentioned.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [MentionEvent] The event that was raised.
     # @return [MentionEventHandler] the event handler that was registered.
@@ -267,7 +291,7 @@ module Discordrb
     # This **event** is raised when a user's voice state changes. This includes when a user joins, leaves, or
     # moves between voice channels, as well as their mute and deaf status for themselves and on the server.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, User] :from Matches the user that sent the message.
+    # @option attributes [String, Integer, User] :from Matches the user that raised the event.
     # @option attributes [String, Integer, Channel] :channel Matches the voice channel the user has joined.
     # @option attributes [String, Integer, Channel] :old_channel Matches the voice channel the user was in previously.
     # @option attributes [true, false] :mute Matches whether or not the user is muted server-wide.
@@ -633,6 +657,80 @@ module Discordrb
     # @return [ChannelSelectEventHandler] The event handler that was registered.
     def channel_select(attributes = {}, &block)
       register_event(ChannelSelectEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a message is pinned or unpinned.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Channel] :channel A channel to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ChannelPinsUpdateEvent] The event that was raised.
+    # @return [ChannelPinsUpdateEventHandler] The event handler that was registered.
+    def channel_pins_update(attributes = {}, &block)
+      register_event(ChannelPinsUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an autocomplete interaction is created.
+    # @param name [String, Symbol, nil] An option name to match against.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :command_id A command ID to match against.
+    # @option attributes [String, Symbol] :subcommand A subcommand name to match against.
+    # @option attributes [String, Symbol] :subcommand_group A subcommand group to match against.
+    # @option attributes [String, Symbol] :command_name A command name to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [AutocompleteEvent] The event that was raised.
+    # @return [AutocompleteEventHandler] The event handler that was registered.
+    def autocomplete(name = nil, attributes = {}, &block)
+      register_event(AutocompleteEvent, attributes.merge!({ name: name }), block)
+    end
+
+    # This **event** is raised whenever an application command's permissions are updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :command_id A command ID to match against.
+    # @option attributes [String, Integer] :application_id An application ID to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ApplicationCommandPermissionsUpdateEvent] The event that was raised.
+    # @return [ApplicationCommandPermissionsUpdateEventHandler] The event handler that was registered.
+    def application_command_permissions_update(attributes = {}, &block)
+      register_event(ApplicationCommandPermissionsUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an integration is added to a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Integration] :id An integration to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Application] :application An application to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [IntegrationCreateEvent] The event that was raised.
+    # @return [IntegrationCreateEventHandler] The event handler that was registered.
+    def integration_create(attributes = {}, &block)
+      register_event(IntegrationCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an integration is updated in a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Integration] :id An integration to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Application] :application An application to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [IntegrationUpdateEvent] The event that was raised.
+    # @return [IntegrationUpdateEventHandler] The event handler that was registered.
+    def integration_update(attributes = {}, &block)
+      register_event(IntegrationUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an integration is removed from a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Integration] :id An integration to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Application] :application An application to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [IntegrationDeleteEvent] The event that was raised.
+    # @return [IntegrationDeleteEventHandler] The event handler that was registered.
+    def integration_delete(attributes = {}, &block)
+      register_event(IntegrationDeleteEvent, attributes, block)
     end
 
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.

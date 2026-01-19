@@ -14,6 +14,21 @@ module Discordrb
     # @return [Array<Role>, nil] roles this emoji is active for, or nil if the emoji's server is unknown
     attr_reader :roles
 
+    # @return [User, nil] the user who uploaded this emoji, or nil if the emoji's server is unknown
+    attr_reader :creator
+
+    # @return [Boolean, nil] if the emoji requires colons to be used, or nil if the emoji's server is unknown
+    attr_reader :requires_colons
+    alias_method :requires_colons?, :requires_colons
+
+    # @return [Boolean, nil] whether this emoji is managed by an integration, or nil if the emoji's server is unknown
+    attr_reader :managed
+    alias_method :managed?, :managed
+
+    # @return [Boolean, nil] if this emoji is currently usable, or nil if the emoji's server is unknown
+    attr_reader :available
+    alias_method :available?, :available
+
     # @return [true, false] if the emoji is animated
     attr_reader :animated
     alias_method :animated?, :animated
@@ -25,8 +40,12 @@ module Discordrb
 
       @name = data['name']
       @server = server
-      @id = data['id'].nil? ? nil : data['id'].to_i
-      @animated = data['animated']
+      @id = data['id']&.to_i
+      @animated = data['animated'] || false
+      @managed = data['managed']
+      @available = data['available']
+      @requires_colons = data['require_colons']
+      @creator = data['user'] ? bot.ensure_user(data['user']) : nil
 
       process_roles(data['roles']) if server
     end
@@ -34,7 +53,7 @@ module Discordrb
     # ID or name based comparison
     def ==(other)
       return false unless other.is_a? Emoji
-      return Discordrb.id_compare(@id, other) if @id
+      return Discordrb.id_compare?(@id, other) if @id
 
       name == other.name
     end
@@ -65,7 +84,7 @@ module Discordrb
 
     # The inspect method is overwritten to give more useful output
     def inspect
-      "<Emoji name=#{name} id=#{id} animated=#{animated}>"
+      "<Emoji name=#{name.inspect} id=#{id.inspect} animated=#{animated}>"
     end
 
     # @!visibility private
@@ -77,6 +96,22 @@ module Discordrb
         role = server.role(role_id)
         @roles << role
       end
+    end
+
+    # @!visibility private
+    def self.build_emoji_hash(emoji, prefix: true)
+      data = { id: nil, name: nil }
+
+      case emoji
+      when Emoji, Reaction
+        emoji.id ? data[:id] = emoji.id : data[:name] = emoji.name
+      when Integer, String
+        emoji.to_i.zero? ? data[:name] = emoji : data[:id] = emoji
+      else
+        raise TypeError, "Invalid emoji type: #{emoji.class}" unless emoji.nil?
+      end
+
+      prefix ? data.transform_keys!({ id: :emoji_id, name: :emoji_name }) : data
     end
   end
 end

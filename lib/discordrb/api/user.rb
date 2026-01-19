@@ -28,8 +28,8 @@ module Discordrb::API::User
     )
   end
 
-  # Change the current bot's nickname on a server
-  # https://discord.com/developers/docs/resources/user#modify-current-user
+  # @deprecated Please use {Discordrb::API::Server.update_current_member} instead.
+  # https://discord.com/developers/docs/resources/user#modify-current-user-nick
   def change_own_nickname(token, server_id, nick, reason = nil)
     Discordrb::API.request(
       :guilds_sid_members_me_nick,
@@ -43,15 +43,21 @@ module Discordrb::API::User
     )
   end
 
-  # Update user data
+  # @deprecated Please use {update_current_user} instead.
   # https://discord.com/developers/docs/resources/user#modify-current-user
-  def update_profile(token, email, password, new_username, avatar, new_password = nil)
+  def update_profile(token, _email, _password, new_username, avatar, _new_password = nil)
+    update_current_user(token, new_username, avatar)
+  end
+
+  # Update the properties of the user for the current bot.
+  # https://discord.com/developers/docs/resources/user#modify-current-user
+  def update_current_user(token, username = :undef, avatar = :undef, banner = :undef)
     Discordrb::API.request(
       :users_me,
       nil,
       :patch,
       "#{Discordrb::API.api_base}/users/@me",
-      { avatar: avatar, email: email, new_password: new_password, password: password, username: new_username }.to_json,
+      { username: username, avatar: avatar, banner: banner }.reject { |_, value| value == :undef }.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -119,22 +125,14 @@ module Discordrb::API::User
     )
   end
 
-  # Change user status setting
-  def change_status_setting(token, status)
-    Discordrb::API.request(
-      :users_me_settings,
-      nil,
-      :patch,
-      "#{Discordrb::API.api_base}/users/@me/settings",
-      { status: status }.to_json,
-      Authorization: token,
-      content_type: :json
-    )
-  end
-
-  # Returns one of the "default" discord avatars from the CDN given a discriminator
-  def default_avatar(discrim = 0)
-    index = discrim.to_i % 5
+  # Returns one of the "default" discord avatars from the CDN given a discriminator or id since new usernames
+  # TODO: Maybe change this method again after discriminator removal ?
+  def default_avatar(discrim_id = 0, legacy: false)
+    index = if legacy
+              discrim_id.to_i % 5
+            else
+              (discrim_id.to_i >> 22) % 5
+            end
     "#{Discordrb::API.cdn_url}/embed/avatars/#{index}.png"
   end
 
@@ -146,5 +144,15 @@ module Discordrb::API::User
                  'webp'
                end
     "#{Discordrb::API.cdn_url}/avatars/#{user_id}/#{avatar_id}.#{format}"
+  end
+
+  # Make a banner URL from the user and banner IDs
+  def banner_url(user_id, banner_id, format = nil)
+    format ||= if banner_id.start_with?('a_')
+                 'gif'
+               else
+                 'png'
+               end
+    "#{Discordrb::API.cdn_url}/banners/#{user_id}/#{banner_id}.#{format}"
   end
 end

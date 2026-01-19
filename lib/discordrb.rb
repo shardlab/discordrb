@@ -46,9 +46,12 @@ module Discordrb
   NO_INTENTS = 0
 
   # Compares two objects based on IDs - either the objects' IDs are equal, or one object is equal to the other's ID.
-  def self.id_compare(one_id, other)
+  def self.id_compare?(one_id, other)
     other.respond_to?(:resolve_id) ? (one_id.resolve_id == other.resolve_id) : (one_id == other)
   end
+
+  # @deprecated Please use {Discordrb.id_compare?}
+  singleton_class.alias_method :id_compare, :id_compare?
 
   # The maximum length a Discord message can have
   CHARACTER_LIMIT = 2000
@@ -62,7 +65,9 @@ module Discordrb
     long_date: 'D', # 20 April 2021
     short_datetime: 'f', # 20 April 2021 16:20
     long_datetime: 'F', # Tuesday, 20 April 2021 16:20
-    relative: 'R' # 2 months ago
+    relative: 'R', # 2 months ago
+    simple_datetime: 's', # 20/04/2021, 16:20
+    medium_datetime: 'S' # 20/04/2021, 16:20:30
   }.freeze
 
   # Splits a message into chunks of 2000 characters. Attempts to split by lines if possible.
@@ -116,6 +121,19 @@ module Discordrb
     else
       "<t:#{time.to_i}:#{TIMESTAMP_STYLES[style] || style}>"
     end
+  end
+
+  # A utility method to base64 encode a file like object using its mime type.
+  # @param file [File, #read] A file like object that responds to #read.
+  # @return [String] The file object encoded as base64 image data.
+  def self.encode64(file)
+    path_method = %i[original_filename path local_path].find { |method| file.respond_to?(method) }
+
+    raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
+    raise ArgumentError, 'File object must respond to read.' unless file.respond_to?(:read)
+
+    mime_type = MIME::Types.type_for(file.__send__(path_method)).first&.to_s || 'image/jpeg'
+    "data:#{mime_type};base64,#{Base64.encode64(file.read).strip}"
   end
 end
 

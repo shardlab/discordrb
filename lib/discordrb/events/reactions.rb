@@ -14,6 +14,18 @@ module Discordrb::Events
     # @!visibility private
     attr_reader :message_id
 
+    # @return [true, false] whether the reaction is a burst reaction.
+    attr_reader :burst
+    alias_method :burst?, :burst
+
+    # @return [Integer] the type of the reaction. 0 for normal, 1 for burst.
+    attr_reader :type
+
+    # @return [Array<ColourRGB>] an array of colors used for animations in burst reactions.
+    attr_reader :burst_colours
+    alias_method :burst_colors, :burst_colours
+
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -21,6 +33,9 @@ module Discordrb::Events
       @user_id = data['user_id'].to_i
       @message_id = data['message_id'].to_i
       @channel_id = data['channel_id'].to_i
+      @burst = data['burst']
+      @type = data['type']
+      @burst_colours = data['burst_colors']&.map { |b| Discordrb::ColourRGB.new(b.delete('#')) } || []
     end
 
     # @return [User, Member] the user that reacted to this message, or member if a server exists.
@@ -89,6 +104,14 @@ module Discordrb::Events
           else
             a == e
           end
+        end,
+        matches_all(@attributes[:type], event.type) do |a, e|
+          case a
+          when Integer
+            a == e
+          when Symbol, String
+            Discordrb::Reaction::TYPES[a.to_sym] == e
+          end
         end
       ].reduce(true, &:&)
     end
@@ -113,6 +136,7 @@ module Discordrb::Events
     # @!visibility private
     attr_reader :message_id
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -150,6 +174,42 @@ module Discordrb::Events
             a == e.id
           else
             a == e
+          end
+        end
+      ].reduce(true, &:&)
+    end
+  end
+
+  # Event raised when all instances of a single reaction are removed from a message.
+  class ReactionRemoveEmojiEvent < ReactionRemoveAllEvent
+    # @return [Emoji] the emoji that was removed.
+    attr_reader :emoji
+
+    # @!visibility private
+    def initialize(data, bot)
+      super
+
+      @emoji = Discordrb::Emoji.new(data['emoji'], bot)
+    end
+  end
+
+  # Event handler for {ReactionRemoveEmojiEvent}.
+  class ReactionRemoveEmojiEventHandler < ReactionRemoveAllEventHandler
+    # @!visibility private
+    def matches?(event)
+      # Check for the proper event type.
+      return false unless super
+      return false unless event.is_a?(ReactionRemoveEmojiEvent)
+
+      [
+        matches_all(@attributes[:emoji], event.emoji) do |a, e|
+          case a
+          when Integer
+            e.id == a
+          when String
+            e.name == a || e.name == a.delete(':') || e.id == a.resolve_id
+          else
+            e == a
           end
         end
       ].reduce(true, &:&)

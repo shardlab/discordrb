@@ -19,18 +19,24 @@ module Discordrb
     alias_method :name=, :username=
 
     # Changes the bot's avatar.
-    # @param avatar [String, #read] A JPG file to be used as the avatar, either
-    #  something readable (e.g. File Object) or as a data URL.
+    # @param avatar [String, File, #read, nil] A file to be used as the avatar, either
+    #  something readable (e.g. File Object) or a data URI.
     def avatar=(avatar)
-      if avatar.respond_to? :read
-        # Set the file to binary mode if supported, so we don't get problems with Windows
-        avatar.binmode if avatar.respond_to?(:binmode)
-
-        avatar_string = 'data:image/jpg;base64,'
-        avatar_string += Base64.strict_encode64(avatar.read)
-        update_profile_data(avatar: avatar_string)
+      if avatar.respond_to?(:read)
+        update_profile_data(avatar: Discordrb.encode64(avatar))
       else
         update_profile_data(avatar: avatar)
+      end
+    end
+
+    # Changes the bot's banner.
+    # @param banner [String, File, #read, nil] A file to be used as the banner, either
+    #  something readable (e.g. File Object) or a data URI.
+    def banner=(banner)
+      if banner.respond_to?(:read)
+        update_profile_data(banner: Discordrb.encode64(banner))
+      else
+        update_profile_data(banner: banner)
       end
     end
 
@@ -38,34 +44,9 @@ module Discordrb
     # @note For internal use only.
     # @!visibility private
     def update_data(new_data)
-      @username = new_data[:username] || @username
-      @avatar_id = new_data[:avatar_id] || @avatar_id
-    end
-
-    # Sets the user status setting to Online.
-    # @note Only usable on User accounts.
-    def online
-      update_profile_status_setting('online')
-    end
-
-    # Sets the user status setting to Idle.
-    # @note Only usable on User accounts.
-    def idle
-      update_profile_status_setting('idle')
-    end
-
-    # Sets the user status setting to Do Not Disturb.
-    # @note Only usable on User accounts.
-    def dnd
-      update_profile_status_setting('dnd')
-    end
-
-    alias_method(:busy, :dnd)
-
-    # Sets the user status setting to Invisible.
-    # @note Only usable on User accounts.
-    def invisible
-      update_profile_status_setting('invisible')
+      @username = new_data['username']
+      @avatar_id = new_data['avatar']
+      @banner_id = new_data['banner']
     end
 
     # The inspect method is overwritten to give more useful output
@@ -75,17 +56,12 @@ module Discordrb
 
     private
 
-    # Internal handler for updating the user's status setting
-    def update_profile_status_setting(status)
-      API::User.change_status_setting(@bot.token, status)
-    end
-
+    # @!visibility private
     def update_profile_data(new_data)
-      API::User.update_profile(@bot.token,
-                               nil, nil,
-                               new_data[:username] || @username,
-                               new_data.key?(:avatar) ? new_data[:avatar] : @avatar_id)
-      update_data(new_data)
+      update_data(JSON.parse(API::User.update_current_user(@bot.token,
+                                                           new_data[:username] || :undef,
+                                                           new_data.key?(:avatar) ? new_data[:avatar] : :undef,
+                                                           new_data.key?(:banner) ? new_data[:banner] : :undef)))
     end
   end
 end

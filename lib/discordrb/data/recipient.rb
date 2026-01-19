@@ -16,7 +16,7 @@ module Discordrb
       raise ArgumentError, 'Tried to create a recipient for a public channel!' unless @channel.private?
 
       @user = user
-      super @user
+      super(@user)
 
       # Member attributes
       @mute = @deaf = @self_mute = @self_deaf = false
