@@ -136,12 +136,10 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments)
-
+      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, wait)
       return unless wait
 
-      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
-      Interactions::Message.new(JSON.parse(response), @bot, self)
+      Interactions::Message.new(JSON.parse(response)['resource']['message'], @bot, self)
     end
 
     # Defer an interaction, setting a temporary response that can be later overriden by {Interaction#send_message}.
@@ -204,12 +202,10 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments)
-
+      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, wait)
       return unless wait
 
-      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
-      Interactions::Message.new(JSON.parse(response), @bot, self)
+      Interactions::Message.new(JSON.parse(response)['resource']['message'], @bot, self)
     end
 
     # Edit the original response to this interaction.
@@ -885,7 +881,7 @@ module Discordrb
 
         @message_reference = data['message_reference']
 
-        @server_id = data['guild_id']&.to_i
+        @server_id = @interaction.server_id
 
         @timestamp = Time.parse(data['timestamp']) if data['timestamp']
         @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
