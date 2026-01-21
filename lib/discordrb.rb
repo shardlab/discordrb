@@ -32,7 +32,13 @@ module Discordrb
     server_message_typing: 1 << 11,
     direct_messages: 1 << 12,
     direct_message_reactions: 1 << 13,
-    direct_message_typing: 1 << 14
+    direct_message_typing: 1 << 14,
+    server_message_content: 1 << 15,
+    server_scheduled_events: 1 << 16,
+    auto_moderation_configuration: 1 << 20,
+    auto_moderation_execution: 1 << 21,
+    server_message_polls: 1 << 24,
+    direct_message_polls: 1 << 25
   }.freeze
 
   # All available intents
@@ -40,7 +46,7 @@ module Discordrb
 
   # All unprivileged intents
   # @see https://discord.com/developers/docs/topics/gateway#privileged-intents
-  UNPRIVILEGED_INTENTS = ALL_INTENTS & ~(INTENTS[:server_members] | INTENTS[:server_presences])
+  UNPRIVILEGED_INTENTS = ALL_INTENTS & ~(INTENTS[:server_members] | INTENTS[:server_presences] | INTENTS[:server_message_content])
 
   # No intents
   NO_INTENTS = 0
