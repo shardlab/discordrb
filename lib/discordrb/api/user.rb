@@ -137,13 +137,13 @@ module Discordrb::API::User
   end
 
   # Make an avatar URL from the user and avatar IDs
-  def avatar_url(user_id, avatar_id, format = nil)
+  def avatar_url(user_id, avatar_id, format = nil, size: nil)
     format ||= if avatar_id.start_with?('a_')
                  'gif'
                else
                  'webp'
                end
-    "#{Discordrb::API.cdn_url}/avatars/#{user_id}/#{avatar_id}.#{format}"
+    "#{Discordrb::API.cdn_url}/avatars/#{user_id}/#{avatar_id}.#{format}#{Discordrb::API.icon_size(size)}"
   end
 
   # Make a banner URL from the user and banner IDs
