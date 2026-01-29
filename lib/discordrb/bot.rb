@@ -1091,11 +1091,7 @@ module Discordrb
 
     # Internal handler for CHANNEL_UPDATE
     def update_channel(data)
-      channel = Channel.new(data, self)
-      old_channel = @channels[channel.id]
-      return unless old_channel
-
-      old_channel.update_from(channel)
+      @channels[data['id'].to_i]&.update_data(data)
     end
 
     # Internal handler for CHANNEL_DELETE
@@ -1114,26 +1110,6 @@ module Discordrb
       end
 
       @thread_members.delete(channel.id) if channel.thread?
-    end
-
-    # Internal handler for CHANNEL_RECIPIENT_ADD
-    def add_recipient(data)
-      channel_id = data['channel_id'].to_i
-      channel = self.channel(channel_id)
-
-      recipient_user = ensure_user(data['user'])
-      recipient = Recipient.new(recipient_user, channel, self)
-      channel.add_recipient(recipient)
-    end
-
-    # Internal handler for CHANNEL_RECIPIENT_REMOVE
-    def remove_recipient(data)
-      channel_id = data['channel_id'].to_i
-      channel = self.channel(channel_id)
-
-      recipient_user = ensure_user(data['user'])
-      recipient = Recipient.new(recipient_user, channel, self)
-      channel.remove_recipient(recipient)
     end
 
     # Internal handler for GUILD_MEMBER_ADD
@@ -1310,16 +1286,6 @@ module Discordrb
           end
 
           ensure_server(element, true)
-        end
-
-        # Add PM and group channels
-        data['private_channels'].each do |element|
-          channel = ensure_channel(element)
-          if channel.pm?
-            @pm_channels[channel.recipient.id] = channel
-          else
-            @channels[channel.id] = channel
-          end
         end
 
         # Don't notify yet if there are unavailable servers because they need to get available before the bot truly has
@@ -1534,16 +1500,6 @@ module Discordrb
         delete_channel(data)
 
         event = ChannelDeleteEvent.new(data, self)
-        raise_event(event)
-      when :CHANNEL_RECIPIENT_ADD
-        add_recipient(data)
-
-        event = ChannelRecipientAddEvent.new(data, self)
-        raise_event(event)
-      when :CHANNEL_RECIPIENT_REMOVE
-        remove_recipient(data)
-
-        event = ChannelRecipientRemoveEvent.new(data, self)
         raise_event(event)
       when :CHANNEL_PINS_UPDATE
         event = ChannelPinsUpdateEvent.new(data, self)
