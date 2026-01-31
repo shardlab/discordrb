@@ -256,6 +256,11 @@ module Discordrb::API
     "#{cdn_url}/guild-tag-badges/#{server_id}/#{badge_id}.#{format}"
   end
 
+  # make a soundboard sound URL from a soundboard sound ID.
+  def soundboard_sound_url(soundboard_sound_id)
+    "#{cdn_url}/soundboard-sounds/#{soundboard_sound_id}"
+  end
+
   # Create an OAuth application
   def create_oauth_application(token, name, redirect_uris)
     request(
@@ -352,6 +357,18 @@ module Discordrb::API
       "#{api_base}/voice/regions",
       Authorization: token,
       content_type: :json
+    )
+  end
+
+  # Get a list of the soundboard sounds that everyone can use.
+  # https://discord.com/developers/docs/resources/soundboard#list-default-soundboard-sounds
+  def list_default_soundboard_sounds(token)
+    Discordrb::API.request(
+      :soundboard_default_sounds,
+      nil,
+      :get,
+      "#{Discordrb::API.api_base}/soundboard-default-sounds",
+      Authorization: token
     )
   end
 end
