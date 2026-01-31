@@ -358,6 +358,20 @@ module Discordrb::API::Channel
     )
   end
 
+  # Play a soundboard sound in a voice channel.
+  # https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound
+  def send_soundboard_sound(token, channel_id, sound_id, source_guild_id = nil)
+    Discordrb::API.request(
+      :channels_cid_send_soundboard_sound,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/send-soundboard-sound",
+      { sound_id:, source_guild_id: }.compact.to_json,
+      content_type: :json,
+      Authorization: token
+    )
+  end
+
   # Create an empty group channel.
   # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
   # https://discord.com/developers/docs/resources/user#create-group-dm

@@ -70,6 +70,7 @@ module Discordrb
       @emoji = {}
       @channels = []
       @channels_by_id = {}
+      @soundboard_sounds = {}
 
       update_data(data)
 
@@ -451,6 +452,16 @@ module Discordrb
       @members[member.id] = member
     end
 
+    # @!visibility private
+    def delete_soundboard_sound(sound)
+      @soundboard_sounds.delete(sound.resolve_id)
+    end
+
+    # @!visibility private
+    def cache_soundboard_sound(sound)
+      @soundboard_sounds[sound.resolve_id] = sound
+    end
+
     # Updates a member's voice state
     # @note For internal use only
     # @!visibility private
@@ -682,6 +693,49 @@ module Discordrb
       API::User.leave_server(@bot.token, @id)
     end
 
+    # Create a soundboard sound in the server.
+    # @param name [String] The 2-32 character name of the soundboard sound to create.
+    # @param file [File, #read] An MP3 or OGG file containing the data for the soundboard sound.
+    # @param volume [Numeric, nil] The volume of the soundboard sound between 0-1. Defaults to 1.
+    # @param emoji [Emoji, Integer, String, nil] The emoji to display when using the soundboard sound.
+    # @param reason [String, nil] The reason to show in the audit log for creating the soundboard sound.
+    # @return [Sound] The soundboard sound that was created.
+    def create_soundboard_sound(name:, file:, volume: nil, emoji: nil, reason: nil)
+      data = {
+        name: name,
+        volume: volume&.to_f,
+        sound: Discordrb.encode64(file),
+        **Emoji.build_emoji_hash(emoji)
+      }
+
+      response = API::Server.create_soundboard_sound(@bot.token, @id, **data, reason: reason)
+      Sound.new(JSON.parse(response), self, @bot).tap { |sound| cache_soundboard_sound(sound) }
+    end
+
+    # Get a list of the soundboard sounds in the server.
+    # @param bypass_cache [true, false] Whether to bypass the cache and re-fetch all soundboard sounds.
+    # @return [Array<Sound>] The soundboard sounds that have been added to the server.
+    def soundboard_sounds(bypass_cache: false)
+      process_soundboard_sounds(JSON.parse(API::Server.list_soundboard_sounds(@bot.token, @id))['items']) if bypass_cache
+
+      @soundboard_sounds.values
+    end
+
+    # Get a single soundboard sound in the server.
+    # @param soundboard_sound_id [Integer, String, Sound] The ID of the soundboard sound to get.
+    # @param request [true, false] Whether to fallback to an HTTPS request and fetch the soundboard sound if it isn't cached.
+    # @return [Sound, nil] The soundboard sound that was identified, or `nil` if there wasn't a soundboard sound with the given ID.
+    def soundboard_sound(soundboard_sound_id, request: true)
+      id = soundboard_sound_id.resolve_id
+      sound = @soundboard_sounds[id]
+      return sound if sound || !request
+
+      response = API::Server.get_soundboard_sound(@bot.token, @id, id)
+      Sound.new(JSON.parse(response), self, @bot).tap { |sound| cache_soundboard_sound(sound) }
+    rescue StandardError
+      nil
+    end
+
     # Sets the server's name.
     # @param name [String] The new server name.
     def name=(name)
@@ -896,6 +950,7 @@ module Discordrb
       process_presences(new_data['presences']) if new_data['presences']
       process_voice_states(new_data['voice_states']) if new_data['voice_states']
       process_active_threads(new_data['threads']) if new_data['threads']
+      process_soundboard_sounds(new_data['soundboard_sounds']) if new_data['soundboard_sounds']
     end
 
     # Adds a channel to this server's cache
@@ -1037,6 +1092,17 @@ module Discordrb
         thread = @bot.ensure_channel(element, self)
         @channels << thread
         @channels_by_id[thread.id] = thread
+      end
+    end
+
+    def process_soundboard_sounds(sounds)
+      @soundboard_sounds = {}
+
+      return unless sounds
+
+      sounds.each do |element|
+        sound = Sound.new(element, self, @bot)
+        @soundboard_sounds[sound.id] = sound
       end
     end
   end
