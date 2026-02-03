@@ -70,7 +70,6 @@ module Discordrb
       @emoji = {}
       @channels = []
       @channels_by_id = {}
-      @stage_instances = {}
 
       update_data(data)
 
@@ -450,20 +449,6 @@ module Discordrb
     # @!visibility private
     def cache_member(member)
       @members[member.id] = member
-    end
-
-    # Adds a stage instance to the cache
-    # @note For internal use only
-    # @!visibility private
-    def cache_stage_instance(instance)
-      @stage_instances[instance.id] = instance
-    end
-
-    # Delete a stage instance from the cache
-    # @note For internal use only
-    # @!visibility private
-    def delete_stage_instance(instance)
-      @stage_instances.delete(instance.resolve_id)
     end
 
     # Updates a member's voice state
@@ -846,19 +831,6 @@ module Discordrb
       invites.map { |invite| Invite.new(invite, @bot) }
     end
 
-    # Get all of the stage instances for the channels in the server.
-    # @return [Array<StageInstance>] the stage instances for the server channels.
-    def stage_instances
-      @stage_instances.values
-    end
-
-    # Get a single stage instance in the server.
-    # @param id [Integer, String, StageInstance] The ID of the stage instance to get.
-    # @return [StageInstance, nil] the stage instance, or `nil` if it couldn't be found.
-    def stage_instance(id)
-      @stage_instances[id.resolve_id]
-    end
-
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
     # @note For internal use only
     # @!visibility private
@@ -1070,13 +1042,11 @@ module Discordrb
     end
 
     def process_stage_instances(instances)
-      @stage_instances = {}
-
       return unless instances
 
       instances.each do |element|
-        instance = StageInstance.new(element, @bot)
-        @stage_instances[instance.id] = instance
+        channel = @channels_by_id[element['channel_id'].to_i]
+        channel&.process_stage_instance(StageInstance.new(element, channel, @bot))
       end
     end
   end

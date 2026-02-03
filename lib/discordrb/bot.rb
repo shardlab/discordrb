@@ -1229,12 +1229,13 @@ module Discordrb
 
     # Internal handler for STAGE_INSTANCE_CREATE and STAGE_INSTANCE_UPDATE
     def update_stage_instance(data)
-      server = @servers[data['guild_id'].to_i]
+      channel = @channels[data['channel_id'].to_i]
+      instance = channel&.stage_instance(request: false)
 
-      if (instance = server&.stage_instance(data['id'].to_i))
+      if instance&.id == data['id'].to_i
         instance&.update_data(data)
       else
-        server&.cache_stage_instance(StageInstance.new(data, self))
+        channel&.process_stage_instance(StageInstance.new(data, channel, self))
       end
     end
 
@@ -1796,7 +1797,7 @@ module Discordrb
         event = StageInstanceUpdateEvent.new(data, self)
         raise_event(event)
       when :STAGE_INSTANCE_DELETE
-        @servers[data['guild_id'].to_i]&.delete_stage_instance(data['id'].to_i)
+        @channels[data['channel_id'].to_i]&.process_stage_instance(nil)
 
         event = StageInstanceDeleteEvent.new(data, self)
         raise_event(event)

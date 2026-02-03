@@ -11,18 +11,15 @@ module Discordrb
     # @return [Channel] the stage channel of the stage instance.
     attr_reader :channel
 
-    # @return [Integer] the privacy level of the stage instance.
-    attr_reader :privacy_level
-
     # @return [Integer, nil] the ID of the scheduled event associated
     #   with the stage instance.
     attr_reader :scheduled_event_id
 
     # @!visibility private
-    def initialize(data, bot)
+    def initialize(data, channel, bot)
       @bot = bot
       @id = data['id'].to_i
-      @channel = bot.channel(data['channel_id'])
+      @channel = channel
       update_data(data)
     end
 
@@ -32,16 +29,13 @@ module Discordrb
       @channel.server
     end
 
-    # Set the topic of the stage instance.
+    # Modify the properties of the stage instance.
     # @param topic [String] The new 1-120 character topic of the stage instance.
-    def topic=(topic)
-      update_stage_instance(topic: topic)
-    end
-
-    # Set the privacy level of the stage instance.
-    # @param level [Integer] The new privacy level (`1` or `2`) of the stage instance.
-    def privacy_level=(level)
-      update_stage_instance(privacy_level: level)
+    # @param reason [String, nil] The reason to show in the audit log for updating the stage instance.
+    # @return [nil]
+    def modify(topic: :undef, reason: nil)
+      update_data(JSON.parse(API::Channel.update_stage_instance(@bot.token, @channel.id, topic:, reason:)))
+      nil
     end
 
     # Get the scheduled event associated with the stage instance.
@@ -51,7 +45,7 @@ module Discordrb
     end
 
     # Permanenty delete the stage instance; this cannot be undone.
-    # @param reason [String, nil] The reason to show in the audit-log for deleting the stage instance.
+    # @param reason [String, nil] The reason to show in the audit log for deleting the stage instance.
     # @return [nil]
     def delete(reason: nil)
       API::Channel.delete_stage_instance(@bot.token, @channel.id, reason: reason)
@@ -62,20 +56,12 @@ module Discordrb
     # @!visibility private
     def update_data(new_data)
       @topic = new_data['topic']
-      @privacy_level = new_data['privacy_level']
       @scheduled_event_id = new_data['guild_scheduled_event_id']&.to_i
     end
 
     # @!visibility private
     def inspect
-      "<StageInstance id=#{@id} topic=\"#{@topic}\" privacy_level=#{@privacy_level}>"
-    end
-
-    private
-
-    # @!visibility private
-    def update_stage_instance(new_data)
-      update_data(JSON.parse(API::Channel.update_stage_instance(@bot.token, @channel.id, **new_data)))
+      "<StageInstance id=#{@id} topic=\"#{@topic}\" scheduled_event_id=#{@scheduled_event_id}>"
     end
   end
 end

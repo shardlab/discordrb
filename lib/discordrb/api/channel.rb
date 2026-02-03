@@ -381,7 +381,7 @@ module Discordrb::API::Channel
       { channel_id:, topic:, send_start_notification:, guild_scheduled_event_id:, privacy_level: }.reject { |_, value| value == :undef }.compact.to_json,
       content_type: :json,
       Authorization: token,
-      'X-audit-log-reason': reason
+      'X-Audit-Log-Reason': reason
     )
   end
 
@@ -396,7 +396,7 @@ module Discordrb::API::Channel
       { topic:, privacy_level: }.reject { |_, value| value == :undef }.to_json,
       content_type: :json,
       Authorization: token,
-      'X-audit-log-reason': reason
+      'X-Audit-Log-Reason': reason
     )
   end
 
@@ -409,7 +409,7 @@ module Discordrb::API::Channel
       :delete,
       "#{Discordrb::API.api_base}/stage-instances/#{channel_id}",
       Authorization: token,
-      'X-audit-log-reason': reason
+      'X-Audit-Log-Reason': reason
     )
   end
 

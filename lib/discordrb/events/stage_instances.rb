@@ -3,8 +3,8 @@
 module Discordrb::Events
   # Generic superclass for stage instance events.
   class StageInstanceEvent < Event
-    # @return [Server] the server of the stage instance.
-    attr_reader :server
+    # @return [Channel] the channel of the stage instance.
+    attr_reader :channel
 
     # @return [StageInstance] the stage instance in question.
     attr_reader :stage_instance
@@ -12,8 +12,8 @@ module Discordrb::Events
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-      @server = bot.server(data['guild_id'].to_i)
-      @stage_instance = @server.stage_instance(data['id'].to_i)
+      @channel = bot.channel(data['channel_id'].to_i)
+      @stage_instance = @channel.stage_instance(request: true)
     end
   end
 
@@ -28,8 +28,8 @@ module Discordrb::Events
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-      @server = bot.server(data['guild_id'].to_i)
-      @stage_instance = Discordrb::StageInstance.new(data, @bot)
+      @channel = bot.channel(data['channel_id'].to_i)
+      @stage_instance = Discordrb::StageInstance.new(data, channel, @bot)
     end
   end
 
@@ -49,11 +49,11 @@ module Discordrb::Events
           end
         end,
 
-        matches_all(@attributes[:server], event.stage_instance.server) do |a, e|
+        matches_all(@attributes[:channel], event.stage_instance.channel) do |a, e|
           a&.resolve_id == e&.resolve_id
         end,
 
-        matches_all(@attributes[:channel], event.stage_instance.channel) do |a, e|
+        matches_all(@attributes[:server], event.stage_instance.channel.server) do |a, e|
           a&.resolve_id == e&.resolve_id
         end,
 
