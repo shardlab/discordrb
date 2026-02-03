@@ -358,6 +358,61 @@ module Discordrb::API::Channel
     )
   end
 
+  # Fetch a pre-exisiting stage instance.
+  # https://discord.com/developers/docs/resources/stage-instance#get-stage-instance
+  def get_stage_instance(token, channel_id)
+    Discordrb::API.request(
+      :stage_instances_cid,
+      channel_id,
+      :get,
+      "#{Discordrb::API.api_base}/stage-instances/#{channel_id}",
+      Authorization: token
+    )
+  end
+
+  # Create a stage instance in a stage channel.
+  # https://discord.com/developers/docs/resources/stage-instance#create-stage-instance
+  def create_stage_instance(token, channel_id, topic: :undef, send_start_notification: :undef, guild_scheduled_event_id: :undef, privacy_level: :undef, reason: nil)
+    Discordrb::API.request(
+      :stage_instances,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/stage-instances",
+      { channel_id:, topic:, send_start_notification:, guild_scheduled_event_id:, privacy_level: }.reject { |_, value| value == :undef }.compact.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Update a pre-exisiting stage instance.
+  # https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance
+  def update_stage_instance(token, channel_id, topic: :undef, privacy_level: :undef, reason: nil)
+    Discordrb::API.request(
+      :stage_instances_cid,
+      channel_id,
+      :patch,
+      "#{Discordrb::API.api_base}/stage-instances/#{channel_id}",
+      { topic:, privacy_level: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Delete a pre-exisiting stage instance.
+  # https://discord.com/developers/docs/resources/stage-instance#delete-stage-instance
+  def delete_stage_instance(token, channel_id, reason: nil)
+    Discordrb::API.request(
+      :stage_instances_cid,
+      channel_id,
+      :delete,
+      "#{Discordrb::API.api_base}/stage-instances/#{channel_id}",
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Create an empty group channel.
   # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
   # https://discord.com/developers/docs/resources/user#create-group-dm
