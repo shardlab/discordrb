@@ -42,43 +42,44 @@ module Discordrb
       @server_id = data['source_guild_id'].to_i
       @creator = bot.ensure_user(data['creator'])
       @created_at = Time.parse(data['created_at'])
-      from_other(data)
+      update_data(data)
     end
 
-    # @return [true, false] whether or not the template
+    # Check if the server template has been synced.
+    # @return [true, false] Whether or not the server template
     #   doesn't have any unsynced changes with the source server.
     def synced?
       @unsynced == false
     end
 
-    # Set the name of this template to something new.
-    # @param name [String] The new 1-100 character name of this template.
-    def name=(name)
-      update_data(name: name)
-    end
-
-    # Set the description of this template to something new.
-    # @param description [String, nil] The new 1-120 character description of this template.
-    def description=(description)
-      update_data(description: description)
-    end
-
-    # Sync this template to match the source server.
-    # @return [void]
+    # Sync the server template to match the source server.
+    # @return [nil]
     def sync
-      from_other(JSON.parse(API::Server.sync_template(@bot.token, @server_id, @code)))
+      update_data(JSON.parse(API::Server.sync_template(@bot.token, @server_id, @code)))
+      nil
     end
 
-    # Delete this template. This action is irreversible and cannot be undone.
-    # @return [void]
+    # Delete the server template. This action is irreversible and cannot be undone.
+    # @return [nil]
     def delete
-      from_other(JSON.parse(API::Server.delete_template(@bot.token, @server_id, @code)))
+      update_data(JSON.parse(API::Server.delete_template(@bot.token, @server_id, @code)))
+      nil
+    end
+
+    # Modify the properties of the server template.
+    # @param name [String] The new 1-100 character name of the server template.
+    # @param description [String, nil] The new 1-120 character description of the server template.
+    # @return [nil]
+    def modify(name: :undef, description: :undef)
+      data = { name: name, description: description }
+      update_data(JSON.parse(API::Server.update_template(@bot.token, @server_id, @code, **data)))
+      nil
     end
 
     private
 
     # @!visibility private
-    def from_other(new_data)
+    def update_data(new_data)
       @name = new_data['name']
       @description = new_data['description']
       @usage_count = new_data['usage_count']
@@ -87,25 +88,20 @@ module Discordrb
       @source_server = SourceServer.new(new_data['serialized_source_guild'], @bot)
     end
 
-    # @!visibility private
-    def update_data(new_data)
-      from_other(JSON.parse(API::Server.update_template(@bot.token, @server_id, @code, **new_data)))
-    end
-
     # The snapshot of a template's server.
     class SourceServer
       include ServerAttributes
 
-      # @return [Array<Role>] an array of all the roles created on this server.
+      # @return [Array<Role>] an array of all the roles created in the server.
       attr_reader :roles
 
       # @return [String] the preferred locale of the server, used in the discovery tab.
       attr_reader :locale
 
-      # @return [Array<Channel>] an array of all the channels (text and voice) on this server.
+      # @return [Array<Channel>] an array of all the channels (text and voice) in the server.
       attr_reader :channels
 
-      # @return [String, nil] the description of this server snapshot, shown in the discovery tab.
+      # @return [String, nil] the description of the source server, shown in the discovery tab.
       attr_reader :description
 
       # @return [Integer] the amount of time after which a voice user gets moved into the AFK channel.
@@ -132,28 +128,33 @@ module Discordrb
         @default_message_notifications = data['default_message_notifications']
       end
 
-      # @return [Symbol] the verification level of the server.
+      # Get the verification level of the source server.
+      # @return [Symbol] the verification level of the source server.
       def verification_level
         Discordrb::Server::VERIFICATION_LEVELS.key(@verification_level)
       end
 
+      # Get the explicit content filter level of the source server.
       # @return [Symbol] the explicit content filter level of the server.
       def explicit_content_filter
         Discordrb::Server::FILTER_LEVELS.key(@explicit_content_filter)
       end
 
-      # @return [Symbol] the default message notifications settings of the server.
+      # Get the default message notification setting of the source server.
+      # @return [Symbol] the default message notifications setting of the source server.
       def default_message_notifications
         Discordrb::Server::NOTIFICATION_LEVELS.key(@default_message_notifications)
       end
 
-      # @return [Channel, nil] the AFK voice channel of this server, or `nil` if none is set.
+      # Get the AFK voice channel of the source server.
+      # @return [Channel, nil] the AFK voice channel of the source server, or `nil` if none is set.
       def afk_channel
         @channels.find { |channel| channel.id == @afk_channel_id } if @afk_channel_id
       end
 
-      # @return [Channel, nil] the system channel used for automatic welcome messages of a server,
-      #   or `nil` if none is set.
+      # Get the system channel of the source server.
+      # @return [Channel, nil] the system channel used for automatic welcome messages for the source
+      #   server, or `nil` if none is set.
       def system_channel
         @channels.find { |channel| channel.id == @system_channel_id } if @system_channel_id
       end
