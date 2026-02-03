@@ -120,7 +120,6 @@ bot.message(content: '!file') do |event|
 
         section.text_display(content: '### Musical File')
 
-        # All of the information below can be found if you inspect the audio file's metadata.
         section.text_display(content: <<~CONTENT)
           > **Title:** Discordrb Theme
           > **Composed:** <t:1472839597:R>

@@ -49,7 +49,7 @@ module Discordrb
     class ActionRow
       include Enumerable
 
-      # @return [Integer] the integer ID of this action row component.
+      # @return [Integer] the numeric identifier of the action row.
       attr_reader :id
 
       # @return [Array<Button>] the components contained within this action row.
@@ -63,6 +63,7 @@ module Discordrb
       end
 
       # Iterate over each component in the row.
+      # @return [Array, Enumerator]
       def each(&block)
         @components.each(&block)
       end
@@ -87,7 +88,7 @@ module Discordrb
 
     # An interactable button component.
     class Button
-      # @return [Integer] the ID of the button.
+      # @return [Integer] the numeric identifier of the button.
       attr_reader :id
 
       # @return [String] the label of the button.
@@ -120,23 +121,23 @@ module Discordrb
         @emoji = Emoji.new(data['emoji'], @bot) if data['emoji']
       end
 
-      # @method primary?
-      #   @return [true, false]
-      # @method secondary?
-      #   @return [true, false]
-      # @method success?
-      #   @return [true, false]
-      # @method danger?
-      #   @return [true, false]
-      # @method link?
-      #   @return [true, false]
+      # @!method primary?
+      #   @return [true, false] whether the button is a primary option in the group.
+      # @!method secondary?
+      #   @return [true, false] whether the button denotes a secondary option in the group.
+      # @!method success?
+      #   @return [true, false] whether the button denotes a success action in the group.
+      # @!method danger?
+      #   @return [true, false] whether the button denotes a dangerous action in the group.
+      # @!method link?
+      #   @return [true, false] whether the button is a container for a URL that will open upon click.
       Webhooks::View::BUTTON_STYLES.each do |name, value|
         define_method("#{name}?") do
           @style == value
         end
       end
 
-      # Await a button click
+      # Await a button click.
       def await_click(key, **attributes, &block)
         @bot.add_await(key, Discordrb::Events::ButtonEvent, { custom_id: @custom_id }.merge!(attributes), &block)
       end
@@ -151,7 +152,7 @@ module Discordrb
     class SelectMenu
       # A select menu option.
       class Option
-        # @return [String] the of the option.
+        # @return [String] the label of the option.
         attr_reader :label
 
         # @return [String] the value of the option.
@@ -172,10 +173,10 @@ module Discordrb
         end
       end
 
-      # @return [Integer] the ID of the select menu.
+      # @return [Integer] the numeric identifier of the select menu.
       attr_reader :id
 
-      # @return [Array<String>] the selected values in the modal.
+      # @return [Array<String>] the submitted values from the modal.
       attr_reader :values
 
       # @return [String] the custom ID used to identify the select menu.
@@ -208,8 +209,28 @@ module Discordrb
 
     # A free-form text input bar in a modal.
     class TextInput
+      # @!visibility private
+      PLACEHOLDERS = %i[
+        label
+        min_length
+        max_length
+        required
+        required?
+        placeholder
+      ].freeze
+
+      # @!visibility private
+      SHORT = 1
+
+      # @!visibility private
+      PARAGRAPH = 2
+
       # @return [Integer] the numeric identifier of the text input.
       attr_reader :id
+
+      # @return [Symbol] This is deprecated and not accurate. This will
+      #   be removed in the next major version (4.0.0).
+      attr_reader :style
 
       # @return [String, nil] the value the user typed into the text input.
       attr_reader :value
@@ -221,9 +242,13 @@ module Discordrb
       def initialize(data, bot)
         @bot = bot
         @id = data['id']
+        @style = :paragraph
         @value = data['value']
         @custom_id = data['custom_id']
       end
+
+      # @!visibility private
+      PLACEHOLDERS.each { |name| define_method(name) { nil } }
     end
 
     # A grouping of components with a contextual accessory.

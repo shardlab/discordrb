@@ -53,16 +53,37 @@ bot.application_command :modal_await_test do |event|
         placeholder: 'Type something to submit.'
       )
     end
+
+    modal.label(label: 'Which structure do you use the most?') do |label|
+      label.radio_group(custom_id: 'structures', required: true) do |group|
+        group.radio_button(label: 'Hash', value: 'hashes', description: 'An efficient key-value store')
+        group.radio_button(label: 'Array', value: 'arrays', description: 'A flexible way to store elements')
+        group.radio_button(label: 'Set', value: 'sets', description: 'A speedy array that contains no duplicates')
+      end
+    end
+
+    modal.label(label: 'Which animals do you like?') do |label|
+      label.checkbox_group(custom_id: 'animals', max_values: 3, required: false) do |group|
+        # Checkboxes support the `description:` KWARG as well. But for the sake of redundancy, I've omitted
+        # it from the example here.
+        group.checkbox(label: 'Cat', value: 'cat')
+        group.checkbox(label: 'Tiger', value: 'tiger')
+        group.checkbox(label: 'Karel', value: 'karel')
+        group.checkbox(label: 'Parrot', value: 'parrot')
+        group.checkbox(label: 'Cricket', value: 'cricket')
+      end
+    end
   end
 
   start_time = Time.now
-  modal_event = bot.add_await!(Discordrb::Events::ModalSubmitEvent, custom_id: id, timeout: (60 * 10))
 
-  if event.nil?
-    modal_event.respond(content: "Time's up!", ephemeral: true)
-  else
-    modal_event.respond(content: "Thanks for submitting your modal. I waited #{Time.now - start_time} seconds")
-  end
+  # Block the thread until we recieve a modal submit.
+  modal_event = bot.add_await!(Discordrb::Events::ModalSubmitEvent, custom_id: id)
+
+  structure = modal_event.value('structures')
+  animals = modal_event.values('animals')&.join(', ') || 'N/A'
+
+  modal_event.respond(content: "Thanks for submitting your modal. I waited #{Time.now - start_time} seconds. You like #{structure} and these animals: #{animals}.")
 end
 
 bot.modal_submit custom_id: 'test1234' do |event|
