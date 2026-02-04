@@ -298,6 +298,9 @@ module Discordrb
     # @option attributes [true, false] :deaf Matches whether or not the user is deafened server-wide.
     # @option attributes [true, false] :self_mute Matches whether or not the user is muted by the bot.
     # @option attributes [true, false] :self_deaf Matches whether or not the user is deafened by the bot.
+    # @option attributes [true, false] :connected Matches whether or not the user is newly connecting to voice.
+    # @option attributes [true, false] :disconnected Matches whether or not the user is no longer connected to any voice channel.
+    # @option attributes [true, false] :moved Matches whether or not the user moved to a different voice channel.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [VoiceStateUpdateEvent] The event that was raised.
     # @return [VoiceStateUpdateEventHandler] the event handler that was registered.
