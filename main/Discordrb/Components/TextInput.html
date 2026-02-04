@@ -101,7 +101,7 @@
 
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
-    <p>Text input component for use in modals. Can be either a line (<code>short</code>), or a multi line (<code>paragraph</code>) block.</p>
+    <p>A free-form text input bar in a modal.</p>
 
 
   </div>
@@ -110,47 +110,6 @@
   
 
 </div>
-  
-    <h2>
-      Constant Summary
-      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
-    </h2>
-
-    <dl class="constants">
-      
-        <dt id="SHORT-constant" class="">SHORT =
-          <div class="docstring">
-  <div class="discussion">
-    <p>Single line text input</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='int'>1</span></pre></dd>
-      
-        <dt id="PARAGRAPH-constant" class="">PARAGRAPH =
-          <div class="docstring">
-  <div class="discussion">
-    <p>Multi-line text input</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='int'>2</span></pre></dd>
-      
-    </dl>
-  
-
 
 
 
@@ -179,7 +138,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The developer-defined identifier for the text input.</p>
+</div></span>
   
 </li>
 
@@ -187,7 +147,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#label-instance_method" title="#label (instance method)">#<strong>label</strong>  &#x21d2; String </a>
+      <a href="#id-instance_method" title="#id (instance method)">#<strong>id</strong>  &#x21d2; Integer </a>
     
 
     
@@ -206,115 +166,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#max_length-instance_method" title="#max_length (instance method)">#<strong>max_length</strong>  &#x21d2; Integer<sup>?</sup> </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#min_length-instance_method" title="#min_length (instance method)">#<strong>min_length</strong>  &#x21d2; Integer<sup>?</sup> </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#placeholder-instance_method" title="#placeholder (instance method)">#<strong>placeholder</strong>  &#x21d2; String<sup>?</sup> </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#required-instance_method" title="#required (instance method)">#<strong>required</strong>  &#x21d2; true, false </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The numeric identifier of the text input.</p>
+</div></span>
   
 </li>
 
@@ -341,7 +194,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>This is deprecated and not accurate.</p>
+</div></span>
   
 </li>
 
@@ -368,7 +222,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The value the user typed into the text input.</p>
+</div></span>
   
 </li>
 
@@ -377,83 +232,6 @@
 
 
 
-
-  
-    <h2>
-      Instance Method Summary
-      <small><a href="#" class="summary_toggle">collapse</a></small>
-    </h2>
-
-    <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#paragraph%3F-instance_method" title="#paragraph? (instance method)">#<strong>paragraph?</strong>  &#x21d2; Boolean </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#required%3F-instance_method" title="#required? (instance method)">#<strong>required?</strong>  &#x21d2; Boolean </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#short%3F-instance_method" title="#short? (instance method)">#<strong>short?</strong>  &#x21d2; Boolean </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-    </ul>
-  
 
 
   <div id="instance_attr_details" class="attr_details">
@@ -472,7 +250,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the developer-defined identifier for the text input.</p>
+
 
   </div>
 </div>
@@ -488,6 +267,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the developer-defined identifier for the text input.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -498,12 +281,12 @@
       <pre class="lines">
 
 
-180
-181
-182</pre>
+239
+240
+241</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 180</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 239</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_custom_id'>custom_id</span>
   <span class='ivar'>@custom_id</span>
@@ -516,9 +299,9 @@
       
       <span id=""></span>
       <div class="method_details ">
-  <h3 class="signature " id="label-instance_method">
+  <h3 class="signature " id="id-instance_method">
   
-    #<strong>label</strong>  &#x21d2; <tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>  <span class="extras">(readonly)</span>
+    #<strong>id</strong>  &#x21d2; <tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>  <span class="extras">(readonly)</span>
   
 
   
@@ -526,7 +309,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the numeric identifier of the text input.</p>
+
 
   </div>
 </div>
@@ -538,9 +322,13 @@
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'><p>the numeric identifier of the text input.</p>
+</div>
       
     </li>
   
@@ -552,231 +340,15 @@
       <pre class="lines">
 
 
-186
-187
-188</pre>
+229
+230
+231</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 186</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 229</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_label'>label</span>
-  <span class='ivar'>@label</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="max_length-instance_method">
-  
-    #<strong>max_length</strong>  &#x21d2; <tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-192
-193
-194</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 192</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_max_length'>max_length</span>
-  <span class='ivar'>@max_length</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="min_length-instance_method">
-  
-    #<strong>min_length</strong>  &#x21d2; <tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-189
-190
-191</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 189</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_min_length'>min_length</span>
-  <span class='ivar'>@min_length</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="placeholder-instance_method">
-  
-    #<strong>placeholder</strong>  &#x21d2; <tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-201
-202
-203</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 201</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_placeholder'>placeholder</span>
-  <span class='ivar'>@placeholder</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="required-instance_method">
-  
-    #<strong>required</strong>  &#x21d2; <tt>true</tt>, <tt>false</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-195
-196
-197</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 195</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_required'>required</span>
-  <span class='ivar'>@required</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_id'>id</span>
+  <span class='ivar'>@id</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -796,7 +368,9 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns This is deprecated and not accurate. This will
+be removed in the next major version (4.0.0).</p>
+
 
   </div>
 </div>
@@ -812,6 +386,11 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>This is deprecated and not accurate. This will
+be removed in the next major version (4.0.0).</p>
+</div>
+      
     </li>
   
 </ul>
@@ -822,12 +401,12 @@
       <pre class="lines">
 
 
-183
-184
-185</pre>
+233
+234
+235</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 183</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 233</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_style'>style</span>
   <span class='ivar'>@style</span>
@@ -850,7 +429,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the value the user typed into the text input.</p>
+
 
   </div>
 </div>
@@ -866,6 +446,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the value the user typed into the text input.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -876,12 +460,12 @@
       <pre class="lines">
 
 
-198
-199
-200</pre>
+236
+237
+238</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 198</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 236</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_value'>value</span>
   <span class='ivar'>@value</span>
@@ -894,172 +478,10 @@
   </div>
 
 
-  <div id="instance_method_details" class="method_details_list">
-    <h2>Instance Method Details</h2>
-
-    
-      <div class="method_details first">
-  <h3 class="signature first" id="paragraph?-instance_method">
-  
-    #<strong>paragraph?</strong>  &#x21d2; <tt>Boolean</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Boolean</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-220
-221
-222</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 220</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_paragraph?'>paragraph?</span>
-  <span class='ivar'>@style</span> <span class='op'>==</span> <span class='symbol'>:paragraph</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="required?-instance_method">
-  
-    #<strong>required?</strong>  &#x21d2; <tt>Boolean</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Boolean</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-224
-225
-226</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 224</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_required?'>required?</span>
-  <span class='ivar'>@required</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="short?-instance_method">
-  
-    #<strong>short?</strong>  &#x21d2; <tt>Boolean</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Boolean</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-216
-217
-218</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 216</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_short?'>short?</span>
-  <span class='ivar'>@style</span> <span class='op'>==</span> <span class='symbol'>:short</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-  </div>
-
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 26 00:35:36 2026 by
+  Generated on Wed Feb  4 03:28:16 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>

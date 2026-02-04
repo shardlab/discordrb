@@ -115,7 +115,7 @@
     
   
     
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Modal/RowBuilder.html" title="Discordrb::Webhooks::Modal::RowBuilder (class)">RowBuilder</a></span>
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Modal/GroupBuilder.html" title="Discordrb::Webhooks::Modal::GroupBuilder (class)">GroupBuilder</a></span>, <span class='object_link'><a href="Modal/LabelBuilder.html" title="Discordrb::Webhooks::Modal::LabelBuilder (class)">LabelBuilder</a></span>
     
   
 </p>
@@ -143,47 +143,41 @@
         </dt>
         <dd><pre class="code"><span class='lbrace'>{</span>
   <span class='label'>action_row:</span> <span class='int'>1</span><span class='comma'>,</span>
-  <span class='label'>text_input:</span> <span class='int'>4</span>
+  <span class='label'>string_select:</span> <span class='int'>3</span><span class='comma'>,</span>
+  <span class='label'>text_input:</span> <span class='int'>4</span><span class='comma'>,</span>
+  <span class='label'>user_select:</span> <span class='int'>5</span><span class='comma'>,</span>
+  <span class='label'>role_select:</span> <span class='int'>6</span><span class='comma'>,</span>
+  <span class='label'>mentionable_select:</span> <span class='int'>7</span><span class='comma'>,</span>
+  <span class='label'>channel_select:</span> <span class='int'>8</span><span class='comma'>,</span>
+  <span class='label'>text_display:</span> <span class='int'>10</span><span class='comma'>,</span>
+  <span class='label'>label:</span> <span class='int'>18</span><span class='comma'>,</span>
+  <span class='label'>file_upload:</span> <span class='int'>19</span><span class='comma'>,</span>
+  <span class='label'>radio_group:</span> <span class='int'>21</span><span class='comma'>,</span>
+  <span class='label'>checkbox_group:</span> <span class='int'>22</span><span class='comma'>,</span>
+  <span class='label'>checkbox:</span> <span class='int'>23</span>
 <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="RowBuilder-constant" class="deprecated">RowBuilder =
+          <div class="docstring">
+  <div class="discussion">
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>This alias will be removed in future releases.</p>
+</div></div>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="Modal/LabelBuilder.html" title="Discordrb::Webhooks::Modal::LabelBuilder (class)">LabelBuilder</a></span></span></pre></dd>
       
     </dl>
   
 
 
 
-
-  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
-  <ul class="summary">
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#rows-instance_method" title="#rows (instance method)">#<strong>rows</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute rows.</p>
-</div></span>
-  
-</li>
-
-    
-  </ul>
 
 
 
@@ -199,15 +193,15 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong> {|_self| ... } &#x21d2; Modal </a>
+      <a href="#label-instance_method" title="#label (instance method)">#<strong>label</strong>  &#x21d2; Object </a>
     
 
+    
+      (also: #row)
     
   </span>
   
   
-    <span class="note title constructor">constructor</span>
-  
   
   
   
@@ -215,7 +209,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>A new instance of Modal.</p>
+    <span class="summary_desc"><div class='inline'><p>Add a label component to the view.</p>
 </div></span>
   
 </li>
@@ -224,7 +218,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#row-instance_method" title="#row (instance method)">#<strong>row</strong> {|| ... } &#x21d2; Object </a>
+      <a href="#text_display-instance_method" title="#text_display (instance method)">#<strong>text_display</strong>  &#x21d2; Object </a>
     
 
     
@@ -238,7 +232,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Add a new ActionRow to the view.</p>
+    <span class="summary_desc"><div class='inline'><p>Add a text display component to the view.</p>
 </div></span>
   
 </li>
@@ -247,133 +241,6 @@
     </ul>
   
 
-<div id="constructor_details" class="method_details_list">
-  <h2>Constructor Details</h2>
-  
-    <div class="method_details first">
-  <h3 class="signature first" id="initialize-instance_method">
-  
-    #<strong>initialize</strong> {|_self| ... } &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Webhooks::Modal (class)">Modal</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns a new instance of Modal.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Yields:</p>
-<ul class="yield">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>_self</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Yield Parameters:</p>
-<ul class="yieldparam">
-  
-    <li>
-      
-        <span class='name'>_self</span>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="" title="Discordrb::Webhooks::Modal (class)">Discordrb::Webhooks::Modal</a></span></tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>the object that the method was called on</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-60
-61
-62
-63
-64</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/modal.rb', line 60</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span>
-  <span class='ivar'>@rows</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
-
-  <span class='kw'>yield</span> <span class='kw'>self</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-  
-</div>
-
-  <div id="instance_attr_details" class="attr_details">
-    <h2>Instance Attribute Details</h2>
-    
-      
-      <span id=""></span>
-      <div class="method_details first">
-  <h3 class="signature first" id="rows-instance_method">
-  
-    #<strong>rows</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns the value of attribute rows.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-58
-59
-60</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/modal.rb', line 58</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_rows'>rows</span>
-  <span class='ivar'>@rows</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-  </div>
 
 
   <div id="instance_method_details" class="method_details_list">
@@ -381,38 +248,34 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="row-instance_method">
+  <h3 class="signature first" id="label-instance_method">
   
-    #<strong>row</strong> {|| ... } &#x21d2; <tt>Object</tt> 
+    #<strong>label</strong>  &#x21d2; <tt>Object</tt> 
   
 
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='row-instance_method'>row</span></span>
+    </span>
   
 
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Add a new ActionRow to the view</p>
+    <p>Add a label component to the view.</p>
 
 
   </div>
 </div>
 <div class="tags">
   
-<p class="tag_title">Yield Parameters:</p>
-<ul class="yieldparam">
-  
-    <li>
-      
-        <span class='name'></span>
-      
-      
-        <span class='type'>(<tt><span class='object_link'><a href="Modal/RowBuilder.html" title="Discordrb::Webhooks::Modal::RowBuilder (class)">RowBuilder</a></span></tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Modal/LabelBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::Modal::LabelBuilder#initialize (method)">Discordrb::Webhooks::Modal::LabelBuilder#initialize</a></span></li>
+    
+  </ul>
 
 </div><table class="source_code">
   <tr>
@@ -420,23 +283,62 @@
       <pre class="lines">
 
 
-68
-69
-70
-71
-72
-73
-74</pre>
+265
+266
+267</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/modal.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/modal.rb', line 265</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_row'>row</span>
-  <span class='id identifier rubyid_new_row'>new_row</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Modal/RowBuilder.html" title="Discordrb::Webhooks::Modal::RowBuilder (class)">RowBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_label'>label</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
+  <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='const'><span class='object_link'><a href="Modal/LabelBuilder.html" title="Discordrb::Webhooks::Modal::LabelBuilder (class)">LabelBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Modal/LabelBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::Modal::LabelBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="text_display-instance_method">
+  
+    #<strong>text_display</strong>  &#x21d2; <tt>Object</tt> 
+  
 
-  <span class='kw'>yield</span> <span class='id identifier rubyid_new_row'>new_row</span>
+  
 
-  <span class='ivar'>@rows</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_new_row'>new_row</span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Add a text display component to the view.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="View/TextDisplayBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::View::TextDisplayBuilder#initialize (method)">View::TextDisplayBuilder#initialize</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+271
+272
+273</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/modal.rb', line 271</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_text_display'>text_display</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
+  <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="View/TextDisplayBuilder.html" title="Discordrb::Webhooks::View::TextDisplayBuilder (class)">TextDisplayBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="View/TextDisplayBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::View::TextDisplayBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -448,7 +350,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 26 00:35:37 2026 by
+  Generated on Wed Feb  4 03:28:17 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>

@@ -424,7 +424,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#edit_message-instance_method" title="#edit_message (instance method)">#<strong>edit_message</strong>(message, content: nil, embeds: nil, allowed_mentions: nil, builder: nil, components: nil) {|builder| ... } &#x21d2; Message </a>
+      <a href="#edit_message-instance_method" title="#edit_message (instance method)">#<strong>edit_message</strong>(message, content: nil, embeds: nil, allowed_mentions: nil, builder: nil, components: nil, flags: 0, has_components: false) {|builder| ... } &#x21d2; Message </a>
     
 
     
@@ -447,7 +447,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#execute-instance_method" title="#execute (instance method)">#<strong>execute</strong>(content: nil, username: nil, avatar_url: nil, tts: nil, file: nil, embeds: nil, allowed_mentions: nil, wait: true, builder: nil, components: nil) {|builder| ... } &#x21d2; Message<sup>?</sup> </a>
+      <a href="#execute-instance_method" title="#execute (instance method)">#<strong>execute</strong>(content: nil, username: nil, avatar_url: nil, tts: nil, file: nil, embeds: nil, allowed_mentions: nil, wait: true, builder: nil, components: nil, flags: 0, has_components: false) {|builder| ... } &#x21d2; Message<sup>?</sup> </a>
     
 
     
@@ -1017,14 +1017,14 @@ ID and avatar if the bot cannot reach the owner</p>
       <pre class="lines">
 
 
-195
-196
-197
-198
-199</pre>
+199
+200
+201
+202
+203</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 195</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 199</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_avatar_url'>avatar_url</span>
   <span class='kw'>return</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/User.html" title="Discordrb::API::User (module)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_avatar'><span class='object_link'><a href="API/User.html#default_avatar-class_method" title="Discordrb::API::User.default_avatar (method)">default_avatar</a></span></span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='ivar'>@avatar</span>
@@ -1202,14 +1202,14 @@ ID and avatar if the bot cannot reach the owner</p>
       <pre class="lines">
 
 
-159
-160
 161
 162
-163</pre>
+163
+164
+165</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 159</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 161</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_message'>delete_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors.html" title="Discordrb::Errors (module)">Errors</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors/UnauthorizedWebhook.html" title="Discordrb::Errors::UnauthorizedWebhook (class)">UnauthorizedWebhook</a></span></span> <span class='kw'>unless</span> <span class='ivar'>@token</span>
@@ -1224,7 +1224,7 @@ ID and avatar if the bot cannot reach the owner</p>
       <div class="method_details ">
   <h3 class="signature " id="edit_message-instance_method">
   
-    #<strong>edit_message</strong>(message, content: nil, embeds: nil, allowed_mentions: nil, builder: nil, components: nil) {|builder| ... } &#x21d2; <tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt> 
+    #<strong>edit_message</strong>(message, content: nil, embeds: nil, allowed_mentions: nil, builder: nil, components: nil, flags: 0, has_components: false) {|builder| ... } &#x21d2; <tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt> 
   
 
   
@@ -1423,8 +1423,6 @@ ID and avatar if the bot cannot reach the owner</p>
       <pre class="lines">
 
 
-176
-177
 178
 179
 180
@@ -1438,25 +1436,31 @@ ID and avatar if the bot cannot reach the owner</p>
 188
 189
 190
-191</pre>
+191
+192
+193
+194
+195</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 176</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 178</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_edit_message'>edit_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>builder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_edit_message'>edit_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>builder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>flags:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>has_components:</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors.html" title="Discordrb::Errors (module)">Errors</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors/UnauthorizedWebhook.html" title="Discordrb::Errors::UnauthorizedWebhook (class)">UnauthorizedWebhook</a></span></span> <span class='kw'>unless</span> <span class='ivar'>@token</span>
 
   <span class='id identifier rubyid_params'>params</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>content:</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='id identifier rubyid_embeds'>embeds</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
 
   <span class='id identifier rubyid_builder'>builder</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/Builder.html" title="Discordrb::Webhooks::Builder (class)">Builder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Webhooks/Builder.html#initialize-instance_method" title="Discordrb::Webhooks::Builder#initialize (method)">new</a></span></span>
-  <span class='id identifier rubyid_view'>view</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Webhooks/View.html#initialize-instance_method" title="Discordrb::Webhooks::View#initialize (method)">new</a></span></span>
+  <span class='id identifier rubyid_view'>view</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+
+  <span class='id identifier rubyid_flags'>flags</span> <span class='op'>|=</span> <span class='lparen'>(</span><span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>15</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_has_components'>has_components</span>
 
   <span class='kw'>yield</span><span class='lparen'>(</span><span class='id identifier rubyid_builder'>builder</span><span class='comma'>,</span> <span class='id identifier rubyid_view'>view</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
 
   <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_builder'>builder</span><span class='period'>.</span><span class='id identifier rubyid_to_json_hash'>to_json_hash</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_components'>components</span> <span class='op'>||=</span> <span class='id identifier rubyid_view'>view</span>
 
-  <span class='id identifier rubyid_resp'>resp</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Webhook.html" title="Discordrb::API::Webhook (module)">Webhook</a></span></span><span class='period'>.</span><span class='id identifier rubyid_token_edit_message'><span class='object_link'><a href="API/Webhook.html#token_edit_message-class_method" title="Discordrb::API::Webhook.token_edit_message (method)">token_edit_message</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:content</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:embeds</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:allowed_mentions</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_resp'>resp</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Webhook.html" title="Discordrb::API::Webhook (module)">Webhook</a></span></span><span class='period'>.</span><span class='id identifier rubyid_token_edit_message'><span class='object_link'><a href="API/Webhook.html#token_edit_message-class_method" title="Discordrb::API::Webhook.token_edit_message (method)">token_edit_message</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:content</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:embeds</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:allowed_mentions</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_flags'>flags</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_resp'>resp</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='ivar'>@bot</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1467,7 +1471,7 @@ ID and avatar if the bot cannot reach the owner</p>
       <div class="method_details ">
   <h3 class="signature " id="execute-instance_method">
   
-    #<strong>execute</strong>(content: nil, username: nil, avatar_url: nil, tts: nil, file: nil, embeds: nil, allowed_mentions: nil, wait: true, builder: nil, components: nil) {|builder| ... } &#x21d2; <tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt><sup>?</sup> 
+    #<strong>execute</strong>(content: nil, username: nil, avatar_url: nil, tts: nil, file: nil, embeds: nil, allowed_mentions: nil, wait: true, builder: nil, components: nil, flags: 0, has_components: false) {|builder| ... } &#x21d2; <tt><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></tt><sup>?</sup> 
   
 
   
@@ -1758,25 +1762,29 @@ whether it should return immediately after sending the message. If <code>true</c
 152
 153
 154
-155</pre>
+155
+156
+157</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 139</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>username:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>avatar_url:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>file:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>wait:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>builder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>username:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>avatar_url:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>file:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>wait:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>builder:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>flags:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>has_components:</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors.html" title="Discordrb::Errors (module)">Errors</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Errors/UnauthorizedWebhook.html" title="Discordrb::Errors::UnauthorizedWebhook (class)">UnauthorizedWebhook</a></span></span> <span class='kw'>unless</span> <span class='ivar'>@token</span>
 
   <span class='id identifier rubyid_params'>params</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>content:</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='label'>username:</span> <span class='id identifier rubyid_username'>username</span><span class='comma'>,</span> <span class='label'>avatar_url:</span> <span class='id identifier rubyid_avatar_url'>avatar_url</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='id identifier rubyid_tts'>tts</span><span class='comma'>,</span> <span class='label'>file:</span> <span class='id identifier rubyid_file'>file</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='id identifier rubyid_embeds'>embeds</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='rbrace'>}</span>
 
   <span class='id identifier rubyid_builder'>builder</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/Builder.html" title="Discordrb::Webhooks::Builder (class)">Builder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Webhooks/Builder.html#initialize-instance_method" title="Discordrb::Webhooks::Builder#initialize (method)">new</a></span></span>
-  <span class='id identifier rubyid_view'>view</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Webhooks/View.html#initialize-instance_method" title="Discordrb::Webhooks::View#initialize (method)">new</a></span></span>
+  <span class='id identifier rubyid_view'>view</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Webhooks/View.html" title="Discordrb::Webhooks::View (class)">View</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+
+  <span class='id identifier rubyid_flags'>flags</span> <span class='op'>|=</span> <span class='lparen'>(</span><span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>15</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_has_components'>has_components</span>
 
   <span class='kw'>yield</span><span class='lparen'>(</span><span class='id identifier rubyid_builder'>builder</span><span class='comma'>,</span> <span class='id identifier rubyid_view'>view</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
 
   <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_builder'>builder</span><span class='period'>.</span><span class='id identifier rubyid_to_json_hash'>to_json_hash</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_components'>components</span> <span class='op'>||=</span> <span class='id identifier rubyid_view'>view</span>
 
-  <span class='id identifier rubyid_resp'>resp</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Webhook.html" title="Discordrb::API::Webhook (module)">Webhook</a></span></span><span class='period'>.</span><span class='id identifier rubyid_token_execute_webhook'><span class='object_link'><a href="API/Webhook.html#token_execute_webhook-class_method" title="Discordrb::API::Webhook.token_execute_webhook (method)">token_execute_webhook</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_wait'>wait</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:content</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:username</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:avatar_url</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:tts</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:file</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:embeds</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:allowed_mentions</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_resp'>resp</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Webhook.html" title="Discordrb::API::Webhook (module)">Webhook</a></span></span><span class='period'>.</span><span class='id identifier rubyid_token_execute_webhook'><span class='object_link'><a href="API/Webhook.html#token_execute_webhook-class_method" title="Discordrb::API::Webhook.token_execute_webhook (method)">token_execute_webhook</a></span></span><span class='lparen'>(</span><span class='ivar'>@token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_wait'>wait</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:content</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:username</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:avatar_url</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:tts</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:file</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:embeds</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:allowed_mentions</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_flags'>flags</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='rparen'>)</span>
 
   <span class='const'><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_resp'>resp</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='ivar'>@bot</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_wait'>wait</span>
 <span class='kw'>end</span></pre>
@@ -1810,12 +1818,12 @@ whether it should return immediately after sending the message. If <code>true</c
       <pre class="lines">
 
 
-202
-203
-204</pre>
+206
+207
+208</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 202</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 206</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;Webhook name=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@name</span><span class='embexpr_end'>}</span><span class='tstring_content'> id=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
@@ -1867,12 +1875,12 @@ whether it should return immediately after sending the message. If <code>true</c
       <pre class="lines">
 
 
-208
-209
-210</pre>
+212
+213
+214</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 208</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/webhook.rb', line 212</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_token?'>token?</span>
   <span class='ivar'>@owner</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -2011,7 +2019,7 @@ whether it should return immediately after sending the message. If <code>true</c
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 26 00:35:35 2026 by
+  Generated on Wed Feb  4 03:28:15 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>

@@ -1094,7 +1094,9 @@
 91
 92
 93
-94</pre>
+94
+95
+96</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/data/snapshot.rb', line 83</span>
@@ -1104,7 +1106,9 @@
     <span class='kw'>case</span> <span class='id identifier rubyid_component'>component</span>
     <span class='kw'>when</span> <span class='const'><span class='object_link'><a href="Components.html" title="Discordrb::Components (module)">Components</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Components/Button.html" title="Discordrb::Components::Button (class)">Button</a></span></span>
       <span class='id identifier rubyid_component'>component</span>
-    <span class='kw'>when</span> <span class='const'><span class='object_link'><a href="Components.html" title="Discordrb::Components (module)">Components</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Components/ActionRow.html" title="Discordrb::Components::ActionRow (class)">ActionRow</a></span></span>
+    <span class='kw'>when</span> <span class='const'><span class='object_link'><a href="Components.html" title="Discordrb::Components (module)">Components</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Components/Section.html" title="Discordrb::Components::Section (class)">Section</a></span></span>
+      <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_accessory'>accessory</span> <span class='kw'>if</span> <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_accessory'>accessory</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Components.html" title="Discordrb::Components (module)">Components</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Components/Button.html" title="Discordrb::Components::Button (class)">Button</a></span></span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='const'><span class='object_link'><a href="Components.html" title="Discordrb::Components (module)">Components</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Components/ActionRow.html" title="Discordrb::Components::ActionRow (class)">ActionRow</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="Components.html" title="Discordrb::Components (module)">Components</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Components/Container.html" title="Discordrb::Components::Container (class)">Container</a></span></span>
       <span class='id identifier rubyid_component'>component</span><span class='period'>.</span><span class='id identifier rubyid_buttons'>buttons</span>
     <span class='kw'>end</span>
   <span class='kw'>end</span>
@@ -1372,7 +1376,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 26 00:35:36 2026 by
+  Generated on Wed Feb  4 03:28:15 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>

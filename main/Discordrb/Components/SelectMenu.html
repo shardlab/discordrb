@@ -148,7 +148,36 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The custom ID used to identify the select menu.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#id-instance_method" title="#id (instance method)">#<strong>id</strong>  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The numeric identifier of the select menu.</p>
+</div></span>
   
 </li>
 
@@ -175,7 +204,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The minimum amount of values that be selected.</p>
+</div></span>
   
 </li>
 
@@ -202,7 +232,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The maximum amount of values that can be selected.</p>
+</div></span>
   
 </li>
 
@@ -229,7 +260,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The options in the select menu, or the selected options.</p>
+</div></span>
   
 </li>
 
@@ -256,7 +288,36 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The default placeholder text shown on the select menu.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#values-instance_method" title="#values (instance method)">#<strong>values</strong>  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The submitted values from the modal.</p>
+</div></span>
   
 </li>
 
@@ -283,7 +344,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the custom ID used to identify the select menu.</p>
+
 
   </div>
 </div>
@@ -299,6 +361,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the custom ID used to identify the select menu.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -309,15 +375,74 @@
       <pre class="lines">
 
 
-145
-146
-147</pre>
+183
+184
+185</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 145</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 183</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_custom_id'>custom_id</span>
   <span class='ivar'>@custom_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="id-instance_method">
+  
+    #<strong>id</strong>  &#x21d2; <tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the numeric identifier of the select menu.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the numeric identifier of the select menu.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+177
+178
+179</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 177</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_id'>id</span>
+  <span class='ivar'>@id</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -337,7 +462,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the minimum amount of values that be selected.</p>
+
 
   </div>
 </div>
@@ -353,6 +479,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the minimum amount of values that be selected.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -363,12 +493,12 @@
       <pre class="lines">
 
 
-148
-149
-150</pre>
+186
+187
+188</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 148</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 186</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_max_values'>max_values</span>
   <span class='ivar'>@max_values</span>
@@ -391,7 +521,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the maximum amount of values that can be selected.</p>
+
 
   </div>
 </div>
@@ -407,6 +538,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the maximum amount of values that can be selected.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -417,12 +552,12 @@
       <pre class="lines">
 
 
-151
-152
-153</pre>
+189
+190
+191</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 151</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 189</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_min_values'>min_values</span>
   <span class='ivar'>@min_values</span>
@@ -445,7 +580,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the options in the select menu, or the selected options.</p>
+
 
   </div>
 </div>
@@ -461,6 +597,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the options in the select menu, or the selected options.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -471,12 +611,12 @@
       <pre class="lines">
 
 
-157
-158
-159</pre>
+195
+196
+197</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 157</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 195</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@options</span>
@@ -499,7 +639,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the default placeholder text shown on the select menu.</p>
+
 
   </div>
 </div>
@@ -515,6 +656,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the default placeholder text shown on the select menu.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -525,15 +670,74 @@
       <pre class="lines">
 
 
-154
-155
-156</pre>
+192
+193
+194</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 154</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 192</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_placeholder'>placeholder</span>
   <span class='ivar'>@placeholder</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="values-instance_method">
+  
+    #<strong>values</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="../../String.html" title="String (class)">String</a></span>&gt;</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the submitted values from the modal.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../../String.html" title="String (class)">String</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the submitted values from the modal.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+180
+181
+182</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 180</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_values'>values</span>
+  <span class='ivar'>@values</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -546,7 +750,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 26 00:35:36 2026 by
+  Generated on Wed Feb  4 03:28:16 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>

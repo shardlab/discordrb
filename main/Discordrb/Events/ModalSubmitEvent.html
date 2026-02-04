@@ -125,7 +125,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#components-instance_method" title="#components (instance method)">#<strong>components</strong>  &#x21d2; Array&lt;TextInputComponent&gt; </a>
+      <a href="#components-instance_method" title="#components (instance method)">#<strong>components</strong>  &#x21d2; Array&lt;Component&gt; </a>
     
 
     
@@ -144,7 +144,36 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>An array of partial component objects that were in the modal.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#resolved-instance_method" title="#resolved (instance method)">#<strong>resolved</strong>  &#x21d2; Resolved </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The resolved channels, roles, users, members, and attachments for the modal.</p>
+</div></span>
   
 </li>
 
@@ -180,6 +209,29 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#attachments-instance_method" title="#attachments (instance method)">#<strong>attachments</strong>(custom_id)  &#x21d2; Array&lt;Attachment&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Get the attachments that a user uploaded in this modal.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#value-instance_method" title="#value (instance method)">#<strong>value</strong>(custom_id)  &#x21d2; String<sup>?</sup> </a>
     
 
@@ -195,6 +247,29 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Get the value of an input passed to the modal.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#values-instance_method" title="#values (instance method)">#<strong>values</strong>(custom_id)  &#x21d2; Array&lt;String&gt;<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Get the selected values from a select menu or file upload component.</p>
 </div></span>
   
 </li>
@@ -235,7 +310,7 @@
       <div class="method_details first">
   <h3 class="signature first" id="components-instance_method">
   
-    #<strong>components</strong>  &#x21d2; <tt>Array&lt;TextInputComponent&gt;</tt>  <span class="extras">(readonly)</span>
+    #<strong>components</strong>  &#x21d2; <tt>Array&lt;Component&gt;</tt>  <span class="extras">(readonly)</span>
   
 
   
@@ -243,7 +318,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns an array of partial component objects that were in the modal.</p>
+
 
   </div>
 </div>
@@ -255,9 +331,13 @@
     <li>
       
       
-        <span class='type'>(<tt>Array&lt;TextInputComponent&gt;</tt>)</span>
+        <span class='type'>(<tt>Array&lt;Component&gt;</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'><p>an array of partial component objects that were in the modal.</p>
+</div>
       
     </li>
   
@@ -269,15 +349,74 @@
       <pre class="lines">
 
 
-407
-408
-409</pre>
+410
+411
+412</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 407</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 410</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_components'>components</span>
   <span class='ivar'>@components</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="resolved-instance_method">
+  
+    #<strong>resolved</strong>  &#x21d2; <tt><span class='object_link'><a href="InteractionCreateEvent/Resolved.html" title="Discordrb::Events::InteractionCreateEvent::Resolved (class)">Resolved</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns The resolved channels, roles, users, members, and attachments for the modal.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="InteractionCreateEvent/Resolved.html" title="Discordrb::Events::InteractionCreateEvent::Resolved (class)">Resolved</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The resolved channels, roles, users, members, and attachments for the modal.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+413
+414
+415</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 413</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_resolved'>resolved</span>
+  <span class='ivar'>@resolved</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -292,7 +431,83 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="value-instance_method">
+  <h3 class="signature first" id="attachments-instance_method">
+  
+    #<strong>attachments</strong>(custom_id)  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="../Attachment.html" title="Discordrb::Attachment (class)">Attachment</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Get the attachments that a user uploaded in this modal.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The custom ID of the file upload component to get attachments for.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../Attachment.html" title="Discordrb::Attachment (class)">Attachment</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the attachments that were uploaded to the file upload component.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+440
+441
+442</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 440</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_attachments'>attachments</span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_values'>values</span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_id'>id</span><span class='op'>|</span> <span class='ivar'>@resolved</span><span class='lbracket'>[</span><span class='symbol'>:attachments</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rbracket'>]</span> <span class='rbrace'>}</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="value-instance_method">
   
     #<strong>value</strong>(custom_id)  &#x21d2; <tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt><sup>?</sup> 
   
@@ -338,6 +553,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>The selected value for the component.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -348,15 +567,91 @@
       <pre class="lines">
 
 
-412
-413
-414</pre>
+426
+427
+428</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 412</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 426</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_value'>value</span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_get_component'>get_component</span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_value'>value</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="values-instance_method">
+  
+    #<strong>values</strong>(custom_id)  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="../../String.html" title="String (class)">String</a></span>&gt;</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Get the selected values from a select menu or file upload component.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>custom_id</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The custom ID of the component to look for.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../../String.html" title="String (class)">String</a></span>&gt;</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The values that were chosen for the component.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+433
+434
+435</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/events/interactions.rb', line 433</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_values'>values</span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_get_component'>get_component</span><span class='lparen'>(</span><span class='id identifier rubyid_custom_id'>custom_id</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_values'>values</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -368,7 +663,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 26 00:35:39 2026 by
+  Generated on Wed Feb  4 03:28:19 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>

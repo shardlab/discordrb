@@ -138,7 +138,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The description of the option.</p>
+</div></span>
   
 </li>
 
@@ -165,7 +166,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The emoji of the option, or <code>nil</code>.</p>
+</div></span>
   
 </li>
 
@@ -192,7 +194,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The label of the option.</p>
+</div></span>
   
 </li>
 
@@ -219,7 +222,8 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>The value of the option.</p>
+</div></span>
   
 </li>
 
@@ -229,92 +233,6 @@
 
 
 
-  
-    <h2>
-      Instance Method Summary
-      <small><a href="#" class="summary_toggle">collapse</a></small>
-    </h2>
-
-    <ul class="summary">
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(data)  &#x21d2; Option </a>
-    
-
-    
-  </span>
-  
-  
-    <span class="note title constructor">constructor</span>
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>A new instance of Option.</p>
-</div></span>
-  
-</li>
-
-      
-    </ul>
-  
-
-<div id="constructor_details" class="method_details_list">
-  <h2>Constructor Details</h2>
-  
-    <div class="method_details first">
-  <h3 class="signature first" id="initialize-instance_method">
-  
-    #<strong>initialize</strong>(data)  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Components::SelectMenu::Option (class)">Option</a></span></tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns a new instance of Option.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-136
-137
-138
-139
-140
-141</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 136</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
-  <span class='ivar'>@label</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>label</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-  <span class='ivar'>@value</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>value</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-  <span class='ivar'>@description</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>description</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-  <span class='ivar'>@emoji</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>emoji</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='ivar'>@bot</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>emoji</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-  
-</div>
 
   <div id="instance_attr_details" class="attr_details">
     <h2>Instance Attribute Details</h2>
@@ -332,7 +250,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the description of the option.</p>
+
 
   </div>
 </div>
@@ -348,6 +267,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the description of the option.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -358,12 +281,12 @@
       <pre class="lines">
 
 
-130
-131
-132</pre>
+162
+163
+164</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 130</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 162</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_description'>description</span>
   <span class='ivar'>@description</span>
@@ -386,7 +309,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the emoji of the option, or <code>nil</code>.</p>
+
 
   </div>
 </div>
@@ -402,6 +326,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the emoji of the option, or <code>nil</code>.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -412,12 +340,12 @@
       <pre class="lines">
 
 
-133
-134
-135</pre>
+165
+166
+167</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 133</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 165</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emoji'>emoji</span>
   <span class='ivar'>@emoji</span>
@@ -440,7 +368,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the label of the option.</p>
+
 
   </div>
 </div>
@@ -456,6 +385,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the label of the option.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -466,12 +399,12 @@
       <pre class="lines">
 
 
-124
-125
-126</pre>
+156
+157
+158</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 124</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 156</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_label'>label</span>
   <span class='ivar'>@label</span>
@@ -494,7 +427,8 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Returns the value of the option.</p>
+
 
   </div>
 </div>
@@ -510,6 +444,10 @@
       
       
       
+        &mdash;
+        <div class='inline'><p>the value of the option.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -520,12 +458,12 @@
       <pre class="lines">
 
 
-127
-128
-129</pre>
+159
+160
+161</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 127</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/component.rb', line 159</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_value'>value</span>
   <span class='ivar'>@value</span>
@@ -541,7 +479,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 26 00:35:36 2026 by
+  Generated on Wed Feb  4 03:28:16 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>
