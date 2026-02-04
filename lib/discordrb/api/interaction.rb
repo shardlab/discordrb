@@ -6,7 +6,7 @@ module Discordrb::API::Interaction
 
   # Respond to an interaction.
   # https://discord.com/developers/docs/interactions/slash-commands#create-interaction-response
-  def create_interaction_response(interaction_token, interaction_id, type, content = nil, tts = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil, attachments = nil, choices = nil)
+  def create_interaction_response(interaction_token, interaction_id, type, content = nil, tts = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil, attachments = nil, choices = nil, with_response = nil)
     body = { tts: tts, content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, components: components, choices: choices }.compact
 
     body = if attachments
@@ -22,7 +22,7 @@ module Discordrb::API::Interaction
       :interactions_iid_token_callback,
       interaction_id,
       :post,
-      "#{Discordrb::API.api_base}/interactions/#{interaction_id}/#{interaction_token}/callback",
+      "#{Discordrb::API.api_base}/interactions/#{interaction_id}/#{interaction_token}/callback?with_response=#{with_response ? 'true' : 'false'}",
       body,
       headers
     )

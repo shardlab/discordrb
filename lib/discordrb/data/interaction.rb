@@ -138,12 +138,10 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments)
-
+      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, wait)
       return unless wait
 
-      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
-      Interactions::Message.new(JSON.parse(response), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(response)['resource']['message'], @bot, self)
     end
 
     # Defer an interaction, setting a temporary response that can be later overriden by {Interaction#send_message}.
@@ -208,12 +206,10 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments)
-
+      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, wait)
       return unless wait
 
-      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
-      Interactions::Message.new(JSON.parse(response), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(response)['resource']['message'], @bot, self)
     end
 
     # Edit the original response to this interaction.
@@ -239,7 +235,7 @@ module Discordrb
       data = builder.to_json_hash
       resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags)
 
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
 
     # Delete the original interaction response.
@@ -272,7 +268,7 @@ module Discordrb
       resp = Discordrb::API::Webhook.token_execute_webhook(
         @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments
       )
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
 
     # @param message [String, Integer, InteractionMessage, Message] The message created by this interaction to be edited.
@@ -298,7 +294,7 @@ module Discordrb
       resp = Discordrb::API::Webhook.token_edit_message(
         @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags
       )
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
 
     # @param message [Integer, String, InteractionMessage, Message] The message created by this interaction to be deleted.
@@ -918,7 +914,7 @@ module Discordrb
 
         @message_reference = data['message_reference']
 
-        @server_id = data['guild_id']&.to_i
+        @server_id = @interaction.server_id
 
         @timestamp = Time.parse(data['timestamp']) if data['timestamp']
         @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
