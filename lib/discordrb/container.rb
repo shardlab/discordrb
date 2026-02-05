@@ -697,6 +697,16 @@ module Discordrb
       register_event(ApplicationCommandPermissionsUpdateEvent, attributes, block)
     end
 
+    # This **event** is raised whenever the stickers for a server are updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ServerStickersUpdateEvent] The event that was raised.
+    # @return [ServerStickersUpdateEventHandler] The event handler that was registered.
+    def server_stickers_update(attributes = {}, &block)
+      register_event(ServerStickersUpdateEvent, attributes, block)
+    end
+
     # This **event** is raised whenever an integration is added to a server.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, Integration] :id An integration to match against.

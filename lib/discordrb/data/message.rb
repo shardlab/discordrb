@@ -148,6 +148,9 @@ module Discordrb
     # @return [Integer] a generally increasing integer that can be used to determine this message's position in a thread.
     attr_reader :position
 
+    # @return [Array<Sticker::Item>] the sticker items sent with this message.
+    attr_reader :stickers
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -199,6 +202,7 @@ module Discordrb
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
+      @stickers = (data['sticker_items'] || data['stickers'])&.map { |sticker| Sticker::Item.new(sticker, @bot) } || []
     end
 
     # @deprecated Please migrate to using {#creation_time} instead.

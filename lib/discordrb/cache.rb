@@ -23,6 +23,8 @@ module Discordrb
       @pm_channels = {}
       @thread_members = {}
       @server_previews = {}
+      @stickers = {}
+      @sticker_packs = {}
     end
 
     # Returns or caches the available voice regions
@@ -194,6 +196,63 @@ module Discordrb
 
       @thread_members[thread_id] ||= {}
       @thread_members[thread_id][user_id] = data.slice('join_timestamp', 'flags')
+    end
+
+    # Get a list of all of the sticker packs the bot can use.
+    # @return [Array<Sticker::Pack>] The sticker packs the bot can use.
+    def sticker_packs
+      return @sticker_packs unless @sticker_packs.empty?
+
+      packs = JSON.parse(API.list_sticker_packs(token))['sticker_packs']
+
+      @sticker_packs = packs.map { |pack| Sticker::Pack.new(pack, self) }
+    end
+
+    # Get a single sticker pack by its ID.
+    # @param id [Integer, String] the sticker pack to resolve.
+    # @return [Sticker::Pack, nil] The sticker pack that was identified, or `nil`.
+    def sticker_pack(id)
+      id = id.resolve_id
+      sticker_packs.find { |pack| pack.id == id }
+    end
+
+    # Get a single sticker by its ID.
+    # @param id [Integer, String, Sticker] the sticker ID to resolve.
+    # @return [Sticker, nil] The sticker that was resolved, or `nil`.
+    def sticker(id)
+      id = id.resolve_id
+
+      # We should check the stickers for each server first, because
+      # it's possible that we globally cached a sticker for a server
+      # the bot hadn't joined at the time, but then the bot joined that
+      # server later at some point. The object from the server is guranteed
+      # to be the most up-to-date.
+      @servers.each_value do |server|
+        sticker = server.sticker(id)
+        return sticker if sticker
+      end
+
+      return @stickers[id] if @stickers[id]
+
+      sticker = Sticker.new(JSON.parse(API.get_sticker(token, id)), self)
+      @stickers[sticker.id] = sticker
+    rescue StandardError
+      nil
+    end
+
+    # Ensures a given sticker object is cached and if not, cache it from the given data hash.
+    # @param data [Hash] A data hash representing a sticker.
+    # @param force_cache [true, false] Whether the object in cache should be updated with the given
+    #   data if it already exists.
+    # @return [Sticker] the sticker represented by the data hash.
+    def ensure_sticker(data, force_cache = true)
+      id = data['id'].to_i
+      if (sticker = @stickers[id])
+        sticker.from_other(data) if force_cache
+        sticker
+      else
+        @stickers[id] = Sticker.new(data, self)
+      end
     end
 
     # Requests member chunks for a given server ID.
