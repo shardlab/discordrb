@@ -6,7 +6,7 @@ module Discordrb
     # @return [Integer] the ID of the server this primary server is for.
     attr_reader :server_id
 
-    # @return [Boolean] if the user is displaying the primary server's tag.
+    # @return [true, false] if the user is displaying the primary server's tag.
     attr_reader :enabled
     alias_method :enabled?, :enabled
 
@@ -14,7 +14,7 @@ module Discordrb
     attr_reader :name
     alias_method :text, :name
 
-    # @return [String] the ID of the server tag's badge. can be used to generate a badge URL.
+    # @return [String] the ID of the server tag's badge. Can be used to generate a badge URL.
     # @see #badge_url
     attr_reader :badge_id
 

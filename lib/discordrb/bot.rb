@@ -1186,28 +1186,14 @@ module Discordrb
       @servers.delete(id)
     end
 
-    # Internal handler for GUILD_ROLE_UPDATE
+    # Internal handler for GUILD_ROLE_CREATE and GUILD_ROLE_UPDATE
     def update_guild_role(data)
-      role_data = data['role']
-      server_id = data['guild_id'].to_i
-      server = @servers[server_id]
-      new_role = Role.new(role_data, self, server)
-      role_id = role_data['id'].to_i
-      old_role = server.roles.find { |r| r.id == role_id }
-      old_role.update_from(new_role)
-    end
+      server = @servers[data['guild_id'].to_i]
 
-    # Internal handler for GUILD_ROLE_CREATE
-    def create_guild_role(data)
-      role_data = data['role']
-      server_id = data['guild_id'].to_i
-      server = @servers[server_id]
-      new_role = Role.new(role_data, self, server)
-      existing_role = server.role(new_role.id)
-      if existing_role
-        existing_role.update_from(new_role)
+      if (role = server&.role(data['role']['id'].to_i))
+        role.update_data(data['role'])
       else
-        server.add_role(new_role)
+        server&.add_role(Role.new(data['role'], self, server))
       end
     end
 
@@ -1216,14 +1202,14 @@ module Discordrb
       role_id = data['role_id'].to_i
       server_id = data['guild_id'].to_i
       server = @servers[server_id]
-      server.delete_role(role_id)
+      server&.delete_role(role_id)
     end
 
     # Internal handler for GUILD_EMOJIS_UPDATE
     def update_guild_emoji(data)
       server_id = data['guild_id'].to_i
       server = @servers[server_id]
-      server.update_emoji_data(data)
+      server&.update_emoji_data(data)
     end
 
     # Internal handler for MESSAGE_CREATE
@@ -1582,7 +1568,7 @@ module Discordrb
         event = ServerRoleUpdateEvent.new(data, self)
         raise_event(event)
       when :GUILD_ROLE_CREATE
-        create_guild_role(data)
+        update_guild_role(data)
 
         event = ServerRoleCreateEvent.new(data, self)
         raise_event(event)

@@ -22,10 +22,7 @@ module Discordrb::Events
       @bot = bot
 
       @server = bot.server(data['guild_id'].to_i)
-      return unless @server
-
-      role_id = data['role']['id'].to_i
-      @role = @server.roles.find { |r| r.id == role_id }
+      @role = @server&.role(data['role']['id'].to_i)
     end
   end
 
