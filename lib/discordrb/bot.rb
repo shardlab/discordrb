@@ -906,6 +906,14 @@ module Discordrb
       API::Application.edit_guild_command_permissions(bearer_token, profile.id, server_id, command_id, permissions)
     end
 
+    # Get the permissions for all of the application commands in a specific server.
+    # @param server_id [Integer, String, nil] The ID of the server to fetch application command permissions for.
+    # @return [Array<ApplicationCommand::Permission>] The permissions for all of the application commands in the given server.
+    def application_command_permissions(server_id:)
+      response = API::Application.get_guild_application_command_permissions(@token, profile.id, server_id.resolve_id)
+      JSON.parse(response).flat_map { |data| data['permissions'].map { |inner| ApplicationCommand::Permission.new(inner, data, self) } }
+    end
+
     # Fetches all the application emojis that the bot can use.
     # @return [Array<Emoji>] Returns an array of emoji objects.
     def application_emojis

@@ -469,7 +469,7 @@ module Discordrb
       @bot.delete_application_command(@id, server_id: @server_id)
     end
 
-    # Get the permission configuration for the this application command on a specific server.
+    # Get the permission configuration for this application command in a specific server.
     # @param server_id [Integer, String, nil] The ID of the server to fetch command permissions for.
     # @return [Array<Permission>] the permissions for this application command in the given server.
     def permissions(server_id: nil)
@@ -495,7 +495,7 @@ module Discordrb
       # @see TYPES
       attr_reader :type
 
-      # @return [Integer] the ID of the thing this permission is for.
+      # @return [Integer] the ID of the entity this permission is for.
       attr_reader :target_id
 
       # @return [Integer] the ID of the server this permission is for.
@@ -518,7 +518,7 @@ module Discordrb
         @overwrite == true
       end
 
-      # Whether this permission has been denied, e.g has a red check in the UI.
+      # Whether this permission has been denied, e.g has a red X-mark in the UI.
       # @return [true, false]
       def denied?
         @overwrite == false
@@ -528,6 +528,13 @@ module Discordrb
       # @return [true, false]
       def everyone?
         @target_id == @server_id
+      end
+
+      # Get the ID of the application command this permission is for.
+      # @return [Integer, nil] This will be `nil` if the permission is the
+      #   default permission.
+      def command_id
+        @command_id unless default?
       end
 
       # Whether this permission is the default for all commands that don't
@@ -552,7 +559,7 @@ module Discordrb
         when TYPES[:member]
           @bot.server(@server_id).member(@target_id)
         when TYPES[:channel]
-          all_channels ? @bot.server(@server_id).channels : [@bot.channel(@target_id)]
+          all_channels? ? @bot.server(@server_id).channels : [@bot.channel(@target_id)]
         end
       end
 
