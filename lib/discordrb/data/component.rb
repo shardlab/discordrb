@@ -522,7 +522,7 @@ module Discordrb
       attr_reader :value
       alias value? value
 
-      # @return [String] the developer-defined identifier for the radio group.
+      # @return [String] the developer-defined identifier of the radio group.
       attr_reader :custom_id
 
       # @!visibility private
@@ -542,7 +542,7 @@ module Discordrb
       # @return [Array<String>] the values of the selected checkbox buttons.
       attr_reader :values
 
-      # @return [String] the developer-defined identifier for the checkbox group.
+      # @return [String] the developer-defined identifier of the checkbox group.
       attr_reader :custom_id
 
       # @!visibility private
@@ -563,7 +563,7 @@ module Discordrb
       attr_reader :value
       alias value? value
 
-      # @return [String] the developer-defined identifier for the checkbox.
+      # @return [String] the developer-defined identifier of the checkbox.
       attr_reader :custom_id
 
       # @!visibility private
