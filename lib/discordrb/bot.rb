@@ -304,13 +304,6 @@ module Discordrb
       @gateway.open?
     end
 
-    # Makes the bot join an invite to a server.
-    # @param invite [String, Invite] The invite to join. For possible formats see {#resolve_invite_code}.
-    def accept_invite(invite)
-      resolved = invite(invite).code
-      API::Invite.accept(token, resolved)
-    end
-
     # Creates an OAuth invite URL that can be used to invite this bot to a particular server.
     # @param server [Server, nil] The server the bot should be invited to, or nil if a general invite should be created.
     # @param permission_bits [String, Integer] Permission bits that should be appended to invite url.
