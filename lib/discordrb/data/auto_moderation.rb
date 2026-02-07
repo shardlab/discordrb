@@ -41,7 +41,7 @@ module Discordrb
     # Get the user who was responsible for creating the auto moderation rule.
     # @return [User] The user who was responsible for creating the auto moderation rule.
     def creator
-      @bot.user(@creator_id) if @creator_id
+      @bot.user(@creator_id)
     end
 
     # Get the roles that will be ignored by the auto moderation rule.
