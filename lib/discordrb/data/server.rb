@@ -70,6 +70,7 @@ module Discordrb
       @emoji = {}
       @channels = []
       @channels_by_id = {}
+      @automod_rules = {}
 
       update_data(data)
 
@@ -478,6 +479,20 @@ module Discordrb
       end
     end
 
+    # Add an automod rule to the cache.
+    # @note For internal use only
+    # @!visibility private
+    def cache_automod_rule(rule)
+      @automod_rules[rule.id] = rule
+    end
+
+    # Delete an existing automod rule from the cache.
+    # @note For internal use only
+    # @!visibility private
+    def delete_automod_rule(rule)
+      @automod_rules.delete(rule.resolve_id)
+    end
+
     # Creates a channel on this server with the given name.
     # @note If parent is provided, permission overwrites have the follow behavior:
     #
@@ -601,6 +616,86 @@ module Discordrb
       else
         50
       end
+    end
+
+    # Get a single automod rule.
+    # @param rule_id [Integer, String, AutoModRule] The ID of the automod rule to get.
+    # @param request [true, false] Whether the automod rule should be requested from Discord if it isn't cached.
+    # @return [AutoModRule, nil] the automod rule that was found, or `nil`.
+    def automod_rule(rule_id, request: true)
+      id = rule_id.resolve_id
+      return @automod_rules[id] if @automod_rules[id]
+      return nil unless request
+
+      data = JSON.parse(API::Server.get_automod_rule(@bot.token, @id, id))
+      rule = AutoModRule.new(data, self, @bot)
+      @automod_rules[rule.resolve_id] = rule
+    rescue StandardError
+      nil
+    end
+
+    # Get a list of all the automod rules configured on this server.
+    # @param bypass_cache [true, false] Whether the cached automod rules
+    #   should be ignored and re-fetched via an HTTP request.
+    # @return [Array<AutoModRule>] the configured automod rules on this server.
+    def automod_rules(bypass_cache: false)
+      return @automod_rules.values if @rules_cached && !bypass_cache
+
+      response = JSON.parse(API::Server.list_automod_rules(@bot.token, @id))
+
+      response.each do |element|
+        rule = AutoModRule.new(element, self, @bot)
+        @automod_rules[rule.id] = rule
+      end
+
+      @rules_cached = true
+      @automod_rules.values
+    rescue StandardError
+      []
+    end
+
+    # Create an auto moderation rule on this server. Requires the `manage_server` permission.
+    # @param name [String] The name of the auto moderation rule to create.
+    # @param event_type [Integer, Symbol] The event type of the auto moderation rule to create.
+    # @param trigger_type [Integer, Symbol] The trigger type of the auto moderation rule to create.
+    # @param actions [Array<#to_h>] The actions of the auto moderation rule to create.
+    # @param enabled [true, false] Whether to enabled the auto moderation rule to create.
+    # @param exempt_roles [Array<#resolve_id>] The exempt roles of the auto moderation rule to create (max 20).
+    # @param exempt_channels [Array<#resolve_id>] The exempt channels of the auto moderation rule to create (max 50).
+    # @param keyword_filter [Array<String>] The substrings that should trigger the auto moderation rule to create.
+    # @param regex_patterns [Array<String>] The Rust regex patterns that should trigger the auto moderation rule to create.
+    # @param keyword_presets [Array<Integer, Symbol>] The of word types that can trigger the auto moderation rule to create.
+    # @param exempt_keywords [Array<String>] The substrings that should not trigger the auto moderation rule to create.
+    # @param mention_limit [Integer] The number of unique mentions that should trigger the auto moderation rule to create.
+    # @param mention_raid_protection [true, false] If mention raids should be auto-detected by the auto moderation rule to create.
+    # @param reason [String, nil] The reason for creating the auto moderation rule.
+    # @yieldparam builder [AutoModRule::Action::Builder] An optional builder for auto moderation actions.
+    # @return [AutoModRule] the newly created auto moderation rule.
+    def create_automod_rule(name:, event_type:, trigger_type:, actions: [], enabled: nil, exempt_roles: nil, exempt_channels: nil, keyword_filter: nil, regex_patterns: nil, keyword_presets: nil, exempt_keywords: nil, mention_limit: nil, mention_raid_protection: nil, reason: nil)
+      yield((builder = AutoModRule::Action::Builder.new)) if block_given?
+
+      trigger = {
+        allow_list: exempt_keywords,
+        keyword_filter: keyword_filter,
+        regex_patterns: regex_patterns,
+        mention_total_limit: mention_limit,
+        mention_raid_protection_enabled: mention_raid_protection,
+        presets: keyword_presets&.map { |type| AutoModRule::Trigger::PRESET_TYPES[type] || type }
+      }.compact
+
+      data = {
+        name: name,
+        enabled: enabled,
+        exempt_roles: exempt_roles&.map(&:resolve_id),
+        trigger_metadata: trigger.empty? ? nil : trigger,
+        exempt_channels: exempt_channels&.map(&:resolve_id),
+        actions: block_given? ? builder&.to_a : actions.map(&:to_h),
+        event_type: AutoModRule::EVENT_TYPES[event_type] || event_type,
+        trigger_type: AutoModRule::Trigger::TYPES[trigger_type] || trigger_type
+      }
+
+      rule = JSON.parse(API::Server.create_automod_rule(@bot.token, @id, **data, reason: reason))
+      AutoModRule.new(rule, self, @bot).tap { |rule| cache_automod_rule(rule) }
     end
 
     # Searches a server for members that matches a username or a nickname.
