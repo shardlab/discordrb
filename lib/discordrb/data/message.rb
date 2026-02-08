@@ -191,7 +191,7 @@ module Discordrb
 
       @attachments = data['attachments']&.map { |attachment| Attachment.new(attachment, self, @bot) } || []
       @embeds = data['embeds']&.map { |embed| Embed.new(embed, self) } || []
-      @components = data['components']&.map { |component| Components.from_data(component, @bot) } || []
+      @components = data['components']&.filter_map { |component| Components.from_data(component, @bot) } || []
 
       @thread = @bot.ensure_channel(data['thread']) if data['thread']
       @pinned_at = Time.parse(data['pinned_at']) if data['pinned_at']

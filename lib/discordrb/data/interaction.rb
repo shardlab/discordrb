@@ -58,6 +58,9 @@ module Discordrb
     # @return [Hash] The interaction data.
     attr_reader :data
 
+    # @return [Interactions::Message, nil] The message associated with this interaction.
+    attr_reader :message
+
     # @return [Array<ActionRow>] The modal components associated with this interaction.
     attr_reader :components
 
@@ -99,7 +102,7 @@ module Discordrb
               end
       @token = data['token']
       @version = data['version']
-      @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
+      @components = @data['components']&.filter_map { |component| Components.from_data(component, @bot) } || []
       @application_permissions = Permissions.new(data['app_permissions']) if data['app_permissions']
       @user_locale = data['locale']
       @server_locale = data['guild_locale']
@@ -944,7 +947,7 @@ module Discordrb
         @mention_everyone = data['mention_everyone']
         @flags = data['flags']
         @pinned = data['pinned']
-        @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+        @components = data['components']&.filter_map { |component| Components.from_data(component, @bot) } || []
       end
 
       # @return [Member, nil] This will return nil if the bot does not have access to the

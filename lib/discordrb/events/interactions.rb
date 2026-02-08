@@ -46,8 +46,8 @@ module Discordrb::Events
 
     # @!visibility private
     def initialize(data, bot)
-      @interaction = Discordrb::Interaction.new(data, bot)
       @bot = bot
+      @interaction = Discordrb::Interaction.new(data, @bot)
     end
 
     # @see Interaction#respond
@@ -198,8 +198,9 @@ module Discordrb::Events
 
       command_data = data['data']
 
-      @command_id = command_data['id']
+      @command_id = command_data['id'].to_i
       @command_name = command_data['name'].to_sym
+      @command_server_id = command_data['guild_id']
 
       @target_id = command_data['target_id']&.to_i
       @resolved = Resolved.new({}, {}, {}, {}, {}, {})
@@ -225,6 +226,13 @@ module Discordrb::Events
       end
 
       @options = transform_options_hash(options || {})
+    end
+
+    # @return [true, false] Whether or not the application command that was executed
+    #   has been registered globally. If this is false, then the application command
+    #   that was executed is only available in the invoking server.
+    def global_command?
+      @command_server_id.nil?
     end
 
     # @return [Message, User, nil] The target of this command, for context commands.
@@ -346,7 +354,7 @@ module Discordrb::Events
     def initialize(data, bot)
       super
 
-      @message = Discordrb::Interactions::Message.new(data['message'], bot, @interaction) if data['message']
+      @message = @interaction.message
       @custom_id = data['data']['custom_id']
     end
   end
@@ -416,6 +424,7 @@ module Discordrb::Events
     def initialize(data, bot)
       super
 
+      @components = @interaction.components
       @resolved = Resolved.new({}, {}, {}, {}, {}, {})
       process_resolved(data['data']['resolved']) if data['data']['resolved']
     end
