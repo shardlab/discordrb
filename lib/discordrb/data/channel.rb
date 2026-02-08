@@ -478,7 +478,7 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
     # @return [Message] the message that was sent.
     def send_message(content, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       @bot.send_message(@id, content, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
@@ -495,7 +495,7 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
     def send_temporary_message(content, timeout, tts = false, embed = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
       @bot.send_temporary_message(@id, content, timeout, tts, embed, attachments, allowed_mentions, message_reference, components, flags)
     end
@@ -513,7 +513,7 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
     # @yield [embed] Yields the embed to allow for easy building inside a block.
     # @yieldparam embed [Discordrb::Webhooks::Embed] The embed from the parameters, or a new one.
     # @return [Message] The resulting message.
@@ -961,6 +961,16 @@ module Discordrb
 
       invites = JSON.parse(API::Channel.invites(@bot.token, @id))
       invites.map { |invite_data| Invite.new(invite_data, @bot) }
+    end
+
+    # Follow the announcement (news) channel to send crossposted messages to a target channel.
+    # @param target [Channel, Integer, String] The target channel to send crossposted messages to.
+    # @param reason [String, nil] The audit log reason shown for the created webhook in the target channel.
+    # @return [Integer] the ID of the created webhook in the target channel.
+    def follow(target, reason: nil)
+      raise 'Cannot follow a non-announcement channel' unless news?
+
+      JSON.parse(API::Channel.follow_channel(@bot.token, @id, target.resolve_id, reason))['webhook_id'].to_i
     end
 
     # Returns the last message or forum post created in this channel.

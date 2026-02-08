@@ -5,6 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.0] - 2026-02-04
+
+[3.8.0]: https://github.com/shardlab/discordrb/releases/tag/v3.8.0
+[View diff for this release.](https://github.com/shardlab/discordrb/compare/v3.7.2..v3.8.0)
+
+
+### Summary
+
+## What's Changed
+* Fix wrong wording in `#voice_state_update` documentation by @gitnickolson in https://github.com/shardlab/discordrb/pull/411
+* feat: integration events by @Droid00000 in https://github.com/shardlab/discordrb/pull/418
+* feat: optimize Bot#emoji by @Droid00000 in https://github.com/shardlab/discordrb/pull/417
+* feat: replied user in allowed mentions by @Droid00000 in https://github.com/shardlab/discordrb/pull/415
+* feat: emoji serialization helper by @Droid00000 in https://github.com/shardlab/discordrb/pull/405
+* feat: delegate more interaction methods by @Droid00000 in https://github.com/shardlab/discordrb/pull/414
+* fix: Secret -> Secrets by @Droid00000 in https://github.com/shardlab/discordrb/pull/392
+* feat: followed channels by @Droid00000 in https://github.com/shardlab/discordrb/pull/328
+* fix: errors on :THREAD_LIST_SYNC by @Droid00000 in https://github.com/shardlab/discordrb/pull/320
+* style: message initializer by @Droid00000 in https://github.com/shardlab/discordrb/pull/382
+* bump: copyright version by @Droid00000 in https://github.com/shardlab/discordrb/pull/424
+* feat: new components by @Droid00000 in https://github.com/shardlab/discordrb/pull/297
+
+## New Contributors
+* @gitnickolson made their first contribution in https://github.com/shardlab/discordrb/pull/411
+
+**Full Changelog**: https://github.com/shardlab/discordrb/compare/v3.7.2...v3.8.0
+
+
+## [3.7.2] 2025-12-24
+
+[View diff for this release](https://github.com/shardlab/discordrb/compare/v3.7.1...v3.7.2)
+
+### Summary
+
+#### What's Changed
+
+- feat: role move interface by @Droid00000 in https://github.com/shardlab/discordrb/pull/377
+- fix: condition to check components presence by @Droid00000 in https://github.com/shardlab/discordrb/pull/391
+- fix: handle pre-existing thread-ids in WH URLs by @Droid00000 in https://github.com/shardlab/discordrb/pull/406
+- fix: handle existing params in webhook urls by @swarley in https://github.com/shardlab/discordrb/pull/396
+
+## [3.7.1] - 2025-11-24
+
+[View diff for this release](https://github.com/shardlab/discordrb/compare/v3.7.0...v3.7.1)
+
+### Summary
+
+#### What's Changed
+
+- fix: condition to check components presence by @Droid00000 #391
+
 ## [3.7.0] - 2025-10-22
 
 [3.7.0]: https://github.com/shardlab/discordrb/releases/tag/v3.7.0
