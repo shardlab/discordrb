@@ -185,8 +185,8 @@ module Discordrb
       @permissions.bits = new_data['permissions'].to_i
       @colour = ColourRGB.new(colours['primary_color'])
       @tags = Tags.new(new_data['tags']) if new_data['tags']
-      @secondary_color = ColourRGB.new(colours['secondary_color']) if colours['secondary_color']
-      @tertiary_colour = ColourRGB.new(colours['tertiary_color']) if colours['tertiary_color']
+      @secondary_colour = colours['secondary_color'] ? ColourRGB.new(colours['secondary_color']) : nil
+      @tertiary_colour = colours['tertiary_color'] ? ColourRGB.new(colours['tertiary_color']) : nil
     end
 
     # Sets the role name to something new
@@ -298,11 +298,10 @@ module Discordrb
     # @example Remove all permissions from a role
     #   role.packed = 0
     # @param packed [Integer, nil] A bitfield with the desired permissions value.
-    # @param update_perms [true, false] Whether the internal data should also be updated. This should always be true
-    #   when calling externally.
-    def packed=(packed, update_perms = true)
+    # @param _update_perms [true, false] Whether the internal data should also be updated. This should always be true
+    #   when calling externally. This is deprecated and no longer works. Permission data is always updated.
+    def packed=(packed, _update_perms = true)
       update_role_data(permissions: packed)
-      @permissions.bits = packed if update_perms
     end
 
     # Moves this role above another role in the list.
@@ -406,12 +405,65 @@ module Discordrb
 
     alias_method :update_colors, :update_colours
 
+    # Check if this role is less than another role in the hierarchy.
+    # @param other [Role] The other role that you want to compare to this one.
+    # @return [true, false] Whether or not this role is less than the other role in the hierarchy.
+    def <(other)
+      # rubocop:disable Style/NumericPredicate
+      self.<=>(other) < 0
+    end
+
+    # Check if this role is greater than another role in the hierarchy.
+    # @param other [Role] The other role that you want to compare to this one.
+    # @return [true, false] Whether or not this role is greater than the other role in the hierarchy.
+    def >(other)
+      self.<=>(other) > 0
+      # rubocop:enable Style/NumericPredicate
+    end
+
+    # Check if this role is less than or equal to another role in the hierarchy.
+    # @param other [Role] The other role that you want to against to this one.
+    # @return [true, false] Whether or not this role is less than or equal to the other role in the hierarchy.
+    def <=(other)
+      self.<=>(other) <= 0
+    end
+
+    # Check if this role is greater than or equal to another role in the hierarchy.
+    # @param other [Role] The other role that you want to compare against this one.
+    # @return [true, false] Whether or not this role is greater than or equal to the other role in the hierarchy.
+    def >=(other)
+      self.<=>(other) >= 0
+    end
+
+    # Check if this role is between two other roles in the hierarchy.
+    # @param min [Role] The minimum role to compare against this one.
+    # @param max [Role] The maximum role to compare against this one.
+    # @return [true, false] Whether or not this role is between the minimum and maximum roles in the hierarchy.
+    def between?(min, max)
+      (self.<=>(min) >= 0) && (self.<=>(max) <= 0)
+    end
+
     # The inspect method is overwritten to give more useful output
     def inspect
       "<Role name=#{@name} permissions=#{@permissions.inspect} hoist=#{@hoist} colour=#{@colour.inspect} server=#{@server.inspect} position=#{@position} mentionable=#{@mentionable} unicode_emoji=#{@unicode_emoji} flags=#{@flags}>"
     end
 
     private
+
+    # @!visibility private
+    def <=>(other)
+      return unless other.is_a?(Role) && (other.server == @server)
+
+      if @id == @server.id
+        other.id == @server.id ? 0 : -1
+      elsif @id == other.id
+        0
+      elsif other.position == @position
+        @id <=> other.id
+      else
+        @position <=> other.position
+      end
+    end
 
     # @!visibility private
     def update_role_data(new_data)
