@@ -946,6 +946,21 @@ module Discordrb
       API::Application.delete_application_emoji(@token, profile.id, emoji_id.resolve_id)
     end
 
+    # Fetches all of the SKUs for the for the current bot.
+    # @return [Array<SKU>] All of the SKUs for the current bot.
+    def skus
+      response = API::Application.list_skus(@token, profile.id)
+      JSON.parse(response).collect { |sku| SKU.new(sku, self) }
+    end
+
+    # Get a single SKU by its ID.
+    # @param id [Integer, String, SKU] The ID of the SKU to get.
+    # @return [SKU, nil] The SKU identified by its ID, or `nil`.
+    def sku(id)
+      id = id.resolve_id
+      skus.find { |sku| sku.id == id }
+    end
+
     # @!visibility private
     def inspect
       "<Bot client_id=#{@client_id.inspect} redact_token=#{@redact_token.inspect}>"
