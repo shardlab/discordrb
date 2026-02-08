@@ -148,6 +148,9 @@ module Discordrb
     # @return [Integer] a generally increasing integer that can be used to determine this message's position in a thread.
     attr_reader :position
 
+    # @return [Poll, nil] the poll that was sent with this message, or nil.
+    attr_reader :poll
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -196,6 +199,7 @@ module Discordrb
       @thread = @bot.ensure_channel(data['thread']) if data['thread']
       @pinned_at = Time.parse(data['pinned_at']) if data['pinned_at']
       @call = Call.new(data['call'], @bot) if data['call']
+      @poll = Poll.new(data['poll'], self, @bot) if data['poll']
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
