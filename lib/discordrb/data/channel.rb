@@ -57,10 +57,6 @@ module Discordrb
     # @return [Integer] the channel's position on the channel list
     attr_reader :position
 
-    # @return [true, false] if this channel is marked as nsfw
-    attr_reader :nsfw
-    alias_method :nsfw?, :nsfw
-
     # @return [Integer] the amount of time (in seconds) users need to wait to send in between messages.
     attr_reader :rate_limit_per_user
     alias_method :slowmode_rate, :rate_limit_per_user
@@ -115,6 +111,18 @@ module Discordrb
 
     # @return [Integer, nil] The video quality mode of this voice or stage channel.
     attr_reader :video_quality_mode
+
+    # @return [Integer, nil] The default client-side duration before a thread is automatically hidden.
+    attr_reader :default_auto_archive_duration
+
+    # @return [Integer, nil] The default sorting order for threads in this forum or media channel.
+    attr_reader :default_sort_order
+
+    # @return [Integer, nil] The default layout used to display threads in this forum or media channel.
+    attr_reader :default_forum_layout
+
+    # @return [Integer, nil] The initial slowmode rate set on newly created threads in this channel.
+    attr_reader :default_thread_rate_limit_per_user
 
     # @return [true, false] whether or not this channel is a PM or group channel.
     def private?
@@ -178,7 +186,7 @@ module Discordrb
       end
 
       if (member = data['member'])
-        @member_join = Time.iso8601(member['join_timestamp'])
+        @join_timestamp = Time.iso8601(member['join_timestamp'])
         @member_flags = member['flags']
       end
 
@@ -186,6 +194,11 @@ module Discordrb
       @voice_region = data['rtc_region']
       @video_quality_mode = data['video_quality_mode']
       @last_message_id = data['last_message_id']&.to_i
+
+      @default_auto_archive_duration = data['default_auto_archive_duration']
+      @default_sort_order = data['default_sort_order']
+      @default_forum_layout = data['default_forum_layout']
+      @default_thread_rate_limit_per_user = data['default_thread_rate_limit_per_user']
 
       process_last_pin_timestamp(data['last_pin_timestamp'])
       process_permission_overwrites(data['permission_overwrites'])
@@ -364,6 +377,15 @@ module Discordrb
       API::Server.update_channel_positions(@bot.token, @server_id, move_argument)
     end
 
+    # Check if this channel is marked as NSFW.
+    # @return [true, false] whether or not this channel is marked as NSFW.
+    def nsfw?
+      thread? ? parent.nsfw? : @nsfw
+    end
+
+    # @deprecated This alias will be removed in a future release.
+    alias_method :nsfw, :nsfw?
+
     # Sets whether this channel is NSFW
     # @param nsfw [true, false]
     # @raise [ArgumentError] if value isn't one of true, false
@@ -393,7 +415,7 @@ module Discordrb
     # Bulk sets this channels permission overwrites
     # @param overwrites [Array<Overwrite>]
     def permission_overwrites=(overwrites)
-      update_channel_data(permission_overwrites: overwrites)
+      update_channel_data(permission_overwrites: overwrites&.map(&:to_hash))
     end
 
     # Sets the amount of time (in seconds) users have to wait in between sending messages.
@@ -672,7 +694,7 @@ module Discordrb
         allow_bits = allow.respond_to?(:bits) ? allow.bits : allow
         deny_bits = deny.respond_to?(:bits) ? deny.bits : deny
 
-        thing = Overwrite.new thing, allow: allow_bits, deny: deny_bits
+        thing = Overwrite.new(thing, allow: allow_bits, deny: deny_bits)
       end
 
       API::Channel.update_permission(@bot.token, @id, thing.id, thing.allow.bits, thing.deny.bits, thing.type, reason)
@@ -682,38 +704,9 @@ module Discordrb
     # @param target [Member, User, Role, Profile, Recipient, String, Integer] What permission overwrite to delete
     #   @param reason [String] The reason the for the overwrite deletion.
     def delete_overwrite(target, reason = nil)
-      raise 'Tried deleting a overwrite for an invalid target' unless target.is_a?(Member) || target.is_a?(User) || target.is_a?(Role) || target.is_a?(Profile) || target.is_a?(Recipient) || target.respond_to?(:resolve_id)
+      raise 'Tried deleting a overwrite for an invalid target' unless target.respond_to?(:resolve_id)
 
       API::Channel.delete_permission(@bot.token, @id, target.resolve_id, reason)
-    end
-
-    # Updates the cached data from another channel.
-    # @note For internal use only
-    # @!visibility private
-    def update_from(other)
-      @name = other.name
-      @type = other.type
-      @position = other.position
-      @topic = other.topic
-      @recipients = other.recipients
-      @bitrate = other.bitrate
-      @user_limit = other.user_limit
-      @permission_overwrites = other.permission_overwrites
-      @nsfw = other.nsfw
-      @parent_id = other.parent_id
-      @rate_limit_per_user = other.rate_limit_per_user
-      @archived = other.archived?
-      @auto_archive_duration = other.auto_archive_duration
-      @archive_timestamp = other.archive_timestamp
-      @locked = other.locked?
-      @invitable = other.invitable?
-      @message_count = other.message_count
-      @last_pin_timestamp = other.last_pin_timestamp
-      @last_message_id = other.last_message_id
-      @total_message_sent = other.total_message_sent
-      @flags = other.flags
-      @voice_region = other.voice_region
-      @video_quality_mode = other.video_quality_mode
     end
 
     # The list of users currently in this channel. For a voice channel, it will return all the members currently
@@ -880,57 +873,6 @@ module Discordrb
       API::Channel.start_typing(@bot.token, @id)
     end
 
-    # Creates a Group channel
-    # @param user_ids [Array<Integer>] Array of user IDs to add to the new group channel (Excluding
-    #   the recipient of the PM channel).
-    # @return [Channel] the created channel.
-    def create_group(user_ids)
-      raise 'Attempted to create group channel on a non-pm channel!' unless pm?
-
-      response = API::Channel.create_group(@bot.token, @id, user_ids.shift)
-      channel = Channel.new(JSON.parse(response), @bot)
-      channel.add_group_users(user_ids)
-    end
-
-    # Adds a user to a group channel.
-    # @param user_ids [Array<String, Integer>, String, Integer] User ID or array of user IDs to add to the group channel.
-    # @return [Channel] the group channel.
-    def add_group_users(user_ids)
-      raise 'Attempted to add a user to a non-group channel!' unless group?
-
-      user_ids = [user_ids] unless user_ids.is_a? Array
-      user_ids.each do |user_id|
-        API::Channel.add_group_user(@bot.token, @id, user_id.resolve_id)
-      end
-      self
-    end
-
-    alias_method :add_group_user, :add_group_users
-
-    # Removes a user from a group channel.
-    # @param user_ids [Array<String, Integer>, String, Integer] User ID or array of user IDs to remove from the group channel.
-    # @return [Channel] the group channel.
-    def remove_group_users(user_ids)
-      raise 'Attempted to remove a user from a non-group channel!' unless group?
-
-      user_ids = [user_ids] unless user_ids.is_a? Array
-      user_ids.each do |user_id|
-        API::Channel.remove_group_user(@bot.token, @id, user_id.resolve_id)
-      end
-      self
-    end
-
-    alias_method :remove_group_user, :remove_group_users
-
-    # Leaves the group.
-    def leave_group
-      raise 'Attempted to leave a non-group channel!' unless group?
-
-      API::Channel.leave_group(@bot.token, @id)
-    end
-
-    alias_method :leave, :leave_group
-
     # Creates a webhook in this channel
     # @param name [String] the default name of this webhook.
     # @param avatar [String] the default avatar URL to give this webhook.
@@ -939,7 +881,6 @@ module Discordrb
     # @return [Webhook] the created webhook.
     def create_webhook(name, avatar = nil, reason = nil)
       raise ArgumentError, 'Tried to create a webhook in a non-server channel' unless server
-      raise ArgumentError, 'Tried to create a webhook in a non-text channel' unless text?
 
       response = API::Channel.create_webhook(@bot.token, @id, name, avatar, reason)
       Webhook.new(JSON.parse(response), @bot)
@@ -1003,7 +944,7 @@ module Discordrb
                API::Channel.start_thread_without_message(@bot.token, @id, name, auto_archive_duration, type)
              end
 
-      Channel.new(JSON.parse(data), @bot, @server)
+      @bot.ensure_channel(JSON.parse(data))
     end
 
     # Start a thread in a forum or media channel.
@@ -1043,6 +984,88 @@ module Discordrb
       Message.new(response['message'].merge!('channel_id' => response['id'], 'thread' => response), @bot)
     end
 
+    # Set whether this thread is archived.
+    # @param archived [true, false] Whether or not this thread should be archived.
+    def archived=(archived)
+      update_channel_data(archived: archived)
+    end
+
+    # Set the auto archive duration for this thread.
+    # @param duration [60, 1440, 4320, 10080] How long before this thread is automatically archived.
+    def auto_archive_duration=(duration)
+      update_channel_data(auto_archive_duration: duration)
+    end
+
+    # Set whether this thread is locked.
+    # @param locked [true, false] Whether or not this thread should be locked.
+    def locked=(locked)
+      update_channel_data(locked: locked)
+    end
+
+    # Set whether this thread is invitable.
+    # @param invitable [true, false] whether non-moderators can add other non-moderators to this private thread.
+    def invitable=(invitable)
+      update_channel_data(invitable: invitable)
+    end
+
+    # Set the flags for this thread.
+    # @param flags [Integer, nil] The new flags to set on this thread.
+    def flags=(flags)
+      update_channel_data(flags: flags || 0)
+    end
+
+    # Set the region of this voice or stage channel.
+    # @param region [String, VoiceRegion, nil] The new voice region ID of this channel.
+    def voice_region=(region)
+      update_channel_data(rtc_region: region&.to_s)
+    end
+
+    # Set the video quality mode of this voice or stage channel.
+    # @param mode [Integer, nil] The new video quality mode of this channel.
+    def video_quality_mode=(mode)
+      update_channel_data(video_quality_mode: mode)
+    end
+
+    # Set the default client-side duration used to hide threads for this channel.
+    # @param duration [Integer, nil] the new default duration used to hide threads for this channel.
+    def default_auto_archive_duration=(duration)
+      update_channel_data(default_auto_archive_duration: duration)
+    end
+
+    # Set the default sort order of this fourm or media channel.
+    # @param order [Integer, nil] The new default sort order for threads in this channel.
+    def default_sort_order=(order)
+      update_channel_data(default_sort_order: order)
+    end
+
+    # Set the default forum layout of this fourm or media channel.
+    # @param layout [Integer, nil] The new default layout for threads in this channel.
+    def default_forum_layout=(layout)
+      update_channel_data(default_forum_layout: layout || 0)
+    end
+
+    # Set the initial slowmode rate for newly created threads in this channel.
+    # @param rate_limit [Integer, nil] The new default slowmode rate for threads created in this channel.
+    def default_thread_rate_limit_per_user=(rate_limit)
+      update_channel_data(default_thread_rate_limit_per_user: rate_limit || 0)
+    end
+
+    # Set the type of this channel. You can only convert between a news channel and a text channel.
+    # @param type [Integer, String, Symbol] The new type of this channel. Must be `:news` (5), or `:text` (0).
+    def type=(type)
+      type = type.respond_to?(:to_sym) ? TYPES[type.to_sym] : type
+
+      if text? && type != TYPES[:news]
+        raise ArgumentError, 'Can only convert text channels to news channels'
+      elsif news? && type != TYPES[:text]
+        raise ArgumentError, 'Can only convert news channels to text channels'
+      elsif !text? || !news?
+        raise ArgumentError, 'Can only convert between text and news channels'
+      end
+
+      update_channel_data(type: type)
+    end
+
     # @!group Threads
 
     # Join this thread.
@@ -1078,30 +1101,6 @@ module Discordrb
       "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} server=#{@server || @server_id}>"
     end
 
-    # Adds a recipient to a group channel.
-    # @param recipient [Recipient] the recipient to add to the group
-    # @raise [ArgumentError] if tried to add a non-recipient
-    # @note For internal use only
-    # @!visibility private
-    def add_recipient(recipient)
-      raise 'Tried to add recipient to a non-group channel' unless group?
-      raise ArgumentError, 'Tried to add a non-recipient to a group' unless recipient.is_a?(Recipient)
-
-      @recipients << recipient
-    end
-
-    # Removes a recipient from a group channel.
-    # @param recipient [Recipient] the recipient to remove from the group
-    # @raise [ArgumentError] if tried to remove a non-recipient
-    # @note For internal use only
-    # @!visibility private
-    def remove_recipient(recipient)
-      raise 'Tried to remove recipient from a non-group channel' unless group?
-      raise ArgumentError, 'Tried to remove a non-recipient from a group' unless recipient.is_a?(Recipient)
-
-      @recipients.delete(recipient)
-    end
-
     # Set the last pin timestamp of a channel.
     # @param time [String, nil] the time of the last pinned message in the channel
     # @note For internal use only
@@ -1123,16 +1122,40 @@ module Discordrb
     # @!visibility private
     def update_data(new_data = nil)
       new_data ||= JSON.parse(API::Channel.resolve(@bot.token, @id))
-      @name = new_data[:name] || new_data['name'] || @name
-      @topic = new_data[:topic] || new_data['topic'] || @topic
-      @position = new_data[:position] || new_data['position'] || @position
-      @bitrate = new_data[:bitrate] || new_data['bitrate'] || @bitrate
-      @user_limit = new_data[:user_limit] || new_data['user_limit'] || @user_limit
-      new_nsfw = new_data.key?(:nsfw) ? new_data[:nsfw] : new_data['nsfw']
-      @nsfw = new_nsfw.nil? ? @nsfw : new_nsfw
-      @parent_id = new_data[:parent_id] || new_data['parent_id'] || @parent_id
-      process_permission_overwrites(new_data[:permission_overwrites] || new_data['permission_overwrites'])
-      @rate_limit_per_user = new_data[:rate_limit_per_user] || new_data['rate_limit_per_user'] || @rate_limit_per_user
+      @type = new_data['type'] || 0
+      @topic = new_data['topic']
+      @bitrate = new_data['bitrate']
+      @name = new_data['name'] || @name
+      @user_limit = new_data['user_limit']
+
+      @position = new_data['position']
+      @parent_id = new_data['parent_id']&.to_i
+      @nsfw = new_data['nsfw'] || false
+      @rate_limit_per_user = new_data['rate_limit_per_user'] || 0
+      @message_count = new_data['message_count']
+      @member_count = new_data['member_count']
+
+      @total_message_sent = new_data['total_message_sent'] || 0
+      @flags = new_data['flags'] || 0
+      @voice_region = new_data['rtc_region']
+      @video_quality_mode = new_data['video_quality_mode']
+      @last_message_id = new_data['last_message_id']&.to_i
+
+      @default_auto_archive_duration = new_data['default_auto_archive_duration']
+      @default_sort_order = new_data['default_sort_order']
+      @default_forum_layout = new_data['default_forum_layout']
+      @default_thread_rate_limit_per_user = new_data['default_thread_rate_limit_per_user']
+
+      if (metadata = new_data['thread_metadata'])
+        @archived = metadata['archived']
+        @auto_archive_duration = metadata['auto_archive_duration']
+        @archive_timestamp = Time.iso8601(metadata['archive_timestamp'])
+        @locked = metadata['locked']
+        @invitable = metadata['invitable']
+      end
+
+      process_last_pin_timestamp(new_data['last_pin_timestamp'])
+      process_permission_overwrites(new_data['permission_overwrites'])
     end
 
     # @return [String] a URL that a user can use to navigate to this channel in the client
@@ -1167,21 +1190,9 @@ module Discordrb
       ids.size
     end
 
+    # @!visibility private
     def update_channel_data(new_data)
-      new_nsfw = new_data[:nsfw].is_a?(TrueClass) || new_data[:nsfw].is_a?(FalseClass) ? new_data[:nsfw] : @nsfw
-      # send permission_overwrite only when explicitly set
-      overwrites = new_data[:permission_overwrites] ? new_data[:permission_overwrites].map(&:to_hash) : nil
-      response = JSON.parse(API::Channel.update(@bot.token, @id,
-                                                new_data[:name] || @name,
-                                                new_data[:topic] || @topic,
-                                                new_data[:position] || @position,
-                                                new_data[:bitrate] || @bitrate,
-                                                new_data[:user_limit] || @user_limit,
-                                                new_nsfw,
-                                                overwrites,
-                                                new_data[:parent_id] || @parent_id,
-                                                new_data[:rate_limit_per_user] || @rate_limit_per_user))
-      update_data(response)
+      update_data(JSON.parse(API::Channel.update!(@bot.token, @id, **new_data)))
     end
 
     def process_permission_overwrites(overwrites)
