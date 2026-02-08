@@ -790,6 +790,99 @@ module Discordrb
       paginator.to_a
     end
 
+    # Check if this channel is a thread only channel.
+    # @return [true, false] whether or not only threads can be created in this channel.
+    def thread_only?
+      forum? || media?
+    end
+
+    # Get a tag in this forum or media channel.
+    # @param id [String, Integer] The ID of the tag to find.
+    # @return [ChannelTag, nil] the tag that was found or `nil` if it couldn't be found.
+    def tag(id)
+      id = id.resolve_id
+      @available_tags.find { |tag| tag == id }
+    end
+
+    # Check if a specific tag has been applied to this thread.
+    # @param id [String, Integer, ChannelTag] The tag you want to check.
+    # @return [true, false] whether or not the thread has the tag applied.
+    def tag?(id)
+      @applied_tags.any?(id&.resolve_id)
+    end
+
+    # Get the tags for this channel. If this channel is a thread channel,
+    #   then the tags that have been applied to the thread will be returned,
+    #   and if the channel is a forum or media channel, then the tags that can
+    #   be applied onto threads created in this channel will be returned instead.
+    # @return [Array<ChannelTag>] the available or set channel tags for this channel.
+    def tags
+      return @available_tags if thread_only? || !thread?
+
+      @applied_tags.filter_map { |tag_id| parent&.tag(tag_id) }
+    end
+
+    # Create a tag in this forum or media channel.
+    # @param name [String] The 1-20 character name of the tag to create.
+    # @param moderated [true, false] Whether or not the tag should be moderated.
+    # @param emoji [Emoji, Integer, String, nil] An optional emoji to set for the tag.
+    # @param reason [String, nil] The reason to show in the audit log for creating the tag.
+    def create_tag(name:, moderated:, emoji: nil, reason: nil)
+      update_tags({ name:, moderated:, **Emoji.build_emoji_hash(emoji) }, reason)
+    end
+
+    # Add a tag to this thread channel.
+    # @param tags [Array, Integer, String, ChannelTag] the tags to add to the thread.
+    def add_tag(tags, reason: nil)
+      raise 'Cannot add tags to this channel' unless parent&.thread_only?
+
+      tags = Array(tags).map(&:resolve_id)
+
+      update_channel_data(applied_tags: @applied_tags + tags, reason: reason)
+    end
+
+    alias_method :add_tags, :add_tag
+
+    # Remove a tag from this thread channel.
+    # @param tags [Array, Integer, String, ChannelTag] the tags to remove from the thread.
+    def remove_tag(tags, reason: nil)
+      raise 'Cannot remove tags from this channel' unless parent&.thread_only?
+
+      tags = Array(tags).map(&:resolve_id)
+
+      update_channel_data(applied_tags: @applied_tags - tags, reason: reason)
+    end
+
+    alias_method :remove_tags, :remove_tag
+
+    # Bulk set the tags for this channel. If this channel is a forum or media channel,
+    #   then this method will overwrite all of the available tags in the channel with the
+    #   argument given to the method. If this channel is a thread channel, then this method
+    #   will overwrite the applied tags for this thread.
+    # @param tags [Array<Hash, Integer, String, #resolve_id>]
+    def tags=(tags)
+      if thread_only?
+        update_channel_data(available_tags: tags.map(&:to_h))
+      elsif parent&.thread_only?
+        update_channel_data(applied_tags: tags.map(&:resolve_id))
+      else
+        raise 'Cannot modify the tags for this channel'
+      end
+    end
+
+    # Get the default reaction emoji of this forum or media channel.
+    # @return [Emoji, nil] The default reaction emoji of this forum or media channel.
+    def default_reaction_emoji
+      @default_reaction_emoji.is_a?(Integer) ? server.emojis[@default_reaction_emoji] : @default_reaction_emoji
+    end
+
+    # Set the default reaction emoji for this forum or media channel.
+    # @param emoji [Emoji, Reaction, Integer, String, nil] the new default
+    #   reaction emoji for this forum or media channel.
+    def default_reaction_emoji=(emoji)
+      update_channel_data(default_reaction_emoji: Emoji.build_emoji_hash(emoji))
+    end
+
     # Delete the last N messages on this channel.
     # @param amount [Integer] The amount of message history to consider for pruning. Must be a value between 2 and 100 (Discord limitation)
     # @param strict [true, false] Whether an error should be raised when a message is reached that is too old to be bulk
@@ -1118,6 +1211,17 @@ module Discordrb
       @last_message_id = id
     end
 
+    # @!visibility private
+    def update_tags(tag, reason)
+      raise 'Cannot modify the tags for this channel' unless thread_only?
+
+      tags = @available_tags.tap { |old_tags| old_tags.delete(tag[:id]) }
+
+      (tags << tag) unless tag[:d]
+
+      update_channel_data(available_tags: tags.map(&:to_h), reason: reason)
+    end
+
     # Updates the cached data with new data
     # @note For internal use only
     # @!visibility private
@@ -1184,6 +1288,7 @@ module Discordrb
       update_data(response)
     end
 
+    # @!visibility private
     def process_permission_overwrites(overwrites)
       # Populate permission overwrites
       @permission_overwrites = {}
@@ -1193,6 +1298,28 @@ module Discordrb
         id = element['id'].to_i
         @permission_overwrites[id] = Overwrite.from_hash(element)
       end
+    end
+
+    # @!visibility private
+    def process_available_tags(tags)
+      # Populate available tags
+      @available_tags = []
+      return unless tags
+
+      tags.each do |element|
+        @available_tags << ChannelTag.new(element, self, @bot)
+      end
+    end
+
+    # @!visibility private
+    def process_default_reaction_emoji(emoji)
+      return @default_reaction_emoji = nil unless emoji
+
+      @default_reaction_emoji = if (name = emoji['emoji_name'])
+                                  Emoji.new({ 'name' => name }, @bot)
+                                else
+                                  emoji['emoji_id']&.to_i
+                                end
     end
   end
 end
