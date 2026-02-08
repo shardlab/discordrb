@@ -21,6 +21,7 @@ require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
 require 'discordrb/events/integrations'
+require 'discordrb/events/stage_instances'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -1226,6 +1227,17 @@ module Discordrb
       server.update_emoji_data(data)
     end
 
+    # Internal handler for STAGE_INSTANCE_CREATE and STAGE_INSTANCE_UPDATE
+    def update_stage_instance(data)
+      server = @servers[data['guild_id'].to_i]
+
+      if (instance = server&.stage_instance(data['id'].to_i))
+        instance&.update_data(data)
+      else
+        server&.cache_stage_instance(StageInstance.new(data, self))
+      end
+    end
+
     # Internal handler for MESSAGE_CREATE
     def create_message(data); end
 
@@ -1772,6 +1784,21 @@ module Discordrb
         end
 
         event = ThreadMembersUpdateEvent.new(data, self)
+        raise_event(event)
+      when :STAGE_INSTANCE_CREATE
+        update_stage_instance(data)
+
+        event = StageInstanceCreateEvent.new(data, self)
+        raise_event(event)
+      when :STAGE_INSTANCE_UPDATE
+        update_stage_instance(data)
+
+        event = StageInstanceUpdateEvent.new(data, self)
+        raise_event(event)
+      when :STAGE_INSTANCE_DELETE
+        @servers[data['guild_id'].to_i]&.delete_stage_instance(data['id'].to_i)
+
+        event = StageInstanceDeleteEvent.new(data, self)
         raise_event(event)
       else
         # another event that we don't support yet
