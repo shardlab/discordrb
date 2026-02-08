@@ -388,6 +388,164 @@ module Discordrb
 
     alias_method :jump_link, :link
 
+    # Search the messages that have been sent in this server.
+    # @example Search for 200 messages from a user that contain an attachment.
+    #  options = {
+    #    limit: 200,
+    #    has: :file,
+    #    authors: 171764626755813376
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for all of the messages in a channel that mentions someone.
+    #  options = {
+    #    limit: nil,
+    #    mentions: 171764626755813376,
+    #    channels: 381891448884428801
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for 105 messages that contain specific embed types, sorted in ascending order.
+    #  options = {
+    #    limit: 105,
+    #    embed_types: %i[article image],
+    #    sort_order: :ascending
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for 30 messages sent between two dates that contain the word “time” and contains an @everyone ping.
+    #  options = {
+    #    limit: 30,
+    #    content: 'time',
+    #    mentions_everyone: true,
+    #    after: Time.parse("December 16th, 2020"),
+    #    before: Time.parse("December 25th, 2020")
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @param limit [Integer, nil] The maximum number of messages to return, or `nil` to fetch all of the messages that match the search query.
+    # @param offset [Integer, nil] The number of messages between 0-9975 to offset the search query by.
+    # @param before [Time, #resolve_id, nil] Get messages sent before this timestamp.
+    # @param after [Time, #resolve_id, nil] Get messages sent after this timestamp.
+    # @param slop [Integer, nil] The fuzzy search match value to use when matching content, between 1-100.
+    # @param content [String, #to_s, nil] Get messages with matching message content.
+    # @param channels [Array<#resolve_id>, #resolve_id, nil] Get messages sent in these channels.
+    # @param author_types [Array<String, Symbol>, String, Symbol, nil] Get messages that were created by these author types.
+    # @param authors [Array<#resolve_id>, #resolve_id, nil] Get messages that were created by these authors.
+    # @param mentions [Array<#resolve_id>, #resolve_id, nil] Get messages that mention these users or members.
+    # @param mentions_everyone [true, false, nil] Get messages that mention @everyone.
+    # @param pinned [true, false, nil] Get messages that are pinned.
+    # @param has [Array<String, Symbol>, String, Symbol, nil] Get messages that contain specific fields, e.g. `file`, `poll`, `sound`, etc.
+    # @param embed_types [Array<String, Symbol>, String, Symbol, nil] Get messages that contain matching embed types.
+    # @param embed_providers [Array<String, Symbol>, String, Symbol, nil] Get messages that contain embeds from specific providers.
+    # @param link_hosts [Array<String, Symbol>, String, Symbol, nil] Get messages that contain matching link hostnames, e.g. `discord.com`.
+    # @param file_names [Array<String, Symbol, Attachment>, String, Symbol, Attachment, nil] Get messages that contain matching attachment filenames.
+    # @param file_extensions [Array<String, Symbol>, String, Symbol, nil] Get messages that contain matching attachment file extensions, e.g. `rb`, `mp3`, etc.
+    # @param sort_by [Symbol, String, nil] Whether to sort the returned messages by their `:creation_time`, or `:relevance` to the search query.
+    # @param sort_order [Symbol, string, nil] Whether to order the returned messages in `:descending`, or `:ascending` order.
+    # @param include_nsfw [true, false, nil] Whether or not to include messages that have been sent in NSFW channels.
+    # @param during [Time, #resolve_id, nil] Get messages sent on this specific day. Overrides the `before` and `after` parameters if passed.
+    # @return [SearchedMessages] the results of the search query.
+    def search_messages(
+      limit: 25, offset: nil, before: nil, after: nil, slop: nil, content: nil, channels: nil,
+      author_types: nil, authors: nil, mentions: nil, mentions_everyone: nil, pinned: nil,
+      has: nil, embed_types: nil, embed_providers: nil, link_hosts: nil, file_names: nil,
+      file_extensions: nil, sort_by: nil, sort_order: :descending, include_nsfw: true,
+      during: nil
+    )
+      sort_order = case sort_order&.to_sym
+                   when nil, :desc, :descending, :newest_first
+                     :desc
+                   when :asc, :ascending, :oldest_first
+                     :asc
+                   else
+                     raise ArgumentError, "Invalid value for the 'sort_order' parameter"
+                   end
+
+      sort_by = case sort_by&.to_sym
+                when nil, :timestamp, :creation_time
+                  :timestamp
+                when :relevance, :match_score
+                  :relevance
+                else
+                  raise ArgumentError, "Invalid value for the 'sort_by' parameter"
+                end
+
+      to_snowflake = lambda do |id, upper_bound:|
+        id = id.is_a?(Time) ? IDObject.synthesize(id.utc) : id&.resolve_id
+        id && upper_bound ? id + ((2**22) - 1) : id
+      end
+
+      if during
+        time = if during.respond_to?(:resolve_id)
+                 IDObject.timestamp(during.resolve_id)
+               else
+                 during
+               end
+
+        after = Time.new(time.year, time.month, time.day)
+        before = (after + 86_400)
+      end
+
+      options = {
+        limit: limit && limit <= 25 ? limit : 25,
+        max_id: to_snowflake.call(before, upper_bound: false),
+        min_id: to_snowflake.call(after, upper_bound: true),
+        offset: offset&.clamp(0, 9975) || 0,
+        slop: slop&.clamp(1, 100),
+        content: content&.to_s,
+        channel_id: channels ? Array(channels).map(&:resolve_id) : channels,
+        author_type: author_types ? Array(author_types) : author_types,
+        author_id: authors ? Array(authors).map(&:resolve_id) : authors,
+        mentions: mentions ? Array(mentions).map(&:resolve_id) : mentions,
+        mention_everyone: mentions_everyone,
+        pinned: pinned,
+        has: has ? Array(has) : has,
+        embed_type: embed_types ? Array(embed_types) : embed_types,
+        embed_provider: embed_providers ? Array(embed_providers) : embed_providers,
+        link_hostname: link_hosts ? Array(link_hosts) : link_hosts,
+        attachment_filename: (Array(file_names).map { |file| file.is_a?(Attachment) ? file.filename : file } if file_names),
+        attachment_extension: file_extensions ? Array(file_extensions) : file_extensions,
+        sort_by: sort_by,
+        sort_order: sort_order,
+        include_nsfw: include_nsfw
+      }.compact
+
+      # Only store the total message count from the first network request.
+      total = nil
+
+      get_messages = lambda do |query|
+        data = JSON.parse(API::Server.search_messages(@bot.token, @id, **options, **query.compact))
+        total ||= data['total_results']
+
+        data['threads']&.each do |thread|
+          thread['member'] = data['members']&.find { |member| thread['id'] == member['id'] }
+
+          @bot.ensure_channel(thread, self)
+        end
+
+        data['messages'].collect { |nested_messages| Message.new(nested_messages[0], @bot) }
+      end
+
+      # Search can return less than the actual amount of results, so the only stopping
+      # point should be when there are no more results, or when the limit is exceeded.
+      paginator = Paginator.new(limit, :down) do |page|
+        if sort_by == :relevance
+          if (paginator.count + options[:offset]) > 9975
+            []
+          else
+            get_messages.call(offset: paginator.count + options[:offset])
+          end
+        elsif sort_order == :desc
+          get_messages.call(max_id: page&.last&.id, offset: page ? 0 : nil)
+        else
+          get_messages.call(min_id: page&.last&.id, offset: page ? 0 : nil)
+        end
+      end
+
+      SearchedMessages.new(paginator.to_a, total, @bot)
+    end
+
     # Adds a role to the role cache
     # @note For internal use only
     # @!visibility private
@@ -1089,6 +1247,42 @@ module Discordrb
       @reason = reason
       @banned_users = data['banned_users']&.map(&:resolve_id) || []
       @failed_users = data['failed_users']&.map(&:resolve_id) || []
+    end
+  end
+
+  # A set of messages collected from a search query.
+  class SearchedMessages
+    include Enumerable
+
+    # @return [Array<Message>] the messages that matched the search query.
+    attr_reader :messages
+
+    # @return [Integer] the total number of messages that matched the search query.
+    attr_reader :total_results
+
+    # @!visibility private
+    def initialize(messages, total, bot)
+      @bot = bot
+      @messages = messages
+      @total_results = total
+    end
+
+    # Get a single message that matched the search query by its index.
+    # @param index [Integer] The index of the message to get from the array.
+    # @return [Message] the message that was found at the specified index.
+    def [](index)
+      @messages[index]
+    end
+
+    # Iterate over each message that matched the search query.
+    # @return [Array<Message>, Enumerable] The array that was iterated over.
+    def each(...)
+      @messages.each(...)
+    end
+
+    # @!visibility private
+    def inspect
+      "<SearchedMessages messages=[#{'...' if @messages.any?}] total_results=#{@total_results}>"
     end
   end
 end

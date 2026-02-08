@@ -7,6 +7,9 @@ module Discordrb
   class Paginator
     include Enumerable
 
+    # @return [Integer] the total amount of elements that have been fetched so far.
+    attr_reader :count
+
     # Creates a new {Paginator}
     # @param limit [Integer] the maximum number of items to request before stopping
     # @param direction [:up, :down] the order in which results are returned in

@@ -221,6 +221,20 @@ module Discordrb::API::Server
     )
   end
 
+  # Query and filter the messages that have been sent in a server.
+  # https://discord.com/developers/docs/resources/message#search-guild-messages
+  def search_messages(token, server_id, limit: 25, offset: nil, max_id: nil, min_id: nil, slop: nil, content: nil, channel_id: nil, author_type: nil, author_id: nil, mentions: nil, mention_everyone: nil, pinned: nil, has: nil, embed_type: nil, embed_provider: nil, link_hostname: nil, attachment_filename: nil, attachment_extension: nil, sort_by: nil, sort_order: nil, include_nsfw: nil)
+    query = URI.encode_www_form({ limit:, offset:, max_id:, min_id:, slop:, content:, channel_id:, author_type:, author_id:, mentions:, mention_everyone:, pinned:, has:, embed_type:, embed_provider:, link_hostname:, attachment_filename:, attachment_extension:, sort_by:, sort_order:, include_nsfw: }.compact)
+
+    Discordrb::API.request(
+      :guilds_gid_messages_search,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/messages/search?#{query}",
+      Authorization: token
+    )
+  end
+
   # Get server roles
   # https://discord.com/developers/docs/resources/guild#get-guild-roles
   def roles(token, server_id)
