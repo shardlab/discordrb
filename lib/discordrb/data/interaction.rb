@@ -29,6 +29,21 @@ module Discordrb
       modal: 9
     }.freeze
 
+    # Interaction context types.
+    # @see https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types
+    CONTEXTS = {
+      server: 0,
+      bot_dm: 1,
+      private_channel: 2
+    }.freeze
+
+    # Application integration types.
+    # @see https://discord.com/developers/docs/resources/application#application-object-application-integration-types
+    INTEGRATION_TYPES = {
+      server: 0,
+      user: 1
+    }.freeze
+
     # @return [User, Member] The user that initiated the interaction.
     attr_reader :user
 
@@ -422,6 +437,12 @@ module Discordrb
     # @return [true, false]
     attr_reader :nsfw
 
+    # @return [Array<Integer>]
+    attr_reader :contexts
+
+    # @return [Array<Integer>]
+    attr_reader :integration_types
+
     # @!visibility private
     def initialize(data, bot, server_id = nil)
       @bot = bot
@@ -434,6 +455,8 @@ module Discordrb
       @default_permission = data['default_permission']
       @options = data['options']
       @nsfw = data['nsfw'] || false
+      @contexts = data['contexts'] || []
+      @integration_types = data['integration_types'] || []
     end
 
     # @param subcommand [String, nil] The subcommand to mention.
