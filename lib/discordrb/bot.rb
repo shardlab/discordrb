@@ -239,15 +239,21 @@ module Discordrb
     alias_method :bot_user, :profile
 
     # The bot's OAuth application.
-    # @return [Application, nil] The bot's application info. Returns `nil` if bot is not a bot account.
+    # @return [Application] The bot's application info.
     def bot_application
-      return unless @type == :bot
-
       response = API.oauth_application(token)
       Application.new(JSON.parse(response), self)
     end
 
     alias_method :bot_app, :bot_application
+    alias_method :application, :bot_application
+
+    # Get the role connection metadata records associated with this application.
+    # @return [Array<RoleConnectionMetadata>] the role connection metadata records associated with this application.
+    def role_connection_metadata_records
+      response = API::Application.get_application_role_connection_metadata_records(@bot.token, @id)
+      JSON.parse(response).map { |role_connection| RoleConnectionMetadata.new(role_connection, @bot) }
+    end
 
     # The Discord API token received when logging in. Useful to explicitly call
     # {API} methods.
