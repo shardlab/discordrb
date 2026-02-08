@@ -560,8 +560,8 @@ module Discordrb
 
       yield(builder, view) if block_given?
 
-      flags = Array(flags).map { |flag| Discordrb::Message::FLAGS[flag] || flag }.reduce(&:|)
-      flags |= (1 << 15) if has_components
+      flags = Array(flags).map { |flag| Discordrb::Message::FLAGS[flag] || flag }.reduce(0, &:|)
+      flags |= Discordrb::Message::FLAGS[:uikit_components] if has_components
       builder = builder.to_json_hash
 
       if timeout

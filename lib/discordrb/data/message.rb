@@ -381,12 +381,17 @@ module Discordrb
       @reactions.select(&:me)
     end
 
-    # Removes embeds from the message
+    # Set the flags for the message.
+    # @param flags [Integer, Symbol, Array<Symbol, Integer>] The new message flags to set.
+    # @return [Message] the resulting message.
+    def flags=(flags)
+      edit!(flags: flags)
+    end
+
+    # Removes embeds from the message.
     # @return [Message] the resulting message.
     def suppress_embeds
-      flags = @flags | (1 << 2)
-      response = API::Channel.edit_message(@bot.token, @channel.id, @id, :undef, :undef, :undef, :undef, flags)
-      Message.new(JSON.parse(response), @bot)
+      edit!(flags: @flags | FLAGS[:suppress_embeds])
     end
 
     # Check if this message mentions a specific user or role.
@@ -565,6 +570,76 @@ module Discordrb
       reference = to_reference(type: :forward, must_exist: must_exist)
 
       @bot.channel(channel).send_message!(reference: reference, timeout: timeout, flags: flags, nonce: nonce, enforce_nonce: enforce_nonce)
+    end
+
+    # Edit the properties of this message. Only the arguments you provide will be explicitly updated.
+    # @example This adds a file to a message while removing any files that were previously set.
+    #   message = channel.load_message(1430561284067168368)
+    #
+    #   message.edit!(attachments: [File.open('role.rb', 'rb')])
+    # @example On the other hand, this adds a file to a message while retaining any previously set files.
+    #   message = channel.load_message(1430561284067168368)
+    #
+    #   message.edit!(attachments: message.attachments + [File.open('role.rb', 'rb')])
+    # @param content [String] The new content of the message. Should not be longer than 2000 characters.
+    # @param embeds [Array<Hash, Webhooks::Embed>] The new embeds that should be attached to the message.
+    # @param flags [Integer, Symbol, Array<Symbol, Integer>] The new message flags that should be applied.
+    # @param components [View, Array<#to_h>] The new message components that should be set for the message.
+    # @param has_components [true, false] Whether to set the `:uikit_components` flag when updating the message.
+    # @param attachments [Array<File, Hash, Integer, String, Attachment>] The new attachments to set for the message. This must
+    #   include previously set attachments if you want to retain them.
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the builder overwrite method arguments.
+    # @yieldparam view [Webhooks::View] An optional component builder. Arguments passed to the builder overwrite method arguments.
+    # @return [Message] the updated message.
+    def edit!(content: :undef, embeds: :undef, flags: :undef, components: :undef, attachments: :undef, has_components: :undef)
+      builder = Discordrb::Webhooks::Builder.new
+      view = Discordrb::Webhooks::View.new
+
+      builder.content = content
+      embeds&.each { |embed| builder << embed } unless embeds == :undef
+      yield(builder, view) if block_given?
+
+      flags = Array(flags).map { |flag| FLAGS[flag] || flag }.reduce(0, &:|) if flags != :undef
+      components = components&.to_a unless components == :undef
+      builder = builder.to_json_hash
+
+      if has_components == true && flags != :undef
+        flags |= FLAGS[:uikit_components]
+      elsif has_components == true && flags == :undef
+        flags = (@flags | FLAGS[:uikit_components])
+      end
+
+      builder = {
+        flags: flags,
+        content: builder[:content],
+        components: block_given? && view.to_a.any? ? view.to_a : components,
+        embeds: block_given? && builder[:embeds]&.any? ? builder[:embeds] : embeds
+      }
+
+      if flags != :undef && flags.anybits?(FLAGS[:uikit_components])
+        builder[:poll] = nil
+        builder[:embeds] = []
+        builder[:content] = nil
+      end
+
+      files = {}
+
+      if attachments.is_a?(Array) && attachments.any?
+        attachments.each do |attachment|
+          case attachment
+          when String, Integer, Attachment
+            (files[:attachments] ||= []) << { id: attachment.resolve_id }
+          when Hash
+            (files[:attachments] ||= []) << attachment
+          else
+            (files[:files] ||= []) << attachment
+          end
+        end
+      else
+        files[:attachments] = attachments
+      end
+
+      Message.new(JSON.parse(API::Channel.update_message(@bot.token, @channel.id, @id, **builder, **files)), @bot)
     end
   end
 end

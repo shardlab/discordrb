@@ -129,6 +129,31 @@ module Discordrb::API::Channel
     )
   end
 
+  # Update the properties of a message.
+  # https://discord.com/developers/docs/resources/message#edit-message
+  def update_message(token, channel_id, message_id, content: :undef, embeds: :undef, flags: :undef, components: :undef, attachments: :undef, files: :undef, poll: :undef)
+    body = { content:, embeds:, flags:, components:, attachments:, poll: }.reject { |_, value| value == :undef }
+
+    body = if files == :undef
+             body.to_json
+           else
+             indices = files.each_index.map { |id| "files[#{id}]" }
+             { **indices.zip(files).to_h, payload_json: body.to_json }
+           end
+
+    headers = { Authorization: token }
+    headers[:content_type] = :json if files == :undef
+
+    Discordrb::API.request(
+      :channels_cid_messages_mid,
+      channel_id,
+      :patch,
+      "https://discord.com/api/v10/channels/#{channel_id}/messages/#{message_id}",
+      body,
+      headers
+    )
+  end
+
   # Delete a message
   # https://discord.com/developers/docs/resources/channel#delete-message
   def delete_message(token, channel_id, message_id, reason = nil)
