@@ -523,7 +523,7 @@ module Discordrb::Events
       return false unless event.is_a?(AutocompleteEvent)
 
       [
-        matches_all(@attributes[:name], event.focused) { |a, e| a&.to_s == e },
+        matches_all(@attributes[:name], event.focused) { |a, e| a == e },
         matches_all(@attributes[:command_id], event.command_id) { |a, e| a&.to_i == e },
         matches_all(@attributes[:subcommand], event.subcommand) { |a, e| a&.to_sym == e },
         matches_all(@attributes[:command_name], event.command_name) { |a, e| a&.to_sym == e },
