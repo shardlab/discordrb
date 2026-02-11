@@ -792,12 +792,13 @@ module Discordrb
 
     # Get all application commands.
     # @param server_id [String, Integer, nil] The ID of the server to get the commands from. Global if `nil`.
+    # @param with_localizations [true, false, nil] Whether the full localizations of commands should be included in the result. `nil` requests the Discord API default.
     # @return [Array<ApplicationCommand>]
-    def get_application_commands(server_id: nil)
+    def get_application_commands(server_id: nil, with_localizations: nil)
       resp = if server_id
-               API::Application.get_guild_commands(@token, profile.id, server_id)
+               API::Application.get_guild_commands(@token, profile.id, server_id, with_localizations: with_localizations)
              else
-               API::Application.get_global_commands(@token, profile.id)
+               API::Application.get_global_commands(@token, profile.id, with_localizations: with_localizations)
              end
 
       JSON.parse(resp).map do |command_data|
@@ -831,7 +832,7 @@ module Discordrb
     #       end
     #     end
     #   end
-    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, nsfw: false)
+    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, nsfw: false, name_localizations: nil, description_localizations: nil)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
@@ -839,9 +840,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw, name_localizations, description_localizations)
              else
-               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw, name_localizations, description_localizations)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -856,7 +857,7 @@ module Discordrb
 
     # @yieldparam [OptionBuilder]
     # @yieldparam [PermissionBuilder]
-    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, nsfw: nil)
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, nsfw: nil, name_localizations: nil, description_localizations: nil)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
@@ -865,9 +866,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw, name_localizations, description_localizations)
              else
-               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
+               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw, name_localizations, description_localizations)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 

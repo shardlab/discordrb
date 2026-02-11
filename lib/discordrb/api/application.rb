@@ -6,12 +6,12 @@ module Discordrb::API::Application
 
   # Get a list of global application commands.
   # https://discord.com/developers/docs/interactions/slash-commands#get-global-application-commands
-  def get_global_commands(token, application_id)
+  def get_global_commands(token, application_id, with_localizations: nil)
     Discordrb::API.request(
       :applications_aid_commands,
       nil,
       :get,
-      "#{Discordrb::API.api_base}/applications/#{application_id}/commands",
+      "#{Discordrb::API.api_base}/applications/#{application_id}/commands#{"?with_localizations=#{!!with_localizations}" unless with_localizations.nil?}",
       Authorization: token
     )
   end
@@ -30,13 +30,13 @@ module Discordrb::API::Application
 
   # Create a global application command.
   # https://discord.com/developers/docs/interactions/slash-commands#create-global-application-command
-  def create_global_command(token, application_id, name, description, options = [], default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = false)
+  def create_global_command(token, application_id, name, description, options = [], default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = false, name_localizations = {}, description_localizations = {})
     Discordrb::API.request(
       :applications_aid_commands,
       nil,
       :post,
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw }.to_json,
+      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw, name_localizations: name_localizations, description_localizations: description_localizations }.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -44,13 +44,13 @@ module Discordrb::API::Application
 
   # Edit a global application command.
   # https://discord.com/developers/docs/interactions/slash-commands#edit-global-application-command
-  def edit_global_command(token, application_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = nil)
+  def edit_global_command(token, application_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = nil, name_localizations = {}, description_localizations = {})
     Discordrb::API.request(
       :applications_aid_commands_cid,
       nil,
       :patch,
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands/#{command_id}",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw }.compact.to_json,
+      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw, name_localizations: name_localizations, description_localizations: description_localizations }.compact.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -84,12 +84,12 @@ module Discordrb::API::Application
 
   # Get a guild's commands for an application.
   # https://discord.com/developers/docs/interactions/slash-commands#get-guild-application-commands
-  def get_guild_commands(token, application_id, guild_id)
+  def get_guild_commands(token, application_id, guild_id, with_localizations: nil)
     Discordrb::API.request(
       :applications_aid_guilds_gid_commands,
       guild_id,
       :get,
-      "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands",
+      "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands#{"?with_localizations=#{!!with_localizations}" unless with_localizations.nil?}",
       Authorization: token
     )
   end
@@ -108,13 +108,13 @@ module Discordrb::API::Application
 
   # Create an application command for a guild.
   # https://discord.com/developers/docs/interactions/slash-commands#create-guild-application-command
-  def create_guild_command(token, application_id, guild_id, name, description, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = false)
+  def create_guild_command(token, application_id, guild_id, name, description, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = false, name_localizations = {}, description_localizations = {})
     Discordrb::API.request(
       :applications_aid_guilds_gid_commands,
       guild_id,
       :post,
       "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw }.to_json,
+      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw, name_localizations: name_localizations, description_localizations: description_localizations }.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -122,13 +122,13 @@ module Discordrb::API::Application
 
   # Edit an application command for a guild.
   # https://discord.com/developers/docs/interactions/slash-commands#edit-guild-application-command
-  def edit_guild_command(token, application_id, guild_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = nil)
+  def edit_guild_command(token, application_id, guild_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = nil, name_localizations = {}, description_localizations = {})
     Discordrb::API.request(
       :applications_aid_guilds_gid_commands_cid,
       guild_id,
       :patch,
       "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands/#{command_id}",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw }.compact.to_json,
+      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw, name_localizations: name_localizations, description_localizations: description_localizations }.compact.to_json,
       Authorization: token,
       content_type: :json
     )

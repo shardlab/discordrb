@@ -407,8 +407,14 @@ module Discordrb
     # @return [String]
     attr_reader :name
 
+    # @return [Hash, nil]
+    attr_reader :name_localizations
+
     # @return [String]
     attr_reader :description
+
+    # @return [Hash, nil]
+    attr_reader :description_localizations
 
     # @return [true, false]
     attr_reader :default_permission
@@ -430,7 +436,9 @@ module Discordrb
       @server_id = server_id&.to_i
 
       @name = data['name']
+      @name_localizations = data['name_localizations']
       @description = data['description']
+      @description_localizations = data['description_localizations']
       @default_permission = data['default_permission']
       @options = data['options']
       @nsfw = data['nsfw'] || false
@@ -457,10 +465,12 @@ module Discordrb
     # @param description [String] The description of this command.
     # @param default_permission [true, false] Whether this command is available with default permissions.
     # @param nsfw [true, false] Whether this command should be marked as age-restricted.
+    # @param name_localizations [Hash] The localized names of the command.
+    # @param description_localizations [Hash] The localized descriptions of the command.
     # @yieldparam (see Bot#edit_application_command)
     # @return (see Bot#edit_application_command)
-    def edit(name: nil, description: nil, default_permission: nil, nsfw: nil, &block)
-      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, nsfw: nsfw, &block)
+    def edit(name: nil, description: nil, default_permission: nil, nsfw: nil, name_localizations: nil, description_localizations: nil, &block)
+      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, nsfw: nsfw, name_localizations: name_localizations, description_localizations: description_localizations, &block)
     end
 
     # Delete this application command.
@@ -616,6 +626,8 @@ module Discordrb
 
       # @param name [String, Symbol] The name of the subcommand.
       # @param description [String] A description of the subcommand.
+      # @param name_localizations [Hash, nil] The localized names of the subcommand.
+      # @param description_localizations [Hash, nil] The localized descriptions of the subcommand.
       # @yieldparam [OptionBuilder]
       # @return (see #option)
       # @example
@@ -624,15 +636,17 @@ module Discordrb
       #       sub.string('message', 'What to echo back', required: true)
       #     end
       #   end
-      def subcommand(name, description)
+      def subcommand(name, description, name_localizations: nil, description_localizations: nil)
         builder = OptionBuilder.new
         yield builder if block_given?
 
-        option(TYPES[:subcommand], name, description, options: builder.to_a)
+        option(TYPES[:subcommand], name, description, options: builder.to_a, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the subcommand group.
       # @param description [String] A description of the subcommand group.
+      # @param name_localizations [Hash, nil] The localized names of the subcommand group.
+      # @param description_localizations [Hash, nil] The localized descriptions of the subcommand group.
       # @yieldparam [OptionBuilder]
       # @return (see #option)
       # @example
@@ -643,11 +657,11 @@ module Discordrb
       #       end
       #     end
       #   end
-      def subcommand_group(name, description)
+      def subcommand_group(name, description, name_localizations: nil, description_localizations: nil)
         builder = OptionBuilder.new
         yield builder
 
-        option(TYPES[:subcommand_group], name, description, options: builder.to_a)
+        option(TYPES[:subcommand_group], name, description, options: builder.to_a, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -657,10 +671,12 @@ module Discordrb
       # @param max_length [Integer] A maximum length for option value.
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
       # @param autocomplete [true, false] Whether this option can dynamically show choices.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
-      def string(name, description, required: nil, min_length: nil, max_length: nil, choices: nil, autocomplete: nil)
+      def string(name, description, required: nil, min_length: nil, max_length: nil, choices: nil, autocomplete: nil, name_localizations: nil, description_localizations: nil)
         option(TYPES[:string], name, description,
-               required: required, min_length: min_length, max_length: max_length, choices: choices, autocomplete: autocomplete)
+               required: required, min_length: min_length, max_length: max_length, choices: choices, autocomplete: autocomplete, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -670,52 +686,64 @@ module Discordrb
       # @param max_value [Integer] A maximum value for option.
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
       # @param autocomplete [true, false] Whether this option can dynamically show choices.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
-      def integer(name, description, required: nil, min_value: nil, max_value: nil, choices: nil, autocomplete: nil)
+      def integer(name, description, required: nil, min_value: nil, max_value: nil, choices: nil, autocomplete: nil, name_localizations: nil, description_localizations: nil)
         option(TYPES[:integer], name, description,
-               required: required, min_value: min_value, max_value: max_value, choices: choices, autocomplete: autocomplete)
+               required: required, min_value: min_value, max_value: max_value, choices: choices, autocomplete: autocomplete, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
-      def boolean(name, description, required: nil)
-        option(TYPES[:boolean], name, description, required: required)
+      def boolean(name, description, required: nil, name_localizations: nil, description_localizations: nil)
+        option(TYPES[:boolean], name, description, required: required, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
-      def user(name, description, required: nil)
-        option(TYPES[:user], name, description, required: required)
+      def user(name, description, required: nil, name_localizations: nil, description_localizations: nil)
+        option(TYPES[:user], name, description, required: required, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
       # @param types [Array<Symbol, Integer>] See {CHANNEL_TYPES}
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
-      def channel(name, description, required: nil, types: nil)
+      def channel(name, description, required: nil, types: nil, name_localizations: nil, description_localizations: nil)
         types = types&.collect { |type| type.is_a?(Numeric) ? type : CHANNEL_TYPES[type] }
-        option(TYPES[:channel], name, description, required: required, channel_types: types)
+        option(TYPES[:channel], name, description, required: required, channel_types: types, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
-      def role(name, description, required: nil)
-        option(TYPES[:role], name, description, required: required)
+      def role(name, description, required: nil, name_localizations: nil, description_localizations: nil)
+        option(TYPES[:role], name, description, required: required, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
-      def mentionable(name, description, required: nil)
-        option(TYPES[:mentionable], name, description, required: required)
+      def mentionable(name, description, required: nil, name_localizations: nil, description_localizations: nil)
+        option(TYPES[:mentionable], name, description, required: required, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -724,18 +752,22 @@ module Discordrb
       # @param min_value [Float] A minimum value for option.
       # @param max_value [Float] A maximum value for option.
       # @param autocomplete [true, false] Whether this option can dynamically show choices.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
-      def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil, autocomplete: nil)
+      def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil, autocomplete: nil, name_localizations: nil, description_localizations: nil)
         option(TYPES[:number], name, description,
-               required: required, min_value: min_value, max_value: max_value, choices: choices, autocomplete: autocomplete)
+               required: required, min_value: min_value, max_value: max_value, choices: choices, autocomplete: autocomplete, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return (see #option)
-      def attachment(name, description, required: nil)
-        option(TYPES[:attachment], name, description, required: required)
+      def attachment(name, description, required: nil, name_localizations: nil, description_localizations: nil)
+        option(TYPES[:attachment], name, description, required: required, name_localizations: name_localizations, description_localizations: description_localizations)
       end
 
       # @!visibility private
@@ -749,10 +781,12 @@ module Discordrb
       # @param max_length [Integer] A maximum length for string option value.
       # @param channel_types [Array<Integer>] Channel types that can be provides for channel options.
       # @param autocomplete [true, false] Whether this option can dynamically show options.
+      # @param name_localizations [Hash, nil] The localized names of the argument.
+      # @param description_localizations [Hash, nil] The localized descriptions of the argument.
       # @return Hash
       def option(type, name, description, required: nil, choices: nil, options: nil, min_value: nil, max_value: nil,
-                 min_length: nil, max_length: nil, channel_types: nil, autocomplete: nil)
-        opt = { type: type, name: name, description: description }
+                 min_length: nil, max_length: nil, channel_types: nil, autocomplete: nil, name_localizations: nil, description_localizations: nil)
+        opt = { type: type, name: name, description: description, name_localizations: name_localizations, description_localizations: description_localizations }
         choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
 
         opt.merge!({ required: required, choices: choices, options: options, min_value: min_value,
