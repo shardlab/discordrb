@@ -40,7 +40,7 @@ class Discordrb::Webhooks::Modal
     def checkbox(value:, label:, description: nil, default: nil)
       raise "Cannot add a checkbox to a #{@type}" unless @type == :checkbox_group
 
-      @options << { value: value, label: label, description: description, default: default }
+      @options << { value: value, label: label, description: description, default: default }.compact
     end
 
     # Add a radio button component to the group.
@@ -51,7 +51,7 @@ class Discordrb::Webhooks::Modal
     def radio_button(value:, label:, description: nil, default: nil)
       raise "Cannot add a radio button to a #{@type}" unless @type == :radio_group
 
-      @options << { value: value, label: label, description: description, default: default }
+      @options << { value: value, label: label, description: description, default: default }.compact
     end
 
     alias_method :button, :radio_button
