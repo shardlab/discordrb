@@ -1154,7 +1154,7 @@ module Discordrb
       if (member = server.member(data['user']['id'].to_i, false))
         member.update_data(data)
       else
-        ensure_user(data['user'])
+        ensure_user(data['user'], true)
       end
     end
 

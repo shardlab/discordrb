@@ -95,7 +95,7 @@ module Discordrb
                 data['member']['guild_id'] = @server_id
                 Discordrb::Member.new(data['member'], bot.servers[@server_id], bot)
               else
-                bot.ensure_user(data['user'])
+                bot.ensure_user(data['user'], true)
               end
       @token = data['token']
       @version = data['version']
