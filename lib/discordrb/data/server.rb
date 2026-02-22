@@ -98,6 +98,18 @@ module Discordrb
     attr_reader :boost_progress_bar
     alias_method :boost_progress_bar?, :boost_progress_bar
 
+    # @return [Time, nil] the time at when the last raid was detected on the server.
+    attr_reader :raid_detected_at
+
+    # @return [Time, nil] the time at when DM spam was last detected on the server.
+    attr_reader :dm_spam_detected_at
+
+    # @return [Time, nil] the time at when invites will be re-enabled on the server.
+    attr_reader :invites_disabled_until
+
+    # @return [Time, nil] the time at when non-friend direct messages will be re-enabled on the server.
+    attr_reader :dms_disabled_until
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -864,6 +876,30 @@ module Discordrb
 
     alias_method :vanity_invite_link, :vanity_invite_url
 
+    # Check if the auto-moderation system has detected a raid.
+    # @return [true, false]
+    def raid_detected?
+      !@raid_detected_at.nil?
+    end
+
+    # Check if the auto-moderation system has detected DM spam.
+    # @return [true, false]
+    def dm_spam_detected?
+      !@dm_spam_detected_at.nil?
+    end
+
+    # Check if the server has disabled non-friend DMs.
+    # @return [true, false]
+    def dms_disabled?
+      !@dms_disabled_until.nil? && @dms_disabled_until > Time.now
+    end
+
+    # Check if the server has paused invites.
+    # @return [true, false]
+    def invites_disabled?
+      (!@invites_disabled_until.nil? && @invites_disabled_until > Time.now) || @features.include?(:invites_disabled)
+    end
+
     # Requests a list of Webhooks on the server.
     # @return [Array<Webhook>] webhooks on the server.
     def webhooks
@@ -938,6 +974,8 @@ module Discordrb
     # @param description [String, nil] The new description of the server.
     # @param boost_progress_bar [true, false] Whether or not the server boosting progress bar should be visible.
     # @param safety_alerts_channel [Channel, Integer, String, nil] The new channel where safety alerts should be sent.
+    # @param dms_disabled_until [Time, nil] The time at when non-friend direct messages will be enabled again.
+    # @param invites_disabled_until [Time, nil] The time at when invites will no longer be disabled.
     # @param reason [String, nil] The reason to show in the server's audit log for modifying the server.
     # @return [nil]
     def modify(
@@ -945,7 +983,7 @@ module Discordrb
       afk_channel: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef,
       system_channel: :undef, system_channel_flags: :undef, rules_channel: :undef, public_updates_channel: :undef,
       locale: :undef, features: :undef, description: :undef, boost_progress_bar: :undef, safety_alerts_channel: :undef,
-      reason: :undef
+      dms_disabled_until: :undef, invites_disabled_until: :undef, reason: nil
     )
       data = {
         name: name,
@@ -968,6 +1006,16 @@ module Discordrb
         premium_progress_bar_enabled: boost_progress_bar,
         safety_alerts_channel_id: safety_alerts_channel == :undef ? safety_alerts_channel : safety_alerts_channel&.resolve_id
       }
+
+      if invites_disabled_until != :undef || dms_disabled_until != :undef
+        incidents_data = {
+          dms_disabled_until: dms_disabled_until == :undef ? @dms_disabled_until&.iso8601 : dms_disabled_until&.iso8601,
+          invites_disabled_until: invites_disabled_until == :undef ? @invites_disabled_until&.iso8601 : invites_disabled_until&.iso8601
+        }
+
+        process_incident_actions(JSON.parse(API::Server.update_incident_actions(@bot.token, @id, **incidents_data, reason: reason)))
+        return unless data.any? { |_, value| value != :undef }
+      end
 
       update_data(JSON.parse(API::Server.update!(@bot.token, @id, **data, reason: reason)))
       nil
@@ -1028,6 +1076,7 @@ module Discordrb
       process_presences(new_data['presences']) if new_data['presences']
       process_voice_states(new_data['voice_states']) if new_data['voice_states']
       process_active_threads(new_data['threads']) if new_data['threads']
+      process_incident_actions(new_data['incidents_data']) if new_data.key?('incidents_data')
     end
 
     # Adds a channel to this server's cache
@@ -1155,6 +1204,14 @@ module Discordrb
         @channels << thread
         @channels_by_id[thread.id] = thread
       end
+    end
+
+    def process_incident_actions(incidents)
+      incidents ||= {}
+      @raid_detected_at = incidents['raid_detected_at'] ? Time.parse(incidents['raid_detected_at']) : nil
+      @dms_disabled_until = incidents['dms_disabled_until'] ? Time.parse(incidents['dms_disabled_until']) : nil
+      @dm_spam_detected_at = incidents['dm_spam_detected_at'] ? Time.parse(incidents['dm_spam_detected_at']) : nil
+      @invites_disabled_until = incidents['invites_disabled_until'] ? Time.parse(incidents['invites_disabled_until']) : nil
     end
   end
 

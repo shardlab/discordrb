@@ -46,6 +46,21 @@ module Discordrb::API::Server
     )
   end
 
+  # Modify the incident actions for a server.
+  # https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions
+  def update_incident_actions(token, server_id, invites_disabled_until: :undef, dms_disabled_until: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_incidents_actions,
+      server_id,
+      :put,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/incident-actions",
+      { invites_disabled_until:, dms_disabled_until: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Get a server's channels list
   # https://discord.com/developers/docs/resources/guild#get-guild-channels
   def channels(token, server_id)
