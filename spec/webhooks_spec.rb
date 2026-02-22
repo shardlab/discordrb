@@ -85,7 +85,7 @@ describe Discordrb::Webhooks do
   describe Discordrb::Webhooks::Client do
     let(:id) { SecureRandom.bytes(8) }
     let(:token) { SecureRandom.bytes(24) }
-    let(:provided_url) { instance_double(String) }
+    let(:provided_url) { instance_double(String, to_str: 'https://discord.com/api/v9/webhooks') }
 
     subject { described_class.new(url: provided_url) }
 
@@ -229,13 +229,17 @@ describe Discordrb::Webhooks do
       it 'makes a POST request with JSON data' do
         subject.__send__(:post_json, builder, [], false, nil)
 
-        expect(RestClient).to have_received(:post).with(provided_url, builder.to_json_hash.merge({ components: [] }).to_json, content_type: :json)
+        url = 'https://discord.com/api/v9/webhooks?wait=false'
+
+        expect(RestClient).to have_received(:post).with(url, builder.to_json_hash.merge({ components: [] }).to_json, content_type: :json)
       end
 
       it 'waits when wait=true' do
         subject.__send__(:post_json, builder, [], true, nil)
 
-        expect(provided_url).to have_received(:+).with('?wait=true')
+        url = 'https://discord.com/api/v9/webhooks?wait=true'
+
+        expect(RestClient).to have_received(:post).with(url, builder.to_json_hash.merge({ components: [] }).to_json, content_type: :json)
       end
     end
 
@@ -246,7 +250,6 @@ describe Discordrb::Webhooks do
 
       before do
         allow(RestClient).to receive(:post).with(any_args)
-        allow(provided_url).to receive(:+).with(anything).and_return(provided_url)
         allow(multipart_hash).to receive(:[]=).and_return(instance_of(Array))
         allow(multipart_hash).to receive(:compact).and_return(post_data)
       end
@@ -254,19 +257,25 @@ describe Discordrb::Webhooks do
       it 'makes a POST request with multipart data' do
         subject.__send__(:post_multipart, builder, [], false, nil)
 
-        expect(RestClient).to have_received(:post).with(provided_url, post_data)
+        url = 'https://discord.com/api/v9/webhooks?wait=false'
+
+        expect(RestClient).to have_received(:post).with(url, post_data)
       end
 
       it 'waits for a response when wait=true' do
         subject.__send__(:post_multipart, builder, [], true, nil)
 
-        expect(provided_url).to have_received(:+).with('?wait=true')
+        url = 'https://discord.com/api/v9/webhooks?wait=true'
+
+        expect(RestClient).to have_received(:post).with(url, post_data)
       end
 
       it 'adds a thread_id when it is provided' do
         subject.__send__(:post_multipart, builder, [], false, '123456')
 
-        expect(provided_url).to have_received(:+).with('?wait=false&thread_id=123456')
+        url = 'https://discord.com/api/v9/webhooks?wait=false&thread_id=123456'
+
+        expect(RestClient).to have_received(:post).with(url, post_data)
       end
     end
 
