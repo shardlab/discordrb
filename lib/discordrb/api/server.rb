@@ -33,7 +33,7 @@ module Discordrb::API::Server
 
   # Update the properties of a guild.
   # https://discord.com/developers/docs/resources/guild#modify-guild
-  def update_guild(token, server_id, name: :undef, region: :undef, verification_level: :undef, default_message_notifications: :undef, explicit_content_filter: :undef, afk_channel_id: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef, system_channel_id: :undef, system_channel_flags: :undef, rules_channel_id: :undef, public_updates_channel_id: :undef, preferred_locale: :undef, features: :undef, description: :undef, premium_progress_bar_enabled: :undef, safety_alerts_channel_id: :undef, reason: nil)
+  def update!(token, server_id, name: :undef, region: :undef, verification_level: :undef, default_message_notifications: :undef, explicit_content_filter: :undef, afk_channel_id: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef, system_channel_id: :undef, system_channel_flags: :undef, rules_channel_id: :undef, public_updates_channel_id: :undef, preferred_locale: :undef, features: :undef, description: :undef, premium_progress_bar_enabled: :undef, safety_alerts_channel_id: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid,
       server_id,

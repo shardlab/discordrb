@@ -9,12 +9,12 @@ module Discordrb
     # @return [String] the hexadecimal ID used to identify this server's icon.
     attr_reader :icon_id
 
-    # Utility function to get the URL for the icon image
-    # @return [String] the URL to the icon image
-    def icon_url
-      return nil unless @icon_id
-
-      API.icon_url(@id, @icon_id)
+    # Utility method to get a server's icon URL.
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg`
+    #   or `png` to override this.
+    # @return [String, nil] The URL to the server's icon, or `nil` if the server hasn't set an icon.
+    def icon_url(format: 'webp')
+      API.icon_url(@id, @icon_id, format) if @icon_id
     end
   end
 
@@ -65,8 +65,12 @@ module Discordrb
     # @return [String, nil] the description of the server. Shown in server discovery and external embeds.
     attr_reader :description
 
-    # @return [Integer, nil] the ID of the application that created the server, if it was created by a bot.
-    attr_reader :application_id
+    # @return [String, nil] the hash of the server's banner image or GIF.
+    attr_reader :banner_id
+
+    # @return [String, nil] the hash of the server's invite splash image.
+    attr_reader :splash_id
+    alias_method :splash_hash, :splash_id
 
     # @return [Integer] the maximum number of members that can join the server.
     attr_reader :max_member_count
@@ -364,9 +368,8 @@ module Discordrb
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
       update_data if @widget_enabled.nil?
-      return unless @widget_enabled
 
-      API.widget_url(@id)
+      API.widget_url(@id) if @widget_enabled
     end
 
     # @param style [Symbol] The style the picture should have. Possible styles are:
@@ -379,45 +382,30 @@ module Discordrb
     #   server icon and server name in a stylish way. `nil` if the widget is not enabled.
     def widget_banner_url(style)
       update_data if @widget_enabled.nil?
-      return unless @widget_enabled
 
-      API.widget_url(@id, style)
+      API.widget_url(@id, style) if @widget_enabled
     end
 
-    # @return [String] the hexadecimal ID used to identify this server's splash image for their VIP invite page.
-    def splash_id
-      @splash_id ||= JSON.parse(API::Server.resolve(@bot.token, @id))['splash']
+    # Utility method to get a server's splash URL.
+    # @param format [String] the URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to
+    #   override this.
+    # @return [String, nil] the URL to the server's splash image, or `nil` if the server doesn't have a splash image.
+    def splash_url(format: 'webp')
+      API.splash_url(@id, @splash_id, format) if @splash_id
     end
 
-    alias_method :splash_hash, :splash_id
-
-    # @return [String, nil] the splash image URL for the server's VIP invite page.
-    #   `nil` if there is no splash image.
-    def splash_url
-      splash_id if @splash_id.nil?
-      return nil unless @splash_id
-
-      API.splash_url(@id, @splash_id)
+    # Utility method to get a server's banner URL.
+    # @param format [String] the URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to
+    #   override this.
+    # @return [String, nil] the URL to the server's banner image, or `nil` if the server doesn't have a banner image.
+    def banner_url(format: 'webp')
+      API.banner_url(@id, @banner_id, format) if @banner_id
     end
 
-    # @return [String] the hexadecimal ID used to identify this server's banner image, shown by the server name.
-    def banner_id
-      @banner_id ||= JSON.parse(API::Server.resolve(@bot.token, @id))['banner']
-    end
-
-    # @return [String, nil] the banner image URL for the server's banner image, or
-    #   `nil` if there is no banner image.
-    def banner_url
-      banner_id if @banner_id.nil?
-      return unless banner_id
-
-      API.banner_url(@id, @banner_id)
-    end
-
-    # Utility method to get a server preview's discovery splash URL.
+    # Utility method to get a server's discovery splash URL.
     # @param format [String] the URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
     # @return [String, nil] the URL to the server's discovery splash image, or `nil` if the server doesn't have a discovery splash image.
-    def discovery_splash_url(format = 'webp')
+    def discovery_splash_url(format: 'webp')
       API.discovery_splash_url(@id, @discovery_splash_id, format) if @discovery_splash_id
     end
 
@@ -725,7 +713,7 @@ module Discordrb
     # Sets the server's name.
     # @param name [String] The new server name.
     def name=(name)
-      update_server_data(name: name)
+      modify(name: name)
     end
 
     # @return [Array<VoiceRegion>] collection of available voice regions to this guild
@@ -747,41 +735,31 @@ module Discordrb
     # Moves the server to another region. This will cause a voice interruption of at most a second.
     # @param region [String] The new region the server should be in.
     def region=(region)
-      update_server_data(region: region.to_s)
+      update_data(JSON.parse(API::Server.update!(@bot.token, @id, region: region.to_s)))
     end
 
     # Sets the server's icon.
-    # @param icon [String, #read] The new icon, in base64-encoded JPG format.
+    # @param icon [String, #read, nil] The new icon, in base64-encoded JPG format.
     def icon=(icon)
-      if icon.respond_to?(:read)
-        update_server_data(icon: Discordrb.encode64(icon))
-      else
-        update_server_data(icon: icon)
-      end
+      modify(icon: icon)
     end
 
     # Sets the server's AFK channel.
     # @param afk_channel [Channel, nil] The new AFK channel, or `nil` if there should be none set.
     def afk_channel=(afk_channel)
-      update_server_data(afk_channel_id: afk_channel.resolve_id)
+      modify(afk_channel: afk_channel)
     end
 
     # Sets the server's system channel.
     # @param system_channel [Channel, String, Integer, nil] The new system channel, or `nil` should it be disabled.
     def system_channel=(system_channel)
-      update_server_data(system_channel_id: system_channel.resolve_id)
-    end
-
-    # Sets the server's system channel's flags.
-    # @param flags [Integer] The new flags to set for the server's system channel, combined as a bitfield.
-    def system_channel_flags=(flags)
-      update_server_data(system_channel_flags: flags)
+      modify(system_channel: system_channel)
     end
 
     # Sets the amount of time after which a user gets moved into the AFK channel.
     # @param afk_timeout [Integer] The AFK timeout, in seconds.
     def afk_timeout=(afk_timeout)
-      update_server_data(afk_timeout: afk_timeout)
+      modify(afk_timeout: afk_timeout)
     end
 
     # A map of possible server verification levels to symbol names
@@ -795,15 +773,13 @@ module Discordrb
 
     # @return [Symbol] the verification level of the server (:none = none, :low = 'Must have a verified email on their Discord account', :medium = 'Has to be registered with Discord for at least 5 minutes', :high = 'Has to be a member of this server for at least 10 minutes', :very_high = 'Must have a verified phone on their Discord account').
     def verification_level
-      VERIFICATION_LEVELS.key @verification_level
+      VERIFICATION_LEVELS.key(@verification_level)
     end
 
     # Sets the verification level of the server
     # @param level [Integer, Symbol] The verification level from 0-4 or Symbol (see {VERIFICATION_LEVELS})
     def verification_level=(level)
-      level = VERIFICATION_LEVELS[level] if level.is_a?(Symbol)
-
-      update_server_data(verification_level: level)
+      modify(verification_level: level)
     end
 
     # A map of possible message notification levels to symbol names
@@ -814,24 +790,16 @@ module Discordrb
 
     # @return [Symbol] the default message notifications settings of the server (:all_messages = 'All messages', :only_mentions = 'Only @mentions').
     def default_message_notifications
-      NOTIFICATION_LEVELS.key @default_message_notifications
+      NOTIFICATION_LEVELS.key(@default_message_notifications)
     end
 
     # Sets the default message notification level
     # @param notification_level [Integer, Symbol] The default message notification 0-1 or Symbol (see {NOTIFICATION_LEVELS})
     def default_message_notifications=(notification_level)
-      notification_level = NOTIFICATION_LEVELS[notification_level] if notification_level.is_a?(Symbol)
-
-      update_server_data(default_message_notifications: notification_level)
+      modify(notification_level: notification_level)
     end
 
     alias_method :notification_level=, :default_message_notifications=
-
-    # Sets the server splash
-    # @param splash_hash [String, File, nil] The new splash for the server.
-    def splash=(splash_hash)
-      update_server_data(splash: splash_hash.respond_to?(:read) ? Discordrb.encode64(splash_hash) : splash_hash)
-    end
 
     # A map of possible content filter levels to symbol names
     FILTER_LEVELS = {
@@ -842,7 +810,7 @@ module Discordrb
 
     # @return [Symbol] the explicit content filter level of the server (:disabled = 'Don't scan any messages.', :members_without_roles = 'Scan messages for members without a role.', :all_members = 'Scan messages sent by all members.').
     def explicit_content_filter
-      FILTER_LEVELS.key @explicit_content_filter
+      FILTER_LEVELS.key(@explicit_content_filter)
     end
 
     alias_method :content_filter_level, :explicit_content_filter
@@ -850,9 +818,7 @@ module Discordrb
     # Sets the server content filter.
     # @param filter_level [Integer, Symbol] The content filter from 0-2 or Symbol (see {FILTER_LEVELS})
     def explicit_content_filter=(filter_level)
-      filter_level = FILTER_LEVELS[filter_level] if filter_level.is_a?(Symbol)
-
-      update_server_data(explicit_content_filter: filter_level)
+      modify(explicit_content_filter: filter_level)
     end
 
     # A map of possible multi-factor authentication levels to symbol names
@@ -911,60 +877,6 @@ module Discordrb
       invites.map { |invite| Invite.new(invite, @bot) }
     end
 
-    # Sets the description of the server.
-    # @param description [String, nil] The new description of the server, or `nil` to remove it.
-    def description=(description)
-      update_server_data(description: description)
-    end
-
-    # Sets the preferred locale of the server.
-    # @param locale [String, nil] The new preferred locale of the server, or `nil` to remove it.
-    def locale=(locale)
-      update_server_data(preferred_locale: locale)
-    end
-
-    # Sets the enabled features of the server.
-    # @param features [Array<String, Symbol>] The new enabled features to set for the server.
-    def features=(features)
-      update_server_data(features: features.map(&:upcase))
-    end
-
-    # Sets whether to show the server's boost progress bar.
-    # @param enabled [true, false] Whether or not the server's boost progress bar should be enabled.
-    def boost_progress_bar=(enabled)
-      update_server_data(premium_progress_bar_enabled: enabled)
-    end
-
-    # Sets the rules channel of the server.
-    # @param channel [String, Integer, Channel, nil] The new rules channel of the server, or `nil` to remove it.
-    def rules_channel=(channel)
-      update_server_data(rules_channel_id: channel&.resolve_id)
-    end
-
-    # Sets the safety alerts channel of the server.
-    # @param channel [String, Integer, Channel, nil] The new safety alerts channel of the server, or `nil` to remove it.
-    def safety_alerts_channel=(channel)
-      update_server_data(safety_alerts_channel_id: channel&.resolve_id)
-    end
-
-    # Sets the public updates channel of the server.
-    # @param channel [String, Integer, Channel, nil] The new public updates channel of the server, or `nil` to remove it.
-    def public_updates_channel=(channel)
-      update_server_data(public_updates_channel_id: channel&.resolve_id)
-    end
-
-    # Sets the custom banner of the server.
-    # @param image [File, #read, String, nil] The new 16:9 banner image, animated GIF for the server, or `nil` to remove it.
-    def banner=(image)
-      update_server_data(banner: image.respond_to?(:read) ? Discordrb.encode64(image) : image)
-    end
-
-    # Sets the discovery splash image of the server.
-    # @param image [File, #read, String, nil] The new 16:9 disocovery splash image for the server, or `nil` to remove it.
-    def discovery_splash=(image)
-      update_server_data(discovery_splash: image.respond_to?(:read) ? Discordrb.encode64(image) : image)
-    end
-
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
     # @note For internal use only
     # @!visibility private
@@ -1005,6 +917,61 @@ module Discordrb
       @bot.channel(@public_updates_channel_id) if @public_updates_channel_id
     end
 
+    # Modify the properties of the server.
+    # @param name [String] The new 2-32 character name of the server.
+    # @param verification_level [Symbol, Integer, nil] The new verification level of the server.
+    # @param notification_level [Symbol, Integer, nil] The new default message notification level of the server.
+    # @param explicit_content_filter [Symbol, Integer, nil] The new explicit content filter level of the server.
+    # @param afk_channel [Channel, Integer, String, nil] The new AFK voice channel members should be automatically moved to.
+    # @param afk_timeout [Integer] The new AFK timeout in seconds. Can be set to one of `60`, `300`, `900`, `1800`, or `3600`.
+    # @param icon [#read, File, nil] The new icon of the server. Should be a file-like object that responds to `#read`.
+    # @param splash [#read, File, nil] The new invite splash of the server. Should be a file-like object that responds to `#read`.
+    # @param discovery_splash [#read, File, nil] The new discovery splash of the server. Should be a file-like object that responds to `#read`.
+    # @param banner [#read, File, nil] The new banner of the server. Should be a file-like object that responds to `#read`.
+    # @param system_channel [Channel, Integer, String, nil] The new channel where system messages should be sent.
+    # @param system_channel_flags [Integer] The new system channel flags to set for the server's system channel expressed as a bitfield.
+    # @param rules_channel [Channel, Integer, String, nil] The new channel where the server displays its rules or guidelines.
+    # @param public_updates_channel [Channel, Integer, String, nil] The new channel where public updates should be sent.
+    # @param locale [String, Symbol, nil] The new preferred locale of the server; primarily for community servers.
+    # @param features [Array<String, Symbol>] The new features to set for the server.
+    # @param description [String, nil] The new description of the server.
+    # @param boost_progress_bar [true, false] Whether or not the server boosting progress bar should be visible.
+    # @param safety_alerts_channel [Channel, Integer, String, nil] The new channel where safety alerts should be sent.
+    # @param reason [String, nil] The reason to show in the server's audit log for modifying the server.
+    # @return [nil]
+    def modify(
+      name: :undef, verification_level: :undef, notification_level: :undef, explicit_content_filter: :undef,
+      afk_channel: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef,
+      system_channel: :undef, system_channel_flags: :undef, rules_channel: :undef, public_updates_channel: :undef,
+      locale: :undef, features: :undef, description: :undef, boost_progress_bar: :undef, safety_alerts_channel: :undef,
+      reason: :undef
+    )
+      data = {
+        name: name,
+        verification_level: VERIFICATION_LEVELS[verification_level] || verification_level,
+        default_message_notifications: NOTIFICATION_LEVELS[notification_level] || notification_level,
+        explicit_content_filter: FILTER_LEVELS[explicit_content_filter] || explicit_content_filter,
+        afk_channel_id: afk_channel == :undef ? afk_channel : afk_channel&.resolve_id,
+        afk_timeout: afk_timeout,
+        icon: icon.respond_to?(:read) ? Discordrb.encode64(icon) : icon,
+        splash: splash.respond_to?(:read) ? Discordrb.encode64(splash) : splash,
+        discovery_splash: discovery_splash.respond_to?(:read) ? Discordrb.encode64(discovery_splash) : discovery_splash,
+        banner: banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner,
+        system_channel_id: system_channel == :undef ? system_channel : system_channel&.resolve_id,
+        system_channel_flags: system_channel_flags,
+        rules_channel_id: rules_channel == :undef ? rules_channel : rules_channel&.resolve_id,
+        public_updates_channel_id: public_updates_channel == :undef ? public_updates_channel : public_updates_channel&.resolve_id,
+        preferred_locale: locale,
+        features: features == :undef ? features : features.map(&:upcase),
+        description: description,
+        premium_progress_bar_enabled: boost_progress_bar,
+        safety_alerts_channel_id: safety_alerts_channel == :undef ? safety_alerts_channel : safety_alerts_channel&.resolve_id
+      }
+
+      update_data(JSON.parse(API::Server.update!(@bot.token, @id, **data, reason: reason)))
+      nil
+    end
+
     # Updates the cached data with new data
     # @note For internal use only
     # @!visibility private
@@ -1036,7 +1003,6 @@ module Discordrb
       @explicit_content_filter = new_data['explicit_content_filter']
       @default_message_notifications = new_data['default_message_notifications']
 
-      @application_id = new_data['application_id']&.to_i
       @features = new_data['features']&.map { |feature| feature.downcase.to_sym } || @features || []
       @max_presence_count = new_data['max_presences'] if new_data.key?('max_presences')
       @max_member_count = new_data['max_members'] if new_data.key?('max_members')
@@ -1093,11 +1059,6 @@ module Discordrb
     end
 
     private
-
-    # @!visibility private
-    def update_server_data(new_data)
-      update_data(JSON.parse(API::Server.update_guild(@bot.token, @id, **new_data)))
-    end
 
     def process_roles(roles)
       # Create roles
