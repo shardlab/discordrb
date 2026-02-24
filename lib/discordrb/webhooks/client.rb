@@ -124,20 +124,35 @@ module Discordrb::Webhooks
     end
 
     def post_json(builder, components, wait, thread_id)
-      query = URI.encode_www_form({ wait:, thread_id: }.compact)
       data = builder.to_json_hash.merge({ components: components.to_a })
-      RestClient.post(@url + (query.empty? ? '' : "?#{query}"), data.to_json, content_type: :json)
+      RestClient.post(encode_url(wait, thread_id), data.to_json, content_type: :json)
     end
 
     def post_multipart(builder, components, wait, thread_id)
-      query = URI.encode_www_form({ wait:, thread_id: }.compact)
       data = builder.to_multipart_hash
       data[:components] = components.to_a if components&.to_a&.any?
-      RestClient.post(@url + (query.empty? ? '' : "?#{query}"), data.compact)
+      RestClient.post(encode_url(wait, thread_id), data.compact)
     end
 
     def generate_url(id, token)
       "https://discord.com/api/v9/webhooks/#{id}/#{token}"
+    end
+
+    def encode_url(wait, thread_id)
+      uri = URI.parse(@url)
+
+      # NOTE: We have to use string keys here, since URI#decode_www_form returns
+      # string keys, and keys with different types are treated as array query params
+      # and appended to the query params twice.
+      query = {
+        'wait' => wait,
+        'thread_id' => thread_id,
+        **URI.decode_www_form(uri.query || '').to_h
+      }
+
+      query = URI.encode_www_form(query.compact)
+      uri.query = query unless query.empty?
+      uri.to_s
     end
   end
 end
