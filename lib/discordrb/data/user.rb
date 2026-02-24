@@ -136,10 +136,9 @@ module Discordrb
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-
+      @id = data['id'].to_i
       @username = data['username']
       @global_name = data['global_name']
-      @id = data['id'].to_i
       @discriminator = data['discriminator']
       @avatar_id = data['avatar']
       @activities = Discordrb::ActivitySet.new
@@ -151,10 +150,9 @@ module Discordrb
       @client_status = process_client_status(data['client_status'])
       @banner_id = data['banner']
       @system_account = data['system'] || false
+      @primary_server = process_primary_server(data['primary_guild'])
+      @collectibles = Collectibles.new(data['collectibles'] || {}, @bot)
       @avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
-      @collectibles = Collectibles.new(data['collectibles'] || {}, bot)
-
-      @primary_server = process_primary_server(data['primary_guild'] || {})
     end
 
     # Get a user's PM channel or send them a PM
@@ -260,7 +258,7 @@ module Discordrb
 
     # @!visibility private
     def process_primary_server(server)
-      PrimaryServer.new(server, @bot) if server['identity_enabled']
+      PrimaryServer.new(server, @bot) if server&.[]('identity_enabled')
     end
 
     # @!method offline?
@@ -308,8 +306,8 @@ module Discordrb
       @avatar_id = new_data['avatar']
       @public_flags = new_data['public_flags'] || 0
       @banner_id = new_data['banner'] || @banner_id
+      @primary_server = process_primary_server(new_data['primary_guild'])
       @collectibles = Collectibles.new(new_data['collectibles'] || {}, @bot)
-      @primary_server = process_primary_server(new_data['primary_guild'] || {})
       @avatar_decoration = process_avatar_decoration(new_data['avatar_decoration_data'])
     end
   end
