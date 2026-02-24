@@ -18,7 +18,7 @@ describe Discordrb::Channel do
 
   shared_examples 'a Channel property' do |property_name|
     it 'should call #update_channel_data with data' do
-      expect(channel).to receive(:update_channel_data).with(property_name => property_value)
+      expect(channel).to receive(:modify)
       channel.__send__("#{property_name}=", property_value)
     end
   end
@@ -82,9 +82,10 @@ describe Discordrb::Channel do
         allow(channel).to receive(:update_data)
         allow(JSON).to receive(:parse)
         data = double(property_name)
+        allow(data).to receive(:resolve_id) if property_name == :parent
         expect(Discordrb::API::Channel).to receive(:update!)
         new_data = { property_name => data }
-        channel.__send__(:update_channel_data, new_data)
+        channel.__send__(:modify, **new_data)
       end
     end
 
@@ -93,7 +94,7 @@ describe Discordrb::Channel do
     include_examples('API call', :position, 4)
     include_examples('API call', :bitrate, 5)
     include_examples('API call', :user_limit, 6)
-    include_examples('API call', :parent_id, 9)
+    include_examples('API call', :parent, 9)
     include_examples('API call', :rate_limit_per_user, 10)
 
     context 'when permission_overwrite are not set' do
@@ -104,7 +105,7 @@ describe Discordrb::Channel do
         allow(new_data).to receive(:[])
         allow(new_data).to receive(:[]).with(:permission_overwrites).and_return(false)
         expect(Discordrb::API::Channel).to receive(:update!)
-        channel.__send__(:update_channel_data, new_data)
+        channel.__send__(:modify, **new_data)
       end
     end
 
@@ -118,7 +119,7 @@ describe Discordrb::Channel do
         allow(new_data).to receive(:[])
         allow(new_data).to receive(:[]).with(:nsfw).and_return(1)
         expect(Discordrb::API::Channel).to receive(:update!)
-        channel.__send__(:update_channel_data, new_data)
+        channel.__send__(:modify, **new_data)
       end
     end
 
@@ -132,7 +133,7 @@ describe Discordrb::Channel do
         allow(new_data).to receive(:[])
         allow(new_data).to receive(:[]).with(:nsfw).and_return(1)
         expect(Discordrb::API::Channel).to receive(:update!)
-        channel.__send__(:update_channel_data, new_data)
+        channel.__send__(:modify, **new_data)
       end
     end
 
@@ -146,7 +147,7 @@ describe Discordrb::Channel do
         allow(new_data).to receive(:[])
         allow(new_data).to receive(:[]).with(:rate_limit_per_user).and_return(5)
         expect(Discordrb::API::Channel).to receive(:update!)
-        channel.__send__(:update_channel_data, new_data)
+        channel.__send__(:modify, **new_data)
       end
     end
 
@@ -155,7 +156,7 @@ describe Discordrb::Channel do
       expect(channel).to receive(:update_data).with(response_data)
       allow(JSON).to receive(:parse).and_return(response_data)
       allow(Discordrb::API::Channel).to receive(:update!)
-      channel.__send__(:update_channel_data, {})
+      channel.__send__(:modify)
     end
 
     context 'when NoPermission is raised' do
@@ -163,7 +164,7 @@ describe Discordrb::Channel do
         allow(Discordrb::API::Channel).to receive(:update!).and_raise(Discordrb::Errors::NoPermission)
         expect(channel).not_to receive(:update_data)
         begin
-          channel.__send__(:update_channel_data, {})
+          channel.__send__(:modify)
         rescue Discordrb::Errors::NoPermission
           nil
         end
