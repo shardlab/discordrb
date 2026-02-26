@@ -46,15 +46,22 @@ module Discordrb::API::Channel
     )
   end
 
-  # Get a list of messages from a channel's history
-  # https://discord.com/developers/docs/resources/channel#get-channel-messages
+  # @deprecated Please use {get_channel_messages} instead.
+  # https://docs.discord.com/developers/resources/message#get-channel-messages
   def messages(token, channel_id, amount, before = nil, after = nil, around = nil)
-    query_string = URI.encode_www_form({ limit: amount, before: before, after: after, around: around }.compact)
+    get_channel_messages(token, channel_id, limit: amount, after:, before:, around:)
+  end
+
+  # Fetch the messages that have been sent in the channel.
+  # https://docs.discord.com/developers/resources/message#get-channel-messages
+  def get_channel_messages(token, channel_id, limit: 50, after: nil, before: nil, around: nil)
+    query = URI.encode_www_form({ limit:, after:, before:, around: }.compact)
+
     Discordrb::API.request(
       :channels_cid_messages,
       channel_id,
       :get,
-      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages?#{query_string}",
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/messages?#{query}",
       Authorization: token
     )
   end
