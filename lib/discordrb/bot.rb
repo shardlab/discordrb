@@ -1725,6 +1725,7 @@ module Discordrb
         raise_event(event)
       when :THREAD_CREATE
         create_channel(data)
+        return unless data['newly_created']
 
         event = ThreadCreateEvent.new(data, self)
         raise_event(event)
@@ -1735,9 +1736,10 @@ module Discordrb
         raise_event(event)
       when :THREAD_DELETE
         delete_channel(data)
-        @thread_members.delete(data['id']&.resolve_id)
+        @thread_members.delete(data['id']&.to_i)
 
-        # raise ThreadDeleteEvent
+        event = ThreadDeleteEvent.new(data, self)
+        raise_event(event)
       when :THREAD_LIST_SYNC
         server_id = data['guild_id'].to_i
         server = @servers[server_id]
@@ -1758,21 +1760,26 @@ module Discordrb
 
         data['members'].each { |member| ensure_thread_member(member) }
         data['threads'].each { |channel| ensure_channel(channel) }
-
-        # raise ThreadListSyncEvent?
       when :THREAD_MEMBER_UPDATE
         ensure_thread_member(data)
       when :THREAD_MEMBERS_UPDATE
-        data['added_members']&.each do |added_member|
-          ensure_thread_member(added_member) if added_member['user_id']
+        thread = @thread_members[data['id'].to_i]
+        server = self.server(data['guild_id'].to_i)
+
+        data['added_members']&.each do |added|
+          member = server&.ensure_member(added['member'])
+          ensure_thread_member(added)
+
+          added = { 'id' => data['id'], 'member' => member }
+          raise_event(ThreadMemberAddEvent.new(added, self))
         end
 
-        data['removed_member_ids']&.each do |member_id|
-          @thread_members[data['id']&.resolve_id]&.delete(member_id&.resolve_id)
+        data['removed_member_ids']&.each do |id|
+          id = id.to_i
+          thread&.delete(id)
+          removed = { 'id' => data['id'], 'user_id' => id }
+          raise_event(ThreadMemberRemoveEvent.new(removed, self))
         end
-
-        event = ThreadMembersUpdateEvent.new(data, self)
-        raise_event(event)
       else
         # another event that we don't support yet
         debug "Event #{type} has been received but is unsupported. Raising UnknownEvent"
