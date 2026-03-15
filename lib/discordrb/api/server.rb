@@ -278,6 +278,21 @@ module Discordrb::API::Server
     )
   end
 
+  # Modify the properties of a role.
+  # https://docs.discord.com/developers/resources/guild#modify-guild-role
+  def update_role!(token, server_id, role_id, name: :undef, permissions: :undef, colors: :undef, hoist: :undef, icon: :undef, unicode_emoji: :undef, mentionable: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_roles_rid,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/#{role_id}",
+      { name:, permissions:, colors:, hoist:, icon:, unicode_emoji:, mentionable: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Update role positions
   # https://discord.com/developers/docs/resources/guild#modify-guild-role-positions
   def update_role_positions(token, server_id, roles, reason = nil)

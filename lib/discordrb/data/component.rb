@@ -59,7 +59,7 @@ module Discordrb
       def initialize(data, bot)
         @bot = bot
         @id = data['id']
-        @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) }
+        @components = data['components'].filter_map { |component| Components.from_data(component, @bot) }
       end
 
       # Iterate over each component in the row.
@@ -267,7 +267,7 @@ module Discordrb
         @bot = bot
         @id = data['id']
         @accessory = Components.from_data(data['accessory'], @bot)
-        @components = data['components'].map { |component| Components.from_data(component, @bot) }
+        @components = data['components'].filter_map { |component| Components.from_data(component, @bot) }
       end
     end
 
@@ -396,7 +396,7 @@ module Discordrb
         @id = data['id']
         @spoiler = data['spoiler']
         @color = ColourRGB.new(data['accent_color']) if data['accent_color']
-        @components = data['components'].map { |component| Components.from_data(component, @bot) }
+        @components = data['components'].filter_map { |component| Components.from_data(component, @bot) }
       end
 
       # Get the buttons contained within the container.
@@ -518,11 +518,10 @@ module Discordrb
       # @return [Integer] the numeric identifier of the radio group.
       attr_reader :id
 
-      # @return [true, false] whether or not a radio button was selected.
+      # @return [String, nil] whether or not a radio button was selected.
       attr_reader :value
-      alias value? value
 
-      # @return [String] the developer-defined identifier for the radio group.
+      # @return [String] the developer-defined identifier of the radio group.
       attr_reader :custom_id
 
       # @!visibility private
@@ -542,7 +541,7 @@ module Discordrb
       # @return [Array<String>] the values of the selected checkbox buttons.
       attr_reader :values
 
-      # @return [String] the developer-defined identifier for the checkbox group.
+      # @return [String] the developer-defined identifier of the checkbox group.
       attr_reader :custom_id
 
       # @!visibility private
@@ -563,7 +562,7 @@ module Discordrb
       attr_reader :value
       alias value? value
 
-      # @return [String] the developer-defined identifier for the checkbox.
+      # @return [String] the developer-defined identifier of the checkbox.
       attr_reader :custom_id
 
       # @!visibility private
