@@ -1749,6 +1749,29 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#timestamps-instance_method" title="#timestamps (instance method)">#<strong>timestamps</strong>  &#x21d2; Array&lt;TimestampMarkdown&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Get the formatted timestamps contained in the message content.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#to_message-instance_method" title="#to_message (instance method)">#<strong>to_message</strong>  &#x21d2; Discordrb::Message </a>
     
 
@@ -6053,6 +6076,85 @@ authorized with the <code>bot</code> scope.</p>
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="timestamps-instance_method">
+  
+    #<strong>timestamps</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="TimestampMarkdown.html" title="Discordrb::TimestampMarkdown (class)">TimestampMarkdown</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Get the formatted timestamps contained in the message content.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="TimestampMarkdown.html" title="Discordrb::TimestampMarkdown (class)">TimestampMarkdown</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The formatted timestamps in the message.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+584
+585
+586
+587
+588
+589
+590
+591
+592
+593
+594
+595
+596
+597</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 584</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_timestamps'>timestamps</span>
+  <span class='kw'>return</span> <span class='lparen'>(</span><span class='ivar'>@timestamps</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@timestamps</span> <span class='op'>||</span> <span class='op'>!</span><span class='ivar'>@content</span> <span class='op'>||</span> <span class='ivar'>@content</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+
+  <span class='ivar'>@timestamps</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+
+  <span class='ivar'>@content</span><span class='period'>.</span><span class='id identifier rubyid_scan'>scan</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>&lt;t:(-?\d{1,13})(?::(t|T|d|D|f|F|s|S|R))?&gt;</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_time'>time</span><span class='comma'>,</span> <span class='id identifier rubyid_style'>style</span><span class='op'>|</span>
+    <span class='comment'># If it&#39;s not between these values, Discord won&#39;t show it, so don&#39;t bother.
+</span>    <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span> <span class='op'>=</span> <span class='id identifier rubyid_time'>time</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_between?'>between?</span><span class='lparen'>(</span><span class='op'>-</span><span class='int'>8_640_000_000_000</span><span class='comma'>,</span> <span class='int'>8_640_000_000_000</span><span class='rparen'>)</span>
+      <span class='ivar'>@timestamps</span> <span class='op'>&lt;&lt;</span> <span class='const'><span class='object_link'><a href="TimestampMarkdown.html" title="Discordrb::TimestampMarkdown (class)">TimestampMarkdown</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_at'>at</span><span class='lparen'>(</span><span class='id identifier rubyid_time'>time</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_style'>style</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='ivar'>@timestamps</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="to_message-instance_method">
   
     #<strong>to_message</strong>  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Message (class)">Discordrb::Message</a></span></tt> 
@@ -6327,7 +6429,7 @@ authorized with the <code>bot</code> scope.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Mar 15 23:22:08 2026 by
+  Generated on Sun Mar 15 23:23:49 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>
