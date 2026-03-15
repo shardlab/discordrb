@@ -148,6 +148,15 @@ module Discordrb
     # @return [Integer] a generally increasing integer that can be used to determine this message's position in a thread.
     attr_reader :position
 
+    # @return [Integer, nil] the ID of the application associated with this message.
+    attr_reader :application_id
+
+    # @return [MessageActivity, nil] the rich-presence activity that prompted this message.
+    attr_reader :activity
+
+    # @return [Interactions::Metadata, nil] the metadata about the interaction that prompted this message.
+    attr_reader :interaction_metadata
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -162,6 +171,7 @@ module Discordrb
       @position = data['position'] || 0
       @mention_everyone = data['mention_everyone']
       @webhook_id = data['webhook_id']&.to_i
+      @application_id = data['application_id']&.to_i
 
       @edited_timestamp = Time.parse(data['edited_timestamp']) if data['edited_timestamp']
       @edited = !@edited_timestamp.nil?
@@ -199,6 +209,8 @@ module Discordrb
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
+      @activity = MessageActivity.new(data['activity'], @bot) if data['activity']
+      @interaction_metadata = Interactions::Metadata.new(data['interaction_metadata'], self, @bot) if data['interaction_metadata']
     end
 
     # @deprecated Please migrate to using {#creation_time} instead.
