@@ -45,7 +45,7 @@ module Discordrb
       @managed = data['managed']
       @available = data['available']
       @requires_colons = data['require_colons']
-      @creator = data['user'] ? bot.ensure_user(data['user']) : nil
+      @creator = data['user'] ? bot.ensure_user(data['user'], true) : nil
 
       process_roles(data['roles']) if server
     end
