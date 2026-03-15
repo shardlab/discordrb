@@ -83,7 +83,7 @@ module Discordrb::Voice
       @bot = bot
       @channel = channel
 
-      @ws = VoiceWS.new(channel, bot, token, session, endpoint)
+      @ws = VoiceWS.new(channel, bot, token, session, endpoint, self)
       @udp = @ws.udp
 
       @sequence = @time = 0
