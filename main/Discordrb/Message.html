@@ -228,6 +228,62 @@
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#activity-instance_method" title="#activity (instance method)">#<strong>activity</strong>  &#x21d2; MessageActivity<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The rich-presence activity that prompted this message.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#application_id-instance_method" title="#application_id (instance method)">#<strong>application_id</strong>  &#x21d2; Integer<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The ID of the application associated with this message.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#attachments-instance_method" title="#attachments (instance method)">#<strong>attachments</strong>  &#x21d2; Array&lt;Attachment&gt; </a>
     
 
@@ -478,6 +534,34 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Flags set on the message.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#interaction_metadata-instance_method" title="#interaction_metadata (instance method)">#<strong>interaction_metadata</strong>  &#x21d2; Interactions::Metadata<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The metadata about the interaction that prompted this message.</p>
 </div></span>
   
 </li>
@@ -1777,7 +1861,125 @@
       
       <span id=""></span>
       <div class="method_details first">
-  <h3 class="signature first" id="attachments-instance_method">
+  <h3 class="signature first" id="activity-instance_method">
+  
+    #<strong>activity</strong>  &#x21d2; <tt><span class='object_link'><a href="MessageActivity.html" title="Discordrb::MessageActivity (class)">MessageActivity</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the rich-presence activity that prompted this message.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="MessageActivity.html" title="Discordrb::MessageActivity (class)">MessageActivity</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the rich-presence activity that prompted this message.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+155
+156
+157</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 155</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_activity'>activity</span>
+  <span class='ivar'>@activity</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="application_id-instance_method">
+  
+    #<strong>application_id</strong>  &#x21d2; <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the ID of the application associated with this message.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the ID of the application associated with this message.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+152
+153
+154</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 152</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_application_id'>application_id</span>
+  <span class='ivar'>@application_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="attachments-instance_method">
   
     #<strong>attachments</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="Attachment.html" title="Discordrb::Attachment (class)">Attachment</a></span>&gt;</tt>  <span class="extras">(readonly)</span>
   
@@ -2311,6 +2513,65 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_flags'>flags</span>
   <span class='ivar'>@flags</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="interaction_metadata-instance_method">
+  
+    #<strong>interaction_metadata</strong>  &#x21d2; <tt><span class='object_link'><a href="Interactions/Metadata.html" title="Discordrb::Interactions::Metadata (class)">Interactions::Metadata</a></span></tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the metadata about the interaction that prompted this message.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Interactions/Metadata.html" title="Discordrb::Interactions::Metadata (class)">Interactions::Metadata</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the metadata about the interaction that prompted this message.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+158
+159
+160</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 158</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_interaction_metadata'>interaction_metadata</span>
+  <span class='ivar'>@interaction_metadata</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -3178,13 +3439,13 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-451
-452
-453
-454</pre>
+463
+464
+465
+466</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 451</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 463</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_all_reaction_users'>all_reaction_users</span><span class='lparen'>(</span><span class='label'>limit:</span> <span class='int'>100</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_all_reactions'>all_reactions</span> <span class='op'>=</span> <span class='ivar'>@reactions</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_r'>r</span><span class='op'>|</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_r'>r</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_reacted_with'>reacted_with</span><span class='lparen'>(</span><span class='id identifier rubyid_r'>r</span><span class='comma'>,</span> <span class='label'>limit:</span> <span class='id identifier rubyid_limit'>limit</span><span class='rparen'>)</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
@@ -3243,19 +3504,19 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-209
-210
-211
-212
-213
-214
-215
-216
-217
-218</pre>
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 209</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 221</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_author'>author</span>
   <span class='kw'>return</span> <span class='ivar'>@author</span> <span class='kw'>if</span> <span class='ivar'>@author</span>
@@ -3306,12 +3567,12 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-322
-323
-324</pre>
+334
+335
+336</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 322</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 334</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_await'>await</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_add_await'>add_await</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events.html" title="Discordrb::Events (module)">Events</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events/MessageEvent.html" title="Discordrb::Events::MessageEvent (class)">MessageEvent</a></span></span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>from:</span> <span class='ivar'>@author</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='label'>in:</span> <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3353,12 +3614,12 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-328
-329
-330</pre>
+340
+341
+342</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 328</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 340</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_await!'>await!</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_add_await!'>add_await!</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events.html" title="Discordrb::Events (module)">Events</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events/MessageEvent.html" title="Discordrb::Events::MessageEvent (class)">MessageEvent</a></span></span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>from:</span> <span class='ivar'>@author</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='label'>in:</span> <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3402,12 +3663,12 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-335
-336
-337</pre>
+347
+348
+349</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 335</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 347</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_await_reaction'>await_reaction</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_add_await'>add_await</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events.html" title="Discordrb::Events (module)">Events</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events/ReactionAddEvent.html" title="Discordrb::Events::ReactionAddEvent (class)">ReactionAddEvent</a></span></span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>message:</span> <span class='ivar'>@id</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3449,12 +3710,12 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-341
-342
-343</pre>
+353
+354
+355</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 341</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 353</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_await_reaction!'>await_reaction!</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_add_await!'>add_await!</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events.html" title="Discordrb::Events (module)">Events</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Events/ReactionAddEvent.html" title="Discordrb::Events::ReactionAddEvent (class)">ReactionAddEvent</a></span></span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>message:</span> <span class='ivar'>@id</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
@@ -3501,23 +3762,23 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-511
-512
-513
-514
-515
-516
-517
-518
-519
-520
-521
-522
 523
-524</pre>
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 511</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 523</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_buttons'>buttons</span>
   <span class='id identifier rubyid_buttons'>buttons</span> <span class='op'>=</span> <span class='ivar'>@components</span><span class='period'>.</span><span class='id identifier rubyid_flat_map'>flat_map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_component'>component</span><span class='op'>|</span>
@@ -3599,14 +3860,14 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-406
-407
-408
-409
-410</pre>
+418
+419
+420
+421
+422</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 406</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 418</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_reaction'>create_reaction</span><span class='lparen'>(</span><span class='id identifier rubyid_reaction'>reaction</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_reaction'>reaction</span> <span class='op'>=</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='period'>.</span><span class='id identifier rubyid_to_reaction'>to_reaction</span> <span class='kw'>if</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to_reaction</span><span class='rparen'>)</span>
@@ -3660,13 +3921,13 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-314
-315
-316
-317</pre>
+326
+327
+328
+329</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 314</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 326</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_crosspost'>crosspost</span>
   <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_crosspost_message'><span class='object_link'><a href="API/Channel.html#crosspost_message-class_method" title="Discordrb::API::Channel.crosspost_message (method)">crosspost_message</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='rparen'>)</span>
@@ -3715,13 +3976,13 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-291
-292
-293
-294</pre>
+303
+304
+305
+306</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 291</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 303</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_message'><span class='object_link'><a href="API/Channel.html#delete_message-class_method" title="Discordrb::API::Channel.delete_message (method)">delete_message</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span><span class='rparen'>)</span>
@@ -3757,12 +4018,12 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-472
-473
-474</pre>
+484
+485
+486</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 472</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 484</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_all_reactions'>delete_all_reactions</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete_all_reactions'><span class='object_link'><a href="API/Channel.html#delete_all_reactions-class_method" title="Discordrb::API::Channel.delete_all_reactions (method)">delete_all_reactions</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='rparen'>)</span>
@@ -3816,13 +4077,13 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-478
-479
-480
-481</pre>
+490
+491
+492
+493</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 478</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 490</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_all_reactions_for_emoji'>delete_all_reactions_for_emoji</span><span class='lparen'>(</span><span class='id identifier rubyid_reaction'>reaction</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_reaction'>reaction</span> <span class='op'>=</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='period'>.</span><span class='id identifier rubyid_to_reaction'>to_reaction</span> <span class='kw'>if</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to_reaction</span><span class='rparen'>)</span>
@@ -3877,13 +4138,13 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-466
-467
-468
-469</pre>
+478
+479
+480
+481</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 466</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 478</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_own_reaction'>delete_own_reaction</span><span class='lparen'>(</span><span class='id identifier rubyid_reaction'>reaction</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_reaction'>reaction</span> <span class='op'>=</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='period'>.</span><span class='id identifier rubyid_to_reaction'>to_reaction</span> <span class='kw'>if</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to_reaction</span><span class='rparen'>)</span>
@@ -3953,13 +4214,13 @@ reaction to an array of users.</p>
       <pre class="lines">
 
 
-459
-460
-461
-462</pre>
+471
+472
+473
+474</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 459</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 471</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_reaction'>delete_reaction</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='comma'>,</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_reaction'>reaction</span> <span class='op'>=</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='period'>.</span><span class='id identifier rubyid_to_reaction'>to_reaction</span> <span class='kw'>if</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to_reaction</span><span class='rparen'>)</span>
@@ -4083,16 +4344,16 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-281
-282
-283
-284
-285
-286
-287</pre>
+293
+294
+295
+296
+297
+298
+299</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 281</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 293</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit'>edit</span><span class='lparen'>(</span><span class='id identifier rubyid_new_content'>new_content</span><span class='comma'>,</span> <span class='id identifier rubyid_new_embeds'>new_embeds</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_new_components'>new_components</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_flags'>flags</span> <span class='op'>=</span> <span class='int'>0</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new_embeds'>new_embeds</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_new_embeds'>new_embeds</span><span class='period'>.</span><span class='id identifier rubyid_instance_of?'>instance_of?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_new_embeds'>new_embeds</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_hash</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_new_embeds'>new_embeds</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_hash'>to_hash</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
@@ -4152,14 +4413,14 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-356
-357
-358
-359
-360</pre>
+368
+369
+370
+371
+372</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 356</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 368</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emoji'>emoji</span>
   <span class='kw'>return</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='ivar'>@content</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span> <span class='op'>||</span> <span class='ivar'>@content</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -4217,12 +4478,12 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-366
-367
-368</pre>
+378
+379
+380</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 366</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 378</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emoji?'>emoji?</span>
   <span class='id identifier rubyid_emoji'>emoji</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span>
@@ -4378,14 +4639,14 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-564
-565
-566
-567
-568</pre>
+576
+577
+578
+579
+580</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 564</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 576</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_forward'>forward</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='label'>must_exist:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>timeout:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>flags:</span> <span class='int'>0</span><span class='comma'>,</span> <span class='label'>nonce:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>enforce_nonce:</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_reference'>reference</span> <span class='op'>=</span> <span class='id identifier rubyid_to_reference'>to_reference</span><span class='lparen'>(</span><span class='label'>type:</span> <span class='symbol'>:forward</span><span class='comma'>,</span> <span class='label'>must_exist:</span> <span class='id identifier rubyid_must_exist'>must_exist</span><span class='rparen'>)</span>
@@ -4439,12 +4700,12 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-346
-347
-348</pre>
+358
+359
+360</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 346</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 358</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_bot?'>from_bot?</span>
   <span class='ivar'>@author</span><span class='op'>&amp;.</span><span class='id identifier rubyid_current_bot?'>current_bot?</span>
@@ -4479,12 +4740,12 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-484
-485
-486</pre>
+496
+497
+498</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 484</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 496</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;Message content=\&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@content</span><span class='embexpr_end'>}</span><span class='tstring_content'>\&quot; id=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_content'> timestamp=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@timestamp</span><span class='embexpr_end'>}</span><span class='tstring_content'> author=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@author</span><span class='embexpr_end'>}</span><span class='tstring_content'> channel=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@channel</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
@@ -4540,12 +4801,12 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-489
-490
-491</pre>
+501
+502
+503</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 489</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 501</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_link'>link</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>https://discord.com/channels/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_server'>server</span><span class='op'>&amp;.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>@me</span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>/</span><span class='embexpr_beg'>#{</span><span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>/</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -4616,16 +4877,16 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-395
-396
-397
-398
-399
-400
-401</pre>
+407
+408
+409
+410
+411
+412
+413</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 395</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 407</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mentions?'>mentions?</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_mentions'>mentions</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='ivar'>@mentions</span> <span class='op'>+</span> <span class='id identifier rubyid_role_mentions'>role_mentions</span><span class='rparen'>)</span>
@@ -4681,12 +4942,12 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-380
-381
-382</pre>
+392
+393
+394</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 380</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 392</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_my_reactions'>my_reactions</span>
   <span class='ivar'>@reactions</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:me</span><span class='rparen'>)</span>
@@ -4734,14 +4995,14 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-298
-299
-300
-301
-302</pre>
+310
+311
+312
+313
+314</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 298</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 310</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_pin'>pin</span><span class='lparen'>(</span><span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_pin_message'><span class='object_link'><a href="API/Channel.html#pin_message-class_method" title="Discordrb::API::Channel.pin_message (method)">pin_message</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span><span class='rparen'>)</span>
@@ -4859,18 +5120,6 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-421
-422
-423
-424
-425
-426
-427
-428
-429
-430
-431
-432
 433
 434
 435
@@ -4881,10 +5130,22 @@ You can only edit your own messages.</p>
 440
 441
 442
-443</pre>
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 421</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 433</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reacted_with'>reacted_with</span><span class='lparen'>(</span><span class='id identifier rubyid_reaction'>reaction</span><span class='comma'>,</span> <span class='label'>limit:</span> <span class='int'>100</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='symbol'>:normal</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_reaction'>reaction</span> <span class='op'>=</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='period'>.</span><span class='id identifier rubyid_to_reaction'>to_reaction</span> <span class='kw'>if</span> <span class='id identifier rubyid_reaction'>reaction</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to_reaction</span><span class='rparen'>)</span>
@@ -4956,12 +5217,12 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-374
-375
-376</pre>
+386
+387
+388</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 374</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 386</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reactions?'>reactions?</span>
   <span class='op'>!</span><span class='ivar'>@reactions</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -5013,16 +5274,16 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-502
-503
-504
-505
-506
-507
-508</pre>
+514
+515
+516
+517
+518
+519
+520</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 502</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 514</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_referenced_message'>referenced_message</span>
   <span class='kw'>return</span> <span class='ivar'>@referenced_message</span> <span class='kw'>if</span> <span class='ivar'>@referenced_message</span>
@@ -5106,12 +5367,12 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-247
-248
-249</pre>
+259
+260
+261</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 247</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 259</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reply'>reply</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span>
   <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span>
@@ -5301,16 +5562,16 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-261
-262
-263
-264
-265
-266
-267</pre>
+273
+274
+275
+276
+277
+278
+279</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 261</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 273</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reply!'>reply!</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>embed:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>attachments:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>mention_user:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>components:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>flags:</span> <span class='int'>0</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>parse:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>==</span> <span class='kw'>false</span>
@@ -5362,12 +5623,12 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-497
-498
-499</pre>
+509
+510
+511</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 497</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 509</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reply?'>reply?</span>
   <span class='op'>!</span><span class='ivar'>@referenced_message</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -5557,12 +5818,12 @@ You can only edit your own messages.</p>
       <pre class="lines">
 
 
-270
-271
-272</pre>
+282
+283
+284</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 270</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 282</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_respond'>respond</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_message_reference'>message_reference</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_flags'>flags</span> <span class='op'>=</span> <span class='int'>0</span><span class='rparen'>)</span>
   <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_send_message'>send_message</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='id identifier rubyid_tts'>tts</span><span class='comma'>,</span> <span class='id identifier rubyid_embed'>embed</span><span class='comma'>,</span> <span class='id identifier rubyid_attachments'>attachments</span><span class='comma'>,</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span><span class='comma'>,</span> <span class='id identifier rubyid_message_reference'>message_reference</span><span class='comma'>,</span> <span class='id identifier rubyid_components'>components</span><span class='comma'>,</span> <span class='id identifier rubyid_flags'>flags</span><span class='rparen'>)</span>
@@ -5632,14 +5893,14 @@ authorized with the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-236
-237
-238
-239
-240</pre>
+248
+249
+250
+251
+252</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 236</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 248</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_role_mentions'>role_mentions</span>
   <span class='kw'>return</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_private?'>private?</span> <span class='op'>||</span> <span class='ivar'>@mention_roles</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -5711,14 +5972,14 @@ authorized with the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-226
-227
-228
-229
-230</pre>
+238
+239
+240
+241
+242</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 226</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 238</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server'>server</span>
   <span class='kw'>return</span> <span class='kw'>if</span> <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_private?'>private?</span>
@@ -5772,14 +6033,14 @@ authorized with the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-386
-387
-388
-389
-390</pre>
+398
+399
+400
+401
+402</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 386</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 398</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_suppress_embeds'>suppress_embeds</span>
   <span class='id identifier rubyid_flags'>flags</span> <span class='op'>=</span> <span class='ivar'>@flags</span> <span class='op'>|</span> <span class='lparen'>(</span><span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='int'>2</span><span class='rparen'>)</span>
@@ -5833,12 +6094,12 @@ authorized with the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-528
-529
-530</pre>
+540
+541
+542</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 528</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 540</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_message'>to_message</span>
   <span class='kw'>self</span>
@@ -5928,14 +6189,14 @@ authorized with the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-550
-551
-552
-553
-554</pre>
+562
+563
+564
+565
+566</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 550</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 562</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_reference'>to_reference</span><span class='lparen'>(</span><span class='label'>type:</span> <span class='symbol'>:reply</span><span class='comma'>,</span> <span class='label'>must_exist:</span> <span class='kw'>true</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='symbol'>:reply</span> <span class='op'>?</span> <span class='int'>0</span> <span class='op'>:</span> <span class='int'>1</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_type'>type</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Symbol</span><span class='rparen'>)</span>
@@ -5985,14 +6246,14 @@ authorized with the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-306
-307
-308
-309
-310</pre>
+318
+319
+320
+321
+322</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 306</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 318</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unpin'>unpin</span><span class='lparen'>(</span><span class='id identifier rubyid_reason'>reason</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_unpin_message'><span class='object_link'><a href="API/Channel.html#unpin_message-class_method" title="Discordrb::API::Channel.unpin_message (method)">unpin_message</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span><span class='rparen'>)</span>
@@ -6046,12 +6307,12 @@ authorized with the <code>bot</code> scope.</p>
       <pre class="lines">
 
 
-351
-352
-353</pre>
+363
+364
+365</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 351</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/message.rb', line 363</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_webhook?'>webhook?</span>
   <span class='op'>!</span><span class='ivar'>@webhook_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -6066,7 +6327,7 @@ authorized with the <code>bot</code> scope.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Mar 15 23:01:53 2026 by
+  Generated on Sun Mar 15 23:02:12 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>
