@@ -289,16 +289,16 @@
       <pre class="lines">
 
 
-291
-292
-293
-294
-295
-296
-297</pre>
+319
+320
+321
+322
+323
+324
+325</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 291</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 319</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@id</span> <span class='op'>=</span> <span class='id identifier rubyid_id'>id</span>
@@ -467,21 +467,21 @@ There is a limit of 100 characters to each custom_id.</p>
       <pre class="lines">
 
 
-324
-325
-326
-327
-328
-329
-330
-331
-332
-333
-334
-335</pre>
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 324</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 352</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_button'>button</span><span class='lparen'>(</span><span class='label'>style:</span><span class='comma'>,</span> <span class='label'>id:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>emoji:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>custom_id:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>disabled:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>url:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_style'>style</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../View.html#BUTTON_STYLES-constant" title="Discordrb::Webhooks::View::BUTTON_STYLES (constant)">BUTTON_STYLES</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_style'>style</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_style'>style</span>
@@ -532,12 +532,12 @@ There is a limit of 100 characters to each custom_id.</p>
       <pre class="lines">
 
 
-301
-302
-303</pre>
+329
+330
+331</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 301</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 329</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_text_display'>text_display</span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
   <span class='ivar'>@components</span> <span class='op'>&lt;&lt;</span> <span class='const'><span class='object_link'><a href="TextDisplayBuilder.html" title="Discordrb::Webhooks::View::TextDisplayBuilder (class)">TextDisplayBuilder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="TextDisplayBuilder.html#initialize-instance_method" title="Discordrb::Webhooks::View::TextDisplayBuilder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='op'>...</span><span class='rparen'>)</span>
@@ -642,12 +642,12 @@ There is a limit of 100 characters to each custom_id.</p>
       <pre class="lines">
 
 
-310
-311
-312</pre>
+338
+339
+340</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 310</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/view.rb', line 338</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_thumbnail'>thumbnail</span><span class='lparen'>(</span><span class='label'>url:</span><span class='comma'>,</span> <span class='label'>id:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>spoiler:</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='ivar'>@accessory</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>type:</span> <span class='const'><span class='object_link'><a href="../View.html#COMPONENT_TYPES-constant" title="Discordrb::Webhooks::View::COMPONENT_TYPES (constant)">COMPONENT_TYPES</a></span></span><span class='lbracket'>[</span><span class='symbol'>:thumbnail</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>id:</span> <span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='label'>media:</span> <span class='lbrace'>{</span> <span class='label'>url:</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>description:</span> <span class='id identifier rubyid_description'>description</span><span class='comma'>,</span> <span class='label'>spoiler:</span> <span class='id identifier rubyid_spoiler'>spoiler</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
@@ -662,7 +662,7 @@ There is a limit of 100 characters to each custom_id.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Mar 15 23:05:35 2026 by
+  Generated on Sun Mar 15 23:06:05 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>
