@@ -20,6 +20,7 @@ require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
+require 'discordrb/events/integrations'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -165,6 +166,7 @@ module Discordrb
       @status = :online
 
       @application_commands = {}
+      @request_members_rl = {}
     end
 
     # The list of users the bot shares a server with.
@@ -199,12 +201,18 @@ module Discordrb
     #   The list of emoji the bot can use.
     #   @return [Array<Emoji>] the emoji available.
     def emoji(id = nil)
-      emoji_hash = servers.values.map(&:emoji).reduce(&:merge)
-      if id
-        id = id.resolve_id
-        emoji_hash[id]
+      if (id = id&.resolve_id)
+        @servers.each_value do |server|
+          emoji = server.emojis[id]
+          return emoji if emoji
+        end
       else
-        emoji_hash.values
+        hash = {}
+        @servers.each_value do |server|
+          hash.merge!(server.emojis)
+        end
+
+        hash
       end
     end
 
@@ -232,15 +240,21 @@ module Discordrb
     alias_method :bot_user, :profile
 
     # The bot's OAuth application.
-    # @return [Application, nil] The bot's application info. Returns `nil` if bot is not a bot account.
+    # @return [Application] The bot's application info.
     def bot_application
-      return unless @type == :bot
-
       response = API.oauth_application(token)
       Application.new(JSON.parse(response), self)
     end
 
     alias_method :bot_app, :bot_application
+    alias_method :application, :bot_application
+
+    # Get the role connection metadata records associated with this application.
+    # @return [Array<RoleConnectionMetadata>] the role connection metadata records associated with this application.
+    def role_connection_metadata_records
+      response = API::Application.get_application_role_connection_metadata_records(@bot.token, @id)
+      JSON.parse(response).map { |role_connection| RoleConnectionMetadata.new(role_connection, @bot) }
+    end
 
     # The Discord API token received when logging in. Useful to explicitly call
     # {API} methods.
@@ -899,6 +913,14 @@ module Discordrb
       API::Application.edit_guild_command_permissions(bearer_token, profile.id, server_id, command_id, permissions)
     end
 
+    # Get the permissions for all of the application commands in a specific server.
+    # @param server_id [Integer, String, nil] The ID of the server to fetch application command permissions for.
+    # @return [Array<ApplicationCommand::Permission>] The permissions for all of the application commands in the given server.
+    def application_command_permissions(server_id:)
+      response = API::Application.get_guild_application_command_permissions(@token, profile.id, server_id.resolve_id)
+      JSON.parse(response).flat_map { |data| data['permissions'].map { |inner| ApplicationCommand::Permission.new(inner, data, self) } }
+    end
+
     # Fetches all the application emojis that the bot can use.
     # @return [Array<Emoji>] Returns an array of emoji objects.
     def application_emojis
@@ -937,6 +959,11 @@ module Discordrb
     # @param emoji_id [Integer, String, Emoji] ID of the application emoji to delete.
     def delete_application_emoji(emoji_id)
       API::Application.delete_application_emoji(@token, profile.id, emoji_id.resolve_id)
+    end
+
+    # @!visibility private
+    def inspect
+      "<Bot client_id=#{@client_id.inspect} redact_token=#{@redact_token.inspect}>"
     end
 
     private
@@ -1565,6 +1592,15 @@ module Discordrb
 
         event = ServerRoleDeleteEvent.new(data, self)
         raise_event(event)
+      when :INTEGRATION_CREATE
+        event = IntegrationCreateEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_UPDATE
+        event = IntegrationUpdateEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_DELETE
+        event = IntegrationDeleteEvent.new(data, self)
+        raise_event(event)
       when :GUILD_CREATE
         create_guild(data)
 
@@ -1704,8 +1740,25 @@ module Discordrb
 
         # raise ThreadDeleteEvent
       when :THREAD_LIST_SYNC
-        data['members'].map { |member| ensure_thread_member(member) }
-        data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
+        server_id = data['guild_id'].to_i
+        server = @servers[server_id]
+
+        # The `channel_ids` field has two meanings:
+        #
+        # 1. If the field is not present, the thread list is being synced for the whole server.
+        #
+        # 2. We are syncing the threads for a specific channel. This can happen when gaining access
+        #    to a channel.
+        if (ids = data['channel_ids']&.map(&:to_i))
+          @channels.delete_if { |_, channel| channel.thread? && ids.any?(channel.parent&.id) }
+          server&.clear_threads(ids)
+        else
+          @channels.delete_if { |_, channel| channel.server.id == server_id && channel.thread? }
+          server&.clear_threads
+        end
+
+        data['members'].each { |member| ensure_thread_member(member) }
+        data['threads'].each { |channel| ensure_channel(channel) }
 
         # raise ThreadListSyncEvent?
       when :THREAD_MEMBER_UPDATE

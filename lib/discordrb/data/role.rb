@@ -173,37 +173,37 @@ module Discordrb
     # Sets the role name to something new
     # @param name [String, nil] The name that should be set.
     def name=(name)
-      update_role_data(name: name)
+      modify(name: name)
     end
 
     # Changes whether or not this role is displayed at the top of the user list
     # @param hoist [true, false] The value it should be changed to
     def hoist=(hoist)
-      update_role_data(hoist: hoist)
+      modify(hoist: hoist)
     end
 
     # Changes whether or not this role can be mentioned
     # @param mentionable [true, false] The value it should be changed to
     def mentionable=(mentionable)
-      update_role_data(mentionable: mentionable)
+      modify(mentionable: mentionable)
     end
 
     # Sets the primary role colour to something new.
     # @param colour [ColourRGB, Integer, nil] The new colour.
     def colour=(colour)
-      update_colours(primary: colour)
+      modify(colour: colour)
     end
 
     # Sets the secondary role colour to something new.
     # @param colour [ColourRGB, Integer, nil] The new secondary colour.
     def secondary_colour=(colour)
-      update_colours(secondary: colour)
+      modify(secondary_colour: colour)
     end
 
     # Sets the tertiary role colour to something new.
     # @param colour [ColourRGB, Integer, nil] The new tertiary colour.
     def tertiary_colour=(colour)
-      update_colours(tertiary: colour)
+      modify(tertiary_colour: colour)
     end
 
     # Sets whether the role colour should be a holographic style.
@@ -215,21 +215,19 @@ module Discordrb
     # Upload a role icon for servers with the ROLE_ICONS feature.
     # @param file [File, nil] File like object that responds to #read, or nil.
     def icon=(file)
-      update_role_data(icon: file)
+      modify(icon: file)
     end
 
     # Set a role icon to a unicode emoji for servers with the ROLE_ICONS feature.
     # @param emoji [String, nil] The new unicode emoji for this role, or nil.
     def unicode_emoji=(emoji)
-      update_role_data(unicode_emoji: emoji)
+      modify(unicode_emoji: emoji)
     end
 
     # @param format ['webp', 'png', 'jpeg']
     # @return [String] URL to the icon on Discord's CDN.
     def icon_url(format = 'webp')
-      return nil unless @icon
-
-      Discordrb::API.role_icon_url(@id, @icon, format)
+      API.role_icon_url(@id, @icon, format) if @icon
     end
 
     # Get the icon that a role has displayed.
@@ -243,16 +241,7 @@ module Discordrb
     # @param icon [File, String, nil] File like object that responds to #read, unicode emoji, or nil.
     # @note Setting the icon to nil will remove the unicode emoji **and** the custom icon.
     def display_icon=(icon)
-      if icon.nil?
-        update_role_data(unicode_emoji: nil, icon: nil)
-        return
-      end
-
-      if icon.respond_to?(:read)
-        update_role_data(unicode_emoji: nil, icon: icon)
-      else
-        update_role_data(unicode_emoji: icon, icon: nil)
-      end
+      modify(display_icon: icon)
     end
 
     # Whether or not the role is of the holographic style.
@@ -278,12 +267,11 @@ module Discordrb
     # https://discord.com/developers/docs/topics/permissions.
     # @example Remove all permissions from a role
     #   role.packed = 0
-    # @param packed [Integer, nil] A bitfield with the desired permissions value.
-    # @param update_perms [true, false] Whether the internal data should also be updated. This should always be true
-    #   when calling externally.
-    def packed=(packed, update_perms = true)
-      update_role_data(permissions: packed)
-      @permissions.bits = packed if update_perms
+    # @param permissions [Integer, nil] A bitfield with the desired permissions value.
+    # @param _update_perms [true, false] Whether the internal data should also be updated. This should always be true
+    #   when calling externally. This is deprecated and no longer functional. Permissions data is always updated.
+    def packed=(permissions, _update_perms = true)
+      modify(permissions: permissions)
     end
 
     # Moves this role above another role in the list.
@@ -320,7 +308,6 @@ module Discordrb
     # @param reason [String, nil] The audit log reason to show for moving the role.
     # @return [Integer] The new position of the role.
     def move(bottom: nil, above: nil, below: nil, offset: 0, reason: nil)
-      # rubocop:disable Style/IfUnlessModifier
       if [bottom, above, below].count(&:itself) > 1
         raise ArgumentError, "'bottom', 'above', and 'below' are mutually exclusive"
       end
@@ -333,7 +320,6 @@ module Discordrb
         raise ArgumentError, 'The target role that was provded is not valid'
       end
 
-      # rubocop:enable Style/IfUnlessModifier
       roles = @server.roles.sort_by { |role| [role.position, role.id] }
 
       # Make sure we remove the current role.
@@ -368,13 +354,13 @@ module Discordrb
     # @param reason [String, nil] The audit log reason to show for updating the role's colours.
     def update_colours(primary: :undef, secondary: :undef, tertiary: :undef, holographic: :undef, reason: nil)
       colours = {
-        primary_color: (primary == :undef ? @colour : primary)&.to_i,
+        color: (primary == :undef ? @colour : primary)&.to_i,
         tertiary_color: (tertiary == :undef ? @tertiary_colour : tertiary)&.to_i,
         secondary_color: (secondary == :undef ? @secondary_colour : secondary)&.to_i
       }
 
       holographic_colours = {
-        primary_color: 11_127_295,
+        color: 11_127_295,
         tertiary_color: 16_761_760,
         secondary_color: 16_759_788
       }
@@ -382,30 +368,82 @@ module Discordrb
       # Only set the tertiary_color to `nil` if holographic is explicitly set to false.
       (colours[:tertiary_color] = nil) if holographic.is_a?(FalseClass)
 
-      update_role_data(colours: holographic == true ? holographic_colours : colours, reason: reason)
+      modify(reason: reason, **(holographic ? holographic_colours : colours))
     end
 
     alias_method :update_colors, :update_colours
 
+    # Modify the properties of the role.
+    # @param name [String, nil] The new 1-100 character name of the role.
+    # @param mentionable [true, false, nil] Whether or not anyone should be able to ping the role.
+    # @param hoist [true, false, nil] Whether or not members who have the role should be shown seperately in the sidebar.
+    # @param unicode_emoji [String, nil] The new unicode emoji to set as the role's icon.
+    # @param icon [#read, File, nil] The new custom icon of the role. Must be a file-like object that responds to `#read`.
+    # @param display_icon [String, #read, File, nil] The new display icon of the role. Mutually exclusive with `icon:` and `unicode_emoji:`.
+    # @param colour [ColourRGB, Integer, nil] The new primary colour of the role. Can also be passed as `color:`.
+    # @param secondary_colour [ColourRGB, Integer, nil] The new secondary colour of the role. Can also be passed as `secondary_color:`.
+    # @param tertiary_colour [ColourRGB, Integer, nil] The new tertiary colour of the role. Can also be passed as `tertiary_color:`.
+    # @param permissions [String, Integer, nil] The new permissions to set for the role.
+    # @param reason [String, nil] The reason to show in the server's audit log for modifying the role.
+    # @yieldparam builder [Permissions] An optional permissions builder. Arguments passed to the method overwrite builder data.
+    # @return [nil]
+    def modify(
+      name: :undef, mentionable: :undef, hoist: :undef, unicode_emoji: :undef, icon: :undef,
+      display_icon: :undef, color: :undef, colour: :undef, secondary_color: :undef,
+      secondary_colour: :undef, tertiary_color: :undef, tertiary_colour: :undef,
+      permissions: :undef, reason: nil
+    )
+      if display_icon != :undef
+        if icon != :undef || unicode_emoji != :undef
+          raise ArgumentError, "'display_icon' is mutually exclusive with 'icon' and 'unicode_emoji'"
+        end
+
+        if display_icon.nil?
+          icon = nil
+          unicode_emoji = nil
+        elsif display_icon.is_a?(String)
+          icon = nil
+          unicode_emoji = display_icon
+        elsif display_icon.respond_to?(:read)
+          icon = display_icon
+          unicode_emoji = nil
+        end
+      end
+
+      if block_given? && permissions == :undef
+        yield((builder = Permissions.new(@permissions.bits)))
+        permissions = builder.bits
+      end
+
+      data = {
+        name: name,
+        mentionable: mentionable,
+        hoist: hoist,
+        unicode_emoji: unicode_emoji,
+        icon: icon.respond_to?(:read) ? Discordrb.encode64(icon) : icon,
+        permissions: permissions == :undef ? permissions : permissions&.to_s,
+        reason: reason
+      }
+
+      color = (colour == :undef ? color : colour)
+      tertiary = (tertiary_colour == :undef ? tertiary_color : tertiary_colour)
+      secondary = (secondary_colour == :undef ? secondary_color : secondary_colour)
+
+      if color != :undef || secondary != :undef || tertiary != :undef
+        data[:colors] = {
+          primary_color: (color == :undef ? @colour : color)&.to_i,
+          tertiary_color: (tertiary == :undef ? @tertiary_colour : tertiary)&.to_i,
+          secondary_color: (secondary == :undef ? @secondary_colour : secondary)&.to_i
+        }
+      end
+
+      update_data(JSON.parse(API::Server.update_role!(@bot.token, @server.id, @id, **data)))
+      nil
+    end
+
     # The inspect method is overwritten to give more useful output
     def inspect
       "<Role name=#{@name} permissions=#{@permissions.inspect} hoist=#{@hoist} colour=#{@colour.inspect} server=#{@server.inspect} position=#{@position} mentionable=#{@mentionable} unicode_emoji=#{@unicode_emoji} flags=#{@flags}>"
-    end
-
-    private
-
-    # @!visibility private
-    def update_role_data(new_data)
-      update_data(JSON.parse(API::Server.update_role(@bot.token, @server.id, @id,
-                                                     new_data.key?(:name) ? new_data[:name] : :undef,
-                                                     :undef,
-                                                     new_data.key?(:hoist) ? new_data[:hoist] : :undef,
-                                                     new_data.key?(:mentionable) ? new_data[:mentionable] : :undef,
-                                                     new_data.key?(:permissions) ? new_data[:permissions] : :undef,
-                                                     new_data[:reason],
-                                                     new_data.key?(:icon) ? new_data[:icon] : :undef,
-                                                     new_data.key?(:unicode_emoji) ? new_data[:unicode_emoji] : :undef,
-                                                     new_data.key?(:colours) ? new_data[:colours] : :undef)))
     end
   end
 end

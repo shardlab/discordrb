@@ -14,6 +14,7 @@ require 'discordrb/events/await'
 require 'discordrb/events/bans'
 require 'discordrb/events/reactions'
 require 'discordrb/events/interactions'
+require 'discordrb/events/integrations'
 
 require 'discordrb/await'
 
@@ -290,7 +291,7 @@ module Discordrb
     # This **event** is raised when a user's voice state changes. This includes when a user joins, leaves, or
     # moves between voice channels, as well as their mute and deaf status for themselves and on the server.
     # @param attributes [Hash] The event's attributes.
-    # @option attributes [String, Integer, User] :from Matches the user that sent the message.
+    # @option attributes [String, Integer, User] :from Matches the user that raised the event.
     # @option attributes [String, Integer, Channel] :channel Matches the voice channel the user has joined.
     # @option attributes [String, Integer, Channel] :old_channel Matches the voice channel the user was in previously.
     # @option attributes [true, false] :mute Matches whether or not the user is muted server-wide.
@@ -561,12 +562,13 @@ module Discordrb
     end
 
     # This **event** is raised whenever an application command (slash command) is executed.
-    # @param name [Symbol] The name of the application command this handler is for.
+    # @param name [Symbol, String] The name of the application command this handler is for.
     # @param attributes [Hash] The event's attributes.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ApplicationCommandEvent] The event that was raised.
     # @return [ApplicationCommandEventHandler] The event handler that was registered.
     def application_command(name, attributes = {}, &block)
+      name = name.to_sym
       @application_commands ||= {}
 
       unless block
@@ -681,7 +683,7 @@ module Discordrb
     # @yieldparam event [AutocompleteEvent] The event that was raised.
     # @return [AutocompleteEventHandler] The event handler that was registered.
     def autocomplete(name = nil, attributes = {}, &block)
-      register_event(AutocompleteEvent, attributes.merge!({ name: name }), block)
+      register_event(AutocompleteEvent, attributes.merge!({ name: name&.to_s }), block)
     end
 
     # This **event** is raised whenever an application command's permissions are updated.
@@ -694,6 +696,42 @@ module Discordrb
     # @return [ApplicationCommandPermissionsUpdateEventHandler] The event handler that was registered.
     def application_command_permissions_update(attributes = {}, &block)
       register_event(ApplicationCommandPermissionsUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an integration is added to a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Integration] :id An integration to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Application] :application An application to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [IntegrationCreateEvent] The event that was raised.
+    # @return [IntegrationCreateEventHandler] The event handler that was registered.
+    def integration_create(attributes = {}, &block)
+      register_event(IntegrationCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an integration is updated in a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Integration] :id An integration to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Application] :application An application to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [IntegrationUpdateEvent] The event that was raised.
+    # @return [IntegrationUpdateEventHandler] The event handler that was registered.
+    def integration_update(attributes = {}, &block)
+      register_event(IntegrationUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an integration is removed from a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Integration] :id An integration to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Application] :application An application to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [IntegrationDeleteEvent] The event that was raised.
+    # @return [IntegrationDeleteEventHandler] The event handler that was registered.
+    def integration_delete(attributes = {}, &block)
+      register_event(IntegrationDeleteEvent, attributes, block)
     end
 
     # This **event** is raised for every dispatch received over the gateway, whether supported by discordrb or not.
