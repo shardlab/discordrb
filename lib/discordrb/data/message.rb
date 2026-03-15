@@ -578,5 +578,22 @@ module Discordrb
 
       @bot.channel(channel).send_message!(reference: reference, timeout: timeout, flags: flags, nonce: nonce, enforce_nonce: enforce_nonce)
     end
+
+    # Get the formatted timestamps contained in the message content.
+    # @return [Array<TimestampMarkdown>] The formatted timestamps in the message.
+    def timestamps
+      return (@timestamps || []) if @timestamps || !@content || @content.empty?
+
+      @timestamps = []
+
+      @content.scan(/<t:(-?\d{1,13})(?::(t|T|d|D|f|F|s|S|R))?>/) do |time, style|
+        # If it's not between these values, Discord won't show it, so don't bother.
+        if (time = time.to_i).between?(-8_640_000_000_000, 8_640_000_000_000)
+          @timestamps << TimestampMarkdown.new(Time.at(time), style)
+        end
+      end
+
+      @timestamps
+    end
   end
 end
