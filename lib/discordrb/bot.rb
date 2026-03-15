@@ -166,6 +166,7 @@ module Discordrb
       @status = :online
 
       @application_commands = {}
+      @request_members_rl = {}
     end
 
     # The list of users the bot shares a server with.
