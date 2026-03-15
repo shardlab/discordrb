@@ -182,7 +182,8 @@
 </span>  <span class='int'>46</span> <span class='op'>=&gt;</span> <span class='symbol'>:send_voice_messages</span><span class='comma'>,</span>         <span class='comment'># 70368744177664
 </span>  <span class='int'>49</span> <span class='op'>=&gt;</span> <span class='symbol'>:send_polls</span><span class='comma'>,</span>                  <span class='comment'># 562949953421312
 </span>  <span class='int'>50</span> <span class='op'>=&gt;</span> <span class='symbol'>:use_external_apps</span><span class='comma'>,</span>           <span class='comment'># 1125899906842624
-</span>  <span class='int'>51</span> <span class='op'>=&gt;</span> <span class='symbol'>:pin_messages</span>                 <span class='comment'># 2251799813685248
+</span>  <span class='int'>51</span> <span class='op'>=&gt;</span> <span class='symbol'>:pin_messages</span><span class='comma'>,</span>                <span class='comment'># 2251799813685248
+</span>  <span class='int'>52</span> <span class='op'>=&gt;</span> <span class='symbol'>:bypass_slowmode</span>              <span class='comment'># 4503599627370496
 </span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
     </dl>
@@ -449,7 +450,6 @@
       <pre class="lines">
 
 
-125
 126
 127
 128
@@ -459,10 +459,11 @@
 132
 133
 134
-135</pre>
+135
+136</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 125</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 126</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_bits'>bits</span> <span class='op'>=</span> <span class='int'>0</span><span class='comma'>,</span> <span class='id identifier rubyid_writer'>writer</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@writer</span> <span class='op'>=</span> <span class='id identifier rubyid_writer'>writer</span>
@@ -512,12 +513,12 @@
       <pre class="lines">
 
 
-80
 81
-82</pre>
+82
+83</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 80</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 81</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bits'>bits</span>
   <span class='ivar'>@bits</span>
@@ -604,7 +605,6 @@ of instancing a new Permissions object.</p>
       <pre class="lines">
 
 
-104
 105
 106
 107
@@ -612,10 +612,11 @@ of instancing a new Permissions object.</p>
 109
 110
 111
-112</pre>
+112
+113</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 104</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 105</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_bits'>bits</span><span class='lparen'>(</span><span class='id identifier rubyid_list'>list</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='int'>0</span>
@@ -662,14 +663,14 @@ of instancing a new Permissions object.</p>
       <pre class="lines">
 
 
-147
 148
 149
 150
-151</pre>
+151
+152</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 147</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 148</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_other'>other</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='rparen'>)</span>
@@ -735,12 +736,12 @@ of instancing a new Permissions object.</p>
       <pre class="lines">
 
 
-142
 143
-144</pre>
+144
+145</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 142</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 143</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_defined_permissions'>defined_permissions</span>
   <span class='const'><span class='object_link'><a href="#FLAGS-constant" title="Discordrb::Permissions::FLAGS (constant)">FLAGS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_filter_map'>filter_map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='op'>|</span> <span class='ivar'>@bits</span><span class='period'>.</span><span class='id identifier rubyid_anybits?'>anybits?</span><span class='lparen'>(</span><span class='lparen'>(</span><span class='int'>1</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>:</span> <span class='kw'>nil</span> <span class='rbrace'>}</span>
@@ -775,15 +776,15 @@ of instancing a new Permissions object.</p>
       <pre class="lines">
 
 
-90
 91
 92
 93
 94
-95</pre>
+95
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/permissions.rb', line 91</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_init_vars'>init_vars</span>
   <span class='const'><span class='object_link'><a href="#FLAGS-constant" title="Discordrb::Permissions::FLAGS (constant)">FLAGS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_position'>position</span><span class='comma'>,</span> <span class='id identifier rubyid_flag'>flag</span><span class='op'>|</span>
@@ -801,7 +802,7 @@ of instancing a new Permissions object.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Mar 15 23:02:11 2026 by
+  Generated on Sun Mar 15 23:02:48 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>
