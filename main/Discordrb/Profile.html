@@ -197,6 +197,52 @@ It can be accessed using <span class='object_link'><a href="Bot.html#profile-ins
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#bio-instance_method" title="#bio (instance method)">#<strong>bio</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Get the bot&#39;s global bio.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#bio=-instance_method" title="#bio= (instance method)">#<strong>bio=</strong>(bio)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set the bot&#39;s global bio.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#current_bot%3F-instance_method" title="#current_bot? (instance method)">#<strong>current_bot?</strong>  &#x21d2; true </a>
     
 
@@ -444,6 +490,122 @@ something readable (e.g. File Object) or a data URI.</p>
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="bio-instance_method">
+  
+    #<strong>bio</strong>  &#x21d2; <tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Get the bot&#39;s global bio.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The bot&#39;s global bio, or an empty string if it doesn&#39;t have one set.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+45
+46
+47</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 45</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_bio'>bio</span>
+  <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_description'>description</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="bio=-instance_method">
+  
+    #<strong>bio=</strong>(bio)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set the bot&#39;s global bio.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>bio</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../String.html" title="String (class)">String</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The bot&#39;s new global bio, or <code>nil</code> to remove the current bio.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+51
+52
+53</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 51</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_bio='>bio=</span><span class='lparen'>(</span><span class='id identifier rubyid_bio'>bio</span><span class='rparen'>)</span>
+  <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_application'>application</span><span class='period'>.</span><span class='id identifier rubyid_modify'>modify</span><span class='lparen'>(</span><span class='label'>description:</span> <span class='id identifier rubyid_bio'>bio</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="current_bot?-instance_method">
   
     #<strong>current_bot?</strong>  &#x21d2; <tt>true</tt> 
@@ -521,12 +683,12 @@ something readable (e.g. File Object) or a data URI.</p>
       <pre class="lines">
 
 
-53
-54
-55</pre>
+65
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/profile.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;Profile user=</span><span class='embexpr_beg'>#{</span><span class='kw'>super</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
@@ -604,7 +766,7 @@ something readable (e.g. File Object) or a data URI.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Mar 15 23:06:52 2026 by
+  Generated on Sun Mar 15 23:07:01 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>
