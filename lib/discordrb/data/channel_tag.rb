@@ -45,14 +45,14 @@ module Discordrb
         **(Emoji.build_emoji_hash(emoji) if emoji != :undef)
       }.reject { |_, value| value == :undef }
 
-      @channel.__send__(:update_tags, to_h.merge(data), reason)
+      @channel.update_tags(to_h.merge(data), reason)
     end
 
     # Permenantly delete the channel tag.
     # @param reason [String, nil] The reason to show in the audit log for deleting the tag.
     # @return [nil]
     def delete(reason: nil)
-      @channel.__send__(:update_tags, { id: @id, d: true }, reason)
+      @channel.update_tags({ id: @id, d: true }, reason)
     end
 
     # @!visibility private

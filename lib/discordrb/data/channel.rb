@@ -1227,6 +1227,19 @@ module Discordrb
       @last_message_id = id
     end
 
+    # Set the available tags of a channel.
+    # @param tag [Hash] the data for the tag to create
+    # @param reason [String, nil] the reason to show in the audit log
+    # @note For internal use only
+    # @!visibility private
+    def update_tags(tag, reason)
+      raise 'Cannot execute action on channel' unless thread_only?
+
+      tags = @available_tags.dup.tap { |old| old.delete(tag[:id]) }
+
+      modify(tags: (tag[:d] ? tags : (tags << tag)), reason: reason)
+    end
+
     # Updates the cached data with new data
     # @note For internal use only
     # @!visibility private
@@ -1300,15 +1313,6 @@ module Discordrb
 
       API::Channel.bulk_delete_messages(@bot.token, @id, ids, reason)
       ids.size
-    end
-
-    # @!visibility private
-    def update_tags(tag, reason)
-      raise 'Cannot execute action on channel' unless thread_only?
-
-      tags = @available_tags.dup.tap { |old| old.delete(tag[:id]) }
-
-      modify(tags: (tag[:d] ? tags : (tags << tag)), reason: reason)
     end
 
     # @!visibility private
