@@ -167,6 +167,7 @@ module Discordrb
       @status = :online
 
       @application_commands = {}
+      @request_members_rl = {}
     end
 
     # The list of users the bot shares a server with.
@@ -240,15 +241,21 @@ module Discordrb
     alias_method :bot_user, :profile
 
     # The bot's OAuth application.
-    # @return [Application, nil] The bot's application info. Returns `nil` if bot is not a bot account.
+    # @return [Application] The bot's application info.
     def bot_application
-      return unless @type == :bot
-
       response = API.oauth_application(token)
       Application.new(JSON.parse(response), self)
     end
 
     alias_method :bot_app, :bot_application
+    alias_method :application, :bot_application
+
+    # Get the role connection metadata records associated with this application.
+    # @return [Array<RoleConnectionMetadata>] the role connection metadata records associated with this application.
+    def role_connection_metadata_records
+      response = API::Application.get_application_role_connection_metadata_records(@bot.token, @id)
+      JSON.parse(response).map { |role_connection| RoleConnectionMetadata.new(role_connection, @bot) }
+    end
 
     # The Discord API token received when logging in. Useful to explicitly call
     # {API} methods.
@@ -905,6 +912,14 @@ module Discordrb
       permissions += builder.to_a
       bearer_token = "Bearer #{bearer_token.delete_prefix('Bearer ')}"
       API::Application.edit_guild_command_permissions(bearer_token, profile.id, server_id, command_id, permissions)
+    end
+
+    # Get the permissions for all of the application commands in a specific server.
+    # @param server_id [Integer, String, nil] The ID of the server to fetch application command permissions for.
+    # @return [Array<ApplicationCommand::Permission>] The permissions for all of the application commands in the given server.
+    def application_command_permissions(server_id:)
+      response = API::Application.get_guild_application_command_permissions(@token, profile.id, server_id.resolve_id)
+      JSON.parse(response).flat_map { |data| data['permissions'].map { |inner| ApplicationCommand::Permission.new(inner, data, self) } }
     end
 
     # Fetches all the application emojis that the bot can use.
