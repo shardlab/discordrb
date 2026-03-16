@@ -109,7 +109,7 @@ Style/RedundantReturn:
 Style/RedundantParentheses:
   Enabled: false
 
-Style:/EndOfLine:
+Layout/EndOfLine:
   Enabled: true
   EnforcedStyle: lf
 
@@ -123,3 +123,7 @@ Style/SafeNavigation:
 
 Style/Documentation:
   Enabled: true
+
+Style/IfUnlessModifier:
+  Exclude:
+    - lib/discordrb/data/role.rb
