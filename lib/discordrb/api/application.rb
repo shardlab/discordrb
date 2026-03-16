@@ -200,6 +200,18 @@ module Discordrb::API::Application
     )
   end
 
+  # Get all of the permissions for the commands in a guild.
+  # https://discord.com/developers/docs/interactions/application-commands#get-guild-application-command-permissions
+  def get_guild_application_command_permissions(token, application_id, guild_id)
+    Discordrb::API.request(
+      :applications_aid_guilds_gid_commands_permissions,
+      guild_id,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands/permissions",
+      Authorization: token
+    )
+  end
+
   # Get the permissions for a specific command in a guild.
   # https://discord.com/developers/docs/interactions/application-commands#get-application-command-permissions
   def get_application_command_permissions(token, application_id, guild_id, command_id)
@@ -272,6 +284,32 @@ module Discordrb::API::Application
       application_id,
       :delete,
       "#{Discordrb::API.api_base}/applications/#{application_id}/emojis/#{emoji_id}",
+      Authorization: token
+    )
+  end
+
+  # Edit the current application for the requesting bot user.
+  # https://discord.com/developers/docs/resources/application#edit-current-application
+  def update_current_application(token, custom_install_url: :undef, description: :undef, role_connections_verification_url: :undef, install_params: :undef, integration_types_config: :undef, flags: :undef, interactions_endpoint_url: :undef, tags: :undef, event_webhooks_url: :undef, event_webhooks_status: :undef, event_webhooks_types: :undef, icon: :undef, cover_image: :undef)
+    Discordrb::API.request(
+      :applications_me,
+      nil,
+      :patch,
+      "#{Discordrb::API.api_base}/applications/@me",
+      { custom_install_url:, description:, role_connections_verification_url:, install_params:, integration_types_config:, flags:, interactions_endpoint_url:, tags:, event_webhooks_url:, event_webhooks_status:, event_webhooks_types:, icon:, cover_image: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
+  # Get a list of role connection metadata records.
+  # https://discord.com/developers/docs/resources/application-role-connection-metadata#get-application-role-connection-metadata-records
+  def get_application_role_connection_metadata_records(token, application_id)
+    Discordrb::API.request(
+      :applications_aid_role_connections_metadata,
+      nil,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/role-connections/metadata",
       Authorization: token
     )
   end
