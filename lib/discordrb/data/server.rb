@@ -79,10 +79,10 @@ module Discordrb
     #   Always set to `nil` except for the largest of servers.
     attr_reader :max_presence_count
 
-    # @return [String, nil] the hexadecimal ID of the server's discovery splash screen.
+    # @return [String, nil] the hash of the server's discovery splash image.
     attr_reader :discovery_splash_id
 
-    # @return [Integer] the flags that have been set on the system channel for the server.
+    # @return [Integer] the flags for the server's designated system channel.
     attr_reader :system_channel_flags
 
     # @return [Integer] the maximum number of members that can concurrently watch a stream in a video channel.
@@ -402,24 +402,24 @@ module Discordrb
     end
 
     # Utility method to get a server's splash URL.
-    # @param format [String] the URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to
     #   override this.
-    # @return [String, nil] the URL to the server's splash image, or `nil` if the server doesn't have a splash image.
+    # @return [String, nil] The URL to the server's splash image, or `nil` if the server doesn't have a splash image.
     def splash_url(format: 'webp')
       API.splash_url(@id, @splash_id, format) if @splash_id
     end
 
     # Utility method to get a server's banner URL.
-    # @param format [String] the URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to
     #   override this.
-    # @return [String, nil] the URL to the server's banner image, or `nil` if the server doesn't have a banner image.
+    # @return [String, nil] The URL to the server's banner image, or `nil` if the server doesn't have a banner image.
     def banner_url(format: 'webp')
       API.banner_url(@id, @banner_id, format) if @banner_id
     end
 
     # Utility method to get a server's discovery splash URL.
-    # @param format [String] the URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
-    # @return [String, nil] the URL to the server's discovery splash image, or `nil` if the server doesn't have a discovery splash image.
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
+    # @return [String, nil] The URL to the server's discovery splash image, or `nil` if the server doesn't have a discovery splash image.
     def discovery_splash_url(format: 'webp')
       API.discovery_splash_url(@id, @discovery_splash_id, format) if @discovery_splash_id
     end
@@ -796,7 +796,7 @@ module Discordrb
       very_high: 4
     }.freeze
 
-    # @return [Symbol] the verification level of the server (:none = none, :low = 'Must have a verified email on their Discord account', :medium = 'Has to be registered with Discord for at least 5 minutes', :high = 'Has to be a member of this server for at least 10 minutes', :very_high = 'Must have a verified phone on their Discord account').
+    # @return [Symbol] The verification level of the server (:none = none, :low = 'Must have a verified email on their Discord account', :medium = 'Has to be registered with Discord for at least 5 minutes', :high = 'Has to be a member of this server for at least 10 minutes', :very_high = 'Must have a verified phone on their Discord account').
     def verification_level
       VERIFICATION_LEVELS.key(@verification_level)
     end
@@ -813,7 +813,7 @@ module Discordrb
       only_mentions: 1
     }.freeze
 
-    # @return [Symbol] the default message notifications settings of the server (:all_messages = 'All messages', :only_mentions = 'Only @mentions').
+    # @return [Symbol] The default message notifications settings of the server (:all_messages = 'All messages', :only_mentions = 'Only @mentions').
     def default_message_notifications
       NOTIFICATION_LEVELS.key(@default_message_notifications)
     end
@@ -833,7 +833,7 @@ module Discordrb
       all_members: 2
     }.freeze
 
-    # @return [Symbol] the explicit content filter level of the server (:disabled = 'Don't scan any messages.', :members_without_roles = 'Scan messages for members without a role.', :all_members = 'Scan messages sent by all members.').
+    # @return [Symbol] The explicit content filter level of the server (:disabled = 'Don't scan any messages.', :members_without_roles = 'Scan messages for members without a role.', :all_members = 'Scan messages sent by all members.').
     def explicit_content_filter
       FILTER_LEVELS.key(@explicit_content_filter)
     end
@@ -852,7 +852,7 @@ module Discordrb
       elevated: 1
     }.freeze
 
-    # @return [Symbol] the multi-factor authentication level of the server (:none = 'no MFA/2FA requirement for moderation actions', :elevated = 'MFA/2FA is required for moderation actions')
+    # @return [Symbol] The multi-factor authentication level of the server (:none = 'no MFA/2FA requirement for moderation actions', :elevated = 'MFA/2FA is required for moderation actions')
     def mfa_level
       MFA_LEVELS.key @mfa_level
     end
@@ -865,7 +865,7 @@ module Discordrb
       age_restricted: 3
     }.freeze
 
-    # @return [Symbol] the NSFW level of the server (:default = 'no NSFW level has been set', :explicit = 'the server may contain explicit content', :safe = 'the server does not contain NSFW content', :age_restricted = 'server membership is restricted to adults')
+    # @return [Symbol] The NSFW level of the server (:default = 'no NSFW level has been set', :explicit = 'the server may contain explicit content', :safe = 'the server does not contain NSFW content', :age_restricted = 'server membership is restricted to adults')
     def nsfw_level
       NSFW_LEVELS.key @nsfw_level
     end
@@ -889,25 +889,26 @@ module Discordrb
     alias_method :vanity_invite_link, :vanity_invite_url
 
     # Check if the auto-moderation system has detected a raid.
-    # @return [true, false]
+    # @return [true, false] Whether or not Discord's anti-spam system has detected a raid in the server.
     def raid_detected?
       !@raid_detected_at.nil?
     end
 
     # Check if the auto-moderation system has detected DM spam.
-    # @return [true, false]
+    # @return [true, false] Whether or not Discord's anti-spam system has detected dm-spam in the server.
     def dm_spam_detected?
       !@dm_spam_detected_at.nil?
     end
 
     # Check if the server has disabled non-friend DMs.
-    # @return [true, false]
+    # @return [true, false] Whether or not the server has stopped member's who aren't friends from DMing each other.
     def dms_disabled?
       !@dms_disabled_until.nil? && @dms_disabled_until > Time.now
     end
 
     # Check if the server has paused invites.
-    # @return [true, false]
+    # @return [true, false] Whether or not the server has stopped new members from joining, either via incident actions
+    #   or the `:invites_disabled` feature.
     def invites_disabled?
       (!@invites_disabled_until.nil? && @invites_disabled_until > Time.now) || @features.include?(:invites_disabled)
     end
@@ -1001,27 +1002,32 @@ module Discordrb
       @chunked = true
     end
 
+    # Get the AFK channel of the server.
     # @return [Channel, nil] the AFK voice channel of this server, or `nil` if none is set.
     def afk_channel
       @bot.channel(@afk_channel_id) if @afk_channel_id
     end
 
-    # @return [Channel, nil] the channel where community servers can display rules or guidelines, or `nil` if none is set.
+    # Get the rules channel of the server.
+    # @return [Channel, nil] The channel where community servers can display rules or guidelines, or `nil` if none is set.
     def rules_channel
       @bot.channel(@rules_channel_id) if @rules_channel_id
     end
 
-    # @return [Channel, nil] the system channel (used for automatic welcome messages) of a server, or `nil` if none is set.
+    # Get the system channel of the server.
+    # @return [Channel, nil] The system channel (used for automatic welcome messages) of a server, or `nil` if none is set.
     def system_channel
       @bot.channel(@system_channel_id) if @system_channel_id
     end
 
-    # @return [Channel, nil] the channel where Community servers receive safety alerts from Discord, or `nil` if none is set.
+    # Get the safety alerts channel of the server.
+    # @return [Channel, nil] The channel where Community servers receive safety alerts from Discord, or `nil` if none is set.
     def safety_alerts_channel
       @bot.channel(@safety_alerts_channel_id) if @safety_alerts_channel_id
     end
 
-    # @return [Channel, nil] the channel where Community servers receive public updates from Discord, or `nil` if none is set.
+    # Get the public updates channel of the server.
+    # @return [Channel, nil] The channel where Community servers receive public updates from Discord, or `nil` if none is set.
     def public_updates_channel
       @bot.channel(@public_updates_channel_id) if @public_updates_channel_id
     end
