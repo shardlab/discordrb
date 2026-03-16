@@ -58,6 +58,9 @@ module Discordrb
     # @return [Hash] The interaction data.
     attr_reader :data
 
+    # @return [Interactions::Message, nil] The message associated with this interaction.
+    attr_reader :message
+
     # @return [Array<ActionRow>] The modal components associated with this interaction.
     attr_reader :components
 
@@ -99,7 +102,7 @@ module Discordrb
               end
       @token = data['token']
       @version = data['version']
-      @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
+      @components = @data['components']&.filter_map { |component| Components.from_data(component, @bot) } || []
       @application_permissions = Permissions.new(data['app_permissions']) if data['app_permissions']
       @user_locale = data['locale']
       @server_locale = data['guild_locale']
@@ -139,12 +142,10 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, poll: data[:poll])
-
+      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, wait, data[:poll])
       return unless wait
 
-      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
-      Interactions::Message.new(JSON.parse(response), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(response)['resource']['message'], @bot, self)
     end
 
     # Defer an interaction, setting a temporary response that can be later overriden by {Interaction#send_message}.
@@ -210,12 +211,10 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, poll: data[:poll])
-
+      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, wait, data[:poll])
       return unless wait
 
-      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
-      Interactions::Message.new(JSON.parse(response), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(response)['resource']['message'], @bot, self)
     end
 
     # Edit the original response to this interaction.
@@ -242,7 +241,7 @@ module Discordrb
       data = builder.to_json_hash
       resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags, data[:poll])
 
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
 
     # Delete the original interaction response.
@@ -276,7 +275,7 @@ module Discordrb
       resp = Discordrb::API::Webhook.token_execute_webhook(
         @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, data[:poll]
       )
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
 
     # @param message [String, Integer, InteractionMessage, Message] The message created by this interaction to be edited.
@@ -303,7 +302,7 @@ module Discordrb
       resp = Discordrb::API::Webhook.token_edit_message(
         @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags, data[:poll]
       )
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
 
     # @param message [Integer, String, InteractionMessage, Message] The message created by this interaction to be deleted.
@@ -476,7 +475,7 @@ module Discordrb
       @bot.delete_application_command(@id, server_id: @server_id)
     end
 
-    # Get the permission configuration for the this application command on a specific server.
+    # Get the permission configuration for this application command in a specific server.
     # @param server_id [Integer, String, nil] The ID of the server to fetch command permissions for.
     # @return [Array<Permission>] the permissions for this application command in the given server.
     def permissions(server_id: nil)
@@ -502,7 +501,7 @@ module Discordrb
       # @see TYPES
       attr_reader :type
 
-      # @return [Integer] the ID of the thing this permission is for.
+      # @return [Integer] the ID of the entity this permission is for.
       attr_reader :target_id
 
       # @return [Integer] the ID of the server this permission is for.
@@ -525,7 +524,7 @@ module Discordrb
         @overwrite == true
       end
 
-      # Whether this permission has been denied, e.g has a red check in the UI.
+      # Whether this permission has been denied, e.g has a red X-mark in the UI.
       # @return [true, false]
       def denied?
         @overwrite == false
@@ -535,6 +534,13 @@ module Discordrb
       # @return [true, false]
       def everyone?
         @target_id == @server_id
+      end
+
+      # Get the ID of the application command this permission is for.
+      # @return [Integer, nil] This will be `nil` if the permission is the
+      #   default permission.
+      def command_id
+        @command_id unless default?
       end
 
       # Whether this permission is the default for all commands that don't
@@ -559,7 +565,7 @@ module Discordrb
         when TYPES[:member]
           @bot.server(@server_id).member(@target_id)
         when TYPES[:channel]
-          all_channels ? @bot.server(@server_id).channels : [@bot.channel(@target_id)]
+          all_channels? ? @bot.server(@server_id).channels : [@bot.channel(@target_id)]
         end
       end
 
@@ -925,7 +931,7 @@ module Discordrb
 
         @message_reference = data['message_reference']
 
-        @server_id = data['guild_id']&.to_i
+        @server_id = @interaction.server_id
 
         @timestamp = Time.parse(data['timestamp']) if data['timestamp']
         @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
@@ -951,7 +957,7 @@ module Discordrb
         @mention_everyone = data['mention_everyone']
         @flags = data['flags']
         @pinned = data['pinned']
-        @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+        @components = data['components']&.filter_map { |component| Components.from_data(component, @bot) } || []
       end
 
       # @return [Member, nil] This will return nil if the bot does not have access to the
@@ -1003,6 +1009,102 @@ module Discordrb
       # @!visibility private
       def inspect
         "<Interaction::Message content=#{@content.inspect} embeds=#{@embeds.inspect} channel_id=#{@channel_id} server_id=#{@server_id} author=#{@author.inspect}>"
+      end
+    end
+
+    # Supplemental metadata about an interaction.
+    class Metadata
+      include IDObject
+
+      # @return [Integer] the type of the interaction.
+      attr_reader :type
+
+      # @return [User] the user that initiated the interaction.
+      attr_reader :user
+
+      # @return [User, nil] the user that the command was ran on.
+      attr_reader :target_user
+
+      # @return [Integer, nil] the ID of the message the command was ran on.
+      attr_reader :target_message_id
+
+      # @return [Metadata, nil] the metadata for the interaction that opened the modal.
+      attr_reader :triggering_metadata
+
+      # @return [Integer, nil] the ID of the message that contained the interactive message component.
+      attr_reader :interacted_message_id
+
+      # @return [Integer, nil] the ID the original response message; only present on follow-up messages.
+      attr_reader :original_response_message_id
+
+      # @!visibility private
+      def initialize(data, message, bot)
+        @bot = bot
+        @message = message
+        @id = data['id'].to_i
+        @type = data['type']
+        @user = bot.ensure_user(data['user']) if data['user']
+        @target_user = bot.ensure_user(data['target_user']) if data['target_user']
+        @target_message_id = data['target_message_id']&.to_i
+        @triggering_metadata = Metadata.new(data['triggering_interaction_metadata'], @message, @bot) if data['triggering_interaction_metadata']
+        @interacted_message_id = data['interacted_message_id']&.to_i
+        @original_response_message_id = data['original_response_message_id']&.to_i
+        @integration_owners = data['authorizing_integration_owners']&.to_h { |key, value| [key.to_i, value.to_i] }
+      end
+
+      # Check if the interaction was triggered by a user by installed the application.
+      # @return [true, false] whether or not the application was installed by the user
+      #   who initiated this interaction.
+      def user_integration?
+        @integration_owners[1] == @user.id
+      end
+
+      # Check if the interaction was triggered by a server by installed the application.
+      # @return [true, false] whether or not the application was installed by the server
+      #   where this interaction originates from.
+      def server_integration?
+        @integration_owners[0] == @message.server.id
+      end
+
+      # Attempt to fetch the target message of the interaction.
+      # @return [Message, nil] the target message of the interaction, or `nil` if it couldn't be found.
+      def target_message
+        return unless @target_message_id
+
+        @target_message ||= @message.channel.message(@target_message_id)
+      end
+
+      # Attempt to fetch the message that contained the interatctive component.
+      # @return [Message, nil] the interacted message with the component, or `nil` if it couldn't be found.
+      def interacted_message
+        return unless @interacted_message_id
+
+        @interacted_message ||= @message.channel.message(@interacted_message_id)
+      end
+
+      # Attempt to fetch the original response message of the interaction.
+      # @return [Message, nil] the original response message of the interaction, or `nil` if it couldn't be found.
+      def original_response_message
+        return unless @original_response_message_id
+
+        @original_response_message ||= @message.channel.message(@original_response_message_id)
+      end
+
+      # @!method command?
+      #  @return [true, false] whether or not the interaction metadata is for an application command.
+      # @!method component?
+      #  @return [true, false] whether or not the interaction metadata is for a message component.
+      # @!method modal_submit?
+      #  @return [true, false] whether or not the interaction metadata is for a modal submission.
+      Interaction::TYPES.each do |name, value|
+        define_method("#{name}?") do
+          @type == value
+        end
+      end
+
+      # @!visibility private
+      def inspect
+        "<Interactions::Metadata id=#{@id} type=#{@type} user=#{@user.inspect} target_user=#{@target_user.inspect}>"
       end
     end
   end

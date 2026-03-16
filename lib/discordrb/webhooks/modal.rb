@@ -40,7 +40,7 @@ class Discordrb::Webhooks::Modal
     def checkbox(value:, label:, description: nil, default: nil)
       raise "Cannot add a checkbox to a #{@type}" unless @type == :checkbox_group
 
-      @options << { value: value, label: label, description: description, default: default }
+      @options << { value: value, label: label, description: description, default: default }.compact
     end
 
     # Add a radio button component to the group.
@@ -51,7 +51,7 @@ class Discordrb::Webhooks::Modal
     def radio_button(value:, label:, description: nil, default: nil)
       raise "Cannot add a radio button to a #{@type}" unless @type == :radio_group
 
-      @options << { value: value, label: label, description: description, default: default }
+      @options << { value: value, label: label, description: description, default: default }.compact
     end
 
     alias_method :button, :radio_button
@@ -139,7 +139,7 @@ class Discordrb::Webhooks::Modal
 
     alias_method :select_menu, :string_select
 
-    # Add a select user to the label component.
+    # Add a user select to the label component.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
     #   There is a limit of 100 characters to each custom_id.
     # @param id [Integer, nil] The unique 32-bit ID of the user select. This is not to be confused with the `custom_id`.
@@ -147,11 +147,12 @@ class Discordrb::Webhooks::Modal
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param required [true, false, nil] Whether a value must be selected for the component.
-    def user_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: nil)
-      @component = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :user_select, id: id, required: required).to_h
+    # @param default_values [Array<User, Member, Recipient, Integer, String, Hash>, nil] The users to populate in the select menu by default.
+    def user_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: nil, default_values: nil)
+      @component = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :user_select, id: id, required: required, default_values: default_values).to_h
     end
 
-    # Add a select role to the label component.
+    # Add a role select to the label component.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
     #   There is a limit of 100 characters to each custom_id.
     # @param id [Integer, nil] The unique 32-bit ID of the role select. This is not to be confused with the `custom_id`.
@@ -159,11 +160,12 @@ class Discordrb::Webhooks::Modal
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param required [true, false, nil] Whether a value must be selected for the component.
-    def role_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: nil)
-      @component = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :role_select, id: id, required: required).to_h
+    # @param default_values [Array<Role, Integer, String, Hash>, nil] The roles to populate in the select menu by default.
+    def role_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: nil, default_values: nil)
+      @component = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :role_select, id: id, required: required, default_values: default_values).to_h
     end
 
-    # Add a select mentionable to the label component.
+    # Add a mentionable select to the label component.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
     #   There is a limit of 100 characters to each custom_id.
     # @param id [Integer, nil] The unique 32-bit ID of the mentionable select. This is not to be confused with the `custom_id`.
@@ -171,11 +173,12 @@ class Discordrb::Webhooks::Modal
     # @param min_values [Integer, nil] The minimum amount of values a user must select.
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param required [true, false, nil] Whether a value must be selected for the component.
-    def mentionable_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: nil)
-      @component = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :mentionable_select, id: id, required: required).to_h
+    # @param default_values [Array<User, Role, Member, Recipient, Hash>, nil] The mentionable entities to populate in the select menu by default.
+    def mentionable_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: nil, default_values: nil)
+      @component = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :mentionable_select, id: id, required: required, default_values: default_values).to_h
     end
 
-    # Add a select channel to the label component.
+    # Add a channel select to the label component.
     # @param custom_id [String] Custom IDs are used to pass state to the events that are raised from interactions.
     #   There is a limit of 100 characters to each custom_id.
     # @param id [Integer, nil] The unique 32-bit ID of the channel select. This is not to be confused with the `custom_id`.
@@ -184,8 +187,9 @@ class Discordrb::Webhooks::Modal
     # @param max_values [Integer, nil] The maximum amount of values a user can select.
     # @param required [true, false, nil] Whether a value must be selected for the component.
     # @param types [Array<Symbol, Integer>, nil] The channel types to include in the select menu.
-    def channel_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: nil, types: nil)
-      builder = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :channel_select, id: id, required: required).to_h
+    # @param default_values [Array<Channel, Integer, String, Hash>, nil] The channels to populate in the select menu by default.
+    def channel_select(custom_id:, id: nil, placeholder: nil, min_values: nil, max_values: nil, required: nil, types: nil, default_values: nil)
+      builder = Discordrb::Webhooks::View::SelectMenuBuilder.new(custom_id, [], placeholder, min_values, max_values, nil, select_type: :channel_select, id: id, required: required, default_values: default_values).to_h
 
       builder[:channel_types] = types.map { |type| Discordrb::Channel::TYPES[type] || type } if types
 

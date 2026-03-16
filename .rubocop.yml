@@ -123,3 +123,7 @@ Style/SafeNavigation:
 
 Style/Documentation:
   Enabled: true
+
+Style/IfUnlessModifier:
+  Exclude:
+    - lib/discordrb/data/role.rb
