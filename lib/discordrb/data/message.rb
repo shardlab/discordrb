@@ -148,6 +148,15 @@ module Discordrb
     # @return [Integer] a generally increasing integer that can be used to determine this message's position in a thread.
     attr_reader :position
 
+    # @return [Integer, nil] the ID of the application associated with this message.
+    attr_reader :application_id
+
+    # @return [MessageActivity, nil] the rich-presence activity that prompted this message.
+    attr_reader :activity
+
+    # @return [Interactions::Metadata, nil] the metadata about the interaction that prompted this message.
+    attr_reader :interaction_metadata
+
     # @return [Array<Sticker::Item>] the sticker items sent with this message.
     attr_reader :stickers
 
@@ -165,6 +174,7 @@ module Discordrb
       @position = data['position'] || 0
       @mention_everyone = data['mention_everyone']
       @webhook_id = data['webhook_id']&.to_i
+      @application_id = data['application_id']&.to_i
 
       @edited_timestamp = Time.parse(data['edited_timestamp']) if data['edited_timestamp']
       @edited = !@edited_timestamp.nil?
@@ -194,7 +204,7 @@ module Discordrb
 
       @attachments = data['attachments']&.map { |attachment| Attachment.new(attachment, self, @bot) } || []
       @embeds = data['embeds']&.map { |embed| Embed.new(embed, self) } || []
-      @components = data['components']&.map { |component| Components.from_data(component, @bot) } || []
+      @components = data['components']&.filter_map { |component| Components.from_data(component, @bot) } || []
 
       @thread = @bot.ensure_channel(data['thread']) if data['thread']
       @pinned_at = Time.parse(data['pinned_at']) if data['pinned_at']
@@ -203,6 +213,8 @@ module Discordrb
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
       @stickers = (data['sticker_items'] || data['stickers'])&.map { |sticker| Sticker::Item.new(sticker, @bot) } || []
+      @activity = MessageActivity.new(data['activity'], @bot) if data['activity']
+      @interaction_metadata = Interactions::Metadata.new(data['interaction_metadata'], self, @bot) if data['interaction_metadata']
     end
 
     # @deprecated Please migrate to using {#creation_time} instead.
@@ -513,16 +525,18 @@ module Discordrb
 
     # @return [Array<Components::Button>]
     def buttons
-      results = @components.collect do |component|
+      buttons = @components.flat_map do |component|
         case component
         when Components::Button
           component
-        when Components::ActionRow
+        when Components::Section
+          component.accessory if component.accessory.is_a?(Components::Button)
+        when Components::ActionRow, Components::Container
           component.buttons
         end
       end
 
-      results.flatten.compact
+      buttons.compact
     end
 
     # to_message -> self or message
@@ -567,6 +581,23 @@ module Discordrb
       reference = to_reference(type: :forward, must_exist: must_exist)
 
       @bot.channel(channel).send_message!(reference: reference, timeout: timeout, flags: flags, nonce: nonce, enforce_nonce: enforce_nonce)
+    end
+
+    # Get the formatted timestamps contained in the message content.
+    # @return [Array<TimestampMarkdown>] The formatted timestamps in the message.
+    def timestamps
+      return (@timestamps || []) if @timestamps || !@content || @content.empty?
+
+      @timestamps = []
+
+      @content.scan(/<t:(-?\d{1,13})(?::(t|T|d|D|f|F|s|S|R))?>/) do |time, style|
+        # If it's not between these values, Discord won't show it, so don't bother.
+        if (time = time.to_i).between?(-8_640_000_000_000, 8_640_000_000_000)
+          @timestamps << TimestampMarkdown.new(Time.at(time), style)
+        end
+      end
+
+      @timestamps
     end
   end
 end
