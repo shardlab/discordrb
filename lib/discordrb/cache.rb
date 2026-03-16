@@ -209,7 +209,7 @@ module Discordrb
     end
 
     # Get a single sticker pack by its ID.
-    # @param id [Integer, String] the sticker pack to resolve.
+    # @param id [Integer, String] The sticker pack to resolve.
     # @return [Sticker::Pack, nil] The sticker pack that was identified, or `nil`.
     def sticker_pack(id)
       id = id.resolve_id
@@ -217,7 +217,7 @@ module Discordrb
     end
 
     # Get a single sticker by its ID.
-    # @param id [Integer, String, Sticker] the sticker ID to resolve.
+    # @param id [Integer, String, Sticker] The sticker ID to resolve.
     # @return [Sticker, nil] The sticker that was resolved, or `nil`.
     def sticker(id)
       id = id.resolve_id

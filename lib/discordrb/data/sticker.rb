@@ -68,22 +68,24 @@ module Discordrb
       @type == 2
     end
 
-    # Set the name of this sticker to something new.
-    # @param name [String] the new 2-30 character name of the sticker.
-    def name=(name)
-      update_data(name: name)
-    end
+    # Modify the properties of the sticker.
+    # @param name [String] The new 2-30 character name of the sticker.
+    # @param tags [String, Array<String>] The new tags of the sticker, max 200 characters.
+    # @param description [String, nil] The new 2-100 character description of the sticker.
+    # @param reason [String, nil] The reason to show in the audit log for modifying the sticker.
+    # @return [nil]
+    def modify(name: :undef, description: :undef, tags: :undef, reason: nil)
+      raise Discordrb::Errors::NoPermission, 'You cannot update a default sticker' if official?
 
-    # Set the tags of this sticker to something new.
-    # @param tags [String, Array<String>] the new tags of the sticker, max 200 characters.
-    def tags=(tags)
-      update_data(tags: tags.is_a?(Array) ? tags.join(', ') : tags)
-    end
+      data = {
+        name: name,
+        description: description,
+        tags: tags.is_a?(Array) ? tags.join(', ') : tags,
+        reason: reason
+      }
 
-    # Set the description of this sticker to something new.
-    # @param description [String, nil] the new 2-100 character description of the sticker.
-    def description=(description)
-      update_data(description: description)
+      update_data(JSON.parse(API::Server.update_sticker(@bot.token, @server_id, @id, **data)))
+      nil
     end
 
     # Get the sticker pack this sticker is associated with.
@@ -104,7 +106,7 @@ module Discordrb
     def creator
       return @creator if @creator || official? || @bot.servers[@server_id].nil?
 
-      from_other(JSON.parse(API::Server.get_sticker(@bot.token, @server_id, @id)))
+      update_data(JSON.parse(API::Server.get_sticker(@bot.token, @server_id, @id)))
 
       @creator
     end
@@ -157,7 +159,7 @@ module Discordrb
     end
 
     # @!visibility private
-    def from_other(new_data)
+    def update_data(new_data)
       @name = new_data['name']
       @tags = new_data['tags']
       @description = new_data['description']
@@ -168,13 +170,6 @@ module Discordrb
     # @!visibility private
     def inspect
       "<Sticker id=#{@id} name=\"#{@name}\" tags=\"#{@tags}\" description=\"#{@description}\">"
-    end
-
-    # @!visibility private
-    def update_data(new_data)
-      raise 'cannot update an official sticker' if official?
-
-      from_other(JSON.parse(API::Server.update_sticker(@bot.token, @server_id, @id, **new_data)))
     end
 
     # A pack of official stickers that everyone can use.
