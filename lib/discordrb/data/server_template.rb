@@ -5,13 +5,14 @@ module Discordrb
   class ServerTemplate
     # @return [String] the code of the template.
     attr_reader :code
-    alias_method :to_s, :code
+    alias to_s code
 
     # @return [String] the name of the template.
     attr_reader :name
 
     # @return [String] the link to the template.
     attr_reader :link
+    alias url link
 
     # @return [User] the user who created the template.
     attr_reader :creator
@@ -114,10 +115,13 @@ module Discordrb
       def initialize(data, bot)
         @bot = bot
         @name = data['name']
-        @roles = data['roles'].map { |role| Role.new(role, bot) }
+        @roles = data['roles'].map do |role|
+          role['colors'] ||= { 'primary_color' => role['color'] }
+          Role.new(role, @bot)
+        end
         @icon_id = data['icon_hash']
         @locale = data['preferred_locale']
-        @channels = data['channels'].map { |channel| Channel.new(channel, bot) }
+        @channels = data['channels'].map { |channel| Channel.new(channel, @bot) }
         @description = data['description']
         @afk_timeout = data['afk_timeout']
         @afk_channel_id = data['afk_channel_id']&.to_i
