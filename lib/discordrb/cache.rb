@@ -199,7 +199,24 @@ module Discordrb
     # Requests member chunks for a given server ID.
     # @param id [Integer] The server ID to request chunks for.
     def request_chunks(id)
-      @gateway.send_request_members(id, '', 0)
+      id = id.resolve_id
+
+      bucket = (@request_members_rl[id] ||= { mutex: Mutex.new, time: Time.at(0) })
+
+      bucket[:mutex].synchronize do
+        last = bucket[:time]
+        now = Time.now
+
+        if now < last
+          duration = last - now
+
+          LOGGER.info("Preemptively locking REQUEST_GUILD_MEMBERS for #{duration} seconds")
+          sleep(duration)
+        end
+
+        @gateway.send_request_members(id, '', 0)
+        bucket[:time] = (Time.now + 30)
+      end
     end
 
     # Gets the code for an invite.
