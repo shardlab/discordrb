@@ -22,6 +22,7 @@ require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
 require 'discordrb/events/integrations'
 require 'discordrb/events/scheduled_events'
+require 'discordrb/events/soundboard'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -1215,6 +1216,17 @@ module Discordrb
       end
     end
 
+    # Internal handler for GUILD_SOUNDBOARD_SOUND_CREATE and GUILD_SOUNDBOARD_SOUND_UPDATE
+    def update_soundboard_sound(data)
+      server = @servers[data['guild_id'].to_i]
+
+      if (sound = server&.soundboard_sound(data['sound_id'].to_i, request: false))
+        sound.update_data(data)
+      else
+        server&.cache_soundboard_sound(Sound.new(data, server, self))
+      end
+    end
+
     # Internal handler for MESSAGE_CREATE
     def create_message(data); end
 
@@ -1742,6 +1754,26 @@ module Discordrb
 
         event = ThreadMembersUpdateEvent.new(data, self)
         raise_event(event)
+      when :GUILD_SOUNDBOARD_SOUND_CREATE
+        update_soundboard_sound(data)
+
+        event = SoundboardSoundCreateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SOUNDBOARD_SOUND_UPDATE
+        update_soundboard_sound(data)
+
+        event = SoundboardSoundUpdateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SOUNDBOARD_SOUND_DELETE
+        @servers[data['guild_id'].to_i]&.delete_soundboard_sound(data['sound_id'].to_i)
+
+        event = SoundboardSoundDeleteEvent.new(data, self)
+        raise_event(event)
+      when :VOICE_CHANNEL_EFFECT_SEND
+        event = VoiceChannelEffectEvent.new(data, self)
+        raise_event(event)
+      when :SOUNDBOARD_SOUNDS, :GUILD_SOUNDBOARD_SOUNDS_UPDATE
+        @servers[data['guild_id'].to_i]&.__send__(:process_soundboard_sounds, data['soundboard_sounds'])
       when :GUILD_SCHEDULED_EVENT_CREATE
         update_guild_scheduled_event(data)
 
