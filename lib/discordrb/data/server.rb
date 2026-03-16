@@ -29,9 +29,6 @@ module Discordrb
     # @return [Array<Channel>] an array of all the channels (text and voice) on this server.
     attr_reader :channels
 
-    # @return [Array<Role>] an array of all the roles created on this server.
-    attr_reader :roles
-
     # @return [Hash<Integer => Emoji>] a hash of all the emoji available on this server.
     attr_reader :emoji
     alias_method :emojis, :emoji
@@ -119,6 +116,7 @@ module Discordrb
       @emoji = {}
       @channels = []
       @channels_by_id = {}
+      @scheduled_events = {}
 
       update_data(data)
 
@@ -150,15 +148,19 @@ module Discordrb
 
     # @return [Role] The @everyone role on this server
     def everyone_role
-      role(@id)
+      @roles[@id]
+    end
+
+    # @return [Array<Role>] an array of all the roles available on this server.
+    def roles
+      @roles.values
     end
 
     # Gets a role on this server based on its ID.
     # @param id [String, Integer] The role ID to look for.
     # @return [Role, nil] The role identified by the ID, or `nil` if it couldn't be found.
     def role(id)
-      id = id.resolve_id
-      @roles.find { |e| e.id == id }
+      @roles[id.resolve_id]
     end
 
     # Gets a member on this server based on user ID
@@ -433,14 +435,14 @@ module Discordrb
     # @note For internal use only
     # @!visibility private
     def add_role(role)
-      @roles << role
+      @roles[role.id] = role
     end
 
     # Removes a role from the role cache
     # @note For internal use only
     # @!visibility private
     def delete_role(role_id)
-      @roles.reject! { |r| r.id == role_id }
+      @roles.delete(role_id.resolve_id)
       @members.each_value do |member|
         new_roles = member.roles.reject { |r| r.id == role_id }
         member.update_roles(new_roles)
@@ -456,10 +458,7 @@ module Discordrb
     # @!visibility private
     def update_role_positions(role_positions, reason: nil)
       response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions, reason))
-      response.each do |data|
-        updated_role = Role.new(data, @bot, self)
-        role(updated_role.id)&.update_from(updated_role)
-      end
+      response.each { |data| role(data['id'].to_i)&.update_data(data) }
     end
 
     # Adds a member to the member cache.
@@ -490,6 +489,20 @@ module Discordrb
     # @!visibility private
     def cache_member(member)
       @members[member.id] = member
+    end
+
+    # Adds a scheduled event to the cache
+    # @note For internal use only
+    # @!visibility private
+    def cache_scheduled_event(event)
+      @scheduled_events[event.id] = event
+    end
+
+    # Removes a scheduled event from the cache.
+    # @note For internal use only
+    # @!visibility private
+    def delete_scheduled_event(event)
+      @scheduled_events.delete(event.resolve_id)
     end
 
     # Updates a member's voice state
@@ -591,8 +604,7 @@ module Discordrb
       response = API::Server.create_role(@bot.token, @id, name, nil, hoist, mentionable, permissions&.to_s, reason, colours, icon, unicode_emoji)
 
       role = Role.new(JSON.parse(response), @bot, self)
-      @roles << role
-      role
+      @roles[role.id] = role
     end
 
     # Adds a new custom emoji on this server.
@@ -914,6 +926,66 @@ module Discordrb
       invites.map { |invite| Invite.new(invite, @bot) }
     end
 
+    # Get the scheduled events on the server.
+    # @param bypass_cache [true, false] Whether the cached scheduled events
+    #   should be ignored and re-fetched via an HTTP request.
+    # @return [Array<ScheduledEvent>] the scheduled events on the server.
+    def scheduled_events(bypass_cache: false)
+      process_scheduled_events(JSON.parse(API::Server.list_scheduled_events(@bot.token, @id, with_user_count: true))) if bypass_cache
+
+      @scheduled_events.values
+    end
+
+    # Get a specific scheduled event on the server.
+    # @param scheduled_event_id [Integer, String, ScheduledEvent] The scheduled event to get.
+    # @param request [true, false] whether to request the event from discord if it isn't cached.
+    # @return [ScheduledEvent, nil] the scheduled event for the ID, or `nil` if it couldn't be found.
+    def scheduled_event(scheduled_event_id, request: true)
+      id = scheduled_event_id.resolve_id
+      return @scheduled_events[id] if @scheduled_events[id]
+      return nil unless request
+
+      event = JSON.parse(API::Server.get_scheduled_event(@bot.token, @id, id, with_user_count: true))
+      scheduled_event = ScheduledEvent.new(event, self, @bot)
+      @scheduled_events[scheduled_event.id] = scheduled_event
+    rescue StandardError
+      nil
+    end
+
+    # Create a scheduled event on this server.
+    # @param name [String] The 1-100 character name of the scheduled event to create.
+    # @param start_time [Time] The start time of the scheduled event to create.
+    # @param entity_type [Integer, Symbol] The entity type of the scheduled event to create.
+    # @param end_time [Time, nil] The end time of the scheduled event to create.
+    # @param channel [Integer, Channel, String, nil] The channel where the scheduled event will take place.
+    # @param location [String, nil] The external location of the scheduled event to create.
+    # @param description [String, nil] The 1-100 character description of the scheduled event to create.
+    # @param cover [File, #read, nil] The cover image of the scheduled event to create.
+    # @param recurrence_rule [#to_h, nil] The recurrence rule of the scheduled event to create.
+    # @param reason [String, nil] The audit log reason for creating the scheduled event.
+    # @yieldparam builder [ScheduledEvent::RecurrenceRule::Builder] An optional reccurence rule builder.
+    # @return [ScheduledEvent] the scheduled event that was created.
+    def create_scheduled_event(name:, start_time:, entity_type:, end_time: nil, channel: nil, location: nil, description: nil, cover: nil, recurrence_rule: nil, reason: nil)
+      yield((builder = ScheduledEvent::RecurrenceRule::Builder.new)) if block_given?
+
+      options = {
+        name: name,
+        privacy_level: 2,
+        scheduled_start_time: start_time&.iso8601,
+        entity_type: ScheduledEvent::ENTITY_TYPES[entity_type] || entity_type,
+        channel_id: channel&.resolve_id,
+        entity_metadata: location ? { location: location } : nil,
+        scheduled_end_time: end_time&.iso8601,
+        description: description,
+        image: cover.respond_to?(:read) ? Discordrb.encode64(cover) : cover,
+        recurrence_rule: block_given? ? builder.to_h : recurrence_rule&.to_h
+      }
+
+      event = JSON.parse(API::Server.create_scheduled_event(@bot.token, @id, **options, reason: reason))
+      scheduled_event = ScheduledEvent.new(event, self, @bot)
+      @scheduled_events[scheduled_event.id] = scheduled_event
+    end
+
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
     # @note For internal use only
     # @!visibility private
@@ -1077,6 +1149,7 @@ module Discordrb
       process_voice_states(new_data['voice_states']) if new_data['voice_states']
       process_active_threads(new_data['threads']) if new_data['threads']
       process_incident_actions(new_data['incidents_data']) if new_data.key?('incidents_data')
+      process_scheduled_events(new_data['guild_scheduled_events']) if new_data['guild_scheduled_events']
     end
 
     # Adds a channel to this server's cache
@@ -1125,15 +1198,13 @@ module Discordrb
 
     def process_roles(roles)
       # Create roles
-      @roles = []
-      @roles_by_id = {}
+      @roles = {}
 
       return unless roles
 
       roles.each do |element|
         role = Role.new(element, @bot, self)
-        @roles << role
-        @roles_by_id[role.id] = role
+        @roles[role.id] = role
       end
     end
 
@@ -1212,6 +1283,17 @@ module Discordrb
       @dms_disabled_until = incidents['dms_disabled_until'] ? Time.parse(incidents['dms_disabled_until']) : nil
       @dm_spam_detected_at = incidents['dm_spam_detected_at'] ? Time.parse(incidents['dm_spam_detected_at']) : nil
       @invites_disabled_until = incidents['invites_disabled_until'] ? Time.parse(incidents['invites_disabled_until']) : nil
+    end
+
+    def process_scheduled_events(events)
+      @scheduled_events = {}
+
+      return unless events
+
+      events.each do |element|
+        event = ScheduledEvent.new(element, self, @bot)
+        @scheduled_events[event.resolve_id] = event
+      end
     end
   end
 
