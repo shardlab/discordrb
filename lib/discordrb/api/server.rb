@@ -609,6 +609,18 @@ module Discordrb::API::Server
     )
   end
 
+  # Get the onboarding configuration for a server.
+  # https://discord.com/developers/docs/resources/webhook#get-guild-onboarding
+  def get_onboarding(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_onboarding,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/onboarding",
+      Authorization: token
+    )
+  end
+
   # Get a list of all of the active scheduled events in the server.
   # https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild
   def list_scheduled_events(token, server_id, with_user_count: false)
@@ -617,6 +629,33 @@ module Discordrb::API::Server
       server_id,
       :get,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events?with_user_count=#{with_user_count}",
+      Authorization: token
+    )
+  end
+
+  # Update the onboarding configuration for a server.
+  # https://discord.com/developers/docs/resources/guild#modify-guild-onboarding
+  def update_onboarding(token, server_id, mode: :undef, prompts: :undef, default_channel_ids: :undef, enabled: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_onboarding,
+      server_id,
+      :put,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/onboarding",
+      { mode:, prompts:, default_channel_ids:, enabled: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get the welcome screen object for a server.
+  # https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen
+  def get_welcome_screen(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_welcome_screen,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/welcome-screen",
       Authorization: token
     )
   end
@@ -644,6 +683,21 @@ module Discordrb::API::Server
       :get,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events/#{scheduled_event_id}/users?#{query}",
       Authorization: token
+    )
+  end
+
+  # Update the welcome screen object for a server.
+  # https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen
+  def update_welcome_screen(token, server_id, enabled: :undef, welcome_channels: :undef, description: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_welcome_screen,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/welcome-screen",
+      { enabled:, welcome_channels:, description: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
     )
   end
 
