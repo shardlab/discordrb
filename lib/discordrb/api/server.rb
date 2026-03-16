@@ -656,7 +656,7 @@ module Discordrb::API::Server
       server_id,
       :get,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/welcome-screen",
-     Authorization: token
+      Authorization: token
     )
   end
 
