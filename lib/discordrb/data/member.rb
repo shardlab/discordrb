@@ -13,7 +13,8 @@ module Discordrb
       started_home_actions: 1 << 5,
       completed_home_actions: 1 << 6,
       automod_quarantined_username: 1 << 7,
-      dm_settings_upsell_acknowledged: 1 << 9
+      dm_settings_upsell_acknowledged: 1 << 9,
+      automod_quarantined_server_tag: 1 << 10
     }.freeze
 
     # @return [Time] when this member joined the server.
@@ -192,7 +193,7 @@ module Discordrb
     def communication_disabled_until=(timeout_until)
       raise ArgumentError, 'A time out cannot exceed 28 days' if timeout_until && timeout_until > (Time.now + 2_419_200)
 
-      API::Server.update_member(@bot.token, @server_id, @user.id, communication_disabled_until: timeout_until&.iso8601)
+      update_member_data(communication_disabled_until: timeout_until&.iso8601)
     end
 
     alias_method :timeout=, :communication_disabled_until=
@@ -202,7 +203,7 @@ module Discordrb
     # @param reason [String] The reason the user's roles are being changed.
     def set_roles(role, reason = nil)
       role_ids = role_id_array(role)
-      API::Server.update_member(@bot.token, @server_id, @user.id, roles: role_ids, reason: reason)
+      update_member_data(roles: role_ids, reason: reason)
     end
 
     # Adds and removes roles from a member.
@@ -219,7 +220,7 @@ module Discordrb
       old_role_ids = resolve_role_ids
       new_role_ids = (old_role_ids - remove_role_ids + add_role_ids).uniq
 
-      API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
+      update_member_data(roles: new_role_ids, reason: reason)
     end
 
     # Adds one or more roles to this member.
@@ -228,12 +229,12 @@ module Discordrb
     def add_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.count.one?
+      if role_ids.one?
         API::Server.add_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
         old_role_ids = resolve_role_ids
         new_role_ids = (old_role_ids + role_ids).uniq
-        API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
+        update_member_data(roles: new_role_ids, reason: reason)
       end
     end
 
@@ -243,12 +244,12 @@ module Discordrb
     def remove_role(role, reason = nil)
       role_ids = role_id_array(role)
 
-      if role_ids.count.one?
+      if role_ids.one?
         API::Server.remove_member_role(@bot.token, @server_id, @user.id, role_ids[0], reason)
       else
         old_role_ids = resolve_role_ids
         new_role_ids = old_role_ids.reject { |i| role_ids.include?(i) }
-        API::Server.update_member(@bot.token, @server_id, @user.id, roles: new_role_ids, reason: reason)
+        update_member_data(roles: new_role_ids, reason: reason)
       end
     end
 
@@ -272,6 +273,7 @@ module Discordrb
 
       coloured_roles.max_by(&:position)
     end
+
     alias_method :color_role, :colour_role
 
     # @return [ColourRGB, nil] the colour this member has.
@@ -280,26 +282,37 @@ module Discordrb
 
       colour_role.color
     end
+
     alias_method :color, :colour
 
+    # Get the member's roles sorted by their order in the hierarchy.
+    # @return [Array<Role>] the roles the member has, ordered by hierarchy.
+    def sort_roles
+      roles.sort_by { |role| [role.position, role.id] }
+    end
+
     # Server deafens this member.
-    def server_deafen
-      API::Server.update_member(@bot.token, @server_id, @user.id, deaf: true)
+    # @param reason [String, nil] The reason for defeaning this member.
+    def server_deafen(reason: nil)
+      update_member_data(deaf: true, reason: reason)
     end
 
     # Server undeafens this member.
-    def server_undeafen
-      API::Server.update_member(@bot.token, @server_id, @user.id, deaf: false)
+    # @param reason [String, nil] The reason for un-defeaning this member.
+    def server_undeafen(reason: nil)
+      update_member_data(deaf: false, reason: reason)
     end
 
     # Server mutes this member.
-    def server_mute
-      API::Server.update_member(@bot.token, @server_id, @user.id, mute: true)
+    # @param reason [String, nil] The reason for muting this member.
+    def server_mute(reason: nil)
+      update_member_data(mute: true, reason: reason)
     end
 
     # Server unmutes this member.
-    def server_unmute
-      API::Server.update_member(@bot.token, @server_id, @user.id, mute: false)
+    # @param reason [String, nil] The reason for un-muting this member.
+    def server_unmute(reason: nil)
+      update_member_data(mute: false, reason: reason)
     end
 
     # Bans this member from the server.
@@ -335,9 +348,9 @@ module Discordrb
     # @param reason [String] The reason the user's nickname is being changed.
     def set_nick(nick, reason = nil)
       if @user.current_bot?
-        API::Server.update_current_member(@bot.token, @server_id, nick, reason)
+        update_current_member_data(nick: nick, reason: reason)
       else
-        API::Server.update_member(@bot.token, @server_id, @user.id, nick: nick, reason: reason)
+        update_member_data(nick: nick, reason: reason)
       end
     end
 
@@ -368,7 +381,31 @@ module Discordrb
     # Set the flags for this member.
     # @param flags [Integer, nil] The new bitwise value of flags for this member, or nil.
     def flags=(flags)
-      API::Server.update_member(@bot.token, @server_id, @user.id, flags: flags)
+      update_member_data(flags: flags)
+    end
+
+    # Set the server banner for the current bot.
+    # @param banner [File, nil] A file like object that responds to read, or `nil`.
+    def server_banner=(banner)
+      raise 'Can only set a banner for the current bot' unless current_bot?
+
+      update_current_member_data(banner: banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner)
+    end
+
+    # Set the server avatar for the current bot.
+    # @param avatar [File, nil] A file like object that responds to read, or `nil`.
+    def server_avatar=(avatar)
+      raise 'Can only set an avatar for the current bot' unless current_bot?
+
+      update_current_member_data(avatar: avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar)
+    end
+
+    # Set the server bio for the current bot.
+    # @param bio [String, nil] The new server bio for the bot, or nil.
+    def server_bio=(bio)
+      raise 'Can only set a bio for the current bot' unless current_bot?
+
+      update_current_member_data(bio: bio)
     end
 
     # Update this member's roles
@@ -424,7 +461,7 @@ module Discordrb
         @communication_disabled_until = timeout_until ? Time.parse(timeout_until) : nil
       end
 
-      if data.key('premium_since')
+      if data.key?('premium_since')
         @boosting_since = data['premium_since'] ? Time.parse(data['premium_since']) : nil
       end
 
@@ -443,7 +480,7 @@ module Discordrb
 
     # Overwriting inspect for debug purposes
     def inspect
-      "<Member user=#{@user.inspect} server=#{@server&.inspect || @server_id} joined_at=#{@joined_at} roles=#{@roles&.inspect || @role_ids} voice_channel=#{@voice_channel.inspect} mute=#{@mute} deaf=#{@deaf} self_mute=#{@self_mute} self_deaf=#{@self_deaf}>"
+      "<Member user=#{@user.inspect} server=#{@server&.inspect || @server_id} joined_at=#{@joined_at} roles=#{@roles&.inspect || @role_ids} voice_channel=#{voice_channel.inspect} mute=#{mute} deaf=#{deaf} self_mute=#{self_mute} self_deaf=#{self_deaf}>"
     end
 
     private
@@ -463,8 +500,24 @@ module Discordrb
       voice_state&.send name
     end
 
+    # @!visibility private
     def resolve_role_ids
       @roles ? @roles.collect(&:id) : @role_ids
+    end
+
+    # @!visibility private
+    def update_member_data(new_data)
+      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, **new_data)))
+    end
+
+    # @!visibility private
+    def update_current_member_data(new_data)
+      update_data(JSON.parse(API::Server.update_current_member(@bot.token, @server_id,
+                                                               new_data.key?(:nick) ? new_data[:nick] : :undef,
+                                                               new_data[:reason],
+                                                               new_data.key?(:bio) ? new_data[:bio] : :undef,
+                                                               new_data.key?(:banner) ? new_data[:banner] : :undef,
+                                                               new_data.key?(:avatar) ? new_data[:avatar] : :undef)))
     end
   end
 end

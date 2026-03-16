@@ -20,6 +20,8 @@ require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
+require 'discordrb/events/integrations'
+require 'discordrb/events/scheduled_events'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -165,6 +167,7 @@ module Discordrb
       @status = :online
 
       @application_commands = {}
+      @request_members_rl = {}
     end
 
     # The list of users the bot shares a server with.
@@ -199,12 +202,18 @@ module Discordrb
     #   The list of emoji the bot can use.
     #   @return [Array<Emoji>] the emoji available.
     def emoji(id = nil)
-      emoji_hash = servers.values.map(&:emoji).reduce(&:merge)
-      if id
-        id = id.resolve_id
-        emoji_hash[id]
+      if (id = id&.resolve_id)
+        @servers.each_value do |server|
+          emoji = server.emojis[id]
+          return emoji if emoji
+        end
       else
-        emoji_hash.values
+        hash = {}
+        @servers.each_value do |server|
+          hash.merge!(server.emojis)
+        end
+
+        hash
       end
     end
 
@@ -232,15 +241,21 @@ module Discordrb
     alias_method :bot_user, :profile
 
     # The bot's OAuth application.
-    # @return [Application, nil] The bot's application info. Returns `nil` if bot is not a bot account.
+    # @return [Application] The bot's application info.
     def bot_application
-      return unless @type == :bot
-
       response = API.oauth_application(token)
       Application.new(JSON.parse(response), self)
     end
 
     alias_method :bot_app, :bot_application
+    alias_method :application, :bot_application
+
+    # Get the role connection metadata records associated with this application.
+    # @return [Array<RoleConnectionMetadata>] the role connection metadata records associated with this application.
+    def role_connection_metadata_records
+      response = API::Application.get_application_role_connection_metadata_records(@bot.token, @id)
+      JSON.parse(response).map { |role_connection| RoleConnectionMetadata.new(role_connection, @bot) }
+    end
 
     # The Discord API token received when logging in. Useful to explicitly call
     # {API} methods.
@@ -400,18 +415,20 @@ module Discordrb
     # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
     # @param embeds [Hash, Discordrb::Webhooks::Embed, Array<Hash>, Array<Discordrb::Webhooks::Embed> nil] The rich embed(s) to append to this message.
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
-    # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
+    # @param message_reference [Message, String, Integer, Hash, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
+    # @param nonce [String, nil] A optional nonce in order to verify that a message was sent. Maximum of twenty-five characters.
+    # @param enforce_nonce [true, false] whether the nonce should be enforced and used for message de-duplication.
     # @return [Message] The message that was sent.
-    def send_message(channel, content, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+    def send_message(channel, content, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0, nonce = nil, enforce_nonce = false)
       channel = channel.resolve_id
       debug("Sending message to #{channel} with content '#{content}'")
       allowed_mentions = { parse: [] } if allowed_mentions == false
-      message_reference = { message_id: message_reference.id } if message_reference.respond_to?(:id)
+      message_reference = { message_id: message_reference.resolve_id } if message_reference.respond_to?(:resolve_id)
       embeds = (embeds.instance_of?(Array) ? embeds.map(&:to_hash) : [embeds&.to_hash]).compact
 
-      response = API::Channel.create_message(token, channel, content, tts, embeds, nil, attachments, allowed_mentions&.to_hash, message_reference, components, flags)
+      response = API::Channel.create_message(token, channel, content, tts, embeds, nonce, attachments, allowed_mentions&.to_hash, message_reference, components, flags, enforce_nonce)
       Message.new(JSON.parse(response), self)
     end
 
@@ -426,12 +443,14 @@ module Discordrb
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, false, nil] Mentions that are allowed to ping on this message. `false` disables all pings
     # @param message_reference [Message, String, Integer, nil] The message, or message ID, to reply to if any.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
-    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2) and SUPPRESS_NOTIFICATIONS (1 << 12) can be set.
-    def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0)
+    # @param flags [Integer] Flags for this message. Currently only SUPPRESS_EMBEDS (1 << 2), SUPPRESS_NOTIFICATIONS (1 << 12), and IS_COMPONENTS_V2 (1 << 15) can be set.
+    # @param nonce [String, nil] A optional nonce in order to verify that a message was sent. Maximum of twenty-five characters.
+    # @param enforce_nonce [true, false] whether the nonce should be enforced and used for message de-duplication.
+    def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0, nonce = nil, enforce_nonce = false)
       Thread.new do
         Thread.current[:discordrb_name] = "#{@current_thread}-temp-msg"
 
-        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components, flags)
+        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components, flags, nonce, enforce_nonce)
         sleep(timeout)
         message.delete
       end
@@ -463,20 +482,6 @@ module Discordrb
       channel = channel.resolve_id
       response = API::Channel.upload_file(token, channel, file, caption: caption, tts: tts)
       Message.new(JSON.parse(response), self)
-    end
-
-    # Creates a server on Discord with a specified name and a region.
-    # @note Discord's API doesn't directly return the server when creating it, so this method
-    #   waits until the data has been received via the websocket. This may make the execution take a while.
-    # @param name [String] The name the new server should have. Doesn't have to be alphanumeric.
-    # @param region [Symbol] The region where the server should be created, for example 'eu-central' or 'hongkong'.
-    # @return [Server] The server that was created.
-    def create_server(name, region = :'eu-central')
-      response = API::Server.create(token, name, region)
-      id = JSON.parse(response)['id'].to_i
-      sleep 0.1 until (server = @servers[id])
-      debug "Successfully created server #{server.id} with name #{server.name}"
-      server
     end
 
     # Creates a new application to do OAuth authorization with. This allows you to use OAuth to authorize users using
@@ -834,7 +839,7 @@ module Discordrb
     #       end
     #     end
     #   end
-    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil)
+    def register_application_command(name, description, server_id: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, nsfw: false)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
@@ -842,9 +847,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
+               API::Application.create_guild_command(@token, profile.id, server_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
              else
-               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
+               API::Application.create_global_command(@token, profile.id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -859,7 +864,7 @@ module Discordrb
 
     # @yieldparam [OptionBuilder]
     # @yieldparam [PermissionBuilder]
-    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil)
+    def edit_application_command(command_id, server_id: nil, name: nil, description: nil, default_permission: nil, type: :chat_input, default_member_permissions: nil, contexts: nil, nsfw: nil)
       type = ApplicationCommand::TYPES[type] || type
 
       builder = Interactions::OptionBuilder.new
@@ -868,9 +873,9 @@ module Discordrb
       yield(builder, permission_builder) if block_given?
 
       resp = if server_id
-               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
+               API::Application.edit_guild_command(@token, profile.id, server_id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
              else
-               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts)
+               API::Application.edit_global_command(@token, profile.id, command_id, name, description, builder.to_a, default_permission, type, default_member_permissions, contexts, nsfw)
              end
       cmd = ApplicationCommand.new(JSON.parse(resp), self, server_id)
 
@@ -897,12 +902,69 @@ module Discordrb
     # @param command_id [Integer, String]
     # @param server_id [Integer, String]
     # @param permissions [Array<Hash>] An array of objects formatted as `{ id: ENTITY_ID, type: 1 or 2, permission: true or false }`
-    def edit_application_command_permissions(command_id, server_id, permissions = [])
+    # @param bearer_token [String] A valid bearer token that has permission to manage the server and its roles.
+    def edit_application_command_permissions(command_id, server_id, permissions = [], bearer_token = nil)
       builder = Interactions::PermissionBuilder.new
       yield builder if block_given?
 
+      raise ArgumentError, 'This method requires a valid bearer token to be provided' unless bearer_token
+
       permissions += builder.to_a
-      API::Application.edit_guild_command_permissions(@token, profile.id, server_id, command_id, permissions)
+      bearer_token = "Bearer #{bearer_token.delete_prefix('Bearer ')}"
+      API::Application.edit_guild_command_permissions(bearer_token, profile.id, server_id, command_id, permissions)
+    end
+
+    # Get the permissions for all of the application commands in a specific server.
+    # @param server_id [Integer, String, nil] The ID of the server to fetch application command permissions for.
+    # @return [Array<ApplicationCommand::Permission>] The permissions for all of the application commands in the given server.
+    def application_command_permissions(server_id:)
+      response = API::Application.get_guild_application_command_permissions(@token, profile.id, server_id.resolve_id)
+      JSON.parse(response).flat_map { |data| data['permissions'].map { |inner| ApplicationCommand::Permission.new(inner, data, self) } }
+    end
+
+    # Fetches all the application emojis that the bot can use.
+    # @return [Array<Emoji>] Returns an array of emoji objects.
+    def application_emojis
+      response = API::Application.list_application_emojis(@token, profile.id)
+      JSON.parse(response)['items'].map { |emoji| Emoji.new(emoji, self) }
+    end
+
+    # Fetches a single application emoji from its ID.
+    # @param emoji_id [Integer, String] ID of the application emoji.
+    # @return [Emoji] The application emoji.
+    def application_emoji(emoji_id)
+      response = API::Application.get_application_emoji(@token, profile.id, emoji_id.resolve_id)
+      Emoji.new(JSON.parse(response), self)
+    end
+
+    # Creates a new custom emoji that can be used by this application.
+    # @param name [String] The name of emoji to create.
+    # @param image [String, #read] Base64 string with the image data, or an object that responds to #read.
+    # @return [Emoji] The emoji that has been created.
+    def create_application_emoji(name:, image:)
+      image = image.respond_to?(:read) ? Discordrb.encode64(image) : image
+      response = API::Application.create_application_emoji(@token, profile.id, name, image)
+      Emoji.new(JSON.parse(response), self)
+    end
+
+    # Edits an existing application emoji.
+    # @param emoji_id [Integer, String, Emoji] ID of the application emoji to edit.
+    # @param name [String] The new name of the emoji.
+    # @return [Emoji] Returns the updated emoji object on success.
+    def edit_application_emoji(emoji_id, name:)
+      response = API::Application.edit_application_emoji(@token, profile.id, emoji_id.resolve_id, name)
+      Emoji.new(JSON.parse(response), self)
+    end
+
+    # Deletes an existing application emoji.
+    # @param emoji_id [Integer, String, Emoji] ID of the application emoji to delete.
+    def delete_application_emoji(emoji_id)
+      API::Application.delete_application_emoji(@token, profile.id, emoji_id.resolve_id)
+    end
+
+    # @!visibility private
+    def inspect
+      "<Bot client_id=#{@client_id.inspect} redact_token=#{@redact_token.inspect}>"
     end
 
     private
@@ -1029,6 +1091,9 @@ module Discordrb
       channel = data.is_a?(Discordrb::Channel) ? data : Channel.new(data, self)
       server = channel.server
 
+      # The last message ID of a forum channel is the most recent post
+      channel.parent.process_last_message_id(channel.id) if channel.parent&.forum? || channel.parent&.media?
+
       # Handle normal and private channels separately
       if server
         server.add_channel(channel)
@@ -1042,11 +1107,7 @@ module Discordrb
 
     # Internal handler for CHANNEL_UPDATE
     def update_channel(data)
-      channel = Channel.new(data, self)
-      old_channel = @channels[channel.id]
-      return unless old_channel
-
-      old_channel.update_from(channel)
+      @channels[data['id'].to_i]&.update_data(data)
     end
 
     # Internal handler for CHANNEL_DELETE
@@ -1065,26 +1126,6 @@ module Discordrb
       end
 
       @thread_members.delete(channel.id) if channel.thread?
-    end
-
-    # Internal handler for CHANNEL_RECIPIENT_ADD
-    def add_recipient(data)
-      channel_id = data['channel_id'].to_i
-      channel = self.channel(channel_id)
-
-      recipient_user = ensure_user(data['user'])
-      recipient = Recipient.new(recipient_user, channel, self)
-      channel.add_recipient(recipient)
-    end
-
-    # Internal handler for CHANNEL_RECIPIENT_REMOVE
-    def remove_recipient(data)
-      channel_id = data['channel_id'].to_i
-      channel = self.channel(channel_id)
-
-      recipient_user = ensure_user(data['user'])
-      recipient = Recipient.new(recipient_user, channel, self)
-      channel.remove_recipient(recipient)
     end
 
     # Internal handler for GUILD_MEMBER_ADD
@@ -1137,28 +1178,14 @@ module Discordrb
       @servers.delete(id)
     end
 
-    # Internal handler for GUILD_ROLE_UPDATE
+    # Internal handler for GUILD_ROLE_CREATE and GUILD_ROLE_UPDATE
     def update_guild_role(data)
-      role_data = data['role']
-      server_id = data['guild_id'].to_i
-      server = @servers[server_id]
-      new_role = Role.new(role_data, self, server)
-      role_id = role_data['id'].to_i
-      old_role = server.roles.find { |r| r.id == role_id }
-      old_role.update_from(new_role)
-    end
+      server = @servers[data['guild_id'].to_i]
 
-    # Internal handler for GUILD_ROLE_CREATE
-    def create_guild_role(data)
-      role_data = data['role']
-      server_id = data['guild_id'].to_i
-      server = @servers[server_id]
-      new_role = Role.new(role_data, self, server)
-      existing_role = server.role(new_role.id)
-      if existing_role
-        existing_role.update_from(new_role)
+      if (role = server&.role(data['role']['id'].to_i))
+        role.update_data(data['role'])
       else
-        server.add_role(new_role)
+        server&.add_role(Role.new(data['role'], self, server))
       end
     end
 
@@ -1167,14 +1194,25 @@ module Discordrb
       role_id = data['role_id'].to_i
       server_id = data['guild_id'].to_i
       server = @servers[server_id]
-      server.delete_role(role_id)
+      server&.delete_role(role_id)
     end
 
     # Internal handler for GUILD_EMOJIS_UPDATE
     def update_guild_emoji(data)
       server_id = data['guild_id'].to_i
       server = @servers[server_id]
-      server.update_emoji_data(data)
+      server&.update_emoji_data(data)
+    end
+
+    # Internal handler for GUILD_SCHEDULED_EVENT_CREATE and GUILD_SCHEDULED_EVENT_UPDATE
+    def update_guild_scheduled_event(data)
+      server = @servers[data['guild_id'].to_i]
+
+      if (event = server&.scheduled_event(data['id'].to_i, request: false))
+        event&.update_data(data)
+      else
+        server&.cache_scheduled_event(ScheduledEvent.new(data, server, self))
+      end
     end
 
     # Internal handler for MESSAGE_CREATE
@@ -1263,16 +1301,6 @@ module Discordrb
           ensure_server(element, true)
         end
 
-        # Add PM and group channels
-        data['private_channels'].each do |element|
-          channel = ensure_channel(element)
-          if channel.pm?
-            @pm_channels[channel.recipient.id] = channel
-          else
-            @channels[channel.id] = channel
-          end
-        end
-
         # Don't notify yet if there are unavailable servers because they need to get available before the bot truly has
         # all the data
         if @unavailable_servers.zero?
@@ -1286,6 +1314,8 @@ module Discordrb
         id = data['guild_id'].to_i
         server = server(id)
         server.process_chunk(data['members'], data['chunk_index'], data['chunk_count'])
+      when :USER_UPDATE
+        @profile = Profile.new(data, self)
       when :INVITE_CREATE
         invite = Invite.new(data, self)
         raise_event(InviteCreateEvent.new(data, invite, self))
@@ -1315,6 +1345,7 @@ module Discordrb
         # Update the existing member if it exists in the cache.
         if data['member']
           member = message.channel.server&.member(data['author']['id'].to_i, false)
+          data['member']['user'] = data['author']
           member&.update_data(data['member'])
         end
 
@@ -1325,11 +1356,20 @@ module Discordrb
           raise_event(ChannelCreateEvent.new(message.channel, self))
         end
 
+        message.channel.process_last_message_id(message.id)
+
         event = MessageEvent.new(message, self)
         raise_event(event)
 
-        if message.mentions.any? { |user| user.id == @profile.id }
-          event = MentionEvent.new(message, self)
+        # Raise a mention event for any direct mentions.
+        if message.mentions.any? { |user| user.id == profile.id }
+          event = MentionEvent.new(message, self, false)
+          raise_event(event)
+        end
+
+        # Raise a mention event for the current bot's auto-generated role.
+        if message.role_mentions.any? { |role| role.tags&.bot_id == profile.id }
+          event = MentionEvent.new(message, self, true)
           raise_event(event)
         end
 
@@ -1358,6 +1398,7 @@ module Discordrb
         # Update the existing member if it exists in the cache.
         if data['member']
           member = message.channel.server&.member(data['author']['id'].to_i, false)
+          data['member']['user'] = data['author']
           member&.update_data(data['member'])
         end
 
@@ -1418,6 +1459,10 @@ module Discordrb
 
         event = ReactionRemoveAllEvent.new(data, self)
         raise_event(event)
+      when :MESSAGE_REACTION_REMOVE_EMOJI
+
+        event = ReactionRemoveEmojiEvent.new(data, self)
+        raise_event(event)
       when :PRESENCE_UPDATE
         # Ignore friends list presences
         return unless data['guild_id']
@@ -1469,20 +1514,12 @@ module Discordrb
 
         event = ChannelDeleteEvent.new(data, self)
         raise_event(event)
-      when :CHANNEL_RECIPIENT_ADD
-        add_recipient(data)
-
-        event = ChannelRecipientAddEvent.new(data, self)
-        raise_event(event)
-      when :CHANNEL_RECIPIENT_REMOVE
-        remove_recipient(data)
-
-        event = ChannelRecipientRemoveEvent.new(data, self)
-        raise_event(event)
       when :CHANNEL_PINS_UPDATE
         event = ChannelPinsUpdateEvent.new(data, self)
-        raise_event(event)
 
+        event.channel.process_last_pin_timestamp(data['last_pin_timestamp']) if data.key?('last_pin_timestamp')
+
+        raise_event(event)
       when :GUILD_MEMBER_ADD
         add_guild_member(data)
 
@@ -1514,7 +1551,7 @@ module Discordrb
         event = ServerRoleUpdateEvent.new(data, self)
         raise_event(event)
       when :GUILD_ROLE_CREATE
-        create_guild_role(data)
+        update_guild_role(data)
 
         event = ServerRoleCreateEvent.new(data, self)
         raise_event(event)
@@ -1522,6 +1559,15 @@ module Discordrb
         delete_guild_role(data)
 
         event = ServerRoleDeleteEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_CREATE
+        event = IntegrationCreateEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_UPDATE
+        event = IntegrationUpdateEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_DELETE
+        event = IntegrationDeleteEvent.new(data, self)
         raise_event(event)
       when :GUILD_CREATE
         create_guild(data)
@@ -1662,8 +1708,25 @@ module Discordrb
 
         # raise ThreadDeleteEvent
       when :THREAD_LIST_SYNC
-        data['members'].map { |member| ensure_thread_member(member) }
-        data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
+        server_id = data['guild_id'].to_i
+        server = @servers[server_id]
+
+        # The `channel_ids` field has two meanings:
+        #
+        # 1. If the field is not present, the thread list is being synced for the whole server.
+        #
+        # 2. We are syncing the threads for a specific channel. This can happen when gaining access
+        #    to a channel.
+        if (ids = data['channel_ids']&.map(&:to_i))
+          @channels.delete_if { |_, channel| channel.thread? && ids.any?(channel.parent&.id) }
+          server&.clear_threads(ids)
+        else
+          @channels.delete_if { |_, channel| channel.server.id == server_id && channel.thread? }
+          server&.clear_threads
+        end
+
+        data['members'].each { |member| ensure_thread_member(member) }
+        data['threads'].each { |channel| ensure_channel(channel) }
 
         # raise ThreadListSyncEvent?
       when :THREAD_MEMBER_UPDATE
@@ -1678,6 +1741,33 @@ module Discordrb
         end
 
         event = ThreadMembersUpdateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_CREATE
+        update_guild_scheduled_event(data)
+
+        event = ScheduledEventCreateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_UPDATE
+        update_guild_scheduled_event(data)
+
+        event = ScheduledEventUpdateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_DELETE
+        @servers[data['guild_id'].to_i]&.delete_scheduled_event(data['id'].to_i)
+
+        event = ScheduledEventDeleteEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_USER_ADD
+        server = @servers[data['guild_id'].to_i]
+        server&.scheduled_event(data['guild_scheduled_event_id'], request: false)&.increment_user_count
+
+        event = ScheduledEventUserAddEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_USER_REMOVE
+        server = @servers[data['guild_id'].to_i]
+        server&.scheduled_event(data['guild_scheduled_event_id'], request: false)&.deincrement_user_count
+
+        event = ScheduledEventUserRemoveEvent.new(data, self)
         raise_event(event)
       else
         # another event that we don't support yet

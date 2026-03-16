@@ -6,6 +6,9 @@ require 'discordrb/data'
 module Discordrb::Events
   # Generic subclass for interaction events
   class InteractionCreateEvent < Event
+    # Struct to allow accessing data via [] or methods.
+    Resolved = Struct.new('Resolved', :channels, :members, :messages, :roles, :users, :attachments) # rubocop:disable Lint/StructNewOverride
+
     # @return [Interaction] The interaction for this event.
     attr_reader :interaction
 
@@ -27,74 +30,111 @@ module Discordrb::Events
     # @!attribute [r] user
     #   @return [User]
     #   @see Interaction#user
-    delegate :type, :server, :server_id, :channel, :channel_id, :user, to: :interaction
+    # @!attribute [r] user_locale
+    #   @return [String]
+    #   @see Interaction#user_locale
+    # @!attribute [r] context
+    #   @return [Integer]
+    #   @see Interaction#context
+    # @!attribute [r] user_integration?
+    #   @return [true, false]
+    #   @see Interaction#user_integration?
+    # @!attribute [r] server_integration?
+    #   @return [true, false]
+    #   @see Interaction#server_integration?
+    delegate :type, :server, :server_id, :channel, :channel_id, :user, :user_locale, :context, :user_integration?, :server_integration?, to: :interaction
 
+    # @!visibility private
     def initialize(data, bot)
-      @interaction = Discordrb::Interaction.new(data, bot)
       @bot = bot
+      @interaction = Discordrb::Interaction.new(data, @bot)
     end
 
-    # (see Interaction#respond)
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, &block)
-      @interaction.respond(
-        content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
-        flags: flags, ephemeral: ephemeral, wait: wait, components: components, attachments: attachments,
-        &block
-      )
+    # @see Interaction#respond
+    def respond(...)
+      @interaction.respond(...)
     end
 
-    # (see Interaction#defer)
-    def defer(flags: 0, ephemeral: true)
-      @interaction.defer(flags: flags, ephemeral: ephemeral)
+    # @see Interaction#defer
+    def defer(...)
+      @interaction.defer(...)
     end
 
-    # (see Interaction#update_message)
-    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, &block)
-      @interaction.update_message(
-        content: content, tts: tts, embeds: embeds, allowed_mentions: allowed_mentions,
-        flags: flags, ephemeral: ephemeral, wait: wait, components: components, attachments: attachments,
-        &block
-      )
+    # @see Interaction#update_message
+    def update_message(...)
+      @interaction.update_message(...)
     end
 
-    # (see Interaction#show_modal)
-    def show_modal(title:, custom_id:, components: nil, &block)
-      @interaction.show_modal(title: title, custom_id: custom_id, components: components, &block)
+    # @see Interaction#show_modal
+    def show_modal(...)
+      @interaction.show_modal(...)
     end
 
-    # (see Interaction#edit_response)
-    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil, &block)
-      @interaction.edit_response(content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, attachments: attachments, &block)
+    # @see Interaction#edit_response
+    def edit_response(...)
+      @interaction.edit_response(...)
     end
 
-    # (see Interaction#delete_response)
+    # @see Interaction#delete_response
     def delete_response
       @interaction.delete_response
     end
 
-    # (see Interaction#send_message)
-    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: nil, components: nil, attachments: nil, &block)
-      @interaction.send_message(content: content, embeds: embeds, tts: tts, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, components: components, attachments: attachments, &block)
+    # @see Interaction#send_message
+    def send_message(...)
+      @interaction.send_message(...)
     end
 
-    # (see Interaction#edit_message)
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, attachments: nil, &block)
-      @interaction.edit_message(message, content: content, embeds: embeds, allowed_mentions: allowed_mentions, attachments: attachments, &block)
+    # @see Interaction#edit_message
+    def edit_message(...)
+      @interaction.edit_message(...)
     end
 
-    # (see Interaction#delete_message)
-    def delete_message(message)
-      @interaction.delete_message(message)
+    # @see Interaction#delete_message
+    def delete_message(...)
+      @interaction.delete_message(...)
     end
 
-    # (see Interaction#defer_update)
+    # @see Interaction#defer_update
     def defer_update
       @interaction.defer_update
     end
 
-    # (see Interaction#get_component)
-    def get_component(custom_id)
-      @interaction.get_component(custom_id)
+    # @see Interaction#get_component
+    def get_component(...)
+      @interaction.get_component(...)
+    end
+
+    private
+
+    # @!visibility private
+    def process_resolved(resolved_data)
+      resolved_data['users']&.each do |id, data|
+        @resolved[:users][id.to_i] = @bot.ensure_user(data)
+      end
+
+      resolved_data['roles']&.each do |id, data|
+        @resolved[:roles][id.to_i] = Discordrb::Role.new(data, @bot)
+      end
+
+      resolved_data['channels']&.each do |id, data|
+        data['guild_id'] = @interaction.server_id
+        @resolved[:channels][id.to_i] = Discordrb::Channel.new(data, @bot)
+      end
+
+      resolved_data['members']&.each do |id, data|
+        data['user'] = resolved_data['users'][id]
+        data['guild_id'] = @interaction.server_id
+        @resolved[:members][id.to_i] = Discordrb::Member.new(data, nil, @bot)
+      end
+
+      resolved_data['messages']&.each do |id, data|
+        @resolved[:messages][id.to_i] = Discordrb::Message.new(data, @bot)
+      end
+
+      resolved_data['attachments']&.each do |id, data|
+        @resolved[:attachments][id.to_i] = Discordrb::Attachment.new(data, nil, @bot)
+      end
     end
   end
 
@@ -131,9 +171,6 @@ module Discordrb::Events
 
   # Event for ApplicationCommand interactions.
   class ApplicationCommandEvent < InteractionCreateEvent
-    # Struct to allow accessing data via [] or methods.
-    Resolved = Struct.new('Resolved', :channels, :members, :messages, :roles, :users, :attachments) # rubocop:disable Lint/StructNewOverride
-
     # @return [Symbol] The name of the command.
     attr_reader :command_name
 
@@ -146,7 +183,7 @@ module Discordrb::Events
     # @return [Symbol, nil] The name of the subcommand relevant to this event.
     attr_reader :subcommand
 
-    # @return [Resolved]
+    # @return [Resolved] The resolved channels, roles, users, members, and attachments for this event.
     attr_reader :resolved
 
     # @return [Hash<Symbol, Object>] Arguments provided to the command, mapped as `Name => Value`.
@@ -155,13 +192,15 @@ module Discordrb::Events
     # @return [Integer, nil] The target of this command when it is a context command.
     attr_reader :target_id
 
+    # @!visibility private
     def initialize(data, bot)
       super
 
       command_data = data['data']
 
-      @command_id = command_data['id']
+      @command_id = command_data['id'].to_i
       @command_name = command_data['name'].to_sym
+      @command_server_id = command_data['guild_id']
 
       @target_id = command_data['target_id']&.to_i
       @resolved = Resolved.new({}, {}, {}, {}, {}, {})
@@ -189,6 +228,13 @@ module Discordrb::Events
       @options = transform_options_hash(options || {})
     end
 
+    # @return [true, false] Whether or not the application command that was executed
+    #   has been registered globally. If this is false, then the application command
+    #   that was executed is only available in the invoking server.
+    def global_command?
+      @command_server_id.nil?
+    end
+
     # @return [Message, User, nil] The target of this command, for context commands.
     def target
       return nil unless @target_id
@@ -197,35 +243,6 @@ module Discordrb::Events
     end
 
     private
-
-    def process_resolved(resolved_data)
-      resolved_data['users']&.each do |id, data|
-        @resolved[:users][id.to_i] = @bot.ensure_user(data)
-      end
-
-      resolved_data['roles']&.each do |id, data|
-        @resolved[:roles][id.to_i] = Discordrb::Role.new(data, @bot)
-      end
-
-      resolved_data['channels']&.each do |id, data|
-        data['guild_id'] = @interaction.server_id
-        @resolved[:channels][id.to_i] = Discordrb::Channel.new(data, @bot)
-      end
-
-      resolved_data['members']&.each do |id, data|
-        data['user'] = resolved_data['users'][id]
-        data['guild_id'] = @interaction.server_id
-        @resolved[:members][id.to_i] = Discordrb::Member.new(data, nil, @bot)
-      end
-
-      resolved_data['messages']&.each do |id, data|
-        @resolved[:messages][id.to_i] = Discordrb::Message.new(data, @bot)
-      end
-
-      resolved_data['attachments']&.each do |id, data|
-        @resolved[:attachments][id.to_i] = Discordrb::Attachment.new(data, nil, @bot)
-      end
-    end
 
     def transform_options_hash(hash)
       hash.to_h { |opt| [opt['name'], opt['options'] || opt['value']] }
@@ -248,7 +265,7 @@ module Discordrb::Events
     # @yieldparam [SubcommandBuilder]
     # @return [ApplicationCommandEventHandler]
     def group(name)
-      raise ArgumentError, 'Unable to mix subcommands and groups' if @subcommands.any? { |_, v| v.is_a? Proc }
+      raise ArgumentError, 'Unable to mix subcommands and groups' if @subcommands.any? { |n, v| n == name && v.is_a?(Proc) }
 
       builder = SubcommandBuilder.new(name)
       yield builder
@@ -261,7 +278,7 @@ module Discordrb::Events
     # @yieldparam [SubcommandBuilder]
     # @return [ApplicationCommandEventHandler]
     def subcommand(name, &block)
-      raise ArgumentError, 'Unable to mix subcommands and groups' if @subcommands.any? { |_, v| v.is_a? Hash }
+      raise ArgumentError, 'Unable to mix subcommands and groups' if @subcommands.any? { |n, v| n == name && v.is_a?(Hash) }
 
       @subcommands[name.to_sym] = block
 
@@ -337,7 +354,7 @@ module Discordrb::Events
     def initialize(data, bot)
       super
 
-      @message = Discordrb::Interactions::Message.new(data['message'], bot, @interaction) if data['message']
+      @message = @interaction.message
       @custom_id = data['data']['custom_id']
     end
   end
@@ -397,14 +414,40 @@ module Discordrb::Events
 
   # An event for when a user submits a modal.
   class ModalSubmitEvent < ComponentEvent
-    # @return [Array<TextInputComponent>]
+    # @return [Array<Component>] an array of partial component objects that were in the modal.
     attr_reader :components
+
+    # @return [Resolved] The resolved channels, roles, users, members, and attachments for the modal.
+    attr_reader :resolved
+
+    # @!visibility private
+    def initialize(data, bot)
+      super
+
+      @components = @interaction.components
+      @resolved = Resolved.new({}, {}, {}, {}, {}, {})
+      process_resolved(data['data']['resolved']) if data['data']['resolved']
+    end
 
     # Get the value of an input passed to the modal.
     # @param custom_id [String] The custom ID of the component to look for.
-    # @return [String, nil]
+    # @return [String, nil] The selected value for the component.
     def value(custom_id)
       get_component(custom_id)&.value
+    end
+
+    # Get the selected values from a select menu or file upload component.
+    # @param custom_id [String] The custom ID of the component to look for.
+    # @return [Array<String>, nil] The values that were chosen for the component.
+    def values(custom_id)
+      get_component(custom_id)&.values
+    end
+
+    # Get the attachments that a user uploaded in this modal.
+    # @param custom_id [String] The custom ID of the file upload component to get attachments for.
+    # @return [Array<Attachment>] the attachments that were uploaded to the file upload component.
+    def attachments(custom_id)
+      values(custom_id)&.map { |id| @resolved[:attachments][id.to_i] } || []
     end
   end
 
@@ -455,7 +498,7 @@ module Discordrb::Events
     def initialize(data, bot)
       super
 
-      users = data['data']['resolved']['users'].keys.map { |e| bot.user(e) }
+      users = data['data']['resolved']['users'].map { |_, user| @bot.ensure_user(user) }
       roles = data['data']['resolved']['roles'] ? data['data']['resolved']['roles'].keys.map { |e| bot.server(data['guild_id']).role(e) } : []
       @values = { users: users, roles: roles }
     end
@@ -489,7 +532,7 @@ module Discordrb::Events
       return false unless event.is_a?(AutocompleteEvent)
 
       [
-        matches_all(@attributes[:name], event.focused) { |a, e| a&.to_s == e },
+        matches_all(@attributes[:name], event.focused) { |a, e| a == e },
         matches_all(@attributes[:command_id], event.command_id) { |a, e| a&.to_i == e },
         matches_all(@attributes[:subcommand], event.subcommand) { |a, e| a&.to_sym == e },
         matches_all(@attributes[:command_name], event.command_name) { |a, e| a&.to_sym == e },

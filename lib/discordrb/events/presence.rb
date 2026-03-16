@@ -19,6 +19,7 @@ module Discordrb::Events
     #   on various device types (`:desktop`, `:mobile`, or `:web`). The value will be `nil` if the user is offline or invisible.
     attr_reader :client_status
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -82,6 +83,7 @@ module Discordrb::Events
     #   on various device types (`:desktop`, `:mobile`, or `:web`). The value will be `nil` if the user is offline or invisible.
     attr_reader :client_status
 
+    # @!visibility private
     def initialize(data, activity, bot)
       @bot = bot
       @activity = activity

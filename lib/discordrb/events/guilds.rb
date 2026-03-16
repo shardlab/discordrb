@@ -9,6 +9,7 @@ module Discordrb::Events
     # @return [Server] the server in question.
     attr_reader :server
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -64,7 +65,8 @@ module Discordrb::Events
     # @return [Integer] The ID of the server that was left.
     attr_reader :server
 
-    # Override init_server to account for the deleted server
+    # @!visibility private
+    # @note Override init_server to account for the deleted server
     def init_server(data, _bot)
       @server = data['id'].to_i
     end
@@ -81,6 +83,7 @@ module Discordrb::Events
     # @return [Array<Emoji>] array of emojis.
     attr_reader :emoji
 
+    # @!visibility private
     def initialize(server, data, bot)
       @bot = bot
       @server = server
@@ -103,6 +106,7 @@ module Discordrb::Events
     # @return [Emoji] the emoji data.
     attr_reader :emoji
 
+    # @!visibility private
     def initialize(server, emoji, bot)
       @bot = bot
       @emoji = emoji
@@ -127,6 +131,7 @@ module Discordrb::Events
     # @return [Emoji, nil] the updated emoji data.
     attr_reader :emoji
 
+    # @!visibility private
     def initialize(server, old_emoji, emoji, bot)
       @bot = bot
       @old_emoji = old_emoji
