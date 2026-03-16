@@ -33,7 +33,7 @@ module Discordrb
     direct_messages: 1 << 12,
     direct_message_reactions: 1 << 13,
     direct_message_typing: 1 << 14,
-    server_scheduled_events: 1 << 16
+    server_scheduled_events: 1 << 16,
     server_automod: 1 << 20,
     server_automod_execution: 1 << 21
   }.freeze

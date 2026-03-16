@@ -68,29 +68,53 @@ module Discordrb
 
     # Edit the properties of the auto moderation rule.
     # @param name [String] The new name of the auto moderation rule.
-    # @param trigger [Trigger, #to_h] The new trigger of the auto moderation rule.
     # @param event_type [Symbol, Integer] The new event type of the auto moderation rule.
-    # @param actions [Array<#to_h, Action>] The new actions of the auto moderation rule.
+    # @param actions [Array<#to_h, Action>] The new actions to set for the auto moderation rule.
     # @param enabled [true, false] Whether or not the auto moderation rule should be enabled.
-    # @param exempt_roles [Array<Integer, String, Role>] The new members to ignore who have any of these roles.
-    # @param exempt_channels [Array<Integer, String, Channel>] The channels where newly created messages should be ignored.
+    # @param exempt_roles [Array<Integer, String, Role>] The new roles that should be ignored by the auto moderation rule.
+    # @param exempt_channels [Array<Integer, String, Channel>] The new channels that should be ignored by the auto moderation rule.
+    # @param mention_limit [Integer] The new max amount of role and user mentions allowed per message; max 50.
+    # @param keyword_filter [Array<String>, nil] The new substrings which will be searched for in content; max 1000.
+    # @param regex_patterns [Array<String>, nil] The new regular expression patterns to match against in content; max 10.
+    # @param exempt_keywords [Array<String>, nil] The new substrings which should not trigger the auto moderation rule; max 1000.
+    # @param keyword_presets [Array<Integer, Symbol>, nil] The new internally pre-defined set of keyword to match against in content.
+    # @param mention_raid_protection [true, false] Whether or not to automatically detect when a mention raid is occuring.
     # @param reason [String, nil] The reason to show in the server's audit log for updating the auto moderation rule.
     # @yieldparam builder [Action::Builder] An optional builder for auto moderation actions. Overrides the `actions:` argument.
     # @return [nil]
     def modify(
-      name: :undef, trigger: :undef, event_type: :undef, actions: :undef,
-      enabled: :undef, exempt_roles: :undef, exempt_channels: :undef,
-      reason: nil
+      name: :undef, event_type: :undef, actions: :undef, enabled: :undef, exempt_roles: :undef,
+      exempt_channels: :undef, mention_limit: :undef, keyword_filter: :undef, regex_patterns: :undef,
+      exempt_keywords: :undef, keyword_presets: :undef, mention_raid_protection: :undef, reason: nil
     )
       data = {
         name: name,
         enabled: enabled,
-        trigger_metadata: trigger == :undef ? trigger : trigger.to_h,
         event_type: event_type == :undef ? event_type : EVENT_TYPES[event_type] || event_type,
         actions: actions == :undef ? actions : actions.to_a.map(&:to_h),
         exempt_roles: exempt_roles == :undef ? exempt_roles : exempt_roles.map(&:resolve_id),
         exempt_channels: exempt_channels == :undef ? exempt_channels : exempt_channels.map(&:resolve_id)
       }
+
+      trigger_fields = [
+        mention_limit,
+        keyword_filter,
+        regex_patterns,
+        exempt_keywords,
+        keyword_presets,
+        mention_raid_protection
+      ]
+
+      if trigger_fields.any? { |_, value| value != :undef }
+        data[:trigger_metadata] = {
+          mention_total_limit: mention_limit == :undef ? @trigger.mention_limit : mention_limit,
+          keyword_filter: keyword_filter == :undef ? @trigger.keyword_filter : (keyword_filter || []),
+          regex_patterns: regex_patterns == :undef ? @trigger.regex_patterns : (regex_patterns || []),
+          allow_list: exempt_keywords == :undef ? @trigger.exempt_keywords : (exempt_keywords || []),
+          presets: keyword_presets == :undef ? @trigger.keyword_presets : (keyword_presets&.map { |id| Trigger::PRESET_TYPES[id] || id } || []),
+          mention_raid_protection_enabled: mention_raid_protection == :undef ? @trigger.mention_raid_protection? : mention_raid_protection
+        }
+      end
 
       if block_given?
         yield((builder = Actions::Builder.new))
@@ -188,31 +212,6 @@ module Discordrb
         @exempt_keywords = data['allow_list'] || []
         @keyword_presets = data['presets'] || []
         @mention_raid_protection = data['mention_raid_protection_enabled'] || false
-      end
-
-      # Modify the attributes of the auto moderation trigger.
-      # @param mention_limit [Integer] The new max amount of role and user mentions allowed per message (max of 50).
-      # @param keyword_filter [Array<String>] The new substrings which will be searched for in content (max of 1000).
-      # @param regex_patterns [Array<String>] The new regular expression patterns to match against in content (max of 10).
-      # @param exempt_keywords [Array<String>] The new substrings which should not trigger the auto moderation rule (max of 100 or 1000).
-      # @param keyword_presets [Array<Integer, Symbol>] The new internally pre-defined set of keyword to match against in content.
-      # @param mention_raid_protection [true, false] Whether or not to automatically detect when a mention raid is occuring.
-      # @param reason [String, nil] The reason to show in the server's audit log for modifying the auto moderation rule's trigger.
-      # @return [nil]
-      def modify(
-        mention_limit: :undef, keyword_filter: :undef, regex_patterns: :undef, exempt_keywords: :undef,
-        keyword_presets: :undef, mention_raid_protection: :undef, reason: nil
-      )
-        data = {
-          mention_total_limit: mention_limit == :undef ? @mention_limit : mention_limit,
-          keyword_filter: keyword_filter == :undef ? @keyword_filter : keyword_filter,
-          regex_patterns: regex_patterns == :undef ? @regex_patterns : regex_patterns,
-          allow_list: exempt_keywords == :undef ? @exempt_keywords : exempt_keywords,
-          presets: keyword_presets == :undef ? @keyword_presets : keyword_presets.map { |set| PRESET_TYPES[set] || set },
-          mention_raid_protection_enabled: mention_raid_protection == :undef ? @mention_raid_protection : mention_raid_protection
-        }
-
-        @rule.modify(trigger: data, reason: reason)
       end
 
       # @!method keyword?

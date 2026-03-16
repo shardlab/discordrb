@@ -609,18 +609,6 @@ module Discordrb::API::Server
     )
   end
 
-  # Get a list of all the configured auto-moderation rules in the server.
-  # https://discord.com/developers/docs/resources/auto-moderation#list-auto-moderation-rules-for-guild
-  def list_automod_rules(token, server_id)
-    Discordrb::API.request(
-      :guilds_sid_auto_moderation_rules,
-      server_id,
-      :get,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules",
-      Authorization: token
-    )
-  end 
-
   # Get a list of all of the active scheduled events in the server.
   # https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild
   def list_scheduled_events(token, server_id, with_user_count: false)
@@ -633,18 +621,6 @@ module Discordrb::API::Server
     )
   end
 
-  # Get a single auto-moderation rule in the server.
-  # https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule
-  def get_automod_rule(token, server_id, rule_id)
-    Discordrb::API.request(
-      :guilds_sid_auto_moderation_rules_rid,
-      server_id,
-      :get,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules/#{rule_id}",
-      Authorization: token
-    )
-  end 
-   
   # Get a single scheduled event in the server.
   # https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event
   def get_scheduled_event(token, server_id, scheduled_event_id, with_user_count: false)
@@ -654,21 +630,6 @@ module Discordrb::API::Server
       :get,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events/#{scheduled_event_id}?with_user_count=#{with_user_count}",
       Authorization: token
-    )
-  end
-
-  # Create an auto-moderation rule in the server.
-  # https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule
-  def create_automod_rule(token, server_id, name:, event_type:, trigger_type:, actions:, trigger_metadata: nil, enabled: nil, exempt_roles: nil, exempt_channels: nil, reason: nil)
-    Discordrb::API.request(
-      :guilds_sid_auto_moderation_rules,
-      server_id,
-      :post,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules",
-      { name:, event_type:, trigger_type:, trigger_metadata:, actions:, enabled:, exempt_roles:, exempt_channels: }.compact.to_json,
-      content_type: :json,
-      Authorization: token,
-      'X-Audit-Log-Reason': reason
     )
   end
 
@@ -701,21 +662,6 @@ module Discordrb::API::Server
     )
   end
 
-  # Update an auto-moderation rule in the server.
-  # https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule
-  def update_automod_rule(token, server_id, rule_id, name: :undef, event_type: :undef, actions: :undef, trigger_metadata: :undef, enabled: :undef, exempt_roles: :undef, exempt_channels: :undef, reason: nil)
-    Discordrb::API.request(
-      :guilds_sid_auto_moderation_rules_rid,
-      server_id,
-      :patch,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules/#{rule_id}",
-      { name:, event_type:, trigger_metadata:, actions:, enabled:, exempt_roles:, exempt_channels: }.reject { |_, value| value == :undef }.to_json,
-      content_type: :json,
-      Authorization: token,
-      'X-Audit-Log-Reason': reason
-    )
-  end
-
   # Update a scheduled event in the server.
   # https://discord.com/developers/docs/resources/guild-scheduled-event#modify-guild-scheduled-event
   def update_scheduled_event(token, server_id, scheduled_event_id, name: :undef, image: :undef, status: :undef, entity_type: :undef, privacy_level: :undef, scheduled_end_time: :undef, scheduled_start_time: :undef, channel_id: :undef, description: :undef, entity_metadata: :undef, recurrence_rule: :undef, reason: nil)
@@ -731,19 +677,6 @@ module Discordrb::API::Server
     )
   end
 
-  # Delete an auto-moderation rule in the server.
-  # https://discord.com/developers/docs/resources/auto-moderation#delete-auto-moderation-rule
-  def delete_automod_rule(token, server_id, rule_id, reason: nil)
-    Discordrb::API.request(
-      :guilds_sid_auto_moderation_rules_rid,
-      server_id,
-      :delete,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules/#{rule_id}",
-      Authorization: token,
-      'X-Audit-Log-Reason': reason
-    )
-  end
-
   # Delete a scheduled event in the server.
   # https://discord.com/developers/docs/resources/guild-scheduled-event#delete-guild-scheduled-event
   def delete_scheduled_event(token, server_id, scheduled_event_id, reason: nil)
@@ -752,6 +685,73 @@ module Discordrb::API::Server
       server_id,
       :delete,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events/#{scheduled_event_id}",
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get a list of all the configured auto-moderation rules in the server.
+  # https://discord.com/developers/docs/resources/auto-moderation#list-auto-moderation-rules-for-guild
+  def list_automod_rules(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_auto_moderation_rules,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules",
+      Authorization: token
+    )
+  end
+
+  # Get a single auto-moderation rule in the server.
+  # https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule
+  def get_automod_rule(token, server_id, rule_id)
+    Discordrb::API.request(
+      :guilds_sid_auto_moderation_rules_rid,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules/#{rule_id}",
+      Authorization: token
+    )
+  end
+
+  # Create an auto-moderation rule in the server.
+  # https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule
+  def create_automod_rule(token, server_id, name:, event_type:, trigger_type:, actions:, trigger_metadata: nil, enabled: nil, exempt_roles: nil, exempt_channels: nil, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_auto_moderation_rules,
+      server_id,
+      :post,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules",
+      { name:, event_type:, trigger_type:, trigger_metadata:, actions:, enabled:, exempt_roles:, exempt_channels: }.compact.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Update an auto-moderation rule in the server.
+  # https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule
+  def update_automod_rule(token, server_id, rule_id, name: :undef, event_type: :undef, actions: :undef, trigger_metadata: :undef, enabled: :undef, exempt_roles: :undef, exempt_channels: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_auto_moderation_rules_rid,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules/#{rule_id}",
+      { name:, event_type:, trigger_metadata:, actions:, enabled:, exempt_roles:, exempt_channels: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Delete an auto-moderation rule in the server.
+  # https://discord.com/developers/docs/resources/auto-moderation#delete-auto-moderation-rule
+  def delete_automod_rule(token, server_id, rule_id, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_auto_moderation_rules_rid,
+      server_id,
+      :delete,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/auto-moderation/rules/#{rule_id}",
       Authorization: token,
       'X-Audit-Log-Reason': reason
     )
