@@ -807,10 +807,10 @@ module Discordrb
     # @param after [Message, Integer, String, Time, nil] Get messages sent after this snowflake ID.
     # @param before [Message, Integer, String, Time, nil] Get messages sent before this snowflake ID.
     # @param around [Message, Integer, String, Time, nil] Get messages sent around this snowflake ID.
-    # @param oldest_first [true, false] Whether the oldest messages in the channel should be fetched first. 
+    # @param oldest_first [true, false] Whether the oldest messages in the channel should be fetched first.
     # @return [Array<Message>] The messages that were fetched. By default, messages will be returned in descending
-    #   order by message ID (newest messages first), but when using the `after:` parameter, messages will be returned
-    #   in ascending order by message ID (newest messages first).
+    #   order by message ID (newest messages first). On the contrary, when using the `after:` or `oldest_first:` parameters,
+    #   messages will be returned in ascending order by message ID (oldest messages first).
     def messages(limit: 100, after: nil, before: nil, around: nil, oldest_first: false)
       if [before, after, around, oldest_first].count(&:itself) > 1
         raise ArgumentError, "'before', 'after', 'around', and 'oldest_first' are mutually exclusive"
@@ -829,8 +829,8 @@ module Discordrb
         around: around.is_a?(Time) ? IDObject.synthesise(around) : around&.resolve_id
       }.compact
 
-      get_messages = lambda do |query = {}|
-        response = API::Channel.get_channel_messages(@bot.token, @id, **rest, **query.compact)
+      get_messages = proc do |query = nil|
+        response = API::Channel.get_channel_messages(@bot.token, @id, **rest, **query&.compact)
         JSON.parse(response).map { |message| Message.new(message, @bot) }
       end
 
