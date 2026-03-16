@@ -11,10 +11,10 @@ bot = Discordrb::Bot.new(token: ENV.fetch('SLASH_COMMAND_BOT_TOKEN', nil), inten
 #
 # You may want to have a separate script for registering your commands so you don't need to do this every
 # time you start your bot.
-bot.register_application_command(:example, 'Example commands', server_id: ENV.fetch('SLASH_COMMAND_BOT_SERVER_ID', nil)) do |cmd|
+bot.register_application_command(:example, 'Example commands', server_id: ENV.fetch('SLASH_COMMAND_BOT_SERVER_ID', nil), name_localizations: { 'de' => 'beispiel' }, description_localizations: { 'de' => 'Beispielbefehle' }) do |cmd|
   cmd.subcommand_group(:fun, 'Fun things!') do |group|
     group.subcommand('8ball', 'Shake the magic 8 ball') do |sub|
-      sub.string('question', 'Ask a question to receive wisdom', required: true)
+      sub.string('question', 'Ask a question to receive wisdom', required: true, name_localizations: { 'de' => 'frage' }, description_localizations: { 'de' => 'Stell eine Frage um Weisheit zu erhalten' })
     end
 
     group.subcommand('java', 'What if it was java?')
