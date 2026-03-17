@@ -1047,8 +1047,9 @@ module Discordrb
 
     # Get the members in the thread.
     # @return [Array<Member>] the members who have joined the thread.
+    # @raise [Discordrb::Errors::NoPermission] This may occur when the application has not enabled the `GUILD_MEMBERS` privileged intent on the Discord Developer Portal.
     def members
-      return [] if !thread? || @bot.gateway.intents.nobits?(Discordrb::INTENTS[:server_members])
+      return [] unless thread?
 
       return (@bot.thread_members[@id]&.keys&.filter_map { |id| @bot.member(@server_id, id) } || []) if @thread_members_chunked
 
