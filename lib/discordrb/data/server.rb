@@ -114,7 +114,13 @@ module Discordrb
       @roles[id.resolve_id]
     end
 
-    # Get a mapping of role IDs to the number of members who have said role.
+    # Get a mapping of role IDs to the amount of members who have the role.
+    # @example Print out the name of the roles in a server followed by the role's member count.
+    #  server = bot.server(81384788765712384)
+    #
+    #  server.role_member_counts.each do |id, count|
+    #    puts("Name: #{server.role(id).name}, Count: #{count}")
+    #  end
     # @return [Hash<Integer => Integer>] A hash mapping role IDs to their respective member counts.
     def role_member_counts
       response = JSON.parse(API::Server.role_member_counts(@bot.token, @id))
@@ -854,7 +860,7 @@ module Discordrb
     # Get the scheduled events on the server.
     # @param bypass_cache [true, false] Whether the cached scheduled events
     #   should be ignored and re-fetched via an HTTP request.
-    # @return [Array<ScheduledEvent>] the scheduled events on the server.
+    # @return [Array<ScheduledEvent>] The scheduled events on the server.
     def scheduled_events(bypass_cache: false)
       process_scheduled_events(JSON.parse(API::Server.list_scheduled_events(@bot.token, @id, with_user_count: true))) if bypass_cache
 
@@ -863,8 +869,8 @@ module Discordrb
 
     # Get a specific scheduled event on the server.
     # @param scheduled_event_id [Integer, String, ScheduledEvent] The scheduled event to get.
-    # @param request [true, false] whether to request the event from discord if it isn't cached.
-    # @return [ScheduledEvent, nil] the scheduled event for the ID, or `nil` if it couldn't be found.
+    # @param request [true, false] Whether to request the event from discord if it isn't cached.
+    # @return [ScheduledEvent, nil] The scheduled event for the ID, or `nil` if it couldn't be found.
     def scheduled_event(scheduled_event_id, request: true)
       id = scheduled_event_id.resolve_id
       return @scheduled_events[id] if @scheduled_events[id]
