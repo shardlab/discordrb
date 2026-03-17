@@ -20,6 +20,8 @@ require 'discordrb/events/webhooks'
 require 'discordrb/events/invites'
 require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
+require 'discordrb/events/integrations'
+require 'discordrb/events/scheduled_events'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -165,6 +167,7 @@ module Discordrb
       @status = :online
 
       @application_commands = {}
+      @request_members_rl = {}
     end
 
     # The list of users the bot shares a server with.
@@ -199,12 +202,18 @@ module Discordrb
     #   The list of emoji the bot can use.
     #   @return [Array<Emoji>] the emoji available.
     def emoji(id = nil)
-      emoji_hash = servers.values.map(&:emoji).reduce(&:merge)
-      if id
-        id = id.resolve_id
-        emoji_hash[id]
+      if (id = id&.resolve_id)
+        @servers.each_value do |server|
+          emoji = server.emojis[id]
+          return emoji if emoji
+        end
       else
-        emoji_hash.values
+        hash = {}
+        @servers.each_value do |server|
+          hash.merge!(server.emojis)
+        end
+
+        hash
       end
     end
 
@@ -232,15 +241,21 @@ module Discordrb
     alias_method :bot_user, :profile
 
     # The bot's OAuth application.
-    # @return [Application, nil] The bot's application info. Returns `nil` if bot is not a bot account.
+    # @return [Application] The bot's application info.
     def bot_application
-      return unless @type == :bot
-
       response = API.oauth_application(token)
       Application.new(JSON.parse(response), self)
     end
 
     alias_method :bot_app, :bot_application
+    alias_method :application, :bot_application
+
+    # Get the role connection metadata records associated with this application.
+    # @return [Array<RoleConnectionMetadata>] the role connection metadata records associated with this application.
+    def role_connection_metadata_records
+      response = API::Application.get_application_role_connection_metadata_records(@bot.token, @id)
+      JSON.parse(response).map { |role_connection| RoleConnectionMetadata.new(role_connection, @bot) }
+    end
 
     # The Discord API token received when logging in. Useful to explicitly call
     # {API} methods.
@@ -899,6 +914,14 @@ module Discordrb
       API::Application.edit_guild_command_permissions(bearer_token, profile.id, server_id, command_id, permissions)
     end
 
+    # Get the permissions for all of the application commands in a specific server.
+    # @param server_id [Integer, String, nil] The ID of the server to fetch application command permissions for.
+    # @return [Array<ApplicationCommand::Permission>] The permissions for all of the application commands in the given server.
+    def application_command_permissions(server_id:)
+      response = API::Application.get_guild_application_command_permissions(@token, profile.id, server_id.resolve_id)
+      JSON.parse(response).flat_map { |data| data['permissions'].map { |inner| ApplicationCommand::Permission.new(inner, data, self) } }
+    end
+
     # Fetches all the application emojis that the bot can use.
     # @return [Array<Emoji>] Returns an array of emoji objects.
     def application_emojis
@@ -937,6 +960,11 @@ module Discordrb
     # @param emoji_id [Integer, String, Emoji] ID of the application emoji to delete.
     def delete_application_emoji(emoji_id)
       API::Application.delete_application_emoji(@token, profile.id, emoji_id.resolve_id)
+    end
+
+    # @!visibility private
+    def inspect
+      "<Bot client_id=#{@client_id.inspect} redact_token=#{@redact_token.inspect}>"
     end
 
     private
@@ -1079,11 +1107,7 @@ module Discordrb
 
     # Internal handler for CHANNEL_UPDATE
     def update_channel(data)
-      channel = Channel.new(data, self)
-      old_channel = @channels[channel.id]
-      return unless old_channel
-
-      old_channel.update_from(channel)
+      @channels[data['id'].to_i]&.update_data(data)
     end
 
     # Internal handler for CHANNEL_DELETE
@@ -1102,26 +1126,6 @@ module Discordrb
       end
 
       @thread_members.delete(channel.id) if channel.thread?
-    end
-
-    # Internal handler for CHANNEL_RECIPIENT_ADD
-    def add_recipient(data)
-      channel_id = data['channel_id'].to_i
-      channel = self.channel(channel_id)
-
-      recipient_user = ensure_user(data['user'])
-      recipient = Recipient.new(recipient_user, channel, self)
-      channel.add_recipient(recipient)
-    end
-
-    # Internal handler for CHANNEL_RECIPIENT_REMOVE
-    def remove_recipient(data)
-      channel_id = data['channel_id'].to_i
-      channel = self.channel(channel_id)
-
-      recipient_user = ensure_user(data['user'])
-      recipient = Recipient.new(recipient_user, channel, self)
-      channel.remove_recipient(recipient)
     end
 
     # Internal handler for GUILD_MEMBER_ADD
@@ -1174,28 +1178,14 @@ module Discordrb
       @servers.delete(id)
     end
 
-    # Internal handler for GUILD_ROLE_UPDATE
+    # Internal handler for GUILD_ROLE_CREATE and GUILD_ROLE_UPDATE
     def update_guild_role(data)
-      role_data = data['role']
-      server_id = data['guild_id'].to_i
-      server = @servers[server_id]
-      new_role = Role.new(role_data, self, server)
-      role_id = role_data['id'].to_i
-      old_role = server.roles.find { |r| r.id == role_id }
-      old_role.update_from(new_role)
-    end
+      server = @servers[data['guild_id'].to_i]
 
-    # Internal handler for GUILD_ROLE_CREATE
-    def create_guild_role(data)
-      role_data = data['role']
-      server_id = data['guild_id'].to_i
-      server = @servers[server_id]
-      new_role = Role.new(role_data, self, server)
-      existing_role = server.role(new_role.id)
-      if existing_role
-        existing_role.update_from(new_role)
+      if (role = server&.role(data['role']['id'].to_i))
+        role.update_data(data['role'])
       else
-        server.add_role(new_role)
+        server&.add_role(Role.new(data['role'], self, server))
       end
     end
 
@@ -1204,14 +1194,25 @@ module Discordrb
       role_id = data['role_id'].to_i
       server_id = data['guild_id'].to_i
       server = @servers[server_id]
-      server.delete_role(role_id)
+      server&.delete_role(role_id)
     end
 
     # Internal handler for GUILD_EMOJIS_UPDATE
     def update_guild_emoji(data)
       server_id = data['guild_id'].to_i
       server = @servers[server_id]
-      server.update_emoji_data(data)
+      server&.update_emoji_data(data)
+    end
+
+    # Internal handler for GUILD_SCHEDULED_EVENT_CREATE and GUILD_SCHEDULED_EVENT_UPDATE
+    def update_guild_scheduled_event(data)
+      server = @servers[data['guild_id'].to_i]
+
+      if (event = server&.scheduled_event(data['id'].to_i, request: false))
+        event&.update_data(data)
+      else
+        server&.cache_scheduled_event(ScheduledEvent.new(data, server, self))
+      end
     end
 
     # Internal handler for MESSAGE_CREATE
@@ -1298,16 +1299,6 @@ module Discordrb
           end
 
           ensure_server(element, true)
-        end
-
-        # Add PM and group channels
-        data['private_channels'].each do |element|
-          channel = ensure_channel(element)
-          if channel.pm?
-            @pm_channels[channel.recipient.id] = channel
-          else
-            @channels[channel.id] = channel
-          end
         end
 
         # Don't notify yet if there are unavailable servers because they need to get available before the bot truly has
@@ -1523,16 +1514,6 @@ module Discordrb
 
         event = ChannelDeleteEvent.new(data, self)
         raise_event(event)
-      when :CHANNEL_RECIPIENT_ADD
-        add_recipient(data)
-
-        event = ChannelRecipientAddEvent.new(data, self)
-        raise_event(event)
-      when :CHANNEL_RECIPIENT_REMOVE
-        remove_recipient(data)
-
-        event = ChannelRecipientRemoveEvent.new(data, self)
-        raise_event(event)
       when :CHANNEL_PINS_UPDATE
         event = ChannelPinsUpdateEvent.new(data, self)
 
@@ -1570,7 +1551,7 @@ module Discordrb
         event = ServerRoleUpdateEvent.new(data, self)
         raise_event(event)
       when :GUILD_ROLE_CREATE
-        create_guild_role(data)
+        update_guild_role(data)
 
         event = ServerRoleCreateEvent.new(data, self)
         raise_event(event)
@@ -1578,6 +1559,15 @@ module Discordrb
         delete_guild_role(data)
 
         event = ServerRoleDeleteEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_CREATE
+        event = IntegrationCreateEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_UPDATE
+        event = IntegrationUpdateEvent.new(data, self)
+        raise_event(event)
+      when :INTEGRATION_DELETE
+        event = IntegrationDeleteEvent.new(data, self)
         raise_event(event)
       when :GUILD_CREATE
         create_guild(data)
@@ -1718,8 +1708,25 @@ module Discordrb
 
         # raise ThreadDeleteEvent
       when :THREAD_LIST_SYNC
-        data['members'].map { |member| ensure_thread_member(member) }
-        data['threads'].map { |channel| ensure_channel(channel, data['guild_id']) }
+        server_id = data['guild_id'].to_i
+        server = @servers[server_id]
+
+        # The `channel_ids` field has two meanings:
+        #
+        # 1. If the field is not present, the thread list is being synced for the whole server.
+        #
+        # 2. We are syncing the threads for a specific channel. This can happen when gaining access
+        #    to a channel.
+        if (ids = data['channel_ids']&.map(&:to_i))
+          @channels.delete_if { |_, channel| channel.thread? && ids.any?(channel.parent&.id) }
+          server&.clear_threads(ids)
+        else
+          @channels.delete_if { |_, channel| channel.server.id == server_id && channel.thread? }
+          server&.clear_threads
+        end
+
+        data['members'].each { |member| ensure_thread_member(member) }
+        data['threads'].each { |channel| ensure_channel(channel) }
 
         # raise ThreadListSyncEvent?
       when :THREAD_MEMBER_UPDATE
@@ -1734,6 +1741,33 @@ module Discordrb
         end
 
         event = ThreadMembersUpdateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_CREATE
+        update_guild_scheduled_event(data)
+
+        event = ScheduledEventCreateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_UPDATE
+        update_guild_scheduled_event(data)
+
+        event = ScheduledEventUpdateEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_DELETE
+        @servers[data['guild_id'].to_i]&.delete_scheduled_event(data['id'].to_i)
+
+        event = ScheduledEventDeleteEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_USER_ADD
+        server = @servers[data['guild_id'].to_i]
+        server&.scheduled_event(data['guild_scheduled_event_id'], request: false)&.increment_user_count
+
+        event = ScheduledEventUserAddEvent.new(data, self)
+        raise_event(event)
+      when :GUILD_SCHEDULED_EVENT_USER_REMOVE
+        server = @servers[data['guild_id'].to_i]
+        server&.scheduled_event(data['guild_scheduled_event_id'], request: false)&.deincrement_user_count
+
+        event = ScheduledEventUserRemoveEvent.new(data, self)
         raise_event(event)
       else
         # another event that we don't support yet
