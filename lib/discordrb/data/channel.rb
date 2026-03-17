@@ -1026,6 +1026,8 @@ module Discordrb
       Message.new(response['message'].merge!('channel_id' => response['id'], 'thread' => response), @bot)
     end
 
+    # Get the default reaction emoji for this forum or media channel.
+    # @return [Emoji, String, nil] The custom emoji, unicode emoji, or `nil` for no default reaction emoji.
     def default_reaction
       @default_reaction.is_a?(Integer) ? server.emojis[@default_reaction] : @default_reaction
     end
