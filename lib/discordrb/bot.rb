@@ -836,7 +836,7 @@ module Discordrb
 
       contexts = contexts&.map { |context| Interaction::CONTEXTS[context] || context }
       integration_types = integration_types&.map { |type| Interaction::INTEGRATION_TYPES[type] || type }
-      default_member_permissions = Permissions.bits(default_member_permissions) if default_member_permissions.is_a?(Array)    
+      default_member_permissions = Permissions.bits(default_member_permissions) if default_member_permissions.is_a?(Array)
 
       builder = Interactions::OptionBuilder.new
       permission_builder = Interactions::PermissionBuilder.new
