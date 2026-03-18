@@ -648,8 +648,38 @@ module Discordrb
     def bans(limit: nil, before_id: nil, after_id: nil)
       response = JSON.parse(API::Server.bans(@bot.token, @id, limit, before_id, after_id))
       response.map do |e|
-        ServerBan.new(self, User.new(e['user'], @bot), e['reason'])
+        ServerBan.new(self, @bot.ensure_user(e['user']), e['reason'])
       end
+    end
+
+    # Get the users who have been banned from the server.
+    # @param limit [Integer, nil] The max number of bans to return, or `nil` for no limit.
+    # @param after [User, Member, Time, Integer, String, nil] Get bans after this user ID.
+    # @param before [User, Member, Time, Integer, String, nil] Get bans before this user ID.
+    # @return [Array<ServerBan>] The users who have been banned from the server.
+    # @note When using the `before` parameter, bans will be sorted in descending order by user ID
+    #   (newest users first), and in ascending order by user ID (oldest users first) otherwise.
+    def bans!(limit: 1000, before: nil, after: nil)
+      raise ArgumentError, "'before' and 'after' are mutually exclusive" if before && after
+
+      f_limit = limit && limit <= 1000 ? limit : 1000
+      f_after = after.is_a?(Time) ? IDObject.synthesize(after) : after&.resolve_id
+      f_before = before.is_a?(Time) ? IDObject.synthesize(before) : before&.resolve_id
+
+      get_bans = lambda do |before: nil, after: nil|
+        data = API::Server.bans(@bot.token, @id, f_limit, before&.id || f_before, after&.id || f_after)
+        JSON.parse(data).map { |ban| ServerBan.new(self, @bot.ensure_user(ban['user']), ban['reason']) }
+      end
+
+      paginator = Paginator.new(limit, before ? :up : :down) do |page|
+        if before
+          get_bans.call(before: page&.first&.user)
+        else
+          get_bans.call(after: page&.last&.user)
+        end
+      end
+
+      paginator.to_a
     end
 
     # Bans a user from this server.
