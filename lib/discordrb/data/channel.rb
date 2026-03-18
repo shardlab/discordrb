@@ -421,7 +421,7 @@ module Discordrb
     end
 
     # Get the time at when this channel was created at.
-    # @return [Time, nil] The time at when the channel was created at.
+    # @return [Time] The time at when the channel was created at.
     def creation_time
       return @create_timestamp if @create_timestamp
 
@@ -1109,7 +1109,7 @@ module Discordrb
       return (@bot.thread_members[@id]&.keys&.filter_map { |id| @bot.member(@server_id, id) } || []) if @thread_members_chunked
 
       get_members = proc do |before = nil|
-        JSON.parse(API::Channel.list_thread_members(@bot.token, @id, before, 100, true)).map do |data|
+        JSON.parse(API::Channel.list_thread_members!(@bot.token, @id, before, 100, true)).map do |data|
           @bot.ensure_thread_member(data)
           Member.new(data['member'], server, @bot).tap { |member| server&.cache_member(member) }
         end
