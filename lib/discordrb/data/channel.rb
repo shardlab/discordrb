@@ -421,7 +421,7 @@ module Discordrb
     end
 
     # Get the time at when this channel was created at.
-    # @return [Time, nil] The time at when the channel was created at.
+    # @return [Time] The time at when the channel was created at.
     def creation_time
       return @create_timestamp if @create_timestamp
 
@@ -1026,6 +1026,8 @@ module Discordrb
       Message.new(response['message'].merge!('channel_id' => response['id'], 'thread' => response), @bot)
     end
 
+    # Get the default reaction emoji for this forum or media channel.
+    # @return [Emoji, String, nil] The custom emoji, unicode emoji, or `nil` for no default reaction emoji.
     def default_reaction
       @default_reaction.is_a?(Integer) ? server.emojis[@default_reaction] : @default_reaction
     end
@@ -1093,22 +1095,46 @@ module Discordrb
       @bot.join_thread(@id)
     end
 
-    # Leave this thread
+    # Leave this thread.
     def leave_thread
       @bot.leave_thread(@id)
     end
 
-    # Members in the thread.
+    # Get the members in the thread.
+    # @return [Array<Member>] the members who have joined the thread.
+    # @raise [Discordrb::Errors::NoPermission] This may occur when the application has not enabled the `GUILD_MEMBERS` privileged intent on the Discord Developer Portal.
     def members
-      @bot.thread_members[@id].collect { |id| @server_id ? @bot.member(@server_id, id) : @bot.user(id) }
+      return [] unless thread?
+
+      return (@bot.thread_members[@id]&.keys&.filter_map { |id| @bot.member(@server_id, id) } || []) if @thread_members_chunked
+
+      get_members = proc do |before = nil|
+        JSON.parse(API::Channel.list_thread_members!(@bot.token, @id, before, 100, true)).map do |data|
+          @bot.ensure_thread_member(data)
+          Member.new(data['member'], server, @bot).tap { |member| server&.cache_member(member) }
+        end
+      end
+
+      paginator = Paginator.new(limit, :down) do |last_page|
+        if last_page && last_page.count < 100
+          []
+        else
+          get_members.call(last_page&.last&.id)
+        end
+      end
+
+      members = paginator.to_a
+      @thread_members_chunked = true
+      members
     end
 
-    # Add a member to the thread
+    # Add a member to the thread.
     # @param member [Member, Integer, String] The member, or ID of the member, to add to this thread.
     def add_member(member)
       @bot.add_thread_member(@id, member)
     end
 
+    # Remove a member from the thread.
     # @param member [Member, Integer, String] The member, or ID of the member, to remove from a thread.
     def remove_member(member)
       @bot.remove_thread_member(@id, member)
