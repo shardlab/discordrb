@@ -413,12 +413,12 @@
       <pre class="lines">
 
 
-200
-201
-202</pre>
+281
+282
+283</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 200</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 281</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_key'>key</span>
   <span class='ivar'>@key</span>
@@ -476,12 +476,12 @@
       <pre class="lines">
 
 
-207
-208
-209</pre>
+288
+289
+290</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 207</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 288</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new'>new</span>
   <span class='ivar'>@new</span>
@@ -539,12 +539,12 @@
       <pre class="lines">
 
 
-203
-204
-205</pre>
+284
+285
+286</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 203</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 284</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_old'>old</span>
   <span class='ivar'>@old</span>
@@ -603,12 +603,12 @@
       <pre class="lines">
 
 
-242
-243
-244</pre>
+323
+324
+325</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 242</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 323</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new_afk_channel'>new_afk_channel</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_channel'>channel</span><span class='lparen'>(</span><span class='ivar'>@new</span><span class='comma'>,</span> <span class='ivar'>@server</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@new</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@key</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>afk_channel_id</span><span class='tstring_end'>&#39;</span></span>
@@ -660,15 +660,15 @@
       <pre class="lines">
 
 
-252
-253
-254</pre>
+333
+334
+335</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 252</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 333</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new_owner'>new_owner</span>
-  <span class='ivar'>@server</span><span class='period'>.</span><span class='id identifier rubyid_member'>member</span><span class='lparen'>(</span><span class='ivar'>@new</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='ivar'>@new</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='ivar'>@logs</span><span class='period'>.</span><span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='ivar'>@new</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@new</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@key</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>owner_id</span><span class='tstring_end'>&#39;</span></span>
+  <span class='ivar'>@server</span><span class='period'>.</span><span class='id identifier rubyid_member'>member</span><span class='lparen'>(</span><span class='ivar'>@new</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='ivar'>@new</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='ivar'>@logs</span><span class='op'>&amp;.</span><span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='ivar'>@new</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@new</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@key</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>owner_id</span><span class='tstring_end'>&#39;</span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -717,12 +717,12 @@
       <pre class="lines">
 
 
-232
-233
-234</pre>
+313
+314
+315</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 232</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 313</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new_widget_channel'>new_widget_channel</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_channel'>channel</span><span class='lparen'>(</span><span class='ivar'>@new</span><span class='comma'>,</span> <span class='ivar'>@server</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@new</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@key</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>widget_channel_id</span><span class='tstring_end'>&#39;</span></span>
@@ -774,12 +774,12 @@
       <pre class="lines">
 
 
-237
-238
-239</pre>
+318
+319
+320</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 237</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 318</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_old_afk_channel'>old_afk_channel</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_channel'>channel</span><span class='lparen'>(</span><span class='ivar'>@old</span><span class='comma'>,</span> <span class='ivar'>@server</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@old</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@key</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>afk_channel_id</span><span class='tstring_end'>&#39;</span></span>
@@ -831,15 +831,15 @@
       <pre class="lines">
 
 
-247
-248
-249</pre>
+328
+329
+330</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 247</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 328</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_old_owner'>old_owner</span>
-  <span class='ivar'>@server</span><span class='period'>.</span><span class='id identifier rubyid_member'>member</span><span class='lparen'>(</span><span class='ivar'>@old</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='ivar'>@old</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='ivar'>@logs</span><span class='period'>.</span><span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='ivar'>@old</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@old</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@key</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>owner_id</span><span class='tstring_end'>&#39;</span></span>
+  <span class='ivar'>@server</span><span class='period'>.</span><span class='id identifier rubyid_member'>member</span><span class='lparen'>(</span><span class='ivar'>@old</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='ivar'>@old</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='ivar'>@logs</span><span class='op'>&amp;.</span><span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='ivar'>@old</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@old</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@key</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>owner_id</span><span class='tstring_end'>&#39;</span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -888,12 +888,12 @@
       <pre class="lines">
 
 
-227
-228
-229</pre>
+308
+309
+310</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 227</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 308</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_old_widget_channel'>old_widget_channel</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_channel'>channel</span><span class='lparen'>(</span><span class='ivar'>@old</span><span class='comma'>,</span> <span class='ivar'>@server</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@old</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@key</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>widget_channel_id</span><span class='tstring_end'>&#39;</span></span>
@@ -908,7 +908,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Mar 18 19:01:29 2026 by
+  Generated on Wed Mar 18 19:02:19 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>

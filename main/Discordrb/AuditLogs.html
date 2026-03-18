@@ -178,7 +178,39 @@
   <span class='int'>75</span> <span class='op'>=&gt;</span> <span class='symbol'>:message_unpin</span><span class='comma'>,</span>
   <span class='int'>80</span> <span class='op'>=&gt;</span> <span class='symbol'>:integration_create</span><span class='comma'>,</span>
   <span class='int'>81</span> <span class='op'>=&gt;</span> <span class='symbol'>:integration_update</span><span class='comma'>,</span>
-  <span class='int'>82</span> <span class='op'>=&gt;</span> <span class='symbol'>:integration_delete</span>
+  <span class='int'>82</span> <span class='op'>=&gt;</span> <span class='symbol'>:integration_delete</span><span class='comma'>,</span>
+  <span class='int'>83</span> <span class='op'>=&gt;</span> <span class='symbol'>:stage_instance_create</span><span class='comma'>,</span>
+  <span class='int'>84</span> <span class='op'>=&gt;</span> <span class='symbol'>:stage_instance_update</span><span class='comma'>,</span>
+  <span class='int'>85</span> <span class='op'>=&gt;</span> <span class='symbol'>:stage_instance_delete</span><span class='comma'>,</span>
+  <span class='int'>90</span> <span class='op'>=&gt;</span> <span class='symbol'>:sticker_create</span><span class='comma'>,</span>
+  <span class='int'>91</span> <span class='op'>=&gt;</span> <span class='symbol'>:sticker_update</span><span class='comma'>,</span>
+  <span class='int'>92</span> <span class='op'>=&gt;</span> <span class='symbol'>:sticker_delete</span><span class='comma'>,</span>
+  <span class='int'>100</span> <span class='op'>=&gt;</span> <span class='symbol'>:scheduled_event_create</span><span class='comma'>,</span>
+  <span class='int'>101</span> <span class='op'>=&gt;</span> <span class='symbol'>:scheduled_event_update</span><span class='comma'>,</span>
+  <span class='int'>102</span> <span class='op'>=&gt;</span> <span class='symbol'>:scheduled_event_delete</span><span class='comma'>,</span>
+  <span class='int'>110</span> <span class='op'>=&gt;</span> <span class='symbol'>:thread_create</span><span class='comma'>,</span>
+  <span class='int'>111</span> <span class='op'>=&gt;</span> <span class='symbol'>:thread_update</span><span class='comma'>,</span>
+  <span class='int'>112</span> <span class='op'>=&gt;</span> <span class='symbol'>:thread_delete</span><span class='comma'>,</span>
+  <span class='int'>121</span> <span class='op'>=&gt;</span> <span class='symbol'>:application_command_permission_update</span><span class='comma'>,</span>
+  <span class='int'>130</span> <span class='op'>=&gt;</span> <span class='symbol'>:soundboard_sound_create</span><span class='comma'>,</span>
+  <span class='int'>131</span> <span class='op'>=&gt;</span> <span class='symbol'>:soundboard_sound_update</span><span class='comma'>,</span>
+  <span class='int'>132</span> <span class='op'>=&gt;</span> <span class='symbol'>:soundboard_sound_delete</span><span class='comma'>,</span>
+  <span class='int'>140</span> <span class='op'>=&gt;</span> <span class='symbol'>:auto_moderation_rule_create</span><span class='comma'>,</span>
+  <span class='int'>141</span> <span class='op'>=&gt;</span> <span class='symbol'>:auto_moderation_rule_update</span><span class='comma'>,</span>
+  <span class='int'>142</span> <span class='op'>=&gt;</span> <span class='symbol'>:auto_moderation_rule_delete</span><span class='comma'>,</span>
+  <span class='int'>143</span> <span class='op'>=&gt;</span> <span class='symbol'>:auto_moderation_block_message</span><span class='comma'>,</span>
+  <span class='int'>144</span> <span class='op'>=&gt;</span> <span class='symbol'>:auto_moderation_flag_to_channel</span><span class='comma'>,</span>
+  <span class='int'>145</span> <span class='op'>=&gt;</span> <span class='symbol'>:auto_moderation_user_communication_disabled</span><span class='comma'>,</span>
+  <span class='int'>146</span> <span class='op'>=&gt;</span> <span class='symbol'>:auto_moderation_quarantine_user</span><span class='comma'>,</span>
+  <span class='int'>150</span> <span class='op'>=&gt;</span> <span class='symbol'>:creator_monetization_request_created</span><span class='comma'>,</span>
+  <span class='int'>151</span> <span class='op'>=&gt;</span> <span class='symbol'>:creator_monetization_terms_accepted</span><span class='comma'>,</span>
+  <span class='int'>163</span> <span class='op'>=&gt;</span> <span class='symbol'>:onboarding_prompt_create</span><span class='comma'>,</span>
+  <span class='int'>164</span> <span class='op'>=&gt;</span> <span class='symbol'>:onboarding_prompt_update</span><span class='comma'>,</span>
+  <span class='int'>165</span> <span class='op'>=&gt;</span> <span class='symbol'>:onboarding_prompt_delete</span><span class='comma'>,</span>
+  <span class='int'>166</span> <span class='op'>=&gt;</span> <span class='symbol'>:onboarding_create</span><span class='comma'>,</span>
+  <span class='int'>167</span> <span class='op'>=&gt;</span> <span class='symbol'>:onboarding_update</span><span class='comma'>,</span>
+  <span class='int'>190</span> <span class='op'>=&gt;</span> <span class='symbol'>:home_settings_create</span><span class='comma'>,</span>
+  <span class='int'>191</span> <span class='op'>=&gt;</span> <span class='symbol'>:home_settings_update</span>
 <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
     </dl>
@@ -409,12 +441,12 @@
       <pre class="lines">
 
 
-74
-75
-76</pre>
+117
+118
+119</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 117</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_entries'>entries</span>
   <span class='ivar'>@entries</span>
@@ -468,12 +500,12 @@
       <pre class="lines">
 
 
-68
-69
-70</pre>
+111
+112
+113</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 111</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_users'>users</span>
   <span class='ivar'>@users</span>
@@ -527,12 +559,12 @@
       <pre class="lines">
 
 
-71
-72
-73</pre>
+114
+115
+116</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 71</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 114</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_webhooks'>webhooks</span>
   <span class='ivar'>@webhooks</span>
@@ -595,12 +627,12 @@
       <pre class="lines">
 
 
-276
-277
-278</pre>
+357
+358
+359</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 276</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 357</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_latest'>latest</span>
   <span class='ivar'>@entries</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
@@ -661,12 +693,12 @@
       <pre class="lines">
 
 
-284
-285
-286</pre>
+365
+366
+367</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 284</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 365</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='ivar'>@users</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='rbracket'>]</span>
@@ -727,12 +759,12 @@
       <pre class="lines">
 
 
-291
-292
-293</pre>
+372
+373
+374</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 291</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/audit_logs.rb', line 372</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_webhook'>webhook</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='ivar'>@webhooks</span><span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='rbracket'>]</span>
@@ -747,7 +779,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Mar 18 19:01:29 2026 by
+  Generated on Wed Mar 18 19:02:19 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>
