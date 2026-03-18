@@ -456,6 +456,34 @@
 </li>
 
     
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#server_collectibles-instance_method" title="#server_collectibles (instance method)">#<strong>server_collectibles</strong>  &#x21d2; Collectibles </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The server-specific collectibles that this user has collected.</p>
+</div></span>
+  
+</li>
+
+    
   </ul>
 
 
@@ -1197,6 +1225,65 @@
 </table>
 </div>
     
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="server_collectibles-instance_method">
+  
+    #<strong>server_collectibles</strong>  &#x21d2; <tt><span class='object_link'><a href="Collectibles.html" title="Discordrb::Collectibles (class)">Collectibles</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the server-specific collectibles that this user has collected.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Collectibles.html" title="Discordrb::Collectibles (class)">Collectibles</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the server-specific collectibles that this user has collected.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+59
+60
+61</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/member.rb', line 59</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_server_collectibles'>server_collectibles</span>
+  <span class='ivar'>@server_collectibles</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 
@@ -1267,12 +1354,12 @@
       <pre class="lines">
 
 
-61
-62
-63</pre>
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/member.rb', line 61</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/member.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_avatar_url'>server_avatar_url</span><span class='lparen'>(</span><span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Server.html" title="Discordrb::API::Server (module)">Server</a></span></span><span class='period'>.</span><span class='id identifier rubyid_avatar_url'><span class='object_link'><a href="API/Server.html#avatar_url-class_method" title="Discordrb::API::Server.avatar_url (method)">avatar_url</a></span></span><span class='lparen'>(</span><span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='ivar'>@user</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='ivar'>@server_avatar_id</span><span class='comma'>,</span> <span class='id identifier rubyid_format'>format</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@server_avatar_id</span>
@@ -1345,12 +1432,12 @@
       <pre class="lines">
 
 
-68
-69
-70</pre>
+71
+72
+73</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/member.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/member.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_banner_url'>server_banner_url</span><span class='lparen'>(</span><span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Server.html" title="Discordrb::API::Server (module)">Server</a></span></span><span class='period'>.</span><span class='id identifier rubyid_banner_url'><span class='object_link'><a href="API/Server.html#banner_url-class_method" title="Discordrb::API::Server.banner_url (method)">banner_url</a></span></span><span class='lparen'>(</span><span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='ivar'>@user</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='ivar'>@server_banner_id</span><span class='comma'>,</span> <span class='id identifier rubyid_format'>format</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@server_banner_id</span>
@@ -1365,7 +1452,7 @@
 </div>
 
       <div id="footer">
-  Generated on Wed Mar 18 19:02:42 2026 by
+  Generated on Wed Mar 18 19:03:06 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.38 (ruby-3.3.10).
 </div>
