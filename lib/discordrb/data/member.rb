@@ -55,6 +55,9 @@ module Discordrb
     # @return [AvatarDecoration, nil] the user's current server avatar decoration, or nil for no server avatar decoration.
     attr_reader :server_avatar_decoration
 
+    # @return [Collectibles] the server-specific collectibles that this user has collected.
+    attr_reader :server_collectibles
+
     # Utility method to get a member's server avatar URL.
     # @param format [String, nil] If `nil`, the URL will default to `webp` for static avatars, and will detect if the member has a `gif` avatar. You can otherwise specify one of `webp`, `jpg`, `png`, or `gif` to override this.
     # @return [String, nil] the URL to the avatar image, or nil if the member doesn't have one.
@@ -134,6 +137,7 @@ module Discordrb
       @flags = data['flags'] || 0
       @pending = data.key?('pending') ? data['pending'] : false
       @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
+      @server_collectibles = Collectibles.new(data['collectibles'] || {}, @bot)
     end
 
     # @return [Server] the server this member is on.
@@ -473,6 +477,7 @@ module Discordrb
         @user.update_primary_server(user['primary_guild']) if user.key?('primary_guild')
       end
 
+      @server_collectibles = Collectibles.new(data['collectibles'] || {}, @bot) if data.key?('collectibles')
       @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data']) if data.key?('avatar_decoration_data')
     end
 
