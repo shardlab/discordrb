@@ -10,10 +10,6 @@ module Discordrb
     # @return [String] the name of the template.
     attr_reader :name
 
-    # @return [String] the link to the template.
-    attr_reader :link
-    alias url link
-
     # @return [User] the user who created the template.
     attr_reader :creator
 
@@ -23,8 +19,8 @@ module Discordrb
     # @return [Time] the time at when the source server was last synced.
     attr_reader :synced_at
 
-    # @return [Time] the time at when the template's source server was created.
-    attr_reader :created_at
+    # @return [Time] the timestamp at when the server template was created.
+    attr_reader :creation_time
 
     # @return [Integer] the total amount of times that the template has been used.
     attr_reader :usage_count
@@ -39,10 +35,9 @@ module Discordrb
     def initialize(data, bot)
       @bot = bot
       @code = data['code']
-      @link = "https://discord.new/#{@code}"
       @server_id = data['source_guild_id'].to_i
       @creator = bot.ensure_user(data['creator'])
-      @created_at = Time.parse(data['created_at'])
+      @creation_time = Time.parse(data['created_at'])
       update_data(data)
     end
 
@@ -52,6 +47,14 @@ module Discordrb
     def synced?
       @unsynced == false
     end
+
+    # Get a link to the server template.
+    # @return [String] A URL to the server template.
+    def link
+      "https://discord.new/#{@code}"
+    end
+
+    alias_method :url, :link
 
     # Sync the server template to match the source server.
     # @return [nil]
@@ -76,6 +79,15 @@ module Discordrb
       update_data(JSON.parse(API::Server.update_template(@bot.token, @server_id, @code, **data)))
       nil
     end
+
+    # Comparison based off of server ID and code.
+    # @param other [ServerTemplate, Object] The object to compare against.
+    # @return [true, false] Whether or not the other object is equal to this server template.
+    def ==(other)
+      other.is_a?(ServerTemplate) ? (@server_id == other.server_id && @code == other.code) : false
+    end
+
+    alias_method :eql?, :==
 
     private
 
