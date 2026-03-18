@@ -421,7 +421,7 @@ module Discordrb
     end
 
     # Get the time at when this channel was created at.
-    # @return [Time, nil] The time at when the channel was created at.
+    # @return [Time] The time at when the channel was created at.
     def creation_time
       return @create_timestamp if @create_timestamp
 
@@ -534,7 +534,7 @@ module Discordrb
       @rate_limit_per_user != 0
     end
 
-    # Get the stage instance for this stage channel.
+    # Get the stage instance for a stage channel.
     # @param request [true, false] Whether to make an API call to fetch the stage instance if it isn't cached.
     # @return [StageInstance, nil] The stage instance for this stage channel, or `nil` if one couldn't be found.
     def stage_instance(request: false)
@@ -547,7 +547,7 @@ module Discordrb
       nil
     end
 
-    # Create a stage instance in this stage channel.
+    # Create a stage instance in a stage channel.
     # @param topic [String] The 1-120 character topic of the stage instance.
     # @param mention_everyone [true, false] Whether to ping @everyone when the stage instance starts.
     # @param scheduled_event [ScheduledEvent, nil] The scheduled event to associate with the stage instance.
@@ -556,14 +556,15 @@ module Discordrb
     def create_stage_instance(topic:, mention_everyone:, scheduled_event: nil, reason: nil)
       raise 'Channel must be a stage channel' unless stage?
 
-      data = {
+      options = {
         topic: topic,
         reason: reason,
+        privacy_level: 2,
         send_start_notification: mention_everyone,
-        guild_scheduled_event_id: scheduled_event&.resolve_id
+        guild_scheduled_event_id: scheduled_event&.resolve_id || :undef
       }
 
-      instance = JSON.parse(API::Channel.create_stage_instance(@bot.token, @id, **data))
+      instance = JSON.parse(API::Channel.create_stage_instance(@bot.token, @id, **options))
       process_stage_instance(StageInstance.new(instance, self, @bot))
     end
 
