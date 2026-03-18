@@ -1535,6 +1535,9 @@ module Discordrb
 
         event = ServerMemberDeleteEvent.new(data, self)
         raise_event(event)
+      when :GUILD_AUDIT_LOG_ENTRY_CREATE
+        event = AuditLogEntryCreateEvent.new(data, self)
+        raise_event(event)
       when :GUILD_BAN_ADD
         add_user_ban(data)
 
