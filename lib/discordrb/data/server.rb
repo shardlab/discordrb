@@ -636,7 +636,7 @@ module Discordrb
     # @return [AutoModRule, nil] the automod rule that was found, or `nil`.
     def automod_rule(rule_id, request: true)
       id = rule_id.resolve_id
-      return @automod_rules[id] if @automod_rules[id]
+      return @automod_rules[id] if @automod_rules[id] && @bot.gateway.intents.anybits?(INTENTS[:server_automod])
       return nil unless request
 
       data = JSON.parse(API::Server.get_automod_rule(@bot.token, @id, id))
@@ -660,30 +660,30 @@ module Discordrb
         @automod_rules[rule.id] = rule
       end
 
-      @rules_cached = true
+      (@rules_cached = true) if @bot.gateway.intents.anybits?(INTENTS[:server_automod])
       @automod_rules.values
     rescue StandardError
       []
     end
 
-    # Create an auto moderation rule on this server. Requires the `manage_server` permission.
-    # @param name [String] The name of the auto moderation rule to create.
-    # @param event_type [Integer, Symbol] The event type of the auto moderation rule to create.
-    # @param trigger_type [Integer, Symbol] The trigger type of the auto moderation rule to create.
-    # @param actions [Array<#to_h>] The actions of the auto moderation rule to create.
-    # @param enabled [true, false] Whether to enabled the auto moderation rule to create.
-    # @param exempt_roles [Array<#resolve_id>] The exempt roles of the auto moderation rule to create (max 20).
-    # @param exempt_channels [Array<#resolve_id>] The exempt channels of the auto moderation rule to create (max 50).
-    # @param keyword_filter [Array<String>] The substrings that should trigger the auto moderation rule to create.
-    # @param regex_patterns [Array<String>] The Rust regex patterns that should trigger the auto moderation rule to create.
-    # @param keyword_presets [Array<Integer, Symbol>] The of word types that can trigger the auto moderation rule to create.
-    # @param exempt_keywords [Array<String>] The substrings that should not trigger the auto moderation rule to create.
-    # @param mention_limit [Integer] The number of unique mentions that should trigger the auto moderation rule to create.
-    # @param mention_raid_protection [true, false] If mention raids should be auto-detected by the auto moderation rule to create.
+    # Create an auto moderation rule. Requires the `manage_server` permission.
+    # @param name [String] The name of the auto moderation rule.
+    # @param event_type [Integer, Symbol] The event type of the auto moderation rule.
+    # @param trigger_type [Integer, Symbol] The trigger type of the auto moderation rule.
+    # @param actions [Array<#to_h>] The actions to execute when the auto moderation rule is triggered.
+    # @param enabled [true, false, nil] Whether to enable the auto moderation rule.
+    # @param exempt_roles [Array<#resolve_id>, nil] The exempt roles of the auto moderation rule; max 20.
+    # @param exempt_channels [Array<#resolve_id>, nil] The exempt channels of the auto moderation rule; max 50.
+    # @param keyword_filter [Array<String>, nil] The substrings that should trigger the auto moderation rule.
+    # @param regex_patterns [Array<String>, nil] The Rust flavoured regex patterns that should trigger the auto moderation rule.
+    # @param keyword_presets [Array<Integer, Symbol>, nil] The of word types that can trigger the auto moderation rule.
+    # @param exempt_keywords [Array<String>, nil] The substrings that should not trigger the auto moderation rule.
+    # @param mention_limit [Integer, nil] The number of unique mentions that should trigger the auto moderation rule.
+    # @param mention_raid_protection [true, false, nil] If mention raids should be auto-detected by the auto moderation rule.
     # @param reason [String, nil] The reason for creating the auto moderation rule.
     # @yieldparam builder [AutoModRule::Action::Builder] An optional builder for auto moderation actions.
     # @return [AutoModRule] the newly created auto moderation rule.
-    def create_automod_rule(name:, event_type:, trigger_type:, actions: [], enabled: nil, exempt_roles: nil, exempt_channels: nil, keyword_filter: nil, regex_patterns: nil, keyword_presets: nil, exempt_keywords: nil, mention_limit: nil, mention_raid_protection: nil, reason: nil)
+    def create_automod_rule(name:, event_type:, trigger_type:, actions: [], enabled: false, exempt_roles: nil, exempt_channels: nil, keyword_filter: nil, regex_patterns: nil, keyword_presets: nil, exempt_keywords: nil, mention_limit: nil, mention_raid_protection: nil, reason: nil)
       yield((builder = AutoModRule::Action::Builder.new)) if block_given?
 
       trigger = {

@@ -149,6 +149,11 @@ module Discordrb
     end
 
     # @!visibility private
+    def inspect
+      "<AutoModRule id=#{@id} name=\"#{@name}\" enabled=#{@enabled} event_type=#{@event_type}>"
+    end
+
+    # @!visibility private
     def update_data(new_data)
       @name = new_data['name']
       @enabled = new_data['enabled']
