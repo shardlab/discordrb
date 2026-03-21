@@ -31,6 +31,36 @@ module Discordrb::API::Server
     )
   end
 
+  # Update the properties of a guild.
+  # https://discord.com/developers/docs/resources/guild#modify-guild
+  def update!(token, server_id, name: :undef, region: :undef, verification_level: :undef, default_message_notifications: :undef, explicit_content_filter: :undef, afk_channel_id: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef, system_channel_id: :undef, system_channel_flags: :undef, rules_channel_id: :undef, public_updates_channel_id: :undef, preferred_locale: :undef, features: :undef, description: :undef, premium_progress_bar_enabled: :undef, safety_alerts_channel_id: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}",
+      { name:, region:, verification_level:, default_message_notifications:, explicit_content_filter:, afk_channel_id:, afk_timeout:, icon:, splash:, discovery_splash:, banner:, system_channel_id:, system_channel_flags:, rules_channel_id:, public_updates_channel_id:, preferred_locale:, features:, description:, premium_progress_bar_enabled:, safety_alerts_channel_id: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Modify the incident actions for a server.
+  # https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions
+  def update_incident_actions(token, server_id, invites_disabled_until: :undef, dms_disabled_until: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_incidents_actions,
+      server_id,
+      :put,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/incident-actions",
+      { invites_disabled_until:, dms_disabled_until: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Get a server's channels list
   # https://discord.com/developers/docs/resources/guild#get-guild-channels
   def channels(token, server_id)
@@ -233,6 +263,18 @@ module Discordrb::API::Server
     )
   end
 
+  # Get a single role
+  # https://discord.com/developers/docs/resources/guild#get-guild-role
+  def role(token, server_id, role_id)
+    Discordrb::API.request(
+      :guilds_sid_roles_rid,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/#{role_id}",
+      Authorization: token
+    )
+  end
+
   # Create a role (parameters such as name and colour if not set can be set by update_role afterwards)
   # Permissions are the Discord defaults; allowed: invite creation, reading/sending messages,
   # sending TTS messages, embedding links, sending files, reading the history, mentioning everybody,
@@ -345,6 +387,18 @@ module Discordrb::API::Server
       "#{Discordrb::API.api_base}/guilds/#{server_id}/members/#{user_id}/roles/#{role_id}",
       Authorization: token,
       'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get the amount of members who have a role
+  # https://discord.com/developers/docs/resources/guild#get-guild-roles-members-count
+  def role_member_counts(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_roles_member_counts,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/member-counts",
+      Authorization: token
     )
   end
 
