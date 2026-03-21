@@ -601,14 +601,15 @@ module Discordrb
     # @param components [View, Array<#to_h>] The new message components that should be set for the message.
     # @param has_components [true, false] Whether to set the `:uikit_components` flag when updating the message.
     # @param attachments [Array<File, Hash, Integer, String, Attachment>] The new attachments to set for the message.
-    # @param retain_attachments [true, false] Whether or not to retain the exisiting attachments present on the message. When this is
-    #   set to false, you must provide the attachments that were previously set in-order to retain them.
-    # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the builder overwrite method arguments.
-    # @yieldparam view [Webhooks::View] An optional component builder. Arguments passed to the builder overwrite method data.
+    # @param retain_attachments [true, false] Whether or not to retain the exisiting attachments present on the message.
+    # @yieldparam builder [Webhooks::Builder] An optional message builder. Overwrites arguments passed to the method.
+    # @yieldparam view [Webhooks::View] An optional component builder. Overwrites arguments passed to the method.
+    # @note Any arguments that you pass will completely overwrite the old value. For example, passing `flags` will completely
+    #   replace the `flags` field, passing `embeds` will completely replace all the `embeds`, etc.
     # @return [Message] the updated message.
     def modify(
       content: :undef, embeds: :undef, flags: :undef, components: :undef, attachments: :undef,
-      retain_attachments: true, has_components: :undef
+      retain_attachments: false, has_components: :undef
     )
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -622,7 +623,7 @@ module Discordrb
       builder = builder.to_json_hash
 
       if has_components == true
-        flags != :undef ? flags |= FLAGS[:uikit_components] : (flags = (@flags | FLAGS[:uikit_components]))
+        flags == :undef ? (flags = (@flags | FLAGS[:uikit_components])) : flags |= FLAGS[:uikit_components]
       end
 
       builder = {
@@ -632,7 +633,7 @@ module Discordrb
         embeds: block_given? && builder[:embeds]&.any? ? builder[:embeds] : embeds
       }
 
-      if flags != :undef && flags.anybits?(FLAGS[:uikit_components])
+      if flags != :undef && !uikit_components? && flags.anybits?(FLAGS[:uikit_components])
         builder[:poll] = nil
         builder[:embeds] = []
         builder[:content] = nil
@@ -653,10 +654,12 @@ module Discordrb
         builder[:attachments] = attachments
       end
 
+      # rubocop:disable Style/IfUnlessModifier
       if builder[:files] && retain_attachments == true && @attachments.any?
         (builder[:attachments] ||= []).push(*@attachments.map { |attachment| { id: attachment.id } })
       end
 
+      # rubocop:enable Style/IfUnlessModifier
       Message.new(JSON.parse(API::Channel.update_message(@bot.token, @channel.id, @id, **builder)), @bot)
     end
   end
