@@ -50,10 +50,7 @@ module Discordrb
       @pack_id = data['pack_id']&.to_i
       @server_id = data['guild_id']&.to_i
       @creator = bot.ensure_user(data['user']) if data['user']
-
-      # If this is omitted, it's because the sticker is from a pack
-      # and is thus always going to be available for use by the bot.
-      @available = data.key?('available') ? data['available'] : true
+      @available = official? || data['available']
     end
 
     # Whether this is an official sticker in a pack.
@@ -61,6 +58,8 @@ module Discordrb
     def official?
       @type == 1
     end
+
+    alias_method :default?, :official?
 
     # Whether this is a custom sticker uploaded to a server.
     # @return [true, false] Whether this sticker is a custom sticker that was uploaded to a server.
