@@ -562,6 +562,69 @@ module Discordrb
       register_event(InviteDeleteEvent, attributes, block)
     end
 
+    # This **event** is raised whenever a member is addded to a thread.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Channel] :channel A thread to match against.
+    # @option attributes [String, Integer, User, Member] :member A member to match against.
+    # @yield The block is executed when the event is raised
+    # @yieldparam event [ThreadMemberAddEvent] The event that was raised.
+    # @return [ThreadMemberAddEventHandler] The event handler that was registered.
+    def thread_member_add(attributes = {}, &block)
+      register_event(ThreadMemberAddEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a member is removed from a thread.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Channel] :channel A thread to match against.
+    # @option attributes [String, Integer, User, Member] :member A member to match against.
+    # @yield The block is executed when the event is raised
+    # @yieldparam event [ThreadMemberRemoveEvent] The event that was raised.
+    # @return [ThreadMemberRemoveEventHandler] The event handler that was registered.
+    def thread_member_remove(attributes = {}, &block)
+      register_event(ThreadMemberRemoveEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a thread channel is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Channel] :id A thread to match against.
+    # @option attributes [String, Integer, Symbol] :type A thread type to match against.
+    # @option attributes [String, Integer, Channel] :parent A parent channel to match against.
+    # @yield The block is executed when the event is raised
+    # @yieldparam event [ThreadCreateEvent] The event that was raised.
+    # @return [ThreadCreateEventHandler] The event handler that was registered.
+    def thread_create(attributes = {}, &block)
+      register_event(ThreadCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a thread channel is updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Channel] :id A thread to match against.
+    # @option attributes [String, Integer, Symbol] :type A thread type to match against.
+    # @option attributes [String, Integer, Channel] :parent A parent channel to match against.
+    # @yield The block is executed when the event is raised
+    # @yieldparam event [ThreadUpdateEvent] The event that was raised.
+    # @return [ThreadUpdateEventHandler] The event handler that was registered.
+    def thread_update(attributes = {}, &block)
+      register_event(ThreadUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a thread channel is deleted.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Channel] :id A thread to match against.
+    # @option attributes [String, Integer, Symbol] :type A thread type to match against.
+    # @option attributes [String, Integer, Channel] :parent A parent channel to match against.
+    # @yield The block is executed when the event is raised
+    # @yieldparam event [ThreadDeleteEvent] The event that was raised.
+    # @return [ThreadDeleteEventHandler] The event handler that was registered.
+    def thread_delete(attributes = {}, &block)
+      register_event(ThreadDeleteEvent, attributes, block)
+    end
+
     # This **event** is raised whenever an interaction event is received.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [Integer, Symbol, String] :type The interaction type, can be the integer value or the name

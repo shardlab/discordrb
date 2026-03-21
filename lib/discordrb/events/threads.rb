@@ -1,100 +1,185 @@
 # frozen_string_literal: true
 
-# Generic subclass for threads
-module Discordrb::Events
-  # Raised when a thread is created
-  class ThreadCreateEvent < Event
-    # @return [Channel] the thread in question.
-    attr_reader :thread
+require 'discordrb/data'
+require 'discordrb/events/generic'
 
-    delegate :name, :server, :owner, :parent_channel, :thread_metadata, to: :thread
+module Discordrb::Events
+  # Generic superclass for thread events.
+  class ThreadEvent < Event
+    # @return [Integer] the ID of the thread associated with the event.
+    attr_reader :id
+
+    # @return [Integer] the type of the thread associated with the event.
+    attr_reader :type
+
+    # @return [Server] the server of the thread associated with the event.
+    attr_reader :server
+
+    # @return [Integer] the parent channel ID of the thread associated with
+    #   the event.
+    attr_reader :parent_id
 
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-      @thread = data.is_a?(Discordrb::Channel) ? data : bot.channel(data['id'].to_i)
+      @id = data['id'].to_i
+      @type = data['type']
+      @parent_id = data['parent_id']&.to_i
+      @server = bot.server(data['guild_id'].to_i)
+    end
+
+    # Get the thread channel associated with the event.
+    # @return [Channel] The thread channel associated with the event.
+    def channel
+      @bot.channel(@id)
+    end
+
+    alias_method :thread, :channel
+
+    # Get the parent channel of the thread associated with the event.
+    # @return [Channel] The parent channel of the thread in question.
+    def parent
+      @bot.channel(@parent_id)
+    end
+
+    # Check if the thread associated with the event was a news thread.
+    # @return [true, false] Whether or not the thread in question was a news thread.
+    def news_thread?
+      @type == Discordrb::Channel::TYPES[:news_thread]
+    end
+
+    # Check if the thread associated with the event was a public thread.
+    # @return [true, false] Whether or not the thread in question was a public thread.
+    def public_thread?
+      @type == Discordrb::Channel::TYPES[:public_thread]
+    end
+
+    # Check if the thread associated with the event was a private thread.
+    # @return [true, false] Whether or not the thread in question was a private thread.
+    def private_thread?
+      @type == Discordrb::Channel::TYPES[:private_thread]
     end
   end
 
-  # Event handler for ChannelCreateEvent
-  class ThreadCreateEventHandler < EventHandler
+  # Raised whenever a thread is created.
+  class ThreadCreateEvent < ThreadEvent; end
+
+  # Raised whenever a thread is updated.
+  class ThreadUpdateEvent < ThreadEvent; end
+
+  # Raised whenever a thread is deleted.
+  class ThreadDeleteEvent < ThreadEvent; undef channel, thread; end
+
+  # Generic event handler for thread events.
+  class ThreadEventHandler < EventHandler
+    # @!visibility private
     def matches?(event)
-      # Check for the proper event type
-      return false unless event.is_a? ThreadCreateEvent
+      # Check for the proper event type.
+      return false unless event.is_a?(ThreadEvent)
 
       [
-        matches_all(@attributes[:name], event.name) do |a, e|
-          a == if a.is_a? String
-                 e.to_s
-               else
-                 e
-               end
+        matches_all(@attributes[:id], event.id) do |a, e|
+          a&.resolve_id == e&.resolve_id
         end,
+
         matches_all(@attributes[:server], event.server) do |a, e|
-          a.resolve_id == e.resolve_id
+          a&.resolve_id == e&.resolve_id
         end,
-        matches_all(@attributes[:invitable], event.thread.invitable) do |a, e|
-          a == e
+
+        matches_all(@attributes[:parent], event.parent_id) do |a, e|
+          a&.resolve_id == e&.resolve_id
         end,
-        matches_all(@attributes[:owner], event.thread.owner) do |a, e|
-          a.resolve_id == e.resolve_id
-        end,
-        matches_all(@attributes[:channel], event.thread.parent) do |a, e|
-          a.resolve_id == e.resolve_id
+
+        matches_all(@attributes[:type], event.type) do |a, e|
+          case a
+          when String, Symbol
+            Discordrb::Channel::TYPES[a.to_sym] == e
+          else
+            a == e
+          end
         end
       ].reduce(true, &:&)
     end
   end
 
-  # Raised when a thread is updated (e.g. name changes)
-  class ThreadUpdateEvent < ThreadCreateEvent; end
+  # Event handler for :THREAD_CREATE events.
+  class ThreadCreateEventHandler < ThreadEventHandler; end
 
-  # Event handler for ThreadUpdateEvent
-  class ThreadUpdateEventHandler < ThreadCreateEventHandler
-    def matches?(event)
-      # Check for the proper event type
-      return false unless event.is_a? ThreadUpdateEvent
+  # Event handler for :THREAD_UPDATE events.
+  class ThreadUpdateEventHandler < ThreadEventHandler; end
 
-      super
-    end
-  end
+  # Event handler for :THREAD_DELETE events.
+  class ThreadDeleteEventHandler < ThreadEventHandler; end
 
-  # Raised when members are added or removed from a thread.
-  class ThreadMembersUpdateEvent < Event
-    # @return [Channel]
-    attr_reader :thread
+  # Generic superclass for thread member events.
+  class ThreadMemberEvent < Event
+    # @return [Member] the member associated with the event.
+    attr_reader :member
+    alias user member
 
-    # @return [Array<Integer>]
-    attr_reader :removed_member_ids
+    # @return [Channel] the thread associated with the event.
+    attr_reader :channel
+    alias thread channel
 
-    # @return [Integer]
-    attr_reader :member_count
-
-    delegate :name, :server, :owner, :parent_channel, :thread_metadata, to: :thread
+    # @return [Integer] the ID of the member associated with the event.
+    attr_reader :user_id
 
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-      @server = bot.server(data['guild_id'].to_i) if data['guild_id']
-      @thread = data.is_a?(Discordrb::Channel) ? data : bot.channel(data['id'].to_i)
-      @added_member_ids = data['added_members']&.map { |m| m['user_id']&.to_i } || []
-      @removed_member_ids = data['removed_member_ids']&.map(&:resolve_id) || []
-      @member_count = data['member_count']
+      @member = data['member']
+      @user_id = @member.resolve_id
+      @channel = bot.channel(data['id'].to_i)
     end
   end
 
-  # @return [Array<Member, User>] the members that were added to the thread
-  def added_members
-    @added_members ||= @added_member_ids&.map { |id| @server&.member(id) || @bot.user(id) }
+  # Raised whenever a member is added to a thread.
+  class ThreadMemberAddEvent < ThreadMemberEvent; end
+
+  # Raised whenever a member is removed from a thread.
+  class ThreadMemberRemoveEvent < ThreadMemberEvent
+    # @!visibility private
+    def initialize(data, bot)
+      @bot = bot
+      @user_id = data['user_id'].to_i
+      @channel = bot.channel(data['id'].to_i)
+    end
+
+    # Get the member who was removed from the thread.
+    # @return [Member, User] The member that was removed from the thread.
+    def member
+      @member ||= (@channel.server.member(@user_id) || @bot.user(@user_id))
+    end
+
+    alias_method :user, :member
   end
 
-  # Event handler for ThreadMembersUpdateEvent
-  class ThreadMembersUpdateEventHandler < ThreadCreateEventHandler
+  # Generic event handler for thread member events.
+  class ThreadMemberEventHandler < EventHandler
+    # @!visibility private
     def matches?(event)
-      # Check for the proper event type
-      return false unless event.is_a? ThreadMembersUpdateEvent
+      # Check for the proper event type.
+      return false unless event.is_a?(ThreadMemberEvent)
 
-      super
+      [
+        matches_all(@attributes[:server], event.channel.server) do |a, e|
+          a&.resolve_id == e&.resolve_id
+        end,
+
+        matches_all(@attributes[:member] || @attributes[:user], event.user_id) do |a, e|
+          a&.resolve_id == e&.resolve_id
+        end,
+
+        matches_all(@attributes[:channel] || @attributes[:thread], event.channel) do |a, e|
+          a&.resolve_id == e&.resolve_id
+        end
+      ].reduce(true, &:&)
     end
   end
+
+  # Event handler for the :THREAD_MEMBERS_UPDATE event.
+  class ThreadMemberAddEventHandler < ThreadMemberEventHandler; end
+
+  # Event handler for the :THREAD_MEMBERS_UPDATE event.
+  class ThreadMemberRemoveEventHandler < ThreadMemberEventHandler; end
 end
