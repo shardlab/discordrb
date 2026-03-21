@@ -22,6 +22,7 @@ require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
 require 'discordrb/events/integrations'
 require 'discordrb/events/scheduled_events'
+require 'discordrb/events/auto_moderation'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -1223,6 +1224,17 @@ module Discordrb
       end
     end
 
+    # Internal handler for AUTO_MODERATION_RULE_CREATE and AUTO_MODERATION_RULE_UPDATE
+    def update_automod_rule(data)
+      server = @servers[data['guild_id'].to_i]
+
+      if (rule = server&.automod_rule(data['id'].to_i, request: false))
+        rule&.update_data(data)
+      else
+        server&.cache_automod_rule(AutoModRule.new(data, server, self))
+      end
+    end
+
     # Internal handler for MESSAGE_CREATE
     def create_message(data); end
 
@@ -1752,6 +1764,24 @@ module Discordrb
         end
 
         event = ThreadMembersUpdateEvent.new(data, self)
+        raise_event(event)
+      when :AUTO_MODERATION_RULE_CREATE
+        update_automod_rule(data)
+
+        event = AutoModRuleCreateEvent.new(data, self)
+        raise_event(event)
+      when :AUTO_MODERATION_RULE_UPDATE
+        update_automod_rule(data)
+
+        event = AutoModRuleUpdateEvent.new(data, self)
+        raise_event(event)
+      when :AUTO_MODERATION_RULE_DELETE
+        @servers[data['guild_id'].to_i]&.delete_automod_rule(data['id'].to_i)
+
+        event = AutoModRuleDeleteEvent.new(data, self)
+        raise_event(event)
+      when :AUTO_MODERATION_ACTION_EXECUTION
+        event = AutoModActionEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_CREATE
         update_guild_scheduled_event(data)
