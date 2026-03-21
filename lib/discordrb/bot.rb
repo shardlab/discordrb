@@ -22,6 +22,7 @@ require 'discordrb/events/interactions'
 require 'discordrb/events/threads'
 require 'discordrb/events/integrations'
 require 'discordrb/events/scheduled_events'
+require 'discordrb/events/stage_instances'
 
 require 'discordrb/api'
 require 'discordrb/api/channel'
@@ -1223,6 +1224,18 @@ module Discordrb
       end
     end
 
+    # Internal handler for STAGE_INSTANCE_CREATE and STAGE_INSTANCE_UPDATE
+    def update_stage_instance(data)
+      channel = @channels[data['channel_id'].to_i]
+      instance = channel&.stage_instance(request: false)
+
+      if instance&.id == data['id'].to_i
+        instance&.update_data(data)
+      else
+        channel&.process_stage_instance(StageInstance.new(data, channel, self))
+      end
+    end
+
     # Internal handler for MESSAGE_CREATE
     def create_message(data); end
 
@@ -1752,6 +1765,21 @@ module Discordrb
         end
 
         event = ThreadMembersUpdateEvent.new(data, self)
+        raise_event(event)
+      when :STAGE_INSTANCE_CREATE
+        update_stage_instance(data)
+
+        event = StageInstanceCreateEvent.new(data, self)
+        raise_event(event)
+      when :STAGE_INSTANCE_UPDATE
+        update_stage_instance(data)
+
+        event = StageInstanceUpdateEvent.new(data, self)
+        raise_event(event)
+      when :STAGE_INSTANCE_DELETE
+        @channels[data['channel_id'].to_i]&.process_stage_instance(nil)
+
+        event = StageInstanceDeleteEvent.new(data, self)
         raise_event(event)
       when :GUILD_SCHEDULED_EVENT_CREATE
         update_guild_scheduled_event(data)
