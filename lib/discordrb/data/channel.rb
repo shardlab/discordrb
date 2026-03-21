@@ -421,7 +421,7 @@ module Discordrb
     end
 
     # Get the time at when this channel was created at.
-    # @return [Time] The time at when the channel was created at.
+    # @return [Time, nil] The time at when the channel was created at.
     def creation_time
       return @create_timestamp if @create_timestamp
 
@@ -1060,8 +1060,6 @@ module Discordrb
       Message.new(response['message'].merge!('channel_id' => response['id'], 'thread' => response), @bot)
     end
 
-    # Get the default reaction emoji for this forum or media channel.
-    # @return [Emoji, String, nil] The custom emoji, unicode emoji, or `nil` for no default reaction.
     def default_reaction
       @default_reaction.is_a?(Integer) ? server.emojis[@default_reaction] : @default_reaction
     end
