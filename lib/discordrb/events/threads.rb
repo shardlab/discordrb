@@ -61,14 +61,14 @@ module Discordrb::Events
     end
   end
 
-  # Raised whenever a thread channel is created.
+  # Raised whenever a thread is created.
   class ThreadCreateEvent < ThreadEvent; end
 
-  # Raised whenever a thread channel is updated.
+  # Raised whenever a thread is updated.
   class ThreadUpdateEvent < ThreadEvent; end
 
-  # Raised whenever a thread channel is deleted.
-  class ThreadDeleteEvent < ThreadEvent; undef :thread; end
+  # Raised whenever a thread is deleted.
+  class ThreadDeleteEvent < ThreadEvent; undef channel, thread; end
 
   # Generic event handler for thread events.
   class ThreadEventHandler < EventHandler
@@ -150,6 +150,8 @@ module Discordrb::Events
     def member
       @member ||= (@channel.server.member(@user_id) || @bot.user(@user_id))
     end
+
+    alias_method :user, :member
   end
 
   # Generic event handler for thread member events.
@@ -175,9 +177,9 @@ module Discordrb::Events
     end
   end
 
-  # Event handler for :THREAD_MEMBERS_UPDATE events.
+  # Event handler for the :THREAD_MEMBERS_UPDATE event.
   class ThreadMemberAddEventHandler < ThreadMemberEventHandler; end
 
-  # Event handler for :THREAD_MEMBERS_UPDATE events.
+  # Event handler for the :THREAD_MEMBERS_UPDATE event.
   class ThreadMemberRemoveEventHandler < ThreadMemberEventHandler; end
 end
