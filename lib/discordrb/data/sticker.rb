@@ -20,7 +20,6 @@ module Discordrb
     attr_reader :tags
 
     # @return [true, false] whether the sticker can be used.
-    #   This can be false due to a lack of server boosts.
     attr_reader :available
     alias_method :available?, :available
 
@@ -41,29 +40,24 @@ module Discordrb
       @bot = bot
       @server = server
       @id = data['id'].to_i
-      @name = data['name']
-      @tags = data['tags']
       @type = data['type']
-      @sort_value = data['sort_value'] || 0
-      @format_type = data['format_type']
-      @description = data['description']
       @pack_id = data['pack_id']&.to_i
+      @format_type = data['format_type']
       @server_id = data['guild_id']&.to_i
-      @creator = bot.ensure_user(data['user']) if data['user']
-
-      # If this is omitted, it's because the sticker is from a pack
-      # and is thus always going to be available for use by the bot.
-      @available = data.key?('available') ? data['available'] : true
+      @sort_value = data['sort_value'] || 0
+      update_data(data)
     end
 
-    # Whether this is an official sticker in a pack.
-    # @return [true, false] Whether this sticker is an official sticker in a pack.
+    # Whether the sticker is an official sticker in a pack.
+    # @return [true, false] Whether the sticker is an official sticker in a pack.
     def official?
       @type == 1
     end
 
-    # Whether this is a custom sticker uploaded to a server.
-    # @return [true, false] Whether this sticker is a custom sticker that was uploaded to a server.
+    alias_method :default?, :official?
+
+    # Whether the sticker is a custom sticker uploaded to a server.
+    # @return [true, false] Whether the sticker is a custom sticker that was uploaded to a server.
     def server?
       @type == 2
     end
@@ -88,15 +82,15 @@ module Discordrb
       nil
     end
 
-    # Get the sticker pack this sticker is associated with.
-    # @return [Pack, nil] The pack this sticker is from, or `nil` if this sticker doesn't have one.
+    # Get the sticker pack the sticker is associated with.
+    # @return [Pack, nil] The pack this sticker is from, or `nil` if the sticker doesn't have an associated pack.
     def pack
       @bot.sticker_pack(@pack_id) if @pack_id
     end
 
-    # Get the server this sticker is associated with.
-    # @return [Server, nil] The server this sticker is associated with, or `nil` if this sticker doesn't have one.
-    # @raise [Errors::NoPermission] this can happen when the bot is not in the server that is associated with the sticker.
+    # Get the server the sticker is associated with.
+    # @return [Server, nil] The server the sticker is associated with, or `nil` if the sticker isn't from a server.
+    # @raise [Discordrb::Errors::NoPermission] This can happen when the bot is not in the server associated with the sticker.
     def server
       (@server ||= @bot.server(@server_id)) if @server_id
     end
@@ -112,10 +106,10 @@ module Discordrb
     end
 
     # Delete the sticker. Use this with caution, as it cannot be undone!
-    # @param reason [String, nil] The audit log reason for deleting this sticker.
+    # @param reason [String, nil] The reason to show in the audit log for deleting the sticker.
     # @return [nil]
     def delete(reason: nil)
-      raise 'cannot delete an official sticker' if official?
+      raise Discordrb::Errors::NoPermission, 'You cannot delete a default sticker' if official?
 
       API::Server.delete_sticker(@bot.token, @server_id, @id, reason: reason)
       @server&.delete_sticker(@id)
@@ -123,7 +117,7 @@ module Discordrb
     end
 
     # Get the extension that can be used to access the sticker's URL.
-    # @return ['png', 'json', 'gif'] The file extension of the sticker.
+    # @return [String] The file extension of the sticker. Will be one of `png`, `json`, or `gif`.
     def extension
       if png? || apng?
         'png'
@@ -169,7 +163,7 @@ module Discordrb
 
     # @!visibility private
     def inspect
-      "<Sticker id=#{@id} name=\"#{@name}\" tags=\"#{@tags}\" description=\"#{@description}\">"
+      "<Sticker id=#{@id} name=\"#{@name}\" tags=\"#{@tags}\" format_type=#{@format_type}>"
     end
 
     # A pack of official stickers that everyone can use.
@@ -253,7 +247,7 @@ module Discordrb
       end
 
       # Get the extension that can be used to access the sticker's URL.
-      # @return ['png', 'json', 'gif'] The file extension of the sticker.
+      # @return [String] The file extension of the sticker. Will be one of `png`, `json`, or `gif`.
       def extension
         if png? || apng?
           'png'
@@ -274,7 +268,7 @@ module Discordrb
         gif? && query ? ("#{url}?size=4096") : url
       end
 
-      # Convert this sticker item into a full sticker object.
+      # Convert the sticker item into a full sticker object.
       # @return [Sticker, nil] The full sticker object, or `nil` if the sticker was deleted.
       def to_sticker
         @bot.sticker(@id)

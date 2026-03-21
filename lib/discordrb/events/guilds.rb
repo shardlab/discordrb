@@ -204,8 +204,8 @@ module Discordrb::Events
     # @!attribute [r] stickers
     #   @return [Array<Sticker>] all of the stickers in the server.
     delegate :stickers, to: :server
-    
-     # @!visibility private
+
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
       @server = bot.server(data['guild_id'].to_i)
