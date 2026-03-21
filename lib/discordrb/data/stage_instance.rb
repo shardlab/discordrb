@@ -11,15 +11,14 @@ module Discordrb
     # @return [Channel] the stage channel of the stage instance.
     attr_reader :channel
 
-    # @return [Integer, nil] the ID of the scheduled event associated
-    #   with the stage instance.
+    # @return [Integer, nil] the ID of the scheduled event for the stage instance.
     attr_reader :scheduled_event_id
 
     # @!visibility private
     def initialize(data, channel, bot)
       @bot = bot
-      @id = data['id'].to_i
       @channel = channel
+      @id = data['id'].to_i
       update_data(data)
     end
 

@@ -1200,7 +1200,7 @@ module Discordrb
       process_active_threads(new_data['threads']) if new_data['threads']
       process_incident_actions(new_data['incidents_data']) if new_data.key?('incidents_data')
       process_scheduled_events(new_data['guild_scheduled_events']) if new_data['guild_scheduled_events']
-      process_stage_instances(new_data['stage_instances']) if new_data['stage_instances'] 
+      process_stage_instances(new_data['stage_instances']) if new_data['stage_instances']
     end
 
     # Adds a channel to this server's cache
