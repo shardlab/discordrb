@@ -1203,7 +1203,7 @@ module Discordrb
       }
 
       if tags != :undef && (thread_only? || thread?)
-        tags = (thread? ? tags&.map(&:resolve_id) : tags&.map(&:to_h))
+        tags = (thread? ? tags&.map(&:resolve_id)&.uniq : tags&.map(&:to_h))
 
         data[thread_only? ? :available_tags : :applied_tags] = tags
       end
