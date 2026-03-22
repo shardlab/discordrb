@@ -104,13 +104,12 @@ module Discordrb::Events
 
       [
         matches_all(@attributes[:type], event.type) do |a, e|
-          match_type = case a
-                       when String, Symbol
-                         Discordrb::Interaction::TYPES[a.to_sym]
-                       else
-                         a
-                       end
-          match_type == e
+          case a
+          when String, Symbol
+            Discordrb::Interaction::TYPES[a.to_sym] == e
+          else
+            a == e
+          end
         end,
 
         matches_all(@attributes[:server], event.interaction) do |a, e|
