@@ -5,12 +5,15 @@ require 'discordrb/webhooks'
 module Discordrb
   # Base class for interaction objects.
   class Interaction
+    include IDObject
+
     # Interaction types.
     # @see https://discord.com/developers/docs/interactions/slash-commands#interaction-interactiontype
     TYPES = {
       ping: 1,
       command: 2,
       component: 3,
+      autocomplete: 4,
       modal_submit: 5
     }.freeze
 
@@ -22,7 +25,23 @@ module Discordrb
       deferred_message: 5,
       deferred_update: 6,
       update_message: 7,
+      autocomplete: 8,
       modal: 9
+    }.freeze
+
+    # Interaction context types.
+    # @see https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types
+    CONTEXTS = {
+      server: 0,
+      bot_dm: 1,
+      private_channel: 2
+    }.freeze
+
+    # Application integration types.
+    # @see https://discord.com/developers/docs/resources/application#application-object-application-integration-types
+    INTEGRATION_TYPES = {
+      server: 0,
+      user: 1
     }.freeze
 
     # @return [User, Member] The user that initiated the interaction.
@@ -34,8 +53,8 @@ module Discordrb
     # @return [Integer] The ID of the channel this interaction originates from.
     attr_reader :channel_id
 
-    # @return [Integer] The ID of this interaction.
-    attr_reader :id
+    # @return [Channel] The channel where this interaction originates from.
+    attr_reader :channel
 
     # @return [Integer] The ID of the application associated with this interaction.
     attr_reader :application_id
@@ -54,8 +73,29 @@ module Discordrb
     # @return [Hash] The interaction data.
     attr_reader :data
 
-    # @return [Array<ActionRow>]
+    # @return [Interactions::Message, nil] The message associated with this interaction.
+    attr_reader :message
+
+    # @return [Array<ActionRow>] The modal components associated with this interaction.
     attr_reader :components
+
+    # @return [Permissions] The permissions the application has where this interaction originates from.
+    attr_reader :application_permissions
+
+    # @return [String] The selected language of the user that initiated this interaction.
+    attr_reader :user_locale
+
+    # @return [String, nil] The selected language of the server this interaction originates from.
+    attr_reader :server_locale
+
+    # @return [Integer] The context of where this interaction was initiated from.
+    attr_reader :context
+
+    # @return [Integer] The maximum number of bytes an attachment can have when responding to this interaction.
+    attr_reader :max_attachment_size
+
+    # @return [Array<Symbol>] The features of the server where this interaction was initiated from.
+    attr_reader :server_features
 
     # @!visibility private
     def initialize(data, bot)
@@ -64,10 +104,11 @@ module Discordrb
       @id = data['id'].to_i
       @application_id = data['application_id'].to_i
       @type = data['type']
-      @message = data['message']
+      @message = Interactions::Message.new(data['message'], @bot, self) if data['message']
       @data = data['data']
       @server_id = data['guild_id']&.to_i
       @channel_id = data['channel_id']&.to_i
+      @channel = bot.ensure_channel(data['channel']) if data['channel']
       @user = if data['member']
                 data['member']['guild_id'] = @server_id
                 Discordrb::Member.new(data['member'], bot.servers[@server_id], bot)
@@ -76,7 +117,14 @@ module Discordrb
               end
       @token = data['token']
       @version = data['version']
-      @components = @data['components']&.map { |component| Components.from_data(component, @bot) }&.compact || []
+      @components = @data['components']&.filter_map { |component| Components.from_data(component, @bot) } || []
+      @application_permissions = Permissions.new(data['app_permissions']) if data['app_permissions']
+      @user_locale = data['locale']
+      @server_locale = data['guild_locale']
+      @context = data['context']
+      @max_attachment_size = data['attachment_size_limit']
+      @integration_owners = data['authorizing_integration_owners']&.to_h { |key, value| [key.to_i, value.to_i] }
+      @server_features = data['guild'] ? data['guild']['features']&.map { |feature| feature.downcase.to_sym } : []
     end
 
     # Respond to the creation of this interaction. An interaction must be responded to or deferred,
@@ -89,11 +137,14 @@ module Discordrb
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
-    # @param components [Array<#to_h>] An array of components
+    # @param components [Array<#to_h>] An array of components.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
-    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
+    def respond(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, has_components: false)
       flags |= 1 << 6 if ephemeral
+      flags |= (1 << 15) if has_components
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -105,12 +156,10 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
-
+      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, wait)
       return unless wait
 
-      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
-      Interactions::Message.new(JSON.parse(response), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(response)['resource']['message'], @bot, self)
     end
 
     # Defer an interaction, setting a temporary response that can be later overriden by {Interaction#send_message}.
@@ -157,11 +206,14 @@ module Discordrb
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
     # @param wait [true, false] Whether this method should return a Message object of the interaction response.
-    # @param components [Array<#to_h>] An array of components
+    # @param components [Array<#to_h>] An array of components.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
     # @yieldparam view [Webhooks::View] A builder for creating interaction components.
-    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil)
+    def update_message(content: nil, tts: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: nil, wait: false, components: nil, attachments: nil, has_components: false)
       flags |= 1 << 6 if ephemeral
+      flags |= (1 << 15) if has_components
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -172,22 +224,25 @@ module Discordrb
       components ||= view
       data = builder.to_json_hash
 
-      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a)
-
+      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, wait)
       return unless wait
 
-      response = Discordrb::API::Interaction.get_original_interaction_response(@token, @application_id)
-      Interactions::Message.new(JSON.parse(response), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(response)['resource']['message'], @bot, self)
     end
 
     # Edit the original response to this interaction.
     # @param content [String] The content of the message.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
-    # @param components [Array<#to_h>] An array of components
+    # @param flags [Integer] Message flags.
+    # @param components [Array<#to_h>] An array of components.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @return [InteractionMessage] The updated response message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, components: nil)
+    def edit_response(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, components: nil, attachments: nil, has_components: false)
+      flags |= (1 << 15) if has_components
+
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
@@ -196,9 +251,9 @@ module Discordrb
 
       components ||= view
       data = builder.to_json_hash
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
+      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags)
 
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
 
     # Delete the original interaction response.
@@ -212,9 +267,12 @@ module Discordrb
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
     # @param flags [Integer] Message flags.
     # @param ephemeral [true, false] Whether this message should only be visible to the interaction initiator.
+    # @param attachments [Array<File>] Files that can be referenced in embeds and components via `attachment://file.png`.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil)
+    def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil, attachments: nil, has_components: false)
       flags |= 64 if ephemeral
+      flags |= (1 << 15) if has_components
 
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
@@ -226,19 +284,24 @@ module Discordrb
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a
+        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments
       )
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
 
     # @param message [String, Integer, InteractionMessage, Message] The message created by this interaction to be edited.
     # @param content [String] The message content.
     # @param embeds [Array<Hash, Webhooks::Embed>] The embeds for the message.
     # @param allowed_mentions [Hash, AllowedMentions] Mentions that can ping on this message.
+    # @param attachments [Array<File>] Files that can be referenced in embeds via `attachment://file.png`.
+    # @param flags [Integer] Message flags.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables content and embeds.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil)
+    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil, flags: 0, has_components: false)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
+
+      flags |= (1 << 15) if has_components
 
       prepare_builder(builder, content, embeds, allowed_mentions)
       yield builder, view if block_given?
@@ -247,9 +310,9 @@ module Discordrb
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags
       )
-      Interactions::Message.new(JSON.parse(resp), @bot, @interaction)
+      Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
 
     # @param message [Integer, String, InteractionMessage, Message] The message created by this interaction to be deleted.
@@ -258,40 +321,51 @@ module Discordrb
       nil
     end
 
+    # Show autocomplete choices as a response.
+    # @param choices [Array<Hash>, Hash] Array of autocomplete choices to show the user.
+    def show_autocomplete_choices(choices)
+      choices = choices.map { |name, value| { name: name, value: value } } unless choices.is_a?(Array)
+      Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:autocomplete], nil, nil, nil, nil, nil, nil, nil, choices)
+      nil
+    end
+
+    # Get the server associated with the interaction.
     # @return [Server, nil] This will be nil for interactions that occur in DM channels or servers where the bot
     #   does not have the `bot` scope.
     def server
       @bot.server(@server_id)
     end
 
-    # @return [Channel, nil]
-    # @raise [Errors::NoPermission] When the bot is not in the server associated with this interaction.
-    def channel
-      @bot.channel(@channel_id)
+    # Get the button component that triggered the interaction.
+    # @return [Components::Button, nil] The button that triggered this interaction if applicable, otherwise `nil`.
+    def button
+      @type == TYPES[:component] ? get_component(@data['custom_id']) : nil
     end
 
-    # @return [Hash, nil] Returns the button that triggered this interaction if applicable, otherwise nil
-    def button
-      return unless @type == TYPES[:component]
-
-      @message['components'].each do |row|
-        Components::ActionRow.new(row, @bot).buttons.each do |button|
-          return button if button.custom_id == @data['custom_id']
-        end
+    # Get the text input components associated with the interaction.
+    # @return [Array<TextInput>] The text input components associated with this interaction.
+    def text_inputs
+      @components.filter_map do |entity|
+        entity.component if entity.is_a?(Components::Label) && entity.component.is_a?(Components::TextInput)
       end
     end
 
-    # @return [Array<TextInput>]
-    def text_inputs
-      @components&.select { |component| component.is_a? TextInput } | []
+    # Get a component by its custom ID.
+    # @param custom_id [String] the custom ID of the component to find.
+    # @return [TextInput, Button, SelectMenu, Checkbox, ModalActionGroup, nil] The component associated with the custom ID, or `nil`.
+    def get_component(custom_id)
+      components = flatten_components((@message&.components || []) + @components)
+      components.find { |component| component.respond_to?(:custom_id) && component.custom_id == custom_id }
     end
 
-    # @return [TextInput, Button, SelectMenu]
-    def get_component(custom_id)
-      top_level = @components.flat_map(&:components) || []
-      message_level = (@message.instance_of?(Hash) ? Message.new(@message, @bot) : @message)&.components&.flat_map(&:components) || []
-      components = top_level.concat(message_level)
-      components.find { |component| component.custom_id == custom_id }
+    # @return [true, false] whether the application was installed by the user who initiated this interaction.
+    def user_integration?
+      @integration_owners[1] == @user.id
+    end
+
+    # @return [true, false] whether the application was installed by the server where this interaction originates from.
+    def server_integration?
+      @server_id ? @integration_owners[0] == @server_id : false
     end
 
     private
@@ -305,6 +379,26 @@ module Discordrb
       builder.content = content
       builder.allowed_mentions = allowed_mentions
       embeds&.each { |embed| builder << embed }
+    end
+
+    # @!visibility private
+    def flatten_components(components)
+      components = components.flat_map do |entity|
+        case entity
+        when Components::ActionRow
+          entity.components
+        when Components::Label
+          entity.component
+        when Components::Section
+          entity.accessory if entity.accessory.respond_to?(:custom_id)
+        when Components::Container
+          flatten_components(entity.components)
+        else
+          entity if entity.respond_to?(:custom_id)
+        end
+      end
+
+      components.compact
     end
   end
 
@@ -339,6 +433,15 @@ module Discordrb
     # @return [Integer]
     attr_reader :id
 
+    # @return [true, false]
+    attr_reader :nsfw
+
+    # @return [Array<Integer>]
+    attr_reader :contexts
+
+    # @return [Array<Integer>]
+    attr_reader :integration_types
+
     # @!visibility private
     def initialize(data, bot, server_id = nil)
       @bot = bot
@@ -350,6 +453,9 @@ module Discordrb
       @description = data['description']
       @default_permission = data['default_permission']
       @options = data['options']
+      @nsfw = data['nsfw'] || false
+      @contexts = data['contexts'] || []
+      @integration_types = data['integration_types'] || []
     end
 
     # @param subcommand [String, nil] The subcommand to mention.
@@ -372,16 +478,126 @@ module Discordrb
     # @param name [String] The name to use for this command.
     # @param description [String] The description of this command.
     # @param default_permission [true, false] Whether this command is available with default permissions.
+    # @param nsfw [true, false] Whether this command should be marked as age-restricted.
     # @yieldparam (see Bot#edit_application_command)
     # @return (see Bot#edit_application_command)
-    def edit(name: nil, description: nil, default_permission: nil, &block)
-      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, &block)
+    def edit(name: nil, description: nil, default_permission: nil, nsfw: nil, &block)
+      @bot.edit_application_command(@id, server_id: @server_id, name: name, description: description, default_permission: default_permission, nsfw: nsfw, &block)
     end
 
     # Delete this application command.
     # @return (see Bot#delete_application_command)
     def delete
       @bot.delete_application_command(@id, server_id: @server_id)
+    end
+
+    # Get the permission configuration for this application command in a specific server.
+    # @param server_id [Integer, String, nil] The ID of the server to fetch command permissions for.
+    # @return [Array<Permission>] the permissions for this application command in the given server.
+    def permissions(server_id: nil)
+      raise ArgumentError, 'A server ID must be provided for global application commands' if @server_id.nil? && server_id.nil?
+
+      response = JSON.parse(API::Application.get_application_command_permissions(@bot.token, @bot.profile.id, @server_id || server_id&.resolve_id, @id))
+      response['permissions'].map { |permission| Permission.new(permission, response, @bot) }
+    rescue Discordrb::Errors::UnknownError
+      # If there aren't any explicit overwrites configured for the command, the response is a 400.
+      []
+    end
+
+    # An application command permission for a channel, member, or a role.
+    class Permission
+      # Map of permission types.
+      TYPES = {
+        role: 1,
+        member: 2,
+        channel: 3
+      }.freeze
+
+      # @return [Integer] the type of this permission.
+      # @see TYPES
+      attr_reader :type
+
+      # @return [Integer] the ID of the entity this permission is for.
+      attr_reader :target_id
+
+      # @return [Integer] the ID of the server this permission is for.
+      attr_reader :server_id
+
+      # @!visibility private
+      def initialize(data, command, bot)
+        @bot = bot
+        @type = data['type']
+        @target_id = data['id'].to_i
+        @overwrite = data['permission']
+        @command_id = command['id'].to_i
+        @server_id = command['guild_id'].to_i
+        @application_id = command['application_id'].to_i
+      end
+
+      # Whether this permission has been allowed, e.g has a green check in the UI.
+      # @return [true, false]
+      def allowed?
+        @overwrite == true
+      end
+
+      # Whether this permission has been denied, e.g has a red X-mark in the UI.
+      # @return [true, false]
+      def denied?
+        @overwrite == false
+      end
+
+      # Whether this permission is applied to the everyone role in the server.
+      # @return [true, false]
+      def everyone?
+        @target_id == @server_id
+      end
+
+      # Get the ID of the application command this permission is for.
+      # @return [Integer, nil] This will be `nil` if the permission is the
+      #   default permission.
+      def command_id
+        @command_id unless default?
+      end
+
+      # Whether this permission is the default for all commands that don't
+      #  contain explicit permission oerwrites.
+      # @return [true, false]
+      def default?
+        @command_id == @application_id
+      end
+
+      # Whether this permission is applied to every channel in the server.
+      # @return [true, false]
+      def all_channels?
+        @target_id == (@server_id - 1)
+      end
+
+      # Get the user, role, or channel(s) that this permission targets.
+      # @return [Array<Channel>, Role, Member]
+      def target
+        case @type
+        when TYPES[:role]
+          @bot.server(@server_id).role(@target_id)
+        when TYPES[:member]
+          @bot.server(@server_id).member(@target_id)
+        when TYPES[:channel]
+          all_channels? ? @bot.server(@server_id).channels : [@bot.channel(@target_id)]
+        end
+      end
+
+      alias_method :targets, :target
+
+      # @!method role?
+      #   @return [true, false] whether this permission is for a role.
+      # @!method member?
+      #   @return [true, false] whether this permission is for a member.
+      # @!method channel?
+      #   @return [true, false] whether this permission is for a channel.
+      TYPES.each do |name, value|
+        define_method("#{name}?") do
+          @type == value
+        end
+      end
     end
   end
 
@@ -466,19 +682,27 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_length [Integer] A minimum length for option value.
+      # @param max_length [Integer] A maximum length for option value.
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
+      # @param autocomplete [true, false] Whether this option can dynamically show choices.
       # @return (see #option)
-      def string(name, description, required: nil, choices: nil)
-        option(TYPES[:string], name, description, required: required, choices: choices)
+      def string(name, description, required: nil, min_length: nil, max_length: nil, choices: nil, autocomplete: nil)
+        option(TYPES[:string], name, description,
+               required: required, min_length: min_length, max_length: max_length, choices: choices, autocomplete: autocomplete)
       end
 
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_value [Integer] A minimum value for option.
+      # @param max_value [Integer] A maximum value for option.
       # @param choices [Hash, nil] Available choices, mapped as `Name => Value`.
+      # @param autocomplete [true, false] Whether this option can dynamically show choices.
       # @return (see #option)
-      def integer(name, description, required: nil, choices: nil)
-        option(TYPES[:integer], name, description, required: required, choices: choices)
+      def integer(name, description, required: nil, min_value: nil, max_value: nil, choices: nil, autocomplete: nil)
+        option(TYPES[:integer], name, description,
+               required: required, min_value: min_value, max_value: max_value, choices: choices, autocomplete: autocomplete)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -526,10 +750,13 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
+      # @param min_value [Float] A minimum value for option.
+      # @param max_value [Float] A maximum value for option.
+      # @param autocomplete [true, false] Whether this option can dynamically show choices.
       # @return (see #option)
-      def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil)
+      def number(name, description, required: nil, min_value: nil, max_value: nil, choices: nil, autocomplete: nil)
         option(TYPES[:number], name, description,
-               required: required, min_value: min_value, max_value: max_value, choices: choices)
+               required: required, min_value: min_value, max_value: max_value, choices: choices, autocomplete: autocomplete)
       end
 
       # @param name [String, Symbol] The name of the argument.
@@ -547,15 +774,19 @@ module Discordrb
       # @param required [true, false] Whether this option must be provided.
       # @param min_value [Integer, Float] A minimum value for integer and number options.
       # @param max_value [Integer, Float] A maximum value for integer and number options.
+      # @param min_length [Integer] A minimum length for string option value.
+      # @param max_length [Integer] A maximum length for string option value.
       # @param channel_types [Array<Integer>] Channel types that can be provides for channel options.
+      # @param autocomplete [true, false] Whether this option can dynamically show options.
       # @return Hash
       def option(type, name, description, required: nil, choices: nil, options: nil, min_value: nil, max_value: nil,
-                 channel_types: nil)
+                 min_length: nil, max_length: nil, channel_types: nil, autocomplete: nil)
         opt = { type: type, name: name, description: description }
         choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
 
         opt.merge!({ required: required, choices: choices, options: options, min_value: min_value,
-                     max_value: max_value, channel_types: channel_types }.compact)
+                     max_value: max_value, min_length: min_length, max_length: max_length,
+                     channel_types: channel_types, autocomplete: autocomplete }.compact)
 
         @options << opt
         opt
@@ -716,7 +947,7 @@ module Discordrb
 
         @message_reference = data['message_reference']
 
-        @server_id = data['guild_id']&.to_i
+        @server_id = @interaction.server_id
 
         @timestamp = Time.parse(data['timestamp']) if data['timestamp']
         @edited_timestamp = data['edited_timestamp'].nil? ? nil : Time.parse(data['edited_timestamp'])
@@ -742,7 +973,7 @@ module Discordrb
         @mention_everyone = data['mention_everyone']
         @flags = data['flags']
         @pinned = data['pinned']
-        @components = data['components'].map { |component_data| Components.from_data(component_data, @bot) } if data['components']
+        @components = data['components']&.filter_map { |component| Components.from_data(component, @bot) } || []
       end
 
       # @return [Member, nil] This will return nil if the bot does not have access to the
@@ -766,8 +997,8 @@ module Discordrb
       # Respond to this message.
       # @param (see Interaction#send_message)
       # @yieldparam (see Interaction#send_message)
-      def respond(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: true, components: nil, &block)
-        @interaction.send_message(content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, components: components, &block)
+      def respond(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, ephemeral: true, components: nil, attachments: nil, &block)
+        @interaction.send_message(content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, ephemeral: ephemeral, components: components, attachments: attachments, &block)
       end
 
       # Delete this message.
@@ -780,8 +1011,8 @@ module Discordrb
       # @param embeds (see Interaction#send_message)
       # @param allowed_mentions (see Interaction#send_message)
       # @yieldparam (see Interaction#send_message)
-      def edit(content: nil, embeds: nil, allowed_mentions: nil, components: nil, &block)
-        @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, &block)
+      def edit(content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil, &block)
+        @interaction.edit_message(@id, content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, attachments: attachments, &block)
       end
 
       # @return [Discordrb::Message]
@@ -794,6 +1025,102 @@ module Discordrb
       # @!visibility private
       def inspect
         "<Interaction::Message content=#{@content.inspect} embeds=#{@embeds.inspect} channel_id=#{@channel_id} server_id=#{@server_id} author=#{@author.inspect}>"
+      end
+    end
+
+    # Supplemental metadata about an interaction.
+    class Metadata
+      include IDObject
+
+      # @return [Integer] the type of the interaction.
+      attr_reader :type
+
+      # @return [User] the user that initiated the interaction.
+      attr_reader :user
+
+      # @return [User, nil] the user that the command was ran on.
+      attr_reader :target_user
+
+      # @return [Integer, nil] the ID of the message the command was ran on.
+      attr_reader :target_message_id
+
+      # @return [Metadata, nil] the metadata for the interaction that opened the modal.
+      attr_reader :triggering_metadata
+
+      # @return [Integer, nil] the ID of the message that contained the interactive message component.
+      attr_reader :interacted_message_id
+
+      # @return [Integer, nil] the ID the original response message; only present on follow-up messages.
+      attr_reader :original_response_message_id
+
+      # @!visibility private
+      def initialize(data, message, bot)
+        @bot = bot
+        @message = message
+        @id = data['id'].to_i
+        @type = data['type']
+        @user = bot.ensure_user(data['user']) if data['user']
+        @target_user = bot.ensure_user(data['target_user']) if data['target_user']
+        @target_message_id = data['target_message_id']&.to_i
+        @triggering_metadata = Metadata.new(data['triggering_interaction_metadata'], @message, @bot) if data['triggering_interaction_metadata']
+        @interacted_message_id = data['interacted_message_id']&.to_i
+        @original_response_message_id = data['original_response_message_id']&.to_i
+        @integration_owners = data['authorizing_integration_owners']&.to_h { |key, value| [key.to_i, value.to_i] }
+      end
+
+      # Check if the interaction was triggered by a user by installed the application.
+      # @return [true, false] whether or not the application was installed by the user
+      #   who initiated this interaction.
+      def user_integration?
+        @integration_owners[1] == @user.id
+      end
+
+      # Check if the interaction was triggered by a server by installed the application.
+      # @return [true, false] whether or not the application was installed by the server
+      #   where this interaction originates from.
+      def server_integration?
+        @integration_owners[0] == @message.server.id
+      end
+
+      # Attempt to fetch the target message of the interaction.
+      # @return [Message, nil] the target message of the interaction, or `nil` if it couldn't be found.
+      def target_message
+        return unless @target_message_id
+
+        @target_message ||= @message.channel.message(@target_message_id)
+      end
+
+      # Attempt to fetch the message that contained the interatctive component.
+      # @return [Message, nil] the interacted message with the component, or `nil` if it couldn't be found.
+      def interacted_message
+        return unless @interacted_message_id
+
+        @interacted_message ||= @message.channel.message(@interacted_message_id)
+      end
+
+      # Attempt to fetch the original response message of the interaction.
+      # @return [Message, nil] the original response message of the interaction, or `nil` if it couldn't be found.
+      def original_response_message
+        return unless @original_response_message_id
+
+        @original_response_message ||= @message.channel.message(@original_response_message_id)
+      end
+
+      # @!method command?
+      #  @return [true, false] whether or not the interaction metadata is for an application command.
+      # @!method component?
+      #  @return [true, false] whether or not the interaction metadata is for a message component.
+      # @!method modal_submit?
+      #  @return [true, false] whether or not the interaction metadata is for a modal submission.
+      Interaction::TYPES.each do |name, value|
+        define_method("#{name}?") do
+          @type == value
+        end
+      end
+
+      # @!visibility private
+      def inspect
+        "<Interactions::Metadata id=#{@id} type=#{@type} user=#{@user.inspect} target_user=#{@target_user.inspect}>"
       end
     end
   end

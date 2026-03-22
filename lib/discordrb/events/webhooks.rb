@@ -12,6 +12,7 @@ module Discordrb::Events
     # @return [Channel] the channel the webhook is associated to
     attr_reader :channel
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 

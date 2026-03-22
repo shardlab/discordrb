@@ -6,5 +6,10 @@
   "position": 39,
   "id": "240172879361212416",
   "managed": false,
-  "permissions": 103809088
+  "permissions": 103809088,
+  "colors": {
+    "primary_color": 0,
+    "secondary_color": null,
+    "tertiary_color": null
+  }
 }

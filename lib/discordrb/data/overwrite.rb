@@ -65,7 +65,8 @@ module Discordrb
 
     # Comparison by attributes [:id, :type, :allow, :deny]
     def ==(other)
-      false unless other.is_a? Discordrb::Overwrite
+      return false unless other.is_a?(Discordrb::Overwrite)
+
       id == other.id &&
         type == other.type &&
         allow == other.allow &&

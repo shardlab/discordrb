@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Generic subclass for threads
 module Discordrb::Events
   # Raised when a thread is created
   class ThreadCreateEvent < Event
@@ -8,6 +9,7 @@ module Discordrb::Events
 
     delegate :name, :server, :owner, :parent_channel, :thread_metadata, to: :thread
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
       @thread = data.is_a?(Discordrb::Channel) ? data : bot.channel(data['id'].to_i)
@@ -62,9 +64,6 @@ module Discordrb::Events
     # @return [Channel]
     attr_reader :thread
 
-    # @return [Array<Member, User>]
-    attr_reader :added_members
-
     # @return [Array<Integer>]
     attr_reader :removed_member_ids
 
@@ -73,15 +72,20 @@ module Discordrb::Events
 
     delegate :name, :server, :owner, :parent_channel, :thread_metadata, to: :thread
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
+      @server = bot.server(data['guild_id'].to_i) if data['guild_id']
       @thread = data.is_a?(Discordrb::Channel) ? data : bot.channel(data['id'].to_i)
-      @added_members = data['added_members']&.map do |member|
-        data['guild_id'] ? bot.member(data['guild_id'], member['user_id']) : bot.user(member['user_id'])
-      end || []
+      @added_member_ids = data['added_members']&.map { |m| m['user_id']&.to_i } || []
       @removed_member_ids = data['removed_member_ids']&.map(&:resolve_id) || []
       @member_count = data['member_count']
     end
+  end
+
+  # @return [Array<Member, User>] the members that were added to the thread
+  def added_members
+    @added_members ||= @added_member_ids&.map { |id| @server&.member(id) || @bot.user(id) }
   end
 
   # Event handler for ThreadMembersUpdateEvent

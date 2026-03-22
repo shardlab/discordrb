@@ -41,13 +41,49 @@ module Discordrb
       75 => :message_unpin,
       80 => :integration_create,
       81 => :integration_update,
-      82 => :integration_delete
+      82 => :integration_delete,
+      83 => :stage_instance_create,
+      84 => :stage_instance_update,
+      85 => :stage_instance_delete,
+      90 => :sticker_create,
+      91 => :sticker_update,
+      92 => :sticker_delete,
+      100 => :scheduled_event_create,
+      101 => :scheduled_event_update,
+      102 => :scheduled_event_delete,
+      110 => :thread_create,
+      111 => :thread_update,
+      112 => :thread_delete,
+      121 => :application_command_permission_update,
+      130 => :soundboard_sound_create,
+      131 => :soundboard_sound_update,
+      132 => :soundboard_sound_delete,
+      140 => :auto_moderation_rule_create,
+      141 => :auto_moderation_rule_update,
+      142 => :auto_moderation_rule_delete,
+      143 => :auto_moderation_block_message,
+      144 => :auto_moderation_flag_to_channel,
+      145 => :auto_moderation_user_communication_disabled,
+      146 => :auto_moderation_quarantine_user,
+      150 => :creator_monetization_request_created,
+      151 => :creator_monetization_terms_accepted,
+      163 => :onboarding_prompt_create,
+      164 => :onboarding_prompt_update,
+      165 => :onboarding_prompt_delete,
+      166 => :onboarding_create,
+      167 => :onboarding_update,
+      190 => :home_settings_create,
+      191 => :home_settings_update
     }.freeze
 
     # @!visibility private
     CREATE_ACTIONS = %i[
       channel_create channel_overwrite_create member_ban_add role_create
       invite_create webhook_create emoji_create integration_create
+      stage_instance_create sticker_create scheduled_event_create thread_create
+      soundboard_sound_create auto_moderation_rule_create onboarding_prompt_create
+      onboarding_create home_settings_create creator_monetization_request_created
+      message_pin auto_moderation_flag_to_channel
     ].freeze
 
     # @!visibility private
@@ -55,13 +91,20 @@ module Discordrb
       channel_delete channel_overwrite_delete member_kick member_prune
       member_ban_remove role_delete invite_delete webhook_delete
       emoji_delete message_delete message_bulk_delete integration_delete
+      stage_instance_delete sticker_delete scheduled_event_delete
+      thread_delete soundboard_sound_delete auto_moderation_rule_delete
+      onboarding_prompt_delete message_unpin auto_moderation_block_message
     ].freeze
 
     # @!visibility private
     UPDATE_ACTIONS = %i[
       server_update channel_update channel_overwrite_update member_update
       member_role_update role_update invite_update webhook_update
-      emoji_update integration_update
+      emoji_update integration_update stage_instance_update sticker_update
+      scheduled_event_update thread_update application_command_permission_update
+      soundboard_sound_update auto_moderation_rule_update onboarding_prompt_update
+      onboarding_update home_settings_update creator_monetization_terms_accepted
+      auto_moderation_user_communication_disabled auto_moderation_quarantine_user
     ].freeze
 
     # @return [Hash<String => User>] the users included in the audit logs.
@@ -108,6 +151,30 @@ module Discordrb
       # @return [Integer, nil] the amount of members removed. Only present if the action is `:member_prune`.
       attr_reader :members_removed
 
+      # @return [Integer, nil] the ID of the message that was pinned or unpinned.
+      attr_reader :message_id
+
+      # @return [String, nil] the type of the integration that updated the member's roles, or kicked the member.
+      attr_reader :integration_type
+
+      # @return [Integer, nil] the ID of the application whose application command permissions were updated.
+      attr_reader :application_id
+
+      # @return [String, nil] the name of the auto moderation rule that was triggered.
+      attr_reader :automod_rule_name
+
+      # @return [Integer, nil] the trigger type of the auto moderation rules that was triggered.
+      attr_reader :automod_rule_trigger_type
+
+      # @return [String, nil] the name of the role associated with the permission overwrite.
+      attr_reader :overwrite_role_name
+
+      # @return [Integer, nil] the ID of the permission overwrite.
+      attr_reader :overwrite_id
+
+      # @return [Symbol, nil] the type of the permission overwrite.
+      attr_reader :overwrite_type
+
       # @return [String, nil] the reason for this action occurring.
       attr_reader :reason
 
@@ -117,7 +184,7 @@ module Discordrb
       # @!visibility private
       def initialize(logs, server, bot, data)
         @bot = bot
-        @id = data['id'].resolve_id
+        @id = data['id'].to_i
         @logs = logs
         @server = server
         @data = data
@@ -133,13 +200,21 @@ module Discordrb
         @changes = RoleChange.new(data['changes'][0], @server) if @action == :member_role_update
 
         process_changes(data['changes']) unless @action == :member_role_update
-        return unless data.include?('options')
+        return unless (options = data['options'])
 
-        # Checks and sets variables for special action options.
-        @count = data['options']['count'].to_i unless data['options']['count'].nil?
-        @channel_id = data['options']['channel'].to_i unless data['options']['channel'].nil?
-        @days = data['options']['delete_member_days'].to_i unless data['options']['delete_member_days'].nil?
-        @members_removed = data['options']['members_removed'].to_i unless data['options']['members_removed'].nil?
+        # https://docs.discord.com/developers/resources/audit-log#audit-log-entry-object-optional-audit-entry-info
+        @count = options['count']&.to_i
+        @channel_id = options['channel_id']&.to_i
+        @days = options['delete_member_days']&.to_i
+        @members_removed = options['members_removed']&.to_i
+        @message_id = options['message_id']&.to_i
+        @integration_type = options['integration_type']
+        @application_id = options['application_id']&.to_i
+        @automod_rule_name = options['auto_moderation_rule_name']
+        @automod_rule_trigger_type = options['auto_moderation_rule_trigger_type']
+        @overwrite_role_name = options['role_name']
+        @overwrite_id = options['id']&.to_i
+        @overwrite_type = Overwrite::TYPES.key(options['type']) if options['type']
       end
 
       # @return [Server, Channel, Member, User, Role, Invite, Webhook, Emoji, nil] the target being performed on.
@@ -149,15 +224,21 @@ module Discordrb
 
       # @return [Member, User] the user that authored this action. Can be a User object if the user no longer exists in the server.
       def user
-        @user ||= @server.member(@data['user_id'].to_i) || @bot.user(@data['user_id'].to_i) || @logs.user(@data['user_id'].to_i)
+        @user ||= @server.member(@data['user_id'].to_i) || @bot.user(@data['user_id'].to_i) || @logs&.user(@data['user_id'].to_i)
       end
+
       alias_method :author, :user
 
-      # @return [Channel, nil] the amount of messages deleted. Won't be nil if the action is `:message_delete`.
+      # @return [Channel, nil] the channel associated with the audit log event.
       def channel
         return nil unless @channel_id
 
-        @channel ||= @bot.channel(@channel_id, @server, bot, self)
+        @channel ||= @bot.channel(@channel_id)
+      end
+
+      # @return [Message, nil] the message that was pinned or un-pinned.
+      def message
+        channel.load_message(@message_id) if @message_id
       end
 
       # @!visibility private
@@ -166,10 +247,10 @@ module Discordrb
         case type
         when :server then @server # Since it won't be anything else
         when :channel then @bot.channel(id, @server)
-        when :user, :message then @server.member(id) || @bot.user(id) || @logs.user(id)
+        when :user, :message then @server.member(id) || @bot.user(id) || @logs&.user(id)
         when :role then @server.role(id)
         when :invite then @bot.invite(@data['changes'].find { |change| change['key'] == 'code' }.values.delete_if { |v| v == 'code' }.first)
-        when :webhook then @server.webhooks.find { |webhook| webhook.id == id } || @logs.webhook(id)
+        when :webhook then @server.webhooks.find { |webhook| webhook.id == id } || @logs&.webhook(id)
         when :emoji then @server.emoji[id]
         when :integration then @server.integrations.find { |integration| integration.id == id }
         end
@@ -245,12 +326,12 @@ module Discordrb
 
       # @return [Member, User, nil] the member that used to be the owner of the server. Only present if the for key for this change is `owner_id`.
       def old_owner
-        @server.member(@old) || @bot.user(@old) || @logs.user(@old) if @old && @key == 'owner_id'
+        @server.member(@old) || @bot.user(@old) || @logs&.user(@old) if @old && @key == 'owner_id'
       end
 
       # @return [Member, User, nil] the member that is now the owner of the server prior to this change. Only present if the key for this change is `owner_id`.
       def new_owner
-        @server.member(@new) || @bot.user(@new) || @logs.user(@new) if @new && @key == 'owner_id'
+        @server.member(@new) || @bot.user(@new) || @logs&.user(@new) if @new && @key == 'owner_id'
       end
     end
 
@@ -297,7 +378,7 @@ module Discordrb
     # @!visibility private
     def process_users(users)
       users.each do |element|
-        user = User.new(element, @bot)
+        user = @bot.ensure_user(element)
         @users[user.id] = user
       end
     end
@@ -317,15 +398,27 @@ module Discordrb
     # @!visibility private
     def self.target_type_for(action)
       case action
-      when 1..9 then :server
-      when 10..19 then :channel
-      when 20..29 then :user
-      when 30..39 then :role
-      when 40..49 then :invite
-      when 50..59 then :webhook
-      when 60..69 then :emoji
-      when 70..79 then :message
-      when 80..89 then :integration
+      when 1 then :server
+      when 10..15 then :channel
+      when 20..28 then :user
+      when 30..32 then :role
+      when 40..42 then :invite
+      when 50..52 then :webhook
+      when 60..62 then :emoji
+      when 72..75 then :message
+      when 80..82 then :integration
+      when 83..85 then :stage_instance
+      when 90..92 then :sticker
+      when 100..102 then :scheduled_event
+      when 110..112 then :thread
+      when 121 then :application_command
+      when 130..132 then :soundboard_sound
+      when 140..146 then :auto_moderation
+      when 150..151 then :creator_monetization
+      when 163..165 then :onboarding_prompt
+      when 166..167 then :onboarding
+      when 190..191 then :home_settings
+
       else :unknown
       end
     end
