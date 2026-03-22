@@ -298,9 +298,7 @@ module Discordrb
       send_identify(@token, {
                       os: RUBY_PLATFORM,
                       browser: 'discordrb',
-                      device: 'discordrb',
-                      referrer: '',
-                      referring_domain: ''
+                      device: 'discordrb'
                     }, compress, LARGE_THRESHOLD, @shard_key, @intents)
     end
 
@@ -677,9 +675,8 @@ module Discordrb
       LOGGER.log_exception(e)
     end
 
-    # rubocop:disable Lint/UselessConstantScoping
     ZLIB_SUFFIX = "\x00\x00\xFF\xFF".b.freeze
-    # rubocop:enable Lint/UselessConstantScoping
+    private_constant :ZLIB_SUFFIX
 
     def handle_message(msg)
       case @compress_mode

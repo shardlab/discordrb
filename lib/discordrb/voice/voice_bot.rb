@@ -2,7 +2,9 @@
 
 require 'discordrb/voice/encoder'
 require 'discordrb/voice/network'
+require 'discordrb/voice/timer'
 require 'discordrb/logger'
+require 'ffi'
 
 # Voice support
 module Discordrb::Voice
@@ -304,19 +306,18 @@ module Discordrb::Voice
     def play_internal
       count = 0
       @playing = true
-
-      # Default play length (ms), will be adjusted later
-      @length = IDEAL_LENGTH
-
       self.speaking = true
-      loop do
-        # Starting from the tenth packet, perform length adjustment every 100 packets (2 seconds)
-        should_adjust_this_packet = (count % @adjust_interval == @adjust_offset)
 
-        # If we should adjust, start now
-        @length_adjust = Time.now.nsec if should_adjust_this_packet
+      last_sent = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+
+      loop do
+        # If paused, wait
+        sleep 0.1 while @paused
 
         break unless @playing
+
+        # Get timestamp before encoding
+        start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
 
         # If we should skip, get some data, discard it and go to the next iteration
         if @skips.positive?
@@ -339,45 +340,22 @@ module Discordrb::Voice
         next unless buf
 
         # Track intermediate adjustment so we can measure how much encoding contributes to the total time
-        @intermediate_adjust = Time.now.nsec if should_adjust_this_packet
+        intermediate_adjust = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+
+        Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+
+        if (last_sent + IDEAL_LENGTH) > Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+          sleep_duration = (last_sent + IDEAL_LENGTH - Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)) / 1000.0
+          @bot.debug("Waiting for next frame: #{sleep_duration * 1000}ms (encoding #{intermediate_adjust - start_time}ms)") if @adjust_debug
+          sleep sleep_duration if sleep_duration.positive?
+        end
 
         # Send the packet
         @udp.send_audio(buf, @sequence, @time)
 
         # Set the stream time (for tracking how long we've been playing)
-        @stream_time = count * @length / 1000
-
-        if @length_override # Don't do adjustment because the user has manually specified an override value
-          @length = @length_override
-        elsif @length_adjust # Perform length adjustment
-          # Define the time once so it doesn't get inaccurate
-          now = Time.now.nsec
-
-          # Difference between length_adjust and now in ms
-          ms_diff = (now - @length_adjust) / 1_000_000.0
-          if ms_diff >= 0
-            @length = if @adjust_average
-                        (IDEAL_LENGTH - ms_diff + @length) / 2.0
-                      else
-                        IDEAL_LENGTH - ms_diff
-                      end
-
-            # Track the time it took to encode
-            encode_ms = (@intermediate_adjust - @length_adjust) / 1_000_000.0
-            @bot.debug("Length adjustment: new length #{@length} (measured #{ms_diff}, #{(100 * encode_ms) / ms_diff}% encoding)") if @adjust_debug
-          end
-          @length_adjust = nil
-        end
-
-        # If paused, wait
-        sleep 0.1 while @paused
-
-        if @length.positive?
-          # Wait `length` ms, then send the next packet
-          sleep @length / 1000.0
-        else
-          Discordrb::LOGGER.warn('Audio encoding and sending together took longer than Discord expects one packet to be (20 ms)! This may be indicative of network problems.')
-        end
+        @stream_time = count * IDEAL_LENGTH / 1000
+        last_sent = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
       end
 
       @bot.debug('Sending five silent frames to clear out buffers')
