@@ -359,6 +359,20 @@ module Discordrb
       register_event(UserBanEvent, attributes, block)
     end
 
+    # This **event** is raised whenever an audit log entry is created in a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the server the entry was created in.
+    # @option attributes [String, Symbol, Integer] :action Matches the type of the entry.
+    # @option attributes [String, Regexp] :reason Matches the reason associated with the entry.
+    # @option attributes [String, Integer, User, Member, Recipient] :user Matches the user or bot that made the changes.
+    # @option attributes [String, Integer, #resolve_id] :target Matches the ID of the affected entity.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [AuditLogEntryCreateEvent] The event that was raised.
+    # @return [AuditLogEntryCreateEventHandler] the event handler that was registered.
+    def audit_log_entry(attributes = {}, &block)
+      register_event(AuditLogEntryCreateEvent, attributes, block)
+    end
+
     # This **event** is raised when a user is unbanned from a server.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, User] :user Matches the user that was unbanned.
