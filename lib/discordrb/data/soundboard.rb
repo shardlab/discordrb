@@ -38,7 +38,7 @@ module Discordrb
     end
 
     # Get the emoji of the soundboard sound.
-    # @return [Emoji, String, nil] The emoji of the soundboard sound, or `nil`.
+    # @return [Emoji, nil] The emoji of the soundboard sound, or `nil`.
     def emoji
       @emoji_id ? @server.emojis[@emoji_id] : @emoji_name
     end
@@ -53,7 +53,7 @@ module Discordrb
       @creator
     end
 
-    # Play the soundboard sound in a voice channel that the bot is currnetly connected to.
+    # Play the soundboard sound in a voice channel that the bot is currently connected to.
     # @param channel [Channel, Integer, String] The channel to play the soundboard sound in.
     # @return [nil]
     def play(channel)
@@ -64,7 +64,7 @@ module Discordrb
     # Edit the properties of the soundboard sound.
     # @param name [String] The new 2-32 character name of the soundboard sound.
     # @param emoji [String, Emoji, Integer, nil] The new emoji of the soundboard sound.
-    # @param volume [Numeric, nil] The new volume of the soundboard sound, between 0-1.
+    # @param volume [Numeric, nil] The new volume of the soundboard sound; between 0-1.
     # @param reason [String, nil] The reason to show in the audit log for updating the soundboard sound.
     # @raise [Discordrb::Errors::NoPermission] When the bot does not have permission to modify the soundboard sound.
     # @return [nil]
