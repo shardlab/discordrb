@@ -38,11 +38,23 @@ module Discordrb
     #  be something readable (e.g. File Object) or a data URI.
     # @param banner [String, File, #read, nil] The new banner to set for the bot. Should
     #  be something readable (e.g. File Object) or a data URI.
+    # @param bio [String, nil] The new global bio to set for the bot. Will be truncated to
+    #  190 characters when rendered in the offical Discord client.
     # @return [nil]
-    def modify(username: :undef, avatar: :undef, banner: :undef)
-      avatar = avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar
-      banner = banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner
-      update_data(JSON.parse(API::User.update_current_user(@bot.token, username, avatar, banner)))
+    def modify(username: :undef, avatar: :undef, banner: :undef, bio: :undef)
+      data = {
+        username: username,
+        avatar: avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar,
+        banner: banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner
+      }
+
+      if bio != :undef
+        API::Application.update_current_application(@bot.token, description: bio)
+
+        return unless data.any? { |_, value| value != :undef }
+      end
+
+      update_data(JSON.parse(API::User.update_current_user!(@bot.token, **data)))
       nil
     end
 
@@ -55,7 +67,7 @@ module Discordrb
     # Set the bot's global bio.
     # @param bio [String, nil] The bot's new global bio, or `nil` to remove the current bio.
     def bio=(bio)
-      @bot.application.modify(description: bio)
+      modify(bio: bio)
     end
 
     # Updates the cached profile data with the new one.

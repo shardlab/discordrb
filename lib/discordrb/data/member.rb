@@ -33,9 +33,10 @@ module Discordrb
     # @return [Server] the server this member is on.
     attr_reader :server
 
-    # @return [Time] When the user's timeout will expire.
+    # @return [Time, nil] When the user's timeout will expire.
     attr_reader :communication_disabled_until
     alias_method :timeout, :communication_disabled_until
+    alias_method :timeout_until, :communication_disabled_until
 
     # @return [Integer] the flags set on this member.
     attr_reader :flags
@@ -110,6 +111,7 @@ module Discordrb
     alias_method :self_deafened?, :self_deaf
 
     include MemberAttributes
+    include PermissionCalculator
 
     # @!visibility private
     def initialize(data, server, bot)
@@ -191,7 +193,7 @@ module Discordrb
     # Set a user's timeout duration, or remove it by setting the timeout to `nil`.
     # @param timeout_until [Time, nil] When the timeout will end.
     def communication_disabled_until=(timeout_until)
-      modify(communication_disabled_until: timeout_until)
+      modify(timeout_until: timeout_until)
     end
 
     alias_method :timeout=, :communication_disabled_until=
@@ -402,95 +404,53 @@ module Discordrb
     end
 
     # Modify the properties of the member.
-    # @param nick [String, nil] The new nickname of the member.
+    # @param nick [String, nil] The new nickname of the member; between 1-32 characters. Can also be passed as `nickname:`.
     # @param roles [Array<Role, Integer, String>, nil] The new roles to set for the member.
     # @param mute [true, false, nil] Whether the member shoule be muted in the voice channel.
     # @param deaf [true, false, nil] Whether the member should be deafened in the voice channel.
-    # @param channel [Channel, Integer, String, nil] The voice channel to move the member to.
-    # @param communication_disabled_until [Time, nil] When the member's timeout should expire.
-    #   Must be a value between now and 28 days in the future.
-    # @param flags [Integer, nil] The new flags to set for the member.
-    # @param avatar [#read, File, nil] The new server avatar to set for the current bot. Should be
-    #   a file-like object that responds to `#read`.
-    # @param banner [#read, File, nil] The new server banner to set for the current bot. Should be
-    #   a file-like object that responds to `#read`.
-    # @param bio [String, nil] The new server bio to set for the current bot.
-    # @param reason [String, nil] The reason to show in the audit log for modifying the member.
+    # @param voice_channel [Channel, Integer, String, nil] The voice channel to move the member to.
+    # @param timeout_until [Time, nil] When the member's timeout should expire. Must be a value between now and 28 days in the future.
+    # @param flags [Integer, nil] The new flags to set for the member. The only flag that can currently be changed is the `bypassed_verification` flag.
+    # @param avatar [#read, File, nil] The new server-specific avatar to set for the current bot. Should be a file-like object that responds to `#read`.
+    # @param banner [#read, File, nil] The new server-specific banner to set for the current bot. Should be a file-like object that responds to `#read`.
+    # @param bio [String, nil] The new server-specific bio to set for the current bot; between 1-190 characters.
+    # @param reason [String, nil] The reason to show in the server's audit log for modifying the member.
     # @return [nil]
     def modify(
-      nick: :undef, roles: :undef, mute: :undef, deaf: :undef, channel: :undef, timeout_until: :undef,
-      communication_disabled_until: :undef, flags: :undef, avatar: :undef, banner: :undef, bio: :undef,
-      reason: nil
+      nick: :undef, roles: :undef, mute: :undef, deaf: :undef, voice_channel: :undef,
+      timeout_until: :undef, flags: :undef, avatar: :undef, banner: :undef, bio: :undef,
+      nickname: :undef, reason: nil
     )
-      timeout = communication_disabled_until == :undef ? timeout_until : communication_disabled_until
-
-      if timeout.respond_to?(:iso8601) && timeout > (Time.now + 2_419_200)
+      if timeout_until.is_a?(Time) && timeout_until > (Time.now + 2_419_200)
         raise ArgumentError, 'The timeout duration cannot be greater than 28 days in the future'
       end
 
       data = {
-        nick: nick,
+        nick: nick == :undef ? nickname : nick,
         roles: roles == :undef ? roles : roles&.map(&:resolve_id),
         mute: mute,
         deaf: deaf,
-        channel_id: channel == :undef ? channel : channel&.resolve_id,
+        channel_id: voice_channel == :undef ? voice_channel : voice_channel&.resolve_id,
         flags: flags,
-        communication_disabled_until: timeout == :undef ? timeout : timeout&.iso8601
+        communication_disabled_until: timeout_until == :undef ? timeout_until : timeout_until&.iso8601
       }
 
       if current_bot? && (nick != :undef || avatar != :undef || banner != :undef || bio != :undef)
-        bot_data = {
+        me = {
           bio: bio,
-          nick: nick,
+          nick: data.delete(:nick),
           avatar: avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar,
-          banner: banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner,
-          reason: reason
+          banner: banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner
         }
 
-        data[:nick] = :undef
-        update_data(JSON.parse(API::Server.update_current_member!(@bot.token, @server_id, **bot_data)))
+        update_data(JSON.parse(API::Server.update_current_member!(@bot.token, @server_id, **me, reason: reason)))
         return unless data.any? { |_, value| value != :undef }
       end
 
-      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, **data, reason:)))
+      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, **data, reason: reason)))
       nil
     end
 
-    # Update this member's roles
-    # @note For internal use only.
-    # @!visibility private
-    def update_roles(role_ids)
-      @roles = [server.role(@server_id)]
-      role_ids.each do |id|
-        # It is possible for members to have roles that do not exist
-        # on the server any longer. See https://github.com/discordrb/discordrb/issues/371
-        role = server.role(id)
-        @roles << role if role
-      end
-    end
-
-    # Update this member's nick
-    # @note For internal use only.
-    # @!visibility private
-    def update_nick(nick)
-      @nick = nick
-    end
-
-    # Update this member's boosting timestamp
-    # @note For internal user only.
-    # @!visibility private
-    def update_boosting_since(time)
-      @boosting_since = time
-    end
-
-    # @!visibility private
-    def update_communication_disabled_until(time)
-      time = time ? Time.parse(time) : nil
-      @communication_disabled_until = time
-    end
-
-    # Update this member
-    # @note For internal use only.
     # @!visibility private
     def update_data(data)
       update_roles(data['roles']) if data['roles']
@@ -524,25 +484,35 @@ module Discordrb
       @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data']) if data.key?('avatar_decoration_data')
     end
 
-    include PermissionCalculator
+    # @!visibility private
+    def update_roles(role_ids)
+      items = role_ids.filter_map { |id| server.role(id) }
 
-    # Overwriting inspect for debug purposes
+      (items << server.everyone_role) if items.none?(@server_id)
+
+      @roles = items
+    end
+
+    # @!visibility private
     def inspect
-      "<Member user=#{@user.inspect} server=#{@server&.inspect || @server_id} joined_at=#{@joined_at} roles=#{@roles&.inspect || @role_ids} voice_channel=#{voice_channel.inspect} mute=#{mute} deaf=#{deaf} self_mute=#{self_mute} self_deaf=#{self_deaf}>"
+      "<Member id=#{@user.id} joined_at=#{@joined_at.inspect} nick=#{@nick.inspect} server_id=#{@server_id}>"
     end
 
     private
 
+    # @!visibility private
     # Utility method to get a list of this member's role IDs.
     def resolve_role_ids
       @roles ? @roles.collect(&:id) : @role_ids
     end
 
+    # @!visibility private
     # Utility method to get data out of this member's voice state.
     def voice_state_attribute(name)
-      server.voice_states[@user.resolve_id]&.send(name)
+      server.voice_states[@user.id]&.send(name)
     end
 
+    # @!visibility private
     # Utility method to get a list of role IDs from one role or an array of roles.
     def role_id_array(role)
       role.is_a?(Array) ? role.map(&:resolve_id) : [role.resolve_id]

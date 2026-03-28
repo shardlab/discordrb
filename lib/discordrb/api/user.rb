@@ -43,23 +43,29 @@ module Discordrb::API::User
     )
   end
 
-  # @deprecated Please use {update_current_user} instead.
+  # @deprecated Please use {update_current_user!} instead.
   # https://discord.com/developers/docs/resources/user#modify-current-user
   def update_profile(token, _email, _password, new_username, avatar, _new_password = nil)
-    update_current_user(token, new_username, avatar)
+    update_current_user!(token, username: new_username, avatar: avatar)
+  end
+
+  # @deprecated Please use {#update_current_user!} instead.
+  # https://discord.com/developers/docs/resources/user#modify-current-user
+  def update_current_user(token, username = :undef, avatar = :undef, banner = :undef)
+    update_current_user!(token, username: username, avatar: avatar, banner: banner)
   end
 
   # Update the properties of the user for the current bot.
   # https://discord.com/developers/docs/resources/user#modify-current-user
-  def update_current_user(token, username = :undef, avatar = :undef, banner = :undef)
+  def update_current_user!(token, username: :undef, avatar: :undef, banner: :undef)
     Discordrb::API.request(
       :users_me,
       nil,
       :patch,
       "#{Discordrb::API.api_base}/users/@me",
-      { username: username, avatar: avatar, banner: banner }.reject { |_, value| value == :undef }.to_json,
-      Authorization: token,
-      content_type: :json
+      { username:, avatar:, banner: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token
     )
   end
 
