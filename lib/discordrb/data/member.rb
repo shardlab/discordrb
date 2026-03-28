@@ -191,7 +191,7 @@ module Discordrb
     # Set a user's timeout duration, or remove it by setting the timeout to `nil`.
     # @param timeout_until [Time, nil] When the timeout will end.
     def communication_disabled_until=(timeout_until)
-      modify(communication_disabled_until: timeout_until)
+      modify(timeout_until: timeout_until)
     end
 
     alias_method :timeout=, :communication_disabled_until=
@@ -402,29 +402,24 @@ module Discordrb
     end
 
     # Modify the properties of the member.
-    # @param nick [String, nil] The new nickname of the member.
+    # @param nick [String, nil] The new nickname of the member; between 1-32 characters.
     # @param roles [Array<Role, Integer, String>, nil] The new roles to set for the member.
     # @param mute [true, false, nil] Whether the member shoule be muted in the voice channel.
     # @param deaf [true, false, nil] Whether the member should be deafened in the voice channel.
-    # @param channel [Channel, Integer, String, nil] The voice channel to move the member to.
-    # @param communication_disabled_until [Time, nil] When the member's timeout should expire.
-    #   Must be a value between now and 28 days in the future.
-    # @param flags [Integer, nil] The new flags to set for the member.
-    # @param avatar [#read, File, nil] The new server avatar to set for the current bot. Should be
-    #   a file-like object that responds to `#read`.
-    # @param banner [#read, File, nil] The new server banner to set for the current bot. Should be
-    #   a file-like object that responds to `#read`.
-    # @param bio [String, nil] The new server bio to set for the current bot.
+    # @param voice_channel [Channel, Integer, String, nil] The voice channel to move the member to.
+    # @param timeout_until [Time, nil] When the member's timeout should expire. Must be a value between now and 28 days in the future.
+    # @param flags [Integer, nil] The new flags to set for the member. The only flag that can currently be updated is the `bypassed_verification` flag.
+    # @param avatar [#read, File, nil] The new server-specific avatar to set for the current bot. Should be a file-like object that responds to `#read`.
+    # @param banner [#read, File, nil] The new server-specific banner to set for the current bot. Should be a file-like object that responds to `#read`.
+    # @param bio [String, nil] The new server-specific bio to set for the current bot; between 1-190 characters.
     # @param reason [String, nil] The reason to show in the audit log for modifying the member.
     # @return [nil]
     def modify(
-      nick: :undef, roles: :undef, mute: :undef, deaf: :undef, channel: :undef, timeout_until: :undef,
-      communication_disabled_until: :undef, flags: :undef, avatar: :undef, banner: :undef, bio: :undef,
+      nick: :undef, roles: :undef, mute: :undef, deaf: :undef, voice_channel: :undef,
+      timeout_until: :undef, flags: :undef, avatar: :undef, banner: :undef, bio: :undef,
       reason: nil
     )
-      timeout = communication_disabled_until == :undef ? timeout_until : communication_disabled_until
-
-      if timeout.respond_to?(:iso8601) && timeout > (Time.now + 2_419_200)
+      if timeout_until.is_a?(Time) && timeout_until > (Time.now + 2_419_200)
         raise ArgumentError, 'The timeout duration cannot be greater than 28 days in the future'
       end
 
@@ -433,26 +428,24 @@ module Discordrb
         roles: roles == :undef ? roles : roles&.map(&:resolve_id),
         mute: mute,
         deaf: deaf,
-        channel_id: channel == :undef ? channel : channel&.resolve_id,
+        channel_id: voice_channel == :undef ? voice_channel : voice_channel&.resolve_id,
         flags: flags,
-        communication_disabled_until: timeout == :undef ? timeout : timeout&.iso8601
+        communication_disabled_until: timeout_until == :undef ? timeout_until : timeout_until&.iso8601
       }
 
       if current_bot? && (nick != :undef || avatar != :undef || banner != :undef || bio != :undef)
-        bot_data = {
+        me = {
           bio: bio,
-          nick: nick,
+          nick: data.delete(:nick),
           avatar: avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar,
-          banner: banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner,
-          reason: reason
+          banner: banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner
         }
 
-        data[:nick] = :undef
-        update_data(JSON.parse(API::Server.update_current_member!(@bot.token, @server_id, **bot_data)))
+        update_data(JSON.parse(API::Server.update_current_member!(@bot.token, @server_id, **me, reason: reason)))
         return unless data.any? { |_, value| value != :undef }
       end
 
-      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, **data, reason:)))
+      update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, **data, reason: reason)))
       nil
     end
 
