@@ -26,7 +26,7 @@ jobs:
           restore-keys: |
             bundle-${{ matrix.ruby }}
       - name: Install dependencies
-        run: bundle install --path vendor/bundle
+        run: bundle config set path vendor/bundle && bundle install
       - name: Run RSpec
         run: |
           mkdir -p rspec
@@ -52,7 +52,7 @@ jobs:
           path: vendor/bundle
           key: bundle-${{ hashFiles('Gemfile', 'discordrb.gemspec') }}-rubocop
       - name: Install dependencies
-        run: bundle install --path vendor/bundle
+        run: bundle config set path vendor/bundle && bundle install
       - name: Run Rubocop
         run: bundle exec rubocop
 
@@ -71,7 +71,7 @@ jobs:
           path: vendor/bundle
           key: bundle-${{ hashFiles('Gemfile', 'discordrb.gemspec') }}-yard
       - name: Install dependencies
-        run: bundle install --path vendor/bundle
+        run: bundle config set path vendor/bundle && bundle install
       - name: Run YARD
         run: |
           mkdir -p docs
