@@ -15,6 +15,7 @@ require 'discordrb/events/bans'
 require 'discordrb/events/reactions'
 require 'discordrb/events/interactions'
 require 'discordrb/events/integrations'
+require 'discordrb/events/scheduled_events'
 
 require 'discordrb/await'
 
@@ -357,6 +358,20 @@ module Discordrb
       register_event(UserBanEvent, attributes, block)
     end
 
+    # This **event** is raised whenever an audit log entry is created in a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the server the entry was created in.
+    # @option attributes [String, Symbol, Integer] :action Matches the type of the entry.
+    # @option attributes [String, Regexp] :reason Matches the reason associated with the entry.
+    # @option attributes [String, Integer, User, Member, Recipient] :user Matches the user or bot that made the changes.
+    # @option attributes [String, Integer, #resolve_id] :target Matches the ID of the affected entity.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [AuditLogEntryCreateEvent] The event that was raised.
+    # @return [AuditLogEntryCreateEventHandler] the event handler that was registered.
+    def audit_log_entry(attributes = {}, &block)
+      register_event(AuditLogEntryCreateEvent, attributes, block)
+    end
+
     # This **event** is raised when a user is unbanned from a server.
     # @param attributes [Hash] The event's attributes.
     # @option attributes [String, Integer, User] :user Matches the user that was unbanned.
@@ -562,12 +577,13 @@ module Discordrb
     end
 
     # This **event** is raised whenever an application command (slash command) is executed.
-    # @param name [Symbol] The name of the application command this handler is for.
+    # @param name [Symbol, String] The name of the application command this handler is for.
     # @param attributes [Hash] The event's attributes.
     # @yield The block is executed when the event is raised.
     # @yieldparam event [ApplicationCommandEvent] The event that was raised.
     # @return [ApplicationCommandEventHandler] The event handler that was registered.
     def application_command(name, attributes = {}, &block)
+      name = name.to_sym
       @application_commands ||= {}
 
       unless block
@@ -682,7 +698,7 @@ module Discordrb
     # @yieldparam event [AutocompleteEvent] The event that was raised.
     # @return [AutocompleteEventHandler] The event handler that was registered.
     def autocomplete(name = nil, attributes = {}, &block)
-      register_event(AutocompleteEvent, attributes.merge!({ name: name }), block)
+      register_event(AutocompleteEvent, attributes.merge!({ name: name&.to_s }), block)
     end
 
     # This **event** is raised whenever an application command's permissions are updated.
@@ -695,6 +711,78 @@ module Discordrb
     # @return [ApplicationCommandPermissionsUpdateEventHandler] The event handler that was registered.
     def application_command_permissions_update(attributes = {}, &block)
       register_event(ApplicationCommandPermissionsUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised when a scheduled event is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer] :server Matches the scheduled event's server.
+    # @option attributes [String, Integer, ScheduledEvent] :id Matches the scheduled event.
+    # @option attributes [String, Integer, User, Member] :creator Matches the scheduled event's creator.
+    # @option attributes [String, Integer, Channel] :channel Matches the scheduled event's channel.
+    # @option attributes [Integer, Symbol, String] :status Matches the status of the scheduled event.
+    # @option attributes [Integer, String] :entity_id Matches the entity ID of the scheduled event.
+    # @option attributes [Integer, Symbol, String] :entity_type Matches the entity type of the scheduled event.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ScheduledEventCreateEvent] The event that was raised.
+    # @return [ScheduledEventCreateEventHandler] the event handler that was registered.
+    def scheduled_event_create(attributes = {}, &block)
+      register_event(ScheduledEventCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised when a scheduled event is updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the scheduled event's server.
+    # @option attributes [String, Integer, ScheduledEvent] :id Matches the scheduled event.
+    # @option attributes [String, Integer, User, Member] :creator Matches the scheduled event's creator.
+    # @option attributes [String, Integer, Channel] :channel Matches the scheduled event's channel.
+    # @option attributes [Integer, Symbol, String] :status Matches the status of the scheduled event.
+    # @option attributes [Integer, String] :entity_id Matches the entity ID of the scheduled event.
+    # @option attributes [Integer, Symbol, String] :entity_type Matches the entity type of the scheduled event.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ScheduledEventUpdateEvent] The event that was raised.
+    # @return [ScheduledEventUpdateEventHandler] the event handler that was registered.
+    def scheduled_event_update(attributes = {}, &block)
+      register_event(ScheduledEventUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised when a scheduled event is deleted.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the scheduled event's server.
+    # @option attributes [String, Integer, ScheduledEvent] :id Matches the scheduled event.
+    # @option attributes [String, Integer, User, Member] :creator Matches the scheduled event's creator.
+    # @option attributes [String, Integer, Channel] :channel Matches the scheduled event's channel.
+    # @option attributes [Integer, Symbol, String] :status Matches the status of the scheduled event.
+    # @option attributes [Integer, String] :entity_id Matches the entity ID of the scheduled event.
+    # @option attributes [Integer, Symbol, String] :entity_type Matches the entity type of the scheduled event.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ScheduledEventDeleteEvent] The event that was raised.
+    # @return [ScheduledEventDeleteEventHandler] the event handler that was registered.
+    def scheduled_event_delete(attributes = {}, &block)
+      register_event(ScheduledEventDeleteEvent, attributes, block)
+    end
+
+    # This **event** is raised when a user is added to a scheduled event.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the scheduled event's server.
+    # @option attributes [String, Integer, ScheduledEvent] :scheduled_event Matches the scheduled event.
+    # @option attributes [String, Integer, User, Member] :user Matches the user that was added.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ScheduledEventUserAddEvent] The event that was raised.
+    # @return [ScheduledEventUserAddEventHandler] the event handler that was registered.
+    def scheduled_event_user_add(attributes = {}, &block)
+      register_event(ScheduledEventUserAddEvent, attributes, block)
+    end
+
+    # This **event** is raised when a user is removed from a scheduled event.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the scheduled event's server.
+    # @option attributes [String, Integer, ScheduledEvent] :scheduled_event Matches the scheduled event.
+    # @option attributes [String, Integer, User, Member] :user Matches the user that was removed.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ScheduledEventUserRemoveEvent] The event that was raised.
+    # @return [ScheduledEventUserRemoveEventHandler] the event handler that was registered.
+    def scheduled_event_user_remove(attributes = {}, &block)
+      register_event(ScheduledEventUserRemoveEvent, attributes, block)
     end
 
     # This **event** is raised whenever an integration is added to a server.
