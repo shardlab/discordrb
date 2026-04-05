@@ -1051,9 +1051,19 @@ module Discordrb
       server = server(server_id)
       return unless server
 
+      if (member_data = data['member'])
+        member = server.member(member_data['user']['id'].to_i, false)
+
+        if member
+          member.update_data(member_data)
+        else
+          server&.cache_member(Member.new(member_data, server, self))
+        end
+      end
+
       user_id = data['user_id'].to_i
       old_voice_state = server.voice_states[user_id]
-      old_channel_id = old_voice_state.voice_channel&.id if old_voice_state
+      old_channel_id = old_voice_state&.voice_channel&.id
 
       server.update_voice_state(data)
 

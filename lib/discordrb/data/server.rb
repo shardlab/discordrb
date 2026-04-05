@@ -525,21 +525,14 @@ module Discordrb
     def update_voice_state(data)
       user_id = data['user_id'].to_i
 
-      if data['channel_id']
-        unless @voice_states[user_id]
-          # Create a new voice state for the user
-          @voice_states[user_id] = VoiceState.new(user_id)
-        end
+      if (channel_id = data['channel_id']&.to_i)
+        found_channel = @channels_by_id[channel_id]
 
-        # Update the existing voice state (or the one we just created)
-        channel = @channels_by_id[data['channel_id'].to_i]
-        @voice_states[user_id].update(
-          channel,
-          data['mute'],
-          data['deaf'],
-          data['self_mute'],
-          data['self_deaf']
-        )
+        if (state = @voice_states[user_id])
+          state.update_data(data, found_channel)
+        else
+          @voice_states[user_id] = VoiceState.new(data, found_channel)
+        end
       else
         # The user is not in a voice channel anymore, so delete its voice state
         @voice_states.delete(user_id)
