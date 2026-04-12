@@ -1052,7 +1052,7 @@ module Discordrb
       return unless server
 
       if (member_data = data['member'])
-        member = server.member(member_data['user']['id'].to_i, false)
+        member = server.member(member_data['user']['id'], false)
 
         if member
           member.update_data(member_data)
