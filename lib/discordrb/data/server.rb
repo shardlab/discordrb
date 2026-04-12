@@ -244,11 +244,15 @@ module Discordrb
       AuditLogs.new(self, @bot, JSON.parse(API::Server.audit_logs(@bot.token, @id, limit, user, action, before)))
     end
 
-    # Cache @widget
     # @note For internal use only
     # @!visibility private
-    def cache_widget_data
-      data = JSON.parse(API::Server.widget(@bot.token, @id))
+    def cache_widget_data(data = nil)
+      data ||= if bot.permission?(:manage_server)
+                 JSON.parse(API::Server.widget(@bot.token, @id))
+               else
+                 return update_data(nil)
+               end
+
       @widget_enabled = data['enabled']
       @widget_channel_id = data['channel_id']
     end
@@ -271,6 +275,7 @@ module Discordrb
 
     # Sets whether this server's widget is enabled
     # @param value [true, false]
+    # @deprecated Please migrate to using {#modify} with the `widget_enabled:` parameter.
     def widget_enabled=(value)
       modify_widget(value, widget_channel)
     end
@@ -279,6 +284,7 @@ module Discordrb
     # Sets whether this server's widget is enabled
     # @param value [true, false]
     # @param reason [String, nil] the reason to be shown in the audit log for this action
+    # @deprecated Please migrate to using {#modify} with the `widget_enabled:` parameter.
     def set_widget_enabled(value, reason = nil)
       modify_widget(value, widget_channel, reason)
     end
@@ -286,6 +292,7 @@ module Discordrb
 
     # Changes the channel on the server's widget
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
+    # @deprecated Please migrate to using {#modify} with the `widget_channel:` parameter.
     def widget_channel=(channel)
       modify_widget(widget?, channel)
     end
@@ -294,6 +301,7 @@ module Discordrb
     # Changes the channel on the server's widget
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
     # @param reason [String, nil] the reason to be shown in the audit log for this action
+    # @deprecated Please migrate to using {#modify} with the `widget_channel:` parameter.
     def set_widget_channel(channel, reason = nil)
       modify_widget(widget?, channel, reason)
     end
@@ -303,12 +311,11 @@ module Discordrb
     # @param enabled [true, false] whether the widget is enabled
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
     # @param reason [String, nil] the reason to be shown in the audit log for this action
+    # @deprecated Please migrate to using {#modify} with the `widget_enabled:` and `widget_channel:` parameters.
     def modify_widget(enabled, channel, reason = nil)
       cache_widget_data if @widget_enabled.nil?
       channel_id = channel ? channel.resolve_id : @widget_channel_id
-      response = JSON.parse(API::Server.modify_widget(@bot.token, @id, enabled, channel_id, reason))
-      @widget_enabled = response['enabled']
-      @widget_channel_id = response['channel_id']
+      cache_widget_data(JSON.parse(API::Server.modify_widget(@bot.token, @id, enabled, channel_id, reason)))
     end
     alias_method :modify_embed, :modify_widget
 
@@ -1096,6 +1103,8 @@ module Discordrb
     # @param description [String, nil] The new description of the server.
     # @param boost_progress_bar [true, false] Whether or not the server boosting progress bar should be visible.
     # @param safety_alerts_channel [Channel, Integer, String, nil] The new channel where safety alerts should be sent.
+    # @param widget_enabled [true, false, nil] Whether or not the server's widget should be enabled.
+    # @param widget_channel [Channel, Integer, String, nil] The new invite channel for the server's widget.
     # @param dms_disabled_until [Time, nil] The time at when non-friend direct messages will be enabled again.
     # @param invites_disabled_until [Time, nil] The time at when invites will no longer be disabled.
     # @param reason [String, nil] The reason to show in the server's audit log for modifying the server.
@@ -1105,7 +1114,8 @@ module Discordrb
       afk_channel: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef,
       system_channel: :undef, system_channel_flags: :undef, rules_channel: :undef, public_updates_channel: :undef,
       locale: :undef, features: :undef, description: :undef, boost_progress_bar: :undef, safety_alerts_channel: :undef,
-      dms_disabled_until: :undef, invites_disabled_until: :undef, reason: nil
+      widget_enabled: :undef, widget_channel: :undef, dms_disabled_until: :undef, invites_disabled_until: :undef,
+      reason: nil
     )
       data = {
         name: name,
@@ -1129,6 +1139,15 @@ module Discordrb
         safety_alerts_channel_id: safety_alerts_channel == :undef ? safety_alerts_channel : safety_alerts_channel&.resolve_id
       }
 
+      if widget_enabled != :undef || widget_channel != :undef
+        widget_data = {
+          enabled: widget_enabled,
+          channel_id: widget_channel == :undef ? widget_channel : widget_channel&.resolve_id
+        }
+
+        cache_widget_data(JSON.parse(API::Server.update_widget(@bot.token, @id, **widget_data, reason: reason)))
+      end
+
       if invites_disabled_until != :undef || dms_disabled_until != :undef
         incidents_data = {
           dms_disabled_until: dms_disabled_until == :undef ? @dms_disabled_until&.iso8601 : dms_disabled_until&.iso8601,
@@ -1136,8 +1155,9 @@ module Discordrb
         }
 
         process_incident_actions(JSON.parse(API::Server.update_incident_actions(@bot.token, @id, **incidents_data, reason: reason)))
-        return unless data.any? { |_, value| value != :undef }
       end
+
+      return unless data.any? { |_, value| value != :undef }
 
       update_data(JSON.parse(API::Server.update!(@bot.token, @id, **data, reason: reason)))
       nil

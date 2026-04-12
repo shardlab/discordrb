@@ -61,6 +61,21 @@ module Discordrb::API::Server
     )
   end
 
+  # Modify the properties of a widget for a server.
+  # https://docs.discord.com/developers/resources/guild#modify-guild-widget
+  def update_widget(token, server_id, enabled: :undef, channel_id: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_widget,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/widget",
+      { enabled:, channel_id: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Get a server's channels list
   # https://discord.com/developers/docs/resources/guild#get-guild-channels
   def channels(token, server_id)
