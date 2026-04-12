@@ -257,42 +257,39 @@ module Discordrb
       end
     end
 
-    # @return [Role] the highest role this member has.
+    # Get the highest role this member has.
+    # @return [Role] The highest role this member has.
     def highest_role
-      roles.max_by(&:position)
+      roles.max
     end
 
-    # @return [Role, nil] the role this member is being hoisted with.
+    # Get the role that determines where the member is shown in
+    #   the Discord client's member list.
+    # @return [Role, nil] The role this member is being hoisted with.
     def hoist_role
-      hoisted_roles = roles.select(&:hoist)
-      return nil if hoisted_roles.empty?
-
-      hoisted_roles.max_by(&:position)
+      roles.select(&:hoist).max
     end
 
-    # @return [Role, nil] the role this member is basing their colour on.
+    # Get the role that determines the primary colour of the member.
+    # @return [Role, nil] The role this member is basing their colour on.
     def colour_role
-      coloured_roles = roles.select { |v| v.colour.combined.nonzero? }
-      return nil if coloured_roles.empty?
-
-      coloured_roles.max_by(&:position)
+      roles.select { |role| role.colour.combined.nonzero? }.max
     end
 
     alias_method :color_role, :colour_role
 
-    # @return [ColourRGB, nil] the colour this member has.
+    # Get the primary colour of the member.
+    # @return [ColourRGB, nil] The colour this member has.
     def colour
-      return nil unless colour_role
-
-      colour_role.color
+      colour_role&.colour
     end
 
     alias_method :color, :colour
 
     # Get the member's roles sorted by their order in the hierarchy.
-    # @return [Array<Role>] the roles the member has, ordered by hierarchy.
+    # @return [Array<Role>] The roles the member has, ordered by hierarchy.
     def sort_roles
-      roles.sort_by { |role| [role.position, role.id] }
+      roles.sort
     end
 
     # Server deafens this member.
