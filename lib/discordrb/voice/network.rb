@@ -70,10 +70,14 @@ module Discordrb::Voice
     # @return [Array(String, Integer)] the IP and port received from the discovery reply.
     def receive_discovery_reply
       # Wait for a UDP message
+      return unless @socket.wait_readable(5)
+
       message = @socket.recv(74)
       ip = message[8..-3].delete("\0")
       port = message[-2..].unpack1('n')
       [ip, port]
+    rescue StandardError
+      nil
     end
 
     # Makes an audio packet from a buffer and sends it to Discord.
@@ -90,6 +94,13 @@ module Discordrb::Voice
       data = header + buf + nonce.byteslice(0, 4)
 
       send_packet(data)
+    end
+
+    # Close the underlying UDP socket.
+    def destroy
+      @socket.close
+    rescue StandardError
+      nil
     end
 
     # Sends the UDP discovery packet with the internally stored SSRC. Discord will send a reply afterwards which can
@@ -164,6 +175,9 @@ module Discordrb::Voice
     # The version of the voice gateway that's supposed to be used.
     VOICE_GATEWAY_VERSION = 8
 
+    # Close codes that are fatal, after which we should not attempt to reconnect.
+    FATAL_CLOSE_CODES = [4004, 4014, 4016, 4017, 4021, 4022].freeze
+
     # @return [VoiceUDP] the UDP voice connection over which the actual audio data is sent.
     attr_reader :udp
 
@@ -173,7 +187,8 @@ module Discordrb::Voice
     # @param token [String] The authentication token which is also used for REST requests
     # @param session [String] The voice session ID Discord sends over the regular websocket
     # @param endpoint [String] The endpoint URL to connect to
-    def initialize(channel, bot, token, session, endpoint)
+    # @param voice_bot [VoiceBot, nil] The voice bot to which this vWS is bound
+    def initialize(channel, bot, token, session, endpoint, voice_bot = nil)
       raise 'libsodium is unavailable - unable to create voice bot! Please read https://github.com/shardlab/discordrb/wiki/Installing-libsodium' unless LIBSODIUM_AVAILABLE
 
       @channel = channel
@@ -182,6 +197,7 @@ module Discordrb::Voice
       @session = session
 
       @endpoint = endpoint
+      @voice_bot = voice_bot
 
       @udp = VoiceUDP.new
     end
@@ -326,7 +342,12 @@ module Discordrb::Voice
       @bot.debug('Started websocket initialization, now waiting for UDP discovery reply')
 
       # Now wait for opcode 2 and the resulting UDP reply packet
-      ip, port = @udp.receive_discovery_reply
+      unless (reply = @udp.receive_discovery_reply)
+        @bot.debug('Did not recieve a UDP discovery reply in time')
+        return
+      end
+
+      ip, port = reply
       @bot.debug("UDP discovery reply received! #{ip} #{port}")
 
       # Send UDP init packet with received UDP data
@@ -341,6 +362,9 @@ module Discordrb::Voice
     # Disconnects the websocket and kills the thread
     def destroy
       @heartbeat_running = false
+      @udp&.destroy
+      @client&.close
+      @thread&.kill
     end
 
     private
@@ -350,12 +374,18 @@ module Discordrb::Voice
       while @heartbeat_running
         if @heartbeat_interval
           sleep @heartbeat_interval / 1000.0
-          send_heartbeat
+          send_heartbeat if @heartbeat_running
         else
           # If no interval has been set yet, sleep a second and check again
           sleep 1
         end
       end
+    end
+
+    def websocket_close(data)
+      @voice_bot&.destroy if data.respond_to?(:code) && FATAL_CLOSE_CODES.any?(data.code)
+
+      @bot.debug("The voice websocket has closed: #{data&.inspect || 'No Information'}")
     end
 
     def init_ws
@@ -367,8 +397,8 @@ module Discordrb::Voice
         host,
         method(:websocket_open),
         method(:websocket_message),
-        proc { |e| Discordrb::LOGGER.error "VWS error: #{e}" },
-        proc { |e| Discordrb::LOGGER.warn "VWS close: #{e}" }
+        method(:websocket_close),
+        proc { |e| Discordrb::LOGGER.error "VWS error: #{e}" }
       )
 
       @bot.debug('VWS connected')
