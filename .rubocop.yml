@@ -125,5 +125,6 @@ Style/Documentation:
   Enabled: true
 
 Style/IfUnlessModifier:
-  Exclude:
+    Exclude:
+    - lib/discordrb/data/channel.rb
     - lib/discordrb/data/role.rb

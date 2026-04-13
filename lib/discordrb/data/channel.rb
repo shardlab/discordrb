@@ -804,6 +804,51 @@ module Discordrb
 
     alias_method :message, :load_message
 
+    # Fetch the messages that have been sent in the channel.
+    # @param limit [Integer, nil] The maximum number of messages to fetch, or `nil` for no limit.
+    # @param after [Message, Integer, String, Time, nil] Get messages sent after this snowflake ID.
+    # @param before [Message, Integer, String, Time, nil] Get messages sent before this snowflake ID.
+    # @param around [Message, Integer, String, Time, nil] Get messages sent around this snowflake ID.
+    # @param oldest_first [true, false] Whether the oldest messages in the channel should be fetched first.
+    # @return [Array<Message>] The messages that were fetched. By default, messages will be returned in descending
+    #   order by message ID (newest messages first). On the contrary, when using the `after:` or `oldest_first:` parameters,
+    #   messages will be returned in ascending order by message ID (oldest messages first).
+    def messages(limit: 100, after: nil, before: nil, around: nil, oldest_first: false)
+      if [before, after, around, oldest_first].count(&:itself) > 1
+        raise ArgumentError, "'before', 'after', 'around', and 'oldest_first' are mutually exclusive"
+      end
+
+      if around && (!limit || limit > 100)
+        raise ArgumentError, "You cannot fetch more than 100 messages when using the 'around' parameter"
+      end
+
+      after = 0 if oldest_first
+
+      rest = {
+        limit: limit && limit <= 100 ? limit : 100,
+        after: after.is_a?(Time) ? IDObject.synthesise(after) : after&.resolve_id,
+        before: before.is_a?(Time) ? IDObject.synthesise(before) : before&.resolve_id,
+        around: around.is_a?(Time) ? IDObject.synthesise(around) : around&.resolve_id
+      }.compact
+
+      get_messages = proc do |query = nil|
+        response = API::Channel.get_channel_messages(@bot.token, @id, **rest, **query&.compact)
+        JSON.parse(response).map { |message| Message.new(message, @bot) }
+      end
+
+      return get_messages.call if around
+
+      paginator = Paginator.new(limit, after ? :up : :down) do |page|
+        if after
+          get_messages.call(after: page&.first&.id)
+        else
+          get_messages.call(before: page&.last&.id)
+        end
+      end
+
+      paginator.to_a
+    end
+
     # Requests the pinned messages in a channel.
     # @param limit [Integer, nil] the limit of how many pinned messages to retrieve. `nil` will return all the pinned messages.
     # @return [Array<Message>] the messages pinned in the channel.
