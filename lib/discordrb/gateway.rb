@@ -717,7 +717,7 @@ module Discordrb
       when Opcodes::RECONNECT
         handle_reconnect
       when Opcodes::INVALIDATE_SESSION
-        handle_invalidate_session
+        handle_invalidate_session(packet)
       when Opcodes::HEARTBEAT_ACK
         handle_heartbeat_ack(packet)
       when Opcodes::HEARTBEAT
@@ -763,11 +763,15 @@ module Discordrb
     end
 
     # Op 9
-    def handle_invalidate_session
+    def handle_invalidate_session(packet)
       LOGGER.debug('Received op 9, invalidating session and re-identifying.')
 
       if @session
-        @session.invalidate
+        if packet['d'] == true
+          reconnect
+        else
+          @session.invalidate
+        end
       else
         LOGGER.warn('Received op 9 without a running session! Not invalidating, we *should* be fine though.')
       end

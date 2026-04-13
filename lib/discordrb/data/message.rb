@@ -148,6 +148,13 @@ module Discordrb
     # @return [Integer] a generally increasing integer that can be used to determine this message's position in a thread.
     attr_reader :position
 
+    # @return [Poll, nil] the poll that was sent with this message, or `nil`.
+    attr_reader :poll
+
+    # @return [Poll::Result, nil] the finalised results for a poll that prompted this message.
+    attr_reader :poll_result
+    alias_method :poll_results, :poll_result
+
     # @return [Integer, nil] the ID of the application associated with this message.
     attr_reader :application_id
 
@@ -201,6 +208,7 @@ module Discordrb
       @reactions = data['reactions']&.map { |reaction| Reaction.new(reaction) } || []
       @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention) } || []
       @mention_roles = data['mention_roles']&.map(&:to_i) || []
+      @poll_result = Poll::Result.new(data['embeds'].pop, @message_reference, @bot) if @type == 46
 
       @attachments = data['attachments']&.map { |attachment| Attachment.new(attachment, self, @bot) } || []
       @embeds = data['embeds']&.map { |embed| Embed.new(embed, self) } || []
@@ -209,6 +217,7 @@ module Discordrb
       @thread = @bot.ensure_channel(data['thread']) if data['thread']
       @pinned_at = Time.parse(data['pinned_at']) if data['pinned_at']
       @call = Call.new(data['call'], @bot) if data['call']
+      @poll = Poll.new(data['poll'], self, @bot) if data['poll']
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
@@ -360,7 +369,7 @@ module Discordrb
 
     # @return [true, false] whether this message was sent by the current {Bot}.
     def from_bot?
-      @author&.current_bot?
+      (@author_id || @author&.id) == @bot.profile.id
     end
 
     # @return [true, false] whether this message has been sent over a webhook.
@@ -465,8 +474,7 @@ module Discordrb
     # @return [Hash<String => Array<User>>] A hash mapping the string representation of a
     #   reaction to an array of users.
     def all_reaction_users(limit: 100)
-      all_reactions = @reactions.map { |r| { r.to_s => reacted_with(r, limit: limit) } }
-      all_reactions.reduce({}, :merge)
+      @reactions.to_h { |reaction| [reaction.to_s, reacted_with(reaction, limit: limit)] }
     end
 
     # Deletes a reaction made by a user on this message.
