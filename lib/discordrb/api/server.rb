@@ -31,6 +31,51 @@ module Discordrb::API::Server
     )
   end
 
+  # Update the properties of a guild.
+  # https://discord.com/developers/docs/resources/guild#modify-guild
+  def update!(token, server_id, name: :undef, region: :undef, verification_level: :undef, default_message_notifications: :undef, explicit_content_filter: :undef, afk_channel_id: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef, system_channel_id: :undef, system_channel_flags: :undef, rules_channel_id: :undef, public_updates_channel_id: :undef, preferred_locale: :undef, features: :undef, description: :undef, premium_progress_bar_enabled: :undef, safety_alerts_channel_id: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}",
+      { name:, region:, verification_level:, default_message_notifications:, explicit_content_filter:, afk_channel_id:, afk_timeout:, icon:, splash:, discovery_splash:, banner:, system_channel_id:, system_channel_flags:, rules_channel_id:, public_updates_channel_id:, preferred_locale:, features:, description:, premium_progress_bar_enabled:, safety_alerts_channel_id: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Modify the incident actions for a server.
+  # https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions
+  def update_incident_actions(token, server_id, invites_disabled_until: :undef, dms_disabled_until: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_incidents_actions,
+      server_id,
+      :put,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/incident-actions",
+      { invites_disabled_until:, dms_disabled_until: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Modify the properties of a widget for a server.
+  # https://docs.discord.com/developers/resources/guild#modify-guild-widget
+  def update_widget(token, server_id, enabled: :undef, channel_id: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_widget,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/widget",
+      { enabled:, channel_id: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Get a server's channels list
   # https://discord.com/developers/docs/resources/guild#get-guild-channels
   def channels(token, server_id)
@@ -233,6 +278,20 @@ module Discordrb::API::Server
     )
   end
 
+  # Query and filter the messages that have been sent in a server.
+  # https://discord.com/developers/docs/resources/message#search-guild-messages
+  def search_messages(token, server_id, limit: 25, offset: nil, max_id: nil, min_id: nil, slop: nil, content: nil, channel_id: nil, author_type: nil, author_id: nil, mentions: nil, mentions_role_id: nil, mention_everyone: nil, replied_to_user_id: nil, replied_to_message_id: nil, pinned: nil, has: nil, embed_type: nil, embed_provider: nil, link_hostname: nil, attachment_filename: nil, attachment_extension: nil, sort_by: nil, sort_order: nil, include_nsfw: nil)
+    query = URI.encode_www_form({ limit:, offset:, max_id:, min_id:, slop:, content:, channel_id:, author_type:, author_id:, mentions:, mentions_role_id:, mention_everyone:, replied_to_user_id:, replied_to_message_id:, pinned:, has:, embed_type:, embed_provider:, link_hostname:, attachment_filename:, attachment_extension:, sort_by:, sort_order:, include_nsfw: }.compact)
+
+    Discordrb::API.request(
+      :guilds_gid_messages_search,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/messages/search?#{query}",
+      Authorization: token
+    )
+  end
+
   # Get server roles
   # https://discord.com/developers/docs/resources/guild#get-guild-roles
   def roles(token, server_id)
@@ -241,6 +300,18 @@ module Discordrb::API::Server
       server_id,
       :get,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/roles",
+      Authorization: token
+    )
+  end
+
+  # Get a single role
+  # https://discord.com/developers/docs/resources/guild#get-guild-role
+  def role(token, server_id, role_id)
+    Discordrb::API.request(
+      :guilds_sid_roles_rid,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/#{role_id}",
       Authorization: token
     )
   end
@@ -286,6 +357,21 @@ module Discordrb::API::Server
       data.reject { |_, value| value == :undef }.to_json,
       Authorization: token,
       content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Modify the properties of a role.
+  # https://docs.discord.com/developers/resources/guild#modify-guild-role
+  def update_role!(token, server_id, role_id, name: :undef, permissions: :undef, colors: :undef, hoist: :undef, icon: :undef, unicode_emoji: :undef, mentionable: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_roles_rid,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/#{role_id}",
+      { name:, permissions:, colors:, hoist:, icon:, unicode_emoji:, mentionable: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
       'X-Audit-Log-Reason': reason
     )
   end
@@ -342,6 +428,18 @@ module Discordrb::API::Server
       "#{Discordrb::API.api_base}/guilds/#{server_id}/members/#{user_id}/roles/#{role_id}",
       Authorization: token,
       'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get the amount of members who have a role
+  # https://discord.com/developers/docs/resources/guild#get-guild-roles-members-count
+  def role_member_counts(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_roles_member_counts,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/member-counts",
+      Authorization: token
     )
   end
 
@@ -601,6 +699,87 @@ module Discordrb::API::Server
       "#{Discordrb::API.api_base}/guilds/#{server_id}/bulk-ban",
       { user_ids: users, delete_message_seconds: message_seconds }.compact.to_json,
       content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get a list of all of the active scheduled events in the server.
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild
+  def list_scheduled_events(token, server_id, with_user_count: false)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events?with_user_count=#{with_user_count}",
+      Authorization: token
+    )
+  end
+
+  # Get a single scheduled event in the server.
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event
+  def get_scheduled_event(token, server_id, scheduled_event_id, with_user_count: false)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events_seid,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events/#{scheduled_event_id}?with_user_count=#{with_user_count}",
+      Authorization: token
+    )
+  end
+
+  # Get a list of subscribers for a scheduled event in the server.
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event-users
+  def get_scheduled_event_users(token, server_id, scheduled_event_id, limit: 100, with_member: false, before: nil, after: nil)
+    query = URI.encode_www_form({ limit:, with_member:, before:, after: }.compact)
+
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events_seid_users,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events/#{scheduled_event_id}/users?#{query}",
+      Authorization: token
+    )
+  end
+
+  # Create a scheduled event in the server.
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event
+  def create_scheduled_event(token, server_id, name:, privacy_level:, scheduled_start_time:, entity_type:, channel_id: nil, entity_metadata: nil, scheduled_end_time: nil, description: nil, image: nil, recurrence_rule: nil, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events,
+      server_id,
+      :post,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events",
+      { name:, privacy_level:, scheduled_start_time:, entity_type:, channel_id:, entity_metadata:, scheduled_end_time:, description:, image:, recurrence_rule: }.compact.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Update a scheduled event in the server.
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#modify-guild-scheduled-event
+  def update_scheduled_event(token, server_id, scheduled_event_id, name: :undef, image: :undef, status: :undef, entity_type: :undef, privacy_level: :undef, scheduled_end_time: :undef, scheduled_start_time: :undef, channel_id: :undef, description: :undef, entity_metadata: :undef, recurrence_rule: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events_seid,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events/#{scheduled_event_id}",
+      { name:, image:, status:, entity_type:, privacy_level:, scheduled_end_time:, scheduled_start_time:, channel_id:, description:, entity_metadata:, recurrence_rule: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Delete a scheduled event in the server.
+  # https://discord.com/developers/docs/resources/guild-scheduled-event#delete-guild-scheduled-event
+  def delete_scheduled_event(token, server_id, scheduled_event_id, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_scheduled_events_seid,
+      server_id,
+      :delete,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/scheduled-events/#{scheduled_event_id}",
       Authorization: token,
       'X-Audit-Log-Reason': reason
     )
