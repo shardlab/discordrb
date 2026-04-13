@@ -163,6 +163,7 @@ describe Discordrb::Bot do
         allow(bot).to receive(:raise_event)
         allow(Discordrb::Message).to receive(:new).and_return(message)
         allow(channel).to receive(:process_last_message_id)
+        allow(message).to receive(:server)
       end
 
       it 'raises a ChannelCreateEvent if the DM channel is uncached' do
