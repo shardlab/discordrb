@@ -148,6 +148,22 @@ module Discordrb
     # @return [Integer] a generally increasing integer that can be used to determine this message's position in a thread.
     attr_reader :position
 
+    # @return [Poll, nil] the poll that was sent with this message, or `nil`.
+    attr_reader :poll
+
+    # @return [Poll::Result, nil] the finalised results for a poll that prompted this message.
+    attr_reader :poll_result
+    alias_method :poll_results, :poll_result
+
+    # @return [Integer, nil] the ID of the application associated with this message.
+    attr_reader :application_id
+
+    # @return [MessageActivity, nil] the rich-presence activity that prompted this message.
+    attr_reader :activity
+
+    # @return [Interactions::Metadata, nil] the metadata about the interaction that prompted this message.
+    attr_reader :interaction_metadata
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -162,6 +178,7 @@ module Discordrb
       @position = data['position'] || 0
       @mention_everyone = data['mention_everyone']
       @webhook_id = data['webhook_id']&.to_i
+      @application_id = data['application_id']&.to_i
 
       @edited_timestamp = Time.parse(data['edited_timestamp']) if data['edited_timestamp']
       @edited = !@edited_timestamp.nil?
@@ -188,17 +205,21 @@ module Discordrb
       @reactions = data['reactions']&.map { |reaction| Reaction.new(reaction) } || []
       @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention) } || []
       @mention_roles = data['mention_roles']&.map(&:to_i) || []
+      @poll_result = Poll::Result.new(data['embeds'].pop, @message_reference, @bot) if @type == 46
 
       @attachments = data['attachments']&.map { |attachment| Attachment.new(attachment, self, @bot) } || []
       @embeds = data['embeds']&.map { |embed| Embed.new(embed, self) } || []
-      @components = data['components']&.map { |component| Components.from_data(component, @bot) } || []
+      @components = data['components']&.filter_map { |component| Components.from_data(component, @bot) } || []
 
       @thread = @bot.ensure_channel(data['thread']) if data['thread']
       @pinned_at = Time.parse(data['pinned_at']) if data['pinned_at']
       @call = Call.new(data['call'], @bot) if data['call']
+      @poll = Poll.new(data['poll'], self, @bot) if data['poll']
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
+      @activity = MessageActivity.new(data['activity'], @bot) if data['activity']
+      @interaction_metadata = Interactions::Metadata.new(data['interaction_metadata'], self, @bot) if data['interaction_metadata']
     end
 
     # @deprecated Please migrate to using {#creation_time} instead.
@@ -344,7 +365,7 @@ module Discordrb
 
     # @return [true, false] whether this message was sent by the current {Bot}.
     def from_bot?
-      @author&.current_bot?
+      (@author_id || @author&.id) == @bot.profile.id
     end
 
     # @return [true, false] whether this message has been sent over a webhook.
@@ -449,8 +470,7 @@ module Discordrb
     # @return [Hash<String => Array<User>>] A hash mapping the string representation of a
     #   reaction to an array of users.
     def all_reaction_users(limit: 100)
-      all_reactions = @reactions.map { |r| { r.to_s => reacted_with(r, limit: limit) } }
-      all_reactions.reduce({}, :merge)
+      @reactions.to_h { |reaction| [reaction.to_s, reacted_with(reaction, limit: limit)] }
     end
 
     # Deletes a reaction made by a user on this message.
@@ -509,16 +529,18 @@ module Discordrb
 
     # @return [Array<Components::Button>]
     def buttons
-      results = @components.collect do |component|
+      buttons = @components.flat_map do |component|
         case component
         when Components::Button
           component
-        when Components::ActionRow
+        when Components::Section
+          component.accessory if component.accessory.is_a?(Components::Button)
+        when Components::ActionRow, Components::Container
           component.buttons
         end
       end
 
-      results.flatten.compact
+      buttons.compact
     end
 
     # to_message -> self or message
@@ -563,6 +585,23 @@ module Discordrb
       reference = to_reference(type: :forward, must_exist: must_exist)
 
       @bot.channel(channel).send_message!(reference: reference, timeout: timeout, flags: flags, nonce: nonce, enforce_nonce: enforce_nonce)
+    end
+
+    # Get the formatted timestamps contained in the message content.
+    # @return [Array<TimestampMarkdown>] The formatted timestamps in the message.
+    def timestamps
+      return (@timestamps || []) if @timestamps || !@content || @content.empty?
+
+      @timestamps = []
+
+      @content.scan(/<t:(-?\d{1,13})(?::(t|T|d|D|f|F|s|S|R))?>/) do |time, style|
+        # If it's not between these values, Discord won't show it, so don't bother.
+        if (time = time.to_i).between?(-8_640_000_000_000, 8_640_000_000_000)
+          @timestamps << TimestampMarkdown.new(Time.at(time), style)
+        end
+      end
+
+      @timestamps
     end
   end
 end

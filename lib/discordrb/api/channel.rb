@@ -33,6 +33,21 @@ module Discordrb::API::Channel
     )
   end
 
+  # Modify the properties of a channel.
+  # https://discord.com/developers/docs/resources/channel#modify-channel
+  def update!(token, channel_id, name: :undef, type: :undef, position: :undef, topic: :undef, nsfw: :undef, rate_limit_per_user: :undef, bitrate: :undef, user_limit: :undef, permission_overwrites: :undef, parent_id: :undef, rtc_region: :undef, video_quality_mode: :undef, default_auto_archive_duration: :undef, flags: :undef, available_tags: :undef, default_reaction_emoji: :undef, default_thread_rate_limit_per_user: :undef, default_sort_order: :undef, default_forum_layout: :undef, archived: :undef, auto_archive_duration: :undef, locked: :undef, invitable: :undef, applied_tags: :undef, reason: nil)
+    Discordrb::API.request(
+      :channels_cid,
+      channel_id,
+      :patch,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}",
+      { name:, type:, position:, topic:, nsfw:, rate_limit_per_user:, bitrate:, user_limit:, permission_overwrites:, parent_id:, rtc_region:, video_quality_mode:, default_auto_archive_duration:, flags:, available_tags:, default_reaction_emoji:, default_thread_rate_limit_per_user:, default_sort_order:, default_forum_layout:, archived:, auto_archive_duration:, locked:, invitable:, applied_tags: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Delete a channel
   # https://discord.com/developers/docs/resources/channel#deleteclose-channel
   def delete(token, channel_id, reason = nil)
@@ -75,8 +90,8 @@ module Discordrb::API::Channel
   # https://discord.com/developers/docs/resources/channel#create-message
   # @param attachments [Array<File>, nil] Attachments to use with `attachment://` in embeds. See
   #   https://discord.com/developers/docs/resources/channel#create-message-using-attachments-within-embeds
-  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil, enforce_nonce = false)
-    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags, enforce_nonce: enforce_nonce }
+  def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil, enforce_nonce = false, poll = nil)
+    body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags, enforce_nonce: enforce_nonce, poll: poll }
     body = if attachments
              files = [*0...attachments.size].zip(attachments).to_h
              { **files, payload_json: body.to_json }
@@ -641,7 +656,7 @@ module Discordrb::API::Channel
 
   # Start a thread in a forum or media channel.
   # https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
-  def start_thread_in_forum_or_media_channel(token, channel_id, name, message, attachments = nil, rate_limit_per_user = nil, auto_archive_duration = nil, applied_tags = [], reason = nil)
+  def start_thread_in_forum_or_media_channel(token, channel_id, name, message, attachments = nil, rate_limit_per_user = nil, auto_archive_duration = nil, applied_tags = nil, reason = nil)
     body = { name: name, message: message, rate_limit_per_user: rate_limit_per_user, auto_archive_duration: auto_archive_duration, applied_tags: applied_tags }.compact
 
     body = if attachments
@@ -661,6 +676,33 @@ module Discordrb::API::Channel
       "#{Discordrb::API.api_base}/channels/#{channel_id}/threads",
       body,
       headers
+    )
+  end
+
+  # Get a list of users that have voted for a poll answer.
+  # https://discord.com/developers/docs/resources/poll#get-answer-voters
+  def get_poll_voters(token, channel_id, message_id, answer_id, limit: 100, after: nil)
+    query = URI.encode_www_form({ limit:, after: }.compact)
+
+    Discordrb::API.request(
+      :channels_cid_polls_mid_answers_aid,
+      channel_id,
+      :get,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/polls/#{message_id}/answers/#{answer_id}?#{query}",
+      Authorization: token
+    )
+  end
+
+  # End a poll created by the current user.
+  # https://discord.com/developers/docs/resources/poll#end-poll
+  def end_poll(token, channel_id, message_id)
+    Discordrb::API.request(
+      :channels_cid_polls_mid_expire,
+      channel_id,
+      :post,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/polls/#{message_id}/expire",
+      nil,
+      Authorization: token
     )
   end
 end
