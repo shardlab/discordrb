@@ -164,6 +164,9 @@ module Discordrb
     # @return [Interactions::Metadata, nil] the metadata about the interaction that prompted this message.
     attr_reader :interaction_metadata
 
+    # @return [Array<Sticker::Item>] the sticker items sent with this message.
+    attr_reader :stickers
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -218,6 +221,7 @@ module Discordrb
 
       @snapshots = data['message_snapshots']&.map { |snapshot| Snapshot.new(snapshot['message'], @bot) } || []
       @role_subscription = RoleSubscriptionData.new(data['role_subscription_data'], self, @bot) if data['role_subscription_data']
+      @stickers = (data['sticker_items'] || data['stickers'])&.map { |sticker| Sticker::Item.new(sticker, @bot) } || []
       @activity = MessageActivity.new(data['activity'], @bot) if data['activity']
       @interaction_metadata = Interactions::Metadata.new(data['interaction_metadata'], self, @bot) if data['interaction_metadata']
     end

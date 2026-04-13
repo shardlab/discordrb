@@ -116,6 +116,7 @@ module Discordrb
       @emoji = {}
       @channels = []
       @channels_by_id = {}
+      @stickers = {}
       @scheduled_events = {}
 
       update_data(data)
@@ -670,6 +671,13 @@ module Discordrb
       @members[member.id] = member
     end
 
+    # Remove a sticker from the cache
+    # @note For internal use only
+    # @!visibility private
+    def delete_sticker(sticker)
+      @stickers.delete(sticker.resolve_id)
+    end
+
     # Adds a scheduled event to the cache
     # @note For internal use only
     # @!visibility private
@@ -1196,6 +1204,47 @@ module Discordrb
       @scheduled_events[scheduled_event.id] = scheduled_event
     end
 
+    # Get all of the stickers available in the server.
+    # @param bypass_cache [true, false] Whether to re-fetch all stickers via a network request.
+    # @return [Array<Sticker>] The stickers that are from the server.
+    def stickers(bypass_cache: false)
+      process_stickers(JSON.parse(API::Server.list_stickers(@bot.token, @id))) if bypass_cache
+
+      @stickers.values
+    end
+
+    # Get a single sticker available in the server.
+    # @param sticker_id [Integer, String] The ID of the sticker to resolve.
+    # @param request [true, false] Whether to request the sticker from Discord if it isn't cached.
+    # @return [Sticker, nil] The sticker that was identified by its ID, or `nil` if it couldn't be found
+    def sticker(sticker_id, request: false)
+      id = sticker_id.resolve_id
+      sticker = @stickers[id]
+      return sticker if sticker || !request
+
+      response = JSON.parse(API::Server.get_sticker(@bot.token, @id, id))
+      Sticker.new(response, @bot, self).tap { |sticker| cache_sticker(sticker) }
+    rescue StandardError
+      nil
+    end
+
+    # Create a single sticker in the server.
+    # @param name [String] The 2-30 character name of the sticker.
+    # @param file [File, #read] The file of the sticker to create.
+    # @param tags [String, Array<String>] The tags of the sticker to create.
+    # @param description [String, nil] The description of the sticker to create.
+    # @param reason [String, nil] The audit log reason to show for creating the sticker.
+    # @return [Sticker] The sticker that was created.
+    def create_sticker(name:, file:, tags:, description: nil, reason: nil)
+      raise ArgumentError, 'the `file:` parameter must respond to #read' unless file.respond_to?(:read)
+
+      description ||= ''
+      tags = tags.join(', ') if tags.is_a?(Array)
+      data = API::Server.create_sticker(@bot.token, @id, name:, file:, tags:, description:, reason:)
+      sticker = Sticker.new(JSON.parse(data), @bot, self)
+      @stickers[sticker.id] = sticker
+    end
+
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
     # @note For internal use only
     # @!visibility private
@@ -1376,6 +1425,7 @@ module Discordrb
       process_presences(new_data['presences']) if new_data['presences']
       process_voice_states(new_data['voice_states']) if new_data['voice_states']
       process_active_threads(new_data['threads']) if new_data['threads']
+      process_stickers(new_data['stickers']) if new_data['stickers']
       process_incident_actions(new_data['incidents_data']) if new_data.key?('incidents_data')
       process_scheduled_events(new_data['guild_scheduled_events']) if new_data['guild_scheduled_events']
     end
@@ -1502,6 +1552,17 @@ module Discordrb
         thread = @bot.ensure_channel(element, self)
         @channels << thread
         @channels_by_id[thread.id] = thread
+      end
+    end
+
+    def process_stickers(stickers)
+      return unless stickers
+
+      @stickers = {}
+
+      stickers.each do |element|
+        sticker = Sticker.new(element, @bot, self)
+        @stickers[sticker.id] = sticker
       end
     end
 

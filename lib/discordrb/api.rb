@@ -273,6 +273,22 @@ module Discordrb::API
     "#{cdn_url}/guild-tag-badges/#{server_id}/#{badge_id}.#{format}"
   end
 
+  # make a sticker pack banner URL from a sticker pack banner ID.
+  def sticker_pack_banner_url(banner_id, format = 'webp', size = nil)
+    "#{cdn_url}/app-assets/710982414301790216/store/#{banner_id}.#{format}#{"?size=#{size}" if size}"
+  end
+
+  # make a sticker URL from a sticker ID.
+  def sticker_url(sticker_id, format)
+    domain = if format.to_s == 'gif'
+               'https://media.discordapp.net'
+             else
+               cdn_url
+             end
+
+    "#{domain}/stickers/#{sticker_id}.#{format}"
+  end
+
   # make a scheduled event cover URL from a scheduled event ID and a cover ID.
   def scheduled_event_cover_url(scheduled_event_id, cover_id, format = 'webp', size = nil)
     "#{cdn_url}/guild-events/#{scheduled_event_id}/#{cover_id}.#{format}#{"?size=#{size}" if size}"
@@ -345,6 +361,42 @@ module Discordrb::API
       "#{api_base}/voice/regions",
       Authorization: token,
       content_type: :json
+    )
+  end
+
+  # Get a single sticker. This can resolve any non-deleted sticker.
+  # https://discord.com/developers/docs/resources/sticker#get-sticker
+  def get_sticker(token, sticker_id)
+    request(
+      :stickers_sid,
+      sticker_id,
+      :get,
+      "#{api_base}/stickers/#{sticker_id}",
+      Authorization: token
+    )
+  end
+
+  # Get all of the sticker packs that the bot can use.
+  # https://discord.com/developers/docs/resources/sticker#list-sticker-packs
+  def list_sticker_packs(token)
+    request(
+      :sticker_packs,
+      nil,
+      :get,
+      "#{api_base}/sticker-packs",
+      Authorization: token
+    )
+  end
+
+  # Get a single sticker pack by its ID.
+  # https://discord.com/developers/docs/resources/sticker#get-sticker-pack
+  def get_sticker_pack(token, pack_id)
+    request(
+      :sticker_packs_pid,
+      pack_id,
+      :get,
+      "#{api_base}/sticker-packs/#{pack_id}",
+      Authorization: token
     )
   end
 end

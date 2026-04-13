@@ -422,15 +422,17 @@ module Discordrb
     # @param nonce [String, nil] A optional nonce in order to verify that a message was sent. Maximum of twenty-five characters.
     # @param enforce_nonce [true, false] Whether the nonce should be enforced and used for message de-duplication.
     # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to this message.
+    # @param stickers [Array<Integer, String, Sticker>, Integer, String, Sticker, nil] The stickers that should be sent with the message; max of 3.
     # @return [Message] The message that was sent.
-    def send_message(channel, content, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0, nonce = nil, enforce_nonce = false, poll = nil)
+    def send_message(channel, content, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0, nonce = nil, enforce_nonce = false, poll = nil, stickers = nil)
       channel = channel.resolve_id
       debug("Sending message to #{channel} with content '#{content}'")
       allowed_mentions = { parse: [] } if allowed_mentions == false
       message_reference = { message_id: message_reference.resolve_id } if message_reference.respond_to?(:resolve_id)
       embeds = (embeds.instance_of?(Array) ? embeds.map(&:to_hash) : [embeds&.to_hash]).compact
+      stickers = (stickers.instance_of?(Array) ? stickers.map(&:resolve_id) : [stickers.resolve_id]) if stickers
 
-      response = API::Channel.create_message(token, channel, content, tts, embeds, nonce, attachments, allowed_mentions&.to_hash, message_reference, components, flags, enforce_nonce, poll&.to_h)
+      response = API::Channel.create_message(token, channel, content, tts, embeds, nonce, attachments, allowed_mentions&.to_hash, message_reference, components, flags, enforce_nonce, poll&.to_h, stickers)
       Message.new(JSON.parse(response), self)
     end
 
@@ -449,11 +451,12 @@ module Discordrb
     # @param nonce [String, nil] A optional nonce in order to verify that a message was sent. Maximum of twenty-five characters.
     # @param enforce_nonce [true, false] Whether the nonce should be enforced and used for message de-duplication.
     # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to this message.
-    def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0, nonce = nil, enforce_nonce = false, poll = nil)
+    # @param stickers [Array<Integer, String, Sticker>, Integer, String, Sticker, nil] The stickers that should be sent with the message; max of 3.
+    def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0, nonce = nil, enforce_nonce = false, poll = nil, stickers = nil)
       Thread.new do
         Thread.current[:discordrb_name] = "#{@current_thread}-temp-msg"
 
-        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components, flags, nonce, enforce_nonce, poll)
+        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components, flags, nonce, enforce_nonce, poll, stickers)
         sleep(timeout)
         message.delete
       end
@@ -1644,6 +1647,11 @@ module Discordrb
           event = ServerEmojiUpdateEvent.new(server, old_emoji_data[e], new_emoji_data[e], self)
           raise_event(event)
         end
+      when :GUILD_STICKERS_UPDATE
+        @servers[data['guild_id'].to_i]&.__send__(:process_stickers, data['stickers'])
+
+        event = ServerStickersUpdateEvent.new(data, self)
+        raise_event(event)
       when :APPLICATION_COMMAND_PERMISSIONS_UPDATE
         event = ApplicationCommandPermissionsUpdateEvent.new(data, self)
 

@@ -611,10 +611,11 @@ module Discordrb
     # @param nonce [nil, String, Integer, false] The 25 character nonce that should be used when sending this message.
     # @param enforce_nonce [true, false] Whether the provided nonce should be enforced and used for message de-duplication.
     # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to the message.
+    # @param stickers [Array<Integer, String, Sticker>, Integer, String, Sticker, nil] The stickers to send with the message; max of 3.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the builder overwrite method data.
     # @yieldparam view [Webhooks::View] An optional component builder. Arguments passed to the builder overwrite method data.
     # @return [Message, nil] The resulting message that was created, or `nil` if the `timeout` parameter was set to a non `nil` value.
-    def send_message!(content: '', timeout: nil, tts: false, embeds: [], attachments: nil, allowed_mentions: nil, reference: nil, components: nil, flags: 0, has_components: false, nonce: nil, enforce_nonce: false, poll: nil)
+    def send_message!(content: '', timeout: nil, tts: false, embeds: [], attachments: nil, allowed_mentions: nil, reference: nil, components: nil, flags: 0, has_components: false, nonce: nil, enforce_nonce: false, poll: nil, stickers: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
@@ -631,9 +632,9 @@ module Discordrb
       builder = builder.to_json_hash
 
       if timeout
-        @bot.send_temporary_message(@id, builder[:content], timeout, builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce, builder[:poll])
+        @bot.send_temporary_message(@id, builder[:content], timeout, builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce, builder[:poll], stickers)
       else
-        @bot.send_message(@id, builder[:content], builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce, builder[:poll])
+        @bot.send_message(@id, builder[:content], builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce, builder[:poll], stickers)
       end
     end
 
@@ -995,12 +996,12 @@ module Discordrb
     # @param name [String] The name of the forum post to create.
     # @param auto_archive_duration [Integer, nil] How long before the post is automatically archived.
     # @param rate_limit_per_user [Integer, nil] The slowmode rate of the forum post to create.
-    # @param tags [Array<#resolve_id>, nil] The tags of the forum channel to apply onto the forum post.
+    # @param tags [Array<ChannelTag, Integer, String>, nil] The tags of the forum channel to apply onto the forum post.
     # @param content [String, nil] The content of the forum post's starter message.
     # @param embeds [Array<Hash, Webhooks::Embed>, nil] The embeds that should be attached to the forum post's starter message.
     # @param allowed_mentions [Hash, Discordrb::AllowedMentions, nil] Mentions that are allowed to ping on this forum post's starter message.
     # @param components [Webhooks::View, Array<#to_h>, nil] The interaction components to associate with this forum post's starter message.
-    # @param stickers [Array<#resolve_id>, nil] The stickers to include in the forum post's starter message.
+    # @param stickers [Array<Sticker, Integer, String>, Sticker, Integer, String, nil] The stickers to include in the forum post's starter message.
     # @param attachments [Array<File>, nil] Files that can be referenced in embeds and components via `attachment://file.png`.
     # @param flags [Integer, Symbol, Array<Symbol, Integer>, nil] The flags to set on the forum post's starter message. Currently only `:suppress_embeds` (1 << 2), `:suppress_notifications` (1 << 12), and `:uikit_components` (1 << 15) can be set.
     # @param has_components [true, false] Whether the starter message for this forum post includes any V2 components. Enabling this disables sending content and embeds.
@@ -1022,7 +1023,7 @@ module Discordrb
       flags |= (1 << 15) if has_components
       builder = builder.to_json_hash
 
-      message = { content: builder[:content], embeds: builder[:embeds], allowed_mentions: builder[:allowed_mentions], components: components&.to_a || view.to_a, sticker_ids: stickers&.map(&:resolve_id), flags: flags }
+      message = { content: builder[:content], embeds: builder[:embeds], allowed_mentions: builder[:allowed_mentions], components: components&.to_a || view.to_a, sticker_ids: stickers ? Array(stickers)&.map(&:resolve_id) : stickers, flags: flags }
       response = JSON.parse(API::Channel.start_thread_in_forum_or_media_channel(@bot.token, @id, name, message.compact, attachments, rate_limit_per_user, auto_archive_duration, tags&.map(&:resolve_id), reason))
 
       Message.new(response['message'].merge!('channel_id' => response['id'], 'thread' => response), @bot)
