@@ -16,6 +16,7 @@ require 'discordrb/events/reactions'
 require 'discordrb/events/interactions'
 require 'discordrb/events/integrations'
 require 'discordrb/events/scheduled_events'
+require 'discordrb/events/polls'
 
 require 'discordrb/await'
 
@@ -356,6 +357,20 @@ module Discordrb
     # @return [UserBanEventHandler] the event handler that was registered.
     def user_ban(attributes = {}, &block)
       register_event(UserBanEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an audit log entry is created in a server.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server Matches the server the entry was created in.
+    # @option attributes [String, Symbol, Integer] :action Matches the type of the entry.
+    # @option attributes [String, Regexp] :reason Matches the reason associated with the entry.
+    # @option attributes [String, Integer, User, Member, Recipient] :user Matches the user or bot that made the changes.
+    # @option attributes [String, Integer, #resolve_id] :target Matches the ID of the affected entity.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [AuditLogEntryCreateEvent] The event that was raised.
+    # @return [AuditLogEntryCreateEventHandler] the event handler that was registered.
+    def audit_log_entry(attributes = {}, &block)
+      register_event(AuditLogEntryCreateEvent, attributes, block)
     end
 
     # This **event** is raised when a user is unbanned from a server.
@@ -760,6 +775,34 @@ module Discordrb
     # @return [ApplicationCommandPermissionsUpdateEventHandler] The event handler that was registered.
     def application_command_permissions_update(attributes = {}, &block)
       register_event(ApplicationCommandPermissionsUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a user votes on a poll.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, User, Member] :user A user to match against.
+    # @option attributes [String, Integer, Channel] :channel A channel to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Message] :message A message to match against.
+    # @option attributes [String, Integer, Answer] :answer A poll answer to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [PollVoteAddEvent] The event that was raised.
+    # @return [PollVoteAddEventHandler] The event handler that was registered.
+    def poll_vote_add(attributes = {}, &block)
+      register_event(PollVoteAddEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever a user removes their vote on a poll.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, User, Member] :user A user to match against.
+    # @option attributes [String, Integer, Channel] :channel A channel to match against.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Integer, Message] :message A message to match against.
+    # @option attributes [String, Integer, Answer] :answer A poll answer to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [PollVoteRemoveEvent] The event that was raised.
+    # @return [PollVoteRemoveEventHandler] The event handler that was registered.
+    def poll_vote_remove(attributes = {}, &block)
+      register_event(PollVoteRemoveEvent, attributes, block)
     end
 
     # This **event** is raised when a scheduled event is created.
