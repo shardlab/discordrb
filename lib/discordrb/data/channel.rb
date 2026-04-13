@@ -534,6 +534,40 @@ module Discordrb
       @rate_limit_per_user != 0
     end
 
+    # Get the stage instance for a stage channel.
+    # @param request [true, false] Whether to make an API call to fetch the stage instance if it isn't cached.
+    # @return [StageInstance, nil] The stage instance for this stage channel, or `nil` if one couldn't be found.
+    def stage_instance(request: false)
+      raise 'Channel must be a stage channel' unless stage?
+      return @stage_instance if @stage_instance || !request
+
+      instance = JSON.parse(API::Channel.get_stage_instance(@bot.token, @id))
+      process_stage_instance(StageInstance.new(instance, self, @bot))
+    rescue StandardError
+      nil
+    end
+
+    # Create a stage instance in a stage channel.
+    # @param topic [String] The 1-120 character topic of the stage instance.
+    # @param mention_everyone [true, false] Whether to ping @everyone when the stage instance starts.
+    # @param scheduled_event [ScheduledEvent, nil] The scheduled event to associate with the stage instance.
+    # @param reason [String, nil] The reason to show in the server's audit log for creating the stage instance.
+    # @return [StageInstance] The stage instance that was created.
+    def create_stage_instance(topic:, mention_everyone:, scheduled_event: nil, reason: nil)
+      raise 'Channel must be a stage channel' unless stage?
+
+      options = {
+        topic: topic,
+        reason: reason,
+        privacy_level: 2,
+        send_start_notification: mention_everyone,
+        guild_scheduled_event_id: scheduled_event&.resolve_id || :undef
+      }
+
+      instance = JSON.parse(API::Channel.create_stage_instance(@bot.token, @id, **options))
+      process_stage_instance(StageInstance.new(instance, self, @bot))
+    end
+
     # Sends a message to this channel.
     # @param content [String] The content to send. Should not be longer than 2000 characters or it will result in an error.
     # @param tts [true, false] Whether or not this message should be sent using Discord text-to-speech.
@@ -1227,6 +1261,14 @@ module Discordrb
     # @!visibility private
     def process_last_message_id(id)
       @last_message_id = id
+    end
+
+    # Set the stage instance of a channel.
+    # @param instance [StageInstance, nil] the stage instance of the channel
+    # @note For internal use only
+    # @!visibility private
+    def process_stage_instance(instance)
+      @stage_instance = instance
     end
 
     # Set the available tags of a channel.
