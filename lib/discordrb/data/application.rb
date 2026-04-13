@@ -143,6 +143,7 @@ module Discordrb
 
     # Delete an integration types config for the application.
     # @param type [Integer, String] The type of the integration type to remove.
+    # @return [nil]
     def delete_integration_type(type)
       new_data = @integration_types.dup.tap { |i| i.delete(type.to_i) }
       modify(integration_types: collect_integration_types(new_data))
@@ -152,6 +153,7 @@ module Discordrb
     # @param type [Integer, String] The type of the integration type.
     # @param scopes [Array<String, Symbol>, nil] The default Oauth scopes for the config.
     # @param permissions [Permissions, String, Integer, nil] The default permissions for the config.
+    # @return [nil]
     def add_integration_type(type:, scopes: nil, permissions: nil)
       permissions = permisisons.bits if permissions.respond_to?(:bits)
       new_data = @integration_types.dup
@@ -167,7 +169,7 @@ module Discordrb
     # Get the integration types config for when the application has been installed to a user.
     # @return [InstallParams, nil] The default install params for when the application's is installed to a user.
     def user_integration_type
-      @integration_type[1]
+      @integration_types[1]
     end
 
     # Get the integration types config for when the application has been installed in a server.
@@ -317,7 +319,7 @@ module Discordrb
       @interactions_endpoint_url = new_data['interactions_endpoint_url']
       @role_connections_verification_url = new_data['role_connections_verification_url']
       @webhook_events_url = new_data['event_webhooks_url']
-      @webhook_events_status = new_data['event_webhooks_status']
+      @webhook_events_status = new_data['event_webhooks_status'] || 1
 
       @webhook_event_types = new_data['event_webhooks_types'] || []
       @tags = new_data['tags'] || []
