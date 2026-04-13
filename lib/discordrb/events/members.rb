@@ -98,7 +98,7 @@ module Discordrb::Events
     # @!visibility private
     # @note Override init_user to account for the deleted user on the server
     def init_user(data, bot)
-      @user = Discordrb::User.new(data['user'], bot)
+      @user = bot.ensure_user(data['user'], true)
     end
 
     # @return [User] the user in question.

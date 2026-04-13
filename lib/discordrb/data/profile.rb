@@ -52,12 +52,10 @@ module Discordrb
       @bot.application.modify(description: bio)
     end
 
-    # Updates the cached profile data with the new one.
-    # @note For internal use only.
     # @!visibility private
     def update_data(new_data)
-      @username = new_data['username']
-      @avatar_id = new_data['avatar']
+      super
+
       @banner_id = new_data['banner']
     end
 

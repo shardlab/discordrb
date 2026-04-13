@@ -219,7 +219,7 @@ module Discordrb
     def users(limit: 100, member: false)
       get_users = proc do |fetch_limit, after = nil|
         response = JSON.parse(API::Server.get_scheduled_event_users(@bot.token, @server_id, @id, limit: fetch_limit, with_member: member, after: after))
-        response.map { |data| data['member'] ? Member.new(data['member'], server, @bot).tap { |member| server&.cache_member(member) } : User.new(data['user'], @bot) }
+        response.map { |data| data['member'] ? Member.new(data['member'], server, @bot).tap { |member| server&.cache_member(member) } : @bot.ensure_user(data['user'], true) }
       end
 
       # Can be done without pagination.
