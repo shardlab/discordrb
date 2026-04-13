@@ -251,6 +251,32 @@
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#poll=-instance_method" title="#poll= (instance method)">#<strong>poll</strong>  &#x21d2; Poll, ... </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The poll attached to this message.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#tts-instance_method" title="#tts (instance method)">#<strong>tts</strong>  &#x21d2; true, false </a>
     
 
@@ -362,7 +388,32 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(content: &#39;&#39;, username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil)  &#x21d2; Builder </a>
+      <a href="#add_poll-instance_method" title="#add_poll (instance method)">#<strong>add_poll</strong>(poll = nil, **kwargs) {|poll| ... } &#x21d2; Poll::Builder, Poll </a>
+    
+
+    
+      (also: #poll)
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Convenience method to add a poll using a builder pattern.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(content: &#39;&#39;, username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil, poll: nil)  &#x21d2; Builder </a>
     
 
     
@@ -439,7 +490,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(content: &#39;&#39;, username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Webhooks::Builder (class)">Builder</a></span></tt> 
+    #<strong>initialize</strong>(content: &#39;&#39;, username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil, poll: nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Discordrb::Webhooks::Builder (class)">Builder</a></span></tt> 
   
 
   
@@ -469,12 +520,13 @@
 13
 14
 15
-16</pre>
+16
+17</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 8</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>username:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>avatar_url:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>file:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>username:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>avatar_url:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>tts:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>file:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>embeds:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>allowed_mentions:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>poll:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@content</span> <span class='op'>=</span> <span class='id identifier rubyid_content'>content</span>
   <span class='ivar'>@username</span> <span class='op'>=</span> <span class='id identifier rubyid_username'>username</span>
   <span class='ivar'>@avatar_url</span> <span class='op'>=</span> <span class='id identifier rubyid_avatar_url'>avatar_url</span>
@@ -482,6 +534,7 @@
   <span class='ivar'>@file</span> <span class='op'>=</span> <span class='id identifier rubyid_file'>file</span>
   <span class='ivar'>@embeds</span> <span class='op'>=</span> <span class='id identifier rubyid_embeds'>embeds</span>
   <span class='ivar'>@allowed_mentions</span> <span class='op'>=</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span>
+  <span class='ivar'>@poll</span> <span class='op'>=</span> <span class='id identifier rubyid_poll'>poll</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -544,12 +597,12 @@
       <pre class="lines">
 
 
-76
-77
-78</pre>
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 76</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 95</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_allowed_mentions'>allowed_mentions</span>
   <span class='ivar'>@allowed_mentions</span>
@@ -604,12 +657,12 @@ settings will be used instead.</p>
       <pre class="lines">
 
 
-30
 31
-32</pre>
+32
+33</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_avatar_url'>avatar_url</span>
   <span class='ivar'>@avatar_url</span>
@@ -663,12 +716,12 @@ settings will be used instead.</p>
       <pre class="lines">
 
 
-20
 21
-22</pre>
+22
+23</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 20</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 21</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_content'>content</span>
   <span class='ivar'>@content</span>
@@ -722,12 +775,12 @@ settings will be used instead.</p>
       <pre class="lines">
 
 
-72
-73
-74</pre>
+91
+92
+93</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 72</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 91</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_embeds'>embeds</span>
   <span class='ivar'>@embeds</span>
@@ -781,15 +834,81 @@ settings will be used instead.</p>
       <pre class="lines">
 
 
-69
-70
-71</pre>
+88
+89
+90</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 69</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 88</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_file'>file</span>
   <span class='ivar'>@file</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="poll-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="poll=-instance_method">
+  
+    #<strong>poll=</strong>(value)  &#x21d2; <tt><span class='object_link'><a href="../Poll.html" title="Discordrb::Poll (class)">Poll</a></span></tt>, ... 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns The poll attached to this message.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Poll.html" title="Discordrb::Poll (class)">Poll</a></span></tt>, <tt><span class='object_link'><a href="../Poll/Builder.html" title="Discordrb::Poll::Builder (class)">Poll::Builder</a></span></tt>, <tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The poll attached to this message.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="https://discord.com/developers/docs/resources/poll#poll-create-request-object" target="_parent" title="https://discord.com/developers/docs/resources/poll#poll-create-request-object">https://discord.com/developers/docs/resources/poll#poll-create-request-object</a></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+99
+100
+101</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 99</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_poll='>poll=</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='ivar'>@poll</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -840,12 +959,12 @@ settings will be used instead.</p>
       <pre class="lines">
 
 
-34
 35
-36</pre>
+36
+37</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 34</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_tts'>tts</span>
   <span class='ivar'>@tts</span>
@@ -900,12 +1019,12 @@ will be used instead.</p>
       <pre class="lines">
 
 
-25
 26
-27</pre>
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_username'>username</span>
   <span class='ivar'>@username</span>
@@ -979,14 +1098,14 @@ will be used instead.</p>
       <pre class="lines">
 
 
-47
 48
 49
 50
-51</pre>
+51
+52</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='op'>&lt;&lt;</span><span class='lparen'>(</span><span class='id identifier rubyid_embed'>embed</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Embeds and files are mutually exclusive!</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='ivar'>@file</span>
@@ -1088,21 +1207,137 @@ will be used instead.</p>
       <pre class="lines">
 
 
-61
 62
 63
 64
 65
-66</pre>
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 61</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 62</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_embed'>add_embed</span><span class='lparen'>(</span><span class='id identifier rubyid_embed'>embed</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_embed'>embed</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Embed.html" title="Discordrb::Webhooks::Embed (class)">Embed</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Embed.html#initialize-instance_method" title="Discordrb::Webhooks::Embed#initialize (method)">new</a></span></span>
   <span class='kw'>yield</span><span class='lparen'>(</span><span class='id identifier rubyid_embed'>embed</span><span class='rparen'>)</span>
   <span class='kw'>self</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_embed'>embed</span>
   <span class='id identifier rubyid_embed'>embed</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="add_poll-instance_method">
+  
+    #<strong>add_poll</strong>(poll = nil, **kwargs) {|poll| ... } &#x21d2; <tt><span class='object_link'><a href="../Poll/Builder.html" title="Discordrb::Poll::Builder (class)">Poll::Builder</a></span></tt>, <tt><span class='object_link'><a href="../Poll.html" title="Discordrb::Poll (class)">Poll</a></span></tt> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='poll-instance_method'>poll</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Convenience method to add a poll using a builder pattern</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'><p>Add a poll to a message</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_builder'>builder</span><span class='period'>.</span><span class='id identifier rubyid_poll'>poll</span><span class='lparen'>(</span><span class='label'>question:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Best Fruit?</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>duration:</span> <span class='int'>48</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_poll'>poll</span><span class='op'>|</span>
+  <span class='id identifier rubyid_poll'>poll</span><span class='period'>.</span><span class='id identifier rubyid_answer'>answer</span><span class='lparen'>(</span><span class='label'>text:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Apple</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>emoji:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>🍎</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_poll'>poll</span><span class='period'>.</span><span class='id identifier rubyid_answer'>answer</span><span class='lparen'>(</span><span class='label'>text:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Orange</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>emoji:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>🍊</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_poll'>poll</span><span class='period'>.</span><span class='id identifier rubyid_answer'>answer</span><span class='lparen'>(</span><span class='label'>text:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Pomelo</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>emoji:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>🍈</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>poll</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Poll/Builder.html" title="Discordrb::Poll::Builder (class)">Poll::Builder</a></span></tt>, <tt><span class='object_link'><a href="../Poll.html" title="Discordrb::Poll (class)">Poll</a></span></tt>, <tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The poll to start the building process with, or nil if one should be created anew.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="#poll-instance_method" title="Discordrb::Webhooks::Builder#poll (method)">poll</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Poll/Builder.html" title="Discordrb::Poll::Builder (class)">Poll::Builder</a></span></tt>, <tt><span class='object_link'><a href="../Poll.html" title="Discordrb::Poll (class)">Poll</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The created poll.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+78
+79
+80
+81
+82
+83</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 78</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_add_poll'>add_poll</span><span class='lparen'>(</span><span class='id identifier rubyid_poll'>poll</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_kwargs'>kwargs</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_poll'>poll</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Poll.html" title="Discordrb::Poll (class)">Poll</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Poll/Builder.html" title="Discordrb::Poll::Builder (class)">Builder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Poll/Builder.html#initialize-instance_method" title="Discordrb::Poll::Builder#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_kwargs'>kwargs</span><span class='rparen'>)</span>
+  <span class='kw'>yield</span><span class='lparen'>(</span><span class='id identifier rubyid_poll'>poll</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+  <span class='ivar'>@poll</span> <span class='op'>=</span> <span class='id identifier rubyid_poll'>poll</span>
+  <span class='id identifier rubyid_poll'>poll</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1151,19 +1386,20 @@ will be used instead.</p>
       <pre class="lines">
 
 
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88</pre>
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 79</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 102</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_json_hash'>to_json_hash</span>
   <span class='lbrace'>{</span>
@@ -1172,7 +1408,8 @@ will be used instead.</p>
     <span class='label'>avatar_url:</span> <span class='ivar'>@avatar_url</span><span class='comma'>,</span>
     <span class='label'>tts:</span> <span class='ivar'>@tts</span><span class='comma'>,</span>
     <span class='label'>embeds:</span> <span class='ivar'>@embeds</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_hash</span><span class='rparen'>)</span><span class='comma'>,</span>
-    <span class='label'>allowed_mentions:</span> <span class='ivar'>@allowed_mentions</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_hash'>to_hash</span>
+    <span class='label'>allowed_mentions:</span> <span class='ivar'>@allowed_mentions</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_hash'>to_hash</span><span class='comma'>,</span>
+    <span class='label'>poll:</span> <span class='ivar'>@poll</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_h'>to_h</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1222,19 +1459,19 @@ will be used instead.</p>
       <pre class="lines">
 
 
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100</pre>
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 91</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/webhooks/builder.rb', line 115</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_multipart_hash'>to_multipart_hash</span>
   <span class='lbrace'>{</span>
@@ -1256,7 +1493,7 @@ will be used instead.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Apr 12 23:31:33 2026 by
+  Generated on Mon Apr 13 00:05:50 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.39 (ruby-3.3.11).
 </div>
