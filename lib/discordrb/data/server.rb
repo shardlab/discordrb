@@ -9,16 +9,16 @@ module Discordrb
     # @return [String] the hexadecimal ID used to identify this server's icon.
     attr_reader :icon_id
 
-    # Utility function to get the URL for the icon image
-    # @return [String] the URL to the icon image
-    def icon_url
-      return nil unless @icon_id
-
-      API.icon_url(@id, @icon_id)
+    # Utility method to get a server's icon URL.
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg`
+    #   or `png` to override this.
+    # @return [String, nil] The URL to the server's icon, or `nil` if the server hasn't set an icon.
+    def icon_url(format: 'webp')
+      API.icon_url(@id, @icon_id, format) if @icon_id
     end
   end
 
-  # A server on Discord
+  # An isolated collection of channels and member's on Discord.
   class Server
     include IDObject
     include ServerAttributes
@@ -28,9 +28,6 @@ module Discordrb
 
     # @return [Array<Channel>] an array of all the channels (text and voice) on this server.
     attr_reader :channels
-
-    # @return [Array<Role>] an array of all the roles created on this server.
-    attr_reader :roles
 
     # @return [Hash<Integer => Emoji>] a hash of all the emoji available on this server.
     attr_reader :emoji
@@ -53,13 +50,62 @@ module Discordrb
     # @return [Hash<Integer => VoiceState>] the hash (user ID => voice state) of voice states of members on this server
     attr_reader :voice_states
 
-    # The server's amount of Nitro boosters.
-    # @return [Integer] the amount of boosters, 0 if no one has boosted.
+    # @return [Integer] the server's amount of Nitro boosters, 0 if no one has boosted.
     attr_reader :booster_count
 
-    # The server's Nitro boost level.
-    # @return [Integer] the boost level, 0 if no level.
+    # @return [Integer] the server's Nitro boost level, 0 if no level.
     attr_reader :boost_level
+
+    # @return [String] the preferred locale of the server. Used in server discovery and notices from Discord.
+    attr_reader :locale
+
+    # @return [String, nil] the description of the server. Shown in server discovery and external embeds.
+    attr_reader :description
+
+    # @return [String, nil] the hash of the server's banner image or GIF.
+    attr_reader :banner_id
+
+    # @return [String, nil] the hash of the server's invite splash image.
+    attr_reader :splash_id
+    alias_method :splash_hash, :splash_id
+
+    # @return [Integer] the maximum number of members that can join the server.
+    attr_reader :max_member_count
+
+    # @return [String, nil] the code of the server's custom vanity invite link.
+    attr_reader :vanity_invite_code
+
+    # @return [Integer, nil] the maximum number of members that can concurrently be online in the server.
+    #   Always set to `nil` except for the largest of servers.
+    attr_reader :max_presence_count
+
+    # @return [String, nil] the hash of the server's discovery splash image.
+    attr_reader :discovery_splash_id
+
+    # @return [Integer] the flags for the server's designated system channel.
+    attr_reader :system_channel_flags
+
+    # @return [Integer] the maximum number of members that can concurrently watch a stream in a video channel.
+    attr_reader :max_video_channel_members
+
+    # @return [Integer] the maximum number of members that can concurrently watch a stream in a stage channel.
+    attr_reader :max_stage_video_channel_members
+
+    # @return [true, false] whether or not the server has the boost progress bar enabled.
+    attr_reader :boost_progress_bar
+    alias_method :boost_progress_bar?, :boost_progress_bar
+
+    # @return [Time, nil] the time at when the last raid was detected on the server.
+    attr_reader :raid_detected_at
+
+    # @return [Time, nil] the time at when DM spam was last detected on the server.
+    attr_reader :dm_spam_detected_at
+
+    # @return [Time, nil] the time at when invites will be re-enabled on the server.
+    attr_reader :invites_disabled_until
+
+    # @return [Time, nil] the time at when non-friend direct messages will be re-enabled on the server.
+    attr_reader :dms_disabled_until
 
     # @!visibility private
     def initialize(data, bot)
@@ -70,6 +116,7 @@ module Discordrb
       @emoji = {}
       @channels = []
       @channels_by_id = {}
+      @scheduled_events = {}
 
       update_data(data)
 
@@ -101,15 +148,33 @@ module Discordrb
 
     # @return [Role] The @everyone role on this server
     def everyone_role
-      role(@id)
+      @roles[@id]
+    end
+
+    # @return [Array<Role>] an array of all the roles available on this server.
+    def roles
+      @roles.values
     end
 
     # Gets a role on this server based on its ID.
     # @param id [String, Integer] The role ID to look for.
     # @return [Role, nil] The role identified by the ID, or `nil` if it couldn't be found.
     def role(id)
-      id = id.resolve_id
-      @roles.find { |e| e.id == id }
+      @roles[id.resolve_id]
+    end
+
+    # Get a mapping of role IDs to the amount of members who have the role.
+    # @example Print out the name of the roles in a server followed by the role's member count.
+    #  server = bot.server(81384788765712384)
+    #
+    #  server.role_member_counts.each do |id, count|
+    #    puts("Name: #{server.role(id).name}, Count: #{count}")
+    #  end
+    # @return [Hash<Integer => Integer>] A hash mapping role IDs to their respective member counts.
+    def role_member_counts
+      response = JSON.parse(API::Server.role_member_counts(@bot.token, @id))
+      response.transform_keys!(&:to_i)
+      response.tap { |hash| hash[@id] = @member_count }
     end
 
     # Gets a member on this server based on user ID
@@ -158,7 +223,8 @@ module Discordrb
       member(@bot.profile)
     end
 
-    # @return [Array<Integration>] an array of all the integrations connected to this server.
+    # @return [Array<Integration>] an array of the integrations in this server.
+    # @note If the server has more than 50 integrations, they cannot be accessed.
     def integrations
       integration = JSON.parse(API::Server.integrations(@bot.token, @id))
       integration.map { |element| Integration.new(element, @bot, self) }
@@ -178,11 +244,15 @@ module Discordrb
       AuditLogs.new(self, @bot, JSON.parse(API::Server.audit_logs(@bot.token, @id, limit, user, action, before)))
     end
 
-    # Cache @widget
     # @note For internal use only
     # @!visibility private
-    def cache_widget_data
-      data = JSON.parse(API::Server.widget(@bot.token, @id))
+    def cache_widget_data(data = nil)
+      data ||= if bot.permission?(:manage_server)
+                 JSON.parse(API::Server.widget(@bot.token, @id))
+               else
+                 return update_data(nil)
+               end
+
       @widget_enabled = data['enabled']
       @widget_channel_id = data['channel_id']
     end
@@ -205,6 +275,7 @@ module Discordrb
 
     # Sets whether this server's widget is enabled
     # @param value [true, false]
+    # @deprecated Please migrate to using {#modify} with the `widget_enabled:` parameter.
     def widget_enabled=(value)
       modify_widget(value, widget_channel)
     end
@@ -213,6 +284,7 @@ module Discordrb
     # Sets whether this server's widget is enabled
     # @param value [true, false]
     # @param reason [String, nil] the reason to be shown in the audit log for this action
+    # @deprecated Please migrate to using {#modify} with the `widget_enabled:` parameter.
     def set_widget_enabled(value, reason = nil)
       modify_widget(value, widget_channel, reason)
     end
@@ -220,6 +292,7 @@ module Discordrb
 
     # Changes the channel on the server's widget
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
+    # @deprecated Please migrate to using {#modify} with the `widget_channel:` parameter.
     def widget_channel=(channel)
       modify_widget(widget?, channel)
     end
@@ -228,6 +301,7 @@ module Discordrb
     # Changes the channel on the server's widget
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
     # @param reason [String, nil] the reason to be shown in the audit log for this action
+    # @deprecated Please migrate to using {#modify} with the `widget_channel:` parameter.
     def set_widget_channel(channel, reason = nil)
       modify_widget(widget?, channel, reason)
     end
@@ -237,12 +311,11 @@ module Discordrb
     # @param enabled [true, false] whether the widget is enabled
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
     # @param reason [String, nil] the reason to be shown in the audit log for this action
+    # @deprecated Please migrate to using {#modify} with the `widget_enabled:` and `widget_channel:` parameters.
     def modify_widget(enabled, channel, reason = nil)
       cache_widget_data if @widget_enabled.nil?
       channel_id = channel ? channel.resolve_id : @widget_channel_id
-      response = JSON.parse(API::Server.modify_widget(@bot.token, @id, enabled, channel_id, reason))
-      @widget_enabled = response['enabled']
-      @widget_channel_id = response['channel_id']
+      cache_widget_data(JSON.parse(API::Server.modify_widget(@bot.token, @id, enabled, channel_id, reason)))
     end
     alias_method :modify_embed, :modify_widget
 
@@ -331,9 +404,8 @@ module Discordrb
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
       update_data if @widget_enabled.nil?
-      return unless @widget_enabled
 
-      API.widget_url(@id)
+      API.widget_url(@id) if @widget_enabled
     end
 
     # @param style [Symbol] The style the picture should have. Possible styles are:
@@ -346,38 +418,31 @@ module Discordrb
     #   server icon and server name in a stylish way. `nil` if the widget is not enabled.
     def widget_banner_url(style)
       update_data if @widget_enabled.nil?
-      return unless @widget_enabled
 
-      API.widget_url(@id, style)
+      API.widget_url(@id, style) if @widget_enabled
     end
 
-    # @return [String] the hexadecimal ID used to identify this server's splash image for their VIP invite page.
-    def splash_id
-      @splash_id ||= JSON.parse(API::Server.resolve(@bot.token, @id))['splash']
-    end
-    alias splash_hash splash_id
-
-    # @return [String, nil] the splash image URL for the server's VIP invite page.
-    #   `nil` if there is no splash image.
-    def splash_url
-      splash_id if @splash_id.nil?
-      return nil unless @splash_id
-
-      API.splash_url(@id, @splash_id)
+    # Utility method to get a server's splash URL.
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to
+    #   override this.
+    # @return [String, nil] The URL to the server's splash image, or `nil` if the server doesn't have a splash image.
+    def splash_url(format: 'webp')
+      API.splash_url(@id, @splash_id, format) if @splash_id
     end
 
-    # @return [String] the hexadecimal ID used to identify this server's banner image, shown by the server name.
-    def banner_id
-      @banner_id ||= JSON.parse(API::Server.resolve(@bot.token, @id))['banner']
+    # Utility method to get a server's banner URL.
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to
+    #   override this.
+    # @return [String, nil] The URL to the server's banner image, or `nil` if the server doesn't have a banner image.
+    def banner_url(format: 'webp')
+      API.banner_url(@id, @banner_id, format) if @banner_id
     end
 
-    # @return [String, nil] the banner image URL for the server's banner image, or
-    #   `nil` if there is no banner image.
-    def banner_url
-      banner_id if @banner_id.nil?
-      return unless banner_id
-
-      API.banner_url(@id, @banner_id)
+    # Utility method to get a server's discovery splash URL.
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
+    # @return [String, nil] The URL to the server's discovery splash image, or `nil` if the server doesn't have a discovery splash image.
+    def discovery_splash_url(format: 'webp')
+      API.discovery_splash_url(@id, @discovery_splash_id, format) if @discovery_splash_id
     end
 
     # @return [String] a URL that a user can use to navigate to this server in the client
@@ -387,18 +452,176 @@ module Discordrb
 
     alias_method :jump_link, :link
 
+    # Search the messages that have been sent in this server.
+    # @example Search for 200 messages from a user that contain an attachment.
+    #  options = {
+    #    limit: 200,
+    #    contains: :file,
+    #    authors: 171764626755813376
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for all of the messages in a channel that mentions someone.
+    #  options = {
+    #    limit: nil,
+    #    mentions: 171764626755813376,
+    #    channels: 381891448884428801
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for 105 messages that contain specific embed types, sorted by oldest to newest.
+    #  options = {
+    #    limit: 105,
+    #    embed_types: %i[article image],
+    #    sort_order: :ascending
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for 30 messages sent between two dates that contain the word “time” and an @everyone ping.
+    #  options = {
+    #    limit: 30,
+    #    content: 'time',
+    #    mentions_everyone: true,
+    #    after: Time.parse("December 16th, 2020"),
+    #    before: Time.parse("December 25th, 2020")
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for 500 messages that reply to a specific message, contain a Ruby file, and were sent by a bot account.
+    #  options = {
+    #    limit: 500,
+    #    author_types: :bot,
+    #    file_extensions: '.rb',
+    #    reply_messages: 1454184993923268660
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @param limit [Integer, nil] The maximum number of messages to return, or `nil` to fetch all of the messages that match the search query.
+    # @param offset [Integer, nil] The number of messages between 0-9975 to offset the search query by.
+    # @param before [Time, #resolve_id, nil] Get messages sent before this timestamp.
+    # @param after [Time, #resolve_id, nil] Get messages sent after this timestamp.
+    # @param content [String, #to_s, nil] Get messages with matching message content.
+    # @param slop [Integer, nil] The amount of variation allowed between the placement of words when matching against message content; between 0-100.
+    # @param channels [Array<Channel, Integer, String>, Channel, Integer, String, nil] Get messages that were sent in these channels.
+    # @param authors [Array<#resolve_id>, #resolve_id, nil] Get messages that were created by these authors.
+    # @param author_types [Array<String, Symbol>, String, Symbol, nil] Get messages that were created by these author types: `user`, `bot`, or `webhook`.
+    # @param mentions [Array<#resolve_id>, #resolve_id, nil] Get messages that mention these users or members.
+    # @param role_mentions [Array<Role, Integer, String>, Role, Integer, String, nil] Get messages that mention these roles.
+    # @param mentions_everyone [true, false, nil] Get messages that mention the @everyone role.
+    # @param reply_users [Array<#resolve_id>, #resolve_id, nil] Get messages that replied to these users or members.
+    # @param reply_messages [Array<Message, Integer, String>, Message, Integer, String, nil] Get messages that replied to these messages.
+    # @param pinned [true, false, nil] Get messages that are pinned.
+    # @param contains [Array<String, Symbol>, String, Symbol, nil] Get messages that contain specific fields, e.g. `file`, `poll`, `sound`, etc.
+    # @param embed_types [Array<String, Symbol>, String, Symbol, nil] Get messages that contain matching embed types.
+    # @param embed_providers [Array<String, Symbol>, String, Symbol, nil] Get messages that contain embeds from specific providers.
+    # @param link_hosts [Array<String, Symbol>, String, Symbol, nil] Get messages that contain matching link hostnames, e.g. `discord.com`.
+    # @param file_names [Array<String, Symbol, Attachment>, String, Symbol, Attachment, nil] Get messages that contain matching attachment filenames.
+    # @param file_extensions [Array<String, Symbol>, String, Symbol, nil] Get messages that contain matching attachment file extensions, e.g. `.rb`, `.mp3`, etc.
+    # @param include_nsfw [true, false, nil] Whether or not to include messages that have been sent in NSFW channels.
+    # @param sort_by [Symbol, String, nil] Whether to sort the returned messages by their `:creation_time`, or `:relevance` to the search query.
+    # @param sort_order [Symbol, string, nil] Whether to order the returned messages in `:descending`, or `:ascending` order. Not respected when sorting by `:relevance`.
+    # @raise [Discordrb::Errors::NoPermission] This may occur when the application has not enabled the `MESSAGE_CONTENT` privileged intent on the Discord Developer Portal.
+    # @note Messages with GIFs sent before February 24th, 2026 may not be returned under the `gif` embed type when using the `embed_types:` parameter.
+    # @note Messages fetched via this method will not contain reactions. This means that {Message#reactions} will **always** return an empty array, even if the message has reactions.
+    # @return [SearchedMessages] the results of the search query.
+    def search_messages(
+      limit: 25, offset: nil, before: nil, after: nil, content: nil, slop: 2, channels: nil, authors: nil, author_types: nil,
+      mentions: nil, role_mentions: nil, mentions_everyone: nil, reply_users: nil, reply_messages: nil, pinned: nil, contains: nil,
+      embed_types: nil, embed_providers: nil, link_hosts: nil, file_names: nil, file_extensions: nil, include_nsfw: true, sort_by: nil,
+      sort_order: :descending
+    )
+      sort_order = case sort_order&.to_sym
+                   when nil, :desc, :descending, :newest_first
+                     :desc
+                   when :asc, :ascending, :oldest_first
+                     :asc
+                   else
+                     raise ArgumentError, "Invalid value for the 'sort_order' parameter"
+                   end
+
+      sort_by = case sort_by&.to_sym
+                when nil, :timestamp, :creation_time
+                  :timestamp
+                when :relevance, :match_score
+                  :relevance
+                else
+                  raise ArgumentError, "Invalid value for the 'sort_by' parameter"
+                end
+
+      options = {
+        limit: limit && limit <= 25 ? limit : 25,
+        max_id: before.is_a?(Time) ? IDObject.synthesise(before) : before&.resolve_id,
+        min_id: after.is_a?(Time) ? IDObject.synthesise(after) : after&.resolve_id,
+        offset: offset || 0,
+        slop: slop,
+        content: content&.to_s,
+        channel_id: channels ? Array(channels).map(&:resolve_id) : channels,
+        author_type: author_types ? Array(author_types) : author_types,
+        author_id: authors ? Array(authors).map(&:resolve_id) : authors,
+        mentions: mentions ? Array(mentions).map(&:resolve_id) : mentions,
+        mentions_role_id: role_mentions ? Array(role_mentions).map(&:resolve_id) : role_mentions,
+        mention_everyone: mentions_everyone,
+        replied_to_user_id: reply_users ? Array(reply_users).map(&:resolve_id) : reply_users,
+        replied_to_message_id: reply_messages ? Array(reply_messages).map(&:resolve_id) : reply_messages,
+        pinned: pinned,
+        has: contains ? Array(contains) : contains,
+        embed_type: embed_types ? Array(embed_types) : embed_types,
+        embed_provider: embed_providers ? Array(embed_providers) : embed_providers,
+        link_hostname: link_hosts ? Array(link_hosts) : link_hosts,
+        attachment_filename: (Array(file_names).map { |file| file.is_a?(Attachment) ? file.filename : file } if file_names),
+        attachment_extension: file_extensions ? Array(file_extensions).map { |type| type.to_s.delete_prefix('.') } : file_extensions,
+        sort_by: sort_by,
+        sort_order: sort_order,
+        include_nsfw: include_nsfw
+      }.compact
+
+      raise ArgumentError, "The 'role_mentions' parameter cannot contain the everyone role" if options[:mentions_role_id]&.any?(@id)
+
+      # Only store the total message count from the first request.
+      total = nil
+
+      get_messages = lambda do |query|
+        data = JSON.parse(API::Server.search_messages(@bot.token, @id, **options, **query.compact))
+        total ||= data['total_results']
+
+        data['threads']&.each do |thread|
+          thread['member'] = data['members']&.find { |member| thread['id'] == member['id'] }
+
+          @bot.ensure_channel(thread, self)
+        end
+
+        data['messages'].collect { |nested_messages| Message.new(nested_messages[0], @bot) }
+      end
+
+      paginator = Paginator.new(limit, :down) do |page|
+        if sort_by == :relevance
+          if (count = (paginator.amount_fetched + options[:offset])) > 9975
+            []
+          else
+            get_messages.call(offset: count)
+          end
+        elsif sort_order == :desc
+          get_messages.call(max_id: page&.last&.id, offset: page ? 0 : nil)
+        else
+          get_messages.call(min_id: page&.last&.id, offset: page ? 0 : nil)
+        end
+      end
+
+      SearchedMessages.new(paginator.to_a, total, @bot)
+    end
+
     # Adds a role to the role cache
     # @note For internal use only
     # @!visibility private
     def add_role(role)
-      @roles << role
+      @roles[role.id] = role
     end
 
     # Removes a role from the role cache
     # @note For internal use only
     # @!visibility private
     def delete_role(role_id)
-      @roles.reject! { |r| r.id == role_id }
+      @roles.delete(role_id.resolve_id)
       @members.each_value do |member|
         new_roles = member.roles.reject { |r| r.id == role_id }
         member.update_roles(new_roles)
@@ -414,10 +637,7 @@ module Discordrb
     # @!visibility private
     def update_role_positions(role_positions, reason: nil)
       response = JSON.parse(API::Server.update_role_positions(@bot.token, @id, role_positions, reason))
-      response.each do |data|
-        updated_role = Role.new(data, @bot, self)
-        role(updated_role.id)&.update_from(updated_role)
-      end
+      response.each { |data| role(data['id'].to_i)&.update_data(data) }
     end
 
     # Adds a member to the member cache.
@@ -448,6 +668,20 @@ module Discordrb
     # @!visibility private
     def cache_member(member)
       @members[member.id] = member
+    end
+
+    # Adds a scheduled event to the cache
+    # @note For internal use only
+    # @!visibility private
+    def cache_scheduled_event(event)
+      @scheduled_events[event.id] = event
+    end
+
+    # Removes a scheduled event from the cache.
+    # @note For internal use only
+    # @!visibility private
+    def delete_scheduled_event(event)
+      @scheduled_events.delete(event.resolve_id)
     end
 
     # Updates a member's voice state
@@ -549,8 +783,7 @@ module Discordrb
       response = API::Server.create_role(@bot.token, @id, name, nil, hoist, mentionable, permissions&.to_s, reason, colours, icon, unicode_emoji)
 
       role = Role.new(JSON.parse(response), @bot, self)
-      @roles << role
-      role
+      @roles[role.id] = role
     end
 
     # Adds a new custom emoji on this server.
@@ -621,8 +854,38 @@ module Discordrb
     def bans(limit: nil, before_id: nil, after_id: nil)
       response = JSON.parse(API::Server.bans(@bot.token, @id, limit, before_id, after_id))
       response.map do |e|
-        ServerBan.new(self, User.new(e['user'], @bot), e['reason'])
+        ServerBan.new(self, @bot.ensure_user(e['user']), e['reason'])
       end
+    end
+
+    # Get the users who have been banned from the server.
+    # @param limit [Integer, nil] The max number of bans to return, or `nil` for no limit.
+    # @param after [User, Member, Time, Integer, String, nil] Get bans after this user ID.
+    # @param before [User, Member, Time, Integer, String, nil] Get bans before this user ID.
+    # @return [Array<ServerBan>] The users who have been banned from the server.
+    # @note When using the `before` parameter, bans will be sorted in descending order by user ID
+    #   (newest users first), and in ascending order by user ID (oldest users first) otherwise.
+    def bans!(limit: 1000, before: nil, after: nil)
+      raise ArgumentError, "'before' and 'after' are mutually exclusive" if before && after
+
+      f_limit = limit && limit <= 1000 ? limit : 1000
+      f_after = after.is_a?(Time) ? IDObject.synthesize(after) : after&.resolve_id
+      f_before = before.is_a?(Time) ? IDObject.synthesize(before) : before&.resolve_id
+
+      get_bans = lambda do |before: nil, after: nil|
+        data = API::Server.bans(@bot.token, @id, f_limit, before&.id || f_before, after&.id || f_after)
+        JSON.parse(data).map { |ban| ServerBan.new(self, @bot.ensure_user(ban['user']), ban['reason']) }
+      end
+
+      paginator = Paginator.new(limit, before ? :up : :down) do |page|
+        if before
+          get_bans.call(before: page&.first&.user)
+        else
+          get_bans.call(after: page&.last&.user)
+        end
+      end
+
+      paginator.to_a
     end
 
     # Bans a user from this server.
@@ -684,7 +947,7 @@ module Discordrb
     # Sets the server's name.
     # @param name [String] The new server name.
     def name=(name)
-      update_server_data(name: name)
+      modify(name: name)
     end
 
     # @return [Array<VoiceRegion>] collection of available voice regions to this guild
@@ -706,35 +969,31 @@ module Discordrb
     # Moves the server to another region. This will cause a voice interruption of at most a second.
     # @param region [String] The new region the server should be in.
     def region=(region)
-      update_server_data(region: region.to_s)
+      update_data(JSON.parse(API::Server.update!(@bot.token, @id, region: region.to_s)))
     end
 
     # Sets the server's icon.
-    # @param icon [String, #read] The new icon, in base64-encoded JPG format.
+    # @param icon [String, #read, nil] The new icon, in base64-encoded JPG format.
     def icon=(icon)
-      if icon.respond_to?(:read)
-        update_server_data(icon_id: Discordrb.encode64(icon))
-      else
-        update_server_data(icon_id: icon)
-      end
+      modify(icon: icon)
     end
 
     # Sets the server's AFK channel.
     # @param afk_channel [Channel, nil] The new AFK channel, or `nil` if there should be none set.
     def afk_channel=(afk_channel)
-      update_server_data(afk_channel_id: afk_channel.resolve_id)
+      modify(afk_channel: afk_channel)
     end
 
     # Sets the server's system channel.
     # @param system_channel [Channel, String, Integer, nil] The new system channel, or `nil` should it be disabled.
     def system_channel=(system_channel)
-      update_server_data(system_channel_id: system_channel.resolve_id)
+      modify(system_channel: system_channel)
     end
 
     # Sets the amount of time after which a user gets moved into the AFK channel.
     # @param afk_timeout [Integer] The AFK timeout, in seconds.
     def afk_timeout=(afk_timeout)
-      update_server_data(afk_timeout: afk_timeout)
+      modify(afk_timeout: afk_timeout)
     end
 
     # A map of possible server verification levels to symbol names
@@ -746,17 +1005,15 @@ module Discordrb
       very_high: 4
     }.freeze
 
-    # @return [Symbol] the verification level of the server (:none = none, :low = 'Must have a verified email on their Discord account', :medium = 'Has to be registered with Discord for at least 5 minutes', :high = 'Has to be a member of this server for at least 10 minutes', :very_high = 'Must have a verified phone on their Discord account').
+    # @return [Symbol] The verification level of the server (:none = none, :low = 'Must have a verified email on their Discord account', :medium = 'Has to be registered with Discord for at least 5 minutes', :high = 'Has to be a member of this server for at least 10 minutes', :very_high = 'Must have a verified phone on their Discord account').
     def verification_level
-      VERIFICATION_LEVELS.key @verification_level
+      VERIFICATION_LEVELS.key(@verification_level)
     end
 
     # Sets the verification level of the server
     # @param level [Integer, Symbol] The verification level from 0-4 or Symbol (see {VERIFICATION_LEVELS})
     def verification_level=(level)
-      level = VERIFICATION_LEVELS[level] if level.is_a?(Symbol)
-
-      update_server_data(verification_level: level)
+      modify(verification_level: level)
     end
 
     # A map of possible message notification levels to symbol names
@@ -765,26 +1022,18 @@ module Discordrb
       only_mentions: 1
     }.freeze
 
-    # @return [Symbol] the default message notifications settings of the server (:all = 'All messages', :mentions = 'Only @mentions').
+    # @return [Symbol] The default message notifications settings of the server (:all_messages = 'All messages', :only_mentions = 'Only @mentions').
     def default_message_notifications
-      NOTIFICATION_LEVELS.key @default_message_notifications
+      NOTIFICATION_LEVELS.key(@default_message_notifications)
     end
 
     # Sets the default message notification level
     # @param notification_level [Integer, Symbol] The default message notification 0-1 or Symbol (see {NOTIFICATION_LEVELS})
     def default_message_notifications=(notification_level)
-      notification_level = NOTIFICATION_LEVELS[notification_level] if notification_level.is_a?(Symbol)
-
-      update_server_data(default_message_notifications: notification_level)
+      modify(notification_level: notification_level)
     end
 
     alias_method :notification_level=, :default_message_notifications=
-
-    # Sets the server splash
-    # @param splash_hash [String] The splash hash
-    def splash=(splash_hash)
-      update_server_data(splash: splash_hash)
-    end
 
     # A map of possible content filter levels to symbol names
     FILTER_LEVELS = {
@@ -793,9 +1042,9 @@ module Discordrb
       all_members: 2
     }.freeze
 
-    # @return [Symbol] the explicit content filter level of the server (:none = 'Don't scan any messages.', :exclude_roles = 'Scan messages for members without a role.', :all = 'Scan messages sent by all members.').
+    # @return [Symbol] The explicit content filter level of the server (:disabled = 'Don't scan any messages.', :members_without_roles = 'Scan messages for members without a role.', :all_members = 'Scan messages sent by all members.').
     def explicit_content_filter
-      FILTER_LEVELS.key @explicit_content_filter
+      FILTER_LEVELS.key(@explicit_content_filter)
     end
 
     alias_method :content_filter_level, :explicit_content_filter
@@ -803,9 +1052,31 @@ module Discordrb
     # Sets the server content filter.
     # @param filter_level [Integer, Symbol] The content filter from 0-2 or Symbol (see {FILTER_LEVELS})
     def explicit_content_filter=(filter_level)
-      filter_level = FILTER_LEVELS[filter_level] if filter_level.is_a?(Symbol)
+      modify(explicit_content_filter: filter_level)
+    end
 
-      update_server_data(explicit_content_filter: filter_level)
+    # A map of possible multi-factor authentication levels to symbol names
+    MFA_LEVELS = {
+      none: 0,
+      elevated: 1
+    }.freeze
+
+    # @return [Symbol] The multi-factor authentication level of the server (:none = 'no MFA/2FA requirement for moderation actions', :elevated = 'MFA/2FA is required for moderation actions')
+    def mfa_level
+      MFA_LEVELS.key @mfa_level
+    end
+
+    # A map of possible NSFW levels to symbol names
+    NSFW_LEVELS = {
+      default: 0,
+      explicit: 1,
+      safe: 2,
+      age_restricted: 3
+    }.freeze
+
+    # @return [Symbol] The NSFW level of the server (:default = 'no NSFW level has been set', :explicit = 'the server may contain explicit content', :safe = 'the server does not contain NSFW content', :age_restricted = 'server membership is restricted to adults')
+    def nsfw_level
+      NSFW_LEVELS.key @nsfw_level
     end
 
     # @return [true, false] whether this server has any emoji or not.
@@ -815,6 +1086,41 @@ module Discordrb
 
     alias_method :has_emoji?, :any_emoji?
     alias_method :emoji?, :any_emoji?
+
+    # Create an invite link using the server's vanity code.
+    # @return [String, nil] The server's vanity invite URL, or `nil` if the server does not have a vanity invite code.
+    def vanity_invite_url
+      return unless @vanity_invite_code
+
+      "https://discord.gg/#{@vanity_invite_code}"
+    end
+
+    alias_method :vanity_invite_link, :vanity_invite_url
+
+    # Check if the auto-moderation system has detected a raid.
+    # @return [true, false] Whether or not Discord's anti-spam system has detected a raid in the server.
+    def raid_detected?
+      !@raid_detected_at.nil?
+    end
+
+    # Check if the auto-moderation system has detected DM spam.
+    # @return [true, false] Whether or not Discord's anti-spam system has detected dm-spam in the server.
+    def dm_spam_detected?
+      !@dm_spam_detected_at.nil?
+    end
+
+    # Check if the server has disabled non-friend DMs.
+    # @return [true, false] Whether or not the server has stopped member's who aren't friends from DMing each other.
+    def dms_disabled?
+      !@dms_disabled_until.nil? && @dms_disabled_until > Time.now
+    end
+
+    # Check if the server has paused invites.
+    # @return [true, false] Whether or not the server has stopped new members from joining, either via incident actions
+    #   or the `:invites_disabled` feature.
+    def invites_disabled?
+      (!@invites_disabled_until.nil? && @invites_disabled_until > Time.now) || @features.include?(:invites_disabled)
+    end
 
     # Requests a list of Webhooks on the server.
     # @return [Array<Webhook>] webhooks on the server.
@@ -828,6 +1134,66 @@ module Discordrb
     def invites
       invites = JSON.parse(API::Server.invites(@bot.token, @id))
       invites.map { |invite| Invite.new(invite, @bot) }
+    end
+
+    # Get the scheduled events on the server.
+    # @param bypass_cache [true, false] Whether the cached scheduled events
+    #   should be ignored and re-fetched via an HTTP request.
+    # @return [Array<ScheduledEvent>] The scheduled events on the server.
+    def scheduled_events(bypass_cache: false)
+      process_scheduled_events(JSON.parse(API::Server.list_scheduled_events(@bot.token, @id, with_user_count: true))) if bypass_cache
+
+      @scheduled_events.values
+    end
+
+    # Get a specific scheduled event on the server.
+    # @param scheduled_event_id [Integer, String, ScheduledEvent] The scheduled event to get.
+    # @param request [true, false] Whether to request the event from discord if it isn't cached.
+    # @return [ScheduledEvent, nil] The scheduled event for the ID, or `nil` if it couldn't be found.
+    def scheduled_event(scheduled_event_id, request: true)
+      id = scheduled_event_id.resolve_id
+      return @scheduled_events[id] if @scheduled_events[id]
+      return nil unless request
+
+      event = JSON.parse(API::Server.get_scheduled_event(@bot.token, @id, id, with_user_count: true))
+      scheduled_event = ScheduledEvent.new(event, self, @bot)
+      @scheduled_events[scheduled_event.id] = scheduled_event
+    rescue StandardError
+      nil
+    end
+
+    # Create a scheduled event on this server.
+    # @param name [String] The 1-100 character name of the scheduled event to create.
+    # @param start_time [Time] The start time of the scheduled event to create.
+    # @param entity_type [Integer, Symbol] The entity type of the scheduled event to create.
+    # @param end_time [Time, nil] The end time of the scheduled event to create.
+    # @param channel [Integer, Channel, String, nil] The channel where the scheduled event will take place.
+    # @param location [String, nil] The external location of the scheduled event to create.
+    # @param description [String, nil] The 1-100 character description of the scheduled event to create.
+    # @param cover [File, #read, nil] The cover image of the scheduled event to create.
+    # @param recurrence_rule [#to_h, nil] The recurrence rule of the scheduled event to create.
+    # @param reason [String, nil] The audit log reason for creating the scheduled event.
+    # @yieldparam builder [ScheduledEvent::RecurrenceRule::Builder] An optional reccurence rule builder.
+    # @return [ScheduledEvent] the scheduled event that was created.
+    def create_scheduled_event(name:, start_time:, entity_type:, end_time: nil, channel: nil, location: nil, description: nil, cover: nil, recurrence_rule: nil, reason: nil)
+      yield((builder = ScheduledEvent::RecurrenceRule::Builder.new)) if block_given?
+
+      options = {
+        name: name,
+        privacy_level: 2,
+        scheduled_start_time: start_time&.iso8601,
+        entity_type: ScheduledEvent::ENTITY_TYPES[entity_type] || entity_type,
+        channel_id: channel&.resolve_id,
+        entity_metadata: location ? { location: location } : nil,
+        scheduled_end_time: end_time&.iso8601,
+        description: description,
+        image: cover.respond_to?(:read) ? Discordrb.encode64(cover) : cover,
+        recurrence_rule: block_given? ? builder.to_h : recurrence_rule&.to_h
+      }
+
+      event = JSON.parse(API::Server.create_scheduled_event(@bot.token, @id, **options, reason: reason))
+      scheduled_event = ScheduledEvent.new(event, self, @bot)
+      @scheduled_events[scheduled_event.id] = scheduled_event
     end
 
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
@@ -845,14 +1211,114 @@ module Discordrb
       @chunked = true
     end
 
+    # Get the AFK channel of the server.
     # @return [Channel, nil] the AFK voice channel of this server, or `nil` if none is set.
     def afk_channel
       @bot.channel(@afk_channel_id) if @afk_channel_id
     end
 
-    # @return [Channel, nil] the system channel (used for automatic welcome messages) of a server, or `nil` if none is set.
+    # Get the rules channel of the server.
+    # @return [Channel, nil] The channel where community servers can display rules or guidelines, or `nil` if none is set.
+    def rules_channel
+      @bot.channel(@rules_channel_id) if @rules_channel_id
+    end
+
+    # Get the system channel of the server.
+    # @return [Channel, nil] The system channel (used for automatic welcome messages) of a server, or `nil` if none is set.
     def system_channel
       @bot.channel(@system_channel_id) if @system_channel_id
+    end
+
+    # Get the safety alerts channel of the server.
+    # @return [Channel, nil] The channel where Community servers receive safety alerts from Discord, or `nil` if none is set.
+    def safety_alerts_channel
+      @bot.channel(@safety_alerts_channel_id) if @safety_alerts_channel_id
+    end
+
+    # Get the public updates channel of the server.
+    # @return [Channel, nil] The channel where Community servers receive public updates from Discord, or `nil` if none is set.
+    def public_updates_channel
+      @bot.channel(@public_updates_channel_id) if @public_updates_channel_id
+    end
+
+    # Modify the properties of the server.
+    # @param name [String] The new 2-32 character name of the server.
+    # @param verification_level [Symbol, Integer, nil] The new verification level of the server.
+    # @param notification_level [Symbol, Integer, nil] The new default message notification level of the server.
+    # @param explicit_content_filter [Symbol, Integer, nil] The new explicit content filter level of the server.
+    # @param afk_channel [Channel, Integer, String, nil] The new AFK voice channel members should be automatically moved to.
+    # @param afk_timeout [Integer] The new AFK timeout in seconds. Can be set to one of `60`, `300`, `900`, `1800`, or `3600`.
+    # @param icon [#read, File, nil] The new icon of the server. Should be a file-like object that responds to `#read`.
+    # @param splash [#read, File, nil] The new invite splash of the server. Should be a file-like object that responds to `#read`.
+    # @param discovery_splash [#read, File, nil] The new discovery splash of the server. Should be a file-like object that responds to `#read`.
+    # @param banner [#read, File, nil] The new banner of the server. Should be a file-like object that responds to `#read`.
+    # @param system_channel [Channel, Integer, String, nil] The new channel where system messages should be sent.
+    # @param system_channel_flags [Integer] The new system channel flags to set for the server's system channel expressed as a bitfield.
+    # @param rules_channel [Channel, Integer, String, nil] The new channel where the server displays its rules or guidelines.
+    # @param public_updates_channel [Channel, Integer, String, nil] The new channel where public updates should be sent.
+    # @param locale [String, Symbol, nil] The new preferred locale of the server; primarily for community servers.
+    # @param features [Array<String, Symbol>] The new features to set for the server.
+    # @param description [String, nil] The new description of the server.
+    # @param boost_progress_bar [true, false] Whether or not the server boosting progress bar should be visible.
+    # @param safety_alerts_channel [Channel, Integer, String, nil] The new channel where safety alerts should be sent.
+    # @param widget_enabled [true, false, nil] Whether or not the server's widget should be enabled.
+    # @param widget_channel [Channel, Integer, String, nil] The new invite channel for the server's widget.
+    # @param dms_disabled_until [Time, nil] The time at when non-friend direct messages will be enabled again.
+    # @param invites_disabled_until [Time, nil] The time at when invites will no longer be disabled.
+    # @param reason [String, nil] The reason to show in the server's audit log for modifying the server.
+    # @return [nil]
+    def modify(
+      name: :undef, verification_level: :undef, notification_level: :undef, explicit_content_filter: :undef,
+      afk_channel: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef,
+      system_channel: :undef, system_channel_flags: :undef, rules_channel: :undef, public_updates_channel: :undef,
+      locale: :undef, features: :undef, description: :undef, boost_progress_bar: :undef, safety_alerts_channel: :undef,
+      widget_enabled: :undef, widget_channel: :undef, dms_disabled_until: :undef, invites_disabled_until: :undef,
+      reason: nil
+    )
+      data = {
+        name: name,
+        verification_level: VERIFICATION_LEVELS[verification_level] || verification_level,
+        default_message_notifications: NOTIFICATION_LEVELS[notification_level] || notification_level,
+        explicit_content_filter: FILTER_LEVELS[explicit_content_filter] || explicit_content_filter,
+        afk_channel_id: afk_channel == :undef ? afk_channel : afk_channel&.resolve_id,
+        afk_timeout: afk_timeout,
+        icon: icon.respond_to?(:read) ? Discordrb.encode64(icon) : icon,
+        splash: splash.respond_to?(:read) ? Discordrb.encode64(splash) : splash,
+        discovery_splash: discovery_splash.respond_to?(:read) ? Discordrb.encode64(discovery_splash) : discovery_splash,
+        banner: banner.respond_to?(:read) ? Discordrb.encode64(banner) : banner,
+        system_channel_id: system_channel == :undef ? system_channel : system_channel&.resolve_id,
+        system_channel_flags: system_channel_flags,
+        rules_channel_id: rules_channel == :undef ? rules_channel : rules_channel&.resolve_id,
+        public_updates_channel_id: public_updates_channel == :undef ? public_updates_channel : public_updates_channel&.resolve_id,
+        preferred_locale: locale,
+        features: features == :undef ? features : features.map(&:upcase),
+        description: description,
+        premium_progress_bar_enabled: boost_progress_bar,
+        safety_alerts_channel_id: safety_alerts_channel == :undef ? safety_alerts_channel : safety_alerts_channel&.resolve_id
+      }
+
+      if widget_enabled != :undef || widget_channel != :undef
+        widget_data = {
+          enabled: widget_enabled,
+          channel_id: widget_channel == :undef ? widget_channel : widget_channel&.resolve_id
+        }
+
+        cache_widget_data(JSON.parse(API::Server.update_widget(@bot.token, @id, **widget_data, reason: reason)))
+      end
+
+      if invites_disabled_until != :undef || dms_disabled_until != :undef
+        incidents_data = {
+          dms_disabled_until: dms_disabled_until == :undef ? @dms_disabled_until&.iso8601 : dms_disabled_until&.iso8601,
+          invites_disabled_until: invites_disabled_until == :undef ? @invites_disabled_until&.iso8601 : invites_disabled_until&.iso8601
+        }
+
+        process_incident_actions(JSON.parse(API::Server.update_incident_actions(@bot.token, @id, **incidents_data, reason: reason)))
+      end
+
+      return unless data.any? { |_, value| value != :undef }
+
+      update_data(JSON.parse(API::Server.update!(@bot.token, @id, **data, reason: reason)))
+      nil
     end
 
     # Updates the cached data with new data
@@ -860,33 +1326,48 @@ module Discordrb
     # @!visibility private
     def update_data(new_data = nil)
       new_data ||= JSON.parse(API::Server.resolve(@bot.token, @id))
-      @name = new_data[:name] || new_data['name'] || @name
-      @region_id = new_data[:region] || new_data['region'] || @region_id
-      @icon_id = new_data[:icon] || new_data['icon'] || @icon_id
-      @afk_timeout = new_data[:afk_timeout] || new_data['afk_timeout'] || @afk_timeout
-
-      afk_channel_id = new_data[:afk_channel_id] || new_data['afk_channel_id'] || @afk_channel
-      @afk_channel_id = afk_channel_id&.resolve_id
-      widget_channel_id = new_data[:widget_channel_id] || new_data['widget_channel_id'] || @widget_channel
-      @widget_channel_id = widget_channel_id&.resolve_id
-      system_channel_id = new_data[:system_channel_id] || new_data['system_channel_id'] || @system_channel
-      @system_channel_id = system_channel_id&.resolve_id
-
-      @widget_enabled = new_data[:widget_enabled] || new_data['widget_enabled']
-      @splash = new_data[:splash_id] || new_data['splash_id'] || @splash_id
-
-      @verification_level = new_data[:verification_level] || new_data['verification_level'] || @verification_level
-      @explicit_content_filter = new_data[:explicit_content_filter] || new_data['explicit_content_filter'] || @explicit_content_filter
-      @default_message_notifications = new_data[:default_message_notifications] || new_data['default_message_notifications'] || @default_message_notifications
-
-      @large = new_data.key?('large') ? new_data['large'] : @large
-      @member_count = new_data['member_count'] || @member_count || 0
-      @splash_id = new_data['splash'] || @splash_id
-      @banner_id = new_data['banner'] || @banner_id
-      @features = new_data['features'] ? new_data['features'].map { |element| element.downcase.to_sym } : @features || []
-      @booster_count = new_data['premium_subscription_count'] || @booster_count || 0
-      @boost_level = new_data['premium_tier'] || @boost_level
+      @name = new_data['name']
+      @icon_id = new_data['icon']
+      @splash_id = new_data['splash']
+      @discovery_splash_id = new_data['discovery_splash']
       @owner_id = new_data['owner_id'].to_i
+      @region_id = new_data['region'] if new_data.key?('region')
+
+      @afk_timeout = new_data['afk_timeout']
+      @afk_channel_id = new_data['afk_channel_id']&.to_i
+
+      @widget_enabled = new_data['widget_enabled'] if new_data.key?('widget_enabled')
+      @widget_channel_id = new_data['widget_channel_id'] if new_data.key?('widget_channel_id')
+
+      @system_channel_flags = new_data['system_channel_flags']
+      @system_channel_id = new_data['system_channel_id']&.to_i
+
+      @rules_channel_id = new_data['rules_channel_id']&.to_i
+      @public_updates_channel_id = new_data['public_updates_channel_id']&.to_i
+      @safety_alerts_channel_id = new_data['safety_alerts_channel_id']&.to_i
+
+      @mfa_level = new_data['mfa_level']
+      @nsfw_level = new_data['nsfw_level']
+      @verification_level = new_data['verification_level']
+      @explicit_content_filter = new_data['explicit_content_filter']
+      @default_message_notifications = new_data['default_message_notifications']
+
+      @features = new_data['features']&.map { |feature| feature.downcase.to_sym } || @features || []
+      @max_presence_count = new_data['max_presences'] if new_data.key?('max_presences')
+      @max_member_count = new_data['max_members'] if new_data.key?('max_members')
+      @large = new_data.key?('large') ? new_data['large'] : (@large || false)
+      @member_count = new_data['member_count'] || new_data['approximate_member_count'] || @member_count || 0
+
+      @vanity_url_code = new_data['vanity_url_code']
+      @description = new_data['description']
+      @banner_id = new_data['banner']
+      @boost_level = new_data['premium_tier']
+      @booster_count = new_data['premium_subscription_count'] || @booster_count || 0
+      @locale = new_data['preferred_locale']
+
+      @max_video_channel_members = new_data['max_video_channel_users'] || @max_video_channel_members
+      @max_stage_video_channel_members = new_data['max_stage_video_channel_users'] || @max_stage_video_channel_members
+      @boost_progress_bar = new_data['premium_progress_bar_enabled']
 
       process_channels(new_data['channels']) if new_data['channels']
       process_roles(new_data['roles']) if new_data['roles']
@@ -895,6 +1376,8 @@ module Discordrb
       process_presences(new_data['presences']) if new_data['presences']
       process_voice_states(new_data['voice_states']) if new_data['voice_states']
       process_active_threads(new_data['threads']) if new_data['threads']
+      process_incident_actions(new_data['incidents_data']) if new_data.key?('incidents_data')
+      process_scheduled_events(new_data['guild_scheduled_events']) if new_data['guild_scheduled_events']
     end
 
     # Adds a channel to this server's cache
@@ -921,6 +1404,19 @@ module Discordrb
       process_emoji(new_data['emojis'])
     end
 
+    # Updates the threads for this server's cache
+    # @note For internal use only
+    # @!visibility private
+    def clear_threads(ids = nil)
+      if ids.nil?
+        @channels.reject!(&:thread?)
+        @channels_by_id.delete_if { |_, channel| channel.thread? }
+      else
+        @channels.reject! { |channel| channel.thread? && ids.any?(channel.parent&.id) }
+        @channels_by_id.delete_if { |_, channel| channel.thread? && ids.any?(channel.parent&.id) }
+      end
+    end
+
     # The inspect method is overwritten to give more useful output
     def inspect
       "<Server name=#{@name} id=#{@id} large=#{@large} region=#{@region} owner=#{@owner} afk_channel_id=#{@afk_channel_id} system_channel_id=#{@system_channel_id} afk_timeout=#{@afk_timeout}>"
@@ -928,32 +1424,15 @@ module Discordrb
 
     private
 
-    def update_server_data(new_data)
-      response = JSON.parse(API::Server.update(@bot.token, @id,
-                                               new_data[:name] || @name,
-                                               new_data[:region] || @region_id,
-                                               new_data[:icon_id] || @icon_id,
-                                               new_data[:afk_channel_id] || @afk_channel_id,
-                                               new_data[:afk_timeout] || @afk_timeout,
-                                               new_data[:splash] || @splash,
-                                               new_data[:default_message_notifications] || @default_message_notifications,
-                                               new_data[:verification_level] || @verification_level,
-                                               new_data[:explicit_content_filter] || @explicit_content_filter,
-                                               new_data[:system_channel_id] || @system_channel_id))
-      update_data(response)
-    end
-
     def process_roles(roles)
       # Create roles
-      @roles = []
-      @roles_by_id = {}
+      @roles = {}
 
       return unless roles
 
       roles.each do |element|
         role = Role.new(element, @bot, self)
-        @roles << role
-        @roles_by_id[role.id] = role
+        @roles[role.id] = role
       end
     end
 
@@ -1025,9 +1504,28 @@ module Discordrb
         @channels_by_id[thread.id] = thread
       end
     end
+
+    def process_incident_actions(incidents)
+      incidents ||= {}
+      @raid_detected_at = incidents['raid_detected_at'] ? Time.parse(incidents['raid_detected_at']) : nil
+      @dms_disabled_until = incidents['dms_disabled_until'] ? Time.parse(incidents['dms_disabled_until']) : nil
+      @dm_spam_detected_at = incidents['dm_spam_detected_at'] ? Time.parse(incidents['dm_spam_detected_at']) : nil
+      @invites_disabled_until = incidents['invites_disabled_until'] ? Time.parse(incidents['invites_disabled_until']) : nil
+    end
+
+    def process_scheduled_events(events)
+      @scheduled_events = {}
+
+      return unless events
+
+      events.each do |element|
+        event = ScheduledEvent.new(element, self, @bot)
+        @scheduled_events[event.resolve_id] = event
+      end
+    end
   end
 
-  # A ban entry on a server
+  # A ban entry on a server.
   class ServerBan
     # @return [String, nil] the reason the user was banned, if provided
     attr_reader :reason
@@ -1055,7 +1553,7 @@ module Discordrb
     alias_method :lift, :remove
   end
 
-  # A bulk ban entry on a server
+  # A bulk ban entry on a server.
   class BulkBan
     # @return [Server] The server this bulk ban belongs to.
     attr_reader :server
@@ -1075,6 +1573,42 @@ module Discordrb
       @reason = reason
       @banned_users = data['banned_users']&.map(&:resolve_id) || []
       @failed_users = data['failed_users']&.map(&:resolve_id) || []
+    end
+  end
+
+  # A set of messages collected from a search query.
+  class SearchedMessages
+    include Enumerable
+
+    # @return [Array<Message>] the messages that matched the search query.
+    attr_reader :messages
+
+    # @return [Integer] the total number of messages that matched the search query.
+    attr_reader :total_results
+
+    # @!visibility private
+    def initialize(messages, total, bot)
+      @bot = bot
+      @messages = messages
+      @total_results = total
+    end
+
+    # Get a single message that matched the search query by its index.
+    # @param index [Integer] The index of the message to get from the array.
+    # @return [Message] the message that was found at the specified index.
+    def [](index)
+      @messages[index]
+    end
+
+    # Iterate over each message that matched the search query.
+    # @return [Array<Message>, Enumerable] The array that was iterated over.
+    def each(...)
+      @messages.each(...)
+    end
+
+    # @!visibility private
+    def inspect
+      "<SearchedMessages messages=[#{'...' if @messages.any?}] total_results=#{@total_results}>"
     end
   end
 end
