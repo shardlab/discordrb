@@ -595,10 +595,10 @@ module Discordrb
 
       paginator = Paginator.new(limit, :down) do |page|
         if sort_by == :relevance
-          if (paginator.amount_fetched + options[:offset]) > 9975
+          if (count = (paginator.amount_fetched + options[:offset])) > 9975
             []
           else
-            get_messages.call(offset: paginator.count + options[:offset])
+            get_messages.call(offset: count + options[:offset])
           end
         elsif sort_order == :desc
           get_messages.call(max_id: page&.last&.id, offset: page ? 0 : nil)
