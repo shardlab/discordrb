@@ -244,11 +244,15 @@ module Discordrb
       AuditLogs.new(self, @bot, JSON.parse(API::Server.audit_logs(@bot.token, @id, limit, user, action, before)))
     end
 
-    # Cache @widget
     # @note For internal use only
     # @!visibility private
-    def cache_widget_data
-      data = JSON.parse(API::Server.widget(@bot.token, @id))
+    def cache_widget_data(data = nil)
+      data ||= if bot.permission?(:manage_server)
+                 JSON.parse(API::Server.widget(@bot.token, @id))
+               else
+                 return update_data(nil)
+               end
+
       @widget_enabled = data['enabled']
       @widget_channel_id = data['channel_id']
     end
@@ -271,6 +275,7 @@ module Discordrb
 
     # Sets whether this server's widget is enabled
     # @param value [true, false]
+    # @deprecated Please migrate to using {#modify} with the `widget_enabled:` parameter.
     def widget_enabled=(value)
       modify_widget(value, widget_channel)
     end
@@ -279,6 +284,7 @@ module Discordrb
     # Sets whether this server's widget is enabled
     # @param value [true, false]
     # @param reason [String, nil] the reason to be shown in the audit log for this action
+    # @deprecated Please migrate to using {#modify} with the `widget_enabled:` parameter.
     def set_widget_enabled(value, reason = nil)
       modify_widget(value, widget_channel, reason)
     end
@@ -286,6 +292,7 @@ module Discordrb
 
     # Changes the channel on the server's widget
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
+    # @deprecated Please migrate to using {#modify} with the `widget_channel:` parameter.
     def widget_channel=(channel)
       modify_widget(widget?, channel)
     end
@@ -294,6 +301,7 @@ module Discordrb
     # Changes the channel on the server's widget
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
     # @param reason [String, nil] the reason to be shown in the audit log for this action
+    # @deprecated Please migrate to using {#modify} with the `widget_channel:` parameter.
     def set_widget_channel(channel, reason = nil)
       modify_widget(widget?, channel, reason)
     end
@@ -303,12 +311,11 @@ module Discordrb
     # @param enabled [true, false] whether the widget is enabled
     # @param channel [Channel, String, Integer] the channel, or its ID, to be referenced by the widget
     # @param reason [String, nil] the reason to be shown in the audit log for this action
+    # @deprecated Please migrate to using {#modify} with the `widget_enabled:` and `widget_channel:` parameters.
     def modify_widget(enabled, channel, reason = nil)
       cache_widget_data if @widget_enabled.nil?
       channel_id = channel ? channel.resolve_id : @widget_channel_id
-      response = JSON.parse(API::Server.modify_widget(@bot.token, @id, enabled, channel_id, reason))
-      @widget_enabled = response['enabled']
-      @widget_channel_id = response['channel_id']
+      cache_widget_data(JSON.parse(API::Server.modify_widget(@bot.token, @id, enabled, channel_id, reason)))
     end
     alias_method :modify_embed, :modify_widget
 
@@ -444,6 +451,164 @@ module Discordrb
     end
 
     alias_method :jump_link, :link
+
+    # Search the messages that have been sent in this server.
+    # @example Search for 200 messages from a user that contain an attachment.
+    #  options = {
+    #    limit: 200,
+    #    contains: :file,
+    #    authors: 171764626755813376
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for all of the messages in a channel that mentions someone.
+    #  options = {
+    #    limit: nil,
+    #    mentions: 171764626755813376,
+    #    channels: 381891448884428801
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for 105 messages that contain specific embed types, sorted by oldest to newest.
+    #  options = {
+    #    limit: 105,
+    #    embed_types: %i[article image],
+    #    sort_order: :ascending
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for 30 messages sent between two dates that contain the word “time” and an @everyone ping.
+    #  options = {
+    #    limit: 30,
+    #    content: 'time',
+    #    mentions_everyone: true,
+    #    after: Time.parse("December 16th, 2020"),
+    #    before: Time.parse("December 25th, 2020")
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @example Search for 500 messages that reply to a specific message, contain a Ruby file, and were sent by a bot account.
+    #  options = {
+    #    limit: 500,
+    #    author_types: :bot,
+    #    file_extensions: '.rb',
+    #    reply_messages: 1454184993923268660
+    #  }
+    #
+    #  results = server.search_messages(**options)
+    # @param limit [Integer, nil] The maximum number of messages to return, or `nil` to fetch all of the messages that match the search query.
+    # @param offset [Integer, nil] The number of messages between 0-9975 to offset the search query by.
+    # @param before [Time, #resolve_id, nil] Get messages sent before this timestamp.
+    # @param after [Time, #resolve_id, nil] Get messages sent after this timestamp.
+    # @param content [String, #to_s, nil] Get messages with matching message content.
+    # @param slop [Integer, nil] The amount of variation allowed between the placement of words when matching against message content; between 0-100.
+    # @param channels [Array<Channel, Integer, String>, Channel, Integer, String, nil] Get messages that were sent in these channels.
+    # @param authors [Array<#resolve_id>, #resolve_id, nil] Get messages that were created by these authors.
+    # @param author_types [Array<String, Symbol>, String, Symbol, nil] Get messages that were created by these author types: `user`, `bot`, or `webhook`.
+    # @param mentions [Array<#resolve_id>, #resolve_id, nil] Get messages that mention these users or members.
+    # @param role_mentions [Array<Role, Integer, String>, Role, Integer, String, nil] Get messages that mention these roles.
+    # @param mentions_everyone [true, false, nil] Get messages that mention the @everyone role.
+    # @param reply_users [Array<#resolve_id>, #resolve_id, nil] Get messages that replied to these users or members.
+    # @param reply_messages [Array<Message, Integer, String>, Message, Integer, String, nil] Get messages that replied to these messages.
+    # @param pinned [true, false, nil] Get messages that are pinned.
+    # @param contains [Array<String, Symbol>, String, Symbol, nil] Get messages that contain specific fields, e.g. `file`, `poll`, `sound`, etc.
+    # @param embed_types [Array<String, Symbol>, String, Symbol, nil] Get messages that contain matching embed types.
+    # @param embed_providers [Array<String, Symbol>, String, Symbol, nil] Get messages that contain embeds from specific providers.
+    # @param link_hosts [Array<String, Symbol>, String, Symbol, nil] Get messages that contain matching link hostnames, e.g. `discord.com`.
+    # @param file_names [Array<String, Symbol, Attachment>, String, Symbol, Attachment, nil] Get messages that contain matching attachment filenames.
+    # @param file_extensions [Array<String, Symbol>, String, Symbol, nil] Get messages that contain matching attachment file extensions, e.g. `.rb`, `.mp3`, etc.
+    # @param include_nsfw [true, false, nil] Whether or not to include messages that have been sent in NSFW channels.
+    # @param sort_by [Symbol, String, nil] Whether to sort the returned messages by their `:creation_time`, or `:relevance` to the search query.
+    # @param sort_order [Symbol, string, nil] Whether to order the returned messages in `:descending`, or `:ascending` order. Not respected when sorting by `:relevance`.
+    # @raise [Discordrb::Errors::NoPermission] This may occur when the application has not enabled the `MESSAGE_CONTENT` privileged intent on the Discord Developer Portal.
+    # @note Messages with GIFs sent before February 24th, 2026 may not be returned under the `gif` embed type when using the `embed_types:` parameter.
+    # @note Messages fetched via this method will not contain reactions. This means that {Message#reactions} will **always** return an empty array, even if the message has reactions.
+    # @return [SearchedMessages] the results of the search query.
+    def search_messages(
+      limit: 25, offset: nil, before: nil, after: nil, content: nil, slop: 2, channels: nil, authors: nil, author_types: nil,
+      mentions: nil, role_mentions: nil, mentions_everyone: nil, reply_users: nil, reply_messages: nil, pinned: nil, contains: nil,
+      embed_types: nil, embed_providers: nil, link_hosts: nil, file_names: nil, file_extensions: nil, include_nsfw: true, sort_by: nil,
+      sort_order: :descending
+    )
+      sort_order = case sort_order&.to_sym
+                   when nil, :desc, :descending, :newest_first
+                     :desc
+                   when :asc, :ascending, :oldest_first
+                     :asc
+                   else
+                     raise ArgumentError, "Invalid value for the 'sort_order' parameter"
+                   end
+
+      sort_by = case sort_by&.to_sym
+                when nil, :timestamp, :creation_time
+                  :timestamp
+                when :relevance, :match_score
+                  :relevance
+                else
+                  raise ArgumentError, "Invalid value for the 'sort_by' parameter"
+                end
+
+      options = {
+        limit: limit && limit <= 25 ? limit : 25,
+        max_id: before.is_a?(Time) ? IDObject.synthesise(before) : before&.resolve_id,
+        min_id: after.is_a?(Time) ? IDObject.synthesise(after) : after&.resolve_id,
+        offset: offset || 0,
+        slop: slop,
+        content: content&.to_s,
+        channel_id: channels ? Array(channels).map(&:resolve_id) : channels,
+        author_type: author_types ? Array(author_types) : author_types,
+        author_id: authors ? Array(authors).map(&:resolve_id) : authors,
+        mentions: mentions ? Array(mentions).map(&:resolve_id) : mentions,
+        mentions_role_id: role_mentions ? Array(role_mentions).map(&:resolve_id) : role_mentions,
+        mention_everyone: mentions_everyone,
+        replied_to_user_id: reply_users ? Array(reply_users).map(&:resolve_id) : reply_users,
+        replied_to_message_id: reply_messages ? Array(reply_messages).map(&:resolve_id) : reply_messages,
+        pinned: pinned,
+        has: contains ? Array(contains) : contains,
+        embed_type: embed_types ? Array(embed_types) : embed_types,
+        embed_provider: embed_providers ? Array(embed_providers) : embed_providers,
+        link_hostname: link_hosts ? Array(link_hosts) : link_hosts,
+        attachment_filename: (Array(file_names).map { |file| file.is_a?(Attachment) ? file.filename : file } if file_names),
+        attachment_extension: file_extensions ? Array(file_extensions).map { |type| type.to_s.delete_prefix('.') } : file_extensions,
+        sort_by: sort_by,
+        sort_order: sort_order,
+        include_nsfw: include_nsfw
+      }.compact
+
+      raise ArgumentError, "The 'role_mentions' parameter cannot contain the everyone role" if options[:mentions_role_id]&.any?(@id)
+
+      # Only store the total message count from the first request.
+      total = nil
+
+      get_messages = lambda do |query|
+        data = JSON.parse(API::Server.search_messages(@bot.token, @id, **options, **query.compact))
+        total ||= data['total_results']
+
+        data['threads']&.each do |thread|
+          thread['member'] = data['members']&.find { |member| thread['id'] == member['id'] }
+
+          @bot.ensure_channel(thread, self)
+        end
+
+        data['messages'].collect { |nested_messages| Message.new(nested_messages[0], @bot) }
+      end
+
+      paginator = Paginator.new(limit, :down) do |page|
+        if sort_by == :relevance
+          if (count = (paginator.amount_fetched + options[:offset])) > 9975
+            []
+          else
+            get_messages.call(offset: count + options[:offset])
+          end
+        elsif sort_order == :desc
+          get_messages.call(max_id: page&.last&.id, offset: page ? 0 : nil)
+        else
+          get_messages.call(min_id: page&.last&.id, offset: page ? 0 : nil)
+        end
+      end
+
+      SearchedMessages.new(paginator.to_a, total, @bot)
+    end
 
     # Adds a role to the role cache
     # @note For internal use only
@@ -1096,6 +1261,8 @@ module Discordrb
     # @param description [String, nil] The new description of the server.
     # @param boost_progress_bar [true, false] Whether or not the server boosting progress bar should be visible.
     # @param safety_alerts_channel [Channel, Integer, String, nil] The new channel where safety alerts should be sent.
+    # @param widget_enabled [true, false, nil] Whether or not the server's widget should be enabled.
+    # @param widget_channel [Channel, Integer, String, nil] The new invite channel for the server's widget.
     # @param dms_disabled_until [Time, nil] The time at when non-friend direct messages will be enabled again.
     # @param invites_disabled_until [Time, nil] The time at when invites will no longer be disabled.
     # @param reason [String, nil] The reason to show in the server's audit log for modifying the server.
@@ -1105,7 +1272,8 @@ module Discordrb
       afk_channel: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef,
       system_channel: :undef, system_channel_flags: :undef, rules_channel: :undef, public_updates_channel: :undef,
       locale: :undef, features: :undef, description: :undef, boost_progress_bar: :undef, safety_alerts_channel: :undef,
-      dms_disabled_until: :undef, invites_disabled_until: :undef, reason: nil
+      widget_enabled: :undef, widget_channel: :undef, dms_disabled_until: :undef, invites_disabled_until: :undef,
+      reason: nil
     )
       data = {
         name: name,
@@ -1129,6 +1297,15 @@ module Discordrb
         safety_alerts_channel_id: safety_alerts_channel == :undef ? safety_alerts_channel : safety_alerts_channel&.resolve_id
       }
 
+      if widget_enabled != :undef || widget_channel != :undef
+        widget_data = {
+          enabled: widget_enabled,
+          channel_id: widget_channel == :undef ? widget_channel : widget_channel&.resolve_id
+        }
+
+        cache_widget_data(JSON.parse(API::Server.update_widget(@bot.token, @id, **widget_data, reason: reason)))
+      end
+
       if invites_disabled_until != :undef || dms_disabled_until != :undef
         incidents_data = {
           dms_disabled_until: dms_disabled_until == :undef ? @dms_disabled_until&.iso8601 : dms_disabled_until&.iso8601,
@@ -1136,8 +1313,9 @@ module Discordrb
         }
 
         process_incident_actions(JSON.parse(API::Server.update_incident_actions(@bot.token, @id, **incidents_data, reason: reason)))
-        return unless data.any? { |_, value| value != :undef }
       end
+
+      return unless data.any? { |_, value| value != :undef }
 
       update_data(JSON.parse(API::Server.update!(@bot.token, @id, **data, reason: reason)))
       nil
@@ -1395,6 +1573,42 @@ module Discordrb
       @reason = reason
       @banned_users = data['banned_users']&.map(&:resolve_id) || []
       @failed_users = data['failed_users']&.map(&:resolve_id) || []
+    end
+  end
+
+  # A set of messages collected from a search query.
+  class SearchedMessages
+    include Enumerable
+
+    # @return [Array<Message>] the messages that matched the search query.
+    attr_reader :messages
+
+    # @return [Integer] the total number of messages that matched the search query.
+    attr_reader :total_results
+
+    # @!visibility private
+    def initialize(messages, total, bot)
+      @bot = bot
+      @messages = messages
+      @total_results = total
+    end
+
+    # Get a single message that matched the search query by its index.
+    # @param index [Integer] The index of the message to get from the array.
+    # @return [Message] the message that was found at the specified index.
+    def [](index)
+      @messages[index]
+    end
+
+    # Iterate over each message that matched the search query.
+    # @return [Array<Message>, Enumerable] The array that was iterated over.
+    def each(...)
+      @messages.each(...)
+    end
+
+    # @!visibility private
+    def inspect
+      "<SearchedMessages messages=[#{'...' if @messages.any?}] total_results=#{@total_results}>"
     end
   end
 end
