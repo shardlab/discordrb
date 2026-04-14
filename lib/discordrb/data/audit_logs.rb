@@ -73,7 +73,9 @@ module Discordrb
       166 => :onboarding_create,
       167 => :onboarding_update,
       190 => :home_settings_create,
-      191 => :home_settings_update
+      191 => :home_settings_update,
+      192 => :voice_channel_status_update,
+      193 => :voice_channel_status_delete
     }.freeze
 
     # @!visibility private
@@ -94,6 +96,7 @@ module Discordrb
       stage_instance_delete sticker_delete scheduled_event_delete
       thread_delete soundboard_sound_delete auto_moderation_rule_delete
       onboarding_prompt_delete message_unpin auto_moderation_block_message
+      voice_channel_status_delete
     ].freeze
 
     # @!visibility private
@@ -105,6 +108,7 @@ module Discordrb
       soundboard_sound_update auto_moderation_rule_update onboarding_prompt_update
       onboarding_update home_settings_update creator_monetization_terms_accepted
       auto_moderation_user_communication_disabled auto_moderation_quarantine_user
+      voice_channel_status_update
     ].freeze
 
     # @return [Hash<String => User>] the users included in the audit logs.
@@ -175,6 +179,9 @@ module Discordrb
       # @return [Symbol, nil] the type of the permission overwrite.
       attr_reader :overwrite_type
 
+      # @return [String, nil] the new status of the voice channel.
+      attr_reader :status
+
       # @return [String, nil] the reason for this action occurring.
       attr_reader :reason
 
@@ -215,6 +222,7 @@ module Discordrb
         @overwrite_role_name = options['role_name']
         @overwrite_id = options['id']&.to_i
         @overwrite_type = Overwrite::TYPES.key(options['type']) if options['type']
+        @status = options['status'] == '' ? nil : options['status']
       end
 
       # @return [Server, Channel, Member, User, Role, Invite, Webhook, Emoji, nil] the target being performed on.
@@ -418,6 +426,7 @@ module Discordrb
       when 163..165 then :onboarding_prompt
       when 166..167 then :onboarding
       when 190..191 then :home_settings
+      when 192..193 then :voice_channel_status
 
       else :unknown
       end

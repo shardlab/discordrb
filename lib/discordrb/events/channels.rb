@@ -185,9 +185,8 @@ module Discordrb::Events
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-
-      @server = bot.server(data['guild_id']) if data['guild_id']
       @channel = bot.channel(data['channel_id'])
+      @server = @channel.server if data['guild_id']
       @last_pin_timestamp = Time.iso8601(data['last_pin_timestamp']) if data['last_pin_timestamp']
     end
   end
@@ -201,6 +200,110 @@ module Discordrb::Events
       [
         matches_all(@attributes[:server], event.server) { |a, e| a.resolve_id == e&.id },
         matches_all(@attributes[:channel], event.channel) { |a, e| a.resolve_id == e.id }
+      ].reduce(true, &:&)
+    end
+  end
+
+  # Raised whenever the status of a voice channel is updated.
+  class ChannelStatusUpdateEvent < Event
+    # @return [String, nil] the new status of the voice channel.
+    attr_reader :status
+
+    # @return [Server] the server that the voice channel is from.
+    attr_reader :server
+
+    # @return [Channel] the channel whose voice status was updated.
+    attr_reader :channel
+
+    # @!visibility private
+    def initialize(data, bot)
+      @bot = bot
+      @channel = bot.channel(data['id'])
+      @server = @channel.server
+      @status = data['status'] == '' ? nil : data['status']
+    end
+  end
+
+  # Event handler for ChannelStatusUpdateEvent.
+  class ChannelStatusUpdateEventHandler < EventHandler
+    # @!visibility private
+    def matches?(event)
+      # Check for the proper event type.
+      return false unless event.is_a?(ChannelStatusUpdateEvent)
+
+      [
+        matches_all(@attributes[:status], event.status) do |a, e|
+          case a
+          when Regexp
+            a.match?(e) if e
+          else
+            a == e
+          end
+        end,
+
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a&.resolve_id == e&.resolve_id
+        end,
+
+        matches_all(@attributes[:channel], event.channel) do |a, e|
+          a&.resolve_id == e&.resolve_id
+        end
+      ].reduce(true, &:&)
+    end
+  end
+
+  # Raised whenever the start time of a voice channel is updated.
+  class ChannelStartTimeUpdateEvent < Event
+    # @return [Server] the server associated with the event.
+    attr_reader :server
+
+    # @return [Channel] the channel associated with the event.
+    attr_reader :channel
+
+    # @return [Time, nil] the new start time of the voice channel.
+    attr_reader :start_time
+
+    # @!visibility private
+    def initialize(data, bot)
+      @bot = bot
+      @channel = bot.channel(data['id'])
+      @server = @channel.server
+      @start_time = Time.at(data['voice_start_time']) if data['voice_start_time']
+    end
+  end
+
+  # Event handler for ChannelStartTimeUpdateEvent.
+  class ChannelStartTimeUpdateEventHandler < EventHandler
+    # @!visibility private
+    def matches?(event)
+      # Check for the proper event type.
+      return false unless event.is_a?(ChannelStartTimeUpdateEvent)
+
+      [
+        matches_all(@attributes[:server], event.server) do |a, e|
+          a&.resolve_id == e&.resolve_id
+        end,
+
+        matches_all(@attributes[:channel], event.channel) do |a, e|
+          a&.resolve_id == e&.resolve_id
+        end,
+
+        matches_all(@attributes[:after], event.start_time) do |a, e|
+          (e > a) if e
+        end,
+
+        matches_all(@attributes[:before], event.start_time) do |a, e|
+          (e < a) if e
+        end,
+
+        matches_all(@attributes[:start_time], event.start_time) do |a, e|
+          a == case a
+               when Integer
+                 e.to_i
+               else
+                 e
+               end
+        end
       ].reduce(true, &:&)
     end
   end
