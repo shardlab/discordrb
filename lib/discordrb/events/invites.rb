@@ -30,7 +30,16 @@ module Discordrb::Events
     # @!attribute [r] inviter
     #   @return [User] The user that created the invite.
     #   @see Invite#inviter
-    delegate :code, :created_at, :max_age, :max_uses, :temporary, :inviter, to: :invite
+    # @!attribute [r] roles
+    #   @return [Array<Role>] The roles to assign to users who accept the invite.
+    #   @see Invite#roles
+    # @!attribute [r] flags
+    #   @return [Integer] The flags for the invite.
+    #   @see Invite#flags
+    # @!attribute [r] expires_at
+    #   @return [Time, nil] The time at when the invite expires.
+    #   @see Invite#expires_at
+    delegate :code, :created_at, :max_age, :max_uses, :temporary, :inviter, :roles, :flags, :expires_at, to: :invite
 
     alias temporary? temporary
 

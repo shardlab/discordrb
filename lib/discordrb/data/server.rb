@@ -1133,7 +1133,7 @@ module Discordrb
     # @return [Array<Invite>] invites to the server.
     def invites
       invites = JSON.parse(API::Server.invites(@bot.token, @id))
-      invites.map { |invite| Invite.new(invite, @bot) }
+      invites.map { |invite| Invite.new(invite, @bot, true) }
     end
 
     # Get the scheduled events on the server.

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# API calls for Invite object
+# API calls for invites.
 module Discordrb::API::Invite
   module_function
 
@@ -29,15 +29,39 @@ module Discordrb::API::Invite
     )
   end
 
-  # Join a server using an invite
-  # https://discord.com/developers/docs/resources/invite#accept-invite
-  def accept(token, invite_code)
+  # Get the target users for an invite.
+  # https://discord.com/developers/docs/resources/invite#get-target-users
+  def get_target_users(token, code)
     Discordrb::API.request(
-      :invite_code,
+      :invites_code_target_users,
       nil,
-      :post,
-      "#{Discordrb::API.api_base}/invites/#{invite_code}",
+      :get,
+      "#{Discordrb::API.api_base}/invites/#{code}/target-users",
+      Authorization: token
+    )
+  end
+
+  # Update the target users for an invite.
+  # https://discord.com/developers/docs/resources/invite#update-target-users
+  def update_target_users(token, code, target_users_file:)
+    Discordrb::API.request(
+      :invites_code_target_users,
       nil,
+      :put,
+      "#{Discordrb::API.api_base}/invites/#{code}/target-users",
+      { target_users_file: },
+      Authorization: token
+    )
+  end
+
+  # Get the target users job status for an invite.
+  # https://discord.com/developers/docs/resources/invite#get-target-users-job-status
+  def get_target_users_job_status(token, code)
+    Discordrb::API.request(
+      :invites_code_target_users,
+      nil,
+      :get,
+      "#{Discordrb::API.api_base}/invites/#{code}/target-users/job-status",
       Authorization: token
     )
   end
