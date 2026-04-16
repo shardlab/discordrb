@@ -5,7 +5,7 @@ require 'discordrb/webhooks/embeds'
 module Discordrb::Webhooks
   # A class that acts as a builder for a webhook message object.
   class Builder
-    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil, poll: nil)
+    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil, poll: nil, client_theme: nil)
       @content = content
       @username = username
       @avatar_url = avatar_url
@@ -14,6 +14,7 @@ module Discordrb::Webhooks
       @embeds = embeds
       @allowed_mentions = allowed_mentions
       @poll = poll
+      @client_theme = client_theme
     end
 
     # The content of the message. May be 2000 characters long at most.
@@ -51,13 +52,13 @@ module Discordrb::Webhooks
       @embeds << embed
     end
 
-    # Convenience method to add an embed using a block-style builder pattern
-    # @example Add an embed to a message
+    # Convenience method to add an embed using a block-style builder pattern.
+    # @example Add an embed to a message.
     #   builder.add_embed do |embed|
     #     embed.title = 'Testing'
     #     embed.image = Discordrb::Webhooks::EmbedImage.new(url: 'https://i.imgur.com/PcMltU7.jpg')
     #   end
-    # @param embed [Embed, nil] The embed to start the building process with, or nil if one should be created anew.
+    # @param embed [Embed, nil] The embed to start the building process with, or `nil` if one should be created anew.
     # @return [Embed] The created embed.
     def add_embed(embed = nil)
       embed ||= Embed.new
@@ -66,23 +67,41 @@ module Discordrb::Webhooks
       embed
     end
 
-    # Convenience method to add a poll using a builder pattern
-    # @example Add a poll to a message
+    # Convenience method to add a poll using a builder pattern.
+    # @example Add a poll to a message.
     #   builder.poll(question: "Best Fruit?", duration: 48) do |poll|
     #     poll.answer(text: "Apple", emoji: "🍎")
     #     poll.answer(text: "Orange", emoji: "🍊")
     #     poll.answer(text: "Pomelo", emoji: "🍈")
     #   end
-    # @param poll [Poll::Builder, Poll, Hash, nil] The poll to start the building process with, or nil if one should be created anew.
+    # @param poll [Poll::Builder, Poll, Hash, nil] The poll to start the building process with, or `nil` if one should be created anew.
     # @return [Poll::Builder, Poll] The created poll.
-    def add_poll(poll = nil, **kwargs)
-      poll ||= Discordrb::Poll::Builder.new(**kwargs)
+    def add_poll(poll = nil, ...)
+      poll ||= Discordrb::Poll::Builder.new(...)
       yield(poll) if block_given?
       @poll = poll
       poll
     end
 
     alias_method :poll, :add_poll
+
+    # Convenience method to add a shared theme using a builder pattern.
+    # @example Add a client theme to a message.
+    #   builder.client_theme(angle: 257, intensity: 20) do |theme|
+    #     theme.colour(12746612)
+    #     theme.colour(984328)
+    #     theme.colour(12549746)
+    #   end
+    # @param theme [ClientTheme::Builder, ClientTheme, Hash, nil] The theme to start the building process with, or `nil` if one should be created anew.
+    # @return [ClientTheme::Builder, ClientTheme] The created theme.
+    def add_client_theme(theme = nil, ...)
+      theme ||= Discordrb::ClientTheme::Builder.new(...)
+      yield(theme) if block_given?
+      @client_theme = theme
+      theme
+    end
+
+    alias_method :client_theme, :add_client_theme
 
     # @return [File, nil] the file attached to this message.
     attr_reader :file
@@ -98,6 +117,10 @@ module Discordrb::Webhooks
     # @see https://discord.com/developers/docs/resources/poll#poll-create-request-object
     attr_writer :poll
 
+    # @return [Hash, ClientTheme::Builder, ClientTheme, nil] The client-side theme to share via this message.
+    # @see https://docs.discord.com/developers/resources/message#shared-client-theme-object
+    attr_writer :client_theme
+
     # @return [Hash] a hash representation of the created message, for JSON format.
     def to_json_hash
       {
@@ -107,7 +130,8 @@ module Discordrb::Webhooks
         tts: @tts,
         embeds: @embeds.map(&:to_hash),
         allowed_mentions: @allowed_mentions&.to_hash,
-        poll: @poll&.to_h
+        poll: @poll&.to_h,
+        shared_client_theme: @client_theme&.to_h
       }
     end
 
