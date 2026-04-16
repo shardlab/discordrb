@@ -5,7 +5,7 @@ require 'discordrb/webhooks/embeds'
 module Discordrb::Webhooks
   # A class that acts as a builder for a webhook message object.
   class Builder
-    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil, poll: nil)
+    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil, poll: nil, shared_theme: nil)
       @content = content
       @username = username
       @avatar_url = avatar_url
@@ -14,6 +14,7 @@ module Discordrb::Webhooks
       @embeds = embeds
       @allowed_mentions = allowed_mentions
       @poll = poll
+      @shared_theme = shared_theme
     end
 
     # The content of the message. May be 2000 characters long at most.
@@ -75,14 +76,32 @@ module Discordrb::Webhooks
     #   end
     # @param poll [Poll::Builder, Poll, Hash, nil] The poll to start the building process with, or nil if one should be created anew.
     # @return [Poll::Builder, Poll] The created poll.
-    def add_poll(poll = nil, **kwargs)
-      poll ||= Discordrb::Poll::Builder.new(**kwargs)
+    def add_poll(poll = nil, ...)
+      poll ||= Discordrb::Poll::Builder.new(...)
       yield(poll) if block_given?
       @poll = poll
       poll
     end
 
     alias_method :poll, :add_poll
+
+    # Convenience method to add a shared theme using a builder pattern
+    # @example Add a shared theme to a message
+    #   builder.shared_theme(angle: 257, intensity: 20) do |theme|
+    #     theme.colour('C27F74')
+    #     theme.colour('0F0508')
+    #     theme.colour('BF7E72')
+    #   end
+    # @param theme [SharedTheme::Builder, SharedTheme, Hash, nil] The theme to start the building process with, or nil if one should be created anew.
+    # @return [SharedTheme::Builder, SharedTheme] The created theme.
+    def add_shared_theme(theme = nil, ...)
+      theme ||= Discordrb::SharedTheme::Builder.new(...)
+      yield(theme) if block_given?
+      @shared_theme = theme
+      theme
+    end
+
+    alias_method :shared_theme, :add_shared_theme
 
     # @return [File, nil] the file attached to this message.
     attr_reader :file
@@ -98,6 +117,10 @@ module Discordrb::Webhooks
     # @see https://discord.com/developers/docs/resources/poll#poll-create-request-object
     attr_writer :poll
 
+    # @return [hash, SharedTheme::Builder, SharedTheme, nil] The client-side theme to share via this message.
+    # @see https://docs.discord.com/developers/resources/message#shared-client-theme-object
+    attr_writer :shared_theme
+
     # @return [Hash] a hash representation of the created message, for JSON format.
     def to_json_hash
       {
@@ -107,7 +130,8 @@ module Discordrb::Webhooks
         tts: @tts,
         embeds: @embeds.map(&:to_hash),
         allowed_mentions: @allowed_mentions&.to_hash,
-        poll: @poll&.to_h
+        poll: @poll&.to_h,
+        shared_client_theme: @shared_theme&.to_h
       }
     end
 
