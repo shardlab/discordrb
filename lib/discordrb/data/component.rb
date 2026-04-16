@@ -446,8 +446,16 @@ module Discordrb
 
     # Resolved metadata about a piece of media.
     class MediaItem
+      # Mapping of flags.
+      FLAGS = {
+        animated: 1 << 0
+      }.freeze
+
       # @return [String] the URL to the media item.
       attr_reader :url
+
+      # @return [Integer] the flags of the media item.
+      attr_reader :flags
 
       # @return [Integer, nil] the width of the media item.
       attr_reader :width
@@ -458,6 +466,9 @@ module Discordrb
       # @return [String, nil] the proxied URL to the media item.
       attr_reader :proxy_url
 
+      # @return [String, nil] the placeholder of the media item.
+      attr_reader :placeholder
+
       # @return [String, nil] the content type of the media item.
       attr_reader :content_type
 
@@ -465,15 +476,29 @@ module Discordrb
       #   when the media item was uploaded via an `attachment://<filename>` reference.
       attr_reader :attachment_id
 
+      # @return [Integer, nil] the version of the thumbhash for images and videos, if any.
+      attr_reader :placeholder_version
+
       # @!visibility private
       def initialize(data, bot)
         @bot = bot
         @url = data['url']
         @width = data['width']
+        @flags = data['flags']
         @height = data['height']
         @proxy_url = data['proxy_url']
+        @placeholder = data['placeholder']
         @content_type = data['content_type']
         @attachment_id = data['attachment_id']&.to_i
+        @placeholder_version = data['placeholder_version']
+      end
+
+      # @!method animated?
+      #   @return [true, false] whether or not the media item is animated.
+      FLAGS.each do |name, value|
+        define_method("#{name}?") do
+          @flags.anybits?(value)
+        end
       end
     end
 

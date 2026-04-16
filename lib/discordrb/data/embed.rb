@@ -11,6 +11,9 @@ module Discordrb
     # @return [String, nil] the title of the embed object. `nil` if there is not a title
     attr_reader :title
 
+    # @return [Integer] the flags of the embed object combined as a bitfield.
+    attr_reader :flags
+
     # @return [String, nil] the description of the embed object. `nil` if there is not a description
     attr_reader :description
 
@@ -55,17 +58,18 @@ module Discordrb
 
       @url = data['url']
       @title = data['title']
+      @flags = data['flags'] || 0
       @type = data['type'].to_sym
       @description = data['description']
-      @timestamp = data['timestamp'].nil? ? nil : Time.parse(data['timestamp'])
+      @timestamp = Time.parse(data['timestamp']) if data['timestamp']
       @color = data['color']
-      @footer = data['footer'].nil? ? nil : EmbedFooter.new(data['footer'], self)
-      @image = data['image'].nil? ? nil : EmbedImage.new(data['image'], self)
-      @video = data['video'].nil? ? nil : EmbedVideo.new(data['video'], self)
-      @provider = data['provider'].nil? ? nil : EmbedProvider.new(data['provider'], self)
-      @thumbnail = data['thumbnail'].nil? ? nil : EmbedThumbnail.new(data['thumbnail'], self)
-      @author = data['author'].nil? ? nil : EmbedAuthor.new(data['author'], self)
-      @fields = data['fields'].nil? ? nil : data['fields'].map { |field| EmbedField.new(field, self) }
+      @footer = EmbedFooter.new(data['footer'], self) if data['footer']
+      @image = EmbedImage.new(data['image'], self) if data['image']
+      @video = EmbedVideo.new(data['video'], self) if data['video']
+      @provider = EmbedProvider.new(data['provider'], self) if data['provider']
+      @thumbnail = EmbedThumbnail.new(data['thumbnail'], self) if data['thumbnail']
+      @author = EmbedAuthor.new(data['author'], self) if data['author']
+      @fields = data['fields']&.map { |field| EmbedField.new(field, self) }
     end
 
     # @return [Message, nil] the message this embed object is contained in.
@@ -120,6 +124,21 @@ module Discordrb
     # @return [Integer] the height of the image, in pixels.
     attr_reader :height
 
+    # @return [Integer] the flags of the image, as a bitfield.
+    attr_reader :flags
+
+    # @return [String, nil] the alt text of the image.
+    attr_reader :description
+
+    # @return [String, nil] the media type of the image.
+    attr_reader :content_type
+
+    # @return [String, nil] the thumbhash of the image.
+    attr_reader :placeholder
+
+    # @return [Integer, nil] the version of the image's thumbhash.
+    attr_reader :placeholder_version
+
     # @!visibility private
     def initialize(data, embed)
       @embed = embed
@@ -128,6 +147,11 @@ module Discordrb
       @proxy_url = data['proxy_url']
       @width = data['width']
       @height = data['height']
+      @flags = data['flags'] || 0
+      @description = data['description']
+      @content_type = data['content_type']
+      @placeholder = data['placeholder']
+      @placeholder_version = data['placeholder_version']
     end
   end
 
@@ -139,19 +163,43 @@ module Discordrb
     # @return [String] the source URL of the video.
     attr_reader :url
 
+    # @return [String] the proxy URL of the video.
+    attr_reader :proxy_url
+
     # @return [Integer] the width of the video, in pixels.
     attr_reader :width
 
     # @return [Integer] the height of the video, in pixels.
     attr_reader :height
 
+    # @return [Integer] the flags of the video, as a bitfield.
+    attr_reader :flags
+
+    # @return [String, nil] the alt text of the video.
+    attr_reader :description
+
+    # @return [String, nil] the media type of the video.
+    attr_reader :content_type
+
+    # @return [String, nil] the thumbhash of the video.
+    attr_reader :placeholder
+
+    # @return [Integer, nil] the version of the video's thumbhash.
+    attr_reader :placeholder_version
+
     # @!visibility private
     def initialize(data, embed)
       @embed = embed
 
       @url = data['url']
+      @proxy_url = data['proxy_url']
       @width = data['width']
       @height = data['height']
+      @flags = data['flags'] || 0
+      @description = data['description']
+      @content_type = data['content_type']
+      @placeholder = data['placeholder']
+      @placeholder_version = data['placeholder_version']
     end
   end
 
