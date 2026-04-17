@@ -34,6 +34,8 @@ module Discordrb
     direct_message_reactions: 1 << 13,
     direct_message_typing: 1 << 14,
     server_scheduled_events: 1 << 16,
+    server_automod: 1 << 20,
+    server_automod_execution: 1 << 21,
     server_message_polls: 1 << 24,
     direct_message_polls: 1 << 25
   }.freeze
