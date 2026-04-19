@@ -208,6 +208,8 @@ module Discordrb
           emoji = server.emojis[id]
           return emoji if emoji
         end
+
+        nil
       else
         hash = {}
         @servers.each_value do |server|
@@ -223,7 +225,7 @@ module Discordrb
 
     # Finds an emoji by its name.
     # @param name [String] The emoji name that should be resolved.
-    # @return [GlobalEmoji, nil] the emoji identified by the name, or `nil` if it couldn't be found.
+    # @return [Emoji, nil] the emoji identified by the name, or `nil` if it couldn't be found.
     def find_emoji(name)
       LOGGER.out("Resolving emoji #{name}")
       emoji.find { |element| element.name == name }
@@ -1054,9 +1056,19 @@ module Discordrb
       server = server(server_id)
       return unless server
 
+      if (member_data = data['member'])
+        member = server.member(member_data['user']['id'], false)
+
+        if member
+          member.update_data(member_data)
+        else
+          server&.cache_member(Member.new(member_data, server, self))
+        end
+      end
+
       user_id = data['user_id'].to_i
       old_voice_state = server.voice_states[user_id]
-      old_channel_id = old_voice_state.voice_channel&.id if old_voice_state
+      old_channel_id = old_voice_state&.voice_channel&.id
 
       server.update_voice_state(data)
 
