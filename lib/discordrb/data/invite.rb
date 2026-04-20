@@ -162,6 +162,12 @@ module Discordrb
 
   # A Discord invite to a channel
   class Invite
+    # @!visibility private
+    TYPES = {
+      stream: 1,
+      application: 2
+    }.freeze
+
     # @return [InviteChannel, Channel] the channel this invite references.
     attr_reader :channel
 
@@ -293,8 +299,8 @@ module Discordrb
     # @param users [File, Array<User, Integer, String>, nil] The new target users of the invite.
     def target_users=(users)
       unless users.respond_to?(:read)
-        users = StringIO.new("user_id\n#{users.map(&:resolve_id).join("\n")}", 'rb')
-        users.define_singleton_method(:path) { 'ids.csv' }
+        users = StringIO.new(users.map(&:resolve_id).join("\n"))
+        users.define_singleton_method(:path) { 'target_users_file.csv' }
       end
 
       API::Invite.update_target_users(@bot.token, @code, target_users_file: users)

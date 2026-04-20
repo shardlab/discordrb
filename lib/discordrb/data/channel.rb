@@ -908,47 +908,48 @@ module Discordrb
 
     alias_method :invite, :make_invite
 
-    # Create an invite for the channel.
-    # @param max_age [Integer] The duration of the invite in seconds, or `nil` for no duration.
-    # @param max_uses [Integer] The number of times the invite can be used, or `nil` for no limit.
-    # @param temporary [true, false] Whether or not the invite should only grant temporary membership.
-    # @param unique [true, false] Whether or not the Discord API should attempt to make a unique invite code.
-    # @param stream_user [User, Integer, String, nil] The user whose stream to display on the invite cover.
-    # @param embedded_application [Application, Integer, String, nil] The embdedded application to open the invite for.
-    # @param target_users [#read, Array<User, Integer, String>, nil] The users who are allowed to accept the invite.
-    # @param roles [Array<Role, Integer, String>, nil] The roles that should be assigned to a member who accepts the invite.
-    # @param reason [String, nil] The reason to show in the audit log for creating the invite.
-    # @return [Invite, nil] The invite that was created. This may be `nil` if the server has manually disabled invites.
-    # @note When passing a file to the `users:` parameter, you must provide a single-column CSV file containg a list of
-    #   user IDs (snowflakes). If any duplicate IDs are provided, then they are ignored.
+    # Create an invite to the channel.
+    # @param flags [Integer, nil] The flags to set for the invite.
+    # @param max_age [Integer, nil] The amount of time in seconds before the invite expires.
+    # @param max_uses [Integer, nil] The amount of times the invite can be used before it expires.
+    # @param temporary [true, false, nil] Whether or not the invite should only grant temporary membership.
+    # @param unique [true, false, nil] Whether or not the backend should attempt to create a unique code.
+    # @param stream_user [User, Member, Integer, String, nil] The user whose stream should be shown on the invite.
+    # @param application [Application, Integer, String, nil] The embedded appplication to open for the invite.
+    # @param target_users [#read, Array<#resolve_id>, nil] The users that are allowed to accept the invite.
+    # @param roles [Array<Integer, String, Role>, nil] The roles to grant to users or members who accept the invite.
+    # @param reason [String, nil] The reason to show in the server's audit log for creating the invite.
+    # @return [Invite, nil] The invite that was created. Can be `nil` if the server has lost the ability to create invites.
     def create_invite(
-      max_age: :undef, max_uses: :undef, temporary: :undef, unique: :undef, stream_user: :undef,
-      embedded_application: :undef, target_users: :undef, roles: :undef, reason: nil
+      flags: nil, max_age: 86_400, max_uses: nil, temporary: false, unique: false,
+      stream_user: nil, application: nil, target_users: nil, roles: nil, reason: nil
     )
-      if target_users && target_users != :undef && !target_users.respond_to?(:read)
-        target_users = StringIO.new("user_id\n#{target_users.map(&:resolve_id).join("\n")}", 'rb')
-        target_users.define_singleton_method(:path) { 'ids.csv' }
+      if (stream_user != :undef && application != :undef) && (stream_user && application)
+        raise ArgumentError, "'stream_user' and 'application' are mutually exclusive"
+      elsif (stream_user != :undef || application != :undef) && (stream_user || application)
+        target_type = stream_user ? Invite::TYPES[:stream] : Invite::TYPES[:application]
       end
 
-      data = {
+      if target_users.is_a?(Enumerable)
+        target_users = StringIO.new(target_users.map(&:resolve_id).join("\n"))
+
+        target_users.define_singleton_method(:path) { 'target_users_file.csv' }
+      end
+
+      new_data = {
+        flags: flags || 0,
         max_age: max_age || 0,
         max_uses: max_uses || 0,
-        temporary: temporary,
-        unique: unique,
-        target_user_id: stream_user == :undef ? stream_user : stream_user.resolve_id,
-        target_application_id: embedded_application == :undef ? embedded_application : embedded_application&.resolve_id,
-        role_ids: roles == :undef ? roles : Array(roles).map(&:resolve_id),
-        target_users_file: target_users,
-        reason: reason
+        temporary: temporary || false,
+        unique: unique || false,
+        target_type: target_type || :undef,
+        target_users_file: target_users || :undef,
+        target_user_id: stream_user == :undef ? stream_user : stream_user&.resolve_id || :undef,
+        role_ids: roles != :undef && roles ? Array(roles).map(&:resolve_id) : roles,
+        target_application_id: application == :undef ? stream : application&.resolve_id || :undef
       }
 
-      if stream_user && stream_user != :undef
-        data[:target_type] = 1
-      elsif embedded_application && embedded_application != :undef
-        data[:target_type] = 2
-      end
-
-      response = API::Channel.create_invite!(@bot.token, @id, **data)
+      response = API::Channel.create_channel_invite(@bot.token, @id, **new_data, reason: reason)
       response.empty? ? nil : Invite.new(JSON.parse(response), @bot, true)
     end
 
