@@ -910,8 +910,8 @@ module Discordrb
 
     # Create an invite to the channel.
     # @param flags [Integer, nil] The flags to set for the invite.
-    # @param max_age [Integer, nil] The amount of time in seconds before the invite expires.
-    # @param max_uses [Integer, nil] The amount of times the invite can be used before it expires.
+    # @param max_age [Integer, nil] The number of seconds before the invite should expire.
+    # @param max_uses [Integer, nil] The number of times the invite can be used before it expires.
     # @param temporary [true, false, nil] Whether or not the invite should only grant temporary membership.
     # @param unique [true, false, nil] Whether or not the backend should attempt to create a unique code.
     # @param stream_user [User, Member, Integer, String, nil] The user whose stream should be shown on the invite.
