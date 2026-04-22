@@ -13,38 +13,38 @@ module Discordrb
       gif: 4
     }.freeze
 
-    # @return [String] the name of the sticker.
+    # @return [String] the name of the sticker; 2-30 characters.
     attr_reader :name
 
-    # @return [String] the tags of the sticker.
+    # @return [String] the tags of the sticker; 1-200 characters.
     attr_reader :tags
 
-    # @return [true, false] whether the sticker can be used.
+    # @return [true, false] whether or not the sticker can be used.
     attr_reader :available
-    alias_method :available?, :available
+    alias available? available
 
-    # @return [Integer, nil] the server ID of the sticker.
+    # @return [Integer, nil] the ID of the server the sticker is from.
     attr_reader :server_id
 
-    # @return [Integer] the sticker's sort value in its pack.
-    attr_reader :sort_value
+    # @return [Integer] The sort order of a standard sticker within its pack.
+    attr_reader :sort_order
 
-    # @return [Integer] the type of the sticker's file.
-    attr_reader :format_type
-
-    # @return [String, nil] the description of the sticker.
+    # @return [String, nil] the description of the sticker; 1-100 characters.
     attr_reader :description
 
+    # @return [Integer] the type of the sticker's file, e.g. `png`, `gif`, etc.
+    attr_reader :format_type
+
     # @!visibility private
-    def initialize(data, bot, server = nil)
+    def initialize(data, server, bot)
       @bot = bot
       @server = server
       @id = data['id'].to_i
       @type = data['type']
       @pack_id = data['pack_id']&.to_i
       @format_type = data['format_type']
-      @server_id = data['guild_id']&.to_i
-      @sort_value = data['sort_value'] || 0
+      @sort_order = data['sort_value'] || 0
+      @server_id = @server&.id || data['guild_id']&.to_i
       update_data(data)
     end
 
@@ -54,13 +54,14 @@ module Discordrb
       @type == 1
     end
 
-    alias_method :default?, :official?
-
     # Whether the sticker is a custom sticker uploaded to a server.
     # @return [true, false] Whether the sticker is a custom sticker that was uploaded to a server.
-    def server?
+    def custom?
       @type == 2
     end
+
+    alias_method :server?, :custom?
+    alias_method :default?, :official?
 
     # Modify the properties of the sticker.
     # @param name [String] The new 2-30 character name of the sticker.
@@ -69,7 +70,7 @@ module Discordrb
     # @param reason [String, nil] The reason to show in the audit log for modifying the sticker.
     # @return [nil]
     def modify(name: :undef, description: :undef, tags: :undef, reason: nil)
-      raise Discordrb::Errors::NoPermission, 'You cannot update a default sticker' if official?
+      raise Discordrb::Errors::NoPermission, 'You cannot update a default sticker' if default?
 
       data = {
         name: name,
@@ -90,7 +91,7 @@ module Discordrb
 
     # Get the server the sticker is associated with.
     # @return [Server, nil] The server the sticker is associated with, or `nil` if the sticker isn't from a server.
-    # @raise [Discordrb::Errors::NoPermission] This can happen when the bot is not in the server associated with the sticker.
+    # @raise [Discordrb::Errors::UnknownServer] This can happen when the bot is not in the server associated with the sticker.
     def server
       (@server ||= @bot.server(@server_id)) if @server_id
     end
@@ -98,18 +99,23 @@ module Discordrb
     # Get the user who uploaded the sticker.
     # @return [User, nil] The user who uploaded the sticker, or `nil` if the creator could not be resolved.
     def creator
-      return @creator if @creator || official? || @bot.servers[@server_id].nil?
+      return @creator if @creator || official?
+
+      me = server.bot
+      return unless me.can_manage_emojis? || me.can_create_server_expressions?
 
       update_data(JSON.parse(API::Server.get_sticker(@bot.token, @server_id, @id)))
 
       @creator
+    rescue Discordrb::Errors::NoPermission, Discordrb::Errors::UnknownServer
+      nil
     end
 
     # Delete the sticker. Use this with caution, as it cannot be undone!
     # @param reason [String, nil] The reason to show in the audit log for deleting the sticker.
     # @return [nil]
     def delete(reason: nil)
-      raise Discordrb::Errors::NoPermission, 'You cannot delete a default sticker' if official?
+      raise Discordrb::Errors::NoPermission, 'You cannot delete a default sticker' if default?
 
       API::Server.delete_sticker(@bot.token, @server_id, @id, reason: reason)
       @server&.delete_sticker(@id)
@@ -157,8 +163,8 @@ module Discordrb
       @name = new_data['name']
       @tags = new_data['tags']
       @description = new_data['description']
+      @available = custom? ? new_data['available'] : true
       @creator = @bot.ensure_user(new_data['user']) if new_data['user']
-      @available = new_data.key?('available') ? new_data['available'] : true
     end
 
     # @!visibility private
@@ -210,7 +216,7 @@ module Discordrb
 
       # @!visibility private
       def inspect
-        "<Sticker::Pack id=#{@id} name=\"#{@name}\" description=\"#{@description}\" banner_id=#{@banner_id}>"
+        "<Pack id=#{@id} name=\"#{@name}\" description=\"#{@description}\" banner_id=#{@banner_id}>"
       end
     end
 
@@ -276,7 +282,7 @@ module Discordrb
 
       # @!visibility private
       def inspect
-        "<Sticker::Item id=#{@id} name=\"#{@name}\" format_type=#{@format_type}>"
+        "<Item id=#{@id} name=\"#{@name}\" format_type=#{@format_type}>"
       end
     end
   end

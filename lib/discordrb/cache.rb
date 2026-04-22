@@ -234,7 +234,7 @@ module Discordrb
 
       return @stickers[id] if @stickers[id]
 
-      sticker = Sticker.new(JSON.parse(API.get_sticker(token, id)), self)
+      sticker = Sticker.new(JSON.parse(API.get_sticker(token, id)), nil, self)
       @stickers[sticker.id] = sticker
     rescue StandardError
       nil
@@ -251,7 +251,7 @@ module Discordrb
         sticker.from_other(data) if force_cache
         sticker
       else
-        @stickers[id] = Sticker.new(data, self)
+        @stickers[id] = Sticker.new(data, nil, self)
       end
     end
 

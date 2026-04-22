@@ -1223,7 +1223,7 @@ module Discordrb
       return sticker if sticker || !request
 
       response = JSON.parse(API::Server.get_sticker(@bot.token, @id, id))
-      Sticker.new(response, @bot, self).tap { |sticker| cache_sticker(sticker) }
+      Sticker.new(response, self, @bot).tap { |sticker| cache_sticker(sticker) }
     rescue StandardError
       nil
     end
@@ -1241,7 +1241,7 @@ module Discordrb
       description ||= ''
       tags = tags.join(', ') if tags.is_a?(Array)
       data = API::Server.create_sticker(@bot.token, @id, name:, file:, tags:, description:, reason:)
-      sticker = Sticker.new(JSON.parse(data), @bot, self)
+      sticker = Sticker.new(JSON.parse(data), self, @bot)
       @stickers[sticker.id] = sticker
     end
 
@@ -1561,7 +1561,7 @@ module Discordrb
       @stickers = {}
 
       stickers.each do |element|
-        sticker = Sticker.new(element, @bot, self)
+        sticker = Sticker.new(element, self, @bot)
         @stickers[sticker.id] = sticker
       end
     end
