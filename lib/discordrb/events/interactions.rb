@@ -114,12 +114,13 @@ module Discordrb::Events
       end
 
       resolved_data['roles']&.each do |id, data|
+        data['guild_id'] = @interaction.server_id
         @resolved[:roles][id.to_i] = Discordrb::Role.new(data, @bot)
       end
 
       resolved_data['channels']&.each do |id, data|
         data['guild_id'] = @interaction.server_id
-        @resolved[:channels][id.to_i] = Discordrb::Channel.new(data, @bot)
+        @resolved[:channels][id.to_i] = @bot.ensure_channel(data)
       end
 
       resolved_data['members']&.each do |id, data|
@@ -344,11 +345,14 @@ module Discordrb::Events
 
   # An event for when a user interacts with a component.
   class ComponentEvent < InteractionCreateEvent
-    # @return [String] User provided data for this button.
+    # @return [String] user-defined identifier for the component.
     attr_reader :custom_id
 
-    # @return [Interactions::Message, nil] The message the button originates from.
+    # @return [Interactions::Message, nil] the message the component originates from.
     attr_reader :message
+
+    # @return [Resolved] the resolved channels, roles, users, members, and attachments.
+    attr_reader :resolved
 
     # @!visibility private
     def initialize(data, bot)
@@ -356,6 +360,8 @@ module Discordrb::Events
 
       @message = @interaction.message
       @custom_id = data['data']['custom_id']
+      @resolved = Resolved.new({}, {}, {}, {}, {}, {})
+      process_resolved(data['data']['resolved']) if data['data']['resolved']
     end
   end
 
@@ -417,16 +423,11 @@ module Discordrb::Events
     # @return [Array<Component>] an array of partial component objects that were in the modal.
     attr_reader :components
 
-    # @return [Resolved] The resolved channels, roles, users, members, and attachments for the modal.
-    attr_reader :resolved
-
     # @!visibility private
     def initialize(data, bot)
       super
 
       @components = @interaction.components
-      @resolved = Resolved.new({}, {}, {}, {}, {}, {})
-      process_resolved(data['data']['resolved']) if data['data']['resolved']
     end
 
     # Get the value of an input passed to the modal.
@@ -447,7 +448,7 @@ module Discordrb::Events
     # @param custom_id [String] The custom ID of the file upload component to get attachments for.
     # @return [Array<Attachment>] the attachments that were uploaded to the file upload component.
     def attachments(custom_id)
-      values(custom_id)&.map { |id| @resolved[:attachments][id.to_i] } || []
+      values(custom_id)&.map { |id| @resolved.attachments[id.to_i] } || []
     end
   end
 
@@ -457,14 +458,14 @@ module Discordrb::Events
 
   # Event for when a user interacts with a select user component.
   class UserSelectEvent < ComponentEvent
-    # @return [Array<User>] Selected values.
+    # @return [Array<User>] the users that were selected.
     attr_reader :values
 
     # @!visibility private
     def initialize(data, bot)
       super
 
-      @values = data['data']['values'].map { |e| bot.user(e) }
+      @values = data['data']['values'].map { |id| bot.user(id) }
     end
   end
 
@@ -474,14 +475,15 @@ module Discordrb::Events
 
   # Event for when a user interacts with a select role component.
   class RoleSelectEvent < ComponentEvent
-    # @return [Array<Role>] Selected values.
+    # @return [Array<Role>] the roles that were selected.
     attr_reader :values
 
     # @!visibility private
     def initialize(data, bot)
       super
 
-      @values = data['data']['values'].map { |e| bot.server(data['guild_id']).role(e) }
+      server = @bot.servers[@interaction.server_id]
+      @values = data['data']['values'].map { |id| server&.role(id) || @resolved.roles[id.to_i] }
     end
   end
 
@@ -491,16 +493,16 @@ module Discordrb::Events
 
   # Event for when a user interacts with a select mentionable component.
   class MentionableSelectEvent < ComponentEvent
-    # @return [Hash<Symbol => Array<User>, Symbol => Array<Role>>] Selected values.
+    # @return [Hash<Symbol => Array<User>, Symbol => Array<Role>>] the selected roles and users.
     attr_reader :values
 
     # @!visibility private
     def initialize(data, bot)
       super
 
-      users = data['data']['resolved']['users'].map { |_, user| @bot.ensure_user(user) }
-      roles = data['data']['resolved']['roles'] ? data['data']['resolved']['roles'].keys.map { |e| bot.server(data['guild_id']).role(e) } : []
-      @values = { users: users, roles: roles }
+      server = @bot.servers[@interaction.server_id]
+      roles = @resolved.roles.map { |id, role| server&.role(id) || role }
+      @values = { users: @resolved.users.values, roles: roles }
     end
   end
 
@@ -510,14 +512,14 @@ module Discordrb::Events
 
   # Event for when a user interacts with a select channel component.
   class ChannelSelectEvent < ComponentEvent
-    # @return [Array<Channel>] Selected values.
+    # @return [Array<Channel>] the channels that were selected.
     attr_reader :values
 
     # @!visibility private
     def initialize(data, bot)
       super
 
-      @values = data['data']['values'].map { |e| bot.channel(e, bot.server(data['guild_id'])) }
+      @values = data['data']['values'].map { |id| @resolved.channels[id.to_i] }
     end
   end
 
