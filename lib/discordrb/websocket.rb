@@ -35,7 +35,7 @@ module Discordrb
           if msg.code
             instance.close_handler.call(msg)
           else
-            instance.message_handler.call(msg.data)
+            instance.message_handler.call(msg)
           end
         end
         ws.on(:close) { |err| instance.close_handler.call(err) }
@@ -45,8 +45,9 @@ module Discordrb
 
     # Send data over this WebSocket
     # @param data [String] What to send
-    def send(data)
-      @client.send(data)
+    # @param type [Symbol] The websocket frame type.
+    def send(data, type = :text)
+      @client.send(data, type: type)
     end
 
     # Close the WebSocket connection

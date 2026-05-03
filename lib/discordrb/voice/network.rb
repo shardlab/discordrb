@@ -19,6 +19,12 @@ rescue LoadError
   LIBSODIUM_AVAILABLE = false
 end
 
+begin
+  LIBDAVE_AVAILABLE = require 'discordrb/voice/dave'
+rescue LoadError, FFI::NotFoundError
+  LIBDAVE_AVAILABLE = false
+end
+
 module Discordrb::Voice
   # Signifies to Discord that encryption should be used
   # @deprecated Discord now supports multiple encryption options.
@@ -64,6 +70,8 @@ module Discordrb::Voice
       @ip = ip
       @port = port
       @ssrc = ssrc
+
+      @dave_encryptor&.assign_audio_ssrc(@ssrc)
     end
 
     # Waits for a UDP discovery reply, and returns the sent data.
@@ -84,6 +92,8 @@ module Discordrb::Voice
     def send_audio(buf, sequence, time)
       # Header of the audio packet
       header = generate_header(sequence, time)
+
+      buf = encrypt_frame(buf)
 
       nonce = generate_nonce
       buf = encrypt_audio(buf, header, nonce)
@@ -114,6 +124,32 @@ module Discordrb::Voice
     end
 
     private
+
+    def activate_dave!(session, user_id)
+      @dave_encryptor ||= Discordrb::Voice::DAVE::Encryptor.new
+      @dave_encryptor.assign_audio_ssrc(@ssrc) if @ssrc
+      @dave_encryptor.passthrough_mode = false
+
+      @dave_key_ratchet = session.key_ratchet(user_id)
+      @dave_encryptor.key_ratchet = @dave_key_ratchet
+      @dave_active = true
+    end
+
+    def deactivate_dave!
+      @dave_encryptor&.passthrough_mode = true
+      @dave_active = false
+      @dave_key_ratchet = nil
+    end
+
+    def dave_active?
+      @dave_active
+    end
+
+    def encrypt_frame(buf)
+      return buf unless dave_active?
+
+      @dave_encryptor.encrypt_audio_frame(@ssrc, buf)
+    end
 
     # Encrypts audio data using libsodium
     # @param buf [String] The encoded audio data to be encrypted
@@ -184,6 +220,9 @@ module Discordrb::Voice
       @endpoint = endpoint
 
       @udp = VoiceUDP.new
+      @media_ready = false
+      @dave_expected_user_ids = Set.new([@bot.profile.id.to_s])
+      @dave_expected_user_ids.merge(@channel.users.map { |user| user.id.to_s })
     end
 
     # Send a connection init packet (op 0)
@@ -192,14 +231,18 @@ module Discordrb::Voice
     # @param session_id [String] The voice session ID
     # @param token [String] The Discord authentication token
     def send_init(server_id, bot_user_id, session_id, token)
+      data = {
+        server_id: server_id,
+        user_id: bot_user_id,
+        session_id: session_id,
+        token: token
+      }
+
+      data[:max_dave_protocol_version] = Discordrb::Voice::DAVE.max_supported_protocol_version if LIBDAVE_AVAILABLE
+
       send_opcode(
         Opcodes::IDENTIFY,
-        {
-          server_id: server_id,
-          user_id: bot_user_id,
-          session_id: session_id,
-          token: token
-        }
+        data
       )
     end
 
@@ -253,7 +296,12 @@ module Discordrb::Voice
       @client.send({
         op: opcode,
         d: data
-      }.to_json)
+      }.to_json, :text)
+    end
+
+    def send_binary_opcode(opcode, payload = ''.b)
+      @bot.debug("Sending voice binary opcode #{opcode} (#{payload.bytesize} bytes)")
+      @client.send(opcode.chr + payload, :binary)
     end
 
     # Event handlers; public for websocket-simple to work correctly
@@ -268,9 +316,19 @@ module Discordrb::Voice
 
     # @!visibility private
     def websocket_message(msg)
+      if msg.type == :binary
+        websocket_binary_message(msg.data)
+      else
+        websocket_text_message(msg.data)
+      end
+    rescue StandardError => e
+      @connection_error ||= e
+      raise
+    end
+
+    def websocket_text_message(msg)
       @bot.debug("Received VWS message! #{msg}")
       packet = JSON.parse(msg)
-
       @seq = packet['seq'] if packet['seq']
 
       case packet['op']
@@ -292,13 +350,46 @@ module Discordrb::Voice
         # Reset the sequence when starting a new session
         @seq = 0
 
-        @ready = true
         @udp.secret_key = @ws_data['secret_key'].pack('C*')
         @udp.mode = @ws_data['mode']
+        setup_dave(@ws_data['dave_protocol_version'].to_i)
+        @ready = true
+        @media_ready = !dave_required?
       when Discordrb::Voice::Opcodes::HELLO
         # Opcode 8 contains the heartbeat interval.
         @heartbeat_interval = packet['d']['heartbeat_interval']
         send_heartbeat
+      when Discordrb::Voice::Opcodes::CLIENT_CONNECT
+        update_expected_users(packet.dig('d', 'user_ids'))
+      when Discordrb::Voice::Opcodes::CLIENT_DISCONNECT
+        remove_expected_user(packet.dig('d', 'user_id'))
+      when Discordrb::Voice::Opcodes::DAVE_PREPARE_TRANSITION
+        handle_dave_prepare_transition(packet['d'])
+      when Discordrb::Voice::Opcodes::DAVE_EXECUTE_TRANSITION
+        handle_dave_execute_transition(packet['d']['transition_id'])
+      when Discordrb::Voice::Opcodes::DAVE_PREPARE_EPOCH
+        handle_dave_prepare_epoch(packet['d'])
+      end
+    end
+
+    def websocket_binary_message(msg)
+      opcode = msg.getbyte(2)
+      payload = msg.byteslice(3..) || ''.b
+      @bot.debug("Received VWS binary opcode #{opcode} (#{payload.bytesize} bytes)")
+
+      case opcode
+      when Discordrb::Voice::Opcodes::DAVE_MLS_EXTERNAL_SENDER
+        dave_control_session.external_sender = payload
+      when Discordrb::Voice::Opcodes::DAVE_MLS_PROPOSALS
+        process_dave_proposals(payload)
+      when Discordrb::Voice::Opcodes::DAVE_MLS_COMMIT_WELCOME
+        @bot.warn('Ignoring unexpected DAVE commit/welcome echo from voice gateway')
+      when Discordrb::Voice::Opcodes::DAVE_MLS_ANNOUNCE_COMMIT_TRANSITION
+        transition_id, commit = unpack_transition_payload(payload)
+        process_dave_commit(transition_id, commit)
+      when Discordrb::Voice::Opcodes::DAVE_MLS_WELCOME
+        transition_id, welcome = unpack_transition_payload(payload)
+        process_dave_welcome(transition_id, welcome)
       end
     end
 
@@ -335,7 +426,7 @@ module Discordrb::Voice
       @bot.debug('Waiting for op 4 now')
 
       # Wait for op 4, then finish
-      sleep 0.05 until @ready
+      sleep 0.05 until ready_for_media?
     end
 
     # Disconnects the websocket and kills the thread
@@ -344,6 +435,149 @@ module Discordrb::Voice
     end
 
     private
+
+    def ready_for_media?
+      raise @connection_error if @connection_error
+
+      @ready && @media_ready
+    end
+
+    def dave_required?
+      @dave_protocol_version&.positive?
+    end
+
+    def setup_dave(protocol_version)
+      @dave_protocol_version = protocol_version
+      return unless dave_required?
+
+      raise 'libdave is unavailable - unable to create DAVE voice session' unless LIBDAVE_AVAILABLE
+
+      @pending_dave_session = build_dave_session(protocol_version)
+      send_dave_key_package(@pending_dave_session)
+    end
+
+    def build_dave_session(protocol_version)
+      Discordrb::Voice::DAVE::Session.new(
+        protocol_version: protocol_version,
+        group_id: @channel.id,
+        self_user_id: @bot.profile.id
+      ) do |source, reason|
+        raise "DAVE MLS failure from #{source}: #{reason}"
+      end
+    end
+
+    def update_expected_users(user_ids)
+      Array(user_ids).each { |user_id| @dave_expected_user_ids << user_id.to_s }
+    end
+
+    def remove_expected_user(user_id)
+      @dave_expected_user_ids.delete(user_id.to_s)
+    end
+
+    def dave_control_session
+      @pending_dave_session || @dave_session || raise('DAVE session is not initialized')
+    end
+
+    def send_dave_key_package(session)
+      send_binary_opcode(Opcodes::DAVE_MLS_KEY_PACKAGE, session.key_package)
+    end
+
+    def process_dave_proposals(payload)
+      commit_welcome = dave_control_session.process_proposals(payload, @dave_expected_user_ids.to_a)
+      send_binary_opcode(Opcodes::DAVE_MLS_COMMIT_WELCOME, commit_welcome) if commit_welcome
+    end
+
+    def process_dave_commit(transition_id, commit)
+      result = dave_control_session.process_commit(commit)
+
+      if result.failed?
+        send_dave_invalid_commit_welcome(transition_id)
+        return
+      end
+
+      return if result.ignored?
+
+      track_pending_transition(transition_id)
+      send_dave_ready_for_transition(transition_id)
+    end
+
+    def process_dave_welcome(transition_id, welcome)
+      dave_control_session.process_welcome(welcome, @dave_expected_user_ids.to_a)
+      track_pending_transition(transition_id, activate_pending_session: true)
+      send_dave_ready_for_transition(transition_id)
+    end
+
+    def unpack_transition_payload(payload)
+      [payload.unpack1('n'), payload.byteslice(2..) || ''.b]
+    end
+
+    def handle_dave_prepare_transition(data)
+      @pending_transition_id = data['transition_id']
+      @pending_transition_protocol_version = data['protocol_version'].to_i
+      @activate_pending_session ||= !@pending_dave_session.nil?
+
+      if @pending_transition_id.zero?
+        handle_dave_execute_transition(@pending_transition_id)
+      elsif @pending_transition_protocol_version.zero?
+        send_dave_ready_for_transition(@pending_transition_id)
+      end
+    end
+
+    def handle_dave_prepare_epoch(data)
+      protocol_version = data['protocol_version'].to_i
+      epoch = data['epoch'].to_i
+
+      if epoch == 1
+        @pending_dave_session = build_dave_session(protocol_version)
+        @pending_transition_protocol_version = protocol_version
+        send_dave_key_package(@pending_dave_session)
+      else
+        dave_control_session.protocol_version = protocol_version
+        @pending_transition_protocol_version = protocol_version
+      end
+    end
+
+    def handle_dave_execute_transition(transition_id)
+      return unless @pending_transition_id.nil? || transition_id == @pending_transition_id
+
+      if @pending_transition_protocol_version.to_i.zero?
+        @udp.send(:deactivate_dave!)
+        @dave_protocol_version = 0
+        @media_ready = true
+        clear_pending_transition
+        return
+      end
+
+      if @activate_pending_session || (@dave_session.nil? && @pending_dave_session)
+        @dave_session = @pending_dave_session
+        @pending_dave_session = nil
+      end
+
+      @udp.send(:activate_dave!, dave_control_session, @bot.profile.id)
+      @dave_protocol_version = dave_control_session.protocol_version
+      @media_ready = true
+      clear_pending_transition
+    end
+
+    def track_pending_transition(transition_id, activate_pending_session: false)
+      @pending_transition_id = transition_id
+      @pending_transition_protocol_version ||= dave_control_session.protocol_version
+      @activate_pending_session = @activate_pending_session || activate_pending_session || !@pending_dave_session.nil?
+    end
+
+    def clear_pending_transition
+      @pending_transition_id = nil
+      @pending_transition_protocol_version = nil
+      @activate_pending_session = false
+    end
+
+    def send_dave_ready_for_transition(transition_id)
+      send_opcode(Opcodes::DAVE_TRANSITION_READY, { transition_id: transition_id })
+    end
+
+    def send_dave_invalid_commit_welcome(transition_id)
+      send_opcode(Opcodes::DAVE_MLS_INVALID_COMMIT_WELCOME, { transition_id: transition_id })
+    end
 
     def heartbeat_loop
       @heartbeat_running = true
@@ -367,8 +601,14 @@ module Discordrb::Voice
         host,
         method(:websocket_open),
         method(:websocket_message),
-        proc { |e| Discordrb::LOGGER.error "VWS error: #{e}" },
-        proc { |e| Discordrb::LOGGER.warn "VWS close: #{e}" }
+        proc do |e|
+          @connection_error ||= e if !@ready || !@media_ready
+          Discordrb::LOGGER.error "VWS error: #{e}"
+        end,
+        proc do |e|
+          @connection_error ||= e if !@ready || !@media_ready
+          Discordrb::LOGGER.warn "VWS close: #{e}"
+        end
       )
 
       @bot.debug('VWS connected')
