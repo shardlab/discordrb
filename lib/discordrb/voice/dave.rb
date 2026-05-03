@@ -14,10 +14,16 @@ module Discordrb::Voice
     ffi_lib([libdave_path, 'dave', 'libdave', 'libdave.dylib', 'libdave.so'].compact)
 
     callback :mls_failure_callback, %i[string string pointer], :void
+    callback :log_sink_callback, %i[int string int string], :void
 
     DAVE_CODEC_OPUS = 1
     DAVE_MEDIA_TYPE_AUDIO = 0
     DAVE_ENCRYPTOR_RESULT_CODE_SUCCESS = 0
+    DAVE_LOGGING_SEVERITY_VERBOSE = 0
+    DAVE_LOGGING_SEVERITY_INFO = 1
+    DAVE_LOGGING_SEVERITY_WARNING = 2
+    DAVE_LOGGING_SEVERITY_ERROR = 3
+    DAVE_LOGGING_SEVERITY_NONE = 4
 
     attach_function :daveMaxSupportedProtocolVersion, [], :uint16
     attach_function :daveFree, [:pointer], :void
@@ -45,6 +51,7 @@ module Discordrb::Voice
     attach_function :daveEncryptorAssignSsrcToCodec, %i[pointer uint32 int], :void
     attach_function :daveEncryptorGetMaxCiphertextByteSize, %i[pointer int size_t], :size_t
     attach_function :daveEncryptorEncrypt, %i[pointer int uint32 pointer size_t pointer size_t pointer], :int
+    attach_function :daveSetLogSinkCallback, [:log_sink_callback], :void
 
     class SessionHandle < FFI::AutoPointer # :nodoc:
       def self.release(ptr)
@@ -78,6 +85,65 @@ module Discordrb::Voice
 
     def self.max_supported_protocol_version
       daveMaxSupportedProtocolVersion
+    end
+
+    def self.log_level=(level)
+      @log_level = normalize_log_level(level)
+    end
+
+    def self.log_level
+      @log_level ||= normalize_log_level(ENV.fetch('DISCORDRB_LIBDAVE_LOG_LEVEL', 'warning'))
+    end
+
+    def self.install_log_sink!
+      return if @log_sink_installed
+
+      @log_sink_callback = proc do |severity, file, line, message|
+        handle_log_message(severity, file, line, message)
+      end
+      daveSetLogSinkCallback(@log_sink_callback)
+      @log_sink_installed = true
+    end
+
+    def self.normalize_log_level(level)
+      {
+        'verbose' => DAVE_LOGGING_SEVERITY_VERBOSE,
+        'debug' => DAVE_LOGGING_SEVERITY_VERBOSE,
+        'info' => DAVE_LOGGING_SEVERITY_INFO,
+        'warn' => DAVE_LOGGING_SEVERITY_WARNING,
+        'warning' => DAVE_LOGGING_SEVERITY_WARNING,
+        'error' => DAVE_LOGGING_SEVERITY_ERROR,
+        'none' => DAVE_LOGGING_SEVERITY_NONE,
+        'silent' => DAVE_LOGGING_SEVERITY_NONE
+      }.fetch(level.to_s.downcase, DAVE_LOGGING_SEVERITY_WARNING)
+    end
+
+    def self.handle_log_message(severity, file, line, message)
+      return if severity < log_level
+
+      logger = discordrb_logger
+      return unless logger
+
+      formatted_message = "DAVE: #{format_log_message(file, line, message)}"
+
+      case severity
+      when DAVE_LOGGING_SEVERITY_ERROR
+        logger.error(formatted_message)
+      when DAVE_LOGGING_SEVERITY_WARNING
+        logger.warn(formatted_message)
+      else
+        logger.debug(formatted_message)
+      end
+    rescue StandardError
+      nil
+    end
+
+    def self.format_log_message(_file, _line, message)
+      message.to_s.strip
+    end
+
+    def self.discordrb_logger
+      Discordrb::LOGGER if defined?(Discordrb::LOGGER)
     end
 
     def self.read_allocated_bytes
@@ -251,5 +317,7 @@ module Discordrb::Voice
         output.read_string_length(written.read_ulong_long)
       end
     end
+
+    install_log_sink!
   end
 end

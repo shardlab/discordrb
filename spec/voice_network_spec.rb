@@ -72,6 +72,7 @@ RSpec.describe Discordrb::Voice::VoiceWS do
     end
 
     it 'sends commit/welcome data returned from proposal processing as a binary opcode' do
+      expect(bot).to receive(:debug).with("DAVE: Processing MLS proposals (#{'proposal-bytes'.bytesize} bytes)")
       expect(session).to receive(:process_proposals).with('proposal-bytes', array_including('123', '789')).and_return('commit')
       expect(client).to receive(:send).with("#{Discordrb::Voice::Opcodes::DAVE_MLS_COMMIT_WELCOME.chr}commit", :binary)
 
@@ -93,6 +94,8 @@ RSpec.describe Discordrb::Voice::VoiceWS do
     end
 
     it 'marks a processed commit ready and activates DAVE on execute' do
+      expect(bot).to receive(:debug).with('DAVE: Processing MLS commit for transition 7').ordered
+      expect(bot).to receive(:debug).with('DAVE: Transition 7 is ready').ordered
       expect(client).to receive(:send) do |payload, type|
         expect(type).to eq(:text)
 
@@ -107,6 +110,7 @@ RSpec.describe Discordrb::Voice::VoiceWS do
       )
 
       expect(udp).to receive(:send).with(:activate_dave!, session, 123)
+      expect(bot).to receive(:debug).with('DAVE: Enabled voice frame encryption with protocol version 1')
       voice_ws.send(:handle_dave_execute_transition, 7)
     end
   end

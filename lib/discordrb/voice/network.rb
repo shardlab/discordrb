@@ -452,6 +452,7 @@ module Discordrb::Voice
 
       raise 'libdave is unavailable - unable to create DAVE voice session' unless LIBDAVE_AVAILABLE
 
+      @bot.debug("DAVE: Voice gateway requires protocol version #{protocol_version}")
       @pending_dave_session = build_dave_session(protocol_version)
       send_dave_key_package(@pending_dave_session)
     end
@@ -479,31 +480,41 @@ module Discordrb::Voice
     end
 
     def send_dave_key_package(session)
+      @bot.debug('DAVE: Sending MLS key package')
       send_binary_opcode(Opcodes::DAVE_MLS_KEY_PACKAGE, session.key_package)
     end
 
     def process_dave_proposals(payload)
+      @bot.debug("DAVE: Processing MLS proposals (#{payload.bytesize} bytes)")
       commit_welcome = dave_control_session.process_proposals(payload, @dave_expected_user_ids.to_a)
       send_binary_opcode(Opcodes::DAVE_MLS_COMMIT_WELCOME, commit_welcome) if commit_welcome
     end
 
     def process_dave_commit(transition_id, commit)
+      @bot.debug("DAVE: Processing MLS commit for transition #{transition_id}")
       result = dave_control_session.process_commit(commit)
 
       if result.failed?
+        Discordrb::LOGGER.warn("DAVE: Received invalid MLS commit for transition #{transition_id}")
         send_dave_invalid_commit_welcome(transition_id)
         return
       end
 
-      return if result.ignored?
+      if result.ignored?
+        @bot.debug("DAVE: Ignored MLS commit for transition #{transition_id}")
+        return
+      end
 
       track_pending_transition(transition_id)
+      @bot.debug("DAVE: Transition #{transition_id} is ready")
       send_dave_ready_for_transition(transition_id)
     end
 
     def process_dave_welcome(transition_id, welcome)
+      @bot.debug("DAVE: Processing MLS welcome for transition #{transition_id}")
       dave_control_session.process_welcome(welcome, @dave_expected_user_ids.to_a)
       track_pending_transition(transition_id, activate_pending_session: true)
+      @bot.debug("DAVE: Transition #{transition_id} is ready")
       send_dave_ready_for_transition(transition_id)
     end
 
@@ -515,6 +526,7 @@ module Discordrb::Voice
       @pending_transition_id = data['transition_id']
       @pending_transition_protocol_version = data['protocol_version'].to_i
       @activate_pending_session ||= !@pending_dave_session.nil?
+      @bot.debug("DAVE: Preparing transition #{@pending_transition_id} for protocol version #{@pending_transition_protocol_version}")
 
       if @pending_transition_id.zero?
         handle_dave_execute_transition(@pending_transition_id)
@@ -526,6 +538,7 @@ module Discordrb::Voice
     def handle_dave_prepare_epoch(data)
       protocol_version = data['protocol_version'].to_i
       epoch = data['epoch'].to_i
+      @bot.debug("DAVE: Preparing epoch #{epoch} for protocol version #{protocol_version}")
 
       if epoch == 1
         @pending_dave_session = build_dave_session(protocol_version)
@@ -544,6 +557,7 @@ module Discordrb::Voice
         @udp.send(:deactivate_dave!)
         @dave_protocol_version = 0
         @media_ready = true
+        @bot.debug('DAVE: Disabled voice frame encryption')
         clear_pending_transition
         return
       end
@@ -556,6 +570,7 @@ module Discordrb::Voice
       @udp.send(:activate_dave!, dave_control_session, @bot.profile.id)
       @dave_protocol_version = dave_control_session.protocol_version
       @media_ready = true
+      @bot.debug("DAVE: Enabled voice frame encryption with protocol version #{@dave_protocol_version}")
       clear_pending_transition
     end
 
