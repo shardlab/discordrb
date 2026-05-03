@@ -322,7 +322,7 @@ module Discordrb::Voice
         websocket_text_message(msg.data)
       end
     rescue StandardError => e
-      @connection_error ||= e
+      @connection_error ||= e.class
       raise
     end
 
