@@ -29,27 +29,28 @@ module Discordrb::API::Webhook
 
   # Execute a webhook via token.
   # https://discord.com/developers/docs/resources/webhook#execute-webhook
-  def token_execute_webhook(webhook_token, webhook_id, wait = false, content = nil, username = nil, avatar_url = nil, tts = nil, file = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil, attachments = nil)
-    body = { content: content, username: username, avatar_url: avatar_url, tts: tts, embeds: embeds&.map(&:to_hash),  allowed_mentions: allowed_mentions, flags: flags, components: components }
+  def token_execute_webhook(webhook_token, webhook_id, wait = false, content = nil, username = nil, avatar_url = nil, tts = nil, file = nil, embeds = nil, allowed_mentions = nil, flags = nil, components = nil, attachments = nil, poll = nil)
+    body = { content: content, username: username, avatar_url: avatar_url, tts: tts, embeds: embeds&.map(&:to_hash),  allowed_mentions: allowed_mentions, flags: flags, components: components, poll: poll }
 
-    payload = body.to_json
+    body = if file
+             { file: file, payload_json: body.to_json }
+           elsif attachments
+             files = Discordrb::API.transform_files(attachments)
 
-    # since this method signature already had 'file' param, we'll prefer deprecated behavior for now
-    if file
-      payload = { file: file, payload_json: payload }
-    elsif attachments
-      files = [*0...attachments.size].zip(attachments).to_h
-      payload = { **files, payload_json: payload }
-    end
+             body[:attachments] = files[:body] if files[:body]
+             { **files[:multipart], payload_json: body.to_json }
+           else
+             body.to_json
+           end
 
-    headers = { content_type: :json } unless attachments || file
+    headers = { content_type: :json } unless file || attachments
 
     Discordrb::API.request(
       :webhooks_wid,
       webhook_id,
       :post,
       "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}?wait=#{wait}",
-      payload,
+      body,
       headers
     )
   end
@@ -121,14 +122,17 @@ module Discordrb::API::Webhook
 
   # Edit a webhook message via webhook token
   # https://discord.com/developers/docs/resources/webhook#edit-webhook-message
-  def token_edit_message(webhook_token, webhook_id, message_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil, attachments = nil)
-    data = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components }
+  def token_edit_message(webhook_token, webhook_id, message_id, content = nil, embeds = nil, allowed_mentions = nil, components = nil, attachments = nil, flags = nil, poll = nil)
+    body = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, flags: flags, poll: poll }
 
-    payload = data.to_json
-    if attachments
-      files = [*0...attachments.size].zip(attachments).to_h
-      payload = { **files, payload_json: payload }
-    end
+    body = if attachments
+             files = Discordrb::API.transform_files(attachments)
+
+             body[:attachments] = files[:body] if files[:body]
+             { **files[:multipart], payload_json: body.to_json }
+           else
+             body.to_json
+           end
 
     headers = { content_type: :json } unless attachments
 
@@ -137,7 +141,7 @@ module Discordrb::API::Webhook
       webhook_id,
       :patch,
       "#{Discordrb::API.api_base}/webhooks/#{webhook_id}/#{webhook_token}/messages/#{message_id}",
-      payload,
+      body,
       headers
     )
   end

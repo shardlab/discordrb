@@ -74,6 +74,29 @@ module Discordrb::API
     mutex.unlock
   end
 
+  # @!visibility private
+  def transform_files(attachments)
+    results = { multipart: {}, body: [] }
+
+    attachments.each_with_index do |item, index|
+      if item.is_a?(Hash) && (file = (item[:file] || item['file']))
+        results[:multipart]["files[#{index}]"] = file
+
+        if (name = (item[:filename] || item['filename']))
+          file.define_singleton_method(:original_filename) { name }
+        end
+
+        results[:body] << { id: index, **item.except(:file, 'file') }
+      elsif !item.is_a?(Hash)
+        results[:multipart]["files[#{index}]"] = item
+      else
+        raise ArgumentError, "Hash must contain a 'file' key mapping to a file-like object"
+      end
+    end
+
+    results[:body].any? ? results : results.tap { results.delete(:body) }
+  end
+
   # Performs a RestClient request.
   # @param type [Symbol] The type of HTTP request to use.
   # @param attributes [Array] The attributes for the request.
@@ -155,6 +178,23 @@ module Discordrb::API
       retry
     end
 
+    # Endpoints that use Elasticsearch can return a 202 when the index isn't ready yet. Wait the
+    # amount of time indicated by the response body, and then recursively retry and return the request.
+    if response&.code == 202 && response&.body
+      body = JSON.parse(response.body)
+
+      if body['code'] == 110_000
+        case body['retry_after']
+        when 0, 1, nil
+          sleep(rand(4.5..5.0))
+        else
+          sleep(body['retry_after'])
+        end
+
+        return request(*key, type, *attributes)
+      end
+    end
+
     response
   end
 
@@ -203,6 +243,11 @@ module Discordrb::API
     "#{cdn_url}/splashes/#{server_id}/#{splash_id}.#{format}"
   end
 
+  # Make a discovery splash URL from server and splash IDs
+  def discovery_splash_url(server_id, splash_id, format = 'webp')
+    "#{cdn_url}/discovery-splashes/#{server_id}/#{splash_id}.#{format}"
+  end
+
   # Make a banner URL from server and banner IDs
   def banner_url(server_id, banner_id, format = 'webp')
     "#{cdn_url}/banners/#{server_id}/#{banner_id}.#{format}"
@@ -231,44 +276,43 @@ module Discordrb::API
     "#{cdn_url}/role-icons/#{role_id}/#{icon_hash}.#{format}"
   end
 
-  # Login to the server
-  def login(email, password)
-    request(
-      :auth_login,
-      nil,
-      :post,
-      "#{api_base}/auth/login",
-      email: email,
-      password: password
-    )
+  # make an avatar decoration URL from an avatar decoration ID.
+  def avatar_decoration_url(avatar_decoration_id, format = 'png')
+    "#{cdn_url}/avatar-decoration-presets/#{avatar_decoration_id}.#{format}"
   end
 
-  # Logout from the server
-  def logout(token)
-    request(
-      :auth_logout,
-      nil,
-      :post,
-      "#{api_base}/auth/logout",
-      nil,
-      Authorization: token
-    )
+  # make a static nameplate URL from the nameplate asset.
+  def static_nameplate_url(nameplate_asset, format = 'png')
+    "#{cdn_url}/assets/collectibles/#{nameplate_asset.delete_suffix('/')}/static.#{format}"
   end
 
-  # Create an OAuth application
-  def create_oauth_application(token, name, redirect_uris)
-    request(
-      :oauth2_applications,
-      nil,
-      :post,
-      "#{api_base}/oauth2/applications",
-      { name: name, redirect_uris: redirect_uris }.to_json,
-      Authorization: token,
-      content_type: :json
-    )
+  # make a nameplate URL from the nameplate asset.
+  def nameplate_url(nameplate_asset, format = 'webm')
+    "#{cdn_url}/assets/collectibles/#{nameplate_asset.delete_suffix('/')}/asset.#{format}"
+  end
+
+  # make a server tag badge URL from a server ID and badge ID.
+  def server_tag_badge_url(server_id, badge_id, format = 'webp')
+    "#{cdn_url}/guild-tag-badges/#{server_id}/#{badge_id}.#{format}"
+  end
+
+  # make a scheduled event cover URL from a scheduled event ID and a cover ID.
+  def scheduled_event_cover_url(scheduled_event_id, cover_id, format = 'webp', size = nil)
+    "#{cdn_url}/guild-events/#{scheduled_event_id}/#{cover_id}.#{format}#{"?size=#{size}" if size}"
+  end
+
+  # make a cover image URL from application and cover IDs.
+  def app_cover_url(app_id, cover_id, format = 'webp')
+    "#{cdn_url}/app-icons/#{app_id}/#{cover_id}.#{format}"
+  end
+
+  # make a team icon URL from team and icon IDs.
+  def team_icon_url(team_id, icon_id, format = 'webp')
+    "#{cdn_url}/team-icons/#{team_id}/#{icon_id}.#{format}"
   end
 
   # Change an OAuth application's properties
+  # @deprecated Please use {Application#update_current_application} instead.
   def update_oauth_application(token, name, redirect_uris, description = '', icon = nil)
     request(
       :oauth2_applications,
@@ -287,21 +331,7 @@ module Discordrb::API
       :oauth2_applications_me,
       nil,
       :get,
-      "#{api_base}/oauth2/applications/@me",
-      Authorization: token
-    )
-  end
-
-  # Acknowledge that a message has been received
-  # The last acknowledged message will be sent in the ready packet,
-  # so this is an easy way to catch up on messages
-  def acknowledge_message(token, channel_id, message_id)
-    request(
-      :channels_cid_messages_mid_ack,
-      nil, # This endpoint is unavailable for bot accounts and thus isn't subject to its rate limit requirements.
-      :post,
-      "#{api_base}/channels/#{channel_id}/messages/#{message_id}/ack",
-      nil,
+      "#{api_base}/applications/@me",
       Authorization: token
     )
   end
@@ -326,19 +356,6 @@ module Discordrb::API
       :get,
       "#{api_base}/gateway/bot",
       Authorization: token
-    )
-  end
-
-  # Validate a token (this request will fail if the token is invalid)
-  def validate_token(token)
-    request(
-      :auth_login,
-      nil,
-      :post,
-      "#{api_base}/auth/login",
-      {}.to_json,
-      Authorization: token,
-      content_type: :json
     )
   end
 
