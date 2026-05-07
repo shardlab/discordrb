@@ -97,7 +97,7 @@ module Discordrb::Webhooks
     def attachments=(attachments)
       attachments = [attachments] unless attachments.is_a?(Array)
 
-      (@attachments = []) && attachments.each { |key| add_attachment(key) }
+      @attachments = attachments.map { |key| key.is_a?(Hash) ? key : { file: key } }
     end
 
     alias_method :files=, :attachments=
@@ -116,6 +116,10 @@ module Discordrb::Webhooks
     # @return [Poll, Poll::Builder, Hash, nil] The poll attached to this message.
     # @see https://discord.com/developers/docs/resources/poll#poll-create-request-object
     attr_writer :poll
+
+    # @return [Array<Hash>] The attachment and file-data to send with this message.
+    # @see https://discord.com/developers/docs/reference#uploading-files
+    attr_reader :attachments
 
     # @return [Hash] a hash representation of the created message, for JSON format.
     def to_json_hash

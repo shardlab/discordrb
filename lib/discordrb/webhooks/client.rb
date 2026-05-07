@@ -48,7 +48,7 @@ module Discordrb::Webhooks
 
       yield(builder, view) if block_given?
 
-      raise ArgumentError, "'file' and 'attachments are mutually exclusive.'" if builder.file && builder.attachments
+      raise ArgumentError, "'file' and 'attachments' are mutually exclusive.'" if builder.file && builder.attachments
 
       if builder.file || builder.attachments
         post_multipart(builder, components || view, wait, thread_id)
@@ -166,18 +166,26 @@ module Discordrb::Webhooks
       results = { multipart: {}, body: [] }
 
       attachments.each_with_index do |item, index|
-        if item.is_a?(Hash) && (file = (item[:file] || item['file']))
-          results[:multipart]["files[#{index}]"] = file
+        if item.is_a?(Hash)
+          if (file = (item[:file] || item['file']))
+            results[:multipart]["files[#{index}]"] = file
 
-          if (name = (item[:filename] || item['filename']))
-            file.define_singleton_method(:original_filename) { name }
+            # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L160
+            if (name = (item[:filename] || item['filename']))
+              file.define_singleton_method(:original_filename) { name }
+            end
+
+            results[:body] << { id: index, **item.except(:file, 'file') }
+          elsif item[:id] || item['id']
+            results[:body] << item
+          else
+            raise ArgumentError, "Hash must contain a 'file' key mapping to a file-like object"
           end
-
-          results[:body] << { id: index, **item.except(:file, 'file') }
-        elsif !item.is_a?(Hash)
+        elsif item.respond_to?(:read) && item.respond_to?(:path)
           results[:multipart]["files[#{index}]"] = item
         else
-          raise ArgumentError, "Hash must contain a 'file' key mapping to a file-like object"
+          # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L41
+          raise ArgumentError, "File-like objects must respond to 'read' and 'path': #{item.class}"
         end
       end
 
