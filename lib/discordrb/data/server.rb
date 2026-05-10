@@ -400,6 +400,21 @@ module Discordrb
       @bot.server_preview(@id)
     end
 
+    # Get the welcome screen of the server.
+    # @return [WelcomeScreen, nil] The welcome screen for new members of the server.
+    def welcome_screen
+      response = API::Server.get_welcome_screen(@bot.token, @id)
+      WelcomeScreen.new(JSON.parse(response), self, @bot)
+    rescue StandardError
+      nil
+    end
+
+    # Get the onboarding flow for the server.
+    # @return [Onboarding] The onboarding flow for new members of the server.
+    def onboarding
+      Onboarding.new(JSON.parse(API::Server.get_onboarding(@bot.token, @id)), self, @bot)
+    end
+
     # @return [String, nil] the widget URL to the server that displays the amount of online members in a
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
