@@ -93,8 +93,10 @@ module Discordrb::API::Channel
   def create_message(token, channel_id, message, tts = false, embeds = nil, nonce = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = nil, enforce_nonce = false, poll = nil)
     body = { content: message, tts: tts, embeds: embeds, nonce: nonce, allowed_mentions: allowed_mentions, message_reference: message_reference, components: components&.to_a, flags: flags, enforce_nonce: enforce_nonce, poll: poll }
     body = if attachments
-             files = [*0...attachments.size].zip(attachments).to_h
-             { **files, payload_json: body.to_json }
+             files = Discordrb::API.transform_files(attachments)
+
+             body[:attachments] = files[:body] if files[:body]
+             { **files[:multipart], payload_json: body.to_json }
            else
              body.to_json
            end
@@ -646,8 +648,10 @@ module Discordrb::API::Channel
     body = { name: name, message: message, rate_limit_per_user: rate_limit_per_user, auto_archive_duration: auto_archive_duration, applied_tags: applied_tags }.compact
 
     body = if attachments
-             files = [*0...attachments.size].zip(attachments).to_h
-             { **files, payload_json: body.to_json }
+             files = Discordrb::API.transform_files(attachments)
+
+             body[:message][:attachments] = files[:body] if files[:body]
+             { **files[:multipart], payload_json: body.to_json }
            else
              body.to_json
            end

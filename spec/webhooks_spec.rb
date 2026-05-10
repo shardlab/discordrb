@@ -113,6 +113,7 @@ describe Discordrb::Webhooks do
         allow(subject).to receive(:post_json).with(any_args)
         allow(subject).to receive(:post_multipart).with(any_args)
         allow(default_builder).to receive(:file).and_return(nil)
+        allow(default_builder).to receive(:attachments)
       end
 
       it 'takes a default builder' do
@@ -252,6 +253,7 @@ describe Discordrb::Webhooks do
         allow(RestClient).to receive(:post).with(any_args)
         allow(multipart_hash).to receive(:[]=).and_return(instance_of(Array))
         allow(multipart_hash).to receive(:compact).and_return(post_data)
+        allow(multipart_hash).to receive(:delete)
       end
 
       it 'makes a POST request with multipart data' do

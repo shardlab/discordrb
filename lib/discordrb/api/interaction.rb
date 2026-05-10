@@ -10,8 +10,10 @@ module Discordrb::API::Interaction
     body = { tts: tts, content: content, embeds: embeds, allowed_mentions: allowed_mentions, flags: flags, components: components, choices: choices, poll: poll }.compact
 
     body = if attachments
-             files = [*0...attachments.size].zip(attachments).to_h
-             { **files, payload_json: { type: type, data: body }.to_json }
+             files = Discordrb::API.transform_files(attachments)
+
+             body[:attachments] = files[:body] if files[:body]
+             { **files[:multipart], payload_json: { type: type, data: body }.to_json }
            else
              { type: type, data: body }.to_json
            end
