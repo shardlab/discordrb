@@ -117,6 +117,7 @@ module Discordrb
       @channels = []
       @channels_by_id = {}
       @scheduled_events = {}
+      @member_chunk_queries = {}
 
       update_data(data)
 
@@ -837,25 +838,68 @@ module Discordrb
 
     # Searches a server for members that matches a username or a nickname.
     # @param name [String] The username or nickname to search for.
-    # @param limit [Integer] The maximum number of members between 1-1000 to return. Returns 1 member by default.
-    # @return [Array<Member>, nil] An array of member objects that match the given parameters, or nil for no members.
+    # @param limit [Integer, nil] The maximum number of members between 1-1000 to return. Returns 1 member by default.
+    # @return [Array<Member>] The members that match the given name.
     def search_members(name:, limit: nil)
-      response = JSON.parse(API::Server.search_guild_members(@bot.token, @id, name, limit))
-      return nil if response.empty?
+      query_members(name: name, limit: limit || 1).members
+    end
 
-      response.map { |mem| Member.new(mem, self, @bot) }
+    # Query the members in the server.
+    # @param name [String, nil] Get members with matching usernames or nicknames.
+    # @param limit [Integer, nil] The maximum number of members to fetch; between 1-1000.
+    # @param ids [Array, Set, #resolve_id, nil] Get members for these user IDs; between 1-100.
+    # @return [QueriedMembers] The resulting server member data for the query that was executed.
+    # @note the `name:` and `ids:` parameters are mutually exclusive. At least one must be passed.
+    #   `limit:` cannot be used in conjuction with the `ids:` parameter.
+    def query_members(name: nil, limit: nil, ids: nil)
+      # rubocop:disable Style/IfUnlessModifier
+      if name && ids
+        raise ArgumentError, "'name' and 'ids' are mutually exclusive"
+      end
+
+      if !name && !ids
+        raise ArgumentError, "One of 'name' and 'ids' must be provided"
+      end
+
+      if ids && limit
+        raise ArgumentError, "'limit' cannot be used in conjunction with 'ids'"
+      end
+
+      if name && !((limit ||= 100).between?(1, 1000))
+        raise ArgumentError, "'limit' must be between 1-1000 when using 'name'"
+      end
+
+      if ids && !((ids = Array(ids)).length.between?(1, 100))
+        raise ArgumentError, "'the length of 'ids' must be betwen 1-100 elements"
+      end
+
+      # rubocop:enable Style/IfUnlessModifier
+      if name
+        data = API::Server.search_guild_members(@bot.token, @id, name, limit)
+
+        return QueriedMembers.new({ members: JSON.parse(data) }, self, @bot)
+      end
+
+      time = Time.now + 70
+
+      nonce = SecureRandom.urlsafe_base64(24)
+
+      @member_chunk_queries[nonce] = nil
+
+      @bot.gateway.send_request_members(@id, nil, nil, nonce:, user_ids: ids.map(&:resolve_id))
+
+      sleep(0.01) until (@member_chunk_queries[nonce]) || (Time.now > time)
+
+      QueriedMembers.new(@member_chunk_queries.delete(nonce) || { timeout: true }, self, @bot)
     end
 
     # Retrieve banned users from this server.
-    # @param limit [Integer] Number of users to return (up to maximum 1000, default 1000).
-    # @param before_id [Integer] Consider only users before given user id.
-    # @param after_id [Integer] Consider only users after given user id.
+    # @param limit [Integer, nil] Number of users to return (up to maximum 1000, default 1000).
+    # @param before_id [Integer, nil] Consider only users before given user id.
+    # @param after_id [Integer, nil] Consider only users after given user id.
     # @return [Array<ServerBan>] a list of banned users on this server and the reason they were banned.
     def bans(limit: nil, before_id: nil, after_id: nil)
-      response = JSON.parse(API::Server.bans(@bot.token, @id, limit, before_id, after_id))
-      response.map do |e|
-        ServerBan.new(self, @bot.ensure_user(e['user']), e['reason'])
-      end
+      bans!(limit: limit || 1000, before: before_id, after: after_id)
     end
 
     # Get the users who have been banned from the server.
@@ -1199,7 +1243,9 @@ module Discordrb
     # Processes a GUILD_MEMBERS_CHUNK packet, specifically the members field
     # @note For internal use only
     # @!visibility private
-    def process_chunk(members, chunk_index, chunk_count)
+    def process_chunk(members, chunk_index, chunk_count, nonce, not_found)
+      return @member_chunk_queries[nonce] = { members:, not_found: } if nonce && @member_chunk_queries.key?(nonce)
+
       process_members(members)
       LOGGER.debug("Processed chunk #{chunk_index + 1}/#{chunk_count} server #{@id} - index #{chunk_index} - length #{members.length}")
 
@@ -1609,6 +1655,50 @@ module Discordrb
     # @!visibility private
     def inspect
       "<SearchedMessages messages=[#{'...' if @messages.any?}] total_results=#{@total_results}>"
+    end
+  end
+
+  # A set of matching members.
+  class QueriedMembers
+    include Enumerable
+
+    # @return [Array<Member>] the members that matched the query.
+    attr_reader :members
+
+    # @return [Array<Integer>] the invalid user IDs that were passed.
+    attr_reader :not_found
+
+    # @return [true, false] whether or not the gateway query timed-out.
+    attr_reader :timed_out
+    alias timed_out? timed_out
+
+    # @!visibility private
+    def initialize(data, server, bot)
+      @bot = bot
+      @members = []
+      @timed_out = data[:timeout] || false
+      @not_found = data[:not_found]&.map(&:to_i) || []
+
+      return unless (query_data = data[:members])
+
+      query_data.each do |data|
+        if (old = server.member(data['user']['id'], false))
+          @members << old.tap { old.update_data(data) }
+        else
+          fresh = Member.new(data, server, @bot)
+          @members << fresh.tap { server.cache_member(fresh) }
+        end
+      end
+    end
+
+    # @!visibility private
+    def each(...)
+      @members.each(...)
+    end
+
+    # @!visibility private
+    def inspect
+      "<QueriedMembers members=[#{'...' if @members.any?}]>"
     end
   end
 end

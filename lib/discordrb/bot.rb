@@ -1324,7 +1324,7 @@ module Discordrb
       when :GUILD_MEMBERS_CHUNK
         id = data['guild_id'].to_i
         server = server(id)
-        server.process_chunk(data['members'], data['chunk_index'], data['chunk_count'])
+        server.process_chunk(data['members'], data['chunk_index'], data['chunk_count'], data['nonce'], data['not_found'])
       when :USER_UPDATE
         @profile = Profile.new(data, self)
       when :INVITE_CREATE
