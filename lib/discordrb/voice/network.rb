@@ -373,6 +373,12 @@ module Discordrb::Voice
     end
 
     def websocket_binary_message(msg)
+      unless msg.bytesize >= 3
+        @bot.debug('VWS: Received malformed binary message (too short)')
+        return
+      end
+
+      @seq = msg.unpack1('n')
       opcode = msg.getbyte(2)
       payload = msg.byteslice(3..) || ''.b
       @bot.debug("Received VWS binary opcode #{opcode} (#{payload.bytesize} bytes)")
@@ -463,7 +469,7 @@ module Discordrb::Voice
         group_id: @channel.id,
         self_user_id: @bot.profile.id
       ) do |source, reason|
-        raise "DAVE MLS failure from #{source}: #{reason}"
+        raise Discordrb::Voice::DAVE::Error, "MLS failure from #{source}: #{reason}"
       end
     end
 
@@ -496,7 +502,7 @@ module Discordrb::Voice
 
       if result.failed?
         Discordrb::LOGGER.warn("DAVE: Received invalid MLS commit for transition #{transition_id}")
-        send_dave_invalid_commit_welcome(transition_id)
+        handle_invalid_dave_group(transition_id)
         return
       end
 
@@ -508,6 +514,9 @@ module Discordrb::Voice
       track_pending_transition(transition_id)
       @bot.debug("DAVE: Transition #{transition_id} is ready")
       send_dave_ready_for_transition(transition_id)
+    rescue Discordrb::Voice::DAVE::Error => e
+      @bot.warn("DAVE: Failed to process MLS commit for transition #{transition_id}: #{e.message}")
+      handle_invalid_dave_group(transition_id)
     end
 
     def process_dave_welcome(transition_id, welcome)
@@ -516,6 +525,9 @@ module Discordrb::Voice
       track_pending_transition(transition_id, activate_pending_session: true)
       @bot.debug("DAVE: Transition #{transition_id} is ready")
       send_dave_ready_for_transition(transition_id)
+    rescue Discordrb::Voice::DAVE::Error => e
+      @bot.warn("DAVE: Failed to process MLS welcome for transition #{transition_id}: #{e.message}")
+      handle_invalid_dave_group(transition_id)
     end
 
     def unpack_transition_payload(payload)
@@ -553,6 +565,13 @@ module Discordrb::Voice
     def handle_dave_execute_transition(transition_id)
       return unless @pending_transition_id.nil? || transition_id == @pending_transition_id
 
+      if @dave_recovering
+        @dave_recovering = false
+        clear_pending_transition
+        @bot.debug("DAVE: Ignoring stale execute transition #{transition_id} during recovery")
+        return
+      end
+
       if @pending_transition_protocol_version.to_i.zero?
         @udp.send(:deactivate_dave!)
         @dave_protocol_version = 0
@@ -584,6 +603,14 @@ module Discordrb::Voice
       @pending_transition_id = nil
       @pending_transition_protocol_version = nil
       @activate_pending_session = false
+    end
+
+    def handle_invalid_dave_group(transition_id)
+      protocol_version = dave_control_session.protocol_version
+      @pending_dave_session = build_dave_session(protocol_version)
+      @dave_recovering = true
+      send_dave_invalid_commit_welcome(transition_id)
+      send_dave_key_package(@pending_dave_session)
     end
 
     def send_dave_ready_for_transition(transition_id)
