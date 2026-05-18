@@ -360,7 +360,10 @@ module Discordrb::Voice
         @heartbeat_interval = packet['d']['heartbeat_interval']
         send_heartbeat
       when Discordrb::Voice::Opcodes::CLIENT_CONNECT
-        update_expected_users(packet.dig('d', 'user_ids'))
+        # The voice gateway uses 'user_ids' (plural) for DAVE-enabled sessions, but fall back
+        # to the legacy singular 'user_id' key in case only one ID is sent.
+        user_ids = packet.dig('d', 'user_ids') || Array(packet.dig('d', 'user_id'))
+        update_expected_users(user_ids)
       when Discordrb::Voice::Opcodes::CLIENT_DISCONNECT
         remove_expected_user(packet.dig('d', 'user_id'))
       when Discordrb::Voice::Opcodes::DAVE_PREPARE_TRANSITION
@@ -389,7 +392,7 @@ module Discordrb::Voice
       when Discordrb::Voice::Opcodes::DAVE_MLS_PROPOSALS
         process_dave_proposals(payload)
       when Discordrb::Voice::Opcodes::DAVE_MLS_COMMIT_WELCOME
-        @bot.warn('Ignoring unexpected DAVE commit/welcome echo from voice gateway')
+        Discordrb::LOGGER.warn('DAVE: Ignoring unexpected DAVE commit/welcome echo from voice gateway')
       when Discordrb::Voice::Opcodes::DAVE_MLS_ANNOUNCE_COMMIT_TRANSITION
         transition_id, commit = unpack_transition_payload(payload)
         process_dave_commit(transition_id, commit)
@@ -468,9 +471,7 @@ module Discordrb::Voice
         protocol_version: protocol_version,
         group_id: @channel.id,
         self_user_id: @bot.profile.id
-      ) do |source, reason|
-        raise Discordrb::Voice::DAVE::Error, "MLS failure from #{source}: #{reason}"
-      end
+      )
     end
 
     def update_expected_users(user_ids)
@@ -492,8 +493,16 @@ module Discordrb::Voice
 
     def process_dave_proposals(payload)
       @bot.debug("DAVE: Processing MLS proposals (#{payload.bytesize} bytes)")
+      # Sync with current channel members as a fallback for cases where CLIENT_CONNECT
+      # arrives after the proposals (Discord gateway ordering is not always guaranteed).
+      @channel.users.each { |u| @dave_expected_user_ids << u.id.to_s }
       commit_welcome = dave_control_session.process_proposals(payload, @dave_expected_user_ids.to_a)
       send_binary_opcode(Opcodes::DAVE_MLS_COMMIT_WELCOME, commit_welcome) if commit_welcome
+    rescue Discordrb::Voice::DAVE::Error => e
+      Discordrb::LOGGER.warn("DAVE: Failed to process MLS proposals: #{e.message}, recovering")
+      protocol_version = dave_control_session.protocol_version
+      @pending_dave_session = build_dave_session(protocol_version)
+      send_dave_key_package(@pending_dave_session)
     end
 
     def process_dave_commit(transition_id, commit)
@@ -515,7 +524,7 @@ module Discordrb::Voice
       @bot.debug("DAVE: Transition #{transition_id} is ready")
       send_dave_ready_for_transition(transition_id)
     rescue Discordrb::Voice::DAVE::Error => e
-      @bot.warn("DAVE: Failed to process MLS commit for transition #{transition_id}: #{e.message}")
+      Discordrb::LOGGER.warn("DAVE: Failed to process MLS commit for transition #{transition_id}: #{e.message}")
       handle_invalid_dave_group(transition_id)
     end
 
@@ -526,7 +535,7 @@ module Discordrb::Voice
       @bot.debug("DAVE: Transition #{transition_id} is ready")
       send_dave_ready_for_transition(transition_id)
     rescue Discordrb::Voice::DAVE::Error => e
-      @bot.warn("DAVE: Failed to process MLS welcome for transition #{transition_id}: #{e.message}")
+      Discordrb::LOGGER.warn("DAVE: Failed to process MLS welcome for transition #{transition_id}: #{e.message}")
       handle_invalid_dave_group(transition_id)
     end
 

@@ -20,7 +20,6 @@ RSpec.describe Discordrb::Voice::VoiceWS do
 
   before do
     allow(bot).to receive(:debug)
-    allow(bot).to receive(:warn)
 
     voice_ws.instance_variable_set(:@client, client)
     voice_ws.instance_variable_set(:@udp, udp)
@@ -55,6 +54,28 @@ RSpec.describe Discordrb::Voice::VoiceWS do
     end
   end
 
+  describe 'CLIENT_CONNECT handling' do
+    it 'adds users from the plural user_ids key to the expected user set' do
+      voice_ws.send(:websocket_text_message, {
+        op: Discordrb::Voice::Opcodes::CLIENT_CONNECT,
+        d: { user_ids: ['111', '222'] }
+      }.to_json)
+
+      expected = voice_ws.instance_variable_get(:@dave_expected_user_ids)
+      expect(expected).to include('111', '222')
+    end
+
+    it 'adds users from the legacy singular user_id key to the expected user set' do
+      voice_ws.send(:websocket_text_message, {
+        op: Discordrb::Voice::Opcodes::CLIENT_CONNECT,
+        d: { user_id: '333' }
+      }.to_json)
+
+      expected = voice_ws.instance_variable_get(:@dave_expected_user_ids)
+      expect(expected).to include('333')
+    end
+  end
+
   describe 'DAVE binary message handling' do
     let(:session) { instance_double('DAVE::Session') }
 
@@ -80,6 +101,30 @@ RSpec.describe Discordrb::Voice::VoiceWS do
         :websocket_binary_message,
         "#{[0, 1, Discordrb::Voice::Opcodes::DAVE_MLS_PROPOSALS].pack('C*')}proposal-bytes"
       )
+    end
+
+    it 'recovers gracefully when proposal processing fails for an unrecognized user' do
+      new_session = instance_double('DAVE::Session')
+      allow(session).to receive(:process_proposals).and_raise(Discordrb::Voice::DAVE::Error, 'MLS failure in proposals: ValidateProposalMessage: Unexpected user ID in add proposal')
+      allow(session).to receive(:protocol_version).and_return(1)
+
+      stub_const('Discordrb::Voice::LIBDAVE_AVAILABLE', true)
+      allow(Discordrb::Voice::DAVE::Session).to receive(:new).and_return(new_session)
+      allow(new_session).to receive(:key_package).and_return('key-package')
+      logger = instance_double('Logger')
+      stub_const('Discordrb::LOGGER', logger)
+      allow(logger).to receive(:warn)
+
+      expect(client).to receive(:send).with(
+        "#{Discordrb::Voice::Opcodes::DAVE_MLS_KEY_PACKAGE.chr}key-package", :binary
+      )
+
+      voice_ws.send(
+        :websocket_binary_message,
+        "#{[0, 1, Discordrb::Voice::Opcodes::DAVE_MLS_PROPOSALS].pack('C*')}proposal-bytes"
+      )
+
+      expect(voice_ws.instance_variable_get(:@dave_recovering)).to be_falsy
     end
   end
 

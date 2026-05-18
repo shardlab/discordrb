@@ -196,11 +196,14 @@ module Discordrb::Voice
     class Session # :nodoc:
       attr_reader :self_user_id
 
-      def initialize(protocol_version:, group_id:, self_user_id:, auth_session_id: nil, &failure_callback)
+      def initialize(protocol_version:, group_id:, self_user_id:, auth_session_id: nil)
         @self_user_id = self_user_id.to_s
-        @failure_callback = failure_callback || proc { |source, reason| raise Error, "#{source}: #{reason}" }
+        @last_failure = nil
+        # Store failure reason without raising; raising inside an FFI callback unwinds through C++ code
+        # via longjmp, skipping destructors and leaving the native session in a corrupted state.
+        # Callers check @last_failure after each FFI call and raise from safe Ruby context.
         @native_failure_callback = proc do |source, reason, _user_data|
-          @failure_callback.call(source, reason)
+          @last_failure = "#{source}: #{reason}"
         end
 
         handle = DAVE.daveSessionCreate(nil, auth_session_id, @native_failure_callback, nil)
@@ -234,10 +237,11 @@ module Discordrb::Voice
       end
 
       def process_proposals(payload, recognized_user_ids)
+        @last_failure = nil
         proposals_ptr, proposals_length = DAVE.write_bytes(payload)
         user_ids_ptr, _user_id_pointers, user_ids_length = DAVE.write_string_array(recognized_user_ids)
 
-        DAVE.read_allocated_bytes do |buffer_ptr, length_ptr|
+        result = DAVE.read_allocated_bytes do |buffer_ptr, length_ptr|
           DAVE.daveSessionProcessProposals(
             @handle,
             proposals_ptr,
@@ -248,20 +252,28 @@ module Discordrb::Voice
             length_ptr
           )
         end
+
+        raise Error, "MLS failure in proposals: #{@last_failure}" if @last_failure
+
+        result
       end
 
       def process_commit(payload)
+        @last_failure = nil
         commit_ptr, commit_length = DAVE.write_bytes(payload)
         handle = DAVE.daveSessionProcessCommit(@handle, commit_ptr, commit_length)
+        raise Error, "MLS failure in commit: #{@last_failure}" if @last_failure
         raise Error, 'Failed to process DAVE commit' if handle.null?
 
         CommitResult.new(handle)
       end
 
       def process_welcome(payload, recognized_user_ids)
+        @last_failure = nil
         welcome_ptr, welcome_length = DAVE.write_bytes(payload)
         user_ids_ptr, _user_id_pointers, user_ids_length = DAVE.write_string_array(recognized_user_ids)
         handle = DAVE.daveSessionProcessWelcome(@handle, welcome_ptr, welcome_length, user_ids_ptr, user_ids_length)
+        raise Error, "MLS failure in welcome: #{@last_failure}" if @last_failure
         raise Error, 'Failed to process DAVE welcome' if handle.null?
 
         WelcomeResultHandle.new(handle)
