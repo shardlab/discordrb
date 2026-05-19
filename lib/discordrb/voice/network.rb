@@ -203,6 +203,11 @@ module Discordrb::Voice
     # @return [VoiceUDP] the UDP voice connection over which the actual audio data is sent.
     attr_reader :udp
 
+    # @return [true, false] whether the voice WebSocket connection has died unexpectedly.
+    #   This is set when the underlying socket raises a connection error or the server closes
+    #   the connection while the session is still meant to be active.
+    attr_reader :connection_dead
+
     # Makes a new voice websocket client, but doesn't connect it (see {#connect} for that)
     # @param channel [Channel] The voice channel to connect to
     # @param bot [Bot] The regular bot to which this vWS is bound
@@ -221,6 +226,7 @@ module Discordrb::Voice
 
       @udp = VoiceUDP.new
       @media_ready = false
+      @connection_dead = false
       @dave_expected_user_ids = Set.new([@bot.profile.id.to_s])
       @dave_expected_user_ids.merge(@channel.users.map { |user| user.id.to_s })
     end
@@ -297,11 +303,17 @@ module Discordrb::Voice
         op: opcode,
         d: data
       }.to_json, :text)
+    rescue SystemCallError, IOError => e
+      @connection_dead = true
+      @bot.debug("VWS: send_opcode failed, marking connection dead (#{e.class}: #{e.message})")
     end
 
     def send_binary_opcode(opcode, payload = ''.b)
       @bot.debug("Sending voice binary opcode #{opcode} (#{payload.bytesize} bytes)")
       @client.send(opcode.chr + payload, :binary)
+    rescue SystemCallError, IOError => e
+      @connection_dead = true
+      @bot.debug("VWS: send_binary_opcode failed, marking connection dead (#{e.class}: #{e.message})")
     end
 
     # Event handlers; public for websocket-simple to work correctly
@@ -322,7 +334,7 @@ module Discordrb::Voice
         websocket_text_message(msg.data)
       end
     rescue StandardError => e
-      @connection_error ||= e.class
+      @connection_error ||= e
       raise
     end
 
@@ -388,7 +400,8 @@ module Discordrb::Voice
 
       case opcode
       when Discordrb::Voice::Opcodes::DAVE_MLS_EXTERNAL_SENDER
-        dave_control_session.external_sender = payload
+        @dave_external_sender = payload
+        (@pending_dave_session || @dave_session)&.external_sender = payload
       when Discordrb::Voice::Opcodes::DAVE_MLS_PROPOSALS
         process_dave_proposals(payload)
       when Discordrb::Voice::Opcodes::DAVE_MLS_COMMIT_WELCOME
@@ -446,7 +459,12 @@ module Discordrb::Voice
     private
 
     def ready_for_media?
-      raise @connection_error if @connection_error
+      if @connection_error
+        err = @connection_error
+        raise err if err.is_a?(Exception)
+        raise "VWS connection error: #{err}"
+      end
+      raise 'VWS connection closed before media was ready' if @connection_dead && !@media_ready
 
       @ready && @media_ready
     end
@@ -467,11 +485,13 @@ module Discordrb::Voice
     end
 
     def build_dave_session(protocol_version)
-      Discordrb::Voice::DAVE::Session.new(
+      session = Discordrb::Voice::DAVE::Session.new(
         protocol_version: protocol_version,
         group_id: @channel.id,
         self_user_id: @bot.profile.id
       )
+      session.external_sender = @dave_external_sender if @dave_external_sender
+      session
     end
 
     def update_expected_users(user_ids)
@@ -550,7 +570,18 @@ module Discordrb::Voice
       @bot.debug("DAVE: Preparing transition #{@pending_transition_id} for protocol version #{@pending_transition_protocol_version}")
 
       if @pending_transition_id.zero?
-        handle_dave_execute_transition(@pending_transition_id)
+        if @pending_dave_session.nil?
+          # No MLS negotiation in progress; execute immediately.
+          handle_dave_execute_transition(@pending_transition_id)
+        elsif @mls_commit_transition_id
+          # MLS commit already arrived before PREPARE_TRANSITION; execute with the committed ID.
+          handle_dave_execute_transition(@mls_commit_transition_id)
+        else
+          # MLS negotiation in progress but commit hasn't arrived yet.
+          # Discord won't send a separate EXECUTE_TRANSITION for id=0, so defer until
+          # track_pending_transition is called after the commit/welcome is processed.
+          @deferred_transition_execute = true
+        end
       elsif @pending_transition_protocol_version.zero?
         send_dave_ready_for_transition(@pending_transition_id)
       end
@@ -603,15 +634,27 @@ module Discordrb::Voice
     end
 
     def track_pending_transition(transition_id, activate_pending_session: false)
+      defer_execute = @deferred_transition_execute
+      # If no PREPARE_TRANSITION was received before this welcome arrives (the initial join
+      # flow never sends a PREPARE_TRANSITION for epoch 0), we should execute immediately
+      # rather than waiting for a deferred signal that will never come.
+      no_prior_prepare = @pending_transition_id.nil? && activate_pending_session
+      @mls_commit_transition_id = transition_id
       @pending_transition_id = transition_id
       @pending_transition_protocol_version ||= dave_control_session.protocol_version
       @activate_pending_session = @activate_pending_session || activate_pending_session || !@pending_dave_session.nil?
+      if defer_execute || no_prior_prepare
+        @deferred_transition_execute = false
+        handle_dave_execute_transition(transition_id)
+      end
     end
 
     def clear_pending_transition
       @pending_transition_id = nil
       @pending_transition_protocol_version = nil
       @activate_pending_session = false
+      @deferred_transition_execute = false
+      @mls_commit_transition_id = nil
     end
 
     def handle_invalid_dave_group(transition_id)
@@ -633,6 +676,8 @@ module Discordrb::Voice
     def heartbeat_loop
       @heartbeat_running = true
       while @heartbeat_running
+        break if @connection_dead
+
         if @heartbeat_interval
           sleep @heartbeat_interval / 1000.0
           send_heartbeat
@@ -653,11 +698,17 @@ module Discordrb::Voice
         method(:websocket_open),
         method(:websocket_message),
         proc do |e|
-          @connection_error ||= e if !@ready || !@media_ready
+          if !@ready || !@media_ready
+            @connection_error ||= e.is_a?(Exception) ? e : RuntimeError.new("VWS error: #{e.inspect}")
+          end
+          @connection_dead = true
           Discordrb::LOGGER.error "VWS error: #{e}"
         end,
         proc do |e|
-          @connection_error ||= e if !@ready || !@media_ready
+          if !@ready || !@media_ready
+            @connection_error ||= e.is_a?(Exception) ? e : RuntimeError.new("VWS closed: #{e.inspect}")
+          end
+          @connection_dead = true
           Discordrb::LOGGER.warn "VWS close: #{e}"
         end
       )

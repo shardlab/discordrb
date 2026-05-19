@@ -158,5 +158,86 @@ RSpec.describe Discordrb::Voice::VoiceWS do
       expect(bot).to receive(:debug).with('DAVE: Enabled voice frame encryption with protocol version 1')
       voice_ws.send(:handle_dave_execute_transition, 7)
     end
+
+    context 'initial join (DAVE_MLS_WELCOME without preceding PREPARE_TRANSITION)' do
+      let(:pending_session) { instance_double('DAVE::Session', protocol_version: 1) }
+      let(:welcome_result) { instance_double('DAVE::CommitResult', failed?: false, ignored?: false) }
+
+      before do
+        voice_ws.instance_variable_set(:@pending_dave_session, pending_session)
+        voice_ws.instance_variable_set(:@pending_transition_protocol_version, 1)
+        allow(pending_session).to receive(:process_welcome)
+        allow(pending_session).to receive(:protocol_version).and_return(1)
+        allow(client).to receive(:send) # DAVE_TRANSITION_READY
+      end
+
+      it 'activates DAVE immediately when a welcome arrives without a prior PREPARE_TRANSITION' do
+        expect(udp).to receive(:send).with(:activate_dave!, pending_session, 123)
+        expect(bot).to receive(:debug).with(a_string_including('Enabled voice frame encryption'))
+
+        voice_ws.send(
+          :websocket_binary_message,
+          "#{[0, 1, Discordrb::Voice::Opcodes::DAVE_MLS_WELCOME].pack('C*')}#{[0].pack('n')}welcome-bytes"
+        )
+
+        expect(voice_ws.instance_variable_get(:@media_ready)).to be true
+        # State must be clean so subsequent epoch handling isn't poisoned by stale commit ID
+        expect(voice_ws.instance_variable_get(:@mls_commit_transition_id)).to be_nil
+        expect(voice_ws.instance_variable_get(:@pending_transition_id)).to be_nil
+      end
+    end
+
+    context 'deferred DAVE_PREPARE_TRANSITION(id=0) execution' do
+      let(:pending_session) { instance_double('DAVE::Session', protocol_version: 1) }
+      let(:pending_commit_result) { instance_double('DAVE::CommitResult', failed?: false, ignored?: false) }
+
+      before do
+        voice_ws.instance_variable_set(:@pending_dave_session, pending_session)
+        voice_ws.instance_variable_set(:@pending_transition_id, 0)
+        voice_ws.instance_variable_set(:@activate_pending_session, true)
+        allow(pending_session).to receive(:process_commit).and_return(pending_commit_result)
+        allow(pending_session).to receive(:protocol_version).and_return(1)
+      end
+
+      it 'executes the transition after the commit arrives when PREPARE_TRANSITION arrives first' do
+        # PREPARE_TRANSITION(id=0) arrives while pending session exists → deferred
+        voice_ws.send(:handle_dave_prepare_transition, { 'transition_id' => 0, 'protocol_version' => 1 })
+        expect(voice_ws.instance_variable_get(:@deferred_transition_execute)).to be true
+        expect(voice_ws.instance_variable_get(:@media_ready)).to be false
+
+        # Commit arrives → should trigger deferred execute and set @media_ready.
+        # process_dave_commit also sends DAVE_TRANSITION_READY after track_pending_transition.
+        allow(client).to receive(:send)
+        expect(udp).to receive(:send).with(:activate_dave!, pending_session, 123)
+        expect(bot).to receive(:debug).with(a_string_including('Enabled voice frame encryption'))
+
+        voice_ws.send(
+          :websocket_binary_message,
+          "#{[0, 1, Discordrb::Voice::Opcodes::DAVE_MLS_ANNOUNCE_COMMIT_TRANSITION].pack('C*')}#{[0].pack('n')}commit-bytes"
+        )
+
+        expect(voice_ws.instance_variable_get(:@media_ready)).to be true
+        expect(voice_ws.instance_variable_get(:@deferred_transition_execute)).to be false
+      end
+
+      it 'executes the transition immediately when commit arrives before PREPARE_TRANSITION' do
+        # Commit arrives first
+        expect(client).to receive(:send) # DAVE_TRANSITION_READY
+        voice_ws.send(
+          :websocket_binary_message,
+          "#{[0, 1, Discordrb::Voice::Opcodes::DAVE_MLS_ANNOUNCE_COMMIT_TRANSITION].pack('C*')}#{[0].pack('n')}commit-bytes"
+        )
+        expect(voice_ws.instance_variable_get(:@mls_commit_transition_id)).to eq(0)
+        expect(voice_ws.instance_variable_get(:@media_ready)).to be false
+
+        # PREPARE_TRANSITION(id=0) arrives after commit → should execute immediately
+        expect(udp).to receive(:send).with(:activate_dave!, pending_session, 123)
+        expect(bot).to receive(:debug).with(a_string_including('Enabled voice frame encryption'))
+
+        voice_ws.send(:handle_dave_prepare_transition, { 'transition_id' => 0, 'protocol_version' => 1 })
+
+        expect(voice_ws.instance_variable_get(:@media_ready)).to be true
+      end
+    end
   end
 end
