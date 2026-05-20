@@ -208,6 +208,8 @@ module Discordrb
           emoji = server.emojis[id]
           return emoji if emoji
         end
+
+        nil
       else
         hash = {}
         @servers.each_value do |server|
@@ -223,7 +225,7 @@ module Discordrb
 
     # Finds an emoji by its name.
     # @param name [String] The emoji name that should be resolved.
-    # @return [GlobalEmoji, nil] the emoji identified by the name, or `nil` if it couldn't be found.
+    # @return [Emoji, nil] the emoji identified by the name, or `nil` if it couldn't be found.
     def find_emoji(name)
       LOGGER.out("Resolving emoji #{name}")
       emoji.find { |element| element.name == name }
@@ -937,7 +939,9 @@ module Discordrb
     # @return [Array<Emoji>] Returns an array of emoji objects.
     def application_emojis
       response = API::Application.list_application_emojis(@token, profile.id)
-      JSON.parse(response)['items'].map { |emoji| Emoji.new(emoji, self) }
+      JSON.parse(response)['items'].collect do |emoji|
+        Emoji.new(emoji.tap { |item| item['_application'] = true }, self, nil)
+      end
     end
 
     # Fetches a single application emoji from its ID.
@@ -945,7 +949,7 @@ module Discordrb
     # @return [Emoji] The application emoji.
     def application_emoji(emoji_id)
       response = API::Application.get_application_emoji(@token, profile.id, emoji_id.resolve_id)
-      Emoji.new(JSON.parse(response), self)
+      Emoji.new(JSON.parse(response).tap { |item| item['_application'] = true }, self)
     end
 
     # Creates a new custom emoji that can be used by this application.
@@ -955,7 +959,7 @@ module Discordrb
     def create_application_emoji(name:, image:)
       image = image.respond_to?(:read) ? Discordrb.encode64(image) : image
       response = API::Application.create_application_emoji(@token, profile.id, name, image)
-      Emoji.new(JSON.parse(response), self)
+      Emoji.new(JSON.parse(response).tap { |item| item['_application'] = true }, self)
     end
 
     # Edits an existing application emoji.
@@ -964,7 +968,7 @@ module Discordrb
     # @return [Emoji] Returns the updated emoji object on success.
     def edit_application_emoji(emoji_id, name:)
       response = API::Application.edit_application_emoji(@token, profile.id, emoji_id.resolve_id, name)
-      Emoji.new(JSON.parse(response), self)
+      Emoji.new(JSON.parse(response).tap { |item| item['_application'] = true }, self)
     end
 
     # Deletes an existing application emoji.
@@ -1015,9 +1019,7 @@ module Discordrb
 
       member_is_new = false
 
-      if server.member_cached?(user_id)
-        member = server.member(user_id)
-      else
+      unless (member = server.member(user_id, false))
         # If the member is not cached yet, it means that it just came online from not being cached at all
         # due to large_threshold. Fortunately, Discord sends the entire member object in this case, and
         # not just a part of it - we can just cache this member directly
@@ -1102,12 +1104,12 @@ module Discordrb
       channel = data.is_a?(Discordrb::Channel) ? data : Channel.new(data, self)
       server = channel.server
 
-      # The last message ID of a forum channel is the most recent post
-      channel.parent.process_last_message_id(channel.id) if channel.parent&.forum? || channel.parent&.media?
+      # The last message ID of a thread-only channel is the most recent post
+      channel.parent.process_last_message_id(channel.id) if channel.parent&.thread_only?
 
       # Handle normal and private channels separately
       if server
-        server.add_channel(channel)
+        server.cache_channel(channel)
         @channels[channel.id] = channel
       elsif channel.private?
         @pm_channels[channel.recipient.id] = channel
@@ -1145,7 +1147,7 @@ module Discordrb
       server = self.server(server_id)
 
       member = Member.new(data, server, self)
-      server.add_member(member)
+      server.cache_member(member, increment: true)
     end
 
     # Internal handler for GUILD_MEMBER_UPDATE
@@ -1196,7 +1198,7 @@ module Discordrb
       if (role = server&.role(data['role']['id'].to_i))
         role.update_data(data['role'])
       else
-        server&.add_role(Role.new(data['role'], self, server))
+        server&.cache_role(Role.new(data['role'], self, server))
       end
     end
 
@@ -1210,9 +1212,7 @@ module Discordrb
 
     # Internal handler for GUILD_EMOJIS_UPDATE
     def update_guild_emoji(data)
-      server_id = data['guild_id'].to_i
-      server = @servers[server_id]
-      server&.update_emoji_data(data)
+      @servers[data['guild_id'].to_i]&.__send__(:process_emojis, data['emojis'])
     end
 
     # Internal handler for GUILD_SCHEDULED_EVENT_CREATE and GUILD_SCHEDULED_EVENT_UPDATE
@@ -1324,7 +1324,7 @@ module Discordrb
       when :GUILD_MEMBERS_CHUNK
         id = data['guild_id'].to_i
         server = server(id)
-        server.process_chunk(data['members'], data['chunk_index'], data['chunk_count'])
+        server.process_chunk(data['members'], data['chunk_index'], data['chunk_count'], data['nonce'], data['not_found'], data['presences'])
       when :USER_UPDATE
         @profile = Profile.new(data, self)
       when :INVITE_CREATE

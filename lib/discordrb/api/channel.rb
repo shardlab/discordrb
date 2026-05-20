@@ -16,8 +16,22 @@ module Discordrb::API::Channel
     )
   end
 
-  # Update a channel's data
-  # https://discord.com/developers/docs/resources/channel#modify-channel
+  # Create a new channel in a server.
+  # https://docs.discord.com/developers/resources/guild#create-guild-channel
+  def create!(token, server_id, name:, type: :undef, topic: :undef, nsfw: :undef, position: :undef, rate_limit_per_user: :undef, bitrate: :undef, user_limit: :undef, permission_overwrites: :undef, parent_id: :undef, rtc_region: :undef, video_quality_mode: :undef, default_auto_archive_duration: :undef, default_reaction_emoji: :undef, default_sort_order: :undef, default_forum_layout: :undef, default_thread_rate_limit_per_user: :undef, available_tags: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_gid_channels,
+      server_id,
+      :post,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/channels",
+      { name:, type:, topic:, nsfw:, position:, rate_limit_per_user:, bitrate:, user_limit:, permission_overwrites:, parent_id:, rtc_region:, video_quality_mode:, default_auto_archive_duration:, default_reaction_emoji:, default_sort_order:, default_forum_layout:, default_thread_rate_limit_per_user:, available_tags: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # @deprecated Please migrate to using {API::Channel.update!} instead.
   def update(token, channel_id, name, topic, position, bitrate, user_limit, nsfw, permission_overwrites = nil, parent_id = nil, rate_limit_per_user = nil, reason = nil, archived = nil, auto_archive_duration = nil, locked = nil, invitable = nil, flags = nil, applied_tags = nil)
     data = { name: name, position: position, topic: topic, bitrate: bitrate, user_limit: user_limit, nsfw: nsfw, parent_id: parent_id, rate_limit_per_user: rate_limit_per_user, archived: archived, auto_archive_duration: auto_archive_duration, locked: locked, invitable: invitable, flags: flags, applied_tags: applied_tags }
     data[:permission_overwrites] = permission_overwrites unless permission_overwrites.nil?
