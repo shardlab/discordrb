@@ -494,7 +494,7 @@ module Discordrb
         break unless @should_reconnect
 
         if @instant_reconnect
-          LOGGER.info('Instant reconnection flag was set - reconnecting right away')
+          LOGGER.out('Instant reconnection flag was set - reconnecting right away')
           @instant_reconnect = false
         else
           wait_for_reconnect
@@ -743,7 +743,7 @@ module Discordrb
         # The RESUMED event is received after a successful op 6 (resume). It does nothing except tell the bot the
         # connection is initiated (like READY would). Starting with v5, it doesn't set a new heartbeat interval anymore
         # since that is handled by op 10 (HELLO).
-        LOGGER.info 'Resumed'
+        LOGGER.out('Resumed')
         return
       end
 
@@ -836,7 +836,8 @@ module Discordrb
         LOGGER.error('The websocket connection has closed due to an error!')
         LOGGER.log_exception(e)
       else
-        LOGGER.error("The websocket connection has closed: #{e&.inspect || '(no information)'}")
+        e = e&.inspect
+        LOGGER.error("The websocket connection has closed: #{e}") if e
       end
     end
 
