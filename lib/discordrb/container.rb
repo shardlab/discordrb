@@ -79,6 +79,16 @@ module Discordrb
       register_event(HeartbeatEvent, attributes, block)
     end
 
+    # This **event** is raised every time the bot successfully resumes a Gateway session. This happens roughly
+    # between every 30 minutes to 6 hours.
+    # @param attributes [Hash] Event attributes, none in this particular case.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ResumedEvent] The event that was raised.
+    # @return [ResumedEventHandler] the event handler that was registered.
+    def resumed(attributes = {}, &block)
+      register_event(ResumedEvent, attributes, block)
+    end
+
     # This **event** is raised when somebody starts typing in a channel the bot is also in. The official Discord
     # client would display the typing indicator for five seconds after receiving this event. If the user continues
     # typing after five seconds, the event will be re-raised.

@@ -1817,6 +1817,12 @@ module Discordrb
       @gateway.notify_ready
     end
 
+    # Raise an event every time the websocket connection is resumed (t = "RESUMED")
+    def notify_resumed
+      raise_event(ResumedEvent.new(self))
+      LOGGER.out('Resumed')
+    end
+
     def raise_event(event)
       debug("Raised a #{event.class}")
       handle_awaits(event)

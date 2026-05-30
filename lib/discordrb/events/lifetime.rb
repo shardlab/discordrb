@@ -28,4 +28,10 @@ module Discordrb::Events
 
   # Event handler for {HeartbeatEvent}
   class HeartbeatEventHandler < TrueEventHandler; end
+
+  # @see Discordrb::EventContainer#resumed
+  class ResumedEvent < LifetimeEvent; end
+
+  # Event handler for {ResumedEvent}
+  class ResumedEventHandler < TrueEventHandler; end
 end
