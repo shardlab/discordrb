@@ -17,6 +17,7 @@ require 'discordrb/events/interactions'
 require 'discordrb/events/integrations'
 require 'discordrb/events/scheduled_events'
 require 'discordrb/events/polls'
+require 'discordrb/events/auto_moderation'
 
 require 'discordrb/await'
 
@@ -712,6 +713,69 @@ module Discordrb
     # @return [ApplicationCommandPermissionsUpdateEventHandler] The event handler that was registered.
     def application_command_permissions_update(attributes = {}, &block)
       register_event(ApplicationCommandPermissionsUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an automod rule is created.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Regexp] :name A name to match against.
+    # @option attributes [String, Integer, AutoModRule] :id An automod rule to match against.
+    # @option attributes [String, Integer, User, Member] :creator A creator to match against.
+    # @option attributes [Symbol, Integer] :event_type An event type to match against.
+    # @option attributes [Symbol, Integer] :trigger_type A trigger type to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [AutoModRuleCreateEvent] The event that was raised.
+    # @return [AutoModRuleCreateEventHandler] The event handler that was registered.
+    def automod_rule_create(attributes = {}, &block)
+      register_event(AutoModRuleCreateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an automod rule is updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Regexp] :name A name to match against.
+    # @option attributes [String, Integer, AutoModRule] :id An automod rule to match against.
+    # @option attributes [String, Integer, User, Member] :creator A creator to match against.
+    # @option attributes [Symbol, Integer] :event_type An event type to match against.
+    # @option attributes [Symbol, Integer] :trigger_type A trigger type to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [AutoModRuleUpdateEvent] The event that was raised.
+    # @return [AutoModRuleUpdateEventHandler] The event handler that was registered.
+    def automod_rule_update(attributes = {}, &block)
+      register_event(AutoModRuleUpdateEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an automod rule is deleted.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Integer, Server] :server A server to match against.
+    # @option attributes [String, Regexp] :name A name to match against.
+    # @option attributes [String, Integer, AutoModRule] :id An automod rule to match against.
+    # @option attributes [String, Integer, User, Member] :creator A creator to match against.
+    # @option attributes [Symbol, Integer] :event_type An event type to match against.
+    # @option attributes [Symbol, Integer] :trigger_type A trigger type to match against.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [AutoModRuleDeleteEvent] The event that was raised.
+    # @return [AutoModRuleDeleteEventHandler] The event handler that was registered.
+    def automod_rule_delete(attributes = {}, &block)
+      register_event(AutoModRuleDeleteEvent, attributes, block)
+    end
+
+    # This **event** is raised whenever an action for an automod rule is executed.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [Integer, String, User, Member] :user Matches the user who triggered the auto moderation rule.
+    # @option attributes [Integer, String, Server] :server Matches the server where the auto moderation rule was triggered.
+    # @option attributes [Integer, String, Channel] :channel Matches the channel where the auto moderation rule was triggered.
+    # @option attributes [Integer, String, AutoModRule] :automod_rule Matches the auto moderation rule that was triggered.
+    # @option attributes [String, Regexp] :content Matches the content which triggered the auto moderation rule.
+    # @option attributes [Symbol, Integer, String] :action_type Matches the type of action that was executed.
+    # @option attributes [Symbol, Integer, String] :trigger_type Matches the trigger type of the auto moderation rule that was triggered.
+    # @option attributes [String, Regexp] :matched_content Matches the substring that triggered that triggered the auto moderation rule.
+    # @option attributes [String, Regexp] :matched_keyword Matches the configured word or phrase that triggered the auto moderation rule.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [AutoModActionEvent] The event that was raised.
+    # @return [AutoModActionEventHandler] The event handler that was registered.
+    def automod_rule_execution(attributes = {}, &block)
+      register_event(AutoModRuleExecutionEvent, attributes, block)
     end
 
     # This **event** is raised whenever a user votes on a poll.
