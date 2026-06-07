@@ -459,22 +459,29 @@ module Discordrb
       return if @heartbeat_thread
 
       @heartbeat_interval = interval
+
       @heartbeat_thread = Thread.new do
         Thread.current[:discordrb_name] = 'heartbeat'
+
         loop do
+          break if @should_reconnect == false
+
           # Send a heartbeat if heartbeats are active and either no session exists yet, or an existing session is
-          # suspended (e.g. after op7)
+          # suspended (e.g. after OP 7)
           if (@session && !@session.suspended?) || !@session
-            sleep @heartbeat_interval
-            # Check if we're connected here, since we could possibly be waiting for a reconnect to occur.
-            if @handshaked && !@closed
+            sleep(@heartbeat_interval)
+
+            # There are two things that we have to check for here. We have to make sure we're connected, since we
+            # could possibly be waiting for a reconnect to occur. Otherwise, we need to make sure that reconnects
+            # are still enabled and that the connection hasn't irreversibly closed.
+            if @handshaked && !@closed && @should_reconnect
               @bot.raise_heartbeat_event
               heartbeat
             else
-              LOGGER.debug('Tried to send a heartbeat without being connected! Ignoring, we should be fine.')
+              LOGGER.debug('Tried to send a heartbeat without being connected. Ignoring, we should be fine.')
             end
           else
-            sleep 1
+            sleep(1)
           end
         rescue StandardError => e
           LOGGER.error('An error occurred while heartbeating!')
