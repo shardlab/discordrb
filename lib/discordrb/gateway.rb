@@ -826,7 +826,7 @@ module Discordrb
           LOGGER.error(<<~ERROR)
             Your bot attempted to identify with privileged intents that it is not authorized to use.
             You must either enable these for your application on the Discord Developer Portal, or
-            set the intents: parameter of Bot#initialize to request only the intents that you need.
+            set the `intents:` parameter of Bot#initialize to request only the intents that you need.
             Read more here: https://discord.com/developers/docs/topics/gateway#privileged-intents
                             https://drb.shardlab.dev/main/Discordrb/Bot.html#initialize-instance_method
           ERROR
