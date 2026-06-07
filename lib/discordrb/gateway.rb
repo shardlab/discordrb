@@ -807,7 +807,6 @@ module Discordrb
 
         if e.code == 4014
           LOGGER.error(<<~ERROR)
-
             Your bot attempted to identify with privileged intents that it is not authorized to use.
             You must either enable these for your application on the Discord Developer Portal, or
             set the intents: parameter of Bot#initialize to request only the intents that you need.
