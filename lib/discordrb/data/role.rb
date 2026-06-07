@@ -8,18 +8,21 @@ module Discordrb
     # @return [Permissions] this role's permissions.
     attr_reader :permissions
 
-    # @return [String] this role's name ("new role" if it hasn't been changed)
+    # @return [String] this role's name ("new role" if it hasn't been changed).
     attr_reader :name
 
-    # @return [true, false] whether or not this role should be displayed separately from other users
+    # @return [Integer] the ID of the server this role is from.
+    attr_reader :server_id
+
+    # @return [true, false] whether or not this role should be displayed separately from other users.
     attr_reader :hoist
     alias_method :hoist?, :hoist
 
-    # @return [true, false] whether or not this role is managed by an integration or a bot
+    # @return [true, false] whether or not this role is managed by an integration or a bot.
     attr_reader :managed
     alias_method :managed?, :managed
 
-    # @return [true, false] whether this role can be mentioned using a role mention
+    # @return [true, false] whether this role can be mentioned using a role mention.
     attr_reader :mentionable
     alias_method :mentionable?, :mentionable
 
@@ -27,7 +30,7 @@ module Discordrb
     attr_reader :colour
     alias_method :color, :colour
 
-    # @return [Integer] the position of this role in the hierarchy
+    # @return [Integer] the position of this role in the hierarchy.
     attr_reader :position
 
     # @return [String, nil] The icon hash for this role.
@@ -143,7 +146,7 @@ module Discordrb
     # @return [Array<Member>] an array of members who have this role.
     # @note This requests a member chunk if it hasn't for the server before, which may be slow initially
     def members
-      server.members.select { |m| m.role?(self) }
+      server.members.select { |item| item.role?(self) }
     end
 
     alias_method :users, :members
@@ -305,7 +308,7 @@ module Discordrb
         raise ArgumentError, 'The target role that was provded is not valid'
       end
 
-      roles = server.roles.sort_by { |role| [role.position, role.id] }
+      roles = server.roles.sort
 
       # Make sure we remove the current role.
       myself = roles.rindex(@id).tap { |index| roles.delete_at(index) }
@@ -357,6 +360,52 @@ module Discordrb
     end
 
     alias_method :update_colors, :update_colours
+
+    # Check if this role is less than another role in the hierarchy.
+    # @param other [Role] The other role that you want to compare to this one.
+    # @return [true, false] Whether or not this role is less than the other role in the hierarchy.
+    def <(other)
+      # rubocop:disable Style/NumericPredicate
+      self.<=>(other) < 0
+    end
+
+    # Check if this role is greater than another role in the hierarchy.
+    # @param other [Role] The other role that you want to compare to this one.
+    # @return [true, false] Whether or not this role is greater than the other role in the hierarchy.
+    def >(other)
+      self.<=>(other) > 0
+      # rubocop:enable Style/NumericPredicate
+    end
+
+    # Check if this role is less than or equal to another role in the hierarchy.
+    # @param other [Role] The other role that you want to against to this one.
+    # @return [true, false] Whether or not this role is less than or equal to the other role in the hierarchy.
+    def <=(other)
+      self.<=>(other) <= 0
+    end
+
+    # Check if this role is greater than or equal to another role in the hierarchy.
+    # @param other [Role] The other role that you want to compare against this one.
+    # @return [true, false] Whether or not this role is greater than or equal to the other role in the hierarchy.
+    def >=(other)
+      self.<=>(other) >= 0
+    end
+
+    # Compare the role against another role based on its position.
+    # @param other [Role] The role to compare the current role against.
+    # @return [0, -1, 1, nil] An integer representing the ordering of the
+    #   roles, or `nil` if the other entity is not able to be compared to the role.
+    def <=>(other)
+      return unless other.is_a?(Role) && @server_id == other.server_id
+
+      if @id == other.id
+        0
+      elsif @position == other.position
+        other.id <=> @id
+      else
+        @position <=> other.position
+      end
+    end
 
     # Modify the properties of the role.
     # @param name [String, nil] The new 1-100 character name of the role.
@@ -426,13 +475,6 @@ module Discordrb
       nil
     end
 
-    # The inspect method is overwritten to give more useful output.
-    def inspect
-      "<Role name=\"#{@name}\" permissions=#{@permissions.bits} hoist=#{@hoist} position=#{@position} mentionable=#{@mentionable} flags=#{@flags}>"
-    end
-
-    # Updates the data cache from a hash containing data
-    # @note For internal use only
     # @!visibility private
     def update_data(new_data)
       @name = new_data['name']
@@ -449,6 +491,11 @@ module Discordrb
       @tags = Tags.new(new_data['tags']) if new_data['tags']
       @tertiary_colour = colours['tertiary_color'] ? ColourRGB.new(colours['tertiary_color']) : nil
       @secondary_colour = colours['secondary_color'] ? ColourRGB.new(colours['secondary_color']) : nil
+    end
+
+    # @!visibility private
+    def inspect
+      "<Role name=\"#{@name}\" permissions=#{@permissions.bits} hoist=#{@hoist} position=#{@position} mentionable=#{@mentionable}>"
     end
   end
 end
