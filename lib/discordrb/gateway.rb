@@ -166,7 +166,7 @@ module Discordrb
       @ws_thread = Thread.new do
         Thread.current[:discordrb_name] = 'websocket'
         connect_loop
-        LOGGER.debug('The WS loop exited! Not sure if this is a good thing')
+        LOGGER.warn('The WS loop exited! Not sure if this is a good thing')
       end
 
       LOGGER.debug('WS thread created! Now waiting for confirmation that everything worked')
@@ -553,7 +553,7 @@ module Discordrb
     end
 
     def connect
-      LOGGER.info('Connecting to gateway')
+      LOGGER.debug('Connecting')
 
       # Get the URI we should connect to
       url = process_gateway
@@ -745,7 +745,13 @@ module Discordrb
     # Op 9
     def handle_invalidate_session
       LOGGER.debug('Received op 9, invalidating session and re-identifying.')
-      @session&.invalidate
+
+      if @session
+        @session.invalidate
+      else
+        LOGGER.warn('Received op 9 without a running session! Not invalidating, we *should* be fine though.')
+      end
+
       identify
     end
 
@@ -793,8 +799,7 @@ module Discordrb
     def handle_close(e)
       @bot.__send__(:raise_event, Events::DisconnectEvent.new(@bot))
 
-      case e
-      when ::WebSocket::Frame::Incoming::Client
+      if e.respond_to?(:code)
         # It is a proper close frame we're dealing with, print reason and message to console
         LOGGER.error('Websocket close frame received!')
         LOGGER.error("Code: #{e.code}")
@@ -812,12 +817,12 @@ module Discordrb
         end
 
         @should_reconnect = false if FATAL_CLOSE_CODES.include?(e.code)
-      when Exception
+      elsif e.is_a?(Exception)
         # Log the exception
-        LOGGER.error('The gateway connection has closed due to an error!')
+        LOGGER.error('The websocket connection has closed due to an error!')
         LOGGER.log_exception(e)
       else
-        LOGGER.error("The gateway connection has closed: #{e&.inspect}")
+        LOGGER.error("The websocket connection has closed: #{e&.inspect || '(no information)'}")
       end
     end
 
