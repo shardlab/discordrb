@@ -1103,7 +1103,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#members-instance_method" title="#members (instance method)">#<strong>members</strong>  &#x21d2; Object </a>
+      <a href="#members-instance_method" title="#members (instance method)">#<strong>members</strong>  &#x21d2; Array&lt;Member&gt; </a>
     
 
     
@@ -1117,7 +1117,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Members in the thread.</p></div></span>
+    <span class="summary_desc"><div class='inline'><p>Get the members in the thread.</p></div></span>
   
 </li>
 
@@ -1139,7 +1139,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Remove a member from the thread.</p></div></span>
   
 </li>
 
@@ -1363,7 +1363,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#creation_time-instance_method" title="#creation_time (instance method)">#<strong>creation_time</strong>  &#x21d2; Time<sup>?</sup> </a>
+      <a href="#creation_time-instance_method" title="#creation_time (instance method)">#<strong>creation_time</strong>  &#x21d2; Time </a>
     
 
     
@@ -1409,7 +1409,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#default_reaction-instance_method" title="#default_reaction (instance method)">#<strong>default_reaction</strong>  &#x21d2; Object </a>
+      <a href="#default_reaction-instance_method" title="#default_reaction (instance method)">#<strong>default_reaction</strong>  &#x21d2; Emoji<sup>?</sup> </a>
     
 
     
@@ -1423,7 +1423,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'><p>Get the default reaction emoji of the forum or media channel.</p></div></span>
   
 </li>
 
@@ -4582,7 +4582,7 @@ the voice region will automatically be determined by Discord.</p></div>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Add a member to the thread</p>
+    <p>Add a member to the thread.</p>
 
   </div>
 </div>
@@ -4613,12 +4613,12 @@ the voice region will automatically be determined by Discord.</p></div>
       <pre class="lines">
 
 
-1155
-1156
-1157</pre>
+1180
+1181
+1182</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1155</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1180</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_member'>add_member</span><span class='lparen'>(</span><span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_add_thread_member'>add_thread_member</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span>
@@ -4674,14 +4674,14 @@ the voice region will automatically be determined by Discord.</p></div>
       <pre class="lines">
 
 
-1108
-1109
 1110
 1111
-1112</pre>
+1112
+1113
+1114</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1108</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1110</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_add_tags'>add_tags</span><span class='lparen'>(</span><span class='id identifier rubyid_tags'>tags</span><span class='comma'>,</span> <span class='label'>reason:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Cannot add tags to this channel</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_parent'>parent</span><span class='op'>&amp;.</span><span class='id identifier rubyid_thread_only?'>thread_only?</span>
@@ -5146,12 +5146,12 @@ the voice region will automatically be determined by Discord.</p></div>
       <pre class="lines">
 
 
-1132
-1133
-1134</pre>
+1134
+1135
+1136</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1132</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1134</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_tag'>create_tag</span><span class='lparen'>(</span><span class='label'>name:</span><span class='comma'>,</span> <span class='label'>moderated:</span><span class='comma'>,</span> <span class='label'>emoji:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>reason:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_update_tags'>update_tags</span><span class='lparen'>(</span><span class='lbrace'>{</span> <span class='label'>name:</span><span class='comma'>,</span> <span class='label'>moderated:</span><span class='comma'>,</span> <span class='op'>**</span><span class='const'><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></span><span class='period'>.</span><span class='id identifier rubyid_build_emoji_hash'>build_emoji_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_emoji'>emoji</span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='id identifier rubyid_reason'>reason</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_thread_only?'>thread_only?</span>
@@ -5291,7 +5291,7 @@ the voice region will automatically be determined by Discord.</p></div>
       <div class="method_details ">
   <h3 class="signature " id="creation_time-instance_method">
   
-    #<strong>creation_time</strong>  &#x21d2; <tt>Time</tt><sup>?</sup> 
+    #<strong>creation_time</strong>  &#x21d2; <tt>Time</tt> 
   
 
   
@@ -5311,12 +5311,12 @@ the voice region will automatically be determined by Discord.</p></div>
     <li>
       
       
-        <span class='type'>(<tt>Time</tt>, <tt>nil</tt>)</span>
+        <span class='type'>(<tt>Time</tt>)</span>
       
       
       
         &mdash;
-        <div class='inline'><p>The time at when the channel was created at.</p></div>
+        <div class='inline'><p>The time at when the channel was created.</p></div>
       
     </li>
   
@@ -5409,24 +5409,49 @@ the voice region will automatically be determined by Discord.</p></div>
       <div class="method_details ">
   <h3 class="signature " id="default_reaction-instance_method">
   
-    #<strong>default_reaction</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>default_reaction</strong>  &#x21d2; <tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt><sup>?</sup> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Get the default reaction emoji of the forum or media channel.</p>
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Emoji.html" title="Discordrb::Emoji (class)">Emoji</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The default reaction emoji of the forum or media channel.</p></div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-1076
-1077
-1078</pre>
+1078
+1079
+1080</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1076</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1078</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_reaction'>default_reaction</span>
   <span class='ivar'>@default_reaction</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_server'>server</span><span class='period'>.</span><span class='id identifier rubyid_emojis'>emojis</span><span class='lbracket'>[</span><span class='ivar'>@default_reaction</span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='ivar'>@default_reaction</span>
@@ -6369,12 +6394,12 @@ as soon as possible with the specified amount.</p></div>
       <pre class="lines">
 
 
-1257
-1258
-1259</pre>
+1283
+1284
+1285</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1257</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1283</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;Channel name=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@name</span><span class='embexpr_end'>}</span><span class='tstring_content'> id=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_content'> topic=\&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@topic</span><span class='embexpr_end'>}</span><span class='tstring_content'>\&quot; type=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@type</span><span class='embexpr_end'>}</span><span class='tstring_content'> position=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@position</span><span class='embexpr_end'>}</span><span class='tstring_content'> server=</span><span class='embexpr_beg'>#{</span><span class='ivar'>@server</span> <span class='op'>||</span> <span class='ivar'>@server_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
@@ -6469,12 +6494,12 @@ as soon as possible with the specified amount.</p></div>
       <pre class="lines">
 
 
-1139
-1140
-1141</pre>
+1141
+1142
+1143</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1139</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1141</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_join_thread'>join_thread</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_join_thread'>join_thread</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='rparen'>)</span>
@@ -6563,7 +6588,7 @@ the most recent forum post if this is a forum or media channel, or <code>nil</co
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Leave this thread</p>
+    <p>Leave this thread.</p>
 
   </div>
 </div>
@@ -6576,12 +6601,12 @@ the most recent forum post if this is a forum or media channel, or <code>nil</co
       <pre class="lines">
 
 
-1144
-1145
-1146</pre>
+1146
+1147
+1148</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1144</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1146</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_leave_thread'>leave_thread</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_leave_thread'>leave_thread</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='rparen'>)</span>
@@ -6635,12 +6660,12 @@ the most recent forum post if this is a forum or media channel, or <code>nil</co
       <pre class="lines">
 
 
-1336
-1337
-1338</pre>
+1362
+1363
+1364</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1336</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1362</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_link'>link</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>https://discord.com/channels/</span><span class='embexpr_beg'>#{</span><span class='ivar'>@server_id</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>@me</span><span class='tstring_end'>&#39;</span></span><span class='embexpr_end'>}</span><span class='tstring_content'>/</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -6995,7 +7020,7 @@ the most recent forum post if this is a forum or media channel, or <code>nil</co
       <div class="method_details ">
   <h3 class="signature " id="members-instance_method">
   
-    #<strong>members</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>members</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="Member.html" title="Discordrb::Member (class)">Member</a></span>&gt;</tt> 
   
 
   
@@ -7003,12 +7028,44 @@ the most recent forum post if this is a forum or media channel, or <code>nil</co
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Members in the thread.</p>
+    <p>Get the members in the thread.</p>
 
   </div>
 </div>
 <div class="tags">
   
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="Member.html" title="Discordrb::Member (class)">Member</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the members who have joined the thread.</p></div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Errors/NoPermission.html" title="Discordrb::Errors::NoPermission (class)">Discordrb::Errors::NoPermission</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>This may occur when the application has not enabled the <code>GUILD_MEMBERS</code> privileged intent on the Discord Developer Portal.</p></div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -7016,15 +7073,57 @@ the most recent forum post if this is a forum or media channel, or <code>nil</co
       <pre class="lines">
 
 
-1149
-1150
-1151</pre>
+1153
+1154
+1155
+1156
+1157
+1158
+1159
+1160
+1161
+1162
+1163
+1164
+1165
+1166
+1167
+1168
+1169
+1170
+1171
+1172
+1173
+1174
+1175
+1176</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1149</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1153</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_members'>members</span>
-  <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_thread_members'>thread_members</span><span class='lbracket'>[</span><span class='ivar'>@id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_collect'>collect</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_id'>id</span><span class='op'>|</span> <span class='ivar'>@server_id</span> <span class='op'>?</span> <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_member'>member</span><span class='lparen'>(</span><span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_user'>user</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>return</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='kw'>unless</span> <span class='id identifier rubyid_thread?'>thread?</span>
+
+  <span class='kw'>return</span> <span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_thread_members'>thread_members</span><span class='lbracket'>[</span><span class='ivar'>@id</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_keys'>keys</span><span class='op'>&amp;.</span><span class='id identifier rubyid_filter_map'>filter_map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_id'>id</span><span class='op'>|</span> <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_member'>member</span><span class='lparen'>(</span><span class='ivar'>@server_id</span><span class='comma'>,</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span> <span class='rbrace'>}</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@thread_members_chunked</span>
+
+  <span class='id identifier rubyid_get_members'>get_members</span> <span class='op'>=</span> <span class='id identifier rubyid_proc'>proc</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_before'>before</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='op'>|</span>
+    <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="API.html" title="Discordrb::API (module)">API</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="API/Channel.html" title="Discordrb::API::Channel (module)">Channel</a></span></span><span class='period'>.</span><span class='id identifier rubyid_list_thread_members!'><span class='object_link'><a href="API/Channel.html#list_thread_members!-class_method" title="Discordrb::API::Channel.list_thread_members! (method)">list_thread_members!</a></span></span><span class='lparen'>(</span><span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span><span class='comma'>,</span> <span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_before'>before</span><span class='comma'>,</span> <span class='int'>100</span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_data'>data</span><span class='op'>|</span>
+      <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_ensure_thread_member'>ensure_thread_member</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+      <span class='const'><span class='object_link'><a href="Member.html" title="Discordrb::Member (class)">Member</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>member</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_server'>server</span><span class='comma'>,</span> <span class='ivar'>@bot</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_member'>member</span><span class='op'>|</span> <span class='id identifier rubyid_server'>server</span><span class='op'>&amp;.</span><span class='id identifier rubyid_cache_member'>cache_member</span><span class='lparen'>(</span><span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_paginator'>paginator</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Paginator.html" title="Discordrb::Paginator (class)">Paginator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Paginator.html#initialize-instance_method" title="Discordrb::Paginator#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_limit'>limit</span><span class='comma'>,</span> <span class='symbol'>:down</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_last_page'>last_page</span><span class='op'>|</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_last_page'>last_page</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_last_page'>last_page</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span> <span class='op'>&lt;</span> <span class='int'>100</span>
+      <span class='lbracket'>[</span><span class='rbracket'>]</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_get_members'>get_members</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_last_page'>last_page</span><span class='op'>&amp;.</span><span class='id identifier rubyid_last'>last</span><span class='op'>&amp;.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_members'>members</span> <span class='op'>=</span> <span class='id identifier rubyid_paginator'>paginator</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+  <span class='ivar'>@thread_members_chunked</span> <span class='op'>=</span> <span class='kw'>true</span>
+  <span class='id identifier rubyid_members'>members</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -7748,32 +7847,6 @@ messages will be returned in ascending order by message ID (oldest messages firs
       <pre class="lines">
 
 
-1194
-1195
-1196
-1197
-1198
-1199
-1200
-1201
-1202
-1203
-1204
-1205
-1206
-1207
-1208
-1209
-1210
-1211
-1212
-1213
-1214
-1215
-1216
-1217
-1218
-1219
 1220
 1221
 1222
@@ -7808,10 +7881,36 @@ messages will be returned in ascending order by message ID (oldest messages firs
 1251
 1252
 1253
-1254</pre>
+1254
+1255
+1256
+1257
+1258
+1259
+1260
+1261
+1262
+1263
+1264
+1265
+1266
+1267
+1268
+1269
+1270
+1271
+1272
+1273
+1274
+1275
+1276
+1277
+1278
+1279
+1280</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1194</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1220</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_modify'>modify</span><span class='lparen'>(</span>
   <span class='label'>name:</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='label'>topic:</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='label'>nsfw:</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='label'>rate_limit_per_user:</span> <span class='symbol'>:undef</span><span class='comma'>,</span> <span class='label'>bitrate:</span> <span class='symbol'>:undef</span><span class='comma'>,</span>
@@ -7846,7 +7945,7 @@ messages will be returned in ascending order by message ID (oldest messages firs
   <span class='rbrace'>}</span>
 
   <span class='kw'>if</span> <span class='id identifier rubyid_tags'>tags</span> <span class='op'>!=</span> <span class='symbol'>:undef</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_thread_only?'>thread_only?</span> <span class='op'>||</span> <span class='id identifier rubyid_thread?'>thread?</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_tags'>tags</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_thread?'>thread?</span> <span class='op'>?</span> <span class='id identifier rubyid_tags'>tags</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:resolve_id</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_tags'>tags</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_h</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_tags'>tags</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_thread?'>thread?</span> <span class='op'>?</span> <span class='id identifier rubyid_tags'>tags</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:resolve_id</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_uniq'>uniq</span> <span class='op'>:</span> <span class='id identifier rubyid_tags'>tags</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_h</span><span class='rparen'>)</span><span class='rparen'>)</span>
 
     <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='id identifier rubyid_thread_only?'>thread_only?</span> <span class='op'>?</span> <span class='symbol'>:available_tags</span> <span class='op'>:</span> <span class='symbol'>:applied_tags</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_tags'>tags</span>
   <span class='kw'>end</span>
@@ -8881,7 +8980,7 @@ deleted. If this is false only a warning message will be output to the console.<
   
 </h3><div class="docstring">
   <div class="discussion">
-    
+    <p>Remove a member from the thread.</p>
 
   </div>
 </div>
@@ -8912,12 +9011,12 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-1160
-1161
-1162</pre>
+1186
+1187
+1188</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1160</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1186</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_member'>remove_member</span><span class='lparen'>(</span><span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span>
   <span class='ivar'>@bot</span><span class='period'>.</span><span class='id identifier rubyid_remove_thread_member'>remove_thread_member</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='comma'>,</span> <span class='id identifier rubyid_member'>member</span><span class='rparen'>)</span>
@@ -8973,14 +9072,14 @@ deleted. If this is false only a warning message will be output to the console.<
       <pre class="lines">
 
 
-1118
-1119
 1120
 1121
-1122</pre>
+1122
+1123
+1124</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1118</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1120</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_remove_tags'>remove_tags</span><span class='lparen'>(</span><span class='id identifier rubyid_tags'>tags</span><span class='comma'>,</span> <span class='label'>reason:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Cannot remove tags from this channel</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_parent'>parent</span><span class='op'>&amp;.</span><span class='id identifier rubyid_thread_only?'>thread_only?</span>
@@ -11397,13 +11496,13 @@ for this will eventually be coming)</p>
       <pre class="lines">
 
 
-1083
-1084
 1085
-1086</pre>
+1086
+1087
+1088</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1083</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1085</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_tag'>tag</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_id'>id</span> <span class='op'>=</span> <span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span>
@@ -11472,12 +11571,12 @@ for this will eventually be coming)</p>
       <pre class="lines">
 
 
-1091
-1092
-1093</pre>
+1093
+1094
+1095</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1091</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1093</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_tag?'>tag?</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='ivar'>@applied_tags</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='op'>&amp;.</span><span class='id identifier rubyid_resolve_id'>resolve_id</span><span class='rparen'>)</span>
@@ -11530,14 +11629,14 @@ be applied onto threads created in this channel will be returned instead.</p>
       <pre class="lines">
 
 
-1100
-1101
 1102
 1103
-1104</pre>
+1104
+1105
+1106</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1100</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/channel.rb', line 1102</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_tags'>tags</span>
   <span class='kw'>return</span> <span class='ivar'>@available_tags</span> <span class='kw'>if</span> <span class='id identifier rubyid_forum?'>forum?</span> <span class='op'>||</span> <span class='op'>!</span><span class='id identifier rubyid_thread_only?'>thread_only?</span>
@@ -12003,7 +12102,7 @@ in that channel. For a text channel, it will return all online members that have
 </div>
 
       <div id="footer">
-  Generated on Sun Jun  7 01:33:49 2026 by
+  Generated on Sun Jun  7 01:37:40 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.44 (ruby-3.3.11).
 </div>
