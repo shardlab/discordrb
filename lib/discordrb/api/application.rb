@@ -30,13 +30,13 @@ module Discordrb::API::Application
 
   # Create a global application command.
   # https://discord.com/developers/docs/interactions/slash-commands#create-global-application-command
-  def create_global_command(token, application_id, name, description, options = [], default_permission = nil, type = 1)
+  def create_global_command(token, application_id, name, description, options = [], default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = false, integration_types = nil)
     Discordrb::API.request(
       :applications_aid_commands,
       nil,
       :post,
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type }.to_json,
+      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw, integration_types: integration_types }.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -44,13 +44,13 @@ module Discordrb::API::Application
 
   # Edit a global application command.
   # https://discord.com/developers/docs/interactions/slash-commands#edit-global-application-command
-  def edit_global_command(token, application_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1)
+  def edit_global_command(token, application_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = nil, integration_types = nil)
     Discordrb::API.request(
       :applications_aid_commands_cid,
       nil,
       :patch,
       "#{Discordrb::API.api_base}/applications/#{application_id}/commands/#{command_id}",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type }.compact.to_json,
+      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw, integration_types: integration_types }.compact.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -108,13 +108,13 @@ module Discordrb::API::Application
 
   # Create an application command for a guild.
   # https://discord.com/developers/docs/interactions/slash-commands#create-guild-application-command
-  def create_guild_command(token, application_id, guild_id, name, description, options = nil, default_permission = nil, type = 1)
+  def create_guild_command(token, application_id, guild_id, name, description, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = false)
     Discordrb::API.request(
       :applications_aid_guilds_gid_commands,
       guild_id,
       :post,
       "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type }.to_json,
+      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw }.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -122,13 +122,13 @@ module Discordrb::API::Application
 
   # Edit an application command for a guild.
   # https://discord.com/developers/docs/interactions/slash-commands#edit-guild-application-command
-  def edit_guild_command(token, application_id, guild_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1)
+  def edit_guild_command(token, application_id, guild_id, command_id, name = nil, description = nil, options = nil, default_permission = nil, type = 1, default_member_permissions = nil, contexts = nil, nsfw = nil)
     Discordrb::API.request(
       :applications_aid_guilds_gid_commands_cid,
       guild_id,
       :patch,
       "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands/#{command_id}",
-      { name: name, description: description, options: options, default_permission: default_permission, type: type }.compact.to_json,
+      { name: name, description: description, options: options, default_permission: default_permission, type: type, default_member_permissions: default_member_permissions, contexts: contexts, nsfw: nsfw }.compact.to_json,
       Authorization: token,
       content_type: :json
     )
@@ -197,6 +197,120 @@ module Discordrb::API::Application
       permissions.to_json,
       Authorization: token,
       content_type: :json
+    )
+  end
+
+  # Get all of the permissions for the commands in a guild.
+  # https://discord.com/developers/docs/interactions/application-commands#get-guild-application-command-permissions
+  def get_guild_application_command_permissions(token, application_id, guild_id)
+    Discordrb::API.request(
+      :applications_aid_guilds_gid_commands_permissions,
+      guild_id,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands/permissions",
+      Authorization: token
+    )
+  end
+
+  # Get the permissions for a specific command in a guild.
+  # https://discord.com/developers/docs/interactions/application-commands#get-application-command-permissions
+  def get_application_command_permissions(token, application_id, guild_id, command_id)
+    Discordrb::API.request(
+      :applications_aid_guilds_gid_commands_cid_permissions,
+      guild_id,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/guilds/#{guild_id}/commands/#{command_id}/permissions",
+      Authorization: token
+    )
+  end
+
+  # Get a list of application emojis.
+  # https://discord.com/developers/docs/resources/emoji#list-application-emojis
+  def list_application_emojis(token, application_id)
+    Discordrb::API.request(
+      :applications_aid_emojis,
+      application_id,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/emojis",
+      Authorization: token
+    )
+  end
+
+  # Get an application emoji by ID.
+  # https://discord.com/developers/docs/resources/emoji#get-application-emoji
+  def get_application_emoji(token, application_id, emoji_id)
+    Discordrb::API.request(
+      :applications_aid_emojis_eid,
+      application_id,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/emojis/#{emoji_id}",
+      Authorization: token
+    )
+  end
+
+  # Create an application emoji.
+  # https://discord.com/developers/docs/resources/emoji#create-application-emoji
+  def create_application_emoji(token, application_id, name, image)
+    Discordrb::API.request(
+      :applications_aid_emojis,
+      application_id,
+      :post,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/emojis",
+      { name: name, image: image }.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
+  # Edit an application emoji.
+  # https://discord.com/developers/docs/resources/emoji#modify-application-emoji
+  def edit_application_emoji(token, application_id, emoji_id, name)
+    Discordrb::API.request(
+      :applications_aid_emojis_eid,
+      application_id,
+      :patch,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/emojis/#{emoji_id}",
+      { name: name }.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
+  # Delete an application emoji.
+  # https://discord.com/developers/docs/resources/emoji#delete-application-emoji
+  def delete_application_emoji(token, application_id, emoji_id)
+    Discordrb::API.request(
+      :applications_aid_emojis_eid,
+      application_id,
+      :delete,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/emojis/#{emoji_id}",
+      Authorization: token
+    )
+  end
+
+  # Edit the current application for the requesting bot user.
+  # https://discord.com/developers/docs/resources/application#edit-current-application
+  def update_current_application(token, custom_install_url: :undef, description: :undef, role_connections_verification_url: :undef, install_params: :undef, integration_types_config: :undef, flags: :undef, interactions_endpoint_url: :undef, tags: :undef, event_webhooks_url: :undef, event_webhooks_status: :undef, event_webhooks_types: :undef, icon: :undef, cover_image: :undef)
+    Discordrb::API.request(
+      :applications_me,
+      nil,
+      :patch,
+      "#{Discordrb::API.api_base}/applications/@me",
+      { custom_install_url:, description:, role_connections_verification_url:, install_params:, integration_types_config:, flags:, interactions_endpoint_url:, tags:, event_webhooks_url:, event_webhooks_status:, event_webhooks_types:, icon:, cover_image: }.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json
+    )
+  end
+
+  # Get a list of role connection metadata records.
+  # https://discord.com/developers/docs/resources/application-role-connection-metadata#get-application-role-connection-metadata-records
+  def get_application_role_connection_metadata_records(token, application_id)
+    Discordrb::API.request(
+      :applications_aid_role_connections_metadata,
+      nil,
+      :get,
+      "#{Discordrb::API.api_base}/applications/#{application_id}/role-connections/metadata",
+      Authorization: token
     )
   end
 end
