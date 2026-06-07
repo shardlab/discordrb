@@ -145,7 +145,7 @@ module Discordrb::API::Server
     )
   end
 
-  # Update the current member's properties.
+  # @deprecated Please use {Discordrb::API::Server.update_current_member!} instead.
   # https://discord.com/developers/docs/resources/guild#modify-current-member
   def update_current_member(token, server_id, nick = :undef, reason = nil, bio = :undef, banner = :undef, avatar = :undef)
     update_current_member!(token, server_id, nick: nick, avatar: avatar, banner: banner, bio: bio, reason: reason)
