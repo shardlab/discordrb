@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'discordrb-webhooks', "~> #{Discordrb::Webhooks::VERSION}"
 
-  spec.required_ruby_version = '>= 3.2'
+  spec.required_ruby_version = '>= 3.3'
 
   spec.add_development_dependency 'bundler', '>= 1.10', '< 5'
   spec.add_development_dependency 'rake', '~> 13.0'

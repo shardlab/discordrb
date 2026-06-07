@@ -20,7 +20,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          ruby-version: ruby
+          ruby-version: '3.4.7'
 
       - name: Validate tag matches gemspecs
         run: |

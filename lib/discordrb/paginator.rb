@@ -7,6 +7,9 @@ module Discordrb
   class Paginator
     include Enumerable
 
+    # @return [Integer] the total amount of elements that have been fetched so far.
+    attr_reader :amount_fetched
+
     # Creates a new {Paginator}
     # @param limit [Integer] the maximum number of items to request before stopping
     # @param direction [:up, :down] the order in which results are returned in
@@ -14,7 +17,7 @@ module Discordrb
     #   This should be used to request the next page of results.
     # @yieldreturn [Array] the next page of results
     def initialize(limit, direction, &block)
-      @count = 0
+      @amount_fetched = 0
       @limit = limit
       @direction = direction
       @block = block
@@ -37,7 +40,7 @@ module Discordrb
 
         enumerator.each do |item|
           yield item
-          @count += 1
+          @amount_fetched += 1
           break if limit_exceeded?
         end
 
@@ -51,7 +54,7 @@ module Discordrb
     def limit_exceeded?
       return false if @limit.nil?
 
-      @count >= @limit
+      @amount_fetched >= @limit
     end
   end
 end

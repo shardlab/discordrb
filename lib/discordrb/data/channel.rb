@@ -421,7 +421,7 @@ module Discordrb
     end
 
     # Get the time at when this channel was created at.
-    # @return [Time, nil] The time at when the channel was created at.
+    # @return [Time] The time at when the channel was created.
     def creation_time
       return @create_timestamp if @create_timestamp
 
@@ -607,31 +607,33 @@ module Discordrb
     # @param reference [Message, String, Integer, Hash, nil] The optional message, or message ID, to reply to or forward.
     # @param components [View, Array<#to_h>] Interaction components to associate with this message.
     # @param flags [Integer, Symbol, Array<Symbol, Integer>] Flags for this message. Currently only `:suppress_embeds` (1 << 2), `:suppress_notifications` (1 << 12), and `:uikit_components` (1 << 15) can be set.
-    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables sending content and embeds.
+    # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables sending content, polls, and embeds.
     # @param nonce [nil, String, Integer, false] The 25 character nonce that should be used when sending this message.
     # @param enforce_nonce [true, false] Whether the provided nonce should be enforced and used for message de-duplication.
+    # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to the message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the builder overwrite method data.
     # @yieldparam view [Webhooks::View] An optional component builder. Arguments passed to the builder overwrite method data.
     # @return [Message, nil] The resulting message that was created, or `nil` if the `timeout` parameter was set to a non `nil` value.
-    def send_message!(content: '', timeout: nil, tts: false, embeds: [], attachments: nil, allowed_mentions: nil, reference: nil, components: nil, flags: 0, has_components: false, nonce: nil, enforce_nonce: false)
+    def send_message!(content: '', timeout: nil, tts: false, embeds: [], attachments: nil, allowed_mentions: nil, reference: nil, components: nil, flags: 0, has_components: false, nonce: nil, enforce_nonce: false, poll: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
       builder.tts = tts
+      builder.poll = poll
       builder.content = content
       embeds&.each { |embed| builder << embed }
       builder.allowed_mentions = allowed_mentions
 
       yield(builder, view) if block_given?
 
-      flags = Array(flags).map { |flag| Discordrb::Message::FLAGS[flag] || flag }.reduce(&:|)
+      flags = Array(flags).map { |flag| Discordrb::Message::FLAGS[flag] || flag }.reduce(0, &:|)
       flags |= (1 << 15) if has_components
       builder = builder.to_json_hash
 
       if timeout
-        @bot.send_temporary_message(@id, builder[:content], timeout, builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce)
+        @bot.send_temporary_message(@id, builder[:content], timeout, builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce, builder[:poll])
       else
-        @bot.send_message(@id, builder[:content], builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce)
+        @bot.send_message(@id, builder[:content], builder[:tts], builder[:embeds], attachments, builder[:allowed_mentions], reference, components&.to_a || view.to_a, flags, nonce, enforce_nonce, builder[:poll])
       end
     end
 
@@ -801,6 +803,51 @@ module Discordrb
     end
 
     alias_method :message, :load_message
+
+    # Fetch the messages that have been sent in the channel.
+    # @param limit [Integer, nil] The maximum number of messages to fetch, or `nil` for no limit.
+    # @param after [Message, Integer, String, Time, nil] Get messages sent after this snowflake ID.
+    # @param before [Message, Integer, String, Time, nil] Get messages sent before this snowflake ID.
+    # @param around [Message, Integer, String, Time, nil] Get messages sent around this snowflake ID.
+    # @param oldest_first [true, false] Whether the oldest messages in the channel should be fetched first.
+    # @return [Array<Message>] The messages that were fetched. By default, messages will be returned in descending
+    #   order by message ID (newest messages first). On the contrary, when using the `after:` or `oldest_first:` parameters,
+    #   messages will be returned in ascending order by message ID (oldest messages first).
+    def messages(limit: 100, after: nil, before: nil, around: nil, oldest_first: false)
+      if [before, after, around, oldest_first].count(&:itself) > 1
+        raise ArgumentError, "'before', 'after', 'around', and 'oldest_first' are mutually exclusive"
+      end
+
+      if around && (!limit || limit > 100)
+        raise ArgumentError, "You cannot fetch more than 100 messages when using the 'around' parameter"
+      end
+
+      after = 0 if oldest_first
+
+      rest = {
+        limit: limit && limit <= 100 ? limit : 100,
+        after: after.is_a?(Time) ? IDObject.synthesise(after) : after&.resolve_id,
+        before: before.is_a?(Time) ? IDObject.synthesise(before) : before&.resolve_id,
+        around: around.is_a?(Time) ? IDObject.synthesise(around) : around&.resolve_id
+      }.compact
+
+      get_messages = proc do |query = nil|
+        response = API::Channel.get_channel_messages(@bot.token, @id, **rest, **query&.compact)
+        JSON.parse(response).map { |message| Message.new(message, @bot) }
+      end
+
+      return get_messages.call if around
+
+      paginator = Paginator.new(limit, after ? :up : :down) do |page|
+        if after
+          get_messages.call(after: page&.first&.id)
+        else
+          get_messages.call(before: page&.last&.id)
+        end
+      end
+
+      paginator.to_a
+    end
 
     # Requests the pinned messages in a channel.
     # @param limit [Integer, nil] the limit of how many pinned messages to retrieve. `nil` will return all the pinned messages.
@@ -1026,6 +1073,8 @@ module Discordrb
       Message.new(response['message'].merge!('channel_id' => response['id'], 'thread' => response), @bot)
     end
 
+    # Get the default reaction emoji of the forum or media channel.
+    # @return [Emoji, nil] The default reaction emoji of the forum or media channel.
     def default_reaction
       @default_reaction.is_a?(Integer) ? server.emojis[@default_reaction] : @default_reaction
     end
@@ -1093,22 +1142,46 @@ module Discordrb
       @bot.join_thread(@id)
     end
 
-    # Leave this thread
+    # Leave this thread.
     def leave_thread
       @bot.leave_thread(@id)
     end
 
-    # Members in the thread.
+    # Get the members in the thread.
+    # @return [Array<Member>] the members who have joined the thread.
+    # @raise [Discordrb::Errors::NoPermission] This may occur when the application has not enabled the `GUILD_MEMBERS` privileged intent on the Discord Developer Portal.
     def members
-      @bot.thread_members[@id].collect { |id| @server_id ? @bot.member(@server_id, id) : @bot.user(id) }
+      return [] unless thread?
+
+      return (@bot.thread_members[@id]&.keys&.filter_map { |id| @bot.member(@server_id, id) } || []) if @thread_members_chunked
+
+      get_members = proc do |before = nil|
+        JSON.parse(API::Channel.list_thread_members!(@bot.token, @id, before, 100, true)).map do |data|
+          @bot.ensure_thread_member(data)
+          Member.new(data['member'], server, @bot).tap { |member| server&.cache_member(member) }
+        end
+      end
+
+      paginator = Paginator.new(limit, :down) do |last_page|
+        if last_page && last_page.count < 100
+          []
+        else
+          get_members.call(last_page&.last&.id)
+        end
+      end
+
+      members = paginator.to_a
+      @thread_members_chunked = true
+      members
     end
 
-    # Add a member to the thread
+    # Add a member to the thread.
     # @param member [Member, Integer, String] The member, or ID of the member, to add to this thread.
     def add_member(member)
       @bot.add_thread_member(@id, member)
     end
 
+    # Remove a member from the thread.
     # @param member [Member, Integer, String] The member, or ID of the member, to remove from a thread.
     def remove_member(member)
       @bot.remove_thread_member(@id, member)
@@ -1177,7 +1250,7 @@ module Discordrb
       }
 
       if tags != :undef && (thread_only? || thread?)
-        tags = (thread? ? tags&.map(&:resolve_id) : tags&.map(&:to_h))
+        tags = (thread? ? tags&.map(&:resolve_id)&.uniq : tags&.map(&:to_h))
 
         data[thread_only? ? :available_tags : :applied_tags] = tags
       end
