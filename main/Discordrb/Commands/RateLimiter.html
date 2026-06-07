@@ -6,13 +6,13 @@
 <title>
   Module: Discordrb::Commands::RateLimiter
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Commands::RateLimiter";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -83,7 +85,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/commands/rate_limiter.rb</dd>
+    <dd>lib/discordrb/commands/rate_limiter.rb
+</dd>
   </dl>
   
 </div>
@@ -91,7 +94,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>Represents a collection of <span class='object_link'><a href="Bucket.html" title="Discordrb::Commands::Bucket (class)">Bucket</a></span>s.</p>
-
 
   </div>
 </div>
@@ -130,8 +132,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Defines a new bucket for this rate limiter.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Defines a new bucket for this rate limiter.</p></div></span>
   
 </li>
 
@@ -153,8 +154,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Cleans all buckets.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Cleans all buckets.</p></div></span>
   
 </li>
 
@@ -176,8 +176,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Adds all the buckets from another RateLimiter onto this one.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Adds all the buckets from another RateLimiter onto this one.</p></div></span>
   
 </li>
 
@@ -199,13 +198,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Performs a rate limit request.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Performs a rate limit request.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 
@@ -227,7 +226,6 @@
   <div class="discussion">
     <p>Defines a new bucket for this rate limiter.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -244,8 +242,7 @@
       
       
         &mdash;
-        <div class='inline'><p>The name for this new bucket.</p>
-</div>
+        <div class='inline'><p>The name for this new bucket.</p></div>
       
     </li>
   
@@ -259,8 +256,7 @@
       
       
         &mdash;
-        <div class='inline'><p>The attributes to initialize the bucket with.</p>
-</div>
+        <div class='inline'><p>The attributes to initialize the bucket with.</p></div>
       
     </li>
   
@@ -281,8 +277,7 @@
             
           </span>
           
-            &mdash; <div class='inline'><p>The limit of requests to perform in the given time span.</p>
-</div>
+            &mdash; <div class='inline'><p>The limit of requests to perform in the given time span.</p></div>
           
         </li>
       
@@ -293,8 +288,7 @@
             
           </span>
           
-            &mdash; <div class='inline'><p>How many seconds until the limit should be reset.</p>
-</div>
+            &mdash; <div class='inline'><p>How many seconds until the limit should be reset.</p></div>
           
         </li>
       
@@ -305,8 +299,7 @@
             
           </span>
           
-            &mdash; <div class='inline'><p>How many seconds the user has to wait after each request.</p>
-</div>
+            &mdash; <div class='inline'><p>How many seconds the user has to wait after each request.</p></div>
           
         </li>
       
@@ -324,8 +317,7 @@
       
       
         &mdash;
-        <div class='inline'><p>the created bucket.</p>
-</div>
+        <div class='inline'><p>the created bucket.</p></div>
       
     </li>
   
@@ -374,7 +366,6 @@
   <div class="discussion">
     <p>Cleans all buckets</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -421,7 +412,6 @@
   <div class="discussion">
     <p>Adds all the buckets from another RateLimiter onto this one.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -438,8 +428,7 @@
       
       
         &mdash;
-        <div class='inline'><p>Another <span class='object_link'><a href="" title="Discordrb::Commands::RateLimiter (module)">Discordrb::Commands::RateLimiter</a></span> module</p>
-</div>
+        <div class='inline'><p>Another <span class='object_link'><a href="" title="Discordrb::Commands::RateLimiter (module)">Discordrb::Commands::RateLimiter</a></span> module</p></div>
       
     </li>
   
@@ -484,7 +473,6 @@
   <div class="discussion">
     <p>Performs a rate limit request.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -501,8 +489,7 @@
       
       
         &mdash;
-        <div class='inline'><p>Which bucket to perform the request for.</p>
-</div>
+        <div class='inline'><p>Which bucket to perform the request for.</p></div>
       
     </li>
   
@@ -516,8 +503,7 @@
       
       
         &mdash;
-        <div class='inline'><p>What should be rate-limited.</p>
-</div>
+        <div class='inline'><p>What should be rate-limited.</p></div>
       
     </li>
   
@@ -533,8 +519,7 @@
       
       
         &mdash;
-        <div class='inline'><p>How much to increment the rate-limit counter. Default is 1.</p>
-</div>
+        <div class='inline'><p>How much to increment the rate-limit counter. Default is 1.</p></div>
       
     </li>
   
@@ -551,8 +536,7 @@
       
       
         &mdash;
-        <div class='inline'><p>How much time to wait or false if the request succeeded.</p>
-</div>
+        <div class='inline'><p>How much time to wait or false if the request succeeded.</p></div>
       
     </li>
   
@@ -597,9 +581,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:46 2026 by
+  Generated on Sun Jun  7 01:31:35 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

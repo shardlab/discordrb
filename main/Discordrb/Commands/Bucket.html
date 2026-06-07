@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Commands::Bucket
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Commands::Bucket";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,7 +96,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/commands/rate_limiter.rb</dd>
+    <dd>lib/discordrb/commands/rate_limiter.rb
+</dd>
   </dl>
   
 </div>
@@ -103,7 +106,6 @@
   <div class="discussion">
     <p>This class represents a bucket for rate limiting - it keeps track of how many requests have been made and when
 exactly the user should be rate limited.</p>
-
 
   </div>
 </div>
@@ -142,8 +144,7 @@ exactly the user should be rate limited.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Cleans the bucket, removing all elements that aren&#39;t necessary anymore.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Cleans the bucket, removing all elements that aren't necessary anymore.</p></div></span>
   
 </li>
 
@@ -167,8 +168,7 @@ exactly the user should be rate limited.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Makes a new bucket.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Makes a new bucket.</p></div></span>
   
 </li>
 
@@ -190,13 +190,13 @@ exactly the user should be rate limited.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Performs a rate limiting request.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Performs a rate limiting request.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 <div id="constructor_details" class="method_details_list">
@@ -215,7 +215,6 @@ exactly the user should be rate limited.</p>
   <div class="discussion">
     <p>Makes a new bucket</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -232,8 +231,7 @@ exactly the user should be rate limited.</p>
       
       
         &mdash;
-        <div class='inline'><p>How many requests the user may perform in the given time_span, or nil if there should be no limit.</p>
-</div>
+        <div class='inline'><p>How many requests the user may perform in the given time_span, or nil if there should be no limit.</p></div>
       
     </li>
   
@@ -247,8 +245,7 @@ exactly the user should be rate limited.</p>
       
       
         &mdash;
-        <div class='inline'><p>The time span after which the request count is reset, in seconds, or nil if the bucket should never be reset. (If this is nil, limit should be nil too)</p>
-</div>
+        <div class='inline'><p>The time span after which the request count is reset, in seconds, or nil if the bucket should never be reset. (If this is nil, limit should be nil too)</p></div>
       
     </li>
   
@@ -262,8 +259,7 @@ exactly the user should be rate limited.</p>
       
       
         &mdash;
-        <div class='inline'><p>The delay for which the user has to wait after performing a request, in seconds, or nil if the user shouldn&#39;t have to wait.</p>
-</div>
+        <div class='inline'><p>The delay for which the user has to wait after performing a request, in seconds, or nil if the user shouldn't have to wait.</p></div>
       
     </li>
   
@@ -334,8 +330,7 @@ exactly the user should be rate limited.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Cleans the bucket, removing all elements that aren&#39;t necessary anymore</p>
-
+    <p>Cleans the bucket, removing all elements that aren't necessary anymore</p>
 
   </div>
 </div>
@@ -355,8 +350,7 @@ exactly the user should be rate limited.</p>
       
       
         &mdash;
-        <div class='inline'><p>The time to base the cleaning on, only useful for testing.</p>
-</div>
+        <div class='inline'><p>The time to base the cleaning on, only useful for testing.</p></div>
       
     </li>
   
@@ -417,7 +411,6 @@ exactly the user should be rate limited.</p>
   <div class="discussion">
     <p>Performs a rate limiting request</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -434,8 +427,7 @@ exactly the user should be rate limited.</p>
       
       
         &mdash;
-        <div class='inline'><p>The particular thing that should be rate-limited (usually a user/channel, but you can also choose arbitrary integers or symbols)</p>
-</div>
+        <div class='inline'><p>The particular thing that should be rate-limited (usually a user/channel, but you can also choose arbitrary integers or symbols)</p></div>
       
     </li>
   
@@ -451,8 +443,7 @@ exactly the user should be rate limited.</p>
       
       
         &mdash;
-        <div class='inline'><p>The time to base the rate limiting on, only useful for testing.</p>
-</div>
+        <div class='inline'><p>The time to base the rate limiting on, only useful for testing.</p></div>
       
     </li>
   
@@ -468,8 +459,7 @@ exactly the user should be rate limited.</p>
       
       
         &mdash;
-        <div class='inline'><p>How much to increment the rate-limit counter. Default is 1.</p>
-</div>
+        <div class='inline'><p>How much to increment the rate-limit counter. Default is 1.</p></div>
       
     </li>
   
@@ -486,8 +476,7 @@ exactly the user should be rate limited.</p>
       
       
         &mdash;
-        <div class='inline'><p>the waiting time until the next request, in seconds, or false if the request succeeded</p>
-</div>
+        <div class='inline'><p>the waiting time until the next request, in seconds, or false if the request succeeded</p></div>
       
     </li>
   
@@ -589,9 +578,9 @@ exactly the user should be rate limited.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:54 2026 by
+  Generated on Sun Jun  7 01:31:46 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

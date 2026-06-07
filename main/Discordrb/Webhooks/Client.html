@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Webhooks::Client
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Webhooks::Client";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,7 +96,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/webhooks/client.rb</dd>
+    <dd>lib/discordrb/webhooks/client.rb
+</dd>
   </dl>
   
 </div>
@@ -102,7 +105,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>A client for a particular webhook added to a Discord channel.</p>
-
 
   </div>
 </div>
@@ -141,8 +143,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Delete this webhook.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Delete this webhook.</p></div></span>
   
 </li>
 
@@ -164,8 +165,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Delete a message created by this webhook.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Delete a message created by this webhook.</p></div></span>
   
 </li>
 
@@ -187,8 +187,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Edit a message from this webhook.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Edit a message from this webhook.</p></div></span>
   
 </li>
 
@@ -210,8 +209,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Executes the webhook this client points to with the given data.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Executes the webhook this client points to with the given data.</p></div></span>
   
 </li>
 
@@ -235,8 +233,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Create a new webhook.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Create a new webhook.</p></div></span>
   
 </li>
 
@@ -258,13 +255,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Modify this webhook&#39;s properties.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Modify this webhook's properties.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 <div id="constructor_details" class="method_details_list">
@@ -282,7 +279,6 @@
 </h3><div class="docstring">
   <div class="discussion">
     <p>Create a new webhook</p>
-
 
   </div>
 </div>
@@ -302,8 +298,7 @@
       
       
         &mdash;
-        <div class='inline'><p>The URL to post messages to.</p>
-</div>
+        <div class='inline'><p>The URL to post messages to.</p></div>
       
     </li>
   
@@ -319,9 +314,8 @@
       
       
         &mdash;
-        <div class='inline'><p>The webhook&#39;s ID. Will only be used if <code>url</code> is not
-set.</p>
-</div>
+        <div class='inline'><p>The webhook's ID. Will only be used if <code>url</code> is not
+set.</p></div>
       
     </li>
   
@@ -337,9 +331,8 @@ set.</p>
       
       
         &mdash;
-        <div class='inline'><p>The webhook&#39;s authorisation token. Will only be used
-if <code>url</code> is not set.</p>
-</div>
+        <div class='inline'><p>The webhook's authorisation token. Will only be used
+if <code>url</code> is not set.</p></div>
       
     </li>
   
@@ -388,12 +381,10 @@ if <code>url</code> is not set.</p>
     
   <div class="note notetag">
     <strong>Note:</strong>
-    <div class='inline'><p>This is permanent and cannot be undone.</p>
-</div>
+    <div class='inline'><p>This is permanent and cannot be undone.</p></div>
   </div>
 
 <p>Delete this webhook.</p>
-
 
   </div>
 </div>
@@ -413,8 +404,7 @@ if <code>url</code> is not set.</p>
       
       
         &mdash;
-        <div class='inline'><p>The reason this webhook was deleted.</p>
-</div>
+        <div class='inline'><p>The reason this webhook was deleted.</p></div>
       
     </li>
   
@@ -431,8 +421,7 @@ if <code>url</code> is not set.</p>
       
       
         &mdash;
-        <div class='inline'><p>the response returned by Discord.</p>
-</div>
+        <div class='inline'><p>the response returned by Discord.</p></div>
       
     </li>
   
@@ -472,7 +461,6 @@ if <code>url</code> is not set.</p>
   <div class="discussion">
     <p>Delete a message created by this webhook.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -489,8 +477,7 @@ if <code>url</code> is not set.</p>
       
       
         &mdash;
-        <div class='inline'><p>The ID of the message to delete.</p>
-</div>
+        <div class='inline'><p>The ID of the message to delete.</p></div>
       
     </li>
   
@@ -507,8 +494,7 @@ if <code>url</code> is not set.</p>
       
       
         &mdash;
-        <div class='inline'><p>the response returned by Discord.</p>
-</div>
+        <div class='inline'><p>the response returned by Discord.</p></div>
       
     </li>
   
@@ -549,12 +535,10 @@ if <code>url</code> is not set.</p>
     
   <div class="note notetag">
     <strong>Note:</strong>
-    <div class='inline'><p>Not all builder options are available when editing.</p>
-</div>
+    <div class='inline'><p>Not all builder options are available when editing.</p></div>
   </div>
 
 <p>Edit a message from this webhook.</p>
-
 
   </div>
 </div>
@@ -564,14 +548,12 @@ if <code>url</code> is not set.</p>
     <h4 class="tag_title">Examples:</h4>
     
       
-        <h5 class="example_title"><div class='inline'><p>Edit message content</p>
-</div></h5>
+        <h5 class="example_title"><div class='inline'><p>Edit message content</p></div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_edit_message'>edit_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message_id'>message_id</span><span class='comma'>,</span> <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>goodbye world!</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span></code></pre>
     
       
-        <h5 class="example_title"><div class='inline'><p>Edit a message via builder</p>
-</div></h5>
+        <h5 class="example_title"><div class='inline'><p>Edit a message via builder</p></div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_edit_message'>edit_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message_id'>message_id</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_builder'>builder</span><span class='op'>|</span>
   <span class='id identifier rubyid_builder'>builder</span><span class='period'>.</span><span class='id identifier rubyid_add_embed'>add_embed</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_e'>e</span><span class='op'>|</span>
@@ -593,8 +575,7 @@ if <code>url</code> is not set.</p>
       
       
         &mdash;
-        <div class='inline'><p>The ID of the message to edit.</p>
-</div>
+        <div class='inline'><p>The ID of the message to edit.</p></div>
       
     </li>
   
@@ -610,8 +591,7 @@ if <code>url</code> is not set.</p>
       
       
         &mdash;
-        <div class='inline'><p>The builder to start out with, or nil if one should be created anew.</p>
-</div>
+        <div class='inline'><p>The builder to start out with, or nil if one should be created anew.</p></div>
       
     </li>
   
@@ -627,8 +607,7 @@ if <code>url</code> is not set.</p>
       
       
         &mdash;
-        <div class='inline'><p>The message content.</p>
-</div>
+        <div class='inline'><p>The message content.</p></div>
       
     </li>
   
@@ -670,8 +649,7 @@ if <code>url</code> is not set.</p>
       
       
         &mdash;
-        <div class='inline'><p>The id of the thread in which the message resides</p>
-</div>
+        <div class='inline'><p>The id of the thread in which the message resides</p></div>
       
     </li>
   
@@ -701,8 +679,7 @@ if <code>url</code> is not set.</p>
       
       
         &mdash;
-        <div class='inline'><p>the response returned by Discord.</p>
-</div>
+        <div class='inline'><p>the response returned by Discord.</p></div>
       
     </li>
   
@@ -760,7 +737,6 @@ if <code>url</code> is not set.</p>
   <div class="discussion">
     <p>Executes the webhook this client points to with the given data.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -769,15 +745,13 @@ if <code>url</code> is not set.</p>
     <h4 class="tag_title">Examples:</h4>
     
       
-        <h5 class="example_title"><div class='inline'><p>Execute the webhook with an already existing builder</p>
-</div></h5>
+        <h5 class="example_title"><div class='inline'><p>Execute the webhook with an already existing builder</p></div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_builder'>builder</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../Discordrb.html" title="Discordrb (module)">Discordrb</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Webhooks.html" title="Discordrb::Webhooks (module)">Webhooks</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Builder.html" title="Discordrb::Webhooks::Builder (class)">Builder</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Builder.html#initialize-instance_method" title="Discordrb::Webhooks::Builder#initialize (method)">new</a></span></span> <span class='comment'># ...
 </span><span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span><span class='lparen'>(</span><span class='id identifier rubyid_builder'>builder</span><span class='rparen'>)</span></code></pre>
     
       
-        <h5 class="example_title"><div class='inline'><p>Execute the webhook by building a new message</p>
-</div></h5>
+        <h5 class="example_title"><div class='inline'><p>Execute the webhook by building a new message</p></div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_execute'>execute</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_builder'>builder</span><span class='op'>|</span>
   <span class='id identifier rubyid_builder'>builder</span><span class='period'>.</span><span class='id identifier rubyid_content'>content</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Testing</span><span class='tstring_end'>&#39;</span></span>
@@ -805,8 +779,7 @@ if <code>url</code> is not set.</p>
       
       
         &mdash;
-        <div class='inline'><p>The builder to start out with, or nil if one should be created anew.</p>
-</div>
+        <div class='inline'><p>The builder to start out with, or nil if one should be created anew.</p></div>
       
     </li>
   
@@ -823,8 +796,7 @@ if <code>url</code> is not set.</p>
       
         &mdash;
         <div class='inline'><p>Whether Discord should wait for the message to be successfully received by clients, or
-whether it should return immediately after sending the message.</p>
-</div>
+whether it should return immediately after sending the message.</p></div>
       
     </li>
   
@@ -840,8 +812,7 @@ whether it should return immediately after sending the message.</p>
       
       
         &mdash;
-        <div class='inline'><p>The thread_id of the thread if a thread should be targeted for the webhook execution</p>
-</div>
+        <div class='inline'><p>The thread_id of the thread if a thread should be targeted for the webhook execution</p></div>
       
     </li>
   
@@ -858,8 +829,7 @@ whether it should return immediately after sending the message.</p>
       
       
         &mdash;
-        <div class='inline'><p>Gives the builder to the block to add additional steps, or to do the entire building process.</p>
-</div>
+        <div class='inline'><p>Gives the builder to the block to add additional steps, or to do the entire building process.</p></div>
       
     </li>
   
@@ -877,8 +847,7 @@ whether it should return immediately after sending the message.</p>
       
       
         &mdash;
-        <div class='inline'><p>The builder given as a parameter which is used as the initial step to start from.</p>
-</div>
+        <div class='inline'><p>The builder given as a parameter which is used as the initial step to start from.</p></div>
       
     </li>
   
@@ -894,8 +863,7 @@ whether it should return immediately after sending the message.</p>
       
       
         &mdash;
-        <div class='inline'><p>the response returned by Discord.</p>
-</div>
+        <div class='inline'><p>the response returned by Discord.</p></div>
       
     </li>
   
@@ -974,8 +942,7 @@ whether it should return immediately after sending the message.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Modify this webhook&#39;s properties.</p>
-
+    <p>Modify this webhook's properties.</p>
 
   </div>
 </div>
@@ -995,8 +962,7 @@ whether it should return immediately after sending the message.</p>
       
       
         &mdash;
-        <div class='inline'><p>The default name.</p>
-</div>
+        <div class='inline'><p>The default name.</p></div>
       
     </li>
   
@@ -1012,8 +978,7 @@ whether it should return immediately after sending the message.</p>
       
       
         &mdash;
-        <div class='inline'><p>The new avatar, in base64-encoded JPG format.</p>
-</div>
+        <div class='inline'><p>The new avatar, in base64-encoded JPG format.</p></div>
       
     </li>
   
@@ -1029,8 +994,7 @@ whether it should return immediately after sending the message.</p>
       
       
         &mdash;
-        <div class='inline'><p>The channel to move the webhook to.</p>
-</div>
+        <div class='inline'><p>The channel to move the webhook to.</p></div>
       
     </li>
   
@@ -1047,8 +1011,7 @@ whether it should return immediately after sending the message.</p>
       
       
         &mdash;
-        <div class='inline'><p>the response returned by Discord.</p>
-</div>
+        <div class='inline'><p>the response returned by Discord.</p></div>
       
     </li>
   
@@ -1080,9 +1043,9 @@ whether it should return immediately after sending the message.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:52 2026 by
+  Generated on Sun Jun  7 01:31:43 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

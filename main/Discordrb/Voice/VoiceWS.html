@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Voice::VoiceWS
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Voice::VoiceWS";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,7 +96,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/voice/network.rb</dd>
+    <dd>lib/discordrb/voice/network.rb
+</dd>
   </dl>
   
 </div>
@@ -104,7 +107,6 @@
     <p>Represents a websocket client connection to the voice server. The websocket connection (sometimes called vWS) is
 used to manage general data about the connection, such as sending the speaking packet, which determines the green
 circle around users on Discord, and obtaining UDP connection info.</p>
-
 
   </div>
 </div>
@@ -123,8 +125,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
         <dt id="VOICE_GATEWAY_VERSION-constant" class="">VOICE_GATEWAY_VERSION =
           <div class="docstring">
   <div class="discussion">
-    <p>The version of the voice gateway that&#39;s supposed to be used.</p>
-
+    <p>The version of the voice gateway that's supposed to be used.</p>
 
   </div>
 </div>
@@ -166,8 +167,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The UDP voice connection over which the actual audio data is sent.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The UDP voice connection over which the actual audio data is sent.</p></div></span>
   
 </li>
 
@@ -202,8 +202,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Communication goes like this: me                    discord   |                      | websocket connect -&gt;     |   |                      |   |     &lt;- websocket opcode 2   |                      | UDP discovery -&gt;         |   |                      |   |       &lt;- UDP reply packet   |                      | websocket opcode 1 -&gt;    |   |                      | ...</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Communication goes like this: me                    discord   |                      | websocket connect -&gt;     |   |                      |   |     &lt;- websocket opcode 2   |                      | UDP discovery -&gt;         |   |                      |   |       &lt;- UDP reply packet   |                      | websocket opcode 1 -&gt;    |   |                      | ...</p></div></span>
   
 </li>
 
@@ -225,8 +224,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Disconnects the websocket and kills the thread.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Disconnects the websocket and kills the thread.</p></div></span>
   
 </li>
 
@@ -250,8 +248,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Makes a new voice websocket client, but doesn&#39;t connect it (see <span class='object_link'><a href="#connect-instance_method" title="Discordrb::Voice::VoiceWS#connect (method)">#connect</a></span> for that).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Makes a new voice websocket client, but doesn't connect it (see <span class='object_link'><a href="#connect-instance_method" title="Discordrb::Voice::VoiceWS#connect (method)">#connect</a></span> for that).</p></div></span>
   
 </li>
 
@@ -273,8 +270,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Send a heartbeat (op 3), has to be done every @heartbeat_interval seconds or the connection will terminate.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Send a heartbeat (op 3), has to be done every @heartbeat_interval seconds or the connection will terminate.</p></div></span>
   
 </li>
 
@@ -296,8 +292,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Send a connection init packet (op 0).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Send a connection init packet (op 0).</p></div></span>
   
 </li>
 
@@ -341,8 +336,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Send a speaking packet (op 5).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Send a speaking packet (op 5).</p></div></span>
   
 </li>
 
@@ -364,13 +358,13 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends the UDP connection packet (op 1).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends the UDP connection packet (op 1).</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 <div id="constructor_details" class="method_details_list">
@@ -387,8 +381,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Makes a new voice websocket client, but doesn&#39;t connect it (see <span class='object_link'><a href="#connect-instance_method" title="Discordrb::Voice::VoiceWS#connect (method)">#connect</a></span> for that)</p>
-
+    <p>Makes a new voice websocket client, but doesn't connect it (see <span class='object_link'><a href="#connect-instance_method" title="Discordrb::Voice::VoiceWS#connect (method)">#connect</a></span> for that)</p>
 
   </div>
 </div>
@@ -406,8 +399,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
       
       
         &mdash;
-        <div class='inline'><p>The voice channel to connect to</p>
-</div>
+        <div class='inline'><p>The voice channel to connect to</p></div>
       
     </li>
   
@@ -421,8 +413,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
       
       
         &mdash;
-        <div class='inline'><p>The regular bot to which this vWS is bound</p>
-</div>
+        <div class='inline'><p>The regular bot to which this vWS is bound</p></div>
       
     </li>
   
@@ -436,8 +427,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
       
       
         &mdash;
-        <div class='inline'><p>The authentication token which is also used for REST requests</p>
-</div>
+        <div class='inline'><p>The authentication token which is also used for REST requests</p></div>
       
     </li>
   
@@ -451,8 +441,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
       
       
         &mdash;
-        <div class='inline'><p>The voice session ID Discord sends over the regular websocket</p>
-</div>
+        <div class='inline'><p>The voice session ID Discord sends over the regular websocket</p></div>
       
     </li>
   
@@ -466,8 +455,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
       
       
         &mdash;
-        <div class='inline'><p>The endpoint URL to connect to</p>
-</div>
+        <div class='inline'><p>The endpoint URL to connect to</p></div>
       
     </li>
   
@@ -533,7 +521,6 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   <div class="discussion">
     <p>Returns the UDP voice connection over which the actual audio data is sent.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -549,8 +536,7 @@ circle around users on Discord, and obtaining UDP connection info.</p>
       
       
         &mdash;
-        <div class='inline'><p>the UDP voice connection over which the actual audio data is sent.</p>
-</div>
+        <div class='inline'><p>the UDP voice connection over which the actual audio data is sent.</p></div>
       
     </li>
   
@@ -597,19 +583,18 @@ circle around users on Discord, and obtaining UDP connection info.</p>
   <div class="discussion">
     <p>Communication goes like this:
 me                    discord
-  |                      |
+|                      |
 websocket connect -&gt;     |
-  |                      |
-  |     &lt;- websocket opcode 2
-  |                      |
+|                      |
+|     &lt;- websocket opcode 2
+|                      |
 UDP discovery -&gt;         |
-  |                      |
-  |       &lt;- UDP reply packet
-  |                      |
+|                      |
+|       &lt;- UDP reply packet
+|                      |
 websocket opcode 1 -&gt;    |
-  |                      |
+|                      |
 ...</p>
-
 
   </div>
 </div>
@@ -686,7 +671,6 @@ websocket opcode 1 -&gt;    |
   <div class="discussion">
     <p>Disconnects the websocket and kills the thread</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -725,7 +709,6 @@ websocket opcode 1 -&gt;    |
 </h3><div class="docstring">
   <div class="discussion">
     <p>Send a heartbeat (op 3), has to be done every @heartbeat_interval seconds or the connection will terminate</p>
-
 
   </div>
 </div>
@@ -784,7 +767,6 @@ websocket opcode 1 -&gt;    |
   <div class="discussion">
     <p>Send a connection init packet (op 0)</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -801,8 +783,7 @@ websocket opcode 1 -&gt;    |
       
       
         &mdash;
-        <div class='inline'><p>The ID of the server to connect to</p>
-</div>
+        <div class='inline'><p>The ID of the server to connect to</p></div>
       
     </li>
   
@@ -816,8 +797,7 @@ websocket opcode 1 -&gt;    |
       
       
         &mdash;
-        <div class='inline'><p>The ID of the bot that is connecting</p>
-</div>
+        <div class='inline'><p>The ID of the bot that is connecting</p></div>
       
     </li>
   
@@ -831,8 +811,7 @@ websocket opcode 1 -&gt;    |
       
       
         &mdash;
-        <div class='inline'><p>The voice session ID</p>
-</div>
+        <div class='inline'><p>The voice session ID</p></div>
       
     </li>
   
@@ -846,8 +825,7 @@ websocket opcode 1 -&gt;    |
       
       
         &mdash;
-        <div class='inline'><p>The Discord authentication token</p>
-</div>
+        <div class='inline'><p>The Discord authentication token</p></div>
       
     </li>
   
@@ -942,7 +920,6 @@ websocket opcode 1 -&gt;    |
   <div class="discussion">
     <p>Send a speaking packet (op 5). This determines the green circle around the avatar in the voice channel</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -959,8 +936,7 @@ websocket opcode 1 -&gt;    |
       
       
         &mdash;
-        <div class='inline'><p>Whether or not the bot should be speaking, can also be a bitmask denoting audio type.</p>
-</div>
+        <div class='inline'><p>Whether or not the bot should be speaking, can also be a bitmask denoting audio type.</p></div>
       
     </li>
   
@@ -1015,7 +991,6 @@ websocket opcode 1 -&gt;    |
   <div class="discussion">
     <p>Sends the UDP connection packet (op 1)</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1032,8 +1007,7 @@ websocket opcode 1 -&gt;    |
       
       
         &mdash;
-        <div class='inline'><p>The IP to bind UDP to</p>
-</div>
+        <div class='inline'><p>The IP to bind UDP to</p></div>
       
     </li>
   
@@ -1047,8 +1021,7 @@ websocket opcode 1 -&gt;    |
       
       
         &mdash;
-        <div class='inline'><p>The port to bind UDP to</p>
-</div>
+        <div class='inline'><p>The port to bind UDP to</p></div>
       
     </li>
   
@@ -1062,8 +1035,7 @@ websocket opcode 1 -&gt;    |
       
       
         &mdash;
-        <div class='inline'><p>Which mode to use for the voice connection</p>
-</div>
+        <div class='inline'><p>Which mode to use for the voice connection</p></div>
       
     </li>
   
@@ -1116,9 +1088,9 @@ websocket opcode 1 -&gt;    |
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:50 2026 by
+  Generated on Sun Jun  7 01:31:40 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

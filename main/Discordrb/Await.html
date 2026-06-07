@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Await
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Await";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,7 +96,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/await.rb</dd>
+    <dd>lib/discordrb/await.rb
+</dd>
   </dl>
   
 </div>
@@ -103,16 +106,13 @@
   <div class="discussion">
     <p>Awaits are a way to register new, temporary event handlers on the fly. Awaits can be
 registered using <span class='object_link'><a href="Bot.html#add_await-instance_method" title="Discordrb::Bot#add_await (method)">Bot#add_await</a></span>, <span class='object_link'><a href="User.html#await-instance_method" title="Discordrb::User#await (method)">User#await</a></span>, <span class='object_link'><a href="Message.html#await-instance_method" title="Discordrb::Message#await (method)">Message#await</a></span> and <span class='object_link'><a href="Channel.html#await-instance_method" title="Discordrb::Channel#await (method)">Channel#await</a></span>.</p>
-
 <p>Awaits contain a block that will be called before the await event will be triggered.
 If this block returns anything that is not <code>false</code> exactly, the await will be deleted.
 If no block is present, the await will also be deleted. This is an easy way to make
 temporary events that are only temporary under certain conditions.</p>
-
 <p>Besides the given block, an <span class='object_link'><a href="Events/AwaitEvent.html" title="Discordrb::Events::AwaitEvent (class)">Events::AwaitEvent</a></span> will also be executed with the key and
-the type of the await that was triggered. It&#39;s possible to register multiple events
+the type of the await that was triggered. It's possible to register multiple events
 that trigger on the same await.</p>
-
 
   </div>
 </div>
@@ -148,8 +148,7 @@ that trigger on the same await.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The attributes of the event that will be listened for.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The attributes of the event that will be listened for.</p></div></span>
   
 </li>
 
@@ -176,8 +175,7 @@ that trigger on the same await.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The key that uniquely identifies this await.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The key that uniquely identifies this await.</p></div></span>
   
 </li>
 
@@ -204,8 +202,7 @@ that trigger on the same await.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The class of the event that this await listens for.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The class of the event that this await listens for.</p></div></span>
   
 </li>
 
@@ -240,13 +237,13 @@ that trigger on the same await.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Checks whether the await can be triggered by the given event, and if it can, execute the block and return its result along with this await&#39;s key.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Checks whether the await can be triggered by the given event, and if it can, execute the block and return its result along with this await's key.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 
@@ -268,7 +265,6 @@ that trigger on the same await.</p>
   <div class="discussion">
     <p>The attributes of the event that will be listened for.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -284,8 +280,7 @@ that trigger on the same await.</p>
       
       
         &mdash;
-        <div class='inline'><p>A hash of attributes.</p>
-</div>
+        <div class='inline'><p>A hash of attributes.</p></div>
       
     </li>
   
@@ -327,7 +322,6 @@ that trigger on the same await.</p>
   <div class="discussion">
     <p>The key that uniquely identifies this await.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -343,8 +337,7 @@ that trigger on the same await.</p>
       
       
         &mdash;
-        <div class='inline'><p>The unique key.</p>
-</div>
+        <div class='inline'><p>The unique key.</p></div>
       
     </li>
   
@@ -386,7 +379,6 @@ that trigger on the same await.</p>
   <div class="discussion">
     <p>The class of the event that this await listens for.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -402,8 +394,7 @@ that trigger on the same await.</p>
       
       
         &mdash;
-        <div class='inline'><p>The event class.</p>
-</div>
+        <div class='inline'><p>The event class.</p></div>
       
     </li>
   
@@ -449,8 +440,7 @@ that trigger on the same await.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Checks whether the await can be triggered by the given event, and if it can, execute the block
-and return its result along with this await&#39;s key.</p>
-
+and return its result along with this await's key.</p>
 
   </div>
 </div>
@@ -468,8 +458,7 @@ and return its result along with this await&#39;s key.</p>
       
       
         &mdash;
-        <div class='inline'><p>An event to check for.</p>
-</div>
+        <div class='inline'><p>An event to check for.</p></div>
       
     </li>
   
@@ -486,8 +475,7 @@ and return its result along with this await&#39;s key.</p>
       
       
         &mdash;
-        <div class='inline'><p>This await&#39;s key and whether or not it should be deleted. If there was no match, both are nil.</p>
-</div>
+        <div class='inline'><p>This await's key and whether or not it should be deleted. If there was no match, both are nil.</p></div>
       
     </li>
   
@@ -529,9 +517,9 @@ and return its result along with this await&#39;s key.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:46 2026 by
+  Generated on Sun Jun  7 01:31:36 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

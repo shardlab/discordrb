@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Session
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Session";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,7 +96,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/gateway.rb</dd>
+    <dd>lib/discordrb/gateway.rb
+</dd>
   </dl>
   
 </div>
@@ -103,7 +106,6 @@
   <div class="discussion">
     <p>This class stores the data of an active gateway session. Note that this is different from a websocket connection -
 there may be multiple sessions per connection or one session may persist over multiple connections.</p>
-
 
   </div>
 </div>
@@ -139,8 +141,7 @@ there may be multiple sessions per connection or one session may persist over mu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Gateway URL used to reconnect to the gateway node that Discord wants this session to use.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Gateway URL used to reconnect to the gateway node that Discord wants this session to use.</p></div></span>
   
 </li>
 
@@ -165,8 +166,7 @@ there may be multiple sessions per connection or one session may persist over mu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Incrementing integer used to determine the most recent event reccived from Discord.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Incrementing integer used to determine the most recent event reccived from Discord.</p></div></span>
   
 </li>
 
@@ -193,8 +193,7 @@ there may be multiple sessions per connection or one session may persist over mu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Used to uniquely identify this session.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Used to uniquely identify this session.</p></div></span>
   
 </li>
 
@@ -251,8 +250,7 @@ there may be multiple sessions per connection or one session may persist over mu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Flags this session as being invalid.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Flags this session as being invalid.</p></div></span>
   
 </li>
 
@@ -274,8 +272,7 @@ there may be multiple sessions per connection or one session may persist over mu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Flags this session as no longer being suspended, so we can resume.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Flags this session as no longer being suspended, so we can resume.</p></div></span>
   
 </li>
 
@@ -319,8 +316,7 @@ there may be multiple sessions per connection or one session may persist over mu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Flags this session as suspended, so we know not to try and send heartbeats, etc.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Flags this session as suspended, so we know not to try and send heartbeats, etc.</p></div></span>
   
 </li>
 
@@ -348,6 +344,7 @@ there may be multiple sessions per connection or one session may persist over mu
 
       
     </ul>
+    
   
 
 
@@ -369,7 +366,6 @@ there may be multiple sessions per connection or one session may persist over mu
   <div class="discussion">
     <p>Returns Gateway URL used to reconnect to the gateway node that Discord wants this session to use.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -385,8 +381,7 @@ there may be multiple sessions per connection or one session may persist over mu
       
       
         &mdash;
-        <div class='inline'><p>Gateway URL used to reconnect to the gateway node that Discord wants this session to use.</p>
-</div>
+        <div class='inline'><p>Gateway URL used to reconnect to the gateway node that Discord wants this session to use.</p></div>
       
     </li>
   
@@ -428,7 +423,6 @@ there may be multiple sessions per connection or one session may persist over mu
   <div class="discussion">
     <p>Returns Incrementing integer used to determine the most recent event reccived from Discord.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -444,8 +438,7 @@ there may be multiple sessions per connection or one session may persist over mu
       
       
         &mdash;
-        <div class='inline'><p>Incrementing integer used to determine the most recent event reccived from Discord.</p>
-</div>
+        <div class='inline'><p>Incrementing integer used to determine the most recent event reccived from Discord.</p></div>
       
     </li>
   
@@ -487,7 +480,6 @@ there may be multiple sessions per connection or one session may persist over mu
   <div class="discussion">
     <p>Returns Used to uniquely identify this session. Mostly used when resuming connections.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -503,8 +495,7 @@ there may be multiple sessions per connection or one session may persist over mu
       
       
         &mdash;
-        <div class='inline'><p>Used to uniquely identify this session. Mostly used when resuming connections.</p>
-</div>
+        <div class='inline'><p>Used to uniquely identify this session. Mostly used when resuming connections.</p></div>
       
     </li>
   
@@ -603,7 +594,6 @@ there may be multiple sessions per connection or one session may persist over mu
   <div class="discussion">
     <p>Flags this session as being invalid</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -644,7 +634,6 @@ there may be multiple sessions per connection or one session may persist over mu
 </h3><div class="docstring">
   <div class="discussion">
     <p>Flags this session as no longer being suspended, so we can resume</p>
-
 
   </div>
 </div>
@@ -735,8 +724,7 @@ there may be multiple sessions per connection or one session may persist over mu
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Flags this session as suspended, so we know not to try and send heartbeats, etc. to the gateway until we&#39;ve reconnected</p>
-
+    <p>Flags this session as suspended, so we know not to try and send heartbeats, etc. to the gateway until we've reconnected</p>
 
   </div>
 </div>
@@ -821,9 +809,9 @@ there may be multiple sessions per connection or one session may persist over mu
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:46 2026 by
+  Generated on Sun Jun  7 01:31:36 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

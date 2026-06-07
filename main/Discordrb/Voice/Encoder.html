@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Voice::Encoder
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Voice::Encoder";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,16 +96,16 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/voice/encoder.rb</dd>
+    <dd>lib/discordrb/voice/encoder.rb
+</dd>
   </dl>
   
 </div>
 
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
-    <p>This class conveniently abstracts opus and ffmpeg/avconv, for easy implementation of voice sending. It&#39;s not very
+    <p>This class conveniently abstracts opus and ffmpeg/avconv, for easy implementation of voice sending. It's not very
 useful for most users, but I guess it can be useful sometimes.</p>
-
 
   </div>
 </div>
@@ -123,7 +125,6 @@ useful for most users, but I guess it can be useful sometimes.</p>
           <div class="docstring">
   <div class="discussion">
     <p>One frame of complete silence Opus encoded</p>
-
 
   </div>
 </div>
@@ -163,8 +164,7 @@ useful for most users, but I guess it can be useful sometimes.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The volume used as a filter to ffmpeg/avconv.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The volume used as a filter to ffmpeg/avconv.</p></div></span>
   
 </li>
 
@@ -189,8 +189,7 @@ useful for most users, but I guess it can be useful sometimes.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Whether or not avconv should be used instead of ffmpeg.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Whether or not avconv should be used instead of ffmpeg.</p></div></span>
   
 </li>
 
@@ -225,8 +224,7 @@ useful for most users, but I guess it can be useful sometimes.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Adjusts the volume of a given buffer of s16le PCM data.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Adjusts the volume of a given buffer of s16le PCM data.</p></div></span>
   
 </li>
 
@@ -248,8 +246,7 @@ useful for most users, but I guess it can be useful sometimes.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Set the opus encoding bitrate.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Set the opus encoding bitrate.</p></div></span>
   
 </li>
 
@@ -271,8 +268,7 @@ useful for most users, but I guess it can be useful sometimes.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Encodes the given buffer using opus.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Encodes the given buffer using opus.</p></div></span>
   
 </li>
 
@@ -294,8 +290,7 @@ useful for most users, but I guess it can be useful sometimes.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Encodes a given file (or rather, decodes it) using ffmpeg.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Encodes a given file (or rather, decodes it) using ffmpeg.</p></div></span>
   
 </li>
 
@@ -317,8 +312,7 @@ useful for most users, but I guess it can be useful sometimes.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Encodes an arbitrary IO audio stream using ffmpeg.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Encodes an arbitrary IO audio stream using ffmpeg.</p></div></span>
   
 </li>
 
@@ -342,13 +336,13 @@ useful for most users, but I guess it can be useful sometimes.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Create a new encoder.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Create a new encoder.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 <div id="constructor_details" class="method_details_list">
@@ -366,7 +360,6 @@ useful for most users, but I guess it can be useful sometimes.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Create a new encoder</p>
-
 
   </div>
 </div>
@@ -441,7 +434,6 @@ useful for most users, but I guess it can be useful sometimes.</p>
   <div class="discussion">
     <p>Returns the volume used as a filter to ffmpeg/avconv.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -457,8 +449,7 @@ useful for most users, but I guess it can be useful sometimes.</p>
       
       
         &mdash;
-        <div class='inline'><p>the volume used as a filter to ffmpeg/avconv.</p>
-</div>
+        <div class='inline'><p>the volume used as a filter to ffmpeg/avconv.</p></div>
       
     </li>
   
@@ -508,7 +499,6 @@ useful for most users, but I guess it can be useful sometimes.</p>
     <p>Whether or not avconv should be used instead of ffmpeg. If possible, it is recommended to use ffmpeg instead,
 as it is better supported.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -524,8 +514,7 @@ as it is better supported.</p>
       
       
         &mdash;
-        <div class='inline'><p>whether avconv should be used instead of ffmpeg.</p>
-</div>
+        <div class='inline'><p>whether avconv should be used instead of ffmpeg.</p></div>
       
     </li>
   
@@ -572,7 +561,6 @@ as it is better supported.</p>
   <div class="discussion">
     <p>Adjusts the volume of a given buffer of s16le PCM data.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -589,8 +577,7 @@ as it is better supported.</p>
       
       
         &mdash;
-        <div class='inline'><p>An unencoded PCM (s16le) buffer.</p>
-</div>
+        <div class='inline'><p>An unencoded PCM (s16le) buffer.</p></div>
       
     </li>
   
@@ -604,8 +591,7 @@ as it is better supported.</p>
       
       
         &mdash;
-        <div class='inline'><p>The volume multiplier, 1 for same volume.</p>
-</div>
+        <div class='inline'><p>The volume multiplier, 1 for same volume.</p></div>
       
     </li>
   
@@ -622,8 +608,7 @@ as it is better supported.</p>
       
       
         &mdash;
-        <div class='inline'><p>The buffer with adjusted volume, s16le again</p>
-</div>
+        <div class='inline'><p>The buffer with adjusted volume, s16le again</p></div>
       
     </li>
   
@@ -687,7 +672,6 @@ as it is better supported.</p>
   <div class="discussion">
     <p>Set the opus encoding bitrate</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -704,8 +688,7 @@ as it is better supported.</p>
       
       
         &mdash;
-        <div class='inline'><p>The new bitrate to use, in bits per second (so 64000 if you want 64 kbps)</p>
-</div>
+        <div class='inline'><p>The new bitrate to use, in bits per second (so 64000 if you want 64 kbps)</p></div>
       
     </li>
   
@@ -746,7 +729,6 @@ as it is better supported.</p>
   <div class="discussion">
     <p>Encodes the given buffer using opus.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -763,8 +745,7 @@ as it is better supported.</p>
       
       
         &mdash;
-        <div class='inline'><p>An unencoded PCM (s16le) buffer.</p>
-</div>
+        <div class='inline'><p>An unencoded PCM (s16le) buffer.</p></div>
       
     </li>
   
@@ -781,8 +762,7 @@ as it is better supported.</p>
       
       
         &mdash;
-        <div class='inline'><p>A buffer encoded using opus.</p>
-</div>
+        <div class='inline'><p>A buffer encoded using opus.</p></div>
       
     </li>
   
@@ -824,7 +804,6 @@ as it is better supported.</p>
 an audio track. For a list of supported formats, see <a href="https://ffmpeg.org/general.html#Audio-Codecs">https://ffmpeg.org/general.html#Audio-Codecs</a>. It even accepts
 URLs, though encoding them is pretty slow - I recommend to make a stream of it and then use <span class='object_link'><a href="#encode_io-instance_method" title="Discordrb::Voice::Encoder#encode_io (method)">#encode_io</a></span> instead.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -841,8 +820,7 @@ URLs, though encoding them is pretty slow - I recommend to make a stream of it a
       
       
         &mdash;
-        <div class='inline'><p>The path or URL to encode.</p>
-</div>
+        <div class='inline'><p>The path or URL to encode.</p></div>
       
     </li>
   
@@ -858,8 +836,7 @@ URLs, though encoding them is pretty slow - I recommend to make a stream of it a
       
       
         &mdash;
-        <div class='inline'><p>ffmpeg options to pass after the -i flag</p>
-</div>
+        <div class='inline'><p>ffmpeg options to pass after the -i flag</p></div>
       
     </li>
   
@@ -876,8 +853,7 @@ URLs, though encoding them is pretty slow - I recommend to make a stream of it a
       
       
         &mdash;
-        <div class='inline'><p>the audio, encoded as s16le PCM</p>
-</div>
+        <div class='inline'><p>the audio, encoded as s16le PCM</p></div>
       
     </li>
   
@@ -920,7 +896,6 @@ URLs, though encoding them is pretty slow - I recommend to make a stream of it a
     <p>Encodes an arbitrary IO audio stream using ffmpeg. Accepts pretty much any media format, even videos with audio
 tracks. For a list of supported audio formats, see <a href="https://ffmpeg.org/general.html#Audio-Codecs">https://ffmpeg.org/general.html#Audio-Codecs</a>.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -937,8 +912,7 @@ tracks. For a list of supported audio formats, see <a href="https://ffmpeg.org/g
       
       
         &mdash;
-        <div class='inline'><p>The stream to encode.</p>
-</div>
+        <div class='inline'><p>The stream to encode.</p></div>
       
     </li>
   
@@ -954,8 +928,7 @@ tracks. For a list of supported audio formats, see <a href="https://ffmpeg.org/g
       
       
         &mdash;
-        <div class='inline'><p>ffmpeg options to pass after the -i flag</p>
-</div>
+        <div class='inline'><p>ffmpeg options to pass after the -i flag</p></div>
       
     </li>
   
@@ -972,8 +945,7 @@ tracks. For a list of supported audio formats, see <a href="https://ffmpeg.org/g
       
       
         &mdash;
-        <div class='inline'><p>the audio, encoded as s16le PCM</p>
-</div>
+        <div class='inline'><p>the audio, encoded as s16le PCM</p></div>
       
     </li>
   
@@ -1007,9 +979,9 @@ tracks. For a list of supported audio formats, see <a href="https://ffmpeg.org/g
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:50 2026 by
+  Generated on Sun Jun  7 01:31:40 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

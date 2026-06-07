@@ -6,13 +6,13 @@
 <title>
   Module: Discordrb::PermissionCalculator
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::PermissionCalculator";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -83,7 +85,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/permissions.rb</dd>
+    <dd>lib/discordrb/permissions.rb
+</dd>
   </dl>
   
 </div>
@@ -91,7 +94,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>Mixin to calculate resulting permissions from overrides etc.</p>
-
 
   </div>
 </div>
@@ -130,8 +132,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Checks whether this user has a particular permission defined (i.e. not implicit, through for example Manage Roles).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Checks whether this user has a particular permission defined (i.e. not implicit, through for example Manage Roles).</p></div></span>
   
 </li>
 
@@ -153,13 +154,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Checks whether this user can do the particular action, regardless of whether it has the permission defined, through for example being the server owner or having the Manage Roles permission.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Checks whether this user can do the particular action, regardless of whether it has the permission defined, through for example being the server owner or having the Manage Roles permission.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 
@@ -182,7 +183,6 @@
     <p>Checks whether this user has a particular permission defined (i.e. not implicit, through for example
 Manage Roles)</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -191,8 +191,7 @@ Manage Roles)</p>
     <h4 class="tag_title">Examples:</h4>
     
       
-        <h5 class="example_title"><div class='inline'><p>Check if a member has the Manage Channels permission defined in the server.</p>
-</div></h5>
+        <h5 class="example_title"><div class='inline'><p>Check if a member has the Manage Channels permission defined in the server.</p></div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_has_manage_channels'>has_manage_channels</span> <span class='op'>=</span> <span class='id identifier rubyid_member'>member</span><span class='period'>.</span><span class='id identifier rubyid_defined_permission?'>defined_permission?</span><span class='lparen'>(</span><span class='symbol'>:manage_channels</span><span class='rparen'>)</span></code></pre>
     
@@ -210,8 +209,7 @@ Manage Roles)</p>
       
       
         &mdash;
-        <div class='inline'><p>The permission that should be checked. See also <span class='object_link'><a href="Permissions.html#FLAGS-constant" title="Discordrb::Permissions::FLAGS (constant)">Discordrb::Permissions::FLAGS</a></span> for a list.</p>
-</div>
+        <div class='inline'><p>The permission that should be checked. See also <span class='object_link'><a href="Permissions.html#FLAGS-constant" title="Discordrb::Permissions::FLAGS (constant)">Discordrb::Permissions::FLAGS</a></span> for a list.</p></div>
       
     </li>
   
@@ -227,8 +225,7 @@ Manage Roles)</p>
       
       
         &mdash;
-        <div class='inline'><p>If channel overrides should be checked too, this channel specifies where the overrides should be checked.</p>
-</div>
+        <div class='inline'><p>If channel overrides should be checked too, this channel specifies where the overrides should be checked.</p></div>
       
     </li>
   
@@ -245,8 +242,7 @@ Manage Roles)</p>
       
       
         &mdash;
-        <div class='inline'><p>whether or not this user has the permission defined.</p>
-</div>
+        <div class='inline'><p>whether or not this user has the permission defined.</p></div>
       
     </li>
   
@@ -319,7 +315,6 @@ Manage Roles)</p>
     <p>Checks whether this user can do the particular action, regardless of whether it has the permission defined,
 through for example being the server owner or having the Manage Roles permission</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -328,8 +323,7 @@ through for example being the server owner or having the Manage Roles permission
     <h4 class="tag_title">Examples:</h4>
     
       
-        <h5 class="example_title"><div class='inline'><p>Check if the bot can send messages to a specific channel in a server.</p>
-</div></h5>
+        <h5 class="example_title"><div class='inline'><p>Check if the bot can send messages to a specific channel in a server.</p></div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_bot_profile'>bot_profile</span> <span class='op'>=</span> <span class='id identifier rubyid_bot'>bot</span><span class='period'>.</span><span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_on'>on</span><span class='lparen'>(</span><span class='id identifier rubyid_event'>event</span><span class='period'>.</span><span class='id identifier rubyid_server'>server</span><span class='rparen'>)</span>
 <span class='id identifier rubyid_can_send_messages'>can_send_messages</span> <span class='op'>=</span> <span class='id identifier rubyid_bot_profile'>bot_profile</span><span class='period'>.</span><span class='id identifier rubyid_permission?'>permission?</span><span class='lparen'>(</span><span class='symbol'>:send_messages</span><span class='comma'>,</span> <span class='id identifier rubyid_channel'>channel</span><span class='rparen'>)</span></code></pre>
@@ -348,8 +342,7 @@ through for example being the server owner or having the Manage Roles permission
       
       
         &mdash;
-        <div class='inline'><p>The permission that should be checked. See also <span class='object_link'><a href="Permissions.html#FLAGS-constant" title="Discordrb::Permissions::FLAGS (constant)">Discordrb::Permissions::FLAGS</a></span> for a list.</p>
-</div>
+        <div class='inline'><p>The permission that should be checked. See also <span class='object_link'><a href="Permissions.html#FLAGS-constant" title="Discordrb::Permissions::FLAGS (constant)">Discordrb::Permissions::FLAGS</a></span> for a list.</p></div>
       
     </li>
   
@@ -365,8 +358,7 @@ through for example being the server owner or having the Manage Roles permission
       
       
         &mdash;
-        <div class='inline'><p>If channel overrides should be checked too, this channel specifies where the overrides should be checked.</p>
-</div>
+        <div class='inline'><p>If channel overrides should be checked too, this channel specifies where the overrides should be checked.</p></div>
       
     </li>
   
@@ -383,8 +375,7 @@ through for example being the server owner or having the Manage Roles permission
       
       
         &mdash;
-        <div class='inline'><p>whether or not this user has the permission.</p>
-</div>
+        <div class='inline'><p>whether or not this user has the permission.</p></div>
       
     </li>
   
@@ -436,9 +427,9 @@ through for example being the server owner or having the Manage Roles permission
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:45 2026 by
+  Generated on Sun Jun  7 01:31:35 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

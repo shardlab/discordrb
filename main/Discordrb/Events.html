@@ -6,13 +6,13 @@
 <title>
   Module: Discordrb::Events
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Events";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -83,8 +85,9 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/events/raw.rb<span class="defines">,<br />
-  lib/discordrb/events/bans.rb,<br /> lib/discordrb/events/await.rb,<br /> lib/discordrb/events/polls.rb,<br /> lib/discordrb/events/roles.rb,<br /> lib/discordrb/events/guilds.rb,<br /> lib/discordrb/events/typing.rb,<br /> lib/discordrb/events/generic.rb,<br /> lib/discordrb/events/invites.rb,<br /> lib/discordrb/events/members.rb,<br /> lib/discordrb/events/message.rb,<br /> lib/discordrb/events/threads.rb,<br /> lib/discordrb/events/channels.rb,<br /> lib/discordrb/events/lifetime.rb,<br /> lib/discordrb/events/presence.rb,<br /> lib/discordrb/events/webhooks.rb,<br /> lib/discordrb/events/reactions.rb,<br /> lib/discordrb/events/integrations.rb,<br /> lib/discordrb/events/interactions.rb,<br /> lib/discordrb/events/scheduled_events.rb,<br /> lib/discordrb/events/voice_state_update.rb,<br /> lib/discordrb/events/voice_server_update.rb</span>
+    <dd>lib/discordrb/events/raw.rb<span class="defines">,<br>
+  lib/discordrb/events/bans.rb,<br> lib/discordrb/events/await.rb,<br> lib/discordrb/events/polls.rb,<br> lib/discordrb/events/roles.rb,<br> lib/discordrb/events/guilds.rb,<br> lib/discordrb/events/typing.rb,<br> lib/discordrb/events/generic.rb,<br> lib/discordrb/events/invites.rb,<br> lib/discordrb/events/members.rb,<br> lib/discordrb/events/message.rb,<br> lib/discordrb/events/threads.rb,<br> lib/discordrb/events/channels.rb,<br> lib/discordrb/events/lifetime.rb,<br> lib/discordrb/events/presence.rb,<br> lib/discordrb/events/webhooks.rb,<br> lib/discordrb/events/reactions.rb,<br> lib/discordrb/events/integrations.rb,<br> lib/discordrb/events/interactions.rb,<br> lib/discordrb/events/scheduled_events.rb,<br> lib/discordrb/events/voice_state_update.rb,<br> lib/discordrb/events/voice_server_update.rb</span>
+
 </dd>
   </dl>
   
@@ -93,7 +96,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>Generic subclass for threads</p>
-
 
   </div>
 </div>
@@ -144,13 +146,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Attempts to match possible formats of event attributes to a set comparison value, using a comparison block.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Attempts to match possible formats of event attributes to a set comparison value, using a comparison block.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
     <h2>
       Instance Method Summary
@@ -176,13 +178,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The members that were added to the thread.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The members that were added to the thread.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 
@@ -203,17 +205,15 @@
 </h3><div class="docstring">
   <div class="discussion">
     <p>Attempts to match possible formats of event attributes to a set comparison value, using a comparison block.
-It allows five kinds of attribute formats:</p>
-
+It allows five kinds of attribute formats:
+0. nil -&gt; always returns true</p>
 <ol>
-<li>nil -&gt; always returns true</li>
 <li>A single attribute, not negated</li>
 <li>A single attribute, negated</li>
 <li>An array of attributes, not negated</li>
 <li>An array of attributes, not negated
-Note that it doesn&#39;t allow an array of negated attributes. For info on negation stuff, see <span class='object_link'><a href="../top-level-namespace.html#not!-instance_method" title="#not! (method)">#not!</a></span></li>
+Note that it doesn't allow an array of negated attributes. For info on negation stuff, see <span class='object_link'><a href="../top-level-namespace.html#not!-instance_method" title="#not! (method)">#not!</a></span></li>
 </ol>
-
 
   </div>
 </div>
@@ -232,8 +232,7 @@ Note that it doesn&#39;t allow an array of negated attributes. For info on negat
       
         &mdash;
         <div class='inline'><p>One or more attributes to
-compare to the to_check value.</p>
-</div>
+compare to the to_check value.</p></div>
       
     </li>
   
@@ -247,8 +246,7 @@ compare to the to_check value.</p>
       
       
         &mdash;
-        <div class='inline'><p>What to compare the attributes to.</p>
-</div>
+        <div class='inline'><p>What to compare the attributes to.</p></div>
       
     </li>
   
@@ -265,8 +263,7 @@ compare to the to_check value.</p>
       
       
         &mdash;
-        <div class='inline'><p>The block will be called when a comparison happens.</p>
-</div>
+        <div class='inline'><p>The block will be called when a comparison happens.</p></div>
       
     </li>
   
@@ -285,8 +282,7 @@ compare to the to_check value.</p>
       
         &mdash;
         <div class='inline'><p>The attribute to compare to the value to check. Will always be a single not-negated object,
-all the negation and array handling is done by the method</p>
-</div>
+all the negation and array handling is done by the method</p></div>
       
     </li>
   
@@ -301,8 +297,7 @@ all the negation and array handling is done by the method</p>
       
         &mdash;
         <div class='inline'><p>The value to compare the attribute to. Will always be the value passed to the function as
-to_check.</p>
-</div>
+to_check.</p></div>
       
     </li>
   
@@ -318,8 +313,7 @@ to_check.</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether or not the attribute a matches the given comparison value e.</p>
-</div>
+        <div class='inline'><p>Whether or not the attribute a matches the given comparison value e.</p></div>
       
     </li>
   
@@ -335,8 +329,7 @@ to_check.</p>
       
       
         &mdash;
-        <div class='inline'><p>whether the attributes match the comparison value in at least one way.</p>
-</div>
+        <div class='inline'><p>whether the attributes match the comparison value in at least one way.</p></div>
       
     </li>
   
@@ -412,7 +405,6 @@ to_check.</p>
   <div class="discussion">
     <p>Returns the members that were added to the thread.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -428,8 +420,7 @@ to_check.</p>
       
       
         &mdash;
-        <div class='inline'><p>the members that were added to the thread</p>
-</div>
+        <div class='inline'><p>the members that were added to the thread</p></div>
       
     </li>
   
@@ -461,9 +452,9 @@ to_check.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:45 2026 by
+  Generated on Sun Jun  7 01:31:34 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

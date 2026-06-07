@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::WebSocket
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::WebSocket";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,16 +96,16 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/websocket.rb</dd>
+    <dd>lib/discordrb/websocket.rb
+</dd>
   </dl>
   
 </div>
 
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
-    <p>Utility wrapper class that abstracts an instance of WSCS. Useful should we decide that WSCS isn&#39;t good either -
+    <p>Utility wrapper class that abstracts an instance of WSCS. Useful should we decide that WSCS isn't good either -
 in that case we can just switch to something else</p>
-
 
   </div>
 </div>
@@ -139,8 +141,7 @@ in that case we can just switch to something else</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute close_handler.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute close_handler.</p></div></span>
   
 </li>
 
@@ -167,8 +168,7 @@ in that case we can just switch to something else</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute error_handler.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute error_handler.</p></div></span>
   
 </li>
 
@@ -195,8 +195,7 @@ in that case we can just switch to something else</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute message_handler.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute message_handler.</p></div></span>
   
 </li>
 
@@ -223,8 +222,7 @@ in that case we can just switch to something else</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute open_handler.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute open_handler.</p></div></span>
   
 </li>
 
@@ -259,8 +257,7 @@ in that case we can just switch to something else</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Close the WebSocket connection.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Close the WebSocket connection.</p></div></span>
   
 </li>
 
@@ -284,8 +281,7 @@ in that case we can just switch to something else</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Create a new WebSocket and connect to the given endpoint.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Create a new WebSocket and connect to the given endpoint.</p></div></span>
   
 </li>
 
@@ -307,8 +303,7 @@ in that case we can just switch to something else</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Send data over this WebSocket.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Send data over this WebSocket.</p></div></span>
   
 </li>
 
@@ -330,13 +325,13 @@ in that case we can just switch to something else</p>
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The internal WSCS thread.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The internal WSCS thread.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 <div id="constructor_details" class="method_details_list">
@@ -355,7 +350,6 @@ in that case we can just switch to something else</p>
   <div class="discussion">
     <p>Create a new WebSocket and connect to the given endpoint.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -372,8 +366,7 @@ in that case we can just switch to something else</p>
       
       
         &mdash;
-        <div class='inline'><p>Where to connect to.</p>
-</div>
+        <div class='inline'><p>Where to connect to.</p></div>
       
     </li>
   
@@ -387,8 +380,7 @@ in that case we can just switch to something else</p>
       
       
         &mdash;
-        <div class='inline'><p>The handler that should be called when the websocket has opened successfully.</p>
-</div>
+        <div class='inline'><p>The handler that should be called when the websocket has opened successfully.</p></div>
       
     </li>
   
@@ -404,8 +396,7 @@ in that case we can just switch to something else</p>
         &mdash;
         <div class='inline'><p>The handler that should be called when the websocket receives a message. The
 handler can take one parameter which will have a <code>data</code> attribute for normal messages and <code>code</code> and <code>data</code> for
-close frames.</p>
-</div>
+close frames.</p></div>
       
     </li>
   
@@ -420,8 +411,7 @@ close frames.</p>
       
         &mdash;
         <div class='inline'><p>The handler that should be called when the websocket is closed due to an internal
-error. The error will be passed as the first parameter to the handler.</p>
-</div>
+error. The error will be passed as the first parameter to the handler.</p></div>
       
     </li>
   
@@ -436,8 +426,7 @@ error. The error will be passed as the first parameter to the handler.</p>
       
         &mdash;
         <div class='inline'><p>The handler that should be called when an error occurs in another handler. The error
-will be passed as the first parameter to the handler.</p>
-</div>
+will be passed as the first parameter to the handler.</p></div>
       
     </li>
   
@@ -527,7 +516,6 @@ will be passed as the first parameter to the handler.</p>
   <div class="discussion">
     <p>Returns the value of attribute close_handler.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -568,7 +556,6 @@ will be passed as the first parameter to the handler.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Returns the value of attribute error_handler.</p>
-
 
   </div>
 </div>
@@ -611,7 +598,6 @@ will be passed as the first parameter to the handler.</p>
   <div class="discussion">
     <p>Returns the value of attribute message_handler.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -652,7 +638,6 @@ will be passed as the first parameter to the handler.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Returns the value of attribute open_handler.</p>
-
 
   </div>
 </div>
@@ -700,7 +685,6 @@ will be passed as the first parameter to the handler.</p>
   <div class="discussion">
     <p>Close the WebSocket connection</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -740,7 +724,6 @@ will be passed as the first parameter to the handler.</p>
   <div class="discussion">
     <p>Send data over this WebSocket</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -757,8 +740,7 @@ will be passed as the first parameter to the handler.</p>
       
       
         &mdash;
-        <div class='inline'><p>What to send</p>
-</div>
+        <div class='inline'><p>What to send</p></div>
       
     </li>
   
@@ -799,7 +781,6 @@ will be passed as the first parameter to the handler.</p>
   <div class="discussion">
     <p>Returns the internal WSCS thread.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -815,8 +796,7 @@ will be passed as the first parameter to the handler.</p>
       
       
         &mdash;
-        <div class='inline'><p>the internal WSCS thread</p>
-</div>
+        <div class='inline'><p>the internal WSCS thread</p></div>
       
     </li>
   
@@ -848,9 +828,9 @@ will be passed as the first parameter to the handler.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:47 2026 by
+  Generated on Sun Jun  7 01:31:36 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

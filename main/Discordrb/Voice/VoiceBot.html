@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Voice::VoiceBot
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Voice::VoiceBot";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,7 +96,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/voice/voice_bot.rb</dd>
+    <dd>lib/discordrb/voice/voice_bot.rb
+</dd>
   </dl>
   
 </div>
@@ -104,12 +107,10 @@
     <p>This class represents a connection to a Discord voice server and channel. It can be used to play audio files and
 streams and to control playback on currently playing tracks. The method <span class='object_link'><a href="../Bot.html#voice_connect-instance_method" title="Discordrb::Bot#voice_connect (method)">Bot#voice_connect</a></span> can be used to connect
 to a voice channel.</p>
-
 <p>discordrb does latency adjustments every now and then to improve playback quality. I made sure to put useful
 defaults for the adjustment parameters, but if the sound is patchy or too fast (or the speed varies a lot) you
 should check the parameters and adjust them to your connection: <span class='object_link'><a href="#adjust_interval-instance_method" title="Discordrb::Voice::VoiceBot#adjust_interval (method)">#adjust_interval</a></span>,
 <span class='object_link'><a href="#adjust_offset-instance_method" title="Discordrb::Voice::VoiceBot#adjust_offset (method)">#adjust_offset</a></span>, and <span class='object_link'><a href="#adjust_average-instance_method" title="Discordrb::Voice::VoiceBot#adjust_average (method)">#adjust_average</a></span>.</p>
-
 
   </div>
 </div>
@@ -143,8 +144,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>This value determines whether or not the adjustment length should be averaged with the previous value.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>This value determines whether or not the adjustment length should be averaged with the previous value.</p></div></span>
   
 </li>
 
@@ -169,8 +169,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Disable the debug message for length adjustment specifically, as it can get quite spammy with very low intervals.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Disable the debug message for length adjustment specifically, as it can get quite spammy with very low intervals.</p></div></span>
   
 </li>
 
@@ -195,8 +194,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>discordrb will occasionally measure the time it takes to send a packet, and adjust future delay times based on that data.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>discordrb will occasionally measure the time it takes to send a packet, and adjust future delay times based on that data.</p></div></span>
   
 </li>
 
@@ -221,8 +219,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>This particular value is also important because ffmpeg may take longer to process the first few packets.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>This particular value is also important because ffmpeg may take longer to process the first few packets.</p></div></span>
   
 </li>
 
@@ -249,8 +246,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The current voice channel.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The current voice channel.</p></div></span>
   
 </li>
 
@@ -277,8 +273,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The encoder used to encode audio files into the format required by Discord.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The encoder used to encode audio files into the format required by Discord.</p></div></span>
   
 </li>
 
@@ -303,8 +298,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>If this value is set, no length adjustments will ever be done and this value will always be used as the length (i.e. packets will be sent every N seconds).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>If this value is set, no length adjustments will ever be done and this value will always be used as the length (i.e. packets will be sent every N seconds).</p></div></span>
   
 </li>
 
@@ -331,8 +325,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The amount of time the stream has been playing, or <code>nil</code> if nothing has been played yet.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The amount of time the stream has been playing, or <code>nil</code> if nothing has been played yet.</p></div></span>
   
 </li>
 
@@ -357,8 +350,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The factor the audio&#39;s volume should be multiplied with.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The factor the audio's volume should be multiplied with.</p></div></span>
   
 </li>
 
@@ -393,8 +385,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Continue playback.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Continue playback.</p></div></span>
   
 </li>
 
@@ -416,8 +407,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Permanently disconnects from the voice channel; to reconnect you will have to call <span class='object_link'><a href="../Bot.html#voice_connect-instance_method" title="Discordrb::Bot#voice_connect (method)">Bot#voice_connect</a></span> again.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Permanently disconnects from the voice channel; to reconnect you will have to call <span class='object_link'><a href="../Bot.html#voice_connect-instance_method" title="Discordrb::Bot#voice_connect (method)">Bot#voice_connect</a></span> again.</p></div></span>
   
 </li>
 
@@ -439,8 +429,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><strong>Deprecated.</strong> <div class='inline'><p>Discord no longer supports unencrypted voice communication.</p>
-</div></span>
+    <span class="summary_desc"><strong>Deprecated.</strong> <div class='inline'><p>Discord no longer supports unencrypted voice communication.</p></div></span>
   
 </li>
 
@@ -462,8 +451,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The volume used as a filter for ffmpeg/avconv.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The volume used as a filter for ffmpeg/avconv.</p></div></span>
   
 </li>
 
@@ -485,8 +473,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Set the filter volume.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Set the filter volume.</p></div></span>
   
 </li>
 
@@ -508,8 +495,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Pause playback.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Pause playback.</p></div></span>
   
 </li>
 
@@ -531,8 +517,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Plays a stream of raw data to the channel.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Plays a stream of raw data to the channel.</p></div></span>
   
 </li>
 
@@ -554,8 +539,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Plays a stream of audio data in the DCA format.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Plays a stream of audio data in the DCA format.</p></div></span>
   
 </li>
 
@@ -577,8 +561,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Plays an encoded audio file of arbitrary format to the channel.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Plays an encoded audio file of arbitrary format to the channel.</p></div></span>
   
 </li>
 
@@ -602,8 +585,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Plays a stream of encoded audio data of arbitrary format to the channel.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Plays a stream of encoded audio data of arbitrary format to the channel.</p></div></span>
   
 </li>
 
@@ -627,8 +609,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Whether it is playing sound or not.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Whether it is playing sound or not.</p></div></span>
   
 </li>
 
@@ -650,8 +631,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Skips to a later time in the song.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Skips to a later time in the song.</p></div></span>
   
 </li>
 
@@ -673,8 +653,7 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sets whether or not the bot is speaking (green circle around user).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sets whether or not the bot is speaking (green circle around user).</p></div></span>
   
 </li>
 
@@ -696,13 +675,13 @@ should check the parameters and adjust them to your connection: <span class='obj
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Stops the current playback entirely.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Stops the current playback entirely.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 
@@ -726,7 +705,6 @@ should check the parameters and adjust them to your connection: <span class='obj
 be useful on slower connections where latencies vary a lot. In general, it will make adjustments more smooth,
 but whether that is desired behaviour should be tried on a case-by-case basis.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -742,8 +720,7 @@ but whether that is desired behaviour should be tried on a case-by-case basis.</
       
       
         &mdash;
-        <div class='inline'><p>whether adjustment lengths should be averaged with the respective previous value.</p>
-</div>
+        <div class='inline'><p>whether adjustment lengths should be averaged with the respective previous value.</p></div>
       
     </li>
   
@@ -792,7 +769,6 @@ but whether that is desired behaviour should be tried on a case-by-case basis.</
   <div class="discussion">
     <p>Disable the debug message for length adjustment specifically, as it can get quite spammy with very low intervals</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -808,8 +784,7 @@ but whether that is desired behaviour should be tried on a case-by-case basis.</
       
       
         &mdash;
-        <div class='inline'><p>whether length adjustment debug messages should be printed</p>
-</div>
+        <div class='inline'><p>whether length adjustment debug messages should be printed</p></div>
       
     </li>
   
@@ -858,11 +833,10 @@ but whether that is desired behaviour should be tried on a case-by-case basis.</
   <div class="discussion">
     <p>discordrb will occasionally measure the time it takes to send a packet, and adjust future delay times based
 on that data. This makes voice playback more smooth, because if packets are sent too slowly, the audio will
-sound patchy, and if they&#39;re sent too quickly, packets will &quot;pile up&quot; and occasionally skip some data or
-play parts back too fast. How often these measurements should be done depends a lot on the system, and if it&#39;s
-done too quickly, especially on slow connections, the playback speed will vary wildly; if it&#39;s done too slowly
+sound patchy, and if they're sent too quickly, packets will &quot;pile up&quot; and occasionally skip some data or
+play parts back too fast. How often these measurements should be done depends a lot on the system, and if it's
+done too quickly, especially on slow connections, the playback speed will vary wildly; if it's done too slowly
 however, small errors will cause quality problems for a longer time.</p>
-
 
   </div>
 </div>
@@ -879,8 +853,7 @@ however, small errors will cause quality problems for a longer time.</p>
       
       
         &mdash;
-        <div class='inline'><p>how frequently audio length adjustments should be done, in ideal packets (20ms).</p>
-</div>
+        <div class='inline'><p>how frequently audio length adjustments should be done, in ideal packets (20ms).</p></div>
       
     </li>
   
@@ -922,9 +895,8 @@ however, small errors will cause quality problems for a longer time.</p>
   <div class="discussion">
     <p>This particular value is also important because ffmpeg may take longer to process the first few packets. It is
 recommended to set this to 10 at maximum, otherwise it will take too long to make the first adjustment, but it
-shouldn&#39;t be any higher than <span class='object_link'><a href="#adjust_interval-instance_method" title="Discordrb::Voice::VoiceBot#adjust_interval (method)">#adjust_interval</a></span>, otherwise no adjustments will take place. If <span class='object_link'><a href="#adjust_interval-instance_method" title="Discordrb::Voice::VoiceBot#adjust_interval (method)">#adjust_interval</a></span>
+shouldn't be any higher than <span class='object_link'><a href="#adjust_interval-instance_method" title="Discordrb::Voice::VoiceBot#adjust_interval (method)">#adjust_interval</a></span>, otherwise no adjustments will take place. If <span class='object_link'><a href="#adjust_interval-instance_method" title="Discordrb::Voice::VoiceBot#adjust_interval (method)">#adjust_interval</a></span>
 is at a value higher than 10, this value should not be changed at all.</p>
-
 
   </div>
 </div>
@@ -941,8 +913,7 @@ is at a value higher than 10, this value should not be changed at all.</p>
       
       
         &mdash;
-        <div class='inline'><p>the packet number (1 packet = 20ms) at which length adjustments should start.</p>
-</div>
+        <div class='inline'><p>the packet number (1 packet = 20ms) at which length adjustments should start.</p></div>
       
     </li>
   
@@ -991,7 +962,6 @@ is at a value higher than 10, this value should not be changed at all.</p>
   <div class="discussion">
     <p>Returns the current voice channel.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1007,8 +977,7 @@ is at a value higher than 10, this value should not be changed at all.</p>
       
       
         &mdash;
-        <div class='inline'><p>the current voice channel</p>
-</div>
+        <div class='inline'><p>the current voice channel</p></div>
       
     </li>
   
@@ -1050,7 +1019,6 @@ is at a value higher than 10, this value should not be changed at all.</p>
   <div class="discussion">
     <p>Returns the encoder used to encode audio files into the format required by Discord.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1066,8 +1034,7 @@ is at a value higher than 10, this value should not be changed at all.</p>
       
       
         &mdash;
-        <div class='inline'><p>the encoder used to encode audio files into the format required by Discord.</p>
-</div>
+        <div class='inline'><p>the encoder used to encode audio files into the format required by Discord.</p></div>
       
     </li>
   
@@ -1108,12 +1075,11 @@ is at a value higher than 10, this value should not be changed at all.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>If this value is set, no length adjustments will ever be done and this value will always be used as the length
-(i.e. packets will be sent every N seconds). Be careful not to set it too low as to not spam Discord&#39;s servers.
+(i.e. packets will be sent every N seconds). Be careful not to set it too low as to not spam Discord's servers.
 The ideal length is 20ms (accessible by the <span class='object_link'><a href="../Voice.html#IDEAL_LENGTH-constant" title="Discordrb::Voice::IDEAL_LENGTH (constant)">IDEAL_LENGTH</a></span> constant), this value should be
 slightly lower than that because encoding + sending takes time. Note that sending DCA files is significantly
 faster than sending regular audio files (usually about four times as fast), so you might want to set this value
-to something else if you&#39;re sending a DCA file.</p>
-
+to something else if you're sending a DCA file.</p>
 
   </div>
 </div>
@@ -1130,8 +1096,7 @@ to something else if you&#39;re sending a DCA file.</p>
       
       
         &mdash;
-        <div class='inline'><p>the packet length that should be used instead of calculating it during the adjustments, in ms.</p>
-</div>
+        <div class='inline'><p>the packet length that should be used instead of calculating it during the adjustments, in ms.</p></div>
       
     </li>
   
@@ -1173,7 +1138,6 @@ to something else if you&#39;re sending a DCA file.</p>
   <div class="discussion">
     <p>Returns the amount of time the stream has been playing, or <code>nil</code> if nothing has been played yet.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1189,8 +1153,7 @@ to something else if you&#39;re sending a DCA file.</p>
       
       
         &mdash;
-        <div class='inline'><p>the amount of time the stream has been playing, or <code>nil</code> if nothing has been played yet.</p>
-</div>
+        <div class='inline'><p>the amount of time the stream has been playing, or <code>nil</code> if nothing has been played yet.</p></div>
       
     </li>
   
@@ -1230,9 +1193,8 @@ to something else if you&#39;re sending a DCA file.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>The factor the audio&#39;s volume should be multiplied with. <code>1</code> is no change in volume, <code>0</code> is completely silent,
+    <p>The factor the audio's volume should be multiplied with. <code>1</code> is no change in volume, <code>0</code> is completely silent,
 <code>0.5</code> is half the default volume and <code>2</code> is twice the default.</p>
-
 
   </div>
 </div>
@@ -1249,8 +1211,7 @@ to something else if you&#39;re sending a DCA file.</p>
       
       
         &mdash;
-        <div class='inline'><p>the volume for audio playback, <code>1.0</code> by default.</p>
-</div>
+        <div class='inline'><p>the volume for audio playback, <code>1.0</code> by default.</p></div>
       
     </li>
   
@@ -1297,7 +1258,6 @@ to something else if you&#39;re sending a DCA file.</p>
   <div class="discussion">
     <p>Continue playback. This change may take up to 100ms to take effect, which is usually negligible.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1336,7 +1296,6 @@ to something else if you&#39;re sending a DCA file.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Permanently disconnects from the voice channel; to reconnect you will have to call <span class='object_link'><a href="../Bot.html#voice_connect-instance_method" title="Discordrb::Bot#voice_connect (method)">Bot#voice_connect</a></span> again.</p>
-
 
   </div>
 </div>
@@ -1379,10 +1338,8 @@ to something else if you&#39;re sending a DCA file.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Discord no longer supports unencrypted voice communication.</p>
-</div></div>
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Discord no longer supports unencrypted voice communication.</p></div></div>
 <p>Returns whether audio data sent will be encrypted.</p>
-
 
   </div>
 </div>
@@ -1399,8 +1356,7 @@ to something else if you&#39;re sending a DCA file.</p>
       
       
         &mdash;
-        <div class='inline'><p>whether audio data sent will be encrypted.</p>
-</div>
+        <div class='inline'><p>whether audio data sent will be encrypted.</p></div>
       
     </li>
   
@@ -1440,7 +1396,6 @@ to something else if you&#39;re sending a DCA file.</p>
   <div class="discussion">
     <p>Returns the volume used as a filter for ffmpeg/avconv.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1456,8 +1411,7 @@ to something else if you&#39;re sending a DCA file.</p>
       
       
         &mdash;
-        <div class='inline'><p>the volume used as a filter for ffmpeg/avconv.</p>
-</div>
+        <div class='inline'><p>the volume used as a filter for ffmpeg/avconv.</p></div>
       
     </li>
   
@@ -1505,7 +1459,6 @@ to something else if you&#39;re sending a DCA file.</p>
     <p>Set the filter volume. This volume is applied as a filter for decoded audio data. It has the advantage that using
 it is much faster than regular volume, but it can only be changed before starting to play something.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1522,8 +1475,7 @@ it is much faster than regular volume, but it can only be changed before startin
       
       
         &mdash;
-        <div class='inline'><p>The value to set the volume to. For possible values, see <span class='object_link'><a href="#volume-instance_method" title="Discordrb::Voice::VoiceBot#volume (method)">#volume</a></span></p>
-</div>
+        <div class='inline'><p>The value to set the volume to. For possible values, see <span class='object_link'><a href="#volume-instance_method" title="Discordrb::Voice::VoiceBot#volume (method)">#volume</a></span></p></div>
       
     </li>
   
@@ -1565,7 +1517,6 @@ it is much faster than regular volume, but it can only be changed before startin
     <p>Pause playback. This is not instant; it may take up to 20 ms for this change to take effect. (This is usually
 negligible.)</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1604,10 +1555,9 @@ negligible.)</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Plays a stream of raw data to the channel. All playback methods are blocking, i.e. they wait for the playback to
-finish before exiting the method. This doesn&#39;t cause a problem if you just use discordrb events/commands to
-play stuff, as these are fully threaded, but if you don&#39;t want this behaviour anyway, be sure to call these
+finish before exiting the method. This doesn't cause a problem if you just use discordrb events/commands to
+play stuff, as these are fully threaded, but if you don't want this behaviour anyway, be sure to call these
 methods in separate threads.</p>
-
 
   </div>
 </div>
@@ -1625,8 +1575,7 @@ methods in separate threads.</p>
       
       
         &mdash;
-        <div class='inline'><p>A stream of raw PCM data (s16le)</p>
-</div>
+        <div class='inline'><p>A stream of raw PCM data (s16le)</p></div>
       
     </li>
   
@@ -1772,13 +1721,11 @@ methods in separate threads.</p>
     <strong>Note:</strong>
     <div class='inline'><p>DCA playback will not be affected by the volume modifier (<span class='object_link'><a href="#volume-instance_method" title="Discordrb::Voice::VoiceBot#volume (method)">#volume</a></span>) because the modifier operates on raw
 PCM, not opus data. Modifying the volume of DCA data would involve decoding it, multiplying the samples and
-re-encoding it, which defeats its entire purpose (no recoding).</p>
-</div>
+re-encoding it, which defeats its entire purpose (no recoding).</p></div>
   </div>
 
 <p>Plays a stream of audio data in the DCA format. This format has the advantage that no recoding has to be
 done - the file contains the data exactly as Discord needs it.</p>
-
 
   </div>
 </div>
@@ -1907,7 +1854,6 @@ done - the file contains the data exactly as Discord needs it.</p>
   <div class="discussion">
     <p>Plays an encoded audio file of arbitrary format to the channel.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1959,7 +1905,6 @@ done - the file contains the data exactly as Discord needs it.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Plays a stream of encoded audio data of arbitrary format to the channel.</p>
-
 
   </div>
 </div>
@@ -2013,7 +1958,6 @@ done - the file contains the data exactly as Discord needs it.</p>
   <div class="discussion">
     <p>Returns Whether it is playing sound or not.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -2029,8 +1973,7 @@ done - the file contains the data exactly as Discord needs it.</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether it is playing sound or not.</p>
-</div>
+        <div class='inline'><p>Whether it is playing sound or not.</p></div>
       
     </li>
   
@@ -2075,8 +2018,7 @@ done - the file contains the data exactly as Discord needs it.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Skips to a later time in the song. It&#39;s impossible to go back without replaying the song.</p>
-
+    <p>Skips to a later time in the song. It's impossible to go back without replaying the song.</p>
 
   </div>
 </div>
@@ -2095,8 +2037,7 @@ done - the file contains the data exactly as Discord needs it.</p>
       
         &mdash;
         <div class='inline'><p>How many seconds to skip forwards. Skipping will always be done in discrete intervals of
-0.05 seconds, so if the given amount is smaller than that, it will be rounded up.</p>
-</div>
+0.05 seconds, so if the given amount is smaller than that, it will be rounded up.</p></div>
       
     </li>
   
@@ -2138,12 +2079,10 @@ done - the file contains the data exactly as Discord needs it.</p>
     
   <div class="note notetag">
     <strong>Note:</strong>
-    <div class='inline'><p><a href="https://discord.com/developers/docs/topics/voice-connections#speaking">https://discord.com/developers/docs/topics/voice-connections#speaking</a> for information on the speaking bitmask</p>
-</div>
+    <div class='inline'><p><a href="https://discord.com/developers/docs/topics/voice-connections#speaking">https://discord.com/developers/docs/topics/voice-connections#speaking</a> for information on the speaking bitmask</p></div>
   </div>
 
 <p>Sets whether or not the bot is speaking (green circle around user).</p>
-
 
   </div>
 </div>
@@ -2161,8 +2100,7 @@ done - the file contains the data exactly as Discord needs it.</p>
       
       
         &mdash;
-        <div class='inline'><p>whether or not the bot should be speaking, or a bitmask denoting the audio type</p>
-</div>
+        <div class='inline'><p>whether or not the bot should be speaking, or a bitmask denoting the audio type</p></div>
       
     </li>
   
@@ -2205,7 +2143,6 @@ done - the file contains the data exactly as Discord needs it.</p>
   <div class="discussion">
     <p>Stops the current playback entirely.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -2225,8 +2162,7 @@ done - the file contains the data exactly as Discord needs it.</p>
       
         &mdash;
         <div class='inline'><p>Whether the method should wait for confirmation from the playback
-method that the playback has actually stopped.</p>
-</div>
+method that the playback has actually stopped.</p></div>
       
     </li>
   
@@ -2277,9 +2213,9 @@ method that the playback has actually stopped.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:52 2026 by
+  Generated on Sun Jun  7 01:31:43 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

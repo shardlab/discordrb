@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Gateway
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Gateway";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,7 +96,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/gateway.rb</dd>
+    <dd>lib/discordrb/gateway.rb
+</dd>
   </dl>
   
 </div>
@@ -102,7 +105,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>Client for the Discord gateway protocol</p>
-
 
   </div>
 </div>
@@ -123,7 +125,6 @@
   <div class="discussion">
     <p>How many members there need to be in a server for it to count as &quot;large&quot;</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -136,8 +137,7 @@
         <dt id="GATEWAY_VERSION-constant" class="">GATEWAY_VERSION =
           <div class="docstring">
   <div class="discussion">
-    <p>The version of the gateway that&#39;s supposed to be used.</p>
-
+    <p>The version of the gateway that's supposed to be used.</p>
 
   </div>
 </div>
@@ -152,14 +152,12 @@
           <div class="docstring">
   <div class="discussion">
     <p>Close codes that are unrecoverable, after which we should not try to reconnect.</p>
-
 <ul>
 <li>4003: Not authenticated. How did this happen?</li>
 <li>4004: Authentication failed. Token was wrong, nothing we can do.</li>
 <li>4011: Sharding required. Currently requires developer intervention.</li>
 <li>4014: Use of disabled privileged intents.</li>
 </ul>
-
 
   </div>
 </div>
@@ -199,8 +197,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Heartbeat ACKs are Discord&#39;s way of verifying on the client side whether the connection is still alive.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Heartbeat ACKs are Discord's way of verifying on the client side whether the connection is still alive.</p></div></span>
   
 </li>
 
@@ -227,8 +224,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The intent parameter sent to the gateway server.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The intent parameter sent to the gateway server.</p></div></span>
   
 </li>
 
@@ -263,8 +259,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends a heartbeat with the last received packet&#39;s seq (to acknowledge that we have received it and all packets before it), or if none have been received yet, with 0.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends a heartbeat with the last received packet's seq (to acknowledge that we have received it and all packets before it), or if none have been received yet, with 0.</p></div></span>
   
 </li>
 
@@ -286,8 +281,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Identifies to Discord with the default parameters.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Identifies to Discord with the default parameters.</p></div></span>
   
 </li>
 
@@ -311,8 +305,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>A new instance of Gateway.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>A new instance of Gateway.</p></div></span>
   
 </li>
 
@@ -334,8 +327,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Injects a terminal gateway error into the handler.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Injects a terminal gateway error into the handler.</p></div></span>
   
 </li>
 
@@ -357,8 +349,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Injects a reconnect event (op 7) into the event processor, causing Discord to reconnect to the given gateway URL.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Injects a reconnect event (op 7) into the event processor, causing Discord to reconnect to the given gateway URL.</p></div></span>
   
 </li>
 
@@ -380,8 +371,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Injects a resume packet (op 6) into the gateway.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Injects a resume packet (op 6) into the gateway.</p></div></span>
   
 </li>
 
@@ -403,8 +393,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Kills the websocket thread, stopping all connections to Discord.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Kills the websocket thread, stopping all connections to Discord.</p></div></span>
   
 </li>
 
@@ -426,8 +415,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Notifies the <span class='object_link'><a href="#run_async-instance_method" title="Discordrb::Gateway#run_async (method)">#run_async</a></span> method that everything is ready and the caller can now continue (i.e. with syncing, or with doing processing and then syncing).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Notifies the <span class='object_link'><a href="#run_async-instance_method" title="Discordrb::Gateway#run_async (method)">#run_async</a></span> method that everything is ready and the caller can now continue (i.e. with syncing, or with doing processing and then syncing).</p></div></span>
   
 </li>
 
@@ -449,8 +437,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Whether the WebSocket connection to the gateway is currently open.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Whether the WebSocket connection to the gateway is currently open.</p></div></span>
   
 </li>
 
@@ -472,8 +459,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Reconnects the gateway connection in a controlled manner.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Reconnects the gateway connection in a controlled manner.</p></div></span>
   
 </li>
 
@@ -495,8 +481,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Resumes the session from the last recorded point.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Resumes the session from the last recorded point.</p></div></span>
   
 </li>
 
@@ -518,8 +503,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Connect to the gateway server in a separate thread.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Connect to the gateway server in a separate thread.</p></div></span>
   
 </li>
 
@@ -541,8 +525,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends a heartbeat packet (op 1).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends a heartbeat packet (op 1).</p></div></span>
   
 </li>
 
@@ -564,8 +547,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends an identify packet (op 2).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends an identify packet (op 2).</p></div></span>
   
 </li>
 
@@ -587,8 +569,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends a custom packet over the connection.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends a custom packet over the connection.</p></div></span>
   
 </li>
 
@@ -610,8 +591,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends custom raw data over the connection.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends custom raw data over the connection.</p></div></span>
   
 </li>
 
@@ -633,8 +613,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends a request members packet (op 8).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends a request members packet (op 8).</p></div></span>
   
 </li>
 
@@ -656,8 +635,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends a resume packet (op 6).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends a resume packet (op 6).</p></div></span>
   
 </li>
 
@@ -679,8 +657,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends a status update packet (op 3).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends a status update packet (op 3).</p></div></span>
   
 </li>
 
@@ -702,8 +679,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends a voice state update packet (op 4).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends a voice state update packet (op 4).</p></div></span>
   
 </li>
 
@@ -725,8 +701,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Stops the bot gracefully, disconnecting the websocket without immediately killing the thread.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Stops the bot gracefully, disconnecting the websocket without immediately killing the thread.</p></div></span>
   
 </li>
 
@@ -748,13 +723,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Prevents all further execution until the websocket thread stops (e.g. through a closed connection).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Prevents all further execution until the websocket thread stops (e.g. through a closed connection).</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 <div id="constructor_details" class="method_details_list">
@@ -772,7 +747,6 @@
 </h3><div class="docstring">
   <div class="discussion">
     <p>Returns a new instance of Gateway.</p>
-
 
   </div>
 </div>
@@ -840,11 +814,10 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Heartbeat ACKs are Discord&#39;s way of verifying on the client side whether the connection is still alive. If this is
+    <p>Heartbeat ACKs are Discord's way of verifying on the client side whether the connection is still alive. If this is
 set to true (default value) the gateway client will use that functionality to detect zombie connections and
-reconnect in such a case; however it may lead to instability if there&#39;s some problem with the ACKs. If this occurs
+reconnect in such a case; however it may lead to instability if there's some problem with the ACKs. If this occurs
 it can simply be set to false.</p>
-
 
   </div>
 </div>
@@ -861,8 +834,7 @@ it can simply be set to false.</p>
       
       
         &mdash;
-        <div class='inline'><p>whether or not this gateway should check for heartbeat ACKs.</p>
-</div>
+        <div class='inline'><p>whether or not this gateway should check for heartbeat ACKs.</p></div>
       
     </li>
   
@@ -904,7 +876,6 @@ it can simply be set to false.</p>
   <div class="discussion">
     <p>Returns the intent parameter sent to the gateway server.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -920,8 +891,7 @@ it can simply be set to false.</p>
       
       
         &mdash;
-        <div class='inline'><p>the intent parameter sent to the gateway server.</p>
-</div>
+        <div class='inline'><p>the intent parameter sent to the gateway server.</p></div>
       
     </li>
   
@@ -966,9 +936,8 @@ it can simply be set to false.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Sends a heartbeat with the last received packet&#39;s seq (to acknowledge that we have received it and all packets
+    <p>Sends a heartbeat with the last received packet's seq (to acknowledge that we have received it and all packets
 before it), or if none have been received yet, with 0.</p>
-
 
   </div>
 </div>
@@ -1046,7 +1015,6 @@ before it), or if none have been received yet, with 0.</p>
   <div class="discussion">
     <p>Identifies to Discord with the default parameters.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1103,7 +1071,6 @@ before it), or if none have been received yet, with 0.</p>
   <div class="discussion">
     <p>Injects a terminal gateway error into the handler. Useful for testing the reconnect logic.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1120,8 +1087,7 @@ before it), or if none have been received yet, with 0.</p>
       
       
         &mdash;
-        <div class='inline'><p>The exception object to inject.</p>
-</div>
+        <div class='inline'><p>The exception object to inject.</p></div>
       
     </li>
   
@@ -1164,7 +1130,6 @@ before it), or if none have been received yet, with 0.</p>
 If the URL is set to nil, it will reconnect and get an entirely new gateway URL. This method has not much use
 outside of testing and implementing highly custom reconnect logic.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1183,8 +1148,7 @@ outside of testing and implementing highly custom reconnect logic.</p>
       
       
         &mdash;
-        <div class='inline'><p>the URL to connect to or nil if one should be obtained from Discord.</p>
-</div>
+        <div class='inline'><p>the URL to connect to or nil if one should be obtained from Discord.</p></div>
       
     </li>
   
@@ -1239,7 +1203,6 @@ outside of testing and implementing highly custom reconnect logic.</p>
 error. It has no use outside of testing stuff that I know of, but if you want to use it anyway for some reason,
 here it is.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1256,8 +1219,7 @@ here it is.</p>
       
       
         &mdash;
-        <div class='inline'><p>The sequence ID to inject, or nil if the currently tracked one should be used.</p>
-</div>
+        <div class='inline'><p>The sequence ID to inject, or nil if the currently tracked one should be used.</p></div>
       
     </li>
   
@@ -1297,7 +1259,6 @@ here it is.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Kills the websocket thread, stopping all connections to Discord.</p>
-
 
   </div>
 </div>
@@ -1339,7 +1300,6 @@ here it is.</p>
     <p>Notifies the <span class='object_link'><a href="#run_async-instance_method" title="Discordrb::Gateway#run_async (method)">#run_async</a></span> method that everything is ready and the caller can now continue (i.e. with syncing,
 or with doing processing and then syncing)</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1378,7 +1338,6 @@ or with doing processing and then syncing)</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Whether the WebSocket connection to the gateway is currently open</p>
-
 
   </div>
 </div>
@@ -1432,7 +1391,6 @@ or with doing processing and then syncing)</p>
   <div class="discussion">
     <p>Reconnects the gateway connection in a controlled manner.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1451,8 +1409,7 @@ or with doing processing and then syncing)</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether a resume should be attempted after the reconnection.</p>
-</div>
+        <div class='inline'><p>Whether a resume should be attempted after the reconnection.</p></div>
       
     </li>
   
@@ -1503,7 +1460,6 @@ or with doing processing and then syncing)</p>
   <div class="discussion">
     <p>Resumes the session from the last recorded point.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1549,7 +1505,6 @@ or with doing processing and then syncing)</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Connect to the gateway server in a separate thread</p>
-
 
   </div>
 </div>
@@ -1629,7 +1584,6 @@ or with doing processing and then syncing)</p>
     <p>Sends a heartbeat packet (op 1). This tells Discord that the current connection is still active and that the last
 packets until the given sequence have been processed (in case of a resume).</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1646,8 +1600,7 @@ packets until the given sequence have been processed (in case of a resume).</p>
       
       
         &mdash;
-        <div class='inline'><p>The sequence number for which to send a heartbeat.</p>
-</div>
+        <div class='inline'><p>The sequence number for which to send a heartbeat.</p></div>
       
     </li>
   
@@ -1689,7 +1642,6 @@ packets until the given sequence have been processed (in case of a resume).</p>
     <p>Sends an identify packet (op 2). This starts a new session on the current connection and tells Discord who we are.
 This can only be done once a connection.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1707,8 +1659,7 @@ This can only be done once a connection.</p>
       
         &mdash;
         <div class='inline'><p>The token with which to authorise the session. If it belongs to a bot account, it must be
-prefixed with &quot;Bot &quot;.</p>
-</div>
+prefixed with &quot;Bot &quot;.</p></div>
       
     </li>
   
@@ -1724,15 +1675,13 @@ prefixed with &quot;Bot &quot;.</p>
         &mdash;
         <div class='inline'><p>A list of properties for Discord to use in analytics. The following
 keys are recognised:</p>
-
 <ul>
 <li>&quot;os&quot; (recommended value: the operating system the bot is running on)</li>
 <li>&quot;browser&quot; (recommended value: library name)</li>
 <li>&quot;device&quot; (recommended value: library name)</li>
 <li>&quot;referrer&quot; (recommended value: empty)</li>
 <li>&quot;referring_domain&quot; (recommended value: empty)</li>
-</ul>
-</div>
+</ul></div>
       
     </li>
   
@@ -1746,8 +1695,7 @@ keys are recognised:</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether certain large packets should be compressed using zlib.</p>
-</div>
+        <div class='inline'><p>Whether certain large packets should be compressed using zlib.</p></div>
       
     </li>
   
@@ -1762,8 +1710,7 @@ keys are recognised:</p>
       
         &mdash;
         <div class='inline'><p>The member threshold after which a server counts as large and will have to have
-its member list chunked.</p>
-</div>
+its member list chunked.</p></div>
       
     </li>
   
@@ -1780,8 +1727,7 @@ its member list chunked.</p>
       
         &mdash;
         <div class='inline'><p>The shard key to use for sharding, represented as
-[shard_id, num_shards], or nil if the bot should not be sharded.</p>
-</div>
+[shard_id, num_shards], or nil if the bot should not be sharded.</p></div>
       
     </li>
   
@@ -1845,8 +1791,7 @@ its member list chunked.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Sends a custom packet over the connection. This can be useful to implement future yet unimplemented functionality
-or for testing. You probably shouldn&#39;t use this unless you know what you&#39;re doing.</p>
-
+or for testing. You probably shouldn't use this unless you know what you're doing.</p>
 
   </div>
 </div>
@@ -1865,8 +1810,7 @@ or for testing. You probably shouldn&#39;t use this unless you know what you&#39
       
         &mdash;
         <div class='inline'><p>The opcode the packet should be sent as. Can be one of <span class='object_link'><a href="Opcodes.html" title="Discordrb::Opcodes (module)">Opcodes</a></span> or a custom value if
-necessary.</p>
-</div>
+necessary.</p></div>
       
     </li>
   
@@ -1880,8 +1824,7 @@ necessary.</p>
       
       
         &mdash;
-        <div class='inline'><p>Some arbitrary JSON-serializable data that should be sent as the <code>d</code> field.</p>
-</div>
+        <div class='inline'><p>Some arbitrary JSON-serializable data that should be sent as the <code>d</code> field.</p></div>
       
     </li>
   
@@ -1930,9 +1873,8 @@ necessary.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Sends custom raw data over the connection. Only useful for testing; even if you know what you&#39;re doing you
+    <p>Sends custom raw data over the connection. Only useful for testing; even if you know what you're doing you
 probably want to use <span class='object_link'><a href="#send_packet-instance_method" title="Discordrb::Gateway#send_packet (method)">#send_packet</a></span> instead.</p>
-
 
   </div>
 </div>
@@ -1950,8 +1892,7 @@ probably want to use <span class='object_link'><a href="#send_packet-instance_me
       
       
         &mdash;
-        <div class='inline'><p>The data to send.</p>
-</div>
+        <div class='inline'><p>The data to send.</p></div>
       
     </li>
   
@@ -1968,8 +1909,7 @@ probably want to use <span class='object_link'><a href="#send_packet-instance_me
       
         &mdash;
         <div class='inline'><p>The type the WebSocket frame should have; either <code>:text</code>, <code>:binary</code>, <code>:ping</code>, <code>:pong</code>, or
-<code>:close</code>.</p>
-</div>
+<code>:close</code>.</p></div>
       
     </li>
   
@@ -2012,7 +1952,6 @@ probably want to use <span class='object_link'><a href="#send_packet-instance_me
 events with type <code>GUILD_MEMBERS_CHUNK</code>. It is necessary to use this method in order to get all members of a large
 server (see <code>large_threshold</code> in <span class='object_link'><a href="#send_identify-instance_method" title="Discordrb::Gateway#send_identify (method)">#send_identify</a></span>), however it can also be used for other purposes.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -2029,8 +1968,7 @@ server (see <code>large_threshold</code> in <span class='object_link'><a href="#
       
       
         &mdash;
-        <div class='inline'><p>The ID of the server whose members to query.</p>
-</div>
+        <div class='inline'><p>The ID of the server whose members to query.</p></div>
       
     </li>
   
@@ -2045,8 +1983,7 @@ server (see <code>large_threshold</code> in <span class='object_link'><a href="#
       
         &mdash;
         <div class='inline'><p>If this string is not empty, only members whose username starts with this string will be
-returned.</p>
-</div>
+returned.</p></div>
       
     </li>
   
@@ -2060,8 +1997,7 @@ returned.</p>
       
       
         &mdash;
-        <div class='inline'><p>How many members to send at maximum, or <code>0</code> to send all members.</p>
-</div>
+        <div class='inline'><p>How many members to send at maximum, or <code>0</code> to send all members.</p></div>
       
     </li>
   
@@ -2115,11 +2051,9 @@ returned.</p>
     <p>Sends a resume packet (op 6). This replays all events from a previous point specified by its packet sequence. This
 will not work if the packet to resume from has already been acknowledged using a heartbeat, or if the session ID
 belongs to a now invalid session.</p>
-
 <p>If this packet is sent at the beginning of a connection, it will act similarly to an <span class='object_link'><a href="#identify-instance_method" title="Discordrb::Gateway#identify (method)">#identify</a></span> in that it
 creates a session on the current connection. Unlike identify however, this packet can also be sent in an existing
 session and will just replay some of the events.</p>
-
 
   </div>
 </div>
@@ -2137,8 +2071,7 @@ session and will just replay some of the events.</p>
       
       
         &mdash;
-        <div class='inline'><p>The token that was used to identify the session to resume.</p>
-</div>
+        <div class='inline'><p>The token that was used to identify the session to resume.</p></div>
       
     </li>
   
@@ -2152,8 +2085,7 @@ session and will just replay some of the events.</p>
       
       
         &mdash;
-        <div class='inline'><p>The session ID of the session to resume.</p>
-</div>
+        <div class='inline'><p>The session ID of the session to resume.</p></div>
       
     </li>
   
@@ -2167,8 +2099,7 @@ session and will just replay some of the events.</p>
       
       
         &mdash;
-        <div class='inline'><p>The packet sequence of the packet after which the events should be replayed.</p>
-</div>
+        <div class='inline'><p>The packet sequence of the packet after which the events should be replayed.</p></div>
       
     </li>
   
@@ -2219,8 +2150,7 @@ session and will just replay some of the events.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Sends a status update packet (op 3). This sets the bot user&#39;s status (online/idle/...) and game playing/streaming.</p>
-
+    <p>Sends a status update packet (op 3). This sets the bot user's status (online/idle/...) and game playing/streaming.</p>
 
   </div>
 </div>
@@ -2238,8 +2168,7 @@ session and will just replay some of the events.</p>
       
       
         &mdash;
-        <div class='inline'><p>The status that should be set (<code>online</code>, <code>idle</code>, <code>dnd</code>, <code>invisible</code>).</p>
-</div>
+        <div class='inline'><p>The status that should be set (<code>online</code>, <code>idle</code>, <code>dnd</code>, <code>invisible</code>).</p></div>
       
     </li>
   
@@ -2254,8 +2183,7 @@ session and will just replay some of the events.</p>
       
         &mdash;
         <div class='inline'><p>The Unix timestamp in milliseconds when the status was set. Should only be provided when
-<code>afk</code> is true.</p>
-</div>
+<code>afk</code> is true.</p></div>
       
     </li>
   
@@ -2270,8 +2198,7 @@ session and will just replay some of the events.</p>
       
         &mdash;
         <div class='inline'><p><code>nil</code> if no game should be played, or a hash of <code>:game =&gt; &quot;name&quot;</code> if a
-game should be played. The hash can also contain additional attributes for streaming statuses.</p>
-</div>
+game should be played. The hash can also contain additional attributes for streaming statuses.</p></div>
       
     </li>
   
@@ -2285,8 +2212,7 @@ game should be played. The hash can also contain additional attributes for strea
       
       
         &mdash;
-        <div class='inline'><p>Whether the status was set due to inactivity on the user&#39;s part.</p>
-</div>
+        <div class='inline'><p>Whether the status was set due to inactivity on the user's part.</p></div>
       
     </li>
   
@@ -2343,7 +2269,6 @@ game should be played. The hash can also contain additional attributes for strea
 status in an existing voice connection, move the user to a new voice channel on the same server or disconnect an
 existing voice connection.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -2360,8 +2285,7 @@ existing voice connection.</p>
       
       
         &mdash;
-        <div class='inline'><p>The ID of the server on which this action should occur.</p>
-</div>
+        <div class='inline'><p>The ID of the server on which this action should occur.</p></div>
       
     </li>
   
@@ -2375,8 +2299,7 @@ existing voice connection.</p>
       
       
         &mdash;
-        <div class='inline'><p>The channel ID to connect/move to, or <code>nil</code> to disconnect.</p>
-</div>
+        <div class='inline'><p>The channel ID to connect/move to, or <code>nil</code> to disconnect.</p></div>
       
     </li>
   
@@ -2390,8 +2313,7 @@ existing voice connection.</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether the user should itself be muted to everyone else.</p>
-</div>
+        <div class='inline'><p>Whether the user should itself be muted to everyone else.</p></div>
       
     </li>
   
@@ -2405,8 +2327,7 @@ existing voice connection.</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether the user should be deaf towards other users.</p>
-</div>
+        <div class='inline'><p>Whether the user should be deaf towards other users.</p></div>
       
     </li>
   
@@ -2461,9 +2382,7 @@ existing voice connection.</p>
   <div class="discussion">
     <p>Stops the bot gracefully, disconnecting the websocket without immediately killing the thread. This means that
 Discord is immediately aware of the closed connection and makes the bot appear offline instantly.</p>
-
-<p>If this method doesn&#39;t work or you&#39;re looking for something more drastic, use <span class='object_link'><a href="#kill-instance_method" title="Discordrb::Gateway#kill (method)">#kill</a></span> instead.</p>
-
+<p>If this method doesn't work or you're looking for something more drastic, use <span class='object_link'><a href="#kill-instance_method" title="Discordrb::Gateway#kill (method)">#kill</a></span> instead.</p>
 
   </div>
 </div>
@@ -2512,7 +2431,6 @@ Discord is immediately aware of the closed connection and makes the bot appear o
   <div class="discussion">
     <p>Prevents all further execution until the websocket thread stops (e.g. through a closed connection).</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -2544,9 +2462,9 @@ Discord is immediately aware of the closed connection and makes the bot appear o
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:46 2026 by
+  Generated on Sun Jun  7 01:31:36 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

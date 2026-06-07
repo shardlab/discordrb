@@ -6,13 +6,13 @@
 <title>
   Module: Discordrb
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="css/style.css" type="text/css" />
+  <link rel="stylesheet" href="css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="css/common.css" type="text/css" />
+  <link rel="stylesheet" href="css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -78,8 +80,9 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb.rb<span class="defines">,<br />
-  lib/discordrb/bot.rb,<br /> lib/discordrb/await.rb,<br /> lib/discordrb/cache.rb,<br /> lib/discordrb/errors.rb,<br /> lib/discordrb/logger.rb,<br /> lib/discordrb/gateway.rb,<br /> lib/discordrb/version.rb,<br /> lib/discordrb/webhooks.rb,<br /> lib/discordrb/container.rb,<br /> lib/discordrb/data/call.rb,<br /> lib/discordrb/data/poll.rb,<br /> lib/discordrb/data/role.rb,<br /> lib/discordrb/data/team.rb,<br /> lib/discordrb/data/user.rb,<br /> lib/discordrb/id_object.rb,<br /> lib/discordrb/paginator.rb,<br /> lib/discordrb/websocket.rb,<br /> lib/discordrb/colour_rgb.rb,<br /> lib/discordrb/data/embed.rb,<br /> lib/discordrb/data/emoji.rb,<br /> lib/discordrb/data/invite.rb,<br /> lib/discordrb/data/member.rb,<br /> lib/discordrb/data/server.rb,<br /> lib/discordrb/permissions.rb,<br /> lib/discordrb/data/channel.rb,<br /> lib/discordrb/data/message.rb,<br /> lib/discordrb/data/profile.rb,<br /> lib/discordrb/data/webhook.rb,<br /> lib/discordrb/data/activity.rb,<br /> lib/discordrb/data/reaction.rb,<br /> lib/discordrb/data/snapshot.rb,<br /> lib/discordrb/data/component.rb,<br /> lib/discordrb/data/overwrite.rb,<br /> lib/discordrb/data/recipient.rb,<br /> lib/discordrb/data/timestamp.rb,<br /> lib/discordrb/data/attachment.rb,<br /> lib/discordrb/data/audit_logs.rb,<br /> lib/discordrb/allowed_mentions.rb,<br /> lib/discordrb/data/application.rb,<br /> lib/discordrb/data/channel_tag.rb,<br /> lib/discordrb/data/integration.rb,<br /> lib/discordrb/data/interaction.rb,<br /> lib/discordrb/data/voice_state.rb,<br /> lib/discordrb/webhooks/version.rb,<br /> lib/discordrb/data/collectibles.rb,<br /> lib/discordrb/data/voice_region.rb,<br /> lib/discordrb/data/install_params.rb,<br /> lib/discordrb/data/primary_server.rb,<br /> lib/discordrb/data/server_preview.rb,<br /> lib/discordrb/data/scheduled_event.rb,<br /> lib/discordrb/data/message_activity.rb,<br /> lib/discordrb/data/avatar_decoration.rb,<br /> lib/discordrb/data/role_subscription.rb,<br /> lib/discordrb/data/role_connection_data.rb</span>
+    <dd>lib/discordrb.rb<span class="defines">,<br>
+  lib/discordrb/bot.rb,<br> lib/discordrb/await.rb,<br> lib/discordrb/cache.rb,<br> lib/discordrb/errors.rb,<br> lib/discordrb/logger.rb,<br> lib/discordrb/gateway.rb,<br> lib/discordrb/version.rb,<br> lib/discordrb/webhooks.rb,<br> lib/discordrb/container.rb,<br> lib/discordrb/data/call.rb,<br> lib/discordrb/data/poll.rb,<br> lib/discordrb/data/role.rb,<br> lib/discordrb/data/team.rb,<br> lib/discordrb/data/user.rb,<br> lib/discordrb/id_object.rb,<br> lib/discordrb/paginator.rb,<br> lib/discordrb/websocket.rb,<br> lib/discordrb/colour_rgb.rb,<br> lib/discordrb/data/embed.rb,<br> lib/discordrb/data/emoji.rb,<br> lib/discordrb/data/invite.rb,<br> lib/discordrb/data/member.rb,<br> lib/discordrb/data/server.rb,<br> lib/discordrb/permissions.rb,<br> lib/discordrb/data/channel.rb,<br> lib/discordrb/data/message.rb,<br> lib/discordrb/data/profile.rb,<br> lib/discordrb/data/webhook.rb,<br> lib/discordrb/data/activity.rb,<br> lib/discordrb/data/reaction.rb,<br> lib/discordrb/data/snapshot.rb,<br> lib/discordrb/data/component.rb,<br> lib/discordrb/data/overwrite.rb,<br> lib/discordrb/data/recipient.rb,<br> lib/discordrb/data/timestamp.rb,<br> lib/discordrb/data/attachment.rb,<br> lib/discordrb/data/audit_logs.rb,<br> lib/discordrb/allowed_mentions.rb,<br> lib/discordrb/data/application.rb,<br> lib/discordrb/data/channel_tag.rb,<br> lib/discordrb/data/integration.rb,<br> lib/discordrb/data/interaction.rb,<br> lib/discordrb/data/voice_state.rb,<br> lib/discordrb/webhooks/version.rb,<br> lib/discordrb/data/collectibles.rb,<br> lib/discordrb/data/voice_region.rb,<br> lib/discordrb/data/install_params.rb,<br> lib/discordrb/data/primary_server.rb,<br> lib/discordrb/data/server_preview.rb,<br> lib/discordrb/data/scheduled_event.rb,<br> lib/discordrb/data/message_activity.rb,<br> lib/discordrb/data/avatar_decoration.rb,<br> lib/discordrb/data/role_subscription.rb,<br> lib/discordrb/data/role_connection_data.rb</span>
+
 </dd>
   </dl>
   
@@ -88,7 +91,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>Webhook support for discordrb</p>
-
 
   </div>
 </div>
@@ -121,7 +123,6 @@
   <div class="discussion">
     <p>The default debug logger used by discordrb.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -136,7 +137,6 @@
   <div class="discussion">
     <p>The Unix timestamp Discord IDs are based on</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -150,7 +150,6 @@
           <div class="docstring">
   <div class="discussion">
     <p>Used to declare what events you wish to recieve from Discord.</p>
-
 
   </div>
 </div>
@@ -192,7 +191,6 @@
   <div class="discussion">
     <p>All available intents</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -206,7 +204,6 @@
           <div class="docstring">
   <div class="discussion">
     <p>All unprivileged intents</p>
-
 
   </div>
 </div>
@@ -229,7 +226,6 @@
   <div class="discussion">
     <p>No intents</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -244,7 +240,6 @@
   <div class="discussion">
     <p>The maximum length a Discord message can have</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -258,7 +253,6 @@
           <div class="docstring">
   <div class="discussion">
     <p>For creating timestamps with <span class='object_link'><a href="#timestamp-class_method" title="Discordrb.timestamp (method)">timestamp</a></span></p>
-
 
   </div>
 </div>
@@ -291,7 +285,6 @@
   <div class="discussion">
     <p>The format log timestamps should be in, in strftime format</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -306,7 +299,6 @@
   <div class="discussion">
     <p>The current version of discordrb.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -320,7 +312,6 @@
           <div class="docstring">
   <div class="discussion">
     <p>Alias for the class <span class='object_link'><a href="Discordrb/ColourRGB.html" title="Discordrb::ColourRGB (class)">ColourRGB</a></span></p>
-
 
   </div>
 </div>
@@ -365,8 +356,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>A utility method to base64 encode a file like object using its mime type.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>A utility method to base64 encode a file like object using its mime type.</p></div></span>
   
 </li>
 
@@ -388,8 +378,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Compares two objects based on IDs - either the objects&#39; IDs are equal, or one object is equal to the other&#39;s ID.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Compares two objects based on IDs - either the objects' IDs are equal, or one object is equal to the other's ID.</p></div></span>
   
 </li>
 
@@ -411,8 +400,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Splits a message into chunks of 2000 characters.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Splits a message into chunks of 2000 characters.</p></div></span>
   
 </li>
 
@@ -440,6 +428,7 @@
 
       
     </ul>
+    
   
 
 
@@ -461,7 +450,6 @@
   <div class="discussion">
     <p>A utility method to base64 encode a file like object using its mime type.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -478,8 +466,7 @@
       
       
         &mdash;
-        <div class='inline'><p>A file like object that responds to #read.</p>
-</div>
+        <div class='inline'><p>A file like object that responds to #read.</p></div>
       
     </li>
   
@@ -496,8 +483,7 @@
       
       
         &mdash;
-        <div class='inline'><p>The file object encoded as base64 image data.</p>
-</div>
+        <div class='inline'><p>The file object encoded as base64 image data.</p></div>
       
     </li>
   
@@ -560,8 +546,7 @@
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Compares two objects based on IDs - either the objects&#39; IDs are equal, or one object is equal to the other&#39;s ID.</p>
-
+    <p>Compares two objects based on IDs - either the objects' IDs are equal, or one object is equal to the other's ID.</p>
 
   </div>
 </div>
@@ -615,7 +600,6 @@
   <div class="discussion">
     <p>Splits a message into chunks of 2000 characters. Attempts to split by lines if possible.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -632,8 +616,7 @@
       
       
         &mdash;
-        <div class='inline'><p>The message to split.</p>
-</div>
+        <div class='inline'><p>The message to split.</p></div>
       
     </li>
   
@@ -650,8 +633,7 @@
       
       
         &mdash;
-        <div class='inline'><p>the message split into chunks</p>
-</div>
+        <div class='inline'><p>the message split into chunks</p></div>
       
     </li>
   
@@ -780,8 +762,7 @@
       
       
         &mdash;
-        <div class='inline'><p>The time to create the timestamp from, or a unix timestamp integer.</p>
-</div>
+        <div class='inline'><p>The time to create the timestamp from, or a unix timestamp integer.</p></div>
       
     </li>
   
@@ -797,8 +778,7 @@
       
       
         &mdash;
-        <div class='inline'><p>One of the keys from <span class='object_link'><a href="#TIMESTAMP_STYLES-constant" title="Discordrb::TIMESTAMP_STYLES (constant)">TIMESTAMP_STYLES</a></span> or a string with the style.</p>
-</div>
+        <div class='inline'><p>One of the keys from <span class='object_link'><a href="#TIMESTAMP_STYLES-constant" title="Discordrb::TIMESTAMP_STYLES (constant)">TIMESTAMP_STYLES</a></span> or a string with the style.</p></div>
       
     </li>
   
@@ -852,9 +832,9 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:44 2026 by
+  Generated on Sun Jun  7 01:31:33 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

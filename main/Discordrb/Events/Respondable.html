@@ -6,13 +6,13 @@
 <title>
   Module: Discordrb::Events::Respondable
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Events::Respondable";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -83,7 +85,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/events/message.rb</dd>
+    <dd>lib/discordrb/events/message.rb
+</dd>
   </dl>
   
 </div>
@@ -91,7 +94,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>Module to make sending messages easier with the presence of a text channel in an event</p>
-
 
   </div>
 </div>
@@ -127,8 +129,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The channel in which this event occurred.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The channel in which this event occurred.</p></div></span>
   
 </li>
 
@@ -163,8 +164,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Adds a string to be sent after the event has finished execution.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Adds a string to be sent after the event has finished execution.</p></div></span>
   
 </li>
 
@@ -186,8 +186,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Drains the currently saved message, which clears it out, resulting in everything being saved before being thrown away and nothing being sent to the channel (unless there is something saved after this).</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Drains the currently saved message, which clears it out, resulting in everything being saved before being thrown away and nothing being sent to the channel (unless there is something saved after this).</p></div></span>
   
 </li>
 
@@ -209,8 +208,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Drains the currently saved message into a result string.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Drains the currently saved message into a result string.</p></div></span>
   
 </li>
 
@@ -232,8 +230,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The same as <span class='object_link'><a href="#send_message-instance_method" title="Discordrb::Events::Respondable#send_message (method)">#send_message</a></span>, but yields a <span class='object_link'><a href="../Webhooks/Embed.html" title="Discordrb::Webhooks::Embed (class)">Webhooks::Embed</a></span> for easy building of embedded content inside a block.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The same as <span class='object_link'><a href="#send_message-instance_method" title="Discordrb::Events::Respondable#send_message (method)">#send_message</a></span>, but yields a <span class='object_link'><a href="../Webhooks/Embed.html" title="Discordrb::Webhooks::Embed (class)">Webhooks::Embed</a></span> for easy building of embedded content inside a block.</p></div></span>
   
 </li>
 
@@ -257,8 +254,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends a message to the channel this message was sent in, right now.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends a message to the channel this message was sent in, right now.</p></div></span>
   
 </li>
 
@@ -282,8 +278,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends a message to the channel this message was sent in, right now.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends a message to the channel this message was sent in, right now.</p></div></span>
   
 </li>
 
@@ -307,13 +302,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends a temporary message to the channel this message was sent in, right now.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends a temporary message to the channel this message was sent in, right now.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 
@@ -335,7 +330,6 @@
   <div class="discussion">
     <p>Returns the channel in which this event occurred.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -351,8 +345,7 @@
       
       
         &mdash;
-        <div class='inline'><p>the channel in which this event occurred</p>
-</div>
+        <div class='inline'><p>the channel in which this event occurred</p></div>
       
     </li>
   
@@ -401,7 +394,6 @@
 one message is ever sent. If it is used multiple times, the strings will bunch up into one message (separated by
 newlines)</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -418,8 +410,7 @@ newlines)</p>
       
       
         &mdash;
-        <div class='inline'><p>The message to send to the channel</p>
-</div>
+        <div class='inline'><p>The message to send to the channel</p></div>
       
     </li>
   
@@ -464,7 +455,6 @@ newlines)</p>
   <div class="discussion">
     <p>Drains the currently saved message, which clears it out, resulting in everything being saved before being
 thrown away and nothing being sent to the channel (unless there is something saved after this).</p>
-
 
   </div>
 </div>
@@ -515,7 +505,6 @@ thrown away and nothing being sent to the channel (unless there is something sav
     <p>Drains the currently saved message into a result string. This prepends it before that string, clears the saved
 message and returns the concatenation.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -532,8 +521,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>The result string to drain into.</p>
-</div>
+        <div class='inline'><p>The result string to drain into.</p></div>
       
     </li>
   
@@ -550,8 +538,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>a string formed by concatenating the saved message and the argument.</p>
-</div>
+        <div class='inline'><p>a string formed by concatenating the saved message and the argument.</p></div>
       
     </li>
   
@@ -599,7 +586,6 @@ message and returns the concatenation.</p>
   <div class="discussion">
     <p>The same as <span class='object_link'><a href="#send_message-instance_method" title="Discordrb::Events::Respondable#send_message (method)">#send_message</a></span>, but yields a <span class='object_link'><a href="../Webhooks/Embed.html" title="Discordrb::Webhooks::Embed (class)">Webhooks::Embed</a></span> for easy building of embedded content inside a block.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -618,8 +604,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>The message that should be sent along with the embed. If this is the empty string, only the embed will be shown.</p>
-</div>
+        <div class='inline'><p>The message that should be sent along with the embed. If this is the empty string, only the embed will be shown.</p></div>
       
     </li>
   
@@ -635,8 +620,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>The embed to start the building process with, or nil if one should be created anew.</p>
-</div>
+        <div class='inline'><p>The embed to start the building process with, or nil if one should be created anew.</p></div>
       
     </li>
   
@@ -652,8 +636,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>Files that can be referenced in embeds via <code>attachment://file.png</code></p>
-</div>
+        <div class='inline'><p>Files that can be referenced in embeds via <code>attachment://file.png</code></p></div>
       
     </li>
   
@@ -669,8 +652,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether or not this message should be sent using Discord text-to-speech.</p>
-</div>
+        <div class='inline'><p>Whether or not this message should be sent using Discord text-to-speech.</p></div>
       
     </li>
   
@@ -686,8 +668,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>Mentions that are allowed to ping on this message. <code>false</code> disables all pings</p>
-</div>
+        <div class='inline'><p>Mentions that are allowed to ping on this message. <code>false</code> disables all pings</p></div>
       
     </li>
   
@@ -703,8 +684,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>The message, or message ID, to reply to if any.</p>
-</div>
+        <div class='inline'><p>The message, or message ID, to reply to if any.</p></div>
       
     </li>
   
@@ -720,8 +700,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>A collection of components to attach to the message.</p>
-</div>
+        <div class='inline'><p>A collection of components to attach to the message.</p></div>
       
     </li>
   
@@ -737,8 +716,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>Flags for this message. Currently only SUPPRESS_EMBEDS (1 &lt;&lt; 2), SUPPRESS_NOTIFICATIONS (1 &lt;&lt; 12), and IS_COMPONENTS_V2 (1 &lt;&lt; 15) can be set.</p>
-</div>
+        <div class='inline'><p>Flags for this message. Currently only SUPPRESS_EMBEDS (1 &lt;&lt; 2), SUPPRESS_NOTIFICATIONS (1 &lt;&lt; 12), and IS_COMPONENTS_V2 (1 &lt;&lt; 15) can be set.</p></div>
       
     </li>
   
@@ -755,8 +733,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>Yields the embed to allow for easy building inside a block.</p>
-</div>
+        <div class='inline'><p>Yields the embed to allow for easy building inside a block.</p></div>
       
     </li>
   
@@ -774,8 +751,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>The embed from the parameters, or a new one.</p>
-</div>
+        <div class='inline'><p>The embed from the parameters, or a new one.</p></div>
       
     </li>
   
@@ -791,8 +767,7 @@ message and returns the concatenation.</p>
       
       
         &mdash;
-        <div class='inline'><p>The resulting message.</p>
-</div>
+        <div class='inline'><p>The resulting message.</p></div>
       
     </li>
   
@@ -844,7 +819,6 @@ message and returns the concatenation.</p>
     <p>Sends a message to the channel this message was sent in, right now. It is usually preferable to use <span class='object_link'><a href="#<<-instance_method" title="Discordrb::Events::Respondable#&lt;&lt; (method)">#&lt;&lt;</a></span> instead
 because it avoids rate limiting problems</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -861,8 +835,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>The message to send to the channel</p>
-</div>
+        <div class='inline'><p>The message to send to the channel</p></div>
       
     </li>
   
@@ -878,8 +851,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether or not this message should be sent using Discord text-to-speech.</p>
-</div>
+        <div class='inline'><p>Whether or not this message should be sent using Discord text-to-speech.</p></div>
       
     </li>
   
@@ -895,8 +867,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>The rich embed to append to this message.</p>
-</div>
+        <div class='inline'><p>The rich embed to append to this message.</p></div>
       
     </li>
   
@@ -912,8 +883,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>Files that can be referenced in embeds via <code>attachment://file.png</code></p>
-</div>
+        <div class='inline'><p>Files that can be referenced in embeds via <code>attachment://file.png</code></p></div>
       
     </li>
   
@@ -929,8 +899,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>Mentions that are allowed to ping on this message. <code>false</code> disables all pings</p>
-</div>
+        <div class='inline'><p>Mentions that are allowed to ping on this message. <code>false</code> disables all pings</p></div>
       
     </li>
   
@@ -946,8 +915,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>The message, or message ID, to reply to if any.</p>
-</div>
+        <div class='inline'><p>The message, or message ID, to reply to if any.</p></div>
       
     </li>
   
@@ -963,8 +931,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>A collection of components to attach to the message.</p>
-</div>
+        <div class='inline'><p>A collection of components to attach to the message.</p></div>
       
     </li>
   
@@ -980,8 +947,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>Flags for this message. Currently only SUPPRESS_EMBEDS (1 &lt;&lt; 2), SUPPRESS_NOTIFICATIONS (1 &lt;&lt; 12), and IS_COMPONENTS_V2 (1 &lt;&lt; 15) can be set.</p>
-</div>
+        <div class='inline'><p>Flags for this message. Currently only SUPPRESS_EMBEDS (1 &lt;&lt; 2), SUPPRESS_NOTIFICATIONS (1 &lt;&lt; 12), and IS_COMPONENTS_V2 (1 &lt;&lt; 15) can be set.</p></div>
       
     </li>
   
@@ -998,8 +964,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>the message that was sent</p>
-</div>
+        <div class='inline'><p>the message that was sent</p></div>
       
     </li>
   
@@ -1042,7 +1007,6 @@ because it avoids rate limiting problems</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Sends a message to the channel this message was sent in, right now.</p>
-
 
   </div>
 </div>
@@ -1094,7 +1058,6 @@ because it avoids rate limiting problems</p>
   <div class="discussion">
     <p>Sends a temporary message to the channel this message was sent in, right now.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -1111,8 +1074,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>The content to send. Should not be longer than 2000 characters or it will result in an error.</p>
-</div>
+        <div class='inline'><p>The content to send. Should not be longer than 2000 characters or it will result in an error.</p></div>
       
     </li>
   
@@ -1126,8 +1088,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>The amount of time in seconds after which the message sent will be deleted.</p>
-</div>
+        <div class='inline'><p>The amount of time in seconds after which the message sent will be deleted.</p></div>
       
     </li>
   
@@ -1143,8 +1104,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether or not this message should be sent using Discord text-to-speech.</p>
-</div>
+        <div class='inline'><p>Whether or not this message should be sent using Discord text-to-speech.</p></div>
       
     </li>
   
@@ -1160,8 +1120,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>The rich embed to append to this message.</p>
-</div>
+        <div class='inline'><p>The rich embed to append to this message.</p></div>
       
     </li>
   
@@ -1177,8 +1136,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>Files that can be referenced in embeds via <code>attachment://file.png</code></p>
-</div>
+        <div class='inline'><p>Files that can be referenced in embeds via <code>attachment://file.png</code></p></div>
       
     </li>
   
@@ -1194,8 +1152,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>Mentions that are allowed to ping on this message. <code>false</code> disables all pings</p>
-</div>
+        <div class='inline'><p>Mentions that are allowed to ping on this message. <code>false</code> disables all pings</p></div>
       
     </li>
   
@@ -1211,8 +1168,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>A collection of components to attach to the message.</p>
-</div>
+        <div class='inline'><p>A collection of components to attach to the message.</p></div>
       
     </li>
   
@@ -1228,8 +1184,7 @@ because it avoids rate limiting problems</p>
       
       
         &mdash;
-        <div class='inline'><p>Flags for this message. Currently only SUPPRESS_EMBEDS (1 &lt;&lt; 2), SUPPRESS_NOTIFICATIONS (1 &lt;&lt; 12), and IS_COMPONENTS_V2 (1 &lt;&lt; 15) can be set.</p>
-</div>
+        <div class='inline'><p>Flags for this message. Currently only SUPPRESS_EMBEDS (1 &lt;&lt; 2), SUPPRESS_NOTIFICATIONS (1 &lt;&lt; 12), and IS_COMPONENTS_V2 (1 &lt;&lt; 15) can be set.</p></div>
       
     </li>
   
@@ -1262,9 +1217,9 @@ because it avoids rate limiting problems</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:45 2026 by
+  Generated on Sun Jun  7 01:31:35 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

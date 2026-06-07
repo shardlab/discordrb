@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Voice::VoiceUDP
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Voice::VoiceUDP";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,7 +96,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/voice/network.rb</dd>
+    <dd>lib/discordrb/voice/network.rb
+</dd>
   </dl>
   
 </div>
@@ -102,7 +105,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>Represents a UDP connection to a voice server. This connection is used to send the actual audio data.</p>
-
 
   </div>
 </div>
@@ -138,8 +140,7 @@
   
 
   
-    <span class="summary_desc"><strong>Deprecated.</strong> <div class='inline'><p>Discord no longer supports unencrypted voice communication.</p>
-</div></span>
+    <span class="summary_desc"><strong>Deprecated.</strong> <div class='inline'><p>Discord no longer supports unencrypted voice communication.</p></div></span>
   
 </li>
 
@@ -166,8 +167,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>The UDP encryption mode.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>The UDP encryption mode.</p></div></span>
   
 </li>
 
@@ -194,8 +194,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sets the secret key used for encryption.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sets the secret key used for encryption.</p></div></span>
   
 </li>
 
@@ -230,8 +229,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Initializes the UDP socket with data obtained from opcode 2.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Initializes the UDP socket with data obtained from opcode 2.</p></div></span>
   
 </li>
 
@@ -255,8 +253,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Creates a new UDP connection.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Creates a new UDP connection.</p></div></span>
   
 </li>
 
@@ -278,8 +275,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Waits for a UDP discovery reply, and returns the sent data.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Waits for a UDP discovery reply, and returns the sent data.</p></div></span>
   
 </li>
 
@@ -301,8 +297,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Makes an audio packet from a buffer and sends it to Discord.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Makes an audio packet from a buffer and sends it to Discord.</p></div></span>
   
 </li>
 
@@ -324,13 +319,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Sends the UDP discovery packet with the internally stored SSRC.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Sends the UDP discovery packet with the internally stored SSRC.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 <div id="constructor_details" class="method_details_list">
@@ -349,7 +344,6 @@
   <div class="discussion">
     <p>Creates a new UDP connection. Only creates a socket as the discovery reply may come before the data is
 initialized.</p>
-
 
   </div>
 </div>
@@ -401,10 +395,8 @@ initialized.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Discord no longer supports unencrypted voice communication.</p>
-</div></div>
+    <div class="note deprecated"><strong>Deprecated.</strong> <div class='inline'><p>Discord no longer supports unencrypted voice communication.</p></div></div>
 <p>Returns whether or not UDP communications are encrypted.</p>
-
 
   </div>
 </div>
@@ -421,8 +413,7 @@ initialized.</p>
       
       
         &mdash;
-        <div class='inline'><p>whether or not UDP communications are encrypted.</p>
-</div>
+        <div class='inline'><p>whether or not UDP communications are encrypted.</p></div>
       
     </li>
   
@@ -464,7 +455,6 @@ initialized.</p>
   <div class="discussion">
     <p>The UDP encryption mode</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -505,7 +495,6 @@ initialized.</p>
 </h3><div class="docstring">
   <div class="discussion">
     <p>Sets the secret key used for encryption</p>
-
 
   </div>
 </div>
@@ -553,7 +542,6 @@ initialized.</p>
   <div class="discussion">
     <p>Initializes the UDP socket with data obtained from opcode 2.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -570,8 +558,7 @@ initialized.</p>
       
       
         &mdash;
-        <div class='inline'><p>The IP address to connect to.</p>
-</div>
+        <div class='inline'><p>The IP address to connect to.</p></div>
       
     </li>
   
@@ -585,8 +572,7 @@ initialized.</p>
       
       
         &mdash;
-        <div class='inline'><p>The port to connect to.</p>
-</div>
+        <div class='inline'><p>The port to connect to.</p></div>
       
     </li>
   
@@ -601,8 +587,7 @@ initialized.</p>
       
         &mdash;
         <div class='inline'><p>The Super Secret Relay Code (SSRC). Discord uses this to identify different voice users
-on the same endpoint.</p>
-</div>
+on the same endpoint.</p></div>
       
     </li>
   
@@ -647,7 +632,6 @@ on the same endpoint.</p>
   <div class="discussion">
     <p>Waits for a UDP discovery reply, and returns the sent data.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -663,8 +647,7 @@ on the same endpoint.</p>
       
       
         &mdash;
-        <div class='inline'><p>the IP and port received from the discovery reply.</p>
-</div>
+        <div class='inline'><p>the IP and port received from the discovery reply.</p></div>
       
     </li>
   
@@ -712,7 +695,6 @@ on the same endpoint.</p>
   <div class="discussion">
     <p>Makes an audio packet from a buffer and sends it to Discord.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -729,8 +711,7 @@ on the same endpoint.</p>
       
       
         &mdash;
-        <div class='inline'><p>The audio data to send, must be exactly one Opus frame</p>
-</div>
+        <div class='inline'><p>The audio data to send, must be exactly one Opus frame</p></div>
       
     </li>
   
@@ -744,8 +725,7 @@ on the same endpoint.</p>
       
       
         &mdash;
-        <div class='inline'><p>The packet sequence number, incremented by one for subsequent packets</p>
-</div>
+        <div class='inline'><p>The packet sequence number, incremented by one for subsequent packets</p></div>
       
     </li>
   
@@ -760,8 +740,7 @@ on the same endpoint.</p>
       
         &mdash;
         <div class='inline'><p>When this packet should be played back, in no particular unit (essentially just the
-sequence number multiplied by 960)</p>
-</div>
+sequence number multiplied by 960)</p></div>
       
     </li>
   
@@ -816,7 +795,6 @@ sequence number multiplied by 960)</p>
   <div class="discussion">
     <p>Sends the UDP discovery packet with the internally stored SSRC. Discord will send a reply afterwards which can
 be received using <span class='object_link'><a href="#receive_discovery_reply-instance_method" title="Discordrb::Voice::VoiceUDP#receive_discovery_reply (method)">#receive_discovery_reply</a></span></p>
-
 
   </div>
 </div>
@@ -879,9 +857,9 @@ be received using <span class='object_link'><a href="#receive_discovery_reply-in
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:50 2026 by
+  Generated on Sun Jun  7 01:31:40 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

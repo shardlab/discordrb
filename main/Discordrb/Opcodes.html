@@ -6,13 +6,13 @@
 <title>
   Module: Discordrb::Opcodes
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Opcodes";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -78,7 +80,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/gateway.rb</dd>
+    <dd>lib/discordrb/gateway.rb
+</dd>
   </dl>
   
 </div>
@@ -86,7 +89,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>Gateway packet opcodes</p>
-
 
   </div>
 </div>
@@ -108,7 +110,6 @@
     <p><strong>Received</strong> when Discord dispatches an event to the gateway (like MESSAGE_CREATE, PRESENCE_UPDATE or whatever).
 The vast majority of received packets will have this opcode.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -124,7 +125,6 @@ The vast majority of received packets will have this opcode.</p>
     <p><strong>Two-way</strong>: The client has to send a packet with this opcode every ~40 seconds (actual interval specified in
 READY or RESUMED) and the current sequence number, otherwise it will be disconnected from the gateway. In certain
 cases Discord may also send one, specifically if two clients are connected at once.</p>
-
 
   </div>
 </div>
@@ -142,7 +142,6 @@ cases Discord may also send one, specifically if two clients are connected at on
 should contain the authentication token along with other stuff the server has to know right from the start, such
 as large_threshold and, for older gateway versions, the desired version.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -155,9 +154,8 @@ as large_threshold and, for older gateway versions, the desired version.</p>
         <dt id="PRESENCE-constant" class="">PRESENCE =
           <div class="docstring">
   <div class="discussion">
-    <p><strong>Sent</strong>: Packets with this opcode are used to change the user&#39;s status and played game. (Sending this is never
+    <p><strong>Sent</strong>: Packets with this opcode are used to change the user's status and played game. (Sending this is never
 necessary for a gateway client to behave correctly)</p>
-
 
   </div>
 </div>
@@ -171,10 +169,9 @@ necessary for a gateway client to behave correctly)</p>
         <dt id="VOICE_STATE-constant" class="">VOICE_STATE =
           <div class="docstring">
   <div class="discussion">
-    <p><strong>Sent</strong>: Packets with this opcode are used to change a user&#39;s voice state (mute/deaf/unmute/undeaf/etc.). It is
+    <p><strong>Sent</strong>: Packets with this opcode are used to change a user's voice state (mute/deaf/unmute/undeaf/etc.). It is
 also used to connect to a voice server in the first place. (Sending this is never necessary for a gateway client
 to behave correctly)</p>
-
 
   </div>
 </div>
@@ -188,9 +185,8 @@ to behave correctly)</p>
         <dt id="VOICE_PING-constant" class="">VOICE_PING =
           <div class="docstring">
   <div class="discussion">
-    <p><strong>Sent</strong>: This opcode is used to ping a voice server, whatever that means. The functionality of this opcode isn&#39;t
+    <p><strong>Sent</strong>: This opcode is used to ping a voice server, whatever that means. The functionality of this opcode isn't
 known well but non-user clients should never send it.</p>
-
 
   </div>
 </div>
@@ -209,7 +205,6 @@ than starting an entirely new session, it resumes an existing session by replayi
 sequence number. It should be used to recover from a connection error or anything like that when the session is
 still valid - sending this with an invalid session will cause an error to occur.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -225,7 +220,6 @@ still valid - sending this with an invalid session will cause an error to occur.
     <p><strong>Received</strong>: Discord sends this opcode to indicate that the client should reconnect to a different gateway
 server because the old one is currently being decommissioned. Counterintuitively, this opcode also invalidates the
 session - the client has to create an entirely new session with the new gateway instead of resuming the old one.</p>
-
 
   </div>
 </div>
@@ -244,7 +238,6 @@ also a REST endpoint available for this, but it is inconvenient to use because t
 pagination itself, whereas sending this opcode lets Discord handle the pagination and the client can just add
 members when it receives them. (Sending this is never necessary for a gateway client to behave correctly)</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -260,7 +253,6 @@ members when it receives them. (Sending this is never necessary for a gateway cl
     <p><strong>Received</strong>: Sent by Discord when the session becomes invalid for any reason. This may include improperly
 resuming existing sessions, attempting to start sessions with invalid data, or something else entirely. The client
 should handle this by simply starting a new session.</p>
-
 
   </div>
 </div>
@@ -278,7 +270,6 @@ should handle this by simply starting a new session.</p>
 server can safely search for a session server to handle the connection without the connection being terminated.
 As a side-effect, large bots are less likely to disconnect because of very large READY parse times.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -292,8 +283,7 @@ As a side-effect, large bots are less likely to disconnect because of very large
           <div class="docstring">
   <div class="discussion">
     <p><strong>Received</strong>: Returned after a heartbeat was sent to the server. This allows clients to identify and deal with
-zombie connections that don&#39;t dispatch any events anymore.</p>
-
+zombie connections that don't dispatch any events anymore.</p>
 
   </div>
 </div>
@@ -318,9 +308,9 @@ zombie connections that don&#39;t dispatch any events anymore.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:44 2026 by
+  Generated on Sun Jun  7 01:31:33 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

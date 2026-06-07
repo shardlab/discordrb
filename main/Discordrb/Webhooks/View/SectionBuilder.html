@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Webhooks::View::SectionBuilder
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Webhooks::View::SectionBuilder";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../../../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,7 +96,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/webhooks/view.rb</dd>
+    <dd>lib/discordrb/webhooks/view.rb
+</dd>
   </dl>
   
 </div>
@@ -102,7 +105,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>A section allows you to group together an accessory with text display components.</p>
-
 
   </div>
 </div>
@@ -141,8 +143,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Set the button for the section.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Set the button for the section.</p></div></span>
   
 </li>
 
@@ -166,8 +167,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Create a section component.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Create a section component.</p></div></span>
   
 </li>
 
@@ -189,8 +189,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Add a text display component to this section.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Add a text display component to this section.</p></div></span>
   
 </li>
 
@@ -212,13 +211,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Set the thumbnail for the section.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Set the thumbnail for the section.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 <div id="constructor_details" class="method_details_list">
@@ -236,7 +235,6 @@
 </h3><div class="docstring">
   <div class="discussion">
     <p>Create a section component.</p>
-
 
   </div>
 </div>
@@ -256,8 +254,7 @@
       
       
         &mdash;
-        <div class='inline'><p>The unique 32-bit ID of the section component.</p>
-</div>
+        <div class='inline'><p>The unique 32-bit ID of the section component.</p></div>
       
     </li>
   
@@ -276,8 +273,7 @@
       
       
         &mdash;
-        <div class='inline'><p>Yields the initialized section component.</p>
-</div>
+        <div class='inline'><p>Yields the initialized section component.</p></div>
       
     </li>
   
@@ -334,7 +330,6 @@
 that responds to <code>#to_h</code> which returns a hash in the format of <code>{ id: Integer, name: string }</code>.
 There is a limit of 100 characters to each custom_id.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -351,8 +346,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>The button&#39;s style type. See <span class='object_link'><a href="../View.html#BUTTON_STYLES-constant" title="Discordrb::Webhooks::View::BUTTON_STYLES (constant)">BUTTON_STYLES</a></span></p>
-</div>
+        <div class='inline'><p>The button's style type. See <span class='object_link'><a href="../View.html#BUTTON_STYLES-constant" title="Discordrb::Webhooks::View::BUTTON_STYLES (constant)">BUTTON_STYLES</a></span></p></div>
       
     </li>
   
@@ -368,8 +362,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>The unique 32-bit ID of the button component. This is not to be confused with the <code>custom_id</code>.</p>
-</div>
+        <div class='inline'><p>The unique 32-bit ID of the button component. This is not to be confused with the <code>custom_id</code>.</p></div>
       
     </li>
   
@@ -385,8 +378,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>The text label for the button. Either a label or emoji must be provided.</p>
-</div>
+        <div class='inline'><p>The text label for the button. Either a label or emoji must be provided.</p></div>
       
     </li>
   
@@ -402,8 +394,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>An emoji ID, or unicode emoji to attach to the button. Can also be an object</p>
-</div>
+        <div class='inline'><p>An emoji ID, or unicode emoji to attach to the button. Can also be an object</p></div>
       
     </li>
   
@@ -419,8 +410,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>Custom IDs are used to pass state to the events that are raised from interactions.</p>
-</div>
+        <div class='inline'><p>Custom IDs are used to pass state to the events that are raised from interactions.</p></div>
       
     </li>
   
@@ -436,8 +426,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether this button is disabled and shown as greyed out.</p>
-</div>
+        <div class='inline'><p>Whether this button is disabled and shown as greyed out.</p></div>
       
     </li>
   
@@ -453,8 +442,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>The URL, when using a link style button.</p>
-</div>
+        <div class='inline'><p>The URL, when using a link style button.</p></div>
       
     </li>
   
@@ -513,7 +501,6 @@ There is a limit of 100 characters to each custom_id.</p>
   <div class="discussion">
     <p>Add a text display component to this section.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -560,7 +547,6 @@ There is a limit of 100 characters to each custom_id.</p>
   <div class="discussion">
     <p>Set the thumbnail for the section. This is mutually exclusive with <span class='object_link'><a href="#button-instance_method" title="Discordrb::Webhooks::View::SectionBuilder#button (method)">#button</a></span>.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -577,8 +563,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>The URL to the thumbnail image.</p>
-</div>
+        <div class='inline'><p>The URL to the thumbnail image.</p></div>
       
     </li>
   
@@ -594,8 +579,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>The unique 32-bit ID of the thumbnail component.</p>
-</div>
+        <div class='inline'><p>The unique 32-bit ID of the thumbnail component.</p></div>
       
     </li>
   
@@ -611,8 +595,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>The description of the thumbnail.</p>
-</div>
+        <div class='inline'><p>The description of the thumbnail.</p></div>
       
     </li>
   
@@ -628,8 +611,7 @@ There is a limit of 100 characters to each custom_id.</p>
       
       
         &mdash;
-        <div class='inline'><p>Whether or not to apply a spoiler label to the thumbnail.</p>
-</div>
+        <div class='inline'><p>Whether or not to apply a spoiler label to the thumbnail.</p></div>
       
     </li>
   
@@ -662,9 +644,9 @@ There is a limit of 100 characters to each custom_id.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:50 2026 by
+  Generated on Sun Jun  7 01:31:41 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

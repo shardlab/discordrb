@@ -6,13 +6,13 @@
 <title>
   Module: Discordrb::Commands::CommandContainer
   
-    &mdash; Documentation by YARD 0.9.39
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Commands::CommandContainer";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -88,7 +90,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/commands/container.rb</dd>
+    <dd>lib/discordrb/commands/container.rb
+</dd>
   </dl>
   
 </div>
@@ -97,7 +100,6 @@
   <div class="discussion">
     <p>This module holds a collection of commands that can be easily added to by calling the <span class='object_link'><a href="#command-instance_method" title="Discordrb::Commands::CommandContainer#command (method)">#command</a></span>
 function. Other containers can be included into it as well. This allows for modularization of command bots.</p>
-
 
   </div>
 </div>
@@ -133,8 +135,7 @@ function. Other containers can be included into it as well. This allows for modu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Hash of command names and commands this container has.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Hash of command names and commands this container has.</p></div></span>
   
 </li>
 
@@ -169,8 +170,7 @@ function. Other containers can be included into it as well. This allows for modu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Adds a new command to the container.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Adds a new command to the container.</p></div></span>
   
 </li>
 
@@ -192,8 +192,7 @@ function. Other containers can be included into it as well. This allows for modu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Includes another container into this one.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Includes another container into this one.</p></div></span>
   
 </li>
 
@@ -215,8 +214,7 @@ function. Other containers can be included into it as well. This allows for modu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Adds all commands from another container into this one.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Adds all commands from another container into this one.</p></div></span>
   
 </li>
 
@@ -238,16 +236,17 @@ function. Other containers can be included into it as well. This allows for modu
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Removes a specific command from this container.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Removes a specific command from this container.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 
+  
   
   
   
@@ -277,7 +276,6 @@ function. Other containers can be included into it as well. This allows for modu
   <div class="discussion">
     <p>Returns hash of command names and commands this container has.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -293,8 +291,7 @@ function. Other containers can be included into it as well. This allows for modu
       
       
         &mdash;
-        <div class='inline'><p>hash of command names and commands this container has.</p>
-</div>
+        <div class='inline'><p>hash of command names and commands this container has.</p></div>
       
     </li>
   
@@ -343,12 +340,10 @@ function. Other containers can be included into it as well. This allows for modu
   <div class="note notetag">
     <strong>Note:</strong>
     <div class='inline'><p><code>LocalJumpError</code>s are rescued from internally, giving bots the opportunity to use <code>return</code> or <code>break</code> in
-their blocks without propagating an exception.</p>
-</div>
+their blocks without propagating an exception.</p></div>
   </div>
 
 <p>Adds a new command to the container.</p>
-
 
   </div>
 </div>
@@ -366,8 +361,7 @@ their blocks without propagating an exception.</p>
       
       
         &mdash;
-        <div class='inline'><p>The name of the command to add.</p>
-</div>
+        <div class='inline'><p>The name of the command to add.</p></div>
       
     </li>
   
@@ -383,8 +377,7 @@ their blocks without propagating an exception.</p>
       
       
         &mdash;
-        <div class='inline'><p>The attributes to initialize the command with.</p>
-</div>
+        <div class='inline'><p>The attributes to initialize the command with.</p></div>
       
     </li>
   
@@ -407,8 +400,7 @@ their blocks without propagating an exception.</p>
           
             &mdash; <div class='inline'><p>A list of additional names for this command. This in effect
 creates <span class='object_link'><a href="CommandAlias.html" title="Discordrb::Commands::CommandAlias (class)">Discordrb::Commands::CommandAlias</a></span> objects in the container (<span class='object_link'><a href="#commands-instance_method" title="Discordrb::Commands::CommandContainer#commands (method)">#commands</a></span>) that refer to the newly created command.
-Additionally, the default help command will identify these command names as an alias where applicable.</p>
-</div>
+Additionally, the default help command will identify these command names as an alias where applicable.</p></div>
           
         </li>
       
@@ -420,8 +412,7 @@ Additionally, the default help command will identify these command names as an a
           </span>
           
             &mdash; <div class='inline'><p>The minimum permission level that can use this command, inclusive.
-See <span class='object_link'><a href="CommandBot.html#set_user_permission-instance_method" title="Discordrb::Commands::CommandBot#set_user_permission (method)">Discordrb::Commands::CommandBot#set_user_permission</a></span> and <span class='object_link'><a href="CommandBot.html#set_role_permission-instance_method" title="Discordrb::Commands::CommandBot#set_role_permission (method)">Discordrb::Commands::CommandBot#set_role_permission</a></span>.</p>
-</div>
+See <span class='object_link'><a href="CommandBot.html#set_user_permission-instance_method" title="Discordrb::Commands::CommandBot#set_user_permission (method)">Discordrb::Commands::CommandBot#set_user_permission</a></span> and <span class='object_link'><a href="CommandBot.html#set_role_permission-instance_method" title="Discordrb::Commands::CommandBot#set_role_permission (method)">Discordrb::Commands::CommandBot#set_role_permission</a></span>.</p></div>
           
         </li>
       
@@ -434,8 +425,7 @@ See <span class='object_link'><a href="CommandBot.html#set_user_permission-insta
           
             &mdash; <div class='inline'><p>Message to display when a user does not have sufficient
 permissions to execute a command. %name% in the message will be replaced with the name of the command. Disable
-the message by setting this option to false.</p>
-</div>
+the message by setting this option to false.</p></div>
           
         </li>
       
@@ -447,8 +437,7 @@ the message by setting this option to false.</p>
           </span>
           
             &mdash; <div class='inline'><p>Discord action permissions (e.g. <code>:kick_members</code>) that
-should be required to use this command. See <span class='object_link'><a href="../Permissions.html#FLAGS-constant" title="Discordrb::Permissions::FLAGS (constant)">Permissions::FLAGS</a></span> for a list.</p>
-</div>
+should be required to use this command. See <span class='object_link'><a href="../Permissions.html#FLAGS-constant" title="Discordrb::Permissions::FLAGS (constant)">Permissions::FLAGS</a></span> for a list.</p></div>
           
         </li>
       
@@ -460,8 +449,7 @@ should be required to use this command. See <span class='object_link'><a href=".
           </span>
           
             &mdash; <div class='inline'><p>Roles, or their IDs, that user must have to use this command
-(user must have all of them).</p>
-</div>
+(user must have all of them).</p></div>
           
         </li>
       
@@ -473,8 +461,7 @@ should be required to use this command. See <span class='object_link'><a href=".
           </span>
           
             &mdash; <div class='inline'><p>Roles, or their IDs, that user should have to use this command
-(user should have at least one of them).</p>
-</div>
+(user should have at least one of them).</p></div>
           
         </li>
       
@@ -486,8 +473,7 @@ should be required to use this command. See <span class='object_link'><a href=".
           </span>
           
             &mdash; <div class='inline'><p>The channels that this command can be used on. An
-empty array indicates it can be used on any channel. Supersedes the command bot attribute.</p>
-</div>
+empty array indicates it can be used on any channel. Supersedes the command bot attribute.</p></div>
           
         </li>
       
@@ -499,8 +485,7 @@ empty array indicates it can be used on any channel. Supersedes the command bot 
           </span>
           
             &mdash; <div class='inline'><p>Whether this command is able to be used inside of a command chain
-or sub-chain. Typically used for administrative commands that shouldn&#39;t be done carelessly.</p>
-</div>
+or sub-chain. Typically used for administrative commands that shouldn't be done carelessly.</p></div>
           
         </li>
       
@@ -512,8 +497,7 @@ or sub-chain. Typically used for administrative commands that shouldn&#39;t be d
           </span>
           
             &mdash; <div class='inline'><p>Whether this command is visible in the help command. See the
-:help_command attribute of <span class='object_link'><a href="CommandBot.html#initialize-instance_method" title="Discordrb::Commands::CommandBot#initialize (method)">Discordrb::Commands::CommandBot#initialize</a></span>.</p>
-</div>
+:help_command attribute of <span class='object_link'><a href="CommandBot.html#initialize-instance_method" title="Discordrb::Commands::CommandBot#initialize (method)">Discordrb::Commands::CommandBot#initialize</a></span>.</p></div>
           
         </li>
       
@@ -525,8 +509,7 @@ or sub-chain. Typically used for administrative commands that shouldn&#39;t be d
           </span>
           
             &mdash; <div class='inline'><p>A short description of what this command does. Will be shown in the help
-command if the user asks for it.</p>
-</div>
+command if the user asks for it.</p></div>
           
         </li>
       
@@ -538,8 +521,7 @@ command if the user asks for it.</p>
           </span>
           
             &mdash; <div class='inline'><p>A short description of how this command should be used. Will be displayed in
-the help command or if the user uses it wrong.</p>
-</div>
+the help command or if the user uses it wrong.</p></div>
           
         </li>
       
@@ -552,8 +534,7 @@ the help command or if the user uses it wrong.</p>
           
             &mdash; <div class='inline'><p>An array of argument classes which will be used for type-checking.
 Hard-coded for some native classes, but can be used with any class that implements static
-method <code>from_argument</code>.</p>
-</div>
+method <code>from_argument</code>.</p></div>
           
         </li>
       
@@ -565,8 +546,7 @@ method <code>from_argument</code>.</p>
           </span>
           
             &mdash; <div class='inline'><p>The minimum number of arguments this command should have. If a user
-attempts to call the command with fewer arguments, the usage information will be displayed, if it exists.</p>
-</div>
+attempts to call the command with fewer arguments, the usage information will be displayed, if it exists.</p></div>
           
         </li>
       
@@ -577,8 +557,7 @@ attempts to call the command with fewer arguments, the usage information will be
             
           </span>
           
-            &mdash; <div class='inline'><p>The maximum number of arguments the command should have.</p>
-</div>
+            &mdash; <div class='inline'><p>The maximum number of arguments the command should have.</p></div>
           
         </li>
       
@@ -591,8 +570,7 @@ attempts to call the command with fewer arguments, the usage information will be
           
             &mdash; <div class='inline'><p>The message that should be displayed if the command hits a rate
 limit. None if unspecified or nil. %time% in the message will be replaced with the time in seconds when the
-command will be available again.</p>
-</div>
+command will be available again.</p></div>
           
         </li>
       
@@ -604,8 +582,7 @@ command will be available again.</p>
           </span>
           
             &mdash; <div class='inline'><p>The rate limit bucket that should be used for rate limiting. No rate limiting
-will be done if unspecified or nil.</p>
-</div>
+will be done if unspecified or nil.</p></div>
           
         </li>
       
@@ -617,9 +594,8 @@ will be done if unspecified or nil.</p>
           </span>
           
             &mdash; <div class='inline'><p>A string to respond with, or a block to be called in the event an exception
-is raised internally. If given a String, <code>%exception%</code> will be substituted with the exception&#39;s <code>#message</code>. If given
-a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with the <code>Exception</code>.</p>
-</div>
+is raised internally. If given a String, <code>%exception%</code> will be substituted with the exception's <code>#message</code>. If given
+a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with the <code>Exception</code>.</p></div>
           
         </li>
       
@@ -637,8 +613,7 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
       
       
         
-        <div class='inline'><p>The block is executed when the command is executed.</p>
-</div>
+        <div class='inline'><p>The block is executed when the command is executed.</p></div>
       
     </li>
   
@@ -656,8 +631,7 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
       
       
         &mdash;
-        <div class='inline'><p>The event of the message that contained the command.</p>
-</div>
+        <div class='inline'><p>The event of the message that contained the command.</p></div>
       
     </li>
   
@@ -673,8 +647,7 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
       
       
         &mdash;
-        <div class='inline'><p>The command that was added.</p>
-</div>
+        <div class='inline'><p>The command that was added.</p></div>
       
     </li>
   
@@ -742,7 +715,6 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
   <div class="discussion">
     <p>Includes another container into this one.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -759,8 +731,7 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
       
       
         &mdash;
-        <div class='inline'><p>An EventContainer or CommandContainer that will be included if it can.</p>
-</div>
+        <div class='inline'><p>An EventContainer or CommandContainer that will be included if it can.</p></div>
       
     </li>
   
@@ -821,7 +792,6 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
   <div class="discussion">
     <p>Adds all commands from another container into this one. Existing commands will be overwritten.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -838,8 +808,7 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
       
       
         &mdash;
-        <div class='inline'><p>A module that <code>extend</code>s <span class='object_link'><a href="" title="Discordrb::Commands::CommandContainer (module)">Discordrb::Commands::CommandContainer</a></span> from which the commands will be added.</p>
-</div>
+        <div class='inline'><p>A module that <code>extend</code>s <span class='object_link'><a href="" title="Discordrb::Commands::CommandContainer (module)">Discordrb::Commands::CommandContainer</a></span> from which the commands will be added.</p></div>
       
     </li>
   
@@ -888,7 +857,6 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
   <div class="discussion">
     <p>Removes a specific command from this container.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -905,8 +873,7 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
       
       
         &mdash;
-        <div class='inline'><p>The command to remove.</p>
-</div>
+        <div class='inline'><p>The command to remove.</p></div>
       
     </li>
   
@@ -941,9 +908,9 @@ a <code>Proc</code>, it will be passed the <code>CommandEvent</code> along with 
 </div>
 
       <div id="footer">
-  Generated on Mon Apr 13 01:23:46 2026 by
+  Generated on Sun Jun  7 01:31:35 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.39 (ruby-3.3.11).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>
