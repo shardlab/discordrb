@@ -17,6 +17,7 @@ module Discordrb::Events
     # @return [Time] when the typing happened.
     attr_reader :timestamp
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 

@@ -8,6 +8,7 @@ describe Discordrb::Emoji do
   subject(:emoji) do
     server = double('server', role: double)
 
+    expect(bot).to receive(:ensure_user)
     described_class.new(emoji_data, bot, server)
   end
 

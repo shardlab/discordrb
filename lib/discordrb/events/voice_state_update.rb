@@ -11,6 +11,7 @@ module Discordrb::Events
     # @return [Channel, nil] the old channel this user was on, or nil if the user is newly joining voice.
     attr_reader :old_channel
 
+    # @!visibility private
     def initialize(data, old_channel_id, bot)
       @bot = bot
 
