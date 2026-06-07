@@ -7,6 +7,7 @@ module Discordrb::Events
   class Negated
     attr_reader :object
 
+    # @!visibility private
     def initialize(object)
       @object = object
     end
@@ -75,6 +76,7 @@ module Discordrb::Events
 
   # Generic event handler that can be extended
   class EventHandler
+    # @!visibility private
     def initialize(attributes, block)
       @attributes = attributes
       @block = block

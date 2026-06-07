@@ -151,14 +151,18 @@ describe Discordrb::Bot do
       let(:user_id) { instance_double(Integer, 'user_id') }
       let(:author) { instance_double(Discordrb::User, id: user_id) }
       let(:message_fixture) { { 'author' => { 'id' => user_id }, 'channel_id' => channel_id } }
-      let(:message) { instance_double(Discordrb::Message, channel: channel, from_bot?: false, mentions: []) }
+      let(:message) { instance_double(Discordrb::Message, channel: channel, from_bot?: false, mentions: [], role_mentions: [], id: 123_456) }
+      let(:profile) { instance_double(Discordrb::Profile, id: 123_456, current_bot?: false) }
 
       before do
+        allow(user_id).to receive(:to_i).and_return(user_id)
+        allow(bot).to receive(:profile).and_return(profile)
         allow(bot).to receive(:channel).with(channel_id).and_return(channel)
         allow(channel).to receive(:is_a?).with(Discordrb::Channel).and_return(true)
         allow(bot).to receive(:ignored?).with(user_id).and_return(false)
         allow(bot).to receive(:raise_event)
         allow(Discordrb::Message).to receive(:new).and_return(message)
+        allow(channel).to receive(:process_last_message_id)
       end
 
       it 'raises a ChannelCreateEvent if the DM channel is uncached' do
