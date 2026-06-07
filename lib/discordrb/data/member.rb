@@ -177,13 +177,7 @@ module Discordrb
     # @param role [Role, String, Integer] the role to check or its ID.
     # @return [true, false] whether this member has the specified role.
     def role?(role)
-      role = role.resolve_id
-      roles.any?(role)
-    end
-
-    # @see Member#set_roles
-    def roles=(role)
-      set_roles(role)
+      roles.any?(role.resolve_id)
     end
 
     # Check if the current user has communication disabled.
@@ -193,21 +187,6 @@ module Discordrb
     end
 
     alias_method :timeout?, :communication_disabled?
-
-    # Set a user's timeout duration, or remove it by setting the timeout to `nil`.
-    # @param timeout_until [Time, nil] When the timeout will end.
-    def communication_disabled_until=(timeout_until)
-      modify(timeout_until: timeout_until)
-    end
-
-    alias_method :timeout=, :communication_disabled_until=
-
-    # Bulk sets a member's roles.
-    # @param role [Role, Array<Role>] The role(s) to set.
-    # @param reason [String] The reason the user's roles are being changed.
-    def set_roles(role, reason = nil)
-      modify(roles: role_id_array(role), reason: reason)
-    end
 
     # Adds and removes roles from a member.
     # @param add [Role, Array<Role>] The role(s) to add.
@@ -294,30 +273,6 @@ module Discordrb
       roles.sort_by { |role| [role.position, role.id] }
     end
 
-    # Server deafens this member.
-    # @param reason [String, nil] The reason for defeaning this member.
-    def server_deafen(reason: nil)
-      modify(deaf: true, reason: reason)
-    end
-
-    # Server undeafens this member.
-    # @param reason [String, nil] The reason for un-defeaning this member.
-    def server_undeafen(reason: nil)
-      modify(deaf: false, reason: reason)
-    end
-
-    # Server mutes this member.
-    # @param reason [String, nil] The reason for muting this member.
-    def server_mute(reason: nil)
-      modify(mute: true, reason: reason)
-    end
-
-    # Server unmutes this member.
-    # @param reason [String, nil] The reason for un-muting this member.
-    def server_unmute(reason: nil)
-      modify(mute: false, reason: reason)
-    end
-
     # Bans this member from the server.
     # @param message_days [Integer] How many days worth of messages sent by the member should be deleted. This parameter is deprecated and will be removed in 4.0.
     # @param message_seconds [Integer] How many seconds worth of messages sent by the member should be deleted.
@@ -337,23 +292,6 @@ module Discordrb
     def kick(reason = nil)
       server.kick(@user, reason)
     end
-
-    # @see Member#set_nick
-    def nick=(nick)
-      set_nick(nick)
-    end
-
-    alias_method :nickname=, :nick=
-
-    # Sets or resets this member's nickname. Requires the Change Nickname permission for the bot itself and Manage
-    # Nicknames for other users.
-    # @param nick [String, nil] The string to set the nickname to, or nil if it should be reset.
-    # @param reason [String] The reason the user's nickname is being changed.
-    def set_nick(nick, reason = nil)
-      modify(nick: nick, reason: reason)
-    end
-
-    alias_method :set_nickname, :set_nick
 
     # @return [String] the name the user displays as (nickname if they have one, global_name if they have one, username otherwise)
     def display_name
@@ -375,36 +313,6 @@ module Discordrb
     # @return [AvatarDecoration, nil] the avatar decoration that the user displays (server avatar decoration if they have one, user avatar decoration if they have one, nil otherwise)
     def display_avatar_decoration
       server_avatar_decoration || avatar_decoration
-    end
-
-    # Set the flags for this member.
-    # @param flags [Integer, nil] The new bitwise value of flags for this member, or nil.
-    def flags=(flags)
-      modify(flags: flags)
-    end
-
-    # Set the server banner for the current bot.
-    # @param banner [File, nil] A file like object that responds to read, or `nil`.
-    def server_banner=(banner)
-      raise 'Can only set a banner for the current bot' unless current_bot?
-
-      modify(banner: banner)
-    end
-
-    # Set the server avatar for the current bot.
-    # @param avatar [File, nil] A file like object that responds to read, or `nil`.
-    def server_avatar=(avatar)
-      raise 'Can only set an avatar for the current bot' unless current_bot?
-
-      modify(avatar: avatar)
-    end
-
-    # Set the server bio for the current bot.
-    # @param bio [String, nil] The new server bio for the bot, or nil.
-    def server_bio=(bio)
-      raise 'Can only set a bio for the current bot' unless current_bot?
-
-      modify(bio: bio)
     end
 
     # Modify the properties of the member.
@@ -454,6 +362,85 @@ module Discordrb
       update_data(JSON.parse(API::Server.update_member(@bot.token, @server_id, @user.id, **data, reason: reason)))
       nil
     end
+
+    # @!group Deprecated
+
+    # @deprecated Please migrate to using {#modify} with the `flags:` argument.
+    def flags=(flags)
+      modify(flags: flags)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `nick:` argument.
+    def nick=(nick)
+      set_nick(nick)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `nick:` argument.
+    def set_nick(nick, reason = nil)
+      modify(nick: nick, reason: reason)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `bio:` argument.
+    def server_bio=(bio)
+      raise 'Can only set a bio for the current bot' unless current_bot?
+
+      modify(bio: bio)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `banner:` argument.
+    def server_banner=(banner)
+      raise 'Can only set a banner for the current bot' unless current_bot?
+
+      modify(banner: banner)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `avatar:` argument.
+    def server_avatar=(avatar)
+      raise 'Can only set an avatar for the current bot' unless current_bot?
+
+      modify(avatar: avatar)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `deaf:` argument.
+    def server_deafen(reason: nil)
+      modify(deaf: true, reason: reason)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `deaf:` argument.
+    def server_undeafen(reason: nil)
+      modify(deaf: false, reason: reason)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `mute:` argument.
+    def server_mute(reason: nil)
+      modify(mute: true, reason: reason)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `mute:` argument.
+    def server_unmute(reason: nil)
+      modify(mute: false, reason: reason)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `timeout_until:` argument.
+    def communication_disabled_until=(timeout_until)
+      modify(timeout_until: timeout_until)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `roles:` argument.
+    def set_roles(role, reason = nil)
+      modify(roles: role_id_array(role), reason: reason)
+    end
+
+    # @deprecated Please migrate to using {#modify} with the `roles:` argument.
+    def roles=(role)
+      set_roles(role)
+    end
+
+    alias_method :nickname=, :nick=
+    alias_method :set_nickname, :set_nick
+    alias_method :timeout=, :communication_disabled_until=
+
+    # @!endgroup
 
     # @!visibility private
     def update_data(data)

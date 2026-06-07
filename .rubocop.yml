@@ -126,6 +126,6 @@ Style/Documentation:
 
 Style/IfUnlessModifier:
     Exclude:
-    - lib/discordrb/data/role.rb
     - lib/discordrb/data/channel.rb
+    - lib/discordrb/data/role.rb
     - lib/discordrb/data/member.rb
