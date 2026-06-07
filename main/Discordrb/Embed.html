@@ -233,6 +233,33 @@ unless grabbed from its ID in a channel.</p>
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#flags-instance_method" title="#flags (instance method)">#<strong>flags</strong>  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The flags of the embed object combined as a bitfield.</p></div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#footer-instance_method" title="#footer (instance method)">#<strong>footer</strong>  &#x21d2; EmbedFooter<sup>?</sup> </a>
     
 
@@ -580,12 +607,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-47
-48
-49</pre>
+50
+51
+52</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 47</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 50</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_author'>author</span>
   <span class='ivar'>@author</span>
@@ -641,12 +668,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-28
-29
-30</pre>
+31
+32
+33</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 28</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_color'>color</span>
   <span class='ivar'>@color</span>
@@ -698,12 +725,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-15
-16
-17</pre>
+18
+19
+20</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 15</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 18</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_description'>description</span>
   <span class='ivar'>@description</span>
@@ -755,15 +782,72 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-50
-51
-52</pre>
+53
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 53</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_fields'>fields</span>
   <span class='ivar'>@fields</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="flags-instance_method">
+  
+    #<strong>flags</strong>  &#x21d2; <tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the flags of the embed object combined as a bitfield.</p>
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Integer.html" title="Integer (class)">Integer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the flags of the embed object combined as a bitfield.</p></div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+15
+16
+17</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 15</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_flags'>flags</span>
+  <span class='ivar'>@flags</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -812,12 +896,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-32
-33
-34</pre>
+35
+36
+37</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 32</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_footer'>footer</span>
   <span class='ivar'>@footer</span>
@@ -869,12 +953,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-38
-39
-40</pre>
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 41</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_image'>image</span>
   <span class='ivar'>@image</span>
@@ -926,12 +1010,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-35
-36
-37</pre>
+38
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 35</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 38</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_provider'>provider</span>
   <span class='ivar'>@provider</span>
@@ -983,12 +1067,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-41
-42
-43</pre>
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_thumbnail'>thumbnail</span>
   <span class='ivar'>@thumbnail</span>
@@ -1040,12 +1124,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-25
-26
-27</pre>
+28
+29
+30</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 28</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_timestamp'>timestamp</span>
   <span class='ivar'>@timestamp</span>
@@ -1164,12 +1248,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-22
-23
-24</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 22</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_type'>type</span>
   <span class='ivar'>@type</span>
@@ -1278,12 +1362,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-44
-45
-46</pre>
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_video'>video</span>
   <span class='ivar'>@video</span>
@@ -1340,12 +1424,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-72
-73
-74</pre>
+76
+77
+78</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 72</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 76</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_message'>message</span>
   <span class='ivar'>@message</span> <span class='kw'>unless</span> <span class='ivar'>@message</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Snapshot.html" title="Discordrb::Snapshot (class)">Snapshot</a></span></span><span class='rparen'>)</span>
@@ -1395,12 +1479,12 @@ unless grabbed from its ID in a channel.</p>
       <pre class="lines">
 
 
-77
-78
-79</pre>
+81
+82
+83</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/discordrb/data/embed.rb', line 81</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_snapshot'>snapshot</span>
   <span class='ivar'>@message</span> <span class='kw'>unless</span> <span class='ivar'>@message</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Message.html" title="Discordrb::Message (class)">Message</a></span></span><span class='rparen'>)</span>
@@ -1415,7 +1499,7 @@ unless grabbed from its ID in a channel.</p>
 </div>
 
       <div id="footer">
-  Generated on Sun Jun  7 01:57:45 2026 by
+  Generated on Sun Jun  7 02:12:03 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.44 (ruby-3.3.11).
 </div>
