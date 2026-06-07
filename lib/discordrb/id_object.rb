@@ -10,7 +10,7 @@ module Discordrb
 
     # ID based comparison
     def ==(other)
-      Discordrb.id_compare(@id, other)
+      Discordrb.id_compare?(@id, other)
     end
 
     alias_method :eql?, :==

@@ -31,6 +31,7 @@ module Discordrb
     # @return [Member, User, nil] the user object of the owner or nil if the webhook was requested using the token.
     attr_reader :owner
 
+    # @!visibility private
     def initialize(data, bot)
       @bot = bot
 
@@ -84,9 +85,9 @@ module Discordrb
     def update(data)
       # Only pass a value for avatar if the key is defined as sending nil will delete the
       data[:avatar] = avatarise(data[:avatar]) if data.key?(:avatar)
-      data[:channel_id] = data[:channel].resolve_id
+      data[:channel_id] = data[:channel]&.resolve_id
       data.delete(:channel)
-      update_webhook(data)
+      update_webhook(**data)
     end
 
     # Deletes the webhook.
@@ -135,7 +136,7 @@ module Discordrb
     # @return [Message, nil] If `wait` is `true`, a {Message} will be returned. Otherwise this method will return `nil`.
     # @note This is only available to webhooks with publically exposed tokens. This excludes channel follow webhooks and webhooks retrieved
     #   via the audit log.
-    def execute(content: nil, username: nil, avatar_url: nil, tts: nil, file: nil, embeds: nil, allowed_mentions: nil, wait: true, builder: nil, components: nil)
+    def execute(content: nil, username: nil, avatar_url: nil, tts: nil, file: nil, embeds: nil, allowed_mentions: nil, wait: true, builder: nil, components: nil, flags: 0, has_components: false)
       raise Discordrb::Errors::UnauthorizedWebhook unless @token
 
       params = { content: content, username: username, avatar_url: avatar_url, tts: tts, file: file, embeds: embeds, allowed_mentions: allowed_mentions }
@@ -143,12 +144,14 @@ module Discordrb
       builder ||= Webhooks::Builder.new
       view = Webhooks::View.new
 
+      flags |= (1 << 15) if has_components
+
       yield(builder, view) if block_given?
 
       data = builder.to_json_hash.merge(params.compact)
       components ||= view
 
-      resp = API::Webhook.token_execute_webhook(@token, @id, wait, data[:content], data[:username], data[:avatar_url], data[:tts], data[:file], data[:embeds], data[:allowed_mentions], nil, components.to_a)
+      resp = API::Webhook.token_execute_webhook(@token, @id, wait, data[:content], data[:username], data[:avatar_url], data[:tts], data[:file], data[:embeds], data[:allowed_mentions], flags, components.to_a)
 
       Message.new(JSON.parse(resp), @bot) if wait
     end
@@ -172,7 +175,7 @@ module Discordrb
     # @return [Message] The updated message.
     # @param components [View, Array<Hash>] Interaction components to associate with this message.
     # @note When editing `allowed_mentions`, it will update visually in the client but not alert the user with a notification.
-    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, builder: nil, components: nil)
+    def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, builder: nil, components: nil, flags: 0, has_components: false)
       raise Discordrb::Errors::UnauthorizedWebhook unless @token
 
       params = { content: content, embeds: embeds, allowed_mentions: allowed_mentions }.compact
@@ -180,19 +183,21 @@ module Discordrb
       builder ||= Webhooks::Builder.new
       view ||= Webhooks::View.new
 
+      flags |= (1 << 15) if has_components
+
       yield(builder, view) if block_given?
 
       data = builder.to_json_hash.merge(params.compact)
       components ||= view
 
-      resp = API::Webhook.token_edit_message(@token, @id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a)
+      resp = API::Webhook.token_edit_message(@token, @id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, nil, flags)
       Message.new(JSON.parse(resp), @bot)
     end
 
     # Utility function to get a webhook's avatar URL.
     # @return [String] the URL to the avatar image
     def avatar_url
-      return API::User.default_avatar unless @avatar
+      return API::User.default_avatar(@id) unless @avatar
 
       API::User.avatar_url(@id, @avatar)
     end
@@ -211,11 +216,7 @@ module Discordrb
     private
 
     def avatarise(avatar)
-      if avatar.respond_to? :read
-        "data:image/jpg;base64,#{Base64.strict_encode64(avatar.read)}"
-      else
-        avatar
-      end
+      avatar.respond_to?(:read) ? Discordrb.encode64(avatar) : avatar
     end
 
     def update_internal(data)
