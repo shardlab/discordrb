@@ -320,7 +320,7 @@ module Discordrb
         raise ArgumentError, 'The target role that was provded is not valid'
       end
 
-      roles = @server.roles.sort_by { |role| [role.position, role.id] }
+      roles = @server.roles.sort
 
       # Make sure we remove the current role.
       myself = roles.rindex(@id).tap { |index| roles.delete_at(index) }
@@ -372,6 +372,52 @@ module Discordrb
     end
 
     alias_method :update_colors, :update_colours
+
+    # Check if this role is less than another role in the hierarchy.
+    # @param other [Role] The other role that you want to compare to this one.
+    # @return [true, false] Whether or not this role is less than the other role in the hierarchy.
+    def <(other)
+      # rubocop:disable Style/NumericPredicate
+      self.<=>(other) < 0
+    end
+
+    # Check if this role is greater than another role in the hierarchy.
+    # @param other [Role] The other role that you want to compare to this one.
+    # @return [true, false] Whether or not this role is greater than the other role in the hierarchy.
+    def >(other)
+      self.<=>(other) > 0
+      # rubocop:enable Style/NumericPredicate
+    end
+
+    # Check if this role is less than or equal to another role in the hierarchy.
+    # @param other [Role] The other role that you want to against to this one.
+    # @return [true, false] Whether or not this role is less than or equal to the other role in the hierarchy.
+    def <=(other)
+      self.<=>(other) <= 0
+    end
+
+    # Check if this role is greater than or equal to another role in the hierarchy.
+    # @param other [Role] The other role that you want to compare against this one.
+    # @return [true, false] Whether or not this role is greater than or equal to the other role in the hierarchy.
+    def >=(other)
+      self.<=>(other) >= 0
+    end
+
+    # Compare the role against another role based on its position.
+    # @param other [Role] The role to compare the current role against.
+    # @return [0, -1, 1, nil] An integer representing the ordering of the
+    #   roles, or `nil` if the other entity is not able to be compared to the role.
+    def <=>(other)
+      return unless other.is_a?(Role) && @server == other.server
+
+      if @id == other.id
+        0
+      elsif @position == other.position
+        other.id <=> @id
+      else
+        @position <=> other.position
+      end
+    end
 
     # Modify the properties of the role.
     # @param name [String, nil] The new 1-100 character name of the role.
@@ -441,7 +487,7 @@ module Discordrb
       nil
     end
 
-    # The inspect method is overwritten to give more useful output
+    # The inspect method is overwritten to give more useful output.
     def inspect
       "<Role name=#{@name} permissions=#{@permissions.inspect} hoist=#{@hoist} colour=#{@colour.inspect} server=#{@server.inspect} position=#{@position} mentionable=#{@mentionable} unicode_emoji=#{@unicode_emoji} flags=#{@flags}>"
     end

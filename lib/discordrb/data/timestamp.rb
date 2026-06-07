@@ -37,6 +37,15 @@ module Discordrb
       Discordrb.timestamp(@time, @style)
     end
 
+    # Check if the timestamp markdown object is equivalent to another object.
+    # @param other [TimestampMarkdown, Object] The object to check against for equality.
+    # @return [true, false] Whether or not the two objects are equivalent to each other.
+    def ==(other)
+      other.is_a?(TimestampMarkdown) ? (other.style == style) && (other.time == time) : false
+    end
+
+    alias_method :eql?, :==
+
     # @!visibility private
     def inspect
       "<TimestampMarkdown time=#{@time.to_i} style=\"#{style}\">"
