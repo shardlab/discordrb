@@ -188,7 +188,7 @@ module Discordrb
 
         get_users = lambda do |limit, after|
           data = API::Channel.get_poll_voters(@bot.token, channel_id, @message_id, @id, after:, limit:)
-          JSON.parse(data)['users'].collect { |poll_voter_data| @bot.ensure_user(poll_voter_data) }
+          JSON.parse(data)['users'].collect { |poll_voter_data| @bot.ensure_user(poll_voter_data, true) }
         end
 
         return get_users.call(limit, after_time) if limit && limit <= 100

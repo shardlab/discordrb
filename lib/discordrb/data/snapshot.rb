@@ -41,7 +41,7 @@ module Discordrb
       @attachments = data['attachments']&.map { |file| Attachment.new(file, self, @bot) } || []
       @created_at = data['timestamp'] ? Time.parse(data['timestamp']) : nil
       @edited_at = data['edited_timestamp'] ? Time.parse(data['edited_timestamp']) : nil
-      @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention) } || []
+      @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention, true) } || []
       @components = data['components']&.map { |component| Components.from_data(component, @bot) } || []
     end
 

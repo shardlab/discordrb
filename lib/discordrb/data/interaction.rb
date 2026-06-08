@@ -113,7 +113,7 @@ module Discordrb
                 data['member']['guild_id'] = @server_id
                 Discordrb::Member.new(data['member'], bot.servers[@server_id], bot)
               else
-                bot.ensure_user(data['user'])
+                bot.ensure_user(data['user'], true)
               end
       @token = data['token']
       @version = data['version']
@@ -1066,8 +1066,8 @@ module Discordrb
         @message = message
         @id = data['id'].to_i
         @type = data['type']
-        @user = bot.ensure_user(data['user']) if data['user']
-        @target_user = bot.ensure_user(data['target_user']) if data['target_user']
+        @user = bot.ensure_user(data['user'], true) if data['user']
+        @target_user = bot.ensure_user(data['target_user'], true) if data['target_user']
         @target_message_id = data['target_message_id']&.to_i
         @triggering_metadata = Metadata.new(data['triggering_interaction_metadata'], @message, @bot) if data['triggering_interaction_metadata']
         @interacted_message_id = data['interacted_message_id']&.to_i

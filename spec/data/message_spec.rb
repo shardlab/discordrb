@@ -28,7 +28,7 @@ describe Discordrb::Message do
     allow(server).to receive(:member)
     allow(channel).to receive(:private?)
     allow(channel).to receive(:text?)
-    allow(bot).to receive(:ensure_user).with message_author
+    allow(bot).to receive(:ensure_user).with message_author, true
   end
 
   fixture :message_data, %i[message]
@@ -113,6 +113,7 @@ describe Discordrb::Message do
     let(:message) { described_class.new(message_data, bot) }
     let(:emoji) { double('emoji') }
     let(:reaction) { double('reaction') }
+    let(:user1) { double('user') }
 
     fixture :user_data, %i[user]
 
@@ -125,6 +126,10 @@ describe Discordrb::Message do
       allow(Discordrb::API::Channel).to receive(:get_reactions)
         .with(any_args, user_data['id'].to_i, anything, nil, nil, anything, anything)
         .and_return([].to_json)
+
+      allow(bot).to receive(:ensure_user)
+        .with(user_data, true)
+        .and_return(user1)
     end
 
     it 'calls the API method' do
