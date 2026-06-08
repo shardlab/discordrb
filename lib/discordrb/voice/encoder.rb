@@ -93,7 +93,7 @@ module Discordrb::Voice
 
     private
 
-    def ffmpeg_command(input: '-', options: null)
+    def ffmpeg_command(input: '-', options: '')
       [
         @use_avconv ? 'avconv' : 'ffmpeg',
         '-loglevel', '0',
