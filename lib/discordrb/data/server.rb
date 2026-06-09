@@ -1223,7 +1223,8 @@ module Discordrb
       return sticker if sticker || !request
 
       response = JSON.parse(API::Server.get_sticker(@bot.token, @id, id))
-      Sticker.new(response, self, @bot).tap { |sticker| cache_sticker(sticker) }
+      sticker = Sticker.new(response, self, @bot)
+      @stickers[sticker.id] = sticker
     rescue StandardError
       nil
     end
@@ -1236,7 +1237,7 @@ module Discordrb
     # @param reason [String, nil] The audit log reason to show for creating the sticker.
     # @return [Sticker] The sticker that was created.
     def create_sticker(name:, file:, tags:, description: nil, reason: nil)
-      raise ArgumentError, 'the `file:` parameter must respond to #read' unless file.respond_to?(:read)
+      raise ArgumentError, "the 'file' parameter must respond to #read" unless file.respond_to?(:read)
 
       description ||= ''
       tags = tags.join(', ') if tags.is_a?(Array)
