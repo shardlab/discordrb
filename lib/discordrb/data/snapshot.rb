@@ -30,6 +30,9 @@ module Discordrb
     # @return [Array<Component>] the interaction components associated with the message snapshot.
     attr_reader :components
 
+    # @return [Array<Sticker::Item>] the sticker items included in the message snapshot.
+    attr_reader :stickers
+
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
@@ -43,6 +46,7 @@ module Discordrb
       @edited_at = data['edited_timestamp'] ? Time.parse(data['edited_timestamp']) : nil
       @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention) } || []
       @components = data['components']&.map { |component| Components.from_data(component, @bot) } || []
+      @stickers = (data['sticker_items'] || data['stickers'])&.map { |sticker| Sticker::Item.new(sticker, @bot) } || []
     end
 
     # Check whether the message snapshot has been edited.
