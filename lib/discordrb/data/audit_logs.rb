@@ -74,7 +74,7 @@ module Discordrb
       167 => :onboarding_update,
       190 => :home_settings_create,
       191 => :home_settings_update,
-      192 => :voice_channel_status_update,
+      192 => :voice_channel_status_create,
       193 => :voice_channel_status_delete
     }.freeze
 
@@ -85,7 +85,7 @@ module Discordrb
       stage_instance_create sticker_create scheduled_event_create thread_create
       soundboard_sound_create auto_moderation_rule_create onboarding_prompt_create
       onboarding_create home_settings_create creator_monetization_request_created
-      message_pin auto_moderation_flag_to_channel
+      message_pin auto_moderation_flag_to_channel voice_channel_status_create
     ].freeze
 
     # @!visibility private
@@ -108,7 +108,6 @@ module Discordrb
       soundboard_sound_update auto_moderation_rule_update onboarding_prompt_update
       onboarding_update home_settings_update creator_monetization_terms_accepted
       auto_moderation_user_communication_disabled auto_moderation_quarantine_user
-      voice_channel_status_update
     ].freeze
 
     # @return [Hash<String => User>] the users included in the audit logs.
