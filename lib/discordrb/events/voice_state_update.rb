@@ -99,6 +99,30 @@ module Discordrb::Events
                else
                  e
                end
+        end,
+        matches_all(@attributes[:connected], event.old_channel) do |a, e|
+          case a
+          when TrueClass
+            e.nil?
+          when FalseClass
+            !e.nil?
+          end
+        end,
+        matches_all(@attributes[:disconnected], event.channel) do |a, e|
+          case a
+          when TrueClass
+            e.nil?
+          when FalseClass
+            !e.nil?
+          end
+        end,
+        matches_all(@attributes[:moved], event) do |a, e|
+          case a
+          when TrueClass
+            (e.channel && e.old_channel) && e.channel != e.old_channel
+          when FalseClass
+            !((e.channel && e.old_channel) && e.channel != e.old_channel)
+          end
         end
       ].reduce(true, &:&)
     end
