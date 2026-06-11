@@ -340,6 +340,21 @@ module Discordrb::API::Channel
     )
   end
 
+  # Update the status of a voice channel.
+  # https://discord.com/developers/docs/resources/channel#set-voice-channel-status
+  def set_voice_channel_status(token, channel_id, status:, reason: nil)
+    Discordrb::API.request(
+      :channels_cid_voice_status,
+      channel_id,
+      :put,
+      "#{Discordrb::API.api_base}/channels/#{channel_id}/voice-status",
+      { status: }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
   # Get a list of pinned messages in a channel
   # https://discord.com/developers/docs/resources/message#get-channel-pins
   def pinned_messages(token, channel_id, limit = 50, before = nil)

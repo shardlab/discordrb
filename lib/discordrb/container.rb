@@ -290,6 +290,36 @@ module Discordrb
       register_event(ChannelRecipientRemoveEvent, attributes, block)
     end
 
+    # This **event** is raised whenever the status for a voice channel is updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [String, Regexp] :status Matches the new status of the voice channel.
+    # @option attributes [String, Integer, Server] :server Matches the server where the status was updated.
+    # @option attributes [String, Integer, Channel] :channel Matches the channel where the status was updated.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ChannelStatusUpdateEvent] The event that was raised.
+    # @return [ChannelStatusUpdateEventHandler] the event handler that was registered.
+    def channel_status_update(attributes = {}, &block)
+      register_event(ChannelStatusUpdateEvent, attributes, block)
+    end
+
+    alias_method :voice_channel_status, :channel_status_update
+
+    # This **event** is raised whenever the start time for a voice channel is updated.
+    # @param attributes [Hash] The event's attributes.
+    # @option attributes [Time] :after Matches a time after the start time of the voice channel.
+    # @option attributes [Time] :before Matches a time before the start time of the voice channel.
+    # @option attributes [Time, Integer] :start_time Unix timestamp of the new start time of the voice channel.
+    # @option attributes [String, Integer, Server] :server Matches the server where the start time was updated.
+    # @option attributes [String, Integer, Channel] :channel Matches the channel where the start time was updated.
+    # @yield The block is executed when the event is raised.
+    # @yieldparam event [ChannelStartTimeUpdateEvent] The event that was raised.
+    # @return [ChannelStartTimeUpdateEventHandler] the event handler that was registered.
+    def channel_start_time_update(attributes = {}, &block)
+      register_event(ChannelStartTimeUpdateEvent, attributes, block)
+    end
+
+    alias_method :voice_channel_start_time, :channel_start_time_update
+
     # This **event** is raised when a user's voice state changes. This includes when a user joins, leaves, or
     # moves between voice channels, as well as their mute and deaf status for themselves and on the server.
     # @param attributes [Hash] The event's attributes.
