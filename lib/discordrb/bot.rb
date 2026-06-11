@@ -449,11 +449,12 @@ module Discordrb
     # @param nonce [String, nil] A optional nonce in order to verify that a message was sent. Maximum of twenty-five characters.
     # @param enforce_nonce [true, false] Whether the nonce should be enforced and used for message de-duplication.
     # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to this message.
+    # @return [nil]
     def send_temporary_message(channel, content, timeout, tts = false, embeds = nil, attachments = nil, allowed_mentions = nil, message_reference = nil, components = nil, flags = 0, nonce = nil, enforce_nonce = false, poll = nil)
+      message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components, flags, nonce, enforce_nonce, poll)
+
       Thread.new do
         Thread.current[:discordrb_name] = "#{@current_thread}-temp-msg"
-
-        message = send_message(channel, content, tts, embeds, attachments, allowed_mentions, message_reference, components, flags, nonce, enforce_nonce, poll)
         sleep(timeout)
         message.delete
       end
