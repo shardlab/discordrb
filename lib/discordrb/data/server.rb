@@ -1378,6 +1378,7 @@ module Discordrb
       process_active_threads(new_data['threads']) if new_data['threads']
       process_incident_actions(new_data['incidents_data']) if new_data.key?('incidents_data')
       process_scheduled_events(new_data['guild_scheduled_events']) if new_data['guild_scheduled_events']
+      process_stage_instances(new_data['stage_instances']) if new_data['stage_instances']
     end
 
     # Adds a channel to this server's cache
@@ -1521,6 +1522,15 @@ module Discordrb
       events.each do |element|
         event = ScheduledEvent.new(element, self, @bot)
         @scheduled_events[event.resolve_id] = event
+      end
+    end
+
+    def process_stage_instances(instances)
+      return unless instances
+
+      instances.each do |element|
+        channel = @channels_by_id[element['channel_id'].to_i]
+        channel&.process_stage_instance(StageInstance.new(element, channel, @bot))
       end
     end
   end
