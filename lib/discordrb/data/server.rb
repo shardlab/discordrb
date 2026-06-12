@@ -670,6 +670,18 @@ module Discordrb
       @members[member.id] = member
     end
 
+    # Ensure a member has been cached from a given data hash
+    # @note For internal use only
+    # @!visibility private
+    def ensure_member(data, force_cache = true)
+      if (member = @members[data['user']['id'].to_i])
+        member.update_data(data) if force_cache
+        member
+      else
+        cache_member(Member.new(data, self, @bot))
+      end
+    end
+
     # Adds a scheduled event to the cache
     # @note For internal use only
     # @!visibility private
