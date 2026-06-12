@@ -22,7 +22,6 @@ module Discordrb
       @channels = {}
       @pm_channels = {}
       @thread_members = {}
-      @server_previews = {}
     end
 
     # Returns or caches the available voice regions
@@ -105,8 +104,8 @@ module Discordrb
       server_id = server_or_id.resolve_id
       user_id = user_id.resolve_id
       server = server_or_id.is_a?(Server) ? server_or_id : self.server(server_id)
-
-      return server.member(user_id) if server.member_cached?(user_id)
+      cached = server.member(user_id, false)
+      return cached if cached
 
       LOGGER.out("Resolving member #{server_id} on server #{user_id}")
       begin
@@ -116,6 +115,7 @@ module Discordrb
       end
       member = Member.new(JSON.parse(response), server, self)
       server.cache_member(member)
+      member
     end
 
     # Creates a PM channel for the given user ID, or if one exists already, returns that one.
@@ -139,11 +139,8 @@ module Discordrb
     # @param id [Integer, String, Server] the ID of the server preview to get.
     # @return [ServerPreview, nil] the server preview, or `nil` if the server isn't accessible.
     def server_preview(id)
-      id = id.resolve_id
-      return @server_previews[id] if @server_previews[id]
-
-      response = JSON.parse(API::Server.preview(token, id))
-      @server_previews[id] = ServerPreview.new(response, self)
+      response = API::Server.preview(token, id.resolve_id)
+      ServerPreview.new(JSON.parse(response), self)
     rescue StandardError
       nil
     end
@@ -220,16 +217,17 @@ module Discordrb
     end
 
     # Gets the code for an invite.
-    # @param invite [String, Invite] The invite to get the code for. Possible formats are:
+    # @param invite [String, Invite, VanityInvite] The invite to get the code for. Possible formats are:
     #
     #    * An {Invite} object
     #    * The code for an invite
+    #    * A {VanityInvite} object
     #    * A fully qualified invite URL (e.g. `https://discord.com/invite/0A37aN7fasF7n83q`)
     #    * A short invite URL with protocol (e.g. `https://discord.gg/0A37aN7fasF7n83q`)
     #    * A short invite URL without protocol (e.g. `discord.gg/0A37aN7fasF7n83q`)
     # @return [String] Only the code for the invite.
     def resolve_invite_code(invite)
-      invite = invite.code if invite.is_a? Discordrb::Invite
+      invite = invite.code if invite.is_a?(Invite) || invite.is_a?(VanityInvite)
       invite = invite[(invite.rindex('/') + 1)..] if invite.start_with?('http', 'discord.gg')
       invite
     end

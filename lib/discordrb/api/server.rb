@@ -16,8 +16,7 @@ module Discordrb::API::Server
     )
   end
 
-  # Update a server
-  # https://discord.com/developers/docs/resources/guild#modify-guild
+  # @deprecated Please migrate to using {API::Server.update!} instead.
   def update(token, server_id, name, region, icon, afk_channel_id, afk_timeout, splash, default_message_notifications, verification_level, explicit_content_filter, system_channel_id, reason = nil)
     Discordrb::API.request(
       :guilds_sid,
@@ -88,8 +87,19 @@ module Discordrb::API::Server
     )
   end
 
-  # Create a channel
-  # https://discord.com/developers/docs/resources/guild#create-guild-channel
+  # Get the active threads for a server.
+  # https://discord.com/developers/docs/resources/guild#list-active-guild-threads
+  def list_active_threads(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_threads_active,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/threads/active",
+      Authorization: token
+    )
+  end
+
+  # @deprecated Please migrate to using {API::Channel.create!} instead.
   def create_channel(token, server_id, name, type, topic, bitrate, user_limit, permission_overwrites, parent_id, nsfw, rate_limit_per_user, position, reason = nil)
     Discordrb::API.request(
       :guilds_sid_channels,
@@ -232,7 +242,7 @@ module Discordrb::API::Server
     )
   end
 
-  # @deprecated Please use {ban_user!} instead.
+  # @deprecated Please migrate to using {API::Server.ban_user!} instead.
   # https://discord.com/developers/docs/resources/guild#create-guild-ban
   def ban_user(token, server_id, user_id, message_days, reason = nil)
     ban_user!(token, server_id, user_id, message_days * 86_400, reason)
@@ -304,30 +314,12 @@ module Discordrb::API::Server
     )
   end
 
-  # Create a role (parameters such as name and colour if not set can be set by update_role afterwards)
-  # Permissions are the Discord defaults; allowed: invite creation, reading/sending messages,
-  # sending TTS messages, embedding links, sending files, reading the history, mentioning everybody,
-  # connecting to voice, speaking and voice activity (push-to-talk isn't mandatory)
-  # https://discord.com/developers/docs/resources/guild#get-guild-roles
+  # @deprecated Please migrate to using {API::Server.create_role!}.
   def create_role(token, server_id, name, colour, hoist, mentionable, packed_permissions, reason = nil, colours = nil, icon = nil, unicode_emoji = nil)
-    Discordrb::API.request(
-      :guilds_sid_roles,
-      server_id,
-      :post,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/roles",
-      { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions, colors: colours, icon: icon, unicode_emoji: unicode_emoji }.compact.to_json,
-      Authorization: token,
-      content_type: :json,
-      'X-Audit-Log-Reason': reason
-    )
+    create_role!(token, server_id, name:, color: colour, hoist:, mentionable:, permissions: packed_permissions, colors: colours, icon:, unicode_emoji:, reason:)
   end
 
-  # Update a role
-  # Permissions are the Discord defaults; allowed: invite creation, reading/sending messages,
-  # sending TTS messages, embedding links, sending files, reading the history, mentioning everybody,
-  # connecting to voice, speaking and voice activity (push-to-talk isn't mandatory)
-  # https://discord.com/developers/docs/resources/guild#batch-modify-guild-role
-  # @param icon [:undef, File]
+  # @deprecated Please migrate to using {API::Server.update_role!}
   def update_role(token, server_id, role_id, name, colour, hoist = false, mentionable = false, packed_permissions = 104_324_161, reason = nil, icon = :undef, unicode_emoji = :undef, colours = :undef)
     data = { color: colour, name: name, hoist: hoist, mentionable: mentionable, permissions: packed_permissions, colors: colours, unicode_emoji: unicode_emoji }
 
@@ -343,6 +335,21 @@ module Discordrb::API::Server
       :patch,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/roles/#{role_id}",
       data.reject { |_, value| value == :undef }.to_json,
+      Authorization: token,
+      content_type: :json,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Creat a new role.
+  # https://docs.discord.com/developers/resources/guild#create-guild-role
+  def create_role!(token, server_id, name: :undef, permissions: :undef, colors: :undef, hoist: :undef, icon: :undef, unicode_emoji: :undef, mentionable: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_roles,
+      server_id,
+      :post,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/roles",
+      { name:, permissions:, colors:, hoist:, icon:, unicode_emoji:, mentionable: }.reject { |_, value| value == :undef }.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
@@ -431,30 +438,43 @@ module Discordrb::API::Server
     )
   end
 
-  # Get server prune count
+  # Get the number of members that would be removed in a prune operation.
   # https://discord.com/developers/docs/resources/guild#get-guild-prune-count
-  def prune_count(token, server_id, days)
+  def get_server_prune_count(token, server_id, days: nil, include_roles: nil)
+    query = URI.encode_www_form({ days:, include_roles: }.compact)
+
     Discordrb::API.request(
       :guilds_sid_prune,
       server_id,
       :get,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/prune?days=#{days}",
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/prune?#{query}",
       Authorization: token
     )
   end
 
-  # Begin server prune
+  # Begin a prune operation to remove inactive members from the server.
   # https://discord.com/developers/docs/resources/guild#begin-guild-prune
-  def begin_prune(token, server_id, days, reason = nil)
+  def begin_server_prune(token, server_id, days: :undef, compute_prune_count: :undef, include_roles: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid_prune,
       server_id,
       :post,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/prune",
-      { days: days },
+      { days:, compute_prune_count:, include_roles: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
       Authorization: token,
       'X-Audit-Log-Reason': reason
     )
+  end
+
+  # @deprecated Please migrate to using {API::Server.get_server_prune_count}.
+  def prune_count(token, server_id, days)
+    get_server_prune_count(token, server_id, days:)
+  end
+
+  # @deprecated Please migrate to using {API::Server.begin_server_prune}.
+  def begin_prune(token, server_id, days, reason = nil)
+    begin_server_prune(token, server_id, days:, reason:)
   end
 
   # Get invites from server
@@ -469,14 +489,33 @@ module Discordrb::API::Server
     )
   end
 
-  # Gets a server's audit logs
-  # https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
-  def audit_logs(token, server_id, limit, user_id = nil, action_type = nil, before = nil)
+  # Get the vanity invite for the server.
+  # https://discord.com/developers/docs/resources/guild#get-guild-vanity-url
+  def get_vanity_invite(token, server_id)
     Discordrb::API.request(
-      :guilds_sid_auditlogs,
+      :guilds_sid_vanity_url,
       server_id,
       :get,
-      "#{Discordrb::API.api_base}/guilds/#{server_id}/audit-logs?limit=#{limit}#{"&user_id=#{user_id}" if user_id}#{"&action_type=#{action_type}" if action_type}#{"&before=#{before}" if before}",
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/vanity-url",
+      Authorization: token
+    )
+  end
+
+  # @deprecated Please migrate to using {API::Server.get_audit_log}.
+  def audit_logs(token, server_id, limit, user_id = nil, action_type = nil, before = nil)
+    get_audit_log(token, server_id, limit:, user_id:, action_type:, before:)
+  end
+
+  # Get the audit log for a server.
+  # https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
+  def get_audit_log(token, server_id, limit: 100, before: nil, after: nil, user_id: nil, target_id: nil, action_type: nil)
+    query = URI.encode_www_form({ before:, after:, limit:, user_id:, action_type:, target_id: }.compact)
+
+    Discordrb::API.request(
+      :guilds_gid_audit_logs,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/audit-logs?#{query}",
       Authorization: token
     )
   end
@@ -560,8 +599,7 @@ module Discordrb::API::Server
   end
   alias embed widget
 
-  # Modify a server's widget settings
-  # https://discord.com/developers/docs/resources/guild#modify-guild-widget
+  # @deprecated Please migrate to using {API::Server.update_widget} instead.
   def modify_widget(token, server_id, enabled, channel_id, reason = nil)
     Discordrb::API.request(
       :guilds_sid_embed,
@@ -576,34 +614,68 @@ module Discordrb::API::Server
   end
   alias modify_embed modify_widget
 
-  # Adds a custom emoji.
-  # https://discord.com/developers/docs/resources/emoji#create-guild-emoji
-  def add_emoji(token, server_id, image, name, roles = [], reason = nil)
+  # Get a list of emojis in the server.
+  # https://discord.com/developers/docs/resources/emoji#list-guild-emojis
+  def list_emojis(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_emojis,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/emojis",
+      Authorization: token
+    )
+  end
+
+  # Get a specific emoji in the server.
+  # https://discord.com/developers/docs/resources/emoji#get-guild-emoji
+  def get_emoji(token, server_id, emoji_id)
+    Discordrb::API.request(
+      :guilds_sid_emojis_eid,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/emojis/#{emoji_id}",
+      Authorization: token
+    )
+  end
+
+  # Create a new emoji in the server.
+  # https://discord.com/developers/docs/resources/emoji#create-guild-emojis
+  def create_emoji(token, server_id, name:, image:, roles: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid_emojis,
       server_id,
       :post,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/emojis",
-      { image: image, name: name, roles: roles }.to_json,
+      { name:, image:, roles: }.reject { |_, value| value == :undef }.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
     )
   end
 
-  # Changes an emoji name and/or roles.
-  # https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
-  def edit_emoji(token, server_id, emoji_id, name, roles = nil, reason = nil)
+  # Create a new emoji in the server.
+  # https://discord.com/developers/docs/resources/emoji#create-guild-emojis
+  def update_emoji(token, server_id, emoji_id, name: :undef, roles: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid_emojis_eid,
       server_id,
       :patch,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/emojis/#{emoji_id}",
-      { name: name, roles: roles }.to_json,
+      { name:, roles: }.reject { |_, value| value == :undef }.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
     )
+  end
+
+  # @deprecated Please migrate to using {API::Server.create_emoji} instead.
+  def add_emoji(token, server_id, image, name, roles = [], reason = nil)
+    create_emoji(token, server_id, image:, name:, roles:, reason:)
+  end
+
+  # @deprecated Please migrate to using {API::Server.update_emoji} instead.
+  def edit_emoji(token, server_id, emoji_id, name, roles = nil, reason = nil)
+    update_emoji(token, server_id, emoji_id, name:, roles:, reason:)
   end
 
   # Deletes a custom emoji
@@ -645,13 +717,13 @@ module Discordrb::API::Server
 
   # Adds a member to a server with an OAuth2 Bearer token that has been granted `guilds.join`
   # https://discord.com/developers/docs/resources/guild#add-guild-member
-  def add_member(token, server_id, user_id, access_token, nick = nil, roles = [], mute = false, deaf = false)
+  def add_member(token, server_id, user_id, access_token, nick = nil, roles = [], mute = false, deaf = false, flags = 0)
     Discordrb::API.request(
       :guilds_sid_members_uid,
       server_id,
       :put,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/members/#{user_id}",
-      { access_token: access_token, nick: nick, roles: roles, mute: mute, deaf: deaf }.to_json,
+      { access_token: access_token, nick: nick, roles: roles, mute: mute, deaf: deaf, flags: flags }.to_json,
       content_type: :json,
       Authorization: token
     )
