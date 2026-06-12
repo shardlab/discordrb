@@ -1242,7 +1242,7 @@ module Discordrb
         default_sort_order: FORUM_SORT_ORDERS[default_sort_order] || default_sort_order,
         default_forum_layout: FORUM_LAYOUTS[default_forum_layout] || default_forum_layout,
         archived: archived,
-        flags: flags == :undef ? flags : Array(flags).map { |bit| FLAGS[bit] || bit.to_i }.reduce(&:|),
+        flags: flags == :undef ? flags : [*flags].reduce(0) { |sum, bit| sum | (FLAGS[bit] || bit.to_i) },
         default_thread_rate_limit_per_user: default_thread_rate_limit_per_user,
         auto_archive_duration: auto_archive_duration,
         locked: locked,

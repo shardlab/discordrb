@@ -153,28 +153,28 @@ module Discordrb
     # @param scopes [Array<String, Symbol>, nil] The default Oauth scopes for the config.
     # @param permissions [Permissions, String, Integer, nil] The default permissions for the config.
     # @return [nil]
-    def add_integration_type(type:, scopes: :undef, permissions: :undef)
+    def modify_integration_type(type:, scopes: :undef, permissions: :undef)
       permissions = permissions.bits if permissions.respond_to?(:bits)
       type = Interaction::INTEGRATION_TYPES[type.to_sym] if type.respond_to?(:to_sym)
 
       integration_types = @integration_types.dup
 
       integration_types[type] = {
-        scopes: scopes == :undef ? integration_types[type]&.scopes : scopes,
-        permissions: (permissions == :undef ? integration_types[type]&.permissions : permissions)&.to_s
+        scopes: scopes == :undef ? (integration_types[type]&.scopes || []) : scopes,
+        permissions: (permissions == :undef ? (integration_types[type]&.permissions&.bits || 0) : permissions)&.to_s
       }
 
       modify(integration_types: collect_integration_types(integration_types))
     end
 
     # Get the integration types config for when the application has been installed to a user.
-    # @return [InstallParams, nil] The default install params for when the application's is installed to a user.
+    # @return [InstallParams, nil] The default install params for when the application is installed to a user.
     def user_integration_type
       @integration_types[1]
     end
 
     # Get the integration types config for when the application has been installed in a server.
-    # @return [InstallParams, nil] The defaults install params for when the application's is installed in a server.
+    # @return [InstallParams, nil] The defaults install params for when the application is installed in a server.
     def server_integration_type
       @integration_types[0]
     end
@@ -204,7 +204,7 @@ module Discordrb
       data = {
         icon: icon.respond_to?(:read) ? Discordrb.encode64(icon) : icon,
         cover_image: cover_image.respond_to?(:read) ? Discordrb.encode64(cover_image) : cover_image,
-        flags: flags == :undef ? flags : [*flags].map { |bit| FLAGS[bit] || bit.to_i }.reduce(&:|),
+        flags: flags == :undef ? flags : [*flags].reduce(0) { |sum, bit| sum | (FLAGS[bit] || bit.to_i) },
         tags: tags,
         description: description,
         custom_install_url: custom_install_url,
@@ -276,7 +276,7 @@ module Discordrb
 
     # @!visibility private
     def inspect
-      "<Application id=#{@id} name=\"#{@name}\" public=#{@public} tags=#{@tags} flags=#{@flags}>"
+      "<Application id=#{@id} name=\"#{@name}\" public=#{@public} flags=#{@flags}>"
     end
 
     private
