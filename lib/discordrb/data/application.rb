@@ -55,16 +55,16 @@ module Discordrb
     # @return [String] the hex encoded key for verification in interactions and the GameSDK.
     attr_reader :verify_key
 
-    # @return [Team, nil] the team that owns this application, or `nil` if the application isn't owned by a team.
+    # @return [Team, nil] the team that owns the application, or `nil` if the application isn't owned by a team.
     attr_reader :team
 
-    # @return [Integer, nil] the ID of the server that is associated with this application.
+    # @return [Integer, nil] the ID of the server that is associated with the application.
     attr_reader :server_id
 
     # @return [String, nil] the URL slug that links to the application's game store page.
     attr_reader :slug
 
-    # @return [Integer, nil] the game SKU ID if this application is a game sold on Discord.
+    # @return [Integer, nil] the game SKU ID if the application is a game sold on Discord.
     attr_reader :primary_sku_id
 
     # @return [String, nil] the ID of the application's default rich presence invite cover image.
@@ -104,12 +104,6 @@ module Discordrb
     # @return [Array<String>] an array of traits describing the content and functionality of the application.
     attr_reader :tags
 
-    # @return [InstallParams] the settings for the application's default authorization link.
-    attr_reader :install_params
-
-    # @return [Hash<Integer => InstallParams>] the default scopes and permissions for each supported installation context.
-    attr_reader :integration_types
-
     # @return [String, nil] the default custom authorization URL for the application.
     attr_reader :custom_install_url
 
@@ -120,8 +114,8 @@ module Discordrb
       update_data(data)
     end
 
-    # Get the server associated with this application.
-    # @return [Server, nil] This will be nil if the bot does not have an associated server set.
+    # Get the server associated with the application.
+    # @return [Server, nil] This will be `nil` if the bot does not have an associated server set.
     # @raise [Discordrb::Errors::NoPermission] This can happen when the bot is not in the associated server.
     def server
       @bot.server(@server_id) if @server_id
@@ -142,38 +136,45 @@ module Discordrb
     end
 
     # Delete an integration types config for the application.
-    # @param type [Integer, String] The type of the integration type to remove.
+    # @param type [Integer, Symbol] The type of the integration type to remove.
     # @return [nil]
     def delete_integration_type(type)
-      new_data = @integration_types.dup.tap { |i| i.delete(type.to_i) }
-      modify(integration_types: collect_integration_types(new_data))
+      type = Interaction::INTEGRATION_TYPES[type.to_sym] if type.respond_to?(:to_sym)
+
+      integration_types = @integration_types.dup.tap do |integration_type|
+        integration_type.delete(type)
+      end
+
+      modify(integration_types: collect_integration_types(integration_types))
     end
 
-    # Add an integration types config for the application.
-    # @param type [Integer, String] The type of the integration type.
+    # Add or update an integration types config for the application.
+    # @param type [Integer, Symbol] The type of the integration type to upsert.
     # @param scopes [Array<String, Symbol>, nil] The default Oauth scopes for the config.
     # @param permissions [Permissions, String, Integer, nil] The default permissions for the config.
     # @return [nil]
-    def add_integration_type(type:, scopes: nil, permissions: nil)
-      permissions = permisisons.bits if permissions.respond_to?(:bits)
-      new_data = @integration_types.dup
+    def modify_integration_type(type:, scopes: :undef, permissions: :undef)
+      permissions = permissions.bits if permissions.respond_to?(:bits)
+      type = Interaction::INTEGRATION_TYPES[type.to_sym] if type.respond_to?(:to_sym)
 
-      new_data[type.to_i] = {
-        scopes: scopes&.map(&:to_s),
-        permissions: permissions&.to_s
+      integration_types = @integration_types.dup
+
+      integration_types[type] = {
+        scopes: scopes == :undef ? (integration_types[type]&.scopes || []) : scopes,
+        permissions: (permissions == :undef ? (integration_types[type]&.permissions&.bits || 0) : permissions)&.to_s
       }
 
-      modify(integration_types: collect_integration_types(new_data.compact))
+      modify(integration_types: collect_integration_types(integration_types))
     end
 
     # Get the integration types config for when the application has been installed to a user.
-    # @return [InstallParams, nil] The default install params for when the application's is installed to a user.
+    # @return [InstallParams, nil] The default install params for when the application is installed to a user.
     def user_integration_type
       @integration_types[1]
     end
 
     # Get the integration types config for when the application has been installed in a server.
-    # @return [InstallParams, nil] The defaults install params for when the application's is installed in a server.
+    # @return [InstallParams, nil] The defaults install params for when the application is installed in a server.
     def server_integration_type
       @integration_types[0]
     end
@@ -189,25 +190,21 @@ module Discordrb
     # @param webhook_events_status [Integer] The new status of the application's webhook events.
     # @param webhook_event_types [Array<String, Symbol>, nil] The new types of webhook events that the application wishes to receive.
     # @param interactions_endpoint_url [String, nil] The new URL the application will use to receive INTERACTION_CREATE events via HTTP.
-    # @param install_scopes [Array<String, Symbol>] The new default scopes to add the application to a server with.
-    # @param install_permissions [Permissions, Integer, String] The new default permissions to add the application to a server with.
     # @param role_connections_verification_url [String, nil] The new role connections verification URL for the application.
     # @param add_flags [Integer, Symbol, Array<Symbol, Integer>] The limited intent flags to add to the application.
     # @param remove_flags [Integer, Symbol, Array<Symbol, Integer>] The limited intent flags to remove from the application.
-    # @param integration_types [#to_h] The new integration types configuration for the application.
     # @note When using the `add_flags:` and `remove_flags:` parameters, The flags are removed first, and then added.
     # @return [nil]
     def modify(
       icon: :undef, cover_image: :undef, flags: :undef, tags: :undef, description: :undef,
       custom_install_url: :undef, webhook_events_url: :undef, webhook_events_status: :undef,
-      webhook_event_types: :undef, interactions_endpoint_url: :undef, install_scopes: :undef,
-      install_permissions: :undef, role_connections_verification_url: :undef, add_flags: :undef,
-      remove_flags: :undef, integration_types: :undef
+      webhook_event_types: :undef, interactions_endpoint_url: :undef, integration_types: :undef,
+      role_connections_verification_url: :undef, add_flags: :undef, remove_flags: :undef
     )
       data = {
         icon: icon.respond_to?(:read) ? Discordrb.encode64(icon) : icon,
         cover_image: cover_image.respond_to?(:read) ? Discordrb.encode64(cover_image) : cover_image,
-        flags: flags == :undef ? flags : [*flags].map { |bit| FLAGS[bit] || bit.to_i }.reduce(&:|),
+        flags: flags == :undef ? flags : [*flags].reduce(0) { |sum, bit| sum | (FLAGS[bit] || bit.to_i) },
         tags: tags,
         description: description,
         custom_install_url: custom_install_url,
@@ -219,18 +216,11 @@ module Discordrb
         integration_types_config: integration_types == :undef ? integration_types : integration_types&.to_h
       }
 
-      ((data[:install_params] ||= @install_params.to_h)[:scopes] = install_scopes) if install_scopes != :undef
-
-      if install_permissions != :undef
-        install_permissions = install_permissions.bits if install_permissions.respond_to?(:bits)
-        (data[:install_params] ||= @install_params.to_h)[:permissions] = install_permissions.to_s
-      end
-
       if add_flags != :undef || remove_flags != :undef
         raise ArgumentError, "'add_flags' and 'remove_flags' are mutually exclusive with 'flags'" if flags != :undef
 
-        to_flags = lambda do |value|
-          [*(value == :undef ? 0 : value)].map { |bit| FLAGS[bit] || bit.to_i }.reduce(&:|)
+        to_flags = lambda do |bits|
+          bits == :undef ? 0 : [*bits].reduce(0) { |sum, bit| sum | (FLAGS[bit] || bit.to_i) }
         end
 
         data[:flags] = ((@flags & ~to_flags.call(remove_flags)) | to_flags.call(add_flags))
@@ -243,21 +233,21 @@ module Discordrb
     # @!method automod_rule_badge?
     #   @return [true, false] whether or not the application has at least 100 automod rules across all of its servers.
     # @!method approved_presence_intent?
-    #   @return [true, false] whether or not the application is in less than 100 servers and has access to the server presences intent.
+    #   @return [true, false] whether or not the application has reached more than 10,000 unique users and has access to the server presences intent.
     # @!method limited_presence_intent?
-    #   @return [true, false] whether or not the application is in more than 100 servers and has access to the server presences intent.
+    #   @return [true, false] whether or not the application has reached less than 10,000 unique users and has access to the server presences intent.
     # @!method approved_server_members_intent?
-    #   @return [true, false] whether or not the application is in more than 100 servers and has access to the server members intent.
+    #   @return [true, false] whether or not the application has reached more than 10,000 unique users and has access to the server members intent.
     # @!method limited_server_members_intent?
-    #   @return [true, false] whether or not the application is in less than 100 servers and has access to the server members intent.
+    #   @return [true, false] whether or not the application has reached less than 10,000 unique users and has access to the server members intent.
     # @!method pending_server_limit_verification?
     #   @return [true, false] whether or not the application has underwent unusual growth that is preventing it from being verified.
     # @!method embedded?
     #   @return [true, false] whether or not the application is embedded within the Discord application (currently unavailable publicly).
     # @!method approved_message_content_intent?
-    #   @return [true, false] whether or not the application is in more than 100 servers and has access to the message content intent.
+    #   @return [true, false] whether or not the application has reached more than 10,000 unique users and has access to the message content intent.
     # @!method limited_message_content_intent?
-    #   @return [true, false] whether or not the application is in less than 100 servers and has access to the message content intent.
+    #   @return [true, false] whether or not the application has reached less than 10,000 unique users and has access to the message content intent.
     # @!method application_command_badge?
     #   @return [true, false] whether or not the application has registered at least one global application command.
     FLAGS.each do |name, value|
@@ -286,7 +276,7 @@ module Discordrb
 
     # @!visibility private
     def inspect
-      "<Application name=#{@name} id=#{@id} public=#{@public} tags=#{@tags} flags=#{@flags}>"
+      "<Application id=#{@id} name=\"#{@name}\" public=#{@public} flags=#{@flags}>"
     end
 
     private
@@ -297,7 +287,7 @@ module Discordrb
       @description = new_data['description']
       @icon_id = new_data['icon']
       @rpc_origins = new_data['rpc_origins'] || []
-      @flags = new_data['flags'] || 0
+      @flags = new_data['flags_new'].to_i
       @owner = new_data['owner'] ? @bot.ensure_user(new_data['owner']) : nil
 
       @public = new_data['bot_public']
@@ -323,7 +313,6 @@ module Discordrb
 
       @webhook_event_types = new_data['event_webhooks_types'] || []
       @tags = new_data['tags'] || []
-      @install_params = InstallParams.new(new_data['install_params'] || {}, @bot)
       @custom_install_url = new_data['custom_install_url']
 
       @integration_types = (new_data['integration_types_config'] || {}).to_h do |key, value|

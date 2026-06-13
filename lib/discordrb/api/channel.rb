@@ -445,20 +445,6 @@ module Discordrb::API::Channel
     )
   end
 
-  # Leave a group channel.
-  # @deprecated Discord no longer supports bots in group DMs, this endpoint was repurposed and no longer works as implemented here.
-  # https://discord.com/developers/docs/resources/channel#deleteclose-channel
-  def leave_group(token, group_channel_id)
-    Discordrb::API.request(
-      :channels_cid,
-      nil,
-      :delete,
-      "#{Discordrb::API.api_base}/channels/#{group_channel_id}",
-      Authorization: token,
-      content_type: :json
-    )
-  end
-
   # Create a webhook
   # https://discord.com/developers/docs/resources/webhook#create-webhook
   def create_webhook(token, channel_id, name, avatar = nil, reason = nil)

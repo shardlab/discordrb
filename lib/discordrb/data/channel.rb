@@ -626,7 +626,7 @@ module Discordrb
 
       yield(builder, view) if block_given?
 
-      flags = Array(flags).map { |flag| Discordrb::Message::FLAGS[flag] || flag }.reduce(0, &:|)
+      flags = [*flags].reduce(0) { |sum, flag| sum | (Message::FLAGS[flag] || flag.to_i) }
       flags |= (1 << 15) if has_components
       builder = builder.to_json_hash
 
@@ -1242,7 +1242,7 @@ module Discordrb
         default_sort_order: FORUM_SORT_ORDERS[default_sort_order] || default_sort_order,
         default_forum_layout: FORUM_LAYOUTS[default_forum_layout] || default_forum_layout,
         archived: archived,
-        flags: flags == :undef ? flags : Array(flags).map { |bit| FLAGS[bit] || bit.to_i }.reduce(&:|),
+        flags: flags == :undef ? flags : [*flags].reduce(0) { |sum, bit| sum | (FLAGS[bit] || bit.to_i) },
         default_thread_rate_limit_per_user: default_thread_rate_limit_per_user,
         auto_archive_duration: auto_archive_duration,
         locked: locked,
@@ -1268,8 +1268,8 @@ module Discordrb
       if add_flags != :undef || remove_flags != :undef
         raise ArgumentError, "'add_flags' and 'remove_flags' cannot be used with 'flags'" if flags != :undef
 
-        to_flags = lambda do |value|
-          [*(value == :undef ? 0 : value)].map { |bit| FLAGS[bit] || bit.to_i }.reduce(&:|)
+        to_flags = lambda do |bits|
+          bits == :undef ? 0 : [*bits].reduce(0) { |sum, bit| sum | (FLAGS[bit] || bit.to_i) }
         end
 
         data[:flags] = ((@flags & ~to_flags.call(remove_flags)) | to_flags.call(add_flags))

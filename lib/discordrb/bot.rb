@@ -76,20 +76,13 @@ module Discordrb
     # Makes a new bot with the given authentication data. It will be ready to be added event handlers to and can
     # eventually be run with {#run}.
     #
-    # As support for logging in using username and password has been removed in version 3.0.0, only a token login is
-    # possible. Be sure to specify the `type` parameter as `:user` if you're logging in as a user.
-    #
     # Simply creating a bot won't be enough to start sending messages etc. with, only a limited set of methods can
     # be used after logging in. If you want to do something when the bot has connected successfully, either do it in the
     # {#ready} event, or use the {#run} method with the :async parameter and do the processing after that.
     # @param log_mode [Symbol] The mode this bot should use for logging. See {Logger#mode=} for a list of modes.
-    # @param token [String] The token that should be used to log in. If your bot is a bot account, you have to specify
-    #   this. If you're logging in as a user, make sure to also set the account type to :user so discordrb doesn't think
-    #   you're trying to log in as a bot.
-    # @param client_id [Integer] If you're logging in as a bot, the bot's client ID. This is optional, and may be fetched
-    #   from the API by calling {Bot#bot_application} (see {Application}).
-    # @param type [Symbol] This parameter lets you manually overwrite the account type. This needs to be set when
-    #   logging in as a user, otherwise discordrb will treat you as a bot account. Valid values are `:user` and `:bot`.
+    # @param token [String] The token that should be used to log in.
+    # @param client_id [Integer] The bot's client ID. This is optional, and may be fetched from the API by calling
+    #   {Bot#bot_application} (see {Application}).
     # @param name [String] Your bot's name. This will be sent to Discord with any API requests, who will use this to
     #   trace the source of excessive API requests; it's recommended to set this to something if you make bots that many
     #   people will host on their servers separately.
@@ -128,7 +121,6 @@ module Discordrb
 
       @client_id = client_id
 
-      @type = type || :bot
       @name = name
 
       @shard_key = num_shards ? [shard_id, num_shards] : nil
@@ -136,9 +128,8 @@ module Discordrb
       LOGGER.fancy = fancy_log
       @prevent_ready = suppress_ready
 
-      @compress_mode = compress_mode
-
       raise 'Token string is empty or nil' if token.nil? || token.empty?
+      raise ArgumentError, "'type' cannot be set to :user" if type == :user
 
       @intents = case intents
                  when :all
@@ -151,8 +142,8 @@ module Discordrb
                    calculate_intents(intents)
                  end
 
-      @token = process_token(@type, token)
-      @gateway = Gateway.new(self, @token, @shard_key, @compress_mode, @intents)
+      @token = "Bot #{token.delete_prefix('Bot ')}"
+      @gateway = Gateway.new(self, @token, @shard_key, compress_mode, @intents)
 
       init_cache
 
@@ -208,6 +199,8 @@ module Discordrb
           emoji = server.emojis[id]
           return emoji if emoji
         end
+
+        nil
       else
         hash = {}
         @servers.each_value do |server|
@@ -311,13 +304,6 @@ module Discordrb
     # @return [true, false] whether or not the bot is currently connected to Discord.
     def connected?
       @gateway.open?
-    end
-
-    # Makes the bot join an invite to a server.
-    # @param invite [String, Invite] The invite to join. For possible formats see {#resolve_invite_code}.
-    def accept_invite(invite)
-      resolved = invite(invite).code
-      API::Invite.accept(token, resolved)
     end
 
     # Creates an OAuth invite URL that can be used to invite this bot to a particular server.
@@ -485,16 +471,6 @@ module Discordrb
       channel = channel.resolve_id
       response = API::Channel.upload_file(token, channel, file, caption: caption, tts: tts)
       Message.new(JSON.parse(response), self)
-    end
-
-    # Creates a new application to do OAuth authorization with. This allows you to use OAuth to authorize users using
-    # Discord. For information how to use this, see the docs: https://discord.com/developers/docs/topics/oauth2
-    # @param name [String] What your application should be called.
-    # @param redirect_uris [Array<String>] URIs that Discord should redirect your users to after authorizing.
-    # @return [Array(String, String)] your applications' client ID and client secret to be used in OAuth authorization.
-    def create_oauth_application(name, redirect_uris)
-      response = JSON.parse(API.create_oauth_application(@token, name, redirect_uris))
-      [response['id'], response['secret']]
     end
 
     # Changes information about your OAuth application
@@ -792,13 +768,6 @@ module Discordrb
     # Raises a heartbeat event. Called by the gateway connection handler used internally.
     def raise_heartbeat_event
       raise_event(HeartbeatEvent.new(self))
-    end
-
-    # Makes the bot leave any groups with no recipients remaining
-    def prune_empty_groups
-      @channels.each_value do |channel|
-        channel.leave_group if channel.group? && channel.recipients.empty?
-      end
     end
 
     # Get all application commands.
@@ -1260,14 +1229,6 @@ module Discordrb
     ##       ##     ## ##    ##   ##  ##  ####
     ##       ##     ## ##    ##   ##  ##   ###
     ########  #######   ######   #### ##    ##
-
-    def process_token(type, token)
-      # Remove the "Bot " prefix if it exists
-      token = token[4..] if token.start_with? 'Bot '
-
-      token = "Bot #{token}" unless type == :user
-      token
-    end
 
     def handle_dispatch(type, data)
       # Check whether there are still unavailable servers and there have been more than 10 seconds since READY
