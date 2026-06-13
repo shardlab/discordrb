@@ -1358,7 +1358,7 @@ module Discordrb
       @large = new_data.key?('large') ? new_data['large'] : (@large || false)
       @member_count = new_data['member_count'] || new_data['approximate_member_count'] || @member_count || 0
 
-      @vanity_url_code = new_data['vanity_url_code']
+      @vanity_invite_code = new_data['vanity_url_code']
       @description = new_data['description']
       @banner_id = new_data['banner']
       @boost_level = new_data['premium_tier']
