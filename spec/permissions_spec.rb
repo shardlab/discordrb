@@ -5,144 +5,111 @@ require 'discordrb'
 describe Discordrb::Permissions do
   subject { Discordrb::Permissions.new }
 
-  describe Discordrb::Permissions::FLAGS do
-    it 'creates a setter for each flag' do
-      responds_to_methods = Discordrb::Permissions::FLAGS.map do |_, flag|
-        subject.respond_to?(:"can_#{flag}=")
-      end
+  describe Discordrb::Permissions::MASKS do
+    masks = Discordrb::Permissions::MASKS
 
-      expect(responds_to_methods.all?).to eq true
+    it 'Creates a method indicating if the bit is set' do
+      expect(masks.all? { |name, _| subject.respond_to?(name) }).to eq(true)
     end
 
-    it 'calls #write on its writer' do
-      writer = double
-      expect(writer).to receive(:write)
-
-      Discordrb::Permissions.new(0, writer).can_read_messages = true
+    it 'Creates a setter method to toggle each permission' do
+      expect(masks.all? { |name, _| subject.respond_to?("can_#{name}=") }).to eq(true)
     end
   end
 
-  context 'with FLAGS stubbed' do
-    before do
-      stub_const('Discordrb::Permissions::FLAGS', 0 => :foo, 1 => :bar)
-    end
+  describe '#initialize' do
+    context 'With nothing passed' do
+      it 'creates a new object with no bits set' do
+        permissions = described_class.new
 
-    describe '#init_vars' do
-      it 'sets an attribute for each flag' do
-        expect(
-          [
-            subject.instance_variable_get(:@foo),
-            subject.instance_variable_get(:@bar)
-          ]
-        ).to eq [false, false]
+        expect(permissions.bits).to eq(0)
       end
     end
 
-    describe '.bits' do
-      it 'returns the correct packed bits from an array of symbols' do
-        expect(Discordrb::Permissions.bits(%i[foo bar])).to eq 3
+    context 'With a bitfield passed' do
+      it 'creates a new object with exactly those bits' do
+        permissions = described_class.new(268_443_648)
+
+        expect(permissions.bits).to eq(268_443_648)
       end
     end
 
-    describe '#bits=' do
-      it 'updates the cached value' do
-        allow(subject).to receive(:init_vars)
-        subject.bits = 1
-        expect(subject.bits).to eq(1)
-      end
+    context 'With an array of permissions passed' do
+      it 'creates a new object with the bits for those permissions' do
+        permissions = described_class.new(%i[manage_roles manage_messages connect])
 
-      it 'calls #init_vars' do
-        expect(subject).to receive(:init_vars)
-        subject.bits = 0
-      end
-    end
-
-    describe '#initialize' do
-      it 'initializes with 0 bits' do
-        expect(subject.bits).to eq 0
-      end
-
-      it 'can initialize with an array of symbols' do
-        instance = Discordrb::Permissions.new %i[foo bar]
-        expect(instance.bits).to eq 3
-      end
-
-      it 'calls #init_vars' do
-        expect_any_instance_of(Discordrb::Permissions).to receive(:init_vars)
-        subject
-      end
-    end
-
-    describe '#defined_permissions' do
-      it 'returns the defined permissions' do
-        instance = Discordrb::Permissions.new 3
-        expect(instance.defined_permissions).to eq %i[foo bar]
+        expect(permissions.bits).to eq(269_492_224)
       end
     end
   end
-end
 
-class ExampleCalculator
-  include Discordrb::PermissionCalculator
-  attr_accessor :server, :roles
-end
+  describe '#==' do
+    context 'When the other object has the same bits' do
+      it 'returns true' do
+        first = described_class.new(%i[manage_roles send_voice_messages])
 
-describe Discordrb::PermissionCalculator do
-  subject { ExampleCalculator.new }
+        second = described_class.new(%i[manage_roles send_voice_messages])
 
-  describe '#defined_role_permission?' do
-    it 'solves permissions (issue #607)' do
-      everyone_role = double('everyone role', id: 0, position: 0, permissions: Discordrb::Permissions.new)
-      role_a = double('role a', id: 1, position: 1, permissions: Discordrb::Permissions.new)
-      role_b = double('role b', id: 2, position: 2, permissions: Discordrb::Permissions.new([:manage_messages]))
-
-      channel = double('channel')
-      allow(subject).to receive(:permission_overwrite)
-        .with(:manage_messages, channel, everyone_role.id)
-        .and_return(false)
-
-      allow(subject).to receive(:permission_overwrite)
-        .with(:manage_messages, channel, role_a.id)
-        .and_return(true)
-
-      allow(subject).to receive(:permission_overwrite)
-        .with(:manage_messages, channel, role_b.id)
-        .and_return(false)
-
-      subject.server = double('server', everyone_role: everyone_role)
-      subject.roles = [role_a, role_b]
-      permission = subject.__send__(:defined_role_permission?, :manage_messages, channel)
-      expect(permission).to eq true
-
-      subject.roles = [role_b, role_a]
-      permission = subject.__send__(:defined_role_permission?, :manage_messages, channel)
-      expect(permission).to eq true
+        expect((first == second)).to eq(true)
+      end
     end
 
-    it 'takes overwrites into account' do
-      everyone_role = double('everyone role', id: 0, position: 0, permissions: Discordrb::Permissions.new)
-      role_a = double('role a', id: 1, position: 1, permissions: Discordrb::Permissions.new([:manage_messages]))
-      role_b = double('role b', id: 2, position: 2, permissions: Discordrb::Permissions.new)
-      channel = double('channel')
+    context 'When the other object has different bits' do
+      it 'returns false' do
+        first = described_class.new(%i[manage_roles send_voice_messages])
 
-      subject.server = double('server', everyone_role: everyone_role)
-      subject.roles = [role_a, role_b]
+        second = described_class.new(%i[manage_roles view_monetization_analytics])
 
-      allow(subject).to receive(:permission_overwrite).and_return(nil)
+        expect((first == second)).to eq(false)
+      end
+    end
 
-      allow(subject).to receive(:permission_overwrite)
-        .with(:manage_messages, channel, role_a.id)
-        .and_return(:deny)
+    context 'When the other is not a permission object' do
+      it 'returns false' do
+        first = described_class.new(%i[manage_roles send_voice_messages])
 
-      allow(subject).to receive(:permission_overwrite)
-        .with(:manage_messages, channel, role_b.id)
-        .and_return(:allow)
+        second = '100'
 
-      subject.roles = [role_a]
-      expect(subject.__send__(:defined_role_permission?, :manage_messages, channel)).to be false
+        expect((first == second)).to eq(false)
+      end
+    end
+  end
 
-      subject.roles = [role_a, role_b]
-      expect(subject.__send__(:defined_role_permission?, :manage_messages, channel)).to be true
+  describe '#bits=' do
+    context 'When directly given a bitfield' do
+      it 'directly sets the provided bitfield' do
+        permissions = described_class.new
+
+        permissions.bits = 139_586_764_800
+
+        expect(permissions.bits).to eq(139_586_764_800)
+      end
+    end
+
+    context 'When given a list of permissions' do
+      it 'straight up converts them into a bitfield' do
+        permissions = described_class.new
+
+        permissions.bits = %i[embed_links attach_files mention_everyone]
+
+        expect(permissions.bits).to eq(180_224)
+      end
+    end
+  end
+
+  describe '#defined_permissions' do
+    it 'Converts the bitfield into a list of permissions' do
+      permissions = described_class.new(3_145_730)
+
+      expect(permissions.defined_permissions).to match_array(%i[connect speak kick_members])
+    end
+  end
+
+  describe '.bits' do
+    it 'Returns the bitfield for a given list of permissions' do
+      permissions = described_class.bits([:manage_roles, 'use_slash_commands', :speak])
+
+      expect(permissions).to eq(2_418_016_256)
     end
   end
 end

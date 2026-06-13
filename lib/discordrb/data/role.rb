@@ -429,9 +429,9 @@ module Discordrb
     # @param colour [ColourRGB, Integer, nil] The new primary colour of the role. Can also be passed as `color:`.
     # @param secondary_colour [ColourRGB, Integer, nil] The new secondary colour of the role. Can also be passed as `secondary_color:`.
     # @param tertiary_colour [ColourRGB, Integer, nil] The new tertiary colour of the role. Can also be passed as `tertiary_color:`.
-    # @param permissions [String, Integer, nil] The new permissions to set for the role.
+    # @param permissions [String, Integer, Permissions, nil] The new permissions to set for the role.
     # @param reason [String, nil] The reason to show in the server's audit log for modifying the role.
-    # @yieldparam builder [Permissions] An optional permissions builder. Arguments passed to the method overwrite builder data.
+    # @yieldparam builder [Permissions] An optional permissions builder. Ignored when the `permissions:` argument is passed.
     # @return [nil]
     def modify(
       name: :undef, mentionable: :undef, hoist: :undef, unicode_emoji: :undef, icon: :undef,
@@ -460,6 +460,8 @@ module Discordrb
         yield((builder = Permissions.new(@permissions.bits)))
         permissions = builder.bits
       end
+
+      permissions = permissions.bits if permissions.is_a?(Permissions)
 
       data = {
         name: name,

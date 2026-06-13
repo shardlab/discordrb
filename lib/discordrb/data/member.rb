@@ -113,6 +113,7 @@ module Discordrb
     alias_method :self_deafened?, :self_deaf
 
     include MemberAttributes
+    include PermissionCalculator
 
     # @!visibility private
     def initialize(data, server, bot)
@@ -477,8 +478,6 @@ module Discordrb
       @server_collectibles = Collectibles.new(data['collectibles'] || {}, @bot) if data.key?('collectibles')
       @server_avatar_decoration = process_avatar_decoration(data['avatar_decoration_data']) if data.key?('avatar_decoration_data')
     end
-
-    include PermissionCalculator
 
     # Overwriting inspect for debug purposes
     def inspect
