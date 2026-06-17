@@ -35,42 +35,25 @@ module Discordrb::Voice
     # @return [Encoder] the encoder used to encode audio files into the format required by Discord.
     attr_reader :encoder
 
-    # discordrb will occasionally measure the time it takes to send a packet, and adjust future delay times based
-    # on that data. This makes voice playback more smooth, because if packets are sent too slowly, the audio will
-    # sound patchy, and if they're sent too quickly, packets will "pile up" and occasionally skip some data or
-    # play parts back too fast. How often these measurements should be done depends a lot on the system, and if it's
-    # done too quickly, especially on slow connections, the playback speed will vary wildly; if it's done too slowly
-    # however, small errors will cause quality problems for a longer time.
-    # @return [Integer] how frequently audio length adjustments should be done, in ideal packets (20ms).
+    # @deprecated This attribute is no longer used. The scheduler advances by a fixed {IDEAL_LENGTH} each packet,
+    #   so per-packet timing is stable without periodic adjustments.
+    # @return [Integer]
     attr_accessor :adjust_interval
 
-    # This particular value is also important because ffmpeg may take longer to process the first few packets. It is
-    # recommended to set this to 10 at maximum, otherwise it will take too long to make the first adjustment, but it
-    # shouldn't be any higher than {#adjust_interval}, otherwise no adjustments will take place. If {#adjust_interval}
-    # is at a value higher than 10, this value should not be changed at all.
-    # @see #adjust_interval
-    # @return [Integer] the packet number (1 packet = 20ms) at which length adjustments should start.
+    # @deprecated This attribute is no longer used. See {#adjust_interval}.
+    # @return [Integer]
     attr_accessor :adjust_offset
 
-    # This value determines whether or not the adjustment length should be averaged with the previous value. This may
-    # be useful on slower connections where latencies vary a lot. In general, it will make adjustments more smooth,
-    # but whether that is desired behaviour should be tried on a case-by-case basis.
-    # @see #adjust_interval
-    # @return [true, false] whether adjustment lengths should be averaged with the respective previous value.
+    # @deprecated This attribute is no longer used. See {#adjust_interval}.
+    # @return [true, false]
     attr_accessor :adjust_average
 
-    # Disable the debug message for length adjustment specifically, as it can get quite spammy with very low intervals
-    # @see #adjust_interval
-    # @return [true, false] whether length adjustment debug messages should be printed
+    # Disable the debug message for packet scheduling.
+    # @return [true, false] whether scheduling debug messages should be printed
     attr_accessor :adjust_debug
 
-    # If this value is set, no length adjustments will ever be done and this value will always be used as the length
-    # (i.e. packets will be sent every N seconds). Be careful not to set it too low as to not spam Discord's servers.
-    # The ideal length is 20ms (accessible by the {Discordrb::Voice::IDEAL_LENGTH} constant), this value should be
-    # slightly lower than that because encoding + sending takes time. Note that sending DCA files is significantly
-    # faster than sending regular audio files (usually about four times as fast), so you might want to set this value
-    # to something else if you're sending a DCA file.
-    # @return [Float] the packet length that should be used instead of calculating it during the adjustments, in ms.
+    # @deprecated This attribute is no longer used. The scheduler always targets {IDEAL_LENGTH} (20ms) per packet.
+    # @return [Float]
     attr_accessor :length_override
 
     # The factor the audio's volume should be multiplied with. `1` is no change in volume, `0` is completely silent,
@@ -308,11 +291,19 @@ module Discordrb::Voice
       @playing = true
       self.speaking = true
 
-      last_sent = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+      # Track the *scheduled* send time for the next packet. Advancing this by exactly IDEAL_LENGTH
+      # each iteration (rather than re-sampling the clock after send_audio) ensures that any jitter
+      # from encryption, UDP, or GC does not accumulate into the inter-packet interval. Discord's
+      # jitter buffer expects RTP timestamps every 20ms; drifting even a fraction of a ms per packet
+      # eventually drains the buffer and causes audible hiccups.
+      next_packet_at = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond) + IDEAL_LENGTH
 
       loop do
-        # If paused, wait
-        sleep 0.1 while @paused
+        # If paused, wait and then rebase the schedule so we don't burst packets on resume.
+        if @paused
+          sleep 0.1 while @paused
+          next_packet_at = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond) + IDEAL_LENGTH
+        end
 
         break unless @playing
 
@@ -339,15 +330,14 @@ module Discordrb::Voice
         # Proceed to the next packet if we got nil
         next unless buf
 
-        # Track intermediate adjustment so we can measure how much encoding contributes to the total time
+        # Track intermediate time so we can report how much encoding contributed to the frame budget
         intermediate_adjust = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
 
-        Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
-
-        if (last_sent + IDEAL_LENGTH) > Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
-          sleep_duration = (last_sent + IDEAL_LENGTH - Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)) / 1000.0
+        now = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+        sleep_duration = (next_packet_at - now) / 1000.0
+        if sleep_duration.positive?
           @bot.debug("Waiting for next frame: #{sleep_duration * 1000}ms (encoding #{intermediate_adjust - start_time}ms)") if @adjust_debug
-          sleep sleep_duration if sleep_duration.positive?
+          sleep sleep_duration
         end
 
         # Send the packet
@@ -355,7 +345,9 @@ module Discordrb::Voice
 
         # Set the stream time (for tracking how long we've been playing)
         @stream_time = count * IDEAL_LENGTH / 1000
-        last_sent = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
+
+        # Advance the schedule by exactly one packet period, regardless of actual send time.
+        next_packet_at += IDEAL_LENGTH
       end
 
       @bot.debug('Sending five silent frames to clear out buffers')
