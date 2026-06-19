@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Permissions
   
-    &mdash; Documentation by YARD 0.9.38
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Permissions";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -94,7 +96,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/permissions.rb</dd>
+    <dd>lib/discordrb/permissions.rb
+</dd>
   </dl>
   
 </div>
@@ -102,7 +105,6 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     <p>List of permissions Discord uses</p>
-
 
   </div>
 </div>
@@ -122,7 +124,6 @@
           <div class="docstring">
   <div class="discussion">
     <p>This hash maps bit positions to logical permissions.</p>
-
 
   </div>
 </div>
@@ -214,8 +215,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute bits.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute bits.</p></div></span>
   
 </li>
 
@@ -250,13 +250,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Return the corresponding bits for an array of permission flag symbols.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Return the corresponding bits for an array of permission flag symbols.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
     <h2>
       Instance Method Summary
@@ -282,8 +282,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Comparison based on permission bits.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Comparison based on permission bits.</p></div></span>
   
 </li>
 
@@ -305,8 +304,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Return an array of permission flag symbols for this class&#39;s permissions.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Return an array of permission flag symbols for this class's permissions.</p></div></span>
   
 </li>
 
@@ -328,8 +326,7 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Initialize the instance variables based on the bitset.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Initialize the instance variables based on the bitset.</p></div></span>
   
 </li>
 
@@ -353,13 +350,13 @@
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Create a new Permissions object either as a blank slate to add permissions to (for example for   <span class='object_link'><a href="Channel.html#define_overwrite-instance_method" title="Discordrb::Channel#define_overwrite (method)">Channel#define_overwrite</a></span>) or from existing bit data to read out.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Create a new Permissions object either as a blank slate to add permissions to (for example for   <span class='object_link'><a href="Channel.html#define_overwrite-instance_method" title="Discordrb::Channel#define_overwrite (method)">Channel#define_overwrite</a></span>) or from existing bit data to read out.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 <div id="constructor_details" class="method_details_list">
@@ -377,8 +374,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     <p>Create a new Permissions object either as a blank slate to add permissions to (for example for
-  <span class='object_link'><a href="Channel.html#define_overwrite-instance_method" title="Discordrb::Channel#define_overwrite (method)">Channel#define_overwrite</a></span>) or from existing bit data to read out.</p>
-
+<span class='object_link'><a href="Channel.html#define_overwrite-instance_method" title="Discordrb::Channel#define_overwrite (method)">Channel#define_overwrite</a></span>) or from existing bit data to read out.</p>
 
   </div>
 </div>
@@ -388,8 +384,7 @@
     <h4 class="tag_title">Examples:</h4>
     
       
-        <h5 class="example_title"><div class='inline'><p>Create a permissions object that could allow/deny read messages, connect, and speak by setting flags</p>
-</div></h5>
+        <h5 class="example_title"><div class='inline'><p>Create a permissions object that could allow/deny read messages, connect, and speak by setting flags</p></div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_permission'>permission</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
 <span class='id identifier rubyid_permission'>permission</span><span class='period'>.</span><span class='id identifier rubyid_can_read_messages'>can_read_messages</span> <span class='op'>=</span> <span class='kw'>true</span>
@@ -397,8 +392,7 @@
 <span class='id identifier rubyid_permission'>permission</span><span class='period'>.</span><span class='id identifier rubyid_can_speak'>can_speak</span> <span class='op'>=</span> <span class='kw'>true</span></code></pre>
     
       
-        <h5 class="example_title"><div class='inline'><p>Create a permissions object that could allow/deny read messages, connect, and speak by an array of symbols</p>
-</div></h5>
+        <h5 class="example_title"><div class='inline'><p>Create a permissions object that could allow/deny read messages, connect, and speak by an array of symbols</p></div></h5>
       
       <pre class="example code"><code><span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='lbracket'>[</span><span class='symbol'>:read_messages</span><span class='comma'>,</span> <span class='symbol'>:connect</span><span class='comma'>,</span> <span class='symbol'>:speak</span><span class='rbracket'>]</span></code></pre>
     
@@ -418,8 +412,7 @@
       
       
         &mdash;
-        <div class='inline'><p>The permission bits that should be set from the beginning, or an array of permission flag symbols</p>
-</div>
+        <div class='inline'><p>The permission bits that should be set from the beginning, or an array of permission flag symbols</p></div>
       
     </li>
   
@@ -435,8 +428,7 @@
       
       
         &mdash;
-        <div class='inline'><p>The writer that should be used to update data when a permission is set.</p>
-</div>
+        <div class='inline'><p>The writer that should be used to update data when a permission is set.</p></div>
       
     </li>
   
@@ -500,7 +492,6 @@
   <div class="discussion">
     <p>Returns the value of attribute bits.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -549,7 +540,6 @@
 This is a class method that can be used to calculate bits instead
 of instancing a new Permissions object.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -558,8 +548,7 @@ of instancing a new Permissions object.</p>
     <h4 class="tag_title">Examples:</h4>
     
       
-        <h5 class="example_title"><div class='inline'><p>Get the bits for permissions that could allow/deny read messages, connect, and speak</p>
-</div></h5>
+        <h5 class="example_title"><div class='inline'><p>Get the bits for permissions that could allow/deny read messages, connect, and speak</p></div></h5>
       
       <pre class="example code"><code><span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_bits'>bits</span> <span class='lbracket'>[</span><span class='symbol'>:read_messages</span><span class='comma'>,</span> <span class='symbol'>:connect</span><span class='comma'>,</span> <span class='symbol'>:speak</span><span class='rbracket'>]</span> <span class='comment'>#=&gt; 3146752</span></code></pre>
     
@@ -591,8 +580,7 @@ of instancing a new Permissions object.</p>
       
       
         &mdash;
-        <div class='inline'><p>the computed permissions integer</p>
-</div>
+        <div class='inline'><p>the computed permissions integer</p></div>
       
     </li>
   
@@ -650,7 +638,6 @@ of instancing a new Permissions object.</p>
   <div class="discussion">
     <p>Comparison based on permission bits</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -692,8 +679,7 @@ of instancing a new Permissions object.</p>
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>Return an array of permission flag symbols for this class&#39;s permissions</p>
-
+    <p>Return an array of permission flag symbols for this class's permissions</p>
 
   </div>
 </div>
@@ -703,8 +689,7 @@ of instancing a new Permissions object.</p>
     <h4 class="tag_title">Examples:</h4>
     
       
-        <h5 class="example_title"><div class='inline'><p>Get the permissions for the bits &quot;9&quot;</p>
-</div></h5>
+        <h5 class="example_title"><div class='inline'><p>Get the permissions for the bits &quot;9&quot;</p></div></h5>
       
       <pre class="example code"><code><span class='id identifier rubyid_permissions'>permissions</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Discordrb::Permissions (class)">Permissions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="#initialize-instance_method" title="Discordrb::Permissions#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='int'>9</span><span class='rparen'>)</span>
 <span class='id identifier rubyid_permissions'>permissions</span><span class='period'>.</span><span class='id identifier rubyid_defined_permissions'>defined_permissions</span> <span class='comment'>#=&gt; [:create_instant_invite, :administrator]</span></code></pre>
@@ -722,8 +707,7 @@ of instancing a new Permissions object.</p>
       
       
         &mdash;
-        <div class='inline'><p>the permissions</p>
-</div>
+        <div class='inline'><p>the permissions</p></div>
       
     </li>
   
@@ -763,7 +747,6 @@ of instancing a new Permissions object.</p>
   <div class="discussion">
     <p>Initialize the instance variables based on the bitset.</p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -801,9 +784,9 @@ of instancing a new Permissions object.</p>
 </div>
 
       <div id="footer">
-  Generated on Wed Feb  4 16:14:15 2026 by
+  Generated on Fri Jun 19 22:32:17 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.38 (ruby-3.3.10).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>

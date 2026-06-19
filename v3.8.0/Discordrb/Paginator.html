@@ -6,13 +6,13 @@
 <title>
   Class: Discordrb::Paginator
   
-    &mdash; Documentation by YARD 0.9.38
+    &mdash; Documentation by YARD 0.9.44
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css">
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css">
 
 <script type="text/javascript">
   pathId = "Discordrb::Paginator";
@@ -27,6 +27,8 @@
 
   </head>
   <body>
+    <div id="main_progress" aria-hidden="true"></div>
+
     <div class="nav_wrap">
       <iframe id="nav" src="../class_list.html?1"></iframe>
       <div id="resizer"></div>
@@ -99,7 +101,8 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/discordrb/paginator.rb</dd>
+    <dd>lib/discordrb/paginator.rb
+</dd>
   </dl>
   
 </div>
@@ -109,7 +112,6 @@
     <p>Utility class for wrapping paginated endpoints. It is <a href="https://ruby-doc.org/core-2.5.1/Enumerable.html">Enumerable</a>,
 similar to an <code>Array</code>, so most of the same methods can be used to filter the results of the request
 that it wraps. If you simply want an array of all of the results, <code>#to_a</code> can be called.</p>
-
 
   </div>
 </div>
@@ -148,8 +150,7 @@ that it wraps. If you simply want an array of all of the results, <code>#to_a</c
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Yields every item produced by the wrapped request, until it returns no more results or the configured <code>limit</code> is reached.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Yields every item produced by the wrapped request, until it returns no more results or the configured <code>limit</code> is reached.</p></div></span>
   
 </li>
 
@@ -173,13 +174,13 @@ that it wraps. If you simply want an array of all of the results, <code>#to_a</c
   
 
   
-    <span class="summary_desc"><div class='inline'><p>Creates a new <span class='object_link'><a href="" title="Discordrb::Paginator (class)">Paginator</a></span>.</p>
-</div></span>
+    <span class="summary_desc"><div class='inline'><p>Creates a new <span class='object_link'><a href="" title="Discordrb::Paginator (class)">Paginator</a></span>.</p></div></span>
   
 </li>
 
       
     </ul>
+    
   
 
 
@@ -199,7 +200,6 @@ that it wraps. If you simply want an array of all of the results, <code>#to_a</c
   <div class="discussion">
     <p>Creates a new <span class='object_link'><a href="" title="Discordrb::Paginator (class)">Discordrb::Paginator</a></span></p>
 
-
   </div>
 </div>
 <div class="tags">
@@ -216,8 +216,7 @@ that it wraps. If you simply want an array of all of the results, <code>#to_a</c
       
       
         &mdash;
-        <div class='inline'><p>the maximum number of items to request before stopping</p>
-</div>
+        <div class='inline'><p>the maximum number of items to request before stopping</p></div>
       
     </li>
   
@@ -231,8 +230,7 @@ that it wraps. If you simply want an array of all of the results, <code>#to_a</c
       
       
         &mdash;
-        <div class='inline'><p>the order in which results are returned in</p>
-</div>
+        <div class='inline'><p>the order in which results are returned in</p></div>
       
     </li>
   
@@ -250,8 +248,7 @@ that it wraps. If you simply want an array of all of the results, <code>#to_a</c
       
         &mdash;
         <div class='inline'><p>the last page of results, or nil if this is the first iteration.
-This should be used to request the next page of results.</p>
-</div>
+This should be used to request the next page of results.</p></div>
       
     </li>
   
@@ -267,8 +264,7 @@ This should be used to request the next page of results.</p>
       
       
         &mdash;
-        <div class='inline'><p>the next page of results</p>
-</div>
+        <div class='inline'><p>the next page of results</p></div>
       
     </li>
   
@@ -321,7 +317,6 @@ This should be used to request the next page of results.</p>
   <div class="discussion">
     <p>Yields every item produced by the wrapped request, until it returns
 no more results or the configured <code>limit</code> is reached.</p>
-
 
   </div>
 </div>
@@ -392,9 +387,9 @@ no more results or the configured <code>limit</code> is reached.</p>
 </div>
 
       <div id="footer">
-  Generated on Wed Feb  4 16:14:14 2026 by
+  Generated on Fri Jun 19 22:32:16 2026 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.38 (ruby-3.3.10).
+  0.9.44 (ruby-3.3.11).
 </div>
 
     </div>
