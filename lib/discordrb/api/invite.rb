@@ -28,17 +28,4 @@ module Discordrb::API::Invite
       'X-Audit-Log-Reason': reason
     )
   end
-
-  # Join a server using an invite
-  # https://discord.com/developers/docs/resources/invite#accept-invite
-  def accept(token, invite_code)
-    Discordrb::API.request(
-      :invite_code,
-      nil,
-      :post,
-      "#{Discordrb::API.api_base}/invites/#{invite_code}",
-      nil,
-      Authorization: token
-    )
-  end
 end
