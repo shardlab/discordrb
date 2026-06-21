@@ -214,7 +214,7 @@ module Discordrb
         @automod_rule_trigger_type = options['auto_moderation_rule_trigger_type']
         @overwrite_role_name = options['role_name']
         @overwrite_id = options['id']&.to_i
-        @overwrite_type = Overwrite::TYPES.key(options['type']) if options['type']
+        @overwrite_type = Overwrite::TYPES.key(options['type'].to_i) if options['type']
       end
 
       # @return [Server, Channel, Member, User, Role, Invite, Webhook, Emoji, nil] the target being performed on.

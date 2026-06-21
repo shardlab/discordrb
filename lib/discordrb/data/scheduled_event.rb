@@ -175,7 +175,7 @@ module Discordrb
         scheduled_end_time: end_time == :undef ? end_time : end_time&.iso8601,
         scheduled_start_time: start_time == :undef ? start_time : start_time&.iso8601,
         description: description,
-        entity_type: entity_type == :undef ? entity_type : ENTITY_TYPES[type] || type,
+        entity_type: entity_type == :undef ? entity_type : ENTITY_TYPES[entity_type] || entity_type,
         status: status == :undef ? status : STATUSES[status] || status,
         image: cover.respond_to?(:read) ? Discordrb.encode64(cover) : cover,
         recurrence_rule: recurrence_rule == :undef ? recurrence_rule : recurrence_rule&.to_h,
@@ -188,7 +188,7 @@ module Discordrb
         raise 'A `frequency` must be provided' unless builder.frequency?
         raise 'A `start_time` must be provided' unless builder.start_time?
 
-        builder[:recurrence_rule] = builder.to_h
+        data[:recurrence_rule] = builder.to_h
       end
 
       update_data(JSON.parse(API::Server.update_scheduled_event(@bot.token, @server_id, @id, **data)))
@@ -323,7 +323,7 @@ module Discordrb
       # @return [Integer] The spacing between the events, defined by the frequency.
       attr_reader :interval
 
-      # @return [Integer] how often the reccurence interval will occur, e.g. yearly, monthly.
+      # @return [Integer] how often the reccurence interval will occur, e.g. yearly, monthly, etc.
       attr_reader :frequency
 
       # @return [Array<Integer>] the specific days within the year (1-364) to recur on.
@@ -471,7 +471,7 @@ module Discordrb
 
         # Set the specific days for a specific week to recur on.
         # @param week [Integer] The week of the month (1-5) to recur on.
-        # @param day [Integer, Symbol] The specific day of the week to recur on, e.g. `:april`.
+        # @param day [Integer, Symbol] The specific day to recur on, e.g. `:friday`.
         # @return [void]
         def by_n_weekday(week:, day:)
           (@by_n_weekday ||= []) << { n: week, day: WEEKDAYS[day] || day }

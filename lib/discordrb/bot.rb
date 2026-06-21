@@ -208,6 +208,8 @@ module Discordrb
           emoji = server.emojis[id]
           return emoji if emoji
         end
+
+        nil
       else
         hash = {}
         @servers.each_value do |server|
