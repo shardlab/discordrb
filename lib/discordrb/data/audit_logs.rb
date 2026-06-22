@@ -73,7 +73,9 @@ module Discordrb
       166 => :onboarding_create,
       167 => :onboarding_update,
       190 => :home_settings_create,
-      191 => :home_settings_update
+      191 => :home_settings_update,
+      192 => :voice_channel_status_create,
+      193 => :voice_channel_status_delete
     }.freeze
 
     # @!visibility private
@@ -83,7 +85,7 @@ module Discordrb
       stage_instance_create sticker_create scheduled_event_create thread_create
       soundboard_sound_create auto_moderation_rule_create onboarding_prompt_create
       onboarding_create home_settings_create creator_monetization_request_created
-      message_pin auto_moderation_flag_to_channel
+      message_pin auto_moderation_flag_to_channel voice_channel_status_create
     ].freeze
 
     # @!visibility private
@@ -94,6 +96,7 @@ module Discordrb
       stage_instance_delete sticker_delete scheduled_event_delete
       thread_delete soundboard_sound_delete auto_moderation_rule_delete
       onboarding_prompt_delete message_unpin auto_moderation_block_message
+      voice_channel_status_delete
     ].freeze
 
     # @!visibility private
@@ -175,6 +178,9 @@ module Discordrb
       # @return [Symbol, nil] the type of the permission overwrite.
       attr_reader :overwrite_type
 
+      # @return [String, nil] the new status of the voice channel.
+      attr_reader :status
+
       # @return [String, nil] the reason for this action occurring.
       attr_reader :reason
 
@@ -215,6 +221,7 @@ module Discordrb
         @overwrite_role_name = options['role_name']
         @overwrite_id = options['id']&.to_i
         @overwrite_type = Overwrite::TYPES.key(options['type']) if options['type']
+        @status = options['status'] == '' ? nil : options['status']
       end
 
       # @return [Server, Channel, Member, User, Role, Invite, Webhook, Emoji, nil] the target being performed on.
@@ -418,6 +425,7 @@ module Discordrb
       when 163..165 then :onboarding_prompt
       when 166..167 then :onboarding
       when 190..191 then :home_settings
+      when 192..193 then :voice_channel_status
 
       else :unknown
       end

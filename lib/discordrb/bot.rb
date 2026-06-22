@@ -1531,6 +1531,24 @@ module Discordrb
         event.channel.process_last_pin_timestamp(data['last_pin_timestamp']) if data.key?('last_pin_timestamp')
 
         raise_event(event)
+      when :VOICE_CHANNEL_STATUS_UPDATE
+        @channels[data['id'].to_i]&.process_voice_status(data['status'])
+
+        event = ChannelStatusUpdateEvent.new(data, self)
+        raise_event(event)
+      when :VOICE_CHANNEL_START_TIME_UPDATE
+        @channels[data['id'].to_i]&.process_start_time(data['voice_start_time'])
+
+        event = ChannelStartTimeUpdateEvent.new(data, self)
+        raise_event(event)
+      when :CHANNEL_INFO
+        data['channels'].each do |inner|
+          next unless (channel = @channels[inner['id'].to_i])
+
+          channel.process_voice_status(inner['status']) if inner.key?('status')
+
+          channel.process_start_time(inner['voice_start_time']) if inner.key?('voice_start_time')
+        end
       when :GUILD_MEMBER_ADD
         add_guild_member(data)
 

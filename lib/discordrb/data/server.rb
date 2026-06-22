@@ -1506,11 +1506,18 @@ module Discordrb
     end
 
     def process_incident_actions(incidents)
-      incidents ||= {}
-      @raid_detected_at = incidents['raid_detected_at'] ? Time.parse(incidents['raid_detected_at']) : nil
-      @dms_disabled_until = incidents['dms_disabled_until'] ? Time.parse(incidents['dms_disabled_until']) : nil
-      @dm_spam_detected_at = incidents['dm_spam_detected_at'] ? Time.parse(incidents['dm_spam_detected_at']) : nil
-      @invites_disabled_until = incidents['invites_disabled_until'] ? Time.parse(incidents['invites_disabled_until']) : nil
+      incidents&.each do |key, value|
+        case key
+        when 'raid_detected_at'
+          @raid_detected_at = value ? Time.parse(value) : nil
+        when 'dms_disabled_until'
+          @dms_disabled_until = value ? Time.parse(value) : nil
+        when 'dm_spam_detected_at'
+          @dm_spam_detected_at = value ? Time.parse(value) : nil
+        when 'invites_disabled_until'
+          @invites_disabled_until = value ? Time.parse(value) : nil
+        end
+      end
     end
 
     def process_scheduled_events(events)
