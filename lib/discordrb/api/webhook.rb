@@ -35,8 +35,10 @@ module Discordrb::API::Webhook
     body = if file
              { file: file, payload_json: body.to_json }
            elsif attachments
-             files = [*0...attachments.size].zip(attachments).to_h
-             { **files, payload_json: body.to_json }
+             files = Discordrb::API.transform_files(attachments)
+
+             body[:attachments] = files[:body] if files[:body]
+             { **files[:multipart], payload_json: body.to_json }
            else
              body.to_json
            end
@@ -124,8 +126,10 @@ module Discordrb::API::Webhook
     body = { content: content, embeds: embeds, allowed_mentions: allowed_mentions, components: components, flags: flags, poll: poll }
 
     body = if attachments
-             files = [*0...attachments.size].zip(attachments).to_h
-             { **files, payload_json: body.to_json }
+             files = Discordrb::API.transform_files(attachments)
+
+             body[:attachments] = files[:body] if files[:body]
+             { **files[:multipart], payload_json: body.to_json }
            else
              body.to_json
            end

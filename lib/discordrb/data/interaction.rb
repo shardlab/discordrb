@@ -151,13 +151,13 @@ module Discordrb
       view = Discordrb::Webhooks::View.new
 
       # Set builder defaults from parameters
-      prepare_builder(builder, content, embeds, allowed_mentions, poll)
+      prepare_builder(builder, content, embeds, allowed_mentions, poll, attachments)
       yield(builder, view) if block_given?
 
       components ||= view
       data = builder.to_json_hash
 
-      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, wait, data[:poll])
+      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:channel_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, data[:attachments], nil, wait, data[:poll])
       return unless wait
 
       Interactions::Message.new(JSON.parse(response)['resource']['message'], @bot, self)
@@ -220,13 +220,13 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
-      prepare_builder(builder, content, embeds, allowed_mentions, poll)
+      prepare_builder(builder, content, embeds, allowed_mentions, poll, attachments)
       yield(builder, view) if block_given?
 
       components ||= view
       data = builder.to_json_hash
 
-      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, nil, wait, data[:poll])
+      response = Discordrb::API::Interaction.create_interaction_response(@token, @id, CALLBACK_TYPES[:update_message], data[:content], tts, data[:embeds], data[:allowed_mentions], flags, components.to_a, data[:attachments], nil, wait, data[:poll])
       return unless wait
 
       Interactions::Message.new(JSON.parse(response)['resource']['message'], @bot, self)
@@ -249,12 +249,12 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
-      prepare_builder(builder, content, embeds, allowed_mentions, poll)
+      prepare_builder(builder, content, embeds, allowed_mentions, poll, attachments)
       yield(builder, view) if block_given?
 
       components ||= view
       data = builder.to_json_hash
-      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags, data[:poll])
+      resp = Discordrb::API::Interaction.edit_original_interaction_response(@token, @application_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, data[:attachments], flags, data[:poll])
 
       Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
@@ -281,14 +281,14 @@ module Discordrb
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new
 
-      prepare_builder(builder, content, embeds, allowed_mentions, poll)
+      prepare_builder(builder, content, embeds, allowed_mentions, poll, attachments)
       yield(builder, view) if block_given?
 
       components ||= view
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_execute_webhook(
-        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a, attachments, data[:poll]
+        @token, @application_id, true, data[:content], nil, nil, tts, nil, data[:embeds], data[:allowed_mentions], flags, components.to_a, data[:attachments], data[:poll]
       )
       Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
@@ -308,14 +308,14 @@ module Discordrb
 
       flags |= (1 << 15) if has_components
 
-      prepare_builder(builder, content, embeds, allowed_mentions, poll)
+      prepare_builder(builder, content, embeds, allowed_mentions, poll, attachments)
       yield(builder, view) if block_given?
 
       components ||= view
       data = builder.to_json_hash
 
       resp = Discordrb::API::Webhook.token_edit_message(
-        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, attachments, flags, data[:poll]
+        @token, @application_id, message.resolve_id, data[:content], data[:embeds], data[:allowed_mentions], components.to_a, data[:attachments], flags, data[:poll]
       )
       Interactions::Message.new(JSON.parse(resp), @bot, self)
     end
@@ -381,11 +381,13 @@ module Discordrb
     # @param embeds [Array<Hash, Discordrb::Webhooks::Embed>, nil]
     # @param allowed_mentions [AllowedMentions, Hash, nil]
     # @param poll [Poll, Poll::Builder, Hash, nil]
-    def prepare_builder(builder, content, embeds, allowed_mentions, poll)
+    # @param attachments [Array<File>, File]
+    def prepare_builder(builder, content, embeds, allowed_mentions, poll, attachments)
       builder.poll = poll
       builder.content = content
       builder.allowed_mentions = allowed_mentions
       embeds&.each { |embed| builder << embed }
+      builder.attachments = attachments if attachments
     end
 
     # @!visibility private

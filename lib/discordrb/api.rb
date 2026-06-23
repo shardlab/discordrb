@@ -74,6 +74,37 @@ module Discordrb::API
     mutex.unlock
   end
 
+  # @!visibility private
+  def transform_files(attachments)
+    results = { multipart: {}, body: [] }
+
+    attachments.each_with_index do |item, index|
+      if item.is_a?(Hash)
+        if (file = (item[:file] || item['file']))
+          results[:multipart]["files[#{index}]"] = file
+
+          # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L160
+          if (name = (item[:filename] || item['filename']))
+            file.define_singleton_method(:original_filename) { name }
+          end
+
+          results[:body] << { id: index, **item.except(:file, 'file') }
+        elsif item[:id] || item['id']
+          results[:body] << item
+        else
+          raise ArgumentError, "Hash must contain a 'file' key mapping to a file-like object"
+        end
+      elsif item.respond_to?(:read) && item.respond_to?(:path)
+        results[:multipart]["files[#{index}]"] = item
+      else
+        # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L41
+        raise ArgumentError, "File-like objects must respond to 'read' and 'path': #{item.class}"
+      end
+    end
+
+    results[:body].any? ? results : results.tap { results.delete(:body) }
+  end
+
   # Performs a RestClient request.
   # @param type [Symbol] The type of HTTP request to use.
   # @param attributes [Array] The attributes for the request.

@@ -48,12 +48,12 @@ module Discordrb::Webhooks
 
       yield(builder, view) if block_given?
 
-      components ||= view
+      raise ArgumentError, "'file' and 'attachments' are mutually exclusive.'" if builder.file && builder.attachments
 
-      if builder.file
-        post_multipart(builder, components, wait, thread_id)
+      if builder.file || builder.attachments
+        post_multipart(builder, components || view, wait, thread_id)
       else
-        post_json(builder, components, wait, thread_id)
+        post_json(builder, components || view, wait, thread_id)
       end
     end
 
@@ -131,6 +131,12 @@ module Discordrb::Webhooks
     def post_multipart(builder, components, wait, thread_id)
       data = builder.to_multipart_hash
       data[:components] = components.to_a if components&.to_a&.any?
+
+      if (attachments = data.delete(:attachments))
+        files = transform_files(attachments)
+        data.merge!(attachments: files[:body], **files[:multipart])
+      end
+
       RestClient.post(encode_url(wait, thread_id), data.compact)
     end
 
@@ -153,6 +159,37 @@ module Discordrb::Webhooks
       query = URI.encode_www_form(query.compact)
       uri.query = query unless query.empty?
       uri.to_s
+    end
+
+    # @!visibility private
+    def transform_files(attachments)
+      results = { multipart: {}, body: [] }
+
+      attachments.each_with_index do |item, index|
+        if item.is_a?(Hash)
+          if (file = (item[:file] || item['file']))
+            results[:multipart]["files[#{index}]"] = file
+
+            # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L160
+            if (name = (item[:filename] || item['filename']))
+              file.define_singleton_method(:original_filename) { name }
+            end
+
+            results[:body] << { id: index, **item.except(:file, 'file') }
+          elsif item[:id] || item['id']
+            results[:body] << item
+          else
+            raise ArgumentError, "Hash must contain a 'file' key mapping to a file-like object"
+          end
+        elsif item.respond_to?(:read) && item.respond_to?(:path)
+          results[:multipart]["files[#{index}]"] = item
+        else
+          # https://github.com/rest-client/rest-client/blob/v2.0.2/lib/restclient/payload.rb#L41
+          raise ArgumentError, "File-like objects must respond to 'read' and 'path': #{item.class}"
+        end
+      end
+
+      results[:body].any? ? results : results.tap { results.delete(:body) }
     end
   end
 end

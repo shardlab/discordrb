@@ -5,7 +5,7 @@ require 'discordrb/webhooks/embeds'
 module Discordrb::Webhooks
   # A class that acts as a builder for a webhook message object.
   class Builder
-    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil, poll: nil)
+    def initialize(content: '', username: nil, avatar_url: nil, tts: false, file: nil, embeds: [], allowed_mentions: nil, poll: nil, attachments: [])
       @content = content
       @username = username
       @avatar_url = avatar_url
@@ -14,6 +14,7 @@ module Discordrb::Webhooks
       @embeds = embeds
       @allowed_mentions = allowed_mentions
       @poll = poll
+      @attachments = attachments
     end
 
     # The content of the message. May be 2000 characters long at most.
@@ -34,20 +35,9 @@ module Discordrb::Webhooks
     # @return [true, false] the TTS status.
     attr_accessor :tts
 
-    # Sets a file to be sent together with the message. Mutually exclusive with embeds; a webhook message can contain
-    # either a file to be sent or an embed.
-    # @param file [File] A file to be sent.
-    def file=(file)
-      raise ArgumentError, 'Embeds and files are mutually exclusive!' unless @embeds.empty?
-
-      @file = file
-    end
-
     # Adds an embed to this message.
     # @param embed [Embed] The embed to add.
     def <<(embed)
-      raise ArgumentError, 'Embeds and files are mutually exclusive!' if @file
-
       @embeds << embed
     end
 
@@ -84,8 +74,37 @@ module Discordrb::Webhooks
 
     alias_method :poll, :add_poll
 
+    # Convinience method to add an attachment.
+    # @param file [File] The file or file-like object to upload.
+    # @param description [String, nil] The description of the attachment.
+    # @param filename [String, nil] The filename to display when viewed on Discord.
+    # @param spoiler [true, false, nil] Whether or not to apply a spoiler label to the attachment.
+    # @return [void]
+    def add_attachment(file, description: nil, filename: nil, spoiler: nil)
+      if defined?(StringIO) && file.is_a?(StringIO) && !file.respond_to?(:path)
+        raise ArgumentError, "StringIO objects must implement 'path'" unless filename
+
+        file.define_singleton_method(:path) { filename }
+      end
+
+      @attachments << { file:, description:, filename:, is_spoiler: spoiler }.compact
+    end
+
+    alias_method :add_file, :add_attachment
+
+    # Sets a list of files to be sent together with the message.
+    # @param attachments [Array<File>] The files that should be sent.
+    def attachments=(attachments)
+      attachments = [attachments] unless attachments.is_a?(Array)
+
+      @attachments = attachments.map { |key| key.is_a?(Hash) ? key : { file: key } }
+    end
+
+    alias_method :files=, :attachments=
+
     # @return [File, nil] the file attached to this message.
-    attr_reader :file
+    # @deprecated Please migrate to using {#attachments} instead.
+    attr_accessor :file
 
     # @return [Array<Embed>] the embeds attached to this message.
     attr_reader :embeds
@@ -98,6 +117,10 @@ module Discordrb::Webhooks
     # @see https://discord.com/developers/docs/resources/poll#poll-create-request-object
     attr_writer :poll
 
+    # @return [Array<Hash>] The attachment and file-data to send with this message.
+    # @see https://discord.com/developers/docs/reference#uploading-files
+    attr_reader :attachments
+
     # @return [Hash] a hash representation of the created message, for JSON format.
     def to_json_hash
       {
@@ -107,7 +130,8 @@ module Discordrb::Webhooks
         tts: @tts,
         embeds: @embeds.map(&:to_hash),
         allowed_mentions: @allowed_mentions&.to_hash,
-        poll: @poll&.to_h
+        poll: @poll&.to_h,
+        attachments: @attachments.any? ? @attachments : nil
       }
     end
 
@@ -119,7 +143,8 @@ module Discordrb::Webhooks
         avatar_url: @avatar_url,
         tts: @tts,
         file: @file,
-        allowed_mentions: @allowed_mentions&.to_hash
+        allowed_mentions: @allowed_mentions&.to_hash,
+        attachments: @attachments.any? ? @attachments : nil
       }
     end
   end
