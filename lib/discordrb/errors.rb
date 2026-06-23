@@ -15,7 +15,19 @@ module Discordrb
     class MessageTooLong < RuntimeError; end
 
     # Raised when the bot can't do something because its permissions on the server are insufficient
-    class NoPermission < RuntimeError; end
+    class NoPermission < RuntimeError
+      # @return [Integer, nil] The error code that was encoutered.
+      attr_reader :code
+
+      # @return [String, Hash, nil] The error message(s) that was encountered.
+      attr_reader :message
+
+      # @!visibility private
+      def initialize(data = {})
+        @code = data['code']
+        @message = data['message']
+      end
+    end
 
     # Raised when the bot gets a HTTP 502 error, which is usually caused by Cloudflare.
     class CloudflareError < RuntimeError; end
