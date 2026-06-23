@@ -136,10 +136,9 @@ module Discordrb
     # @!visibility private
     def initialize(data, bot)
       @bot = bot
-
+      @id = data['id'].to_i
       @username = data['username']
       @global_name = data['global_name']
-      @id = data['id'].to_i
       @discriminator = data['discriminator']
       @avatar_id = data['avatar']
       @activities = Discordrb::ActivitySet.new
@@ -151,10 +150,9 @@ module Discordrb
       @client_status = process_client_status(data['client_status'])
       @banner_id = data['banner']
       @system_account = data['system'] || false
+      @primary_server = process_primary_server(data['primary_guild'])
+      @collectibles = Collectibles.new(data['collectibles'] || {}, @bot)
       @avatar_decoration = process_avatar_decoration(data['avatar_decoration_data'])
-      @collectibles = Collectibles.new(data['collectibles'] || {}, bot)
-
-      @primary_server = process_primary_server(data['primary_guild'] || {})
     end
 
     # Get a user's PM channel or send them a PM
@@ -210,27 +208,6 @@ module Discordrb
       @global_name = global_name
     end
 
-    # Set the user's avatar_decoration
-    # @note For internal use only.
-    # @!visibility private
-    def update_avatar_decoration(decoration)
-      @avatar_decoration = process_avatar_decoration(decoration)
-    end
-
-    # Set the user's collectibles
-    # @note For internal use only.
-    # @!visibility private
-    def update_collectibles(collectibles)
-      @collectibles = Collectibles.new(collectibles || {}, @bot)
-    end
-
-    # Set the user's primary server
-    # @note For internal use only.
-    # @!visibility private
-    def update_primary_server(server)
-      @primary_server = process_primary_server(server || {})
-    end
-
     # Set the user's presence data
     # @note for internal use only
     # @!visibility private
@@ -276,12 +253,12 @@ module Discordrb
 
     # @!visibility private
     def process_avatar_decoration(decoration)
-      decoration ? AvatarDecoration.new(decoration, @bot) : nil
+      AvatarDecoration.new(decoration, @bot) if decoration
     end
 
     # @!visibility private
     def process_primary_server(server)
-      PrimaryServer.new(server, @bot) if server['identity_enabled']
+      PrimaryServer.new(server, @bot) if server&.[]('identity_enabled')
     end
 
     # @!method offline?
@@ -319,6 +296,18 @@ module Discordrb
     # The inspect method is overwritten to give more useful output
     def inspect
       "<User username=#{@username} id=#{@id} discriminator=#{@discriminator}>"
+    end
+
+    # @!visibility private
+    def update_data(new_data)
+      @username = new_data['username']
+      @global_name = new_data['global_name']
+      @discriminator = new_data['discriminator']
+      @avatar_id = new_data['avatar']
+      @public_flags = new_data['public_flags'] || 0
+      @primary_server = process_primary_server(new_data['primary_guild'])
+      @collectibles = Collectibles.new(new_data['collectibles'] || {}, @bot)
+      @avatar_decoration = process_avatar_decoration(new_data['avatar_decoration_data'])
     end
   end
 end

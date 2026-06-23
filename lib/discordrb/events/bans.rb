@@ -13,9 +13,9 @@ module Discordrb::Events
 
     # @!visibility private
     def initialize(data, bot)
-      @user = bot.user(data['user']['id'].to_i)
-      @server = bot.server(data['guild_id'].to_i)
       @bot = bot
+      @user = bot.ensure_user(data['user'], true)
+      @server = bot.server(data['guild_id'].to_i)
     end
   end
 

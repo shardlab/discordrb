@@ -110,7 +110,7 @@ module Discordrb::Events
     # @!visibility private
     def process_resolved(resolved_data)
       resolved_data['users']&.each do |id, data|
-        @resolved[:users][id.to_i] = @bot.ensure_user(data)
+        @resolved[:users][id.to_i] = @bot.ensure_user(data, true)
       end
 
       resolved_data['roles']&.each do |id, data|

@@ -150,10 +150,13 @@ module Discordrb
 
     # Ensures a given user object is cached and if not, cache it from the given data hash.
     # @param data [Hash] A data hash representing a user.
+    # @param force_cache [true, false] Whether the object in cache should be updated with the given
+    #   data if it already exists.
     # @return [User] the user represented by the data hash.
-    def ensure_user(data)
-      if @users.include?(data['id'].to_i)
-        @users[data['id'].to_i]
+    def ensure_user(data, force_cache = false)
+      if (user = @users[data['id'].to_i])
+        user.update_data(data) if force_cache
+        user
       else
         @users[data['id'].to_i] = User.new(data, self)
       end
@@ -165,8 +168,7 @@ module Discordrb
     #   data if it already exists.
     # @return [Server] the server represented by the data hash.
     def ensure_server(data, force_cache = false)
-      if @servers.include?(data['id'].to_i)
-        server = @servers[data['id'].to_i]
+      if (server = @servers[data['id'].to_i])
         server.update_data(data) if force_cache
         server
       else
@@ -179,8 +181,8 @@ module Discordrb
     # @param server [Server, nil] The server the channel is on, if known.
     # @return [Channel] the channel represented by the data hash.
     def ensure_channel(data, server = nil)
-      if @channels.include?(data['id'].to_i)
-        @channels[data['id'].to_i]
+      if (channel = @channels[data['id'].to_i])
+        channel
       else
         @channels[data['id'].to_i] = Channel.new(data, self, server)
       end

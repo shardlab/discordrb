@@ -196,14 +196,18 @@ module Discordrb
 
           # Turn the message user into a recipient - we can't use the channel recipient
           # directly because the bot may also send messages to the channel
-          @author = Recipient.new(@bot.user(data['author']['id'].to_i), @channel, @bot)
+          @author = Recipient.new(@bot.ensure_user(data['author']), @channel, @bot)
         else
+          # Cache the user-data to avoid network requests in {Channel#history} contexts when the
+          # author has left the server. Skip if the message is from a guild sent via MESSAGE_CREATE.
+          @bot.ensure_user(data['author'], true) unless data['member']
+
           @author_id = data['author']['id'].to_i
         end
       end
 
       @reactions = data['reactions']&.map { |reaction| Reaction.new(reaction) } || []
-      @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention) } || []
+      @mentions = data['mentions']&.map { |mention| @bot.ensure_user(mention, true) } || []
       @mention_roles = data['mention_roles']&.map(&:to_i) || []
       @poll_result = Poll::Result.new(data['embeds'].pop, @message_reference, @bot) if @type == 46
 
@@ -446,7 +450,7 @@ module Discordrb
 
       get_reactions = proc do |fetch_limit, after_id = nil|
         resp = API::Channel.get_reactions(@bot.token, @channel.id, @id, reaction, nil, after_id, fetch_limit, type)
-        JSON.parse(resp).map { |d| User.new(d, @bot) }
+        JSON.parse(resp).map { |user_data| @bot.ensure_user(user_data, true) }
       end
 
       # Can be done without pagination
