@@ -10,6 +10,10 @@ module Discordrb
     # @see #splash_url
     attr_reader :splash_id
 
+    # @return [String, nil] the ID of the banner image for the server guide.
+    # @see #home_banner_url
+    attr_reader :home_banner_id
+
     # @return [String, nil] the ID of the server's discovery splash screen.
     # @see #discovery_splash_url
     attr_reader :discovery_splash_id
@@ -37,6 +41,7 @@ module Discordrb
       @icon_id = data['icon']
       @splash_id = data['splash']
       @description = data['description']
+      @home_banner_id = data['home_header']
       @discovery_splash_id = data['discovery_splash']
       @member_count = data['approximate_member_count']
       @presence_count = data['approximate_presence_count']
@@ -56,6 +61,13 @@ module Discordrb
     # @return [String, nil] the URL to the server's splash image, or `nil` if the server doesn't have a splash image.
     def splash_url(format = 'webp')
       API.splash_url(@id, @splash_id, format) if @splash_id
+    end
+
+    # Utility method to get a server preview's home banner URL.
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
+    # @return [String, nil] The URL to the server's home banner image, or `nil` if the server doesn't have a home banner image.
+    def home_banner_url(format: 'webp')
+      API.home_banner_url(@id, @home_banner_id, format) if @home_banner_id
     end
 
     # Utility method to get a server preview's discovery splash URL.

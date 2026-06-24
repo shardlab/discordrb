@@ -33,13 +33,13 @@ module Discordrb::API::Server
 
   # Update the properties of a guild.
   # https://discord.com/developers/docs/resources/guild#modify-guild
-  def update!(token, server_id, name: :undef, region: :undef, verification_level: :undef, default_message_notifications: :undef, explicit_content_filter: :undef, afk_channel_id: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef, system_channel_id: :undef, system_channel_flags: :undef, rules_channel_id: :undef, public_updates_channel_id: :undef, preferred_locale: :undef, features: :undef, description: :undef, premium_progress_bar_enabled: :undef, safety_alerts_channel_id: :undef, reason: nil)
+  def update!(token, server_id, name: :undef, region: :undef, verification_level: :undef, default_message_notifications: :undef, explicit_content_filter: :undef, afk_channel_id: :undef, afk_timeout: :undef, icon: :undef, splash: :undef, discovery_splash: :undef, banner: :undef, system_channel_id: :undef, system_channel_flags: :undef, rules_channel_id: :undef, public_updates_channel_id: :undef, preferred_locale: :undef, features: :undef, description: :undef, premium_progress_bar_enabled: :undef, safety_alerts_channel_id: :undef, home_header: :undef, reason: nil)
     Discordrb::API.request(
       :guilds_sid,
       server_id,
       :patch,
       "#{Discordrb::API.api_base}/guilds/#{server_id}",
-      { name:, region:, verification_level:, default_message_notifications:, explicit_content_filter:, afk_channel_id:, afk_timeout:, icon:, splash:, discovery_splash:, banner:, system_channel_id:, system_channel_flags:, rules_channel_id:, public_updates_channel_id:, preferred_locale:, features:, description:, premium_progress_bar_enabled:, safety_alerts_channel_id: }.reject { |_, value| value == :undef }.to_json,
+      { name:, region:, verification_level:, default_message_notifications:, explicit_content_filter:, afk_channel_id:, afk_timeout:, icon:, splash:, discovery_splash:, banner:, system_channel_id:, system_channel_flags:, rules_channel_id:, public_updates_channel_id:, preferred_locale:, features:, description:, premium_progress_bar_enabled:, safety_alerts_channel_id:, home_header: }.reject { |_, value| value == :undef }.to_json,
       Authorization: token,
       content_type: :json,
       'X-Audit-Log-Reason': reason
@@ -163,6 +163,72 @@ module Discordrb::API::Server
       server_id,
       :get,
       "#{Discordrb::API.api_base}/guilds/#{server_id}/members/search?#{query_string}",
+      Authorization: token
+    )
+  end
+
+  # Get the onboarding configuration for a server.
+  # https://discord.com/developers/docs/resources/webhook#get-guild-onboarding
+  def get_onboarding(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_onboarding,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/onboarding",
+      Authorization: token
+    )
+  end
+
+  # Update the onboarding configuration for a server.
+  # https://discord.com/developers/docs/resources/guild#modify-guild-onboarding
+  def update_onboarding(token, server_id, mode: :undef, prompts: :undef, default_channel_ids: :undef, enabled: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_onboarding,
+      server_id,
+      :put,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/onboarding",
+      { mode:, prompts:, default_channel_ids:, enabled: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get the welcome screen object for a server.
+  # https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen
+  def get_welcome_screen(token, server_id)
+    Discordrb::API.request(
+      :guilds_sid_welcome_screen,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/welcome-screen",
+      Authorization: token
+    )
+  end
+
+  # Update the welcome screen object for a server.
+  # https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen
+  def update_welcome_screen(token, server_id, enabled: :undef, welcome_channels: :undef, description: :undef, reason: nil)
+    Discordrb::API.request(
+      :guilds_sid_welcome_screen,
+      server_id,
+      :patch,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/welcome-screen",
+      { enabled:, welcome_channels:, description: }.reject { |_, value| value == :undef }.to_json,
+      content_type: :json,
+      Authorization: token,
+      'X-Audit-Log-Reason': reason
+    )
+  end
+
+  # Get the new member welcome experience for a server.
+  # https://discord.com/developers/docs/resources/webhook#get-guild-new-member-welcome
+  def get_new_member_welcome(token, server_id)
+    Discordrb::API.request(
+      :servers_sid_new_member_welcome,
+      server_id,
+      :get,
+      "#{Discordrb::API.api_base}/guilds/#{server_id}/new-member-welcome",
       Authorization: token
     )
   end

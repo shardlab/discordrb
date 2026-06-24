@@ -82,6 +82,9 @@ module Discordrb
     # @return [String, nil] the hash of the server's discovery splash image.
     attr_reader :discovery_splash_id
 
+    # @return [String, nil] the hash of the server guide's banner image.
+    attr_reader :home_banner_id
+
     # @return [Integer] the flags for the server's designated system channel.
     attr_reader :system_channel_flags
 
@@ -400,6 +403,32 @@ module Discordrb
       @bot.server_preview(@id)
     end
 
+    # Get the onboarding flow for the server.
+    # @return [Onboarding] The onboarding flow for the server.
+    def onboarding
+      response = API::Server.get_onboarding(@bot.token, @id)
+
+      response.empty? ? nil : Onboarding.new(JSON.parse(response), self, @bot)
+    end
+
+    # Get the welcome screen for the server.
+    # @return [WelcomeScreen, nil] The welcome screen for the server, or `nil`.
+    def welcome_screen
+      response = API::Server.get_welcome_screen(@bot.token, @id)
+
+      response.empty? ? nil : WelcomeScreen.new(JSON.parse(response), self, @bot)
+    rescue StandardError
+      nil
+    end
+
+    # Get the new member experience for the server.
+    # @return [NewMemberWelcome, nil] The new member experience for the server, or `nil`.
+    def new_member_welcome
+      response = API::Server.get_new_member_welcome(@bot.token, @id)
+
+      response.empty? ? nil : NewMemberWelcome.new(JSON.parse(response), self, @bot)
+    end
+
     # @return [String, nil] the widget URL to the server that displays the amount of online members in a
     #   stylish way. `nil` if the widget is not enabled.
     def widget_url
@@ -436,6 +465,13 @@ module Discordrb
     # @return [String, nil] The URL to the server's banner image, or `nil` if the server doesn't have a banner image.
     def banner_url(format: 'webp')
       API.banner_url(@id, @banner_id, format) if @banner_id
+    end
+
+    # Utility method to get a server's home banner URL.
+    # @param format [String] The URL will default to `webp`. You can otherwise specify one of `jpg` or `png` to override this.
+    # @return [String, nil] The URL to the server's home banner image, or `nil` if the server doesn't have a home banner image.
+    def home_banner_url(format: 'webp')
+      API.home_banner_url(@id, @home_banner_id, format) if @home_banner_id
     end
 
     # Utility method to get a server's discovery splash URL.
@@ -1265,6 +1301,7 @@ module Discordrb
     # @param widget_channel [Channel, Integer, String, nil] The new invite channel for the server's widget.
     # @param dms_disabled_until [Time, nil] The time at when non-friend direct messages will be enabled again.
     # @param invites_disabled_until [Time, nil] The time at when invites will no longer be disabled.
+    # @param home_banner [#read, File, nil] The new home banner of the server. Should be a file-like object that responds to `#read`.
     # @param reason [String, nil] The reason to show in the server's audit log for modifying the server.
     # @return [nil]
     def modify(
@@ -1273,7 +1310,7 @@ module Discordrb
       system_channel: :undef, system_channel_flags: :undef, rules_channel: :undef, public_updates_channel: :undef,
       locale: :undef, features: :undef, description: :undef, boost_progress_bar: :undef, safety_alerts_channel: :undef,
       widget_enabled: :undef, widget_channel: :undef, dms_disabled_until: :undef, invites_disabled_until: :undef,
-      reason: nil
+      home_banner: :undef, reason: nil
     )
       data = {
         name: name,
@@ -1294,7 +1331,8 @@ module Discordrb
         features: features == :undef ? features : features.map(&:upcase),
         description: description,
         premium_progress_bar_enabled: boost_progress_bar,
-        safety_alerts_channel_id: safety_alerts_channel == :undef ? safety_alerts_channel : safety_alerts_channel&.resolve_id
+        safety_alerts_channel_id: safety_alerts_channel == :undef ? safety_alerts_channel : safety_alerts_channel&.resolve_id,
+        home_header: home_banner.respond_to?(:read) ? Discordrb.encode64(home_banner) : home_banner
       }
 
       if widget_enabled != :undef || widget_channel != :undef
@@ -1358,12 +1396,13 @@ module Discordrb
       @large = new_data.key?('large') ? new_data['large'] : (@large || false)
       @member_count = new_data['member_count'] || new_data['approximate_member_count'] || @member_count || 0
 
-      @vanity_url_code = new_data['vanity_url_code']
+      @vanity_invite_code = new_data['vanity_url_code']
       @description = new_data['description']
       @banner_id = new_data['banner']
       @boost_level = new_data['premium_tier']
       @booster_count = new_data['premium_subscription_count'] || @booster_count || 0
       @locale = new_data['preferred_locale']
+      @home_banner_id = new_data['home_header']
 
       @max_video_channel_members = new_data['max_video_channel_users'] || @max_video_channel_members
       @max_stage_video_channel_members = new_data['max_stage_video_channel_users'] || @max_stage_video_channel_members

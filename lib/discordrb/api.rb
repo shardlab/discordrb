@@ -288,6 +288,21 @@ module Discordrb::API
     "#{cdn_url}/team-icons/#{team_id}/#{icon_id}.#{format}"
   end
 
+  # make a home banner URL from a server ID and header ID.
+  def home_banner_url(server_id, header_id, format = 'webp', size = nil)
+    "#{cdn_url}/home-headers/#{server_id}/#{header_id}.#{format}#{"?size=#{size}" if size}"
+  end
+
+  # make a resource channel icon URL from a channel ID and icon ID.
+  def resource_channel_icon_url(channel_id, icon_id, format = 'webp', size = nil)
+    "#{cdn_url}/resource-channels/#{channel_id}/#{icon_id}.#{format}#{"?size=#{size}" if size}"
+  end
+
+  # make a new member action icon URL from a channel ID and icon ID.
+  def new_member_action_icon_url(channel_id, icon_id, format = 'webp', size = nil)
+    "#{cdn_url}/new-member-actions/#{channel_id}/#{icon_id}.#{format}#{"?size=#{size}" if size}"
+  end
+
   # Change an OAuth application's properties
   # @deprecated Please use {Application#update_current_application} instead.
   def update_oauth_application(token, name, redirect_uris, description = '', icon = nil)
