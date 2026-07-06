@@ -85,6 +85,11 @@ module Discordrb
     # **Received**: Returned after a heartbeat was sent to the server. This allows clients to identify and deal with
     # zombie connections that don't dispatch any events anymore.
     HEARTBEAT_ACK = 11
+
+    # **Sent**: This opcode is used to request soundboard sounds for a specific set of guilds. It is **not** nessecary
+    # to use this opcode to get the soundboard sounds for a single guild, as there is a REST endpoint that is much more
+    # convenient to use. If you need to requests the soundboard sounds for more than one guild, this packet may be used.
+    REQUEST_SOUNDBOARD_SOUNDS = 31
   end
 
   # This class stores the data of an active gateway session. Note that this is different from a websocket connection -
@@ -424,6 +429,14 @@ module Discordrb
       }
 
       send_packet(Opcodes::REQUEST_MEMBERS, data)
+    end
+
+    # Sends a request soundboard sounds packet (OP 31). This will order Discord to send the list of soundboard sounds
+    # for each guild in the server_ids array as dispatch events with type `SOUNDBOARD_SOUNDS`. Unlike the request members packet
+    # (OP 8), it is NOT nessecary to use this packet (OP 31) to get a list of soundboard sounds for a single server.
+    # @param server_ids [Array<Integer, String>] The ID of the guilds you wish to request soundboard sounds for.
+    def send_request_soundboard_sounds(server_ids)
+      send_packet(Opcodes::REQUEST_SOUNDBOARD_SOUNDS, { guild_ids: server_ids })
     end
 
     # Sends a custom packet over the connection. This can be useful to implement future yet unimplemented functionality
