@@ -177,10 +177,13 @@ module Discordrb
     # Ensures a given channel object is cached and if not, cache it from the given data hash.
     # @param data [Hash] A data hash representing a channel.
     # @param server [Server, nil] The server the channel is on, if known.
+    # @param unhide [true, false, nil] Whether to deobfuscate the channel if it was recieved
+    #   from an interaction and the channel is already cached.
     # @return [Channel] the channel represented by the data hash.
-    def ensure_channel(data, server = nil)
-      if @channels.include?(data['id'].to_i)
-        @channels[data['id'].to_i]
+    def ensure_channel(data, server = nil, unhide = nil)
+      if (channel = @channels[data['id'].to_i])
+        channel.update_data(data) if unhide && channel.obfuscated?
+        channel
       else
         @channels[data['id'].to_i] = Channel.new(data, self, server)
       end

@@ -1512,16 +1512,19 @@ module Discordrb
         raise_event(event)
       when :CHANNEL_CREATE
         create_channel(data)
+        return if @channels[data['id'].to_i]&.obfuscated?
 
         event = ChannelCreateEvent.new(data, self)
         raise_event(event)
       when :CHANNEL_UPDATE
         update_channel(data)
+        return if @channels[data['id'].to_i]&.obfuscated?
 
         event = ChannelUpdateEvent.new(data, self)
         raise_event(event)
       when :CHANNEL_DELETE
         delete_channel(data)
+        return if data['flags'].to_i.anybits?(Channel::FLAGS[:obfuscated])
 
         event = ChannelDeleteEvent.new(data, self)
         raise_event(event)

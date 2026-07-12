@@ -173,7 +173,7 @@ module Discordrb
       return true if defined_permission?(:administrator, channel)
 
       # Otherwise, defer to defined_permission
-      defined_permission?(action, channel)
+      channel&.obfuscated? && current_bot? ? false : defined_permission?(action, channel)
     end
 
     # Checks whether this user has a particular permission defined (i.e. not implicit, through for example

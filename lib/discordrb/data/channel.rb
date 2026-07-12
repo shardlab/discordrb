@@ -29,8 +29,9 @@ module Discordrb
     # Map of channel flags.
     FLAGS = {
       pinned: 1 << 1,
-      require_tag: 1 << 4,
-      hide_download_options: 1 << 15
+      requires_tag: 1 << 4,
+      hide_download_options: 1 << 15,
+      obfuscated: 1 << 17
     }.freeze
 
     # Map of forum layouts.
@@ -173,6 +174,7 @@ module Discordrb
 
       @id = data['id'].to_i
       @type = data['type'] || 0
+      @flags = data['flags'] || 0
       @topic = data['topic']
       @bitrate = data['bitrate']
       @user_limit = data['user_limit']
@@ -192,7 +194,7 @@ module Discordrb
           @owner_id = data['owner_id']
         end
       else
-        @name = data['name']
+        @name = obfuscated? ? '' : data['name']
         @server_id = server&.id || data['guild_id'].to_i
         @server = server
       end
@@ -217,7 +219,6 @@ module Discordrb
         @member_flags = member['flags']
       end
 
-      @flags = data['flags'] || 0
       @voice_region = data['rtc_region']
       @video_quality_mode = data['video_quality_mode']
       @last_message_id = data['last_message_id']&.to_i
@@ -233,6 +234,21 @@ module Discordrb
       process_last_pin_timestamp(data['last_pin_timestamp'])
       process_permission_overwrites(data['permission_overwrites'])
       process_default_reaction_emoji(data['default_reaction_emoji'])
+    end
+
+    # @!method pinned?
+    #   @return [true, false] whether or not the thread has been pinned in the forum channel.
+    # @!method requires_tag?
+    #   @return [true, false] whether or not threads created in the forum channel require a tag to be set.
+    # @!method hide_download_options?
+    #   @return [true, false] whether or not the media channel has hidden the download options.
+    # @!method obfuscated?
+    #   @return [true, false] whether or not the channel's attributes are hidden because the bot does not
+    #      have the required permissions to view the channel.
+    FLAGS.each do |name, value|
+      define_method("#{name}?") do
+        @flags.anybits?(value)
+      end
     end
 
     # @return [Server, nil] the server this channel is on. If this channel is a PM channel, it will be nil.
@@ -447,9 +463,11 @@ module Discordrb
     #   @param type [Symbol] the kind of overwrite to return
     #   @return [Array<Overwrite>]
     def permission_overwrites(type = nil)
-      return @permission_overwrites unless type
-
-      @permission_overwrites.values.select { |e| e.type == type }
+      if type
+        obfuscated? ? [] : @permission_overwrites&.filter_map { |_, e| e if e.type == type } || []
+      else
+        obfuscated? ? {} : @permission_overwrites || {}
+      end
     end
 
     alias_method :overwrites, :permission_overwrites
@@ -1321,8 +1339,9 @@ module Discordrb
       @type = new_data['type'] || 0
       @topic = new_data['topic']
       @bitrate = new_data['bitrate']
-      @name = new_data['name'] || @name
+      @flags = new_data['flags'] || 0
       @user_limit = new_data['user_limit']
+      @name = obfuscated? ? '' : new_data['name']
 
       @position = new_data['position']
       @parent_id = new_data['parent_id']&.to_i
@@ -1332,7 +1351,6 @@ module Discordrb
       @member_count = new_data['member_count']
 
       @total_message_sent = new_data['total_message_sent'] || 0
-      @flags = new_data['flags'] || 0
       @voice_region = new_data['rtc_region']
       @video_quality_mode = new_data['video_quality_mode']
       @last_message_id = new_data['last_message_id']&.to_i
