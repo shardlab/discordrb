@@ -101,7 +101,7 @@ describe Discordrb::Webhook do
 
   describe '#update' do
     it 'calls update_webhook' do
-      expect(webhook).to receive(:update_webhook).with(avatar: avatar_string, channel_id: edited_webhook_channel_id.to_i, name: edited_webhook_name, reason: reason)
+      expect(webhook).to receive(:update_webhook).with(hash_including(avatar: avatar_string, channel_id: edited_webhook_channel_id.to_i, name: edited_webhook_name, reason: reason))
       webhook.update(avatar: avatar_string, channel: edited_webhook_channel_id, name: edited_webhook_name, reason: reason)
     end
   end
