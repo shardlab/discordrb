@@ -8,21 +8,21 @@ module Discordrb
     # @return [Permissions] this role's permissions.
     attr_reader :permissions
 
-    # @return [String] this role's name ("new role" if it hasn't been changed)
+    # @return [String] this role's name ("new role" if it hasn't been changed).
     attr_reader :name
 
-    # @return [Server] the server this role belongs to
-    attr_reader :server
+    # @return [Integer] the ID of the server this role is from.
+    attr_reader :server_id
 
-    # @return [true, false] whether or not this role should be displayed separately from other users
+    # @return [true, false] whether or not this role should be displayed separately from other users.
     attr_reader :hoist
     alias_method :hoist?, :hoist
 
-    # @return [true, false] whether or not this role is managed by an integration or a bot
+    # @return [true, false] whether or not this role is managed by an integration or a bot.
     attr_reader :managed
     alias_method :managed?, :managed
 
-    # @return [true, false] whether this role can be mentioned using a role mention
+    # @return [true, false] whether this role can be mentioned using a role mention.
     attr_reader :mentionable
     alias_method :mentionable?, :mentionable
 
@@ -30,7 +30,7 @@ module Discordrb
     attr_reader :colour
     alias_method :color, :colour
 
-    # @return [Integer] the position of this role in the hierarchy
+    # @return [Integer] the position of this role in the hierarchy.
     attr_reader :position
 
     # @return [String, nil] The icon hash for this role.
@@ -115,6 +115,7 @@ module Discordrb
       @permissions = Permissions.new(data['permissions'].to_i, RoleWriter.new(self, @bot.token))
       @name = data['name']
       @id = data['id'].to_i
+      @server_id = @server&.id || data['guild_id']&.to_i
 
       @position = data['position']
 
@@ -145,29 +146,16 @@ module Discordrb
     # @return [Array<Member>] an array of members who have this role.
     # @note This requests a member chunk if it hasn't for the server before, which may be slow initially
     def members
-      @server.members.select { |m| m.role? self }
+      server.members.select { |item| item.role?(self) }
     end
 
     alias_method :users, :members
 
-    # Updates the data cache from a hash containing data
-    # @note For internal use only
-    # @!visibility private
-    def update_data(new_data)
-      @name = new_data['name']
-      @hoist = new_data['hoist']
-      @icon = new_data['icon']
-      @unicode_emoji = new_data['unicode_emoji']
-      @position = new_data['position']
-      @mentionable = new_data['mentionable']
-      @flags = new_data['flags']
-      colours = new_data['colors']
-      @managed = new_data['managed']
-      @permissions.bits = new_data['permissions'].to_i
-      @colour = ColourRGB.new(colours['primary_color'])
-      @tags = Tags.new(new_data['tags']) if new_data['tags']
-      @tertiary_colour = colours['tertiary_color'] ? ColourRGB.new(colours['tertiary_color']) : nil
-      @secondary_colour = colours['secondary_color'] ? ColourRGB.new(colours['secondary_color']) : nil
+    # @return [Server] The server the role belongs to.
+    # @return [Discordrb::Errors::UnknownServer] This can happen if the role is from an interaction for a
+    #   server the bot is not a member of.
+    def server
+      @server ||= (@bot.server(@server_id) if @server_id)
     end
 
     # Sets the role name to something new
@@ -288,8 +276,8 @@ module Discordrb
     # Deletes this role. This cannot be undone without recreating the role!
     # @param reason [String] the reason for this role's deletion
     def delete(reason = nil)
-      API::Server.delete_role(@bot.token, @server.id, @id, reason)
-      @server.delete_role(@id)
+      API::Server.delete_role(@bot.token, @server_id, @id, reason)
+      @server&.delete_role(@id)
     end
 
     # Move the position of this role in the roles list.
@@ -312,15 +300,15 @@ module Discordrb
         raise ArgumentError, "'bottom', 'above', and 'below' are mutually exclusive"
       end
 
-      if (above || below) && !(target = @server.role(above || below))
+      if (above || below) && !(target = server.role(above || below))
         raise ArgumentError, "The given 'above' or 'below' options are not valid"
       end
 
-      if (below && target&.id == @server.id) || (@id == target&.id)
+      if (below && target&.id == @server_id) || (@id == target&.id)
         raise ArgumentError, 'The target role that was provded is not valid'
       end
 
-      roles = @server.roles.sort
+      roles = server.roles.sort
 
       # Make sure we remove the current role.
       myself = roles.rindex(@id).tap { |index| roles.delete_at(index) }
@@ -341,7 +329,7 @@ module Discordrb
         { id: role.resolve_id, position: new_position }
       end
 
-      @server.update_role_positions(roles, reason: reason)
+      server.update_role_positions(roles, reason: reason)
       @position
     end
 
@@ -408,7 +396,7 @@ module Discordrb
     # @return [0, -1, 1, nil] An integer representing the ordering of the
     #   roles, or `nil` if the other entity is not able to be compared to the role.
     def <=>(other)
-      return unless other.is_a?(Role) && @server == other.server
+      return unless other.is_a?(Role) && @server_id == other.server_id
 
       if @id == other.id
         0
@@ -483,13 +471,31 @@ module Discordrb
         }
       end
 
-      update_data(JSON.parse(API::Server.update_role!(@bot.token, @server.id, @id, **data)))
+      update_data(JSON.parse(API::Server.update_role!(@bot.token, @server_id, @id, **data)))
       nil
     end
 
-    # The inspect method is overwritten to give more useful output.
+    # @!visibility private
+    def update_data(new_data)
+      @name = new_data['name']
+      @hoist = new_data['hoist']
+      @icon = new_data['icon']
+      @unicode_emoji = new_data['unicode_emoji']
+      @position = new_data['position']
+      @mentionable = new_data['mentionable']
+      @flags = new_data['flags']
+      colours = new_data['colors']
+      @managed = new_data['managed']
+      @permissions.bits = new_data['permissions'].to_i
+      @colour = ColourRGB.new(colours['primary_color'])
+      @tags = Tags.new(new_data['tags']) if new_data['tags']
+      @tertiary_colour = colours['tertiary_color'] ? ColourRGB.new(colours['tertiary_color']) : nil
+      @secondary_colour = colours['secondary_color'] ? ColourRGB.new(colours['secondary_color']) : nil
+    end
+
+    # @!visibility private
     def inspect
-      "<Role name=#{@name} permissions=#{@permissions.inspect} hoist=#{@hoist} colour=#{@colour.inspect} server=#{@server.inspect} position=#{@position} mentionable=#{@mentionable} unicode_emoji=#{@unicode_emoji} flags=#{@flags}>"
+      "<Role name=\"#{@name}\" permissions=#{@permissions.bits} hoist=#{@hoist} position=#{@position} mentionable=#{@mentionable}>"
     end
   end
 end

@@ -1281,7 +1281,7 @@ module Discordrb
 
     # The default `inspect` method is overwritten to give more useful output.
     def inspect
-      "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} server=#{@server || @server_id}>"
+      "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} server_id=#{@server_id}>"
     end
 
     # Set the last pin timestamp of a channel.
