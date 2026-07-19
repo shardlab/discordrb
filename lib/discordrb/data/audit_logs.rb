@@ -107,10 +107,10 @@ module Discordrb
       auto_moderation_user_communication_disabled auto_moderation_quarantine_user
     ].freeze
 
-    # @return [Hash<String => User>] the users included in the audit logs.
+    # @return [Hash<Integer => User>] the users included in the audit logs.
     attr_reader :users
 
-    # @return [Hash<String => Webhook>] the webhooks included in the audit logs.
+    # @return [Hash<Integer => Webhook>] the webhooks included in the audit logs.
     attr_reader :webhooks
 
     # @return [Array<Entry>] the entries listed in the audit logs.

@@ -3,49 +3,64 @@
 require 'discordrb'
 
 describe Discordrb::Emoji do
-  let(:bot) { double('bot') }
+  describe '#mention' do
+    context 'When the emoji is unicode' do
+      it 'returns the name of the emoji' do
+        emoji = described_class.new({ 'name' => '🍄', 'animated' => false, 'id' => nil }, nil)
 
-  subject(:emoji) do
-    server = double('server', role: double)
+        expect(emoji.mention).to eq('🍄')
+      end
+    end
 
-    expect(bot).to receive(:ensure_user)
-    described_class.new(emoji_data, bot, server)
+    context 'When the emoji is animated' do
+      it 'mentions the emoji with the \'a\' property' do
+        emoji = described_class.new({ 'name' => 'rubytaco', 'animated' => true, 'id' => '315242245274075157' }, nil)
+
+        expect(emoji.mention).to eq('<a:rubytaco:315242245274075157>')
+      end
+    end
+
+    context 'When the emoji is not animated' do
+      it 'mentions the emoji without the \'a\' property' do
+        emoji = described_class.new({ 'name' => 'rubytaco', 'animated' => false, 'id' => '315242245274075157' }, nil)
+
+        expect(emoji.mention).to eq('<:rubytaco:315242245274075157>')
+      end
+    end
   end
 
-  fixture :emoji_data, %i[emoji]
+  describe '#to_h' do
+    context 'When the emoji is a unicode emoji' do
+      it 'serializes the emoji with the \'name:\' key' do
+        emoji = described_class.new({ 'name' => '🍄', 'animated' => false, 'id' => nil }, nil)
 
-  describe '#mention' do
-    context 'with an animated emoji' do
-      it 'serializes with animated flag' do
-        allow(emoji).to receive(:animated).and_return(true)
-
-        expect(emoji.mention).to eq '<a:rubytaco:315242245274075157>'
+        expect(emoji.to_h).to eq({ name: '🍄' })
       end
     end
 
-    context 'with a unicode emoji' do
-      it 'serializes' do
-        allow(emoji).to receive(:id).and_return(nil)
+    context 'When the emoji is a custom emoji' do
+      it 'serializes the emoji with the \'id:\' key' do
+        emoji = described_class.new({ 'name' => 'rubytaco', 'animated' => true, 'id' => '315242245274075157' }, nil)
 
-        expect(emoji.mention).to eq 'rubytaco'
+        expect(emoji.to_h).to eq({ id: 315_242_245_274_075_157 })
       end
-    end
-
-    it 'serializes' do
-      expect(emoji.mention).to eq '<:rubytaco:315242245274075157>'
     end
   end
 
   describe '#to_reaction' do
-    it 'serializes to reaction format' do
-      expect(emoji.to_reaction).to eq 'rubytaco:315242245274075157'
+    context 'When the emoji is a unicode emoji' do
+      it 'serializes the emoji in the unicode format' do
+        emoji = described_class.new({ 'name' => '🍄', 'animated' => false, 'id' => nil }, nil)
+
+        expect(emoji.to_reaction).to eq('🍄')
+      end
     end
 
-    context 'when ID is nil' do
-      it 'serializes to reaction format without custom emoji ID character' do
-        allow(emoji).to receive(:id).and_return(nil)
+    context 'When the emoji is a custom emoji' do
+      it 'serializes the emoji in the custom format' do
+        emoji = described_class.new({ 'name' => 'rubytaco', 'animated' => true, 'id' => '315242245274075157' }, nil)
 
-        expect(emoji.to_reaction).to eq 'rubytaco'
+        expect(emoji.to_reaction).to eq('rubytaco:315242245274075157')
       end
     end
   end

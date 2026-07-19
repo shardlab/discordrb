@@ -416,12 +416,18 @@ module Discordrb
     # @param query [String] If this string is not empty, only members whose username starts with this string will be
     #   returned.
     # @param limit [Integer] How many members to send at maximum, or `0` to send all members.
-    def send_request_members(server_id, query, limit)
+    # @param nonce [String, nil] Optional 32-byte string used to identify the `GUILD_MEMBERS_CHUNK` response.
+    # @param user_ids [Array<Integer>, nil] Specific user IDs to request.
+    # @param presences [true, false, nil] Whether to include the presences of the matched members.
+    def send_request_members(server_id, query, limit, nonce = nil, user_ids = nil, presences = nil)
       data = {
         guild_id: server_id,
         query: query,
-        limit: limit
-      }
+        limit: limit,
+        nonce: nonce,
+        user_ids: user_ids,
+        presences: presences
+      }.compact
 
       send_packet(Opcodes::REQUEST_MEMBERS, data)
     end

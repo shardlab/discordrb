@@ -155,7 +155,7 @@ module Discordrb
     # @param location [String, nil] The new location of the scheduled event.
     # @param start_time [Time] The new start time of the scheduled event.
     # @param end_time [Time] The new end time of the scheduled event.
-    # @param description [String, nil] The new 1-100 character description of the scheduled event.
+    # @param description [String, nil] The new 1-1000 character description of the scheduled event.
     # @param entity_type [Integer, Symbol] The new entity type of the scheduled event.
     # @param status [Integer, Symbol] The new status of the scheduled event.
     # @param cover [File, #read] The new cover image of the scheduled event.
