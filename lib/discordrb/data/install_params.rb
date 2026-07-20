@@ -16,6 +16,17 @@ module Discordrb
       @permissions = data['permissions'] ? Permissions.new(data['permissions']) : nil
     end
 
+    # Check if two install params are equivalent.
+    # @param other [InstallParams, Object] The object to compare against.
+    # @return [true, false] Whether or not the two objects are equivalent.
+    def ==(other)
+      return false unless other.is_a?(InstallParams)
+
+      @scopes == other.scopes && @permissions == other.permissions
+    end
+
+    alias_method :eql?, :==
+
     # @!visibility private
     def to_h
       { scopes: @scopes.any? ? @scopes : nil, permissions: @permissions&.bits&.to_s }.compact

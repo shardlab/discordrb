@@ -206,8 +206,8 @@ module Discordrb::API
   end
 
   # Make an icon URL from application and icon IDs
-  def app_icon_url(app_id, icon_id, format = 'webp')
-    "#{cdn_url}/app-icons/#{app_id}/#{icon_id}.#{format}"
+  def app_icon_url(app_id, icon_id, format = 'webp', size = nil)
+    "#{cdn_url}/app-icons/#{app_id}/#{icon_id}.#{format}#{"?size=#{size}" if size}"
   end
 
   # Make a widget picture URL from server ID
@@ -279,13 +279,13 @@ module Discordrb::API
   end
 
   # make a cover image URL from application and cover IDs.
-  def app_cover_url(app_id, cover_id, format = 'webp')
-    "#{cdn_url}/app-icons/#{app_id}/#{cover_id}.#{format}"
+  def app_cover_url(app_id, cover_id, format = 'webp', size = nil)
+    "#{cdn_url}/app-icons/#{app_id}/#{cover_id}.#{format}#{"?size=#{size}" if size}"
   end
 
   # make a team icon URL from team and icon IDs.
-  def team_icon_url(team_id, icon_id, format = 'webp')
-    "#{cdn_url}/team-icons/#{team_id}/#{icon_id}.#{format}"
+  def team_icon_url(team_id, icon_id, format = 'webp', size = nil)
+    "#{cdn_url}/team-icons/#{team_id}/#{icon_id}.#{format}#{"?size=#{size}" if size}"
   end
 
   # Change an OAuth application's properties
