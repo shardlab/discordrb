@@ -243,6 +243,7 @@ module Discordrb
     # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to this message.
     # @return [InteractionMessage] The updated response message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
+    # @yieldparam view [Webhooks::View] A builder for creating interaction components.
     def edit_response(content: nil, embeds: nil, allowed_mentions: nil, flags: 0, components: nil, attachments: nil, has_components: false, poll: nil)
       flags |= (1 << 15) if has_components
 
@@ -274,6 +275,7 @@ module Discordrb
     # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables sending content, polls, and embeds.
     # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to this message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
+    # @yieldparam view [Webhooks::View] A builder for creating interaction components.
     def send_message(content: nil, embeds: nil, tts: false, allowed_mentions: nil, flags: 0, ephemeral: false, components: nil, attachments: nil, has_components: false, poll: nil)
       flags |= 64 if ephemeral
       flags |= (1 << 15) if has_components
@@ -302,6 +304,7 @@ module Discordrb
     # @param has_components [true, false] Whether this message includes any V2 components. Enabling this disables sending content, polls, and embeds.
     # @param poll [Hash, Poll::Builder, Poll, nil] The poll that should be attached to this message.
     # @yieldparam builder [Webhooks::Builder] An optional message builder. Arguments passed to the method overwrite builder data.
+    # @yieldparam view [Webhooks::View] A builder for creating interaction components.
     def edit_message(message, content: nil, embeds: nil, allowed_mentions: nil, components: nil, attachments: nil, flags: 0, has_components: false, poll: nil)
       builder = Discordrb::Webhooks::Builder.new
       view = Discordrb::Webhooks::View.new

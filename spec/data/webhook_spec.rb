@@ -166,8 +166,9 @@ describe Discordrb::Webhook do
   describe '#avatarise' do
     context 'avatar responds to read' do
       it 'returns encoded' do
-        avatar = double('avatar', read: 'text', path: '/foo')
-        expect(webhook.send(:avatarise, avatar)).to eq 'data:image/jpeg;base64,dGV4dA=='
+        avatar = double('avatar', read: "\xFF\xD8\xFF".b, path: '/foo')
+        allow(avatar).to receive(:rewind)
+        expect(webhook.send(:avatarise, avatar)).to eq 'data:image/jpeg;base64,/9j/'
       end
     end
 

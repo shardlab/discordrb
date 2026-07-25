@@ -126,17 +126,44 @@ module Discordrb
     end
   end
 
-  # A utility method to base64 encode a file like object using its mime type.
-  # @param file [File, #read] A file like object that responds to #read.
-  # @return [String] The file object encoded as base64 image data.
+  # A utility method to base64 encode a file like-object into a data URI.
+  # @param file [File, #read] A file like object that responds to `#read`.
+  # @return [String] The file object represented in its Base64 data URI form.
+  # @raise [ArgumentError] If the file-like object does not respond to `#read`.
   def self.encode64(file)
-    path_method = %i[original_filename path local_path].find { |method| file.respond_to?(method) }
+    raise ArgumentError, 'File or file-like object must respond to {#read}' unless file.respond_to?(:read)
 
-    raise ArgumentError, 'File object must respond to original_filename, path, or local path.' unless path_method
-    raise ArgumentError, 'File object must respond to read.' unless file.respond_to?(:read)
+    "data:#{sniff_mime_type(file)};base64,#{Base64.encode64(file.read).strip}"
+  end
 
-    mime_type = MIME::Types.type_for(file.__send__(path_method)).first&.to_s || 'image/jpeg'
-    "data:#{mime_type};base64,#{Base64.encode64(file.read).strip}"
+  # A utility method to determine the content type of a file.
+  # @param file [File, #read] A file-like object that responds to `#read`.
+  # @return [String] The content type of the file. The only content types that are
+  #   currently supported include: `audio/ogg`, `image/png`, `image/gif`, `image/webp`,
+  #   `audio/mpeg`, `image/avif`, `image/jpeg`, and `application/json`.
+  # @raise [ArgumentError] If the content type of the file was unable to be determined.
+  def self.sniff_mime_type(file)
+    bytes = file.read(12).tap { file.rewind }
+
+    if bytes.start_with?('OggS'.b)
+      'audio/ogg'
+    elsif bytes.start_with?("\x89PNG\r\n\x1A\n".b)
+      'image/png'
+    elsif bytes.start_with?('GIF87a'.b, 'GIF89a'.b)
+      'image/gif'
+    elsif bytes.start_with?('RIFF'.b) && bytes[8, 4] == 'WEBP'.b
+      'image/webp'
+    elsif bytes.start_with?("\xFF\xFB".b, "\xFF\xF3".b, "\xFF\xF2".b, 'ID3'.b)
+      'audio/mpeg'
+    elsif bytes[4, 4] == 'ftyp'.b && ['avif'.b, 'avis'.b].include?(bytes[8, 4])
+      'image/avif'
+    elsif bytes.start_with?("\xFF\xD8\xFF".b) || ['JFIF'.b, 'Exif'.b].include?(bytes[6, 4])
+      'image/jpeg'
+    elsif bytes.start_with?('{'.b)
+      'application/json'
+    else
+      raise ArgumentError, 'Unable to determine the exact content type of the provided file.'
+    end
   end
 end
 
