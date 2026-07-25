@@ -727,17 +727,19 @@ module Discordrb
     # @param parent [Channel, String, Integer] parent category, or its ID, for this channel to be created in.
     # @param nsfw [true, false] whether this channel should be created as nsfw
     # @param rate_limit_per_user [Integer] how many seconds users need to wait in between messages.
+    # @param flags [Integer, Symbol, Array<Symbol, Integer>, nil] The flags to set for the channel. Only `:spoiler` is supported.
     # @param reason [String] The reason the for the creation of this channel.
     # @return [Channel] the created channel.
-    # @raise [ArgumentError] if type is not 0 (text), 2 (voice), 4 (category), 5 (news), or 6 (store)
-    def create_channel(name, type = 0, topic: nil, bitrate: nil, user_limit: nil, permission_overwrites: nil, parent: nil, nsfw: false, rate_limit_per_user: nil, position: nil, reason: nil)
-      type = Channel::TYPES[type] if type.is_a?(Symbol)
-      raise ArgumentError, 'Channel type must be either 0 (text), 2 (voice), 4 (category), news (5), or store (6)!' unless [0, 2, 4, 5, 6].include?(type)
+    # @raise [ArgumentError] if the type of channel specified is not valid.
+    def create_channel(name, type = 0, topic: nil, bitrate: nil, user_limit: nil, permission_overwrites: nil, parent: nil, nsfw: false, rate_limit_per_user: nil, position: nil, flags: nil, reason: nil)
+      type = Channel::TYPES[type.to_sym] unless type.is_a?(Numeric)
+      invalid_types = Channel::TYPES.values_at(:dm, :group, :store, :news_thread, :public_thread, :private_thread, :directory)
+      raise ArgumentError, 'Invalid channel type' if invalid_types.include?(type)
 
+      flags = flags ? [*flags].reduce(0) { |mask, bit| mask | (Channel::FLAGS[bit] || bit.to_i) } : 0
       permission_overwrites.map! { |e| e.is_a?(Overwrite) ? e.to_hash : e } if permission_overwrites.is_a?(Array)
-      parent_id = parent.respond_to?(:resolve_id) ? parent.resolve_id : nil
-      response = API::Server.create_channel(@bot.token, @id, name, type, topic, bitrate, user_limit, permission_overwrites, parent_id, nsfw, rate_limit_per_user, position, reason)
-      Channel.new(JSON.parse(response), @bot)
+      response = API::Server.create_channel(@bot.token, @id, name, type, topic, bitrate, user_limit, permission_overwrites, parent&.resolve_id, nsfw, rate_limit_per_user, position, reason, flags)
+      @bot.gateway.intents.anybits?(INTENTS[:servers]) ? Channel.new(JSON.parse(response), @bot) : @bot.ensure_channel(JSON.parse(response))
     end
 
     # Creates a role on this server which can then be modified. It will be initialized
