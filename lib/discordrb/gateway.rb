@@ -175,6 +175,15 @@ module Discordrb
 
       @compress_mode = compress_mode
       @intents = intents
+
+      return unless @compress_mode == :stream
+
+      begin
+        require 'zstd-ruby'
+        @zstd_available = true
+      rescue LoadError
+        @zstd_available = false
+      end
     end
 
     # Connect to the gateway server in a separate thread
@@ -563,7 +572,7 @@ module Discordrb
       raw_url += '/' unless raw_url.end_with? '/'
 
       query = if @compress_mode == :stream
-                "?encoding=json&v=#{GATEWAY_VERSION}&compress=zlib-stream"
+                "?encoding=json&v=#{GATEWAY_VERSION}&compress=#{@zstd_available ? 'zstd' : 'zlib'}-stream"
               else
                 "?encoding=json&v=#{GATEWAY_VERSION}"
               end
@@ -581,8 +590,13 @@ module Discordrb
       # Parse it
       gateway_uri = URI.parse(url)
 
-      # Zlib context for this gateway connection
-      @zlib_reader = Zlib::Inflate.new
+      if @zstd_available
+        @buffer = +''
+        @zstd = Zstd::StreamingDecompress.new
+      else
+        # Zlib context for this gateway connection
+        @zlib_reader = Zlib::Inflate.new
+      end
 
       # Connect to the obtained URI with a socket
       @socket = obtain_socket(gateway_uri)
@@ -686,14 +700,33 @@ module Discordrb
           msg = Zlib::Inflate.inflate(msg)
         end
       when :stream
-        # Write deflated string to buffer
-        @zlib_reader << msg
+        if @zstd_available
+          output = +''
+          @buffer << msg
 
-        # Check if message ends in `ZLIB_SUFFIX`
-        return if msg.bytesize < 4 || msg.byteslice(-4, 4) != ZLIB_SUFFIX
+          loop do
+            chunk, consumed = @zstd.decompress_with_pos(@buffer)
+            output << chunk
 
-        # Inflate the deflated buffer
-        msg = @zlib_reader.inflate('')
+            if consumed.positive?
+              @buffer = (@buffer.byteslice(consumed..-1) || +'')
+              next
+            end
+
+            break
+          end
+
+          output.empty? ? return : (msg = output)
+        else
+          # Write deflated string to buffer
+          @zlib_reader << msg
+
+          # Check if message ends in `ZLIB_SUFFIX`
+          return if msg.bytesize < 4 || msg.byteslice(-4, 4) != ZLIB_SUFFIX
+
+          # Inflate the deflated buffer
+          msg = @zlib_reader.inflate('')
+        end
       end
 
       # Parse packet
