@@ -214,7 +214,7 @@ module Discordrb
           sleep(duration)
         end
 
-        @gateway.send_request_members(id, '', 0)
+        @gateway.request_server_members(server: id, query: '', limit: 0)
         bucket[:time] = (Time.now + 30)
       end
     end

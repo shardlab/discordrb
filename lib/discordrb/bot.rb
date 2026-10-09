@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+require 'websocket/driver'
 require 'rest-client'
+require 'openssl'
+require 'socket'
 require 'zlib'
 
 require 'discordrb/events/message'
@@ -136,23 +139,21 @@ module Discordrb
       LOGGER.fancy = fancy_log
       @prevent_ready = suppress_ready
 
-      @compress_mode = compress_mode
-
       raise 'Token string is empty or nil' if token.nil? || token.empty?
 
-      @intents = case intents
-                 when :all
-                   ALL_INTENTS
-                 when :unprivileged
-                   UNPRIVILEGED_INTENTS
-                 when :none
-                   NO_INTENTS
-                 else
-                   calculate_intents(intents)
-                 end
+      intents = case intents
+                when :all
+                  ALL_INTENTS
+                when :unprivileged
+                  UNPRIVILEGED_INTENTS
+                when :none
+                  NO_INTENTS
+                else
+                  calculate_intents(intents)
+                end
 
       @token = process_token(@type, token)
-      @gateway = Gateway.new(self, @token, @shard_key, @compress_mode, @intents)
+      @gateway = Gateway.new(self, @shard_key, compress_mode, intents)
 
       init_cache
 
@@ -299,6 +300,7 @@ module Discordrb
     def join
       @gateway.sync
     end
+
     alias_method :sync, :join
 
     # Stops the bot gracefully, disconnecting the websocket without immediately killing the thread. This means that
@@ -381,8 +383,7 @@ module Discordrb
       debug("Got voice channel: #{chan}")
 
       @should_connect_to_voice[server_id] = chan
-      @gateway.send_voice_state_update(server_id.to_s, chan.id.to_s, false, false)
-
+      @gateway.modify_voice_state(server: server_id, channel: chan.id, mute: false, deaf: false)
       debug('Voice channel init packet sent! Now waiting.')
 
       sleep(0.05) until @voices[server_id]
@@ -397,8 +398,8 @@ module Discordrb
     #   directly, you should leave it as true.
     def voice_destroy(server, destroy_vws = true)
       server = server.resolve_id
-      @gateway.send_voice_state_update(server.to_s, nil, false, false)
-      @voices[server].destroy if @voices[server] && destroy_vws
+      @gateway.modify_voice_state(server: server, channel: nil, mute: false, deaf: false)
+      @voices[server]&.destroy if destroy_vws
       @voices.delete(server)
     end
 
@@ -566,11 +567,13 @@ module Discordrb
       @streamurl = url
       type = url ? 1 : activity_type
 
-      activity_obj = activity || url ? { 'name' => activity, 'url' => url, 'type' => type } : nil
-      @gateway.send_status_update(status, since, activity_obj, afk)
+      main = activity || url ? [{ 'name' => activity, 'url' => url, 'type' => type }] : nil
+      @gateway.modify_presence(status: status, since: since, activities: main, afk: afk)
+      new_data = { 'status' => status.to_s, 'activities' => main || [] }
 
       # Update the status in the cache
-      profile.update_presence('status' => status.to_s, 'activities' => [activity_obj].compact)
+      profile.update_presence(new_data)
+      @users[profile&.id]&.update_presence(new_data)
     end
 
     # Sets the currently playing game to the specified game.
@@ -1271,7 +1274,7 @@ module Discordrb
 
     def handle_dispatch(type, data)
       # Check whether there are still unavailable servers and there have been more than 10 seconds since READY
-      if @unavailable_servers&.positive? && (Time.now - @unavailable_timeout_time) > 10 && !(@intents || 0).nobits?(INTENTS[:servers])
+      if @unavailable_servers&.positive? && (Time.now - @unavailable_timeout_time) > 10 && @gateway&.intents&.anybits?(INTENTS[:servers])
         # The server streaming timed out!
         LOGGER.debug("Server streaming timed out with #{@unavailable_servers} servers remaining")
         LOGGER.debug('Calling ready now because server loading is taking a long time. Servers may be unavailable due to an outage, or your bot is on very large servers.')
@@ -1299,17 +1302,19 @@ module Discordrb
         # Count unavailable servers
         @unavailable_servers = 0
 
-        data['guilds'].each do |element|
-          # Check for true specifically because unavailable=false indicates that a previously unavailable server has
-          # come online
-          if element['unavailable']
-            @unavailable_servers += 1
+        if @gateway&.intents&.anybits?(INTENTS[:servers])
+          data['guilds'].each do |element|
+            # Check for true specifically because unavailable=false indicates that a previously unavailable server has
+            # come online
+            if element['unavailable']
+              @unavailable_servers += 1
 
-            # Ignore any unavailable servers
-            next
+              # Ignore any unavailable servers
+              next
+            end
+
+            ensure_server(element, true)
           end
-
-          ensure_server(element, true)
         end
 
         # Don't notify yet if there are unavailable servers because they need to get available before the bot truly has
@@ -1321,6 +1326,9 @@ module Discordrb
 
         @ready_time = Time.now
         @unavailable_timeout_time = Time.now
+      when :RESUMED
+        raise_event(ResumedEvent.new(self))
+        LOGGER.out('Resumed')
       when :GUILD_MEMBERS_CHUNK
         id = data['guild_id'].to_i
         server = server(id)
@@ -1813,8 +1821,6 @@ module Discordrb
       # Make sure to raise the event
       raise_event(ReadyEvent.new(self))
       LOGGER.good 'Ready'
-
-      @gateway.notify_ready
     end
 
     def raise_event(event)

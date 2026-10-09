@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require 'websocket-client-simple'
-require 'socket'
 require 'json'
+require 'socket'
 
 require 'discordrb/websocket'
 require 'discordrb/voice/opcodes'
@@ -258,7 +257,7 @@ module Discordrb::Voice
 
     # Event handlers; public for websocket-simple to work correctly
     # @!visibility private
-    def websocket_open
+    def notify_open
       # Give the current thread a name ('Voice Web Socket Internal')
       Thread.current[:discordrb_name] = 'vws-i'
 
@@ -267,7 +266,7 @@ module Discordrb::Voice
     end
 
     # @!visibility private
-    def websocket_message(msg)
+    def notify_message(msg)
       @bot.debug("Received VWS message! #{msg}")
       packet = JSON.parse(msg)
 
@@ -340,7 +339,23 @@ module Discordrb::Voice
 
     # Disconnects the websocket and kills the thread
     def destroy
+      @client&.close(code: 1000)
       @heartbeat_running = false
+    end
+
+    # @!visibility private
+    def notify_close(code:, reason:)
+      Discordrb::LOGGER.warn("The voice-websocket has closed (code: #{code}, reason: \"#{reason}\").")
+    end
+
+    # @!visibility private
+    def notify_error
+      DisDiscordrb::LOGGER.warn('The voice-websocket has unexpectedly closed.')
+    end
+
+    # @!visibility private
+    def url
+      "wss://#{@endpoint}/?v=#{VOICE_GATEWAY_VERSION}"
     end
 
     private
@@ -359,17 +374,11 @@ module Discordrb::Voice
     end
 
     def init_ws
-      host = "wss://#{@endpoint}/?v=#{VOICE_GATEWAY_VERSION}"
-      @bot.debug("Connecting VWS to host: #{host}")
+      @bot.debug("Connecting VWS to host: #{url}")
 
       # Connect the WS
-      @client = Discordrb::WebSocket.new(
-        host,
-        method(:websocket_open),
-        method(:websocket_message),
-        proc { |e| Discordrb::LOGGER.error "VWS error: #{e}" },
-        proc { |e| Discordrb::LOGGER.warn "VWS close: #{e}" }
-      )
+      @client = Discordrb::WebSocket.new(self, :none, false)
+      @client.connect
 
       @bot.debug('VWS connected')
 

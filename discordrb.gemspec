@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ffi', '>= 1.9.24'
   spec.add_dependency 'opus-ruby'
   spec.add_dependency 'rest-client', '>= 2.0.0'
-  spec.add_dependency 'websocket-client-simple', '>= 0.9.0'
+  spec.add_dependency 'websocket-driver', '>= 0.8.2'
 
   spec.add_dependency 'discordrb-webhooks', "~> #{Discordrb::Webhooks::VERSION}"
 
