@@ -363,8 +363,9 @@ module Discordrb
     # @param orphan [true, nil] Whether to remove the channel from its current category.
     # @param sync_permissions [true, false, nil] Whether to sync the permission overwrites of the
     #   channel with the new category channel (if applicable).
+    # @param reason [String, nil] The reason to show in the server's audit log for moving the channel.
     # @return [nil]
-    def move(above: nil, below: nil, orphan: nil, sync_permissions: nil)
+    def move(above: nil, below: nil, orphan: nil, sync_permissions: nil, reason: nil)
       if [above, below, orphan].count(&:itself) > 1
         raise ArgumentError, "'above', 'below', and 'orphan' are mutually exclusive"
       end
@@ -455,7 +456,7 @@ module Discordrb
         hash
       end
 
-      API::Server.update_channel_positions(@bot.token, @server_id, list)
+      API::Server.update_channel_positions(@bot.token, @server_id, list, reason: reason)
       nil
     end
 
