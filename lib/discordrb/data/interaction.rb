@@ -823,7 +823,7 @@ module Discordrb
       def option(type, name, description, required: nil, choices: nil, options: nil, min_value: nil, max_value: nil,
                  min_length: nil, max_length: nil, channel_types: nil, autocomplete: nil, name_localizations: nil, description_localizations: nil)
         opt = { type: type, name: name, description: description, name_localizations: name_localizations, description_localizations: description_localizations }
-        choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
+        choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices.is_a?(Hash)
 
         opt.merge!({ required: required, choices: choices, options: options, min_value: min_value,
                      max_value: max_value, min_length: min_length, max_length: max_length,
