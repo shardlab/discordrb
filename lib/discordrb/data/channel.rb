@@ -348,70 +348,116 @@ module Discordrb
 
     alias_method :parent=, :category=
 
-    # Sorts this channel's position to follow another channel.
-    # @param other [Channel, String, Integer, nil] The channel, or its ID, below which this channel should be sorted. If the given
-    #   channel is a category, this channel will be sorted at the top of that category. If it is `nil`, the channel will
-    #   be sorted at the top of the channel list.
-    # @param lock_permissions [true, false] Whether the channel's permissions should be synced to the category's
+    # @deprecated Please migrate to using {#sort_after}.
     def sort_after(other = nil, lock_permissions = false)
-      raise TypeError, 'other must be one of Channel, NilClass, String, or Integer' unless other.is_a?(Channel) || other.nil? || other.respond_to?(:resolve_id)
+      if other.nil?
+        move(orphan: true, sync_permissions: lock_permissions)
+      else
+        move(below: other, sync_permissions: lock_permissions)
+      end
+    end
 
-      other = @bot.channel(other.resolve_id) if other
-
-      # Container for the API request payload
-      move_argument = []
-
-      if other
-        raise ArgumentError, 'Can only sort a channel after a channel of the same type!' unless other.category? || (@type == other.type)
-
-        raise ArgumentError, 'Can only sort a channel after a channel in the same server!' unless other.server == server
-
-        # Store `others` parent (or if `other` is a category itself)
-        parent = if category? && other.category?
-                   # If we're sorting two categories, there is no new parent
-                   nil
-                 elsif other.category?
-                   # `other` is the category this channel will be moved into
-                   other
-                 else
-                   # `other`'s parent is the category this channel will be
-                   # moved into (if it exists)
-                   other.parent
-                 end
+    # Change the position of the channel in the channels list.
+    # @param above [Channel, Integer, String, nil] The channel to move this one above.
+    # @param below [Channel, Integer, String, nil] The channel to move this one below.
+    # @param orphan [true, nil] Whether to remove the channel from its current category.
+    # @param sync_permissions [true, false, nil] Whether to sync the permission overwrites of the
+    #   channel with the new category channel (if applicable).
+    # @param reason [String, nil] The reason to show in the server's audit log for moving the channel.
+    # @return [nil]
+    def move(above: nil, below: nil, orphan: nil, sync_permissions: nil, reason: nil)
+      if [above, below, orphan].count(&:itself) > 1
+        raise ArgumentError, "'above', 'below', and 'orphan' are mutually exclusive"
       end
 
-      # Collect and sort the IDs within the context (category or not) that we
-      # need to form our payload with
-      ids = if parent
-              parent.children
-            else
-              server.channels.reject(&:parent_id).select { |c| c.type == @type }
-            end.sort_by(&:position).map(&:id)
+      if !@server_id || directory? || thread?
+        raise TypeError, 'Unable to sort the current channel due to an invalid type'
+      end
 
-      # Move our channel ID after the target ID by deleting it,
-      # getting the index of `other`, and inserting it after.
-      ids.delete(@id) if ids.include?(@id)
-      index = other ? (ids.index { |c| c == other.id } || -1) + 1 : 0
-      ids.insert(index, @id)
+      if (above || below) && !(target = @bot.channel(above || below))
+        raise ArgumentError, "The given 'above' or 'below' options are not valid"
+      end
 
-      # Generate `move_argument`, making the positions in order from how
-      # we have sorted them in the above logic
-      ids.each_with_index do |id, pos|
-        # These keys are present in each element
-        hash = { id: id, position: pos }
+      if (above || below) && @server_id != target.server&.id
+        raise ArgumentError, 'The target channel that was provded is not valid'
+      end
 
-        # Conditionally add `lock_permissions` and `parent_id` if we're
-        # iterating past ourselves
-        if id == @id
-          hash[:lock_permissions] = true if lock_permissions
-          hash[:parent_id] = parent.nil? ? nil : parent.id
+      if !category? && (above && target&.category?)
+        raise ArgumentError, 'The target channel that was provded is not valid'
+      end
+
+      if category? && (!target || !target.category?)
+        raise ArgumentError, 'Categories must be sorted within the same bucket'
+      end
+
+      list = if category? && target&.category?
+               server.categories
+             elsif orphan
+               server.orphan_channels
+             elsif target&.category?
+               target.children
+             else
+               target.parent.children
+             end
+
+      list.tap(&:uniq!).sort_by! { |item| [item.bucket, item.position, item.id] }
+
+      list.rindex(self)&.tap { |index| list.delete_at(index) }
+
+      if !category? && target&.category?
+        list.insert(0, self)
+      elsif orphan
+        list.insert(-1, self)
+      elsif above
+        list.insert(list.rindex(target), self)
+      elsif below
+        list.insert(list.rindex(target) + 1, self)
+      end
+
+      # A channel can only be sorted amongst its own bucket, e.g. text, news, and
+      # forum channels are all in the same bucket, while voice and stage channels
+      # are in their own seperate bucket. When a bucket range starts, only channels
+      # of the same type can come after, unless we're starting a new bucket. If we
+      # encounter a channel whose bucket range has already previously ended, the sort
+      # is invalid. For a bit of context, we skip this check in certain contexts, because
+      # I don't really want to deal with calculating the correct insertion index for some
+      # internal insert operations, since the client will display them correctly anyways.
+      unless list.length <= 1 || category? || target&.category? || orphan
+        hash = {}
+        current_bucket = nil
+
+        list.each do |channel|
+          next unless channel.bucket != current_bucket
+
+          if hash[channel.bucket]
+            raise ArgumentError, 'The target channel that was provded is not valid'
+          end
+
+          hash[current_bucket] = true if current_bucket
+          current_bucket = channel.bucket
+        end
+      end
+
+      list.map!.with_index do |channel, index|
+        hash = { id: channel.id, position: index }
+
+        if channel.id == @id
+          hash[:parent_id] = if category? || orphan || target&.orphan?
+                               nil
+                             elsif !category? && target&.category?
+                               target.id
+                             else
+                               target.parent_id
+                             end
+
+          hash[:lock_permissions] = sync_permissions
         end
 
-        # Add it to the stack
-        move_argument << hash
+        hash
       end
 
-      API::Server.update_channel_positions(@bot.token, @server_id, move_argument)
+      API::Server.update_channel_positions(@bot.token, @server_id, list, reason: reason)
+      nil
     end
 
     # Check if this channel is marked as NSFW.
@@ -1212,7 +1258,7 @@ module Discordrb
     # @param invitable [true, false] Whether or not non-moderators should be able to add other non-moderators to the private thread.
     # @param add_flags [Symbol, Integer, Array<Symbol, Integer>] The flags to add to the channel. Mutually exclusive with `flags:`.
     # @param remove_flags [Symbol, Integer, Array<Symbol, Integer>] The flags to remove from the channel. Mutually exclusive with `flags:`.
-    # @param position [Integer, nil] The new sorting position of the channel. Generally, this parameter should not be used. Please use {#sort_after} instead.
+    # @param position [Integer, nil] The new sorting position of the channel. Generally, this parameter should not be used. Please use {#move} instead.
     # @param auto_archive_duration [Integer] The amount of minutes after which the thread will stop showing in the channel list.
     # @param default_thread_rate_limit_per_user [Integer] The default slowmode rate to set on threads created in the text or forum channel.
     # @param reason [String, nil] The reason to show in the server's audit log for modifying the channel.
@@ -1282,6 +1328,14 @@ module Discordrb
     # The default `inspect` method is overwritten to give more useful output.
     def inspect
       "<Channel name=#{@name} id=#{@id} topic=\"#{@topic}\" type=#{@type} position=#{@position} server=#{@server || @server_id}>"
+    end
+
+    # Get the sorting bucket of the channel
+    # @return [Integer, nil] the sorting bucket of the channel
+    # @note For internal use only
+    # @!visibility private
+    def bucket
+      (voice? || stage? ? 2 : 1) unless private?
     end
 
     # Set the last pin timestamp of a channel.
