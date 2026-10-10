@@ -224,59 +224,26 @@ describe Discordrb::Bot do
   end
 
   describe '#send_file' do
-    let(:channel) { double(:channel, resolve_id: double) }
+    let(:channel) { double(:channel, resolve_id: 381_891_448_884_428_801) }
 
-    it 'defines original_filename when filename is passed' do
-      original_filename = double(:original_filename)
-      file = double(:file, original_filename: original_filename, read: true)
-      new_filename = double('new filename')
+    it 'defines the original_filename method when an override path is passed' do
+      file = double(:file, original_filename: 'ruby.png', read: true)
 
-      allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
+      allow(Discordrb::API::Channel).to receive(:send_attachment).and_return('{}')
 
-      bot.send_file(channel, file, filename: new_filename)
-      expect(file.original_filename).to eq new_filename
+      bot.send_file(channel.resolve_id, file, filename: 'crystal.png')
+      expect(file.original_filename).to eq('crystal.png')
     end
 
-    it 'does not define original_filename when filename is nil' do
-      original_filename = double(:original_filename)
-      file = double(:file, read: true, original_filename: original_filename)
+    it 'Does not defines the original_filename method when the filename is `nil`' do
+      file = double(:file, original_filename: 'ruby.png', read: true)
 
-      allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
       allow(Discordrb::Message).to receive(:new)
+      allow(Discordrb::API::Channel).to receive(:send_attachment).and_return('{}')
 
-      bot.send_file(channel, file)
-      expect(file.original_filename).to eq original_filename
-    end
-
-    it 'prepends "SPOILER_" when spoiler is truthy and the filename does not start with "SPOILER_"' do
-      file = double(:file, read: true)
-
-      allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
-      allow(Discordrb::Message).to receive(:new)
-
-      bot.send_file(channel, file, filename: 'file.txt', spoiler: true)
-      expect(file.original_filename).to eq 'SPOILER_file.txt'
-    end
-
-    it 'does not prepend "SPOILER_" if the filename starts with "SPOILER_"' do
-      file = double(:file, read: true, path: 'SPOILER_file.txt')
-
-      allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
-      allow(Discordrb::Message).to receive(:new)
-
-      bot.send_file(channel, file, spoiler: true)
-      expect(file.original_filename).to eq 'SPOILER_file.txt'
-    end
-
-    it 'uses the original filename when spoiler is truthy and filename is nil' do
-      file = double(:file, read: true, path: 'file.txt')
-
-      allow(Discordrb::API::Channel).to receive(:upload_file).and_return('{}')
-      allow(Discordrb::Message).to receive(:new)
-
-      bot.send_file(channel, file, spoiler: true)
-      expect(file.original_filename).to eq 'SPOILER_file.txt'
+      bot.send_file(channel.resolve_id, file)
+      expect(file.original_filename).to eq('ruby.png')
     end
   end
 

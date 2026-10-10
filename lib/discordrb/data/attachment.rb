@@ -98,21 +98,19 @@ module Discordrb
       @clip_creation_time = Time.iso8601(data['clip_created_at']) if data['clip_created_at']
     end
 
+    # Check if the attachment is an image.
     # @return [true, false] whether this file is an image file.
     def image?
       !(@width.nil? || @height.nil?)
     end
 
-    # @return [true, false] whether this file is tagged as a spoiler.
-    def spoiler?
-      @filename.start_with?('SPOILER_') || @flags.anybits?(FLAGS[:spoiler])
-    end
-
+    # Get the message associated with the attachment.
     # @return [Message, nil] the message this attachment object belongs to.
     def message
       @message unless @message.is_a?(Snapshot)
     end
 
+    # Get the message snapshot associated with the attachment.
     # @return [Snapshot, nil] the message snapshot this attachment object belongs to.
     def snapshot
       @message unless @message.is_a?(Message)
@@ -124,8 +122,10 @@ module Discordrb
     #   @return [true, false] whether or not the attachment is the thumbnail of a thread in a media channel.
     # @!method animated?
     #   @return [true, false] whether or not the attachment is considered to be an animated image.
+    # @!method spoiler?
+    #   @return [true, false] whether or not the attachment is marked as a spoiler.
     FLAGS.each do |name, value|
-      define_method("#{name}?") { @flags.anybits?(value) } if name != :spoiler
+      define_method("#{name}?") { @flags.anybits?(value) }
     end
   end
 end

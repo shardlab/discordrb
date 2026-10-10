@@ -627,7 +627,7 @@ module Discordrb
         attachment: 11
       }.freeze
 
-      # Channel types that can be provided to #channel
+      # Channel types that can be provided to {#channel}.
       CHANNEL_TYPES = {
         text: 0,
         dm: 1,
@@ -639,7 +639,10 @@ module Discordrb
         news_thread: 10,
         public_thread: 11,
         private_thread: 12,
-        stage: 13
+        stage: 13,
+        directory: 14,
+        forum: 15,
+        media: 16
       }.freeze
 
       # @return [Array<Hash>]
@@ -769,9 +772,12 @@ module Discordrb
       # @param name [String, Symbol] The name of the argument.
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
-      # @return (see #option)
-      def attachment(name, description, required: nil)
-        option(TYPES[:attachment], name, description, required: required)
+      # @param types [Array<String, Symbol>] The dot-prefixed file extensions, or file
+      #   groups to estrict the option to. This restriction is **only** a client-side check. For
+      #   more info, please see: https://docs.discord.com/developers/reference#file-type-filtering
+      # @return [Hash]
+      def attachment(name, description, required: nil, types: nil)
+        option(TYPES[:attachment], name, description, required: required, file_types: types)
       end
 
       # @!visibility private
@@ -785,15 +791,16 @@ module Discordrb
       # @param max_length [Integer] A maximum length for string option value.
       # @param channel_types [Array<Integer>] Channel types that can be provides for channel options.
       # @param autocomplete [true, false] Whether this option can dynamically show options.
-      # @return Hash
+      # @param file_types [Array<String, Symbol>] The file types to restrict this option to in the client.
+      # @return [Hash]
       def option(type, name, description, required: nil, choices: nil, options: nil, min_value: nil, max_value: nil,
-                 min_length: nil, max_length: nil, channel_types: nil, autocomplete: nil)
+                 min_length: nil, max_length: nil, channel_types: nil, autocomplete: nil, file_types: nil)
         opt = { type: type, name: name, description: description }
         choices = choices.map { |option_name, value| { name: option_name, value: value } } if choices
 
         opt.merge!({ required: required, choices: choices, options: options, min_value: min_value,
                      max_value: max_value, min_length: min_length, max_length: max_length,
-                     channel_types: channel_types, autocomplete: autocomplete }.compact)
+                     channel_types: channel_types, autocomplete: autocomplete, file_types: file_types }.compact)
 
         @options << opt
         opt

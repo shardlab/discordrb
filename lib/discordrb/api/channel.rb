@@ -124,15 +124,22 @@ module Discordrb::API::Channel
     raise
   end
 
-  # Send a file as a message to a channel
-  # https://discord.com/developers/docs/resources/channel#upload-file
+  # @deprecated Please migrate to using {.send_attachment}.
   def upload_file(token, channel_id, file, caption: nil, tts: false)
+    send_attachment(token, channel_id, file, tts: tts, description: caption)
+  end
+
+  # Send a message to a channel. In the future, this will be obselete as
+  #   {.create_message} will eventually support passing these attributes per-file.
+  def send_attachment(token, channel_id, file, tts: nil, description: nil, spoiler: nil)
+    body = { id: 0, description: description, is_spoiler: spoiler }.compact
+
     Discordrb::API.request(
       :channels_cid_messages_mid,
       channel_id,
       :post,
       "#{Discordrb::API.api_base}/channels/#{channel_id}/messages",
-      { file: file, content: caption, tts: tts },
+      { 'files[0]' => file, payload_json: { tts: tts, attachments: [body] }.to_json },
       Authorization: token
     )
   end
