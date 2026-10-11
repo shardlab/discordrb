@@ -1135,6 +1135,113 @@ module Discordrb
       update_tags({ name:, moderated:, **Emoji.build_emoji_hash(emoji) }, reason) if thread_only?
     end
 
+    # Search the threads that have been created in the channel.
+    # @param name [String, #to_s, nil] Get threads with matching thread names.
+    # @param after [Time, #resolve_id, nil] Get threads with IDs that come after this point.
+    # @param before [Time, #resolve_id, nil] Get threads with IDs that come before this point.
+    # @param offset [Integer, nil] The number of threads between 0-9975 to offset the search query by.
+    # @param slop [Integer, nil] The amount of variation allowed between the placement of words when matching against thread names; between 0-100.
+    # @param tags [Array<ChannelTag, Integer, String>, ChannelTag, Integer, String, nil] Get threads that have these tags.
+    # @param tag_matching [Symbol, string, nil] Whether to `:match_all`, or `:match_some` of the `tags:`.
+    # @param archived [true, false, nil] Whether or not to include archived threads. `nil` will retrieve archived **and** un-archived threads.
+    # @param sort_by [Symbol, String, nil] Whether to sort the threads by `:creation_time`, `:relevance`, `:archive_time`, or `:last_message_time`.
+    # @param sort_order [Symbol, string, nil] Whether to order the returned threads in `:descending`, or `:ascending` order.
+    # @param limit [Integer, nil] The maximum number of threads to retrieve, or `nil` to retrieve all of the threads that matched the search query.
+    # @return [SearchedThreads] The results of the search query.
+    def search_threads(
+      name: nil, slop: 2, tags: nil, tag_matching: :match_all, archived: nil,
+      sort_by: :creation_time, sort_order: :descending, limit: 25, offset: nil,
+      before: nil, after: nil
+    )
+      tag_match = case tag_matching&.to_sym
+                  when nil, :all, :match_all
+                    :match_all
+                  when :some, :match_some
+                    :match_some
+                  else
+                    raise ArgumentError, "Invalid value for the 'tag_matching' parameter"
+                  end
+
+      sort_order = case sort_order&.to_sym
+                   when nil, :desc, :descending, :newest_first
+                     :desc
+                   when :asc, :ascending, :oldest_first
+                     :asc
+                   else
+                     raise ArgumentError, "Invalid value for the 'sort_order' parameter"
+                   end
+
+      sort_by = case sort_by&.to_sym
+                when :last_message_time, :recently_active, :activity, :recent_activity
+                  :last_message_time
+                when nil, :timestamp, :creation_time
+                  :creation_time
+                when :archived_at, :archive_time
+                  :archive_time
+                when :relevance, :match_score
+                  :relevance
+                else
+                  raise ArgumentError, "Invalid value for the 'sort_by' parameter"
+                end
+
+      options = {
+        name: name&.to_s,
+        slop: slop || 2,
+        tag_setting: tag_match,
+        tag: tags ? [*tags].map(&:resolve_id) : nil,
+        archived: archived,
+        sort_by: sort_by,
+        sort_order: sort_order,
+        limit: limit && limit <= 25 ? limit : 25,
+        offset: offset || 0,
+        min_id: after.is_a?(Time) ? IDObject.synthesise(after) : after&.resolve_id,
+        max_id: before.is_a?(Time) ? IDObject.synthesise(before) : before&.resolve_id
+      }.compact
+
+      # Only store the total thread count from the first request.
+      total = nil
+
+      # A map of thread IDs to the first message sent in each thread.
+      messages = {}
+
+      # The API helpfully provides this data so we known when to break.
+      more_threads = nil
+
+      get_threads = lambda do |query|
+        data = JSON.parse(API::Channel.search_threads(@bot.token, @id, **options, **query.compact))
+        total ||= data['total_results']
+        more_threads = data['has_more']
+
+        data['first_messages']&.each do |value|
+          messages[value['channel_id'].to_i] = Message.new(value, @bot)
+        end
+
+        data['threads']&.map do |thread|
+          thread['member'] = data['members']&.find { |member| thread['id'] == member['id'] }
+
+          @bot.ensure_channel(thread)
+        end
+      end
+
+      paginator = Paginator.new(limit, :down) do |page|
+        if more_threads == false
+          []
+        elsif sort_by != :creation_time
+          if (count = (paginator.amount_fetched + options[:offset])) > 9975
+            []
+          else
+            get_threads.call(offset: count)
+          end
+        elsif sort_order == :desc
+          get_threads.call(max_id: page&.last&.id, offset: page ? 0 : nil)
+        else
+          get_threads.call(min_id: page&.last&.id, offset: page ? 0 : nil)
+        end
+      end
+
+      SearchedThreads.new(paginator.to_a, total, messages, @bot)
+    end
+
     # @!group Threads
 
     # Join this thread.
@@ -1418,6 +1525,48 @@ module Discordrb
                           else
                             emoji['emoji_id']&.to_i
                           end
+    end
+  end
+
+  # A set of threads collected from a search query.
+  class SearchedThreads
+    include Enumerable
+
+    # @return [Array<Channel>] the threads that matched the search query.
+    attr_reader :channels
+    alias threads channels
+
+    # @return [Integer] the total number of threads that matched the search query.
+    attr_reader :total_results
+
+    # @return [Hash<Integer => Message>] a mapping of thread IDs to the first message
+    #   sent in each thread. Will only be populated for threads created in a forum channel.
+    attr_reader :first_messages
+
+    # @!visibility private
+    def initialize(threads, total, messages, bot)
+      @bot = bot
+      @channels = threads
+      @total_results = total
+      @first_messages = messages
+    end
+
+    # Get a single thread that matched the search query by its index.
+    # @param index [Integer] The index of the thread to get from the array.
+    # @return [Channel] the thread that was found at the specified index.
+    def [](index)
+      @channels[index]
+    end
+
+    # Iterate over each thread that matched the search query.
+    # @return [Array<Channel>, Enumerable] The array that was iterated over.
+    def each(...)
+      @channels.each(...)
+    end
+
+    # @!visibility private
+    def inspect
+      "<SearchedThreads threads=[#{'...' if @channels.any?}] total_results=#{@total_results}>"
     end
   end
 end
