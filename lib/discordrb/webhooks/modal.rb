@@ -203,8 +203,10 @@ class Discordrb::Webhooks::Modal
     # @param min_values [Integer, nil] The minimum amount of files a user must upload.
     # @param max_values [Integer, nil] The maximum amount of files a user has to upload.
     # @param required [true, false, nil] Whether or not a file must be uploaded to the component.
-    def file_upload(custom_id:, id: nil, min_values: nil, max_values: nil, required: nil)
-      @component = { type: COMPONENT_TYPES[:file_upload], custom_id: custom_id, id: id, min_values: min_values, max_values: max_values, required: required }.compact
+    # @param types [Array<String, Symbol>, nil] The types of files that a user can upload. This can be a file extension or one of:
+    #  `image`, `video`, or `audio`. This is only a **client-side restriction**, meaning that you must continue to ensure that the file is valid.
+    def file_upload(custom_id:, id: nil, min_values: nil, max_values: nil, required: nil, types: nil)
+      @component = { type: COMPONENT_TYPES[:file_upload], custom_id: custom_id, id: id, min_values: min_values, max_values: max_values, required: required, file_types: types }.compact
     end
 
     # Add a standalone checkbox component to the label component.
