@@ -773,7 +773,7 @@ module Discordrb
       # @param description [String] A description of the argument.
       # @param required [true, false] Whether this option must be provided.
       # @param types [Array<String, Symbol>] The dot-prefixed file extensions, or file
-      #   groups to estrict the option to. This restriction is **only** a client-side check. For
+      #   groups to restrict the option to. This restriction is **only** a client-side check. For
       #   more info, please see: https://docs.discord.com/developers/reference#file-type-filtering
       # @return [Hash]
       def attachment(name, description, required: nil, types: nil)
