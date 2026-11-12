@@ -127,7 +127,8 @@ module Discordrb
       def initialize(data, bot)
         @bot = bot
         @name = data['name']
-        @roles = data['roles'].map do |role|
+        @roles = data['roles'].map.with_index do |role, index|
+          role['position'] = index
           role['colors'] ||= { 'primary_color' => role['color'] }
           Role.new(role, @bot)
         end
