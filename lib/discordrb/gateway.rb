@@ -145,6 +145,11 @@ module Discordrb
     # The version of the gateway that's supposed to be used.
     GATEWAY_VERSION = 9
 
+    # How long a session has to last, in seconds, for the reconnect after it to start again from the shortest delay.
+    # Sessions that end sooner keep backing off, so a connection that keeps dropping can't burn through the daily
+    # identify limit.
+    STABLE_SESSION_DURATION = 120
+
     # Close codes that are unrecoverable, after which we should not try to reconnect.
     # - 4003: Not authenticated. How did this happen?
     # - 4004: Authentication failed. Token was wrong, nothing we can do.
@@ -507,6 +512,12 @@ module Discordrb
     # Separate method to wait an ever-increasing amount of time before reconnecting after being disconnected in an
     # unexpected way
     def wait_for_reconnect
+      # If the session we just lost had been up for a while, this is a one-off disconnect rather than part of a run of
+      # failed attempts, so start again from the shortest delay. Without this the falloff only ever grows, and a bot
+      # that has been running for a few days waits two minutes after every routine disconnect.
+      @falloff = 1.0 if @session_started_at && monotonic_time - @session_started_at >= STABLE_SESSION_DURATION
+      @session_started_at = nil
+
       # We disconnected in an unexpected way! Wait before reconnecting so we don't spam Discord's servers.
       LOGGER.debug("Attempting to reconnect in #{@falloff} seconds.")
       sleep @falloff
@@ -514,6 +525,10 @@ module Discordrb
       # Calculate new falloff
       @falloff *= 1.5
       @falloff = 115 + (rand * 10) if @falloff > 120 # Cap the falloff at 120 seconds and then add some random jitter
+    end
+
+    def monotonic_time
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
 
     # Create and connect a socket using a URI
@@ -738,12 +753,14 @@ module Discordrb
 
         @session = Session.new(data['session_id'], data['resume_gateway_url'])
         @session.sequence = 0
+        @session_started_at = monotonic_time
         @bot.__send__(:notify_ready) if @intents && @intents.nobits?(INTENTS[:servers])
       when :RESUMED
         # The RESUMED event is received after a successful op 6 (resume). It does nothing except tell the bot the
         # connection is initiated (like READY would). Starting with v5, it doesn't set a new heartbeat interval anymore
         # since that is handled by op 10 (HELLO).
         LOGGER.info 'Resumed'
+        @session_started_at = monotonic_time
         return
       end
 
